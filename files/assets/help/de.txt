@@ -1,0 +1,203 @@
+# better-Y — menu rows (de)
+#
+# Порядок, группировка и подпункты берутся ТОЛЬКО из en.txt. Здесь читаются лишь названия строк
+# (после скобок), значения перечислений (строки со «*») и описания; всё остальное игнорируется.
+# Непереведённая строка откатывается на английскую, так что файл можно переводить по частям.
+#
+# [[группа]] Название      заголовок группы
+# [строка] Название        название строки меню
+# * Значение               значение строки-перечисления, по порядку
+# ---                      принудительный разрыв страницы описания
+# @img файл Подпись        страница-картинка (help/img/файл)
+# {row:ключ} {app:имя}     название другой строки / раздела приложения на языке устройства
+# {On} {Off}               значения тумблера, как их показывает само меню
+
+[[tools]] Werkzeuge
+
+[reboot] Neustart
+Startet das Gerät neu.
+
+[cache] Bibliothek zwischenspeichern
+Legt die Mediathek im Cache ab.
+
+Neben dieser Schaltfläche wird auch während der Nutzung des Players zwischengespeichert.
+
+[scan] Bibliothek aktualisieren
+Liest Metadaten und Cover der bereits in der Mediathek vorhandenen Titel neu ein und aktualisiert sie, falls sie sich geändert haben.
+
+[log] Diagnoseprotokoll speichern
+Speichert einen Diagnosebericht im Ordner /better-Y/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
+
+[sf] SurfaceFlinger-Neustart
+Diagnose: startet den Compositor neu und schreibt einen Bericht in den Ordner /better-Y/.
+
+Diesen Punkt gibt es nur im Debugmodus, der mit fünf Druckvorgängen auf die mittlere Taste unter Settings → About eingeschaltet wird.
+
+[[player]] Gerade läuft
+
+[icon_tint] Symbolfarbe
+* Hell
+* Dunkel
+* Themenfarbe
+Legt die Farbe der interaktiven Schaltflächen im Player fest.
+
+[cover_tilt] Cover neigen
+@img cover_tilt_on.png {On}
+@img cover_tilt_off.png {Off}
+
+[top_hold] Obere Taste gedrueckt halten (Musik)
+* Songtext
+* Warteschlange
+* AB-Schleife
+Die gewählte Funktion wird im Musikplayer geöffnet, wenn die obere Taste gehalten wird.
+
+Der Satz der interaktiven Schaltflächen ändert sich mit dieser Auswahl.
+
+[book_top_hold] Obere Taste gedrueckt halten (Hörbücher)
+* Lesezeichen
+* Warteschlange
+Die gewählte Funktion wird im Hörbuchplayer geöffnet, wenn die obere Taste gehalten wird.
+
+Der Satz der interaktiven Schaltflächen ändert sich mit dieser Auswahl.
+
+[first_artist_only] Nur den ersten Künstler anzeigen
+Blendet alles nach dem ersten Komma im Künstler-Tag aus, sodass nur der erste Künstler bleibt. Zum Beispiel:
+
+„Tree, Shelf Nunny, Lena Kuhn — People“
+wird zu
+„Tree — People“
+
+Gilt nur für die Künstlerzeile im Player.
+
+Ausgeblendete Künstler lassen sich mit „{row:feat_in_title}“ in den Titel verschieben.
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title] Ausgeblendete Künstler in den Titel verschieben
+Verschiebt die von „{row:first_artist_only}“ ausgeblendeten Künstler hinter einem „feat.“ in den Songtitel. Zum Beispiel:
+
+„Tree, Shelf Nunny, Lena Kuhn — People“
+wird mit dieser Einstellung Aus zu
+„Tree — People“
+
+mit dieser Einstellung An zu
+„Tree — People (feat. Shelf Nunny, Lena Kuhn)“
+
+Gilt nur für die Künstlerzeile im Player.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
+[[menu]] Menü
+
+[alpha_scroll] Alphabetisches Schnellscrollen
+Setzt nach einigen Radklicks ein und springt anhand des ersten Buchstabens durch die Liste.
+
+Gilt nicht, wenn die Liste nach Dateiname sortiert ist.
+
+Steht „{row:meta_title}“ auf {Off}, zeigen die Zeilen Dateinamen, der Sprung folgt aber weiterhin den Titeln aus den Tags: in dieser Reihenfolge ist die Liste sortiert.
+
+Lieder ohne Titel-Tag bilden eine Gruppe am Ende der Liste und werden als „#“ angezeigt.
+
+[alpha_threshold] Auslöseschwelle (Anzahl der Klicks)
+Die Anzahl der Radklicks, nach der „{row:alpha_scroll}“ einsetzt.
+
+[follow_playing] Auswahl folgt dem laufenden Titel
+Bei gesperrtem Bildschirm und solange das Scrollrad ruht, folgt die Auswahl automatisch dem gerade laufenden Titel.
+
+Sobald das Scrollrad benutzt wird, wechselt die Auswahl in den manuellen Modus. Hört das Scrollen auf, läuft ein Timer; nach dessen Ablauf springt die Auswahl auf den gerade laufenden Titel und der automatische Modus greift wieder. Das Öffnen des Kontextmenüs oder des Multiauswahl-Modus setzt den Timer zurück und hält ihn an.
+
+Beim Öffnen der Liste, in der der gerade laufende Titel steht, springt die Auswahl sofort auf ihn. Auch beim Verlassen des Players landet die Auswahl darauf.
+
+[follow_idle if follow_playing] Verzögerung der Rückkehr (Sekunden)
+Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum gerade laufenden Titel zurückkehrt.
+
+[fixed_menu_pad] Korrigierte Menüränder
+Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
+
+Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, besser ausschalten — etwa beim mitgelieferten Melody Munchkin.
+@img fixed_menu_pad_off.png {Off}
+@img fixed_menu_pad_on.png {On}
+
+[[metadata]] Metadaten
+
+[meta_title] Songtitel aus Metadaten
+Zeigt Songtitel aus den Metadaten statt des Dateinamens.
+
+[book_meta_title] Hörbuchtitel aus Metadaten
+Zeigt Hörbuchtitel aus den Metadaten statt des Dateinamens.
+
+[album_year] Erscheinungsjahr in Albumnamen
+Zeigt das Erscheinungsjahr des Albums in dessen Namen. Zum Beispiel:
+„The Eminem Show (2002)“
+
+[track_numbers] Titelnummern aus Metadaten in Alben
+Zeigt Titelnummern aus den Metadaten innerhalb von Alben.
+
+Gilt unabhängig von der Sortierung: bei Sortierung nach Dateiname stehen die Nummern nicht der Reihe nach.
+---
+Ist für keinen Titel des Albums eine Titelnummer hinterlegt, werden die Titel ganz normal fortlaufend nummeriert.
+
+Sind Titelnummern nur für einen Teil der Titel hinterlegt, rücken die Titel ohne Nummer nach unten und zeigen an deren Stelle ein „#“.
+
+[artist_split] Künstler mit Komma und Semikolon trennen
+Teilt Künstler, die in den Metadaten mit Komma oder Semikolon aufgezählt sind, in einzelne Künstler auf:
+
+„System of a Down, RZA“ oder
+„System of a Down; RZA“
+wird zu zwei verschiedenen Künstlern
+„System of a Down“ und „RZA“
+---
+Damit ein Künstler mit Komma im Namen zusammenbleibt, verwenden Sie ein Semikolon — es hat Vorrang:
+
+„Tyler, The Creator; Frank Ocean“
+wird zu zwei verschiedenen Künstlern
+„Tyler, The Creator“ und „Frank Ocean“
+
+Semikolons werden in der Oberfläche überall als Kommas angezeigt.
+---
+Dasselbe geht auch mit reinen Kommas, indem der Künstler in /better-Y/comma_artists.txt eingetragen wird:
+
+„Tyler, The Creator, Frank Ocean“
+wird zu zwei verschiedenen Künstlern
+„Tyler, The Creator“ und „Frank Ocean“
+
+[genre_split] Genres mit Komma, Semikolon und Schrägstrich trennen
+Teilt Genres, die in den Metadaten mit Komma, Semikolon oder Schrägstrich aufgezählt sind, in einzelne Genres auf:
+
+„Indie Rock, Acoustic“ oder
+„Indie Rock; Acoustic“ oder
+„Indie Rock / Acoustic“ oder
+„Indie Rock/Acoustic“
+wird zu zwei verschiedenen Genres
+„Indie Rock“ und „Acoustic“
+
+[artist_scope] Unter Künstler nur Titel des gewählten Künstlers zeigen
+Wird ein Album über den Bereich „{app:artists}“ geöffnet, werden nur die Titel gezeigt, an denen der gewählte Künstler beteiligt ist; die übrigen bleiben ausgeblendet.
+@img artist_scope_off.png {Off}, Künstler Beat Culture ist ausgewählt
+@img artist_scope_on.png {On}, Künstler Beat Culture ist ausgewählt
+
+[[system]] System
+
+[delete_folder] Nach dem Löschen eines Titels auch dessen Ordner löschen
+Beim Löschen von Titeln oder Alben werden auch die Ordner gelöscht, in denen sie lagen, sofern diese leer zurückbleiben.
+---
+Ein Ordner, in dem nur noch externe Cover (cover.* und folder.*), Liedtexte (*.lrc) und leere Ordner liegen, gilt als leer und wird mitgelöscht.
+
+Für den Bereich „{app:folders}“ gilt das nicht, dort funktioniert das Löschen wie gewohnt.
+
+[keep_awake] Automatische Bildschirmsperre beim Lesen von Texten und Büchern aus
+Verhindert die automatische Bildschirmsperre, solange der Liedtext oder ein Buch geöffnet ist.
+
+[likes] Favoriten-System
+Fügt die Wiedergabeliste „{app:favorites}“ und die Schaltfläche „❤“ im Player hinzu: ein Druck darauf legt den Titel in diese Wiedergabeliste.
+---
+Titel lassen sich dort wie in jeder anderen Wiedergabeliste hinzufügen, die Likes werden dabei automatisch gesetzt und entfernt.
+
+Wird die Einstellung ausgeschaltet, werden die Wiedergabeliste und die vergebenen Likes nicht gelöscht, sondern nur ausgeblendet.
+
+[kb_lang2] Zweite Tastatursprache
+* Aus
+* Russisch
+Fügt der Bildschirmtastatur eine zweite Belegung hinzu.
+
+Zum Umschalten die obere Taste halten.

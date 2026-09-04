@@ -1,0 +1,203 @@
+# better-Y — menu rows (fr)
+#
+# Порядок, группировка и подпункты берутся ТОЛЬКО из en.txt. Здесь читаются лишь названия строк
+# (после скобок), значения перечислений (строки со «*») и описания; всё остальное игнорируется.
+# Непереведённая строка откатывается на английскую, так что файл можно переводить по частям.
+#
+# [[группа]] Название      заголовок группы
+# [строка] Название        название строки меню
+# * Значение               значение строки-перечисления, по порядку
+# ---                      принудительный разрыв страницы описания
+# @img файл Подпись        страница-картинка (help/img/файл)
+# {row:ключ} {app:имя}     название другой строки / раздела приложения на языке устройства
+# {On} {Off}               значения тумблера, как их показывает само меню
+
+[[tools]] Outils
+
+[reboot] Redémarrer
+Redémarre l'appareil.
+
+[cache] Mettre la bibliothèque en cache
+Met la bibliothèque en cache.
+
+Outre ce bouton, la mise en cache se fait aussi au fil de l'utilisation du lecteur.
+
+[scan] Actualiser la bibliothèque
+Relit et met à jour les métadonnées et les pochettes des morceaux déjà présents dans la bibliothèque, au cas où ils auraient changé.
+
+[log] Enregistrer le journal de diagnostic
+Enregistre un rapport de diagnostic dans le dossier /better-Y/ de la carte mémoire, à joindre à un rapport de bogue.
+
+[sf] Redémarrer SurfaceFlinger
+Diagnostic : redémarre le compositeur et écrit un rapport dans le dossier /better-Y/.
+
+Cette option n'apparaît qu'en mode débogage, activé par cinq appuis sur le bouton central dans Settings → About.
+
+[[player]] En lecture
+
+[icon_tint] Couleur des icônes
+* Clair
+* Sombre
+* Couleur du thème
+Définit la couleur des boutons interactifs du lecteur.
+
+[cover_tilt] Incliner la pochette
+@img cover_tilt_on.png {On}
+@img cover_tilt_off.png {Off}
+
+[top_hold] Appui long bouton haut (Musique)
+* Paroles
+* File d attente
+* Boucle AB
+La fonction choisie est celle qui s'ouvre dans le lecteur de musique lorsque le bouton du haut est maintenu.
+
+Le jeu de boutons interactifs change selon ce choix.
+
+[book_top_hold] Appui long bouton haut (Livres audio)
+* Signet
+* File d attente
+La fonction choisie est celle qui s'ouvre dans le lecteur de livres audio lorsque le bouton du haut est maintenu.
+
+Le jeu de boutons interactifs change selon ce choix.
+
+[first_artist_only] N'afficher que le premier artiste
+Masque tout ce qui suit la première virgule dans le tag d'artiste et ne garde que le premier. Par exemple :
+
+« Tree, Shelf Nunny, Lena Kuhn — People »
+devient
+« Tree — People »
+
+Ne s'applique qu'à la ligne d'artiste du lecteur.
+
+Les artistes masqués peuvent être déplacés dans le titre en activant « {row:feat_in_title} ».
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title] Déplacer les artistes masqués dans le titre
+Déplace les artistes masqués par « {row:first_artist_only} » dans le titre du morceau, après un « feat. ». Par exemple :
+
+« Tree, Shelf Nunny, Lena Kuhn — People »
+avec ce réglage désactivé devient
+« Tree — People »
+
+avec ce réglage activé devient
+« Tree — People (feat. Shelf Nunny, Lena Kuhn) »
+
+Ne s'applique qu'à la ligne d'artiste du lecteur.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
+[[menu]] Menu
+
+[alpha_scroll] Défilement alphabétique rapide
+Démarre après un certain nombre de crans de la molette et parcourt la liste par première lettre.
+
+Ne s'applique pas lorsque la liste est triée par nom de fichier.
+
+Lorsque « {row:meta_title} » est sur {Off}, les lignes affichent les noms de fichiers, mais le saut suit toujours les titres des tags : c'est l'ordre réel de la liste.
+
+Les morceaux sans tag de titre forment un seul groupe en fin de liste, indiqué par « # ».
+
+[alpha_threshold] Seuil d'activation (nombre de crans)
+Le nombre de crans de la molette au bout duquel « {row:alpha_scroll} » démarre.
+
+[follow_playing] La sélection suit le titre en cours
+Écran verrouillé, et tant que la molette est au repos, la sélection suit automatiquement le morceau en cours de lecture.
+
+La sélection passe en mode manuel dès que la molette est utilisée. Une fois le défilement arrêté, un minuteur démarre ; à son terme, la sélection se place sur le morceau en cours et le mode automatique reprend. Ouvrir le menu contextuel ou le mode multisélection remet le minuteur à zéro et le met en pause.
+
+À l'ouverture de la liste où se trouve le morceau en cours de lecture, la sélection s'y place aussitôt. Quitter le lecteur y place également la sélection.
+
+[follow_idle if follow_playing] Délai de retour (secondes)
+Détermine au bout de combien de secondes, après la dernière rotation de la molette, la sélection revient sur le morceau en cours de lecture.
+
+[fixed_menu_pad] Marges de menu corrigées
+Corrige les marges du menu principal et des réglages.
+
+À désactiver avec les thèmes dont les fonds sont dessinés pour les marges d'origine — le thème fourni Melody Munchkin, par exemple.
+@img fixed_menu_pad_off.png {Off}
+@img fixed_menu_pad_on.png {On}
+
+[[metadata]] Métadonnées
+
+[meta_title] Titres des morceaux depuis les métadonnées
+Affiche les titres des morceaux depuis les métadonnées au lieu du nom de fichier.
+
+[book_meta_title] Titres des livres audio depuis les métadonnées
+Affiche les titres des livres audio depuis les métadonnées au lieu du nom de fichier.
+
+[album_year] Année de sortie dans les albums
+Affiche l'année de sortie de l'album dans son nom. Par exemple :
+« The Eminem Show (2002) »
+
+[track_numbers] Numéros de piste des métadonnées dans les albums
+Affiche les numéros de piste des métadonnées au sein des albums.
+
+S'applique quel que soit le tri : trié par nom de fichier, les numéros ne se suivent pas.
+---
+Si aucun morceau de l'album ne porte de numéro de piste, les morceaux sont numérotés dans l'ordre habituel.
+
+Si seuls certains morceaux en portent un, ceux qui n'en ont pas passent à la fin et affichent « # » à la place du numéro.
+
+[artist_split] Séparer les artistes divisés par virgules et points-virgules
+Sépare en artistes distincts les artistes énumérés dans les métadonnées par des virgules ou des points-virgules :
+
+« System of a Down, RZA » ou
+« System of a Down; RZA »
+devient deux artistes différents
+« System of a Down » et « RZA »
+---
+Pour qu'un artiste dont le nom contient une virgule ne soit pas séparé, utilisez un point-virgule : il est prioritaire.
+
+« Tyler, The Creator; Frank Ocean »
+devient deux artistes différents
+« Tyler, The Creator » et « Frank Ocean »
+
+Les points-virgules sont affichés comme des virgules partout dans l'interface.
+---
+On obtient la même chose avec des virgules seules en ajoutant l'artiste à /better-Y/comma_artists.txt :
+
+« Tyler, The Creator, Frank Ocean »
+devient deux artistes différents
+« Tyler, The Creator » et « Frank Ocean »
+
+[genre_split] Séparer les genres divisés par virgules, points-virgules et barres obliques
+Sépare en genres distincts les genres énumérés dans les métadonnées par des virgules, des points-virgules ou des barres obliques :
+
+« Indie Rock, Acoustic » ou
+« Indie Rock; Acoustic » ou
+« Indie Rock / Acoustic » ou
+« Indie Rock/Acoustic »
+devient deux genres différents
+« Indie Rock » et « Acoustic »
+
+[artist_scope] Afficher seulement les titres de l'artiste choisi dans Artistes
+Lorsqu'un album est ouvert depuis la section « {app:artists} », seuls les morceaux auxquels participe l'artiste sélectionné sont affichés ; les autres restent masqués.
+@img artist_scope_off.png {Off}, l'artiste Beat Culture est sélectionné
+@img artist_scope_on.png {On}, l'artiste Beat Culture est sélectionné
+
+[[system]] Système
+
+[delete_folder] Après la suppression d'un morceau, supprimer aussi son dossier
+Lors de la suppression de morceaux ou d'albums, les dossiers qui les contenaient sont supprimés aussi s'ils se retrouvent vides.
+---
+Un dossier ne contenant plus que des pochettes externes (cover.* et folder.*), des paroles (*.lrc) et des dossiers vides est considéré comme vide et disparaît avec.
+
+Cela ne s'applique pas à la section « {app:folders} », où la suppression fonctionne comme d'habitude.
+
+[keep_awake] Désactiver le verrouillage auto en lisant paroles et livres
+Empêche l'écran de se verrouiller tant que les paroles ou un livre sont ouverts.
+
+[likes] Système de favoris
+Ajoute la playlist « {app:favorites} » et le bouton « ❤ » du lecteur : l'appui y place le morceau.
+---
+Les morceaux s'y ajoutent comme dans n'importe quelle playlist, et les favoris se mettent et se retirent automatiquement.
+
+Lorsque ce réglage est désactivé, la playlist et les favoris donnés ne sont pas supprimés : ils sont simplement masqués.
+
+[kb_lang2] Deuxième langue du clavier
+* Désactivé
+* Russe
+Ajoute une deuxième disposition au clavier à l'écran.
+
+Maintenez le bouton du haut pour changer.

@@ -1,0 +1,203 @@
+# better-Y — menu rows (es)
+#
+# Порядок, группировка и подпункты берутся ТОЛЬКО из en.txt. Здесь читаются лишь названия строк
+# (после скобок), значения перечислений (строки со «*») и описания; всё остальное игнорируется.
+# Непереведённая строка откатывается на английскую, так что файл можно переводить по частям.
+#
+# [[группа]] Название      заголовок группы
+# [строка] Название        название строки меню
+# * Значение               значение строки-перечисления, по порядку
+# ---                      принудительный разрыв страницы описания
+# @img файл Подпись        страница-картинка (help/img/файл)
+# {row:ключ} {app:имя}     название другой строки / раздела приложения на языке устройства
+# {On} {Off}               значения тумблера, как их показывает само меню
+
+[[tools]] Herramientas
+
+[reboot] Reiniciar
+Reinicia el dispositivo.
+
+[cache] Almacenar biblioteca en caché
+Guarda la biblioteca en la caché.
+
+Además de este botón, la caché también se va llenando a medida que se usa el reproductor.
+
+[scan] Actualizar biblioteca
+Vuelve a leer y actualiza los metadatos y las carátulas de las canciones que ya están en la biblioteca, por si han cambiado.
+
+[log] Guardar registro de diagnóstico
+Guarda un informe de diagnóstico en la carpeta /better-Y/ de la tarjeta de memoria para adjuntarlo a un informe de error.
+
+[sf] Reiniciar SurfaceFlinger
+Diagnóstico: reinicia el compositor y escribe un informe en la carpeta /better-Y/.
+
+Esta opción solo aparece en el modo de depuración, que se activa pulsando cinco veces el botón central en Settings → About.
+
+[[player]] Reproduciendo ahora
+
+[icon_tint] Color de los iconos
+* Claro
+* Oscuro
+* Color del tema
+Establece el color de los botones interactivos del reproductor.
+
+[cover_tilt] Inclinar la carátula
+@img cover_tilt_on.png {On}
+@img cover_tilt_off.png {Off}
+
+[top_hold] Mantener boton superior (Música)
+* Letras
+* Cola
+* Bucle AB
+La función seleccionada es la que se abre en el reproductor de música al mantener pulsado el botón superior.
+
+El conjunto de botones interactivos cambia según esta elección.
+
+[book_top_hold] Mantener boton superior (Audiolibros)
+* Marcador
+* Cola
+La función seleccionada es la que se abre en el reproductor de audiolibros al mantener pulsado el botón superior.
+
+El conjunto de botones interactivos cambia según esta elección.
+
+[first_artist_only] Mostrar solo el primer artista
+Oculta todo lo que va después de la primera coma en la etiqueta del artista y deja solo el primero. Por ejemplo:
+
+«Tree, Shelf Nunny, Lena Kuhn — People»
+pasa a ser
+«Tree — People»
+
+Solo funciona en la línea del artista del reproductor.
+
+Los artistas ocultos se pueden mover al título activando «{row:feat_in_title}».
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title] Mover los artistas ocultos al título
+Mueve los artistas ocultados por «{row:first_artist_only}» al título de la canción, después de un «feat.». Por ejemplo:
+
+«Tree, Shelf Nunny, Lena Kuhn — People»
+con esta opción desactivada pasa a ser
+«Tree — People»
+
+con esta opción activada pasa a ser
+«Tree — People (feat. Shelf Nunny, Lena Kuhn)»
+
+Solo funciona en la línea del artista del reproductor.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
+[[menu]] Menú
+
+[alpha_scroll] Desplazamiento alfabético rápido
+Se activa tras un número de clics de la rueda y salta por la lista según la primera letra.
+
+No se aplica cuando la lista está ordenada por nombre de archivo.
+
+Con «{row:meta_title}» en {Off}, las filas muestran nombres de archivo, pero el salto sigue los títulos de las etiquetas: ese es el orden real de la lista.
+
+Las canciones sin etiqueta de título forman un solo grupo al final de la lista, indicado con «#».
+
+[alpha_threshold] Umbral de activación (número de clics)
+El número de clics de la rueda tras el cual se activa «{row:alpha_scroll}».
+
+[follow_playing] La selección sigue a la canción actual
+Con la pantalla bloqueada, y mientras la rueda está en reposo, la selección sigue automáticamente a la canción que se está reproduciendo.
+
+La selección pasa a modo manual en cuanto se usa la rueda. Cuando el desplazamiento se detiene arranca un temporizador; al agotarse, la selección se mueve a la canción en reproducción y vuelve el modo automático. Abrir el menú contextual o el modo de selección múltiple reinicia el temporizador y lo pausa.
+
+Al abrir la lista en la que está la canción en reproducción, la selección va de inmediato a ella. Salir del reproductor también coloca la selección sobre ella.
+
+[follow_idle if follow_playing] Retardo de regreso (segundos)
+Determina cuántos segundos después del último giro de la rueda la selección vuelve a la canción que se está reproduciendo.
+
+[fixed_menu_pad] Márgenes de menú corregidos
+Corrige los márgenes del menú principal y de los ajustes.
+
+Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes originales, como el incluido Melody Munchkin.
+@img fixed_menu_pad_off.png {Off}
+@img fixed_menu_pad_on.png {On}
+
+[[metadata]] Metadatos
+
+[meta_title] Títulos de canciones de los metadatos
+Muestra los títulos de las canciones de los metadatos en lugar del nombre del archivo.
+
+[book_meta_title] Títulos de audiolibros de los metadatos
+Muestra los títulos de los audiolibros de los metadatos en lugar del nombre del archivo.
+
+[album_year] Año de lanzamiento en los álbumes
+Muestra el año de lanzamiento del álbum en su nombre. Por ejemplo:
+«The Eminem Show (2002)»
+
+[track_numbers] Números de pista de los metadatos en los álbumes
+Muestra los números de pista de los metadatos dentro de los álbumes.
+
+Se aplica sea cual sea la ordenación: si se ordena por nombre de archivo, los números no irán en orden.
+---
+Si no hay números de pista en ninguna canción del álbum, las canciones se muestran con la numeración correlativa habitual.
+
+Si solo algunas canciones tienen número, las que no lo tienen pasan al final y en lugar del número muestran «#».
+
+[artist_split] Dividir artistas separados por comas y puntos y comas
+Divide en artistas independientes a los artistas que en los metadatos aparecen separados por comas o puntos y comas:
+
+«System of a Down, RZA» o
+«System of a Down; RZA»
+pasa a ser dos artistas distintos
+«System of a Down» y «RZA»
+---
+Para que un artista con una coma en el nombre no se divida, use un punto y coma: tiene prioridad.
+
+«Tyler, The Creator; Frank Ocean»
+pasa a ser dos artistas distintos
+«Tyler, The Creator» y «Frank Ocean»
+
+Los puntos y comas se muestran como comas en toda la interfaz.
+---
+Lo mismo se consigue solo con comas si se añade el artista a /better-Y/comma_artists.txt:
+
+«Tyler, The Creator, Frank Ocean»
+pasa a ser dos artistas distintos
+«Tyler, The Creator» y «Frank Ocean»
+
+[genre_split] Dividir géneros separados por comas, puntos y comas y barras
+Divide en géneros independientes los géneros que en los metadatos aparecen separados por comas, puntos y comas o barras:
+
+«Indie Rock, Acoustic» o
+«Indie Rock; Acoustic» o
+«Indie Rock / Acoustic» o
+«Indie Rock/Acoustic»
+pasa a ser dos géneros distintos
+«Indie Rock» y «Acoustic»
+
+[artist_scope] Mostrar solo las canciones del artista elegido en Artistas
+Al abrir un álbum desde la sección «{app:artists}», solo se muestran las canciones en las que participa el artista seleccionado; las demás quedan ocultas.
+@img artist_scope_off.png {Off}, con el artista Beat Culture seleccionado
+@img artist_scope_on.png {On}, con el artista Beat Culture seleccionado
+
+[[system]] Sistema
+
+[delete_folder] Al eliminar una canción, eliminar también su carpeta
+Al eliminar canciones o álbumes, también se eliminan las carpetas que los contenían si quedan vacías.
+---
+Una carpeta en la que solo quedan carátulas externas (cover.* y folder.*), letras (*.lrc) y carpetas vacías se considera vacía y se elimina también.
+
+Esto no se aplica a la sección «{app:folders}», donde eliminar funciona como siempre.
+
+[keep_awake] Desactivar el bloqueo automático al leer letras y libros
+Impide que la pantalla se bloquee sola mientras está abierta la letra de la canción o un libro.
+
+[likes] Sistema de favoritos
+Añade la lista de reproducción «{app:favorites}» y el botón «❤» del reproductor: al pulsarlo, la canción pasa a esa lista.
+---
+Se pueden añadir canciones como en cualquier otra lista de reproducción, y los Me gusta se ponen y se quitan automáticamente.
+
+Al desactivar esta opción, la lista y los Me gusta que haya dado no se eliminan: simplemente se ocultan.
+
+[kb_lang2] Segundo idioma del teclado
+* Desactivado
+* Ruso
+Añade una segunda distribución al teclado en pantalla.
+
+Mantenga pulsado el botón superior para cambiar.

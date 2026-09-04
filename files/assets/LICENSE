@@ -1,0 +1,68 @@
+better-Y - a mod of the stock launcher for the Innioasis Y1
+
+Copyright (c) 2026 better-Y Team
+
+
+WHAT THIS LICENSE COVERS
+------------------------
+
+The MIT License below applies to what was written for this project, and to that alone:
+
+  * our own code and resources - the com/innioasis/ipp package, IppActivity, IppQueueActivity,
+    and the drawables, layouts and strings added with them
+  * the build, patch and image scripts under build/, and the Java sources they compile
+  * the wording of the strings, help texts and documentation in this repository
+
+
+WHAT IT DOES NOT COVER
+----------------------
+
+The Innioasis Y1 launcher, package com.innioasis.y1, is proprietary software of INNIOASIS. This
+project modifies it; it does not replace it and does not license it. All rights in that code, and
+in the firmware it ships with, belong to their respective authors.
+
+  * stock.diff quotes lines of that launcher as the context a patch needs. Those lines are
+    INNIOASIS's, are reproduced only to identify where our changes go, and no license of ours
+    applies to them.
+
+  * delete.txt names files of that launcher. Naming them is not distributing them.
+
+  * A built APK is our code compiled into theirs. The MIT License covers our part of it wherever
+    it ends up - including in a closed-source or commercial build - and says nothing about the rest.
+
+  * The firmware images attached to releases (system.img, rom.zip) are the factory Innioasis Y1
+    3.1.2 partitions - the same ones published by y1-community/y1-stock-rom - with our launcher put
+    in place of the stock one. Everything in them except that one file is INNIOASIS's, distributed
+    unmodified for the practical reason that a system APK cannot be installed any other way.
+
+  * The signing key used for builds is the public AOSP platform testkey from the Android Open
+    Source Project (Apache-2.0). It is not included here; the README says where to get it and what
+    fingerprint to verify.
+
+  * Third-party libraries inside the stock launcher (AndroidX, Glide, Kotlin, xCrash and others)
+    carry their own licenses, held by their own authors.
+
+No affiliation with or endorsement by INNIOASIS is claimed. "Innioasis" and "Y1" are used only to
+say which device this is for.
+
+
+MIT License
+-----------
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

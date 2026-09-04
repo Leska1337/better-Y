@@ -1,0 +1,10 @@
+# Every file is stored exactly as it is on disk. No line-ending normalisation, ever.
+#
+# This repository is a byte-exact recipe: `patch.sh --apply` puts these files onto a tree that
+# apktool produced, and `patch.sh --verify` compares the result byte for byte. apktool writes the
+# ~12 000 smali files and the resource XML with the line endings it chooses -- mixed, and per file
+# -- and aapt2 and the smali assembler read them back the same way. Git's autocrlf is on by default
+# on a lot of Windows installs, so without this line a clone there would silently receive different
+# bytes than the ones the diff was made against, and the verify would fail for a reason nothing
+# points at.
+* -text

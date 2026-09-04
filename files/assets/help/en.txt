@@ -1,0 +1,205 @@
+# better-Y — the better-Y menu: its rows, their order and what each one does
+#
+# [[group]] Caption        a group; where it stands here is where it stands in the menu
+# [row] Name               a row; where it stands here is where it stands in its group
+# [row if parent] Name     a SUB-ITEM: shown only while `parent` is on, and drawn with an arrow
+# * Value                  one value of a choice row, in order
+# ---                      a forced page break in the description; otherwise pages are measured
+# @img file Caption        a description page that is nothing but this picture (help/img/file)
+# {row:key} {app:name}     another row's name / one of the app's own names, in the device language
+# {On} {Off}               a toggle's two values, worded as the menu itself shows them
+#
+# ENGLISH ALONE DECIDES THE ARRANGEMENT. The other languages carry only wording: their order,
+# their grouping and their `if` clauses are ignored, and a key this file does not list is dropped.
+# English is also the FALLBACK for every language that has no file of its own, so this one is
+# never allowed to be incomplete.
+
+[[tools]] Tools
+
+[reboot] Reboot
+Restarts the device.
+
+[cache] Cache library
+Caches the library.
+
+Besides this button, caching also happens as you use the player.
+
+[scan] Update library
+Re-reads and updates metadata and cover art for songs already in the library, in case they have changed.
+
+[log] Save diagnostic log
+Saves a diagnostic report to the /better-Y/ folder on the SD card for a bug report.
+
+[sf] Restart SurfaceFlinger
+A diagnostic: restarts the compositor and writes a report to the /better-Y/ folder.
+
+This option is only there in debug mode, which is switched on by five centre presses on Settings → About.
+
+[[player]] Now playing
+
+[icon_tint] Icon color
+* Light
+* Dark
+* Theme color
+Sets the colour of the interactive buttons in the player.
+
+[cover_tilt] Tilt the cover
+@img cover_tilt_on.png {On}
+@img cover_tilt_off.png {Off}
+
+[top_hold] Top button hold (Music)
+* Lyrics
+* Queue
+* AB Loop
+The selected function is the one that opens in the music player when the top button is held.
+
+The set of interactive buttons changes with this choice.
+
+[book_top_hold] Top button hold (Audiobooks)
+* Bookmark
+* Queue
+The selected function is the one that opens in the audiobook player when the top button is held.
+
+The set of interactive buttons changes with this choice.
+
+[first_artist_only] Show only the first artist
+Hides everything after the first comma in the artist tag, leaving only the first artist. For example:
+ 
+"Tree, Shelf Nunny, Lena Kuhn — People" 
+becomes
+"Tree — People"
+
+Works only in the artist line of the player.
+
+Hidden artists can be moved to the title by enabling "{row:feat_in_title}".
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title if first_artist_only] Move hidden artists to the title
+Moves the artists hidden by "{row:first_artist_only}" into the song title, after a "feat.". For example:
+
+"Tree, Shelf Nunny, Lena Kuhn — People"
+with this setting Off becomes
+"Tree — People"
+
+with this setting On becomes
+"Tree — People (feat. Shelf Nunny, Lena Kuhn)"
+
+Works only in the artist line of the player.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
+[[menu]] Menu
+
+[alpha_scroll] Alphabetical fast scroll
+Starts after a number of wheel clicks and jumps through a list by first letter.
+
+Does not apply when the list is sorted by file name.
+
+With "{row:meta_title}" — {Off} the rows show file names, but the jump still goes by the titles from the tags: that is the order the list is really sorted in.
+
+Songs with no title tag are one group at the end of the list, shown as "#".
+
+[alpha_threshold if alpha_scroll] Activation threshold (number of scrolls)
+The number of wheel scrolls after which "{row:alpha_scroll}" starts.
+
+[follow_playing] Selection follows playing song
+When the screen is locked, and while the scroll wheel is at rest, the selection automatically follows the song currently playing.
+
+The selection switches to manual mode as soon as the scroll wheel is used. Once scrolling stops, a timer starts; after it expires, the selection moves to the currently playing song, and automatic mode resumes. Opening the context menu or MultiSelect mode resets the timer and pauses it.
+
+When you open the list containing the currently playing song, the selection immediately moves to it. Exiting the player also sets the selection to it.
+
+[follow_idle if follow_playing] Return delay (seconds)
+Determines how many seconds after the last scroll of the wheel the selection returns to the song currently playing.
+
+[fixed_menu_pad] Fixed menu margins
+Fixes margins of the main menu and settings.
+
+Worth turning off with themes whose backgrounds are drawn for stock margins — bundled Melody Munchkin, for example.
+@img fixed_menu_pad_off.png {Off}
+@img fixed_menu_pad_on.png {On}
+
+[[metadata]] Metadata
+
+[meta_title] Song titles from metadata
+Shows song titles from the metadata instead of the file name.
+
+[book_meta_title] Audiobook titles from metadata
+Shows audiobook titles from the metadata instead of the file name.
+
+[album_year] Release year in album names
+Shows the album's release year in its name. For example:
+"The Eminem Show (2002)"
+
+[track_numbers] Track numbers from metadata inside albums
+Shows track numbers from the metadata inside albums. 
+
+It applies whatever the sort is: if sorted by file name - the numbers won't be in order.
+---
+If no track numbers are specified for the songs on the album, the stock numbers are used instead.
+
+If track numbers are specified for only some of the songs, the songs without numbers will be moved to the bottom, and a "#" will appear in place of their track numbers.
+
+[artist_split] Split artists that are divided by commas and semicolons
+Splits artists that are listed in the metadata with commas or semicolons into separate artists:
+
+"System of a Down, RZA" or
+"System of a Down; RZA"
+becomes two different artists
+"System of a Down" and "RZA"
+---
+To keep an artist whose name contains a comma, use a semicolon — it takes priority:
+ 
+"Tyler, The Creator; Frank Ocean" 
+becomes two different artists
+"Tyler, The Creator" and "Frank Ocean"
+
+Semicolons are shown as commas everywhere in the interface.
+---
+The same can be done with commas alone by adding the artist to /better-Y/comma_artists.txt:
+
+"Tyler, The Creator, Frank Ocean"
+becomes two different artists
+"Tyler, The Creator" and "Frank Ocean"
+
+[genre_split] Split genres that are divided by commas, semicolons and slashes
+Splits genres that are listed in the metadata with commas, semicolons or slashes into separate genres:
+
+"Indie Rock, Acoustic" or 
+"Indie Rock; Acoustic" or 
+"Indie Rock / Acoustic" or
+"Indie Rock/Acoustic"
+becomes two different genres 
+"Indie Rock" and "Acoustic"
+
+[artist_scope] Show songs only by selected artist inside of Artists - Album
+When an album is opened through the "{app:artists}" section, only the songs the selected artist appears on are shown; the rest are hidden.
+@img artist_scope_off.png {Off}, Beat Culture artist is selected
+@img artist_scope_on.png {On}, Beat Culture artist is selected
+
+[[system]] System
+
+[delete_folder] After deleting a song also delete the folder it was stored in
+When songs or albums are deleted, the folders that held them are deleted as well, if they are left empty.
+---
+A folder holding nothing but external covers (cover.* and folder.*), lyrics (*.lrc) and empty folders counts as empty and goes too.
+
+This does not apply to the "{app:folders}" section, where deleting works as usual.
+
+[keep_awake] Disable auto screen lock while reading lyrics and books
+Keeps the screen from locking itself while the lyrics screen or a book is open.
+
+[likes] Favorites system
+Adds the "{app:favorites}" playlist and the "❤" button in the player: pressing it puts the song into that playlist.
+---
+You can add songs to it just like you would to a regular playlist, and likes are automatically added and removed.
+
+When you turn off this setting, the playlist and the likes you've given aren't deleted - they're simply hidden.
+
+[kb_lang2] Second keyboard language
+* Off
+* Russian
+Adds a second layout to the on-screen keyboard.
+
+Hold top button to switch.
