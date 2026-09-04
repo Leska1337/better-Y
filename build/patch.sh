@@ -21,6 +21,7 @@ MODE="export"
 TREE=""
 SET_DIR="$ROOT/publish"
 BASE=""
+ALLOW_DEV=0
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -29,6 +30,7 @@ while [ $# -gt 0 ]; do
         --verify) MODE="verify" ;;
         --set)    shift; SET_DIR="${1:-}" ;;
         --base)   shift; BASE="${1:-}" ;;
+        --allow-dev) ALLOW_DEV=1 ;;
         -h|--help) sed -n '2,20p' "$0"; exit 0 ;;
         *) die "unknown option: $1" ;;
     esac
@@ -308,6 +310,15 @@ do_verify() {
         exit 1
     fi
 }
+
+# The set in publish/ is what the public repository is built from, so it is exported off a release
+# tree, not off a build of the day. --verify is not held to this: reproducing the tree is worth
+# checking at any point.
+if [ "$MODE" = "export" ] && [ "$ALLOW_DEV" -eq 0 ]; then
+    case "$(mod_version)" in
+        *-dev[0-9]*) die "the tree is at $(mod_version) - a dev build is not published; build with --release, or pass --allow-dev" ;;
+    esac
+fi
 
 case "$MODE" in
     export) do_export ;;

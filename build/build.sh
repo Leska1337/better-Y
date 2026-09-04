@@ -2,13 +2,24 @@
 # Builds, signs (AOSP platform testkey) and verifies the better-Y modded APK.
 # Output name: better-Y_3.1.2_<mod_version>.apk  (mod_version read from ipp_version in strings.xml)
 #
-#   ./build/build.sh
+#   ./build/build.sh              # dev build, -devN grows by one
+#   ./build/build.sh --release    # the release, version as it stands
 #
 # The macOS/Linux side of build.ps1: same four steps, same output. Tools are found as described in
 # lib.sh. The signing key is not in the repository — it is the public AOSP platform testkey, and
 # the README says where to get it and what fingerprint it must print.
 
 . "$(dirname "$0")/lib.sh"
+
+RELEASE=0
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --release) RELEASE=1 ;;
+        -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
+        *) die "unknown option: $1" ;;
+    esac
+    shift
+done
 
 OUT="$BUILD_DIR/out"
 DEST="/data/local/tmp/ipp.apk"   # fixed device path (our boot image, /ipp_installer.sh) - do not change
@@ -21,7 +32,17 @@ KEY="$BUILD_DIR/keys/platform.pk8"
 CERT="$BUILD_DIR/keys/platform.x509.pem"
 [ -f "$KEY" ] && [ -f "$CERT" ] || die "no signing key in build/keys — see the README (AOSP platform testkey)"
 
-VER="$(mod_version)"
+# The version carries the dev number, and it is raised right here, before the build: vA.B.C is a
+# release, vA.B.C-devN the Nth build after it. --release skips the bump and demands a clean vA.B.C,
+# because the released APK must not say -dev.
+if [ "$RELEASE" -eq 1 ]; then
+    VER="$(mod_version)"
+    case "$VER" in
+        *-dev*) die "--release wants a clean vA.B.C in strings.xml, found $VER" ;;
+    esac
+else
+    VER="$(bump_dev_version)"
+fi
 APK_NAME="better-Y_3.1.2_$VER.apk"
 # The versionCode is derived from the same string and written into apktool.yml on every build.
 # It has to GROW, because that is the only thing that decides whether a build put on the player

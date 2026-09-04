@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c..76401c2 100644
+index 2c8d26c0..76401c29 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -32,6 +32,7 @@
@@ -28,7 +28,7 @@ index 2c8d26c..76401c2 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f73..e7fb88e 100644
+index 01b1f730..9c736614 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,12 +43,12 @@ index 01b1f73..e7fb88e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000
++  versionCode: 10000001
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
 diff --git a/build/src/res/layout-v22/activity_music_player.xml b/build/src/res/layout-v22/activity_music_player.xml
-index 2e99c3a..8c3e1d4 100644
+index 2e99c3ad..8c3e1d4e 100644
 --- a/build/src/res/layout-v22/activity_music_player.xml
 +++ b/build/src/res/layout-v22/activity_music_player.xml
 @@ -20,7 +20,7 @@
@@ -61,7 +61,7 @@ index 2e99c3a..8c3e1d4 100644
          </com.bosphere.fadingedgelayout.FadingEdgeLayout>
          <TextView android:textSize="27.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/tv_song_name2" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent" />
 diff --git a/build/src/res/layout-v22/dialog_input_method.xml b/build/src/res/layout-v22/dialog_input_method.xml
-index 82e89f7..15f5043 100644
+index 82e89f7a..15f50434 100644
 --- a/build/src/res/layout-v22/dialog_input_method.xml
 +++ b/build/src/res/layout-v22/dialog_input_method.xml
 @@ -1,6 +1,7 @@
@@ -75,7 +75,7 @@ index 82e89f7..15f5043 100644
 +    <androidx.recyclerview.widget.RecyclerView android:orientation="horizontal" android:id="@id/select_box" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="11.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="11.0dip" android:layout_marginBottom="10.0dip" android:layout_marginHorizontal="11.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/input_box" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout-v22/item_input_method.xml b/build/src/res/layout-v22/item_input_method.xml
-index 7b87d10..378d96d 100644
+index 7b87d102..378d96df 100644
 --- a/build/src/res/layout-v22/item_input_method.xml
 +++ b/build/src/res/layout-v22/item_input_method.xml
 @@ -1,5 +1,5 @@
@@ -86,7 +86,7 @@ index 7b87d10..378d96d 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" android:layout_marginHorizontal="3.0dip" android:layout_marginVertical="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_albums.xml b/build/src/res/layout/activity_albums.xml
-index a65785d..6017a86 100644
+index a65785d4..6017a86d 100644
 --- a/build/src/res/layout/activity_albums.xml
 +++ b/build/src/res/layout/activity_albums.xml
 @@ -1,6 +1,26 @@
@@ -123,7 +123,7 @@ index a65785d..6017a86 100644
 +    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_allaudiobooks.xml b/build/src/res/layout/activity_allaudiobooks.xml
-index 83c1845..3819279 100644
+index 83c18457..38192792 100644
 --- a/build/src/res/layout/activity_allaudiobooks.xml
 +++ b/build/src/res/layout/activity_allaudiobooks.xml
 @@ -1,6 +1,8 @@
@@ -138,7 +138,7 @@ index 83c1845..3819279 100644
 +    <ListView android:id="@id/lv_audiobooks" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_artists.xml b/build/src/res/layout/activity_artists.xml
-index a65785d..88d40e9 100644
+index a65785d4..88d40e93 100644
 --- a/build/src/res/layout/activity_artists.xml
 +++ b/build/src/res/layout/activity_artists.xml
 @@ -1,6 +1,8 @@
@@ -153,7 +153,7 @@ index a65785d..88d40e9 100644
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
-index 3fff842..9969b5b 100644
+index 3fff8427..9969b5b1 100644
 --- a/build/src/res/layout/activity_blutooth.xml
 +++ b/build/src/res/layout/activity_blutooth.xml
 @@ -1,7 +1,10 @@
@@ -169,7 +169,7 @@ index 3fff842..9969b5b 100644
          <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
      </LinearLayout>
 diff --git a/build/src/res/layout/activity_book_main.xml b/build/src/res/layout/activity_book_main.xml
-index cf5ce73..80f9774 100644
+index cf5ce73a..80f97744 100644
 --- a/build/src/res/layout/activity_book_main.xml
 +++ b/build/src/res/layout/activity_book_main.xml
 @@ -3,7 +3,11 @@
@@ -186,7 +186,7 @@ index cf5ce73..80f9774 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
-index a65785d..9754b9d 100644
+index a65785d4..9754b9dc 100644
 --- a/build/src/res/layout/activity_genres.xml
 +++ b/build/src/res/layout/activity_genres.xml
 @@ -1,6 +1,20 @@
@@ -213,7 +213,7 @@ index a65785d..9754b9d 100644
 +    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_main.xml b/build/src/res/layout/activity_main.xml
-index 08bc383..80f241b 100644
+index 08bc3833..80f241b3 100644
 --- a/build/src/res/layout/activity_main.xml
 +++ b/build/src/res/layout/activity_main.xml
 @@ -2,6 +2,10 @@
@@ -229,7 +229,7 @@ index 08bc383..80f241b 100644
      <ImageView android:id="@id/iv_now" android:layout_width="179.0dip" android:layout_height="wrap_content" android:layout_marginTop="86.0dip" android:layout_marginRight="23.0dip" android:adjustViewBounds="true" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_music_player.xml b/build/src/res/layout/activity_music_player.xml
-index 4fcc1b5..831d3b8 100644
+index 4fcc1b5f..831d3b8a 100644
 --- a/build/src/res/layout/activity_music_player.xml
 +++ b/build/src/res/layout/activity_music_player.xml
 @@ -11,19 +11,37 @@
@@ -278,7 +278,7 @@ index 4fcc1b5..831d3b8 100644
      <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/ll_volume" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="32.0dip" app:layout_constraintBottom_toBottomOf="parent">
          <ImageView android:layout_width="77.0dip" android:layout_height="16.0dip" android:src="@mipmap/music_volume_off" android:scaleType="center" />
 diff --git a/build/src/res/layout/activity_play_list.xml b/build/src/res/layout/activity_play_list.xml
-index e5699c0..6a6eb60 100644
+index e5699c0f..6a6eb609 100644
 --- a/build/src/res/layout/activity_play_list.xml
 +++ b/build/src/res/layout/activity_play_list.xml
 @@ -1,6 +1,8 @@
@@ -293,7 +293,7 @@ index e5699c0..6a6eb60 100644
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_search.xml b/build/src/res/layout/activity_search.xml
-index 8592ee3..22b9bb9 100644
+index 8592ee3d..22b9bb96 100644
 --- a/build/src/res/layout/activity_search.xml
 +++ b/build/src/res/layout/activity_search.xml
 @@ -4,8 +4,8 @@
@@ -308,7 +308,7 @@ index 8592ee3..22b9bb9 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/search_list" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/search_head" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_setting.xml b/build/src/res/layout/activity_setting.xml
-index 0ed053c..7e8bc4e 100644
+index 0ed053cd..7e8bc4e7 100644
 --- a/build/src/res/layout/activity_setting.xml
 +++ b/build/src/res/layout/activity_setting.xml
 @@ -2,9 +2,19 @@
@@ -334,7 +334,7 @@ index 0ed053c..7e8bc4e 100644
              <ImageView android:layout_gravity="center" android:id="@id/right_image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/icon_setting_brightness" android:adjustViewBounds="true" app:layout_constraintTop_toTopOf="parent" />
              <com.innioasis.y1.utils.AboutView android:layout_gravity="center" android:id="@id/bzt_view" android:visibility="gone" android:layout_width="130.0dip" android:layout_height="130.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
 diff --git a/build/src/res/layout/activity_song_list.xml b/build/src/res/layout/activity_song_list.xml
-index d1f9fb8..a491623 100644
+index d1f9fb86..a491623c 100644
 --- a/build/src/res/layout/activity_song_list.xml
 +++ b/build/src/res/layout/activity_song_list.xml
 @@ -1,7 +1,14 @@
@@ -360,7 +360,7 @@ index d1f9fb8..a491623 100644
 +    <ListView android:id="@id/lv" android:focusable="false" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/dialog_input_method.xml b/build/src/res/layout/dialog_input_method.xml
-index cfa3f96..c3c2883 100644
+index cfa3f963..c3c28834 100644
 --- a/build/src/res/layout/dialog_input_method.xml
 +++ b/build/src/res/layout/dialog_input_method.xml
 @@ -1,6 +1,9 @@
@@ -376,7 +376,7 @@ index cfa3f96..c3c2883 100644
 +    <androidx.recyclerview.widget.RecyclerView android:orientation="horizontal" android:id="@id/select_box" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="11.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="11.0dip" android:layout_marginBottom="10.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/input_box" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
-index 4b9d121..cb731bb 100644
+index 4b9d1219..cb731bb9 100644
 --- a/build/src/res/layout/item_album.xml
 +++ b/build/src/res/layout/item_album.xml
 @@ -1,8 +1,85 @@
@@ -474,7 +474,7 @@ index 4b9d121..cb731bb 100644
 +    </LinearLayout>
 +</RelativeLayout>
 diff --git a/build/src/res/layout/item_book_library.xml b/build/src/res/layout/item_book_library.xml
-index 47fb6a5..dd78f13 100644
+index 47fb6a5a..dd78f130 100644
 --- a/build/src/res/layout/item_book_library.xml
 +++ b/build/src/res/layout/item_book_library.xml
 @@ -10,5 +10,12 @@
@@ -492,7 +492,7 @@ index 47fb6a5..dd78f13 100644
 +    <ImageView android:layout_gravity="center" android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_eq.xml b/build/src/res/layout/item_eq.xml
-index ceb7695..252a74f 100644
+index ceb7695d..252a74ff 100644
 --- a/build/src/res/layout/item_eq.xml
 +++ b/build/src/res/layout/item_eq.xml
 @@ -1,3 +1,7 @@
@@ -505,7 +505,7 @@ index ceb7695..252a74f 100644
 +<TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/text" android:layout_width="fill_parent" android:layout_height="30.0dip"
    xmlns:android="http://schemas.android.com/apk/res/android" />
 diff --git a/build/src/res/layout/item_file_kt.xml b/build/src/res/layout/item_file_kt.xml
-index 3d525b5..8d10200 100644
+index 3d525b5f..8d102001 100644
 --- a/build/src/res/layout/item_file_kt.xml
 +++ b/build/src/res/layout/item_file_kt.xml
 @@ -2,6 +2,12 @@
@@ -523,7 +523,7 @@ index 3d525b5..8d10200 100644
      <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_genre.xml b/build/src/res/layout/item_genre.xml
-index 144eedc..358fd2d 100644
+index 144eedc1..358fd2d8 100644
 --- a/build/src/res/layout/item_genre.xml
 +++ b/build/src/res/layout/item_genre.xml
 @@ -1,7 +1,22 @@
@@ -554,7 +554,7 @@ index 144eedc..358fd2d 100644
 +    <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="0.0dip" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_input_method.xml b/build/src/res/layout/item_input_method.xml
-index a59668b..6351530 100644
+index a59668be..63515302 100644
 --- a/build/src/res/layout/item_input_method.xml
 +++ b/build/src/res/layout/item_input_method.xml
 @@ -1,5 +1,5 @@
@@ -565,7 +565,7 @@ index a59668b..6351530 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_main.xml b/build/src/res/layout/item_main.xml
-index 6917d78..1d6e454 100644
+index 6917d780..1d6e454f 100644
 --- a/build/src/res/layout/item_main.xml
 +++ b/build/src/res/layout/item_main.xml
 @@ -1,6 +1,19 @@
@@ -590,7 +590,7 @@ index 6917d78..1d6e454 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_player.xml b/build/src/res/layout/item_player.xml
-index dbfa730..ec41f85 100644
+index dbfa7302..ec41f852 100644
 --- a/build/src/res/layout/item_player.xml
 +++ b/build/src/res/layout/item_player.xml
 @@ -1,6 +1,23 @@
@@ -624,7 +624,7 @@ index dbfa730..ec41f85 100644
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/tv_prograss" android:layout_width="60.0dip" android:layout_height="fill_parent" android:layout_centerInParent="true" android:layout_marginEnd="20.0dip" android:layout_alignParentEnd="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_search_result.xml b/build/src/res/layout/item_search_result.xml
-index ce45631..5e5d5be 100644
+index ce45631a..5e5d5bed 100644
 --- a/build/src/res/layout/item_search_result.xml
 +++ b/build/src/res/layout/item_search_result.xml
 @@ -3,7 +3,7 @@
@@ -638,7 +638,7 @@ index ce45631..5e5d5be 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b9172..f6f18a6 100644
+index 60b91724..f6f18a67 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
 @@ -1,8 +1,51 @@
@@ -702,7 +702,7 @@ index 60b9172..f6f18a6 100644
 +    </RelativeLayout>
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_video.xml b/build/src/res/layout/item_video.xml
-index f543a23..a07336f 100644
+index f543a231..a07336f6 100644
 --- a/build/src/res/layout/item_video.xml
 +++ b/build/src/res/layout/item_video.xml
 @@ -8,9 +8,19 @@
@@ -728,7 +728,7 @@ index f543a23..a07336f 100644
      <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </FrameLayout>
 diff --git a/build/src/res/layout/view_shuffle_playlist_item.xml b/build/src/res/layout/view_shuffle_playlist_item.xml
-index 252b934..bdd3b7d 100644
+index 252b9346..bdd3b7d9 100644
 --- a/build/src/res/layout/view_shuffle_playlist_item.xml
 +++ b/build/src/res/layout/view_shuffle_playlist_item.xml
 @@ -1,7 +1,12 @@
@@ -747,7 +747,7 @@ index 252b934..bdd3b7d 100644
      <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/values-480x360/dimens.xml b/build/src/res/values-480x360/dimens.xml
-index 67bb2db..f9f646a 100644
+index 67bb2db9..f9f646a6 100644
 --- a/build/src/res/values-480x360/dimens.xml
 +++ b/build/src/res/values-480x360/dimens.xml
 @@ -9,7 +9,7 @@
@@ -760,7 +760,7 @@ index 67bb2db..f9f646a 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 5044600..3ebf4ae 100644
+index 50446006..3ebf4ae0 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,472 @@
@@ -1654,7 +1654,7 @@ index 5044600..3ebf4ae 100644
 +    <string name="ipp_already_added">Bereits in der Liste</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
-index a2f30ff..bea496b 100644
+index a2f30ff6..bea496bf 100644
 --- a/build/src/res/values-en/strings.xml
 +++ b/build/src/res/values-en/strings.xml
 @@ -4,7 +4,7 @@
@@ -1969,7 +1969,7 @@ index a2f30ff..bea496b 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555..3e13a5f 100644
+index 6f5a555d..3e13a5f1 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
 @@ -1,417 +1,472 @@
@@ -2863,7 +2863,7 @@ index 6f5a555..3e13a5f 100644
 +    <string name="ipp_already_added">Ya está en la lista</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee..d664260 100644
+index c242cee4..d6642601 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,472 @@
@@ -3757,7 +3757,7 @@ index c242cee..d664260 100644
 +    <string name="ipp_already_added">Déjà dans la liste</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6b..93e0f4c 100644
+index d82ac6bb..93e0f4cd 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
 @@ -1,417 +1,472 @@
@@ -4651,7 +4651,7 @@ index d82ac6b..93e0f4c 100644
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb..0735d9f 100644
+index f71d0cb1..0735d9f4 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
 @@ -1,334 +1,389 @@
@@ -5379,7 +5379,7 @@ index f71d0cb..0735d9f 100644
 +    <string name="ipp_already_added">이미 재생 목록에 있음</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
-index d79cf0f..315aaa9 100644
+index d79cf0f6..315aaa9f 100644
 --- a/build/src/res/values-ru-rRU/strings.xml
 +++ b/build/src/res/values-ru-rRU/strings.xml
 @@ -22,20 +22,20 @@
@@ -5611,7 +5611,7 @@ index d79cf0f..315aaa9 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2..9410edd 100644
+index 4c84fd2b..9410edd8 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
 @@ -1,86 +1,141 @@
@@ -5843,7 +5843,7 @@ index 4c84fd2..9410edd 100644
 +    <string name="ipp_already_added">Уже в плейлисте</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd..01d2ef9 100644
+index 5665bdd9..01d2ef94 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
 @@ -1,426 +1,481 @@
@@ -6755,7 +6755,7 @@ index 5665bdd..01d2ef9 100644
 +    <string name="ipp_already_added">已在播放列表中</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
-index ce849b8..31964bc 100644
+index ce849b8e..31964bc2 100644
 --- a/build/src/res/values/attrs.xml
 +++ b/build/src/res/values/attrs.xml
 @@ -48,32 +48,32 @@
@@ -8028,7 +8028,7 @@ index ce849b8..31964bc 100644
      <attr name="windowActionBar" format="boolean" />
      <attr name="windowActionBarOverlay" format="boolean" />
 diff --git a/build/src/res/values/dimens.xml b/build/src/res/values/dimens.xml
-index 4597ba8..c002d25 100644
+index 4597ba81..c002d255 100644
 --- a/build/src/res/values/dimens.xml
 +++ b/build/src/res/values/dimens.xml
 @@ -166,6 +166,7 @@
@@ -8049,7 +8049,7 @@ index 4597ba8..c002d25 100644
      <dimen name="player_progress_height">40.0dip</dimen>
      <dimen name="popup_h">80.0dip</dimen>
 diff --git a/build/src/res/values/integers.xml b/build/src/res/values/integers.xml
-index 48ac137..961ff67 100644
+index 48ac137a..961ff677 100644
 --- a/build/src/res/values/integers.xml
 +++ b/build/src/res/values/integers.xml
 @@ -9,6 +9,7 @@
@@ -8061,7 +8061,7 @@ index 48ac137..961ff67 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7..dfa78d1 100644
+index 803c1e7a..dfa78d1a 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
 @@ -1,5519 +1,5611 @@
@@ -19196,7 +19196,7 @@ index 803c1e7..dfa78d1 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d..fb7d779 100644
+index 71fe29d0..3724b880 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20145,7 +20145,7 @@ index 71fe29d..fb7d779 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0</string>
++    <string name="ipp_version">v1.0.0-dev1</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20204,7 +20204,7 @@ index 71fe29d..fb7d779 100644
 +    <string name="ipp_already_added">Already in the playlist</string>
 +</resources>
 diff --git a/build/src/smali/com/innioasis/music/util/Other.smali b/build/src/smali/com/innioasis/music/util/Other.smali
-index e5eeb74..8cb91a2 100644
+index e5eeb74a..8cb91a2c 100644
 --- a/build/src/smali/com/innioasis/music/util/Other.smali
 +++ b/build/src/smali/com/innioasis/music/util/Other.smali
 @@ -412,7 +412,16 @@
@@ -20254,7 +20254,7 @@ index e5eeb74..8cb91a2 100644
      :try_start_0
      invoke-virtual {p1}, Landroid/widget/ListView;->getFirstVisiblePosition()I
 diff --git a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali b/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
-index 516036f..efc4d99 100644
+index 516036f6..efc4d990 100644
 --- a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
 +++ b/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
 @@ -42,7 +42,46 @@
@@ -20419,7 +20419,7 @@ index 516036f..efc4d99 100644
      new-instance v0, Ljava/lang/StringBuilder;
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
-index 74759f7..9577517 100644
+index 74759f7b..95775174 100644
 --- a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
 @@ -322,7 +322,7 @@
@@ -20519,7 +20519,7 @@ index 74759f7..9577517 100644
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2..1719779 100644
+index 675ebb2a..17197797 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,26 @@
@@ -21607,7 +21607,7 @@ index 675ebb2..1719779 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d..1fd46fa 100644
+index 060ed6d1..1fd46fa6 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -21741,7 +21741,7 @@ index 060ed6d..1fd46fa 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcff..1eab5dd 100644
+index 4fcfcfff..1eab5ddf 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 @@ -1,7643 +1,7912 @@
@@ -37301,7 +37301,7 @@ index 4fcfcff..1eab5dd 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 5491908..0a8703b 100644
+index 54919080..0a8703bc 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -747,17 +747,13 @@
@@ -37516,7 +37516,7 @@ index 5491908..0a8703b 100644
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali
-index 38de58f..28cf65f 100644
+index 38de58fe..28cf65f3 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali
 @@ -125,9 +125,11 @@
@@ -37534,7 +37534,7 @@ index 38de58f..28cf65f 100644
      iget-object p2, p0, Lcom/innioasis/fm/MenuActivity$rangesAdapter$2$1;->this$0:Lcom/innioasis/fm/MenuActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
-index 04adc81..42877f3 100644
+index 04adc813..42877f32 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
 @@ -230,6 +230,10 @@
@@ -37549,7 +37549,7 @@ index 04adc81..42877f3 100644
      iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1;->$albums:Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
-index e054b64..1ed478e 100644
+index e054b642..1ed478ef 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
 @@ -221,7 +221,24 @@
@@ -37593,7 +37593,7 @@ index e054b64..1ed478e 100644
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$multiSelOrAllSel$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$multiSelOrAllSel$1.smali
-index 7c5da9c..a0ed8ca 100644
+index 7c5da9cc..a0ed8cac 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$multiSelOrAllSel$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$multiSelOrAllSel$1.smali
 @@ -1,314 +1,316 @@
@@ -38228,7 +38228,7 @@ index 7c5da9c..a0ed8ca 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$showArtistsSortDialog$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$showArtistsSortDialog$1.smali
-index c33ee0c..e210743 100644
+index c33ee0c6..e2107431 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$showArtistsSortDialog$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$showArtistsSortDialog$1.smali
 @@ -74,6 +74,52 @@
@@ -38321,7 +38321,7 @@ index c33ee0c..e210743 100644
      iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$showArtistsSortDialog$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
-index 2cbe180..d98be46 100644
+index 2cbe1802..d98be469 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
 @@ -66,7 +66,7 @@
@@ -38402,7 +38402,7 @@ index 2cbe180..d98be46 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
-index 5bb7e0b..3f6b38b 100644
+index 5bb7e0bd..3f6b38b3 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
 @@ -71,7 +71,206 @@
@@ -38721,7 +38721,7 @@ index 5bb7e0b..3f6b38b 100644
  
      check-cast p2, Landroidx/lifecycle/LifecycleOwner;
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
-index 0bc3f6f..699d734 100644
+index 0bc3f6f7..699d7341 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
 @@ -127,6 +127,17 @@
@@ -38743,7 +38743,7 @@ index 0bc3f6f..699d734 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
-index 643e5c4..790e698 100644
+index 643e5c43..790e6980 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
 @@ -71,6 +71,63 @@
@@ -38811,7 +38811,7 @@ index 643e5c4..790e698 100644
      iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$subMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
-index adfdd78..9a45fbf 100644
+index adfdd784..9a45fbfc 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
 @@ -205,6 +205,11 @@
@@ -38855,7 +38855,7 @@ index adfdd78..9a45fbf 100644
  
      return-object p1
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$WhenMappings.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$WhenMappings.smali
-index 135c698..8e39c2b 100644
+index 135c6984..8e39c2bd 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$WhenMappings.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$WhenMappings.smali
 @@ -110,6 +110,16 @@
@@ -38876,7 +38876,7 @@ index 135c698..8e39c2b 100644
  
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1.smali
-index 9115da9..c5c0d24 100644
+index 9115da99..c5c0d24b 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1.smali
 @@ -384,7 +384,6 @@
@@ -38932,7 +38932,7 @@ index 9115da9..c5c0d24 100644
      .end packed-switch
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
-index c3dbcf7..0372d2b 100644
+index c3dbcf78..0372d2bd 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 @@ -318,6 +318,14 @@
@@ -39403,7 +39403,7 @@ index c3dbcf7..0372d2b 100644
  
      move-result-object v5
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
-index 15d905f..35f5653 100644
+index 15d905fa..35f5653b 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
 @@ -127,6 +127,17 @@
@@ -39425,7 +39425,7 @@ index 15d905f..35f5653 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$2.smali
-index a125c5a..35054ab 100644
+index a125c5af..35054abb 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$2.smali
 @@ -1,204 +1,205 @@
@@ -39839,7 +39839,7 @@ index a125c5a..35054ab 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$3.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$3.smali
-index 3dbb1fd..4616ea3 100644
+index 3dbb1fda..4616ea33 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1$3.smali
 @@ -1,204 +1,205 @@
@@ -40253,7 +40253,7 @@ index 3dbb1fd..4616ea3 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
-index 9357eb5..65e1241 100644
+index 9357eb57..65e1241f 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
 @@ -185,7 +185,11 @@
@@ -40270,7 +40270,7 @@ index 9357eb5..65e1241 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
-index 37ee4b9..ca123f2 100644
+index 37ee4b9f..ca123f2c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
 @@ -71,6 +71,34 @@
@@ -40309,7 +40309,7 @@ index 37ee4b9..ca123f2 100644
      iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
-index 19a1aba..32f6086 100644
+index 19a1aba9..32f60867 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
 @@ -211,7 +211,13 @@
@@ -40328,7 +40328,7 @@ index 19a1aba..32f6086 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
-index 2ae0be0..268f089 100644
+index 2ae0be0f..268f0899 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
 @@ -125,6 +125,17 @@
@@ -40350,7 +40350,7 @@ index 2ae0be0..268f089 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$2.smali
-index d22e58e..f9facbe 100644
+index d22e58ec..f9facbe3 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$2.smali
 @@ -1,204 +1,205 @@
@@ -40764,7 +40764,7 @@ index d22e58e..f9facbe 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$3.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$3.smali
-index a5ddd05..ae5bb54 100644
+index a5ddd058..ae5bb54f 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1$3.smali
 @@ -1,204 +1,205 @@
@@ -41178,7 +41178,7 @@ index a5ddd05..ae5bb54 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
-index 9d6806a..1531b1e 100644
+index 9d6806a3..1531b1e7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
 @@ -75,6 +75,34 @@
@@ -41217,7 +41217,7 @@ index 9d6806a..1531b1e 100644
      iget-object v3, v0, Lcom/innioasis/music/ArtistsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
-index dfdea4b..a0bccb0 100644
+index dfdea4b6..a0bccb05 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
 @@ -759,7 +759,7 @@
@@ -41307,7 +41307,7 @@ index dfdea4b..a0bccb0 100644
  
      :goto_1
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
-index 717ead6..2102d90 100644
+index 717ead6e..2102d906 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
 @@ -1,229 +1,231 @@
@@ -41772,7 +41772,7 @@ index 717ead6..2102d90 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-index 67d9981..a9561b1 100644
+index 67d99812..a9561b1c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 @@ -283,6 +283,17 @@
@@ -41794,7 +41794,7 @@ index 67d9981..a9561b1 100644
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
-index d8dc6b0..2b3e6da 100644
+index d8dc6b04..2b3e6dae 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 @@ -613,6 +613,30 @@
@@ -41829,7 +41829,7 @@ index d8dc6b0..2b3e6da 100644
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
-index 64fce4e..1adb666 100644
+index 64fce4ec..1adb666d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 @@ -68,6 +68,41 @@
@@ -41875,7 +41875,7 @@ index 64fce4e..1adb666 100644
  
      if-eq p1, v0, :cond_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
-index d3742cc..0cc7fdb 100644
+index d3742cc2..0cc7fdb3 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 @@ -380,6 +380,13 @@
@@ -41993,7 +41993,7 @@ index d3742cc..0cc7fdb 100644
      iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$1.smali
-index 1d7196d..2bd8932 100644
+index 1d7196d6..2bd8932a 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$1.smali
 @@ -155,6 +155,11 @@
@@ -42030,7 +42030,7 @@ index 1d7196d..2bd8932 100644
      iget-object v0, p0, Lcom/innioasis/music/GenresActivity$confirm$1;->this$0:Lcom/innioasis/music/GenresActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
-index 72fdca8..cbf62cb 100644
+index 72fdca8b..cbf62cb1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
 @@ -105,6 +105,9 @@
@@ -42076,7 +42076,7 @@ index 72fdca8..cbf62cb 100644
      iget-object v1, p0, Lcom/innioasis/music/GenresActivity$confirm$2$1;->this$0:Lcom/innioasis/music/GenresActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
-index af9b5e7..f900022 100644
+index af9b5e7c..f900022e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
 @@ -100,6 +100,12 @@
@@ -42116,7 +42116,7 @@ index af9b5e7..f900022 100644
      sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$initView$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$initView$1.smali
-index 0c53af5..348a8bd 100644
+index 0c53af5e..348a8bd1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$initView$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$initView$1.smali
 @@ -214,6 +214,12 @@
@@ -42133,7 +42133,7 @@ index 0c53af5..348a8bd 100644
  
      .line 56
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
-index bdc0ac3..2798d9f 100644
+index bdc0ac32..2798d9fa 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
 @@ -294,7 +294,9 @@
@@ -42148,7 +42148,7 @@ index bdc0ac3..2798d9f 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$1.smali
-index 8400040..b3761f6 100644
+index 8400040c..b3761f6e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$1.smali
 @@ -1,401 +1,403 @@
@@ -42957,7 +42957,7 @@ index 8400040..b3761f6 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
-index 1bef7ac..5c5ef87 100644
+index 1bef7acf..5c5ef87e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
 @@ -189,7 +189,9 @@
@@ -42972,7 +42972,7 @@ index 1bef7ac..5c5ef87 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1.smali
-index 7131669..4aea78f 100644
+index 71316696..4aea78fd 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1.smali
 @@ -74,6 +74,33 @@
@@ -43010,7 +43010,7 @@ index 7131669..4aea78f 100644
  
      if-eq v1, v2, :cond_5
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
-index ff3e0fc..86e24cc 100644
+index ff3e0fc0..86e24cc2 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
 @@ -1,2495 +1,2653 @@
@@ -48163,7 +48163,7 @@ index ff3e0fc..86e24cc 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f627..ca6f7b8 100644
+index 132f6278..ca6f7b89 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 @@ -123,7 +123,7 @@
@@ -48221,7 +48221,7 @@ index 132f627..ca6f7b8 100644
      .packed-switch 0x0
          :pswitch_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-index 943028f..54a7eab 100644
+index 943028f8..54a7eab7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 @@ -397,6 +397,13 @@
@@ -48386,7 +48386,7 @@ index 943028f..54a7eab 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$startSelect$1.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$startSelect$1.smali
-index 92a63b3..cff86b9 100644
+index 92a63b38..cff86b95 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$startSelect$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$startSelect$1.smali
 @@ -1,272 +1,274 @@
@@ -48937,7 +48937,7 @@ index 92a63b3..cff86b9 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
-index d4e6487..83972a5 100644
+index d4e64877..83972a5d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
 @@ -140,6 +140,56 @@
@@ -49010,7 +49010,7 @@ index d4e6487..83972a5 100644
  
      .line 52
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
-index d16f4b9..41f0ed9 100644
+index d16f4b98..41f0ed98 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
 @@ -66,11 +66,127 @@
@@ -49185,7 +49185,7 @@ index d16f4b9..41f0ed9 100644
  
      invoke-virtual {p2, v1}, Lcom/innioasis/music/PlayListActivity;->getString(I)Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity.smali
-index 1e17511..2457719 100644
+index 1e17511e..2457719a 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity.smali
 @@ -222,6 +222,10 @@
@@ -49211,7 +49211,7 @@ index 1e17511..2457719 100644
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
-index 6baad17..98eb2d9 100644
+index 6baad174..98eb2d9f 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
 @@ -242,6 +242,19 @@
@@ -49235,7 +49235,7 @@ index 6baad17..98eb2d9 100644
      sget-object v3, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$startMultiSelect$1$2.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$startMultiSelect$1$2.smali
-index fc13886..ca98f3b 100644
+index fc138862..ca98f3b3 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$startMultiSelect$1$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$startMultiSelect$1$2.smali
 @@ -1,234 +1,236 @@
@@ -49710,7 +49710,7 @@ index fc13886..ca98f3b 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
-index e8778ff..c2d1372 100644
+index e8778ff8..c2d13720 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
 @@ -185,6 +185,17 @@
@@ -49732,7 +49732,7 @@ index e8778ff..c2d1372 100644
      iget-object v0, p0, Lcom/innioasis/music/PlaylistsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlaylistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
-index 66c966f..1562cf8 100644
+index 66c966fd..1562cf8e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 @@ -477,6 +477,17 @@
@@ -49831,7 +49831,7 @@ index 66c966f..1562cf8 100644
  
      .line 271
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-index 64e6832..ea4b3c9 100644
+index 64e6832c..ea4b3c97 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 @@ -409,138 +409,60 @@
@@ -50005,7 +50005,7 @@ index 64e6832..ea4b3c9 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
-index 4772cdd..edb3e9f 100644
+index 4772cdd7..edb3e9fd 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
 @@ -186,6 +186,13 @@
@@ -50023,7 +50023,7 @@ index 4772cdd..edb3e9f 100644
  
      :cond_0
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
-index 5a7ef8c..4ae8355 100644
+index 5a7ef8c8..4ae83552 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
 @@ -163,7 +163,7 @@
@@ -50056,7 +50056,7 @@ index 5a7ef8c..4ae8355 100644
  
      move-result-object p1
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1$select$1$2.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1$select$1$2.smali
-index 28a2705..0c25297 100644
+index 28a27055..0c252973 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1$select$1$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1$select$1$2.smali
 @@ -1,235 +1,237 @@
@@ -50533,7 +50533,7 @@ index 28a2705..0c25297 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
-index ee8709a..e617096 100644
+index ee8709a5..e6170966 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
 @@ -66,6 +66,113 @@
@@ -50651,7 +50651,7 @@ index ee8709a..e617096 100644
  
      const/4 v1, 0x1
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2.smali
-index 74b3d42..fe2825d 100644
+index 74b3d42d..fe2825db 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2.smali
 @@ -81,6 +81,8 @@
@@ -50664,7 +50664,7 @@ index 74b3d42..fe2825d 100644
  
      iget-object v3, p0, Lcom/innioasis/music/SearchActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/SearchActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
-index 104ab12..ce98d42 100644
+index 104ab128..ce98d429 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 @@ -341,13 +341,15 @@
@@ -50709,7 +50709,7 @@ index 104ab12..ce98d42 100644
  
      .line 333
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity$handler$1.smali
-index 5068685..b65fb0e 100644
+index 50686851..b65fb0e6 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity$handler$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity$handler$1.smali
 @@ -1,189 +1,191 @@
@@ -51094,7 +51094,7 @@ index 5068685..b65fb0e 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
-index 51980e1..3574c26 100644
+index 51980e1a..3574c265 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
 @@ -112,6 +112,42 @@
@@ -51141,7 +51141,7 @@ index 51980e1..3574c26 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
-index 2ffd8b9..2a819e7 100644
+index 2ffd8b91..2a819e77 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
 @@ -978,6 +978,157 @@
@@ -51303,7 +51303,7 @@ index 2ffd8b9..2a819e7 100644
  
      .line 193
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
-index b9220ba..05cae46 100644
+index b9220ba5..05cae465 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
 @@ -107,10 +107,22 @@
@@ -51412,7 +51412,7 @@ index b9220ba..05cae46 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9..193239f 100644
+index 4ed7ef9f..193239fa 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 @@ -135,358 +135,271 @@
@@ -51971,7 +51971,7 @@ index 4ed7ef9..193239f 100644
 +.end method
 \ No newline at end of file
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
-index ce188cf..f43ee54 100644
+index ce188cfe..f43ee546 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 @@ -59,7 +59,27 @@
@@ -52119,7 +52119,7 @@ index ce188cf..f43ee54 100644
  
      return-object p2
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
-index 3087ba8..c2c17ad 100644
+index 3087ba8e..c2c17ad9 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
 @@ -84,6 +84,18 @@
@@ -52157,7 +52157,7 @@ index 3087ba8..c2c17ad 100644
      iget-object v0, p0, Lcom/innioasis/music/adapter/GenreListAdapter$getView$1;->this$0:Lcom/innioasis/music/adapter/GenreListAdapter;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
-index 754dc7c..a3d2aa1 100644
+index 754dc7c2..a3d2aa12 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 @@ -70,19 +70,29 @@
@@ -52229,7 +52229,7 @@ index 754dc7c..a3d2aa1 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
-index 13bfb25..a69b43c 100644
+index 13bfb259..a69b43c1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 @@ -79,6 +79,19 @@
@@ -52297,7 +52297,7 @@ index 13bfb25..a69b43c 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
-index 1b2fd58..e159bc4 100644
+index 1b2fd585..e159bc48 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 @@ -229,6 +229,28 @@
@@ -52476,7 +52476,7 @@ index 1b2fd58..e159bc4 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
-index c65cfdf..71fbb19 100644
+index c65cfdfe..71fbb190 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 @@ -1,4 +1,6 @@
@@ -52760,7 +52760,7 @@ index c65cfdf..71fbb19 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter2.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter2.smali
-index 982db4e..623d518 100644
+index 982db4ed..623d5189 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter2.smali
 @@ -1,321 +1,52 @@
@@ -53138,7 +53138,7 @@ index 982db4e..623d518 100644
 +
 +
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SubmenuAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SubmenuAdapter.smali
-index 306c059..05023aa 100644
+index 306c059f..05023aa4 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SubmenuAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SubmenuAdapter.smali
 @@ -140,6 +140,21 @@
@@ -53178,7 +53178,7 @@ index 306c059..05023aa 100644
  
      invoke-static {p2, p3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
-index fe02089..dedb18c 100644
+index fe02089c..dedb18c3 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 @@ -411,6 +411,18 @@
@@ -53212,7 +53212,7 @@ index fe02089..dedb18c 100644
  
      .line 131
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
-index bf78e9a..0bf8c44 100644
+index bf78e9a8..0bf8c44d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
 @@ -96,25 +96,59 @@
@@ -53282,7 +53282,7 @@ index bf78e9a..0bf8c44 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali b/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
-index 6681baa..7b44c23 100644
+index 6681baa9..7b44c234 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
 @@ -1,152 +1,76 @@
@@ -53515,7 +53515,7 @@ index 6681baa..7b44c23 100644
 +    return-object p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
-index 3f62d18..469fc21 100644
+index 3f62d183..469fc212 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 @@ -662,6 +662,10 @@
@@ -53563,7 +53563,7 @@ index 3f62d18..469fc21 100644
  
      move-result p1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
-index 2b24d8d..f17397e 100644
+index 2b24d8d3..f17397e2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
 @@ -77,6 +77,12 @@
@@ -53580,7 +53580,7 @@ index 2b24d8d..f17397e 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
-index 2ae02d9..da3a63e 100644
+index 2ae02d9c..da3a63e0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
 @@ -1,293 +1,295 @@
@@ -54173,7 +54173,7 @@ index 2ae02d9..da3a63e 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
-index c4ec82e..12f4526 100644
+index c4ec82ef..12f4526f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 @@ -76,6 +76,24 @@
@@ -54202,7 +54202,7 @@ index c4ec82e..12f4526 100644
  
      .line 141
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
-index f8a19b2..6f36412 100644
+index f8a19b28..6f364126 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 @@ -732,6 +732,16 @@
@@ -54223,7 +54223,7 @@ index f8a19b2..6f36412 100644
      new-instance v0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity$isAddToBookmarkCallback$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity$isAddToBookmarkCallback$1.smali
-index f12a772..56fac33 100644
+index f12a7726..56fac334 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity$isAddToBookmarkCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity$isAddToBookmarkCallback$1.smali
 @@ -63,143 +63,13 @@
@@ -54377,7 +54377,7 @@ index f12a772..56fac33 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
-index 92290be..c5e483e 100644
+index 92290be6..c5e483e5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 @@ -636,6 +636,27 @@
@@ -54491,7 +54491,7 @@ index 92290be..c5e483e 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
-index 6a25d7c..282fa94 100644
+index 6a25d7cf..282fa946 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -54506,7 +54506,7 @@ index 6a25d7c..282fa94 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
-index 552a1de..067bed7 100644
+index 552a1de3..067bed78 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -54521,7 +54521,7 @@ index 552a1de..067bed7 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b9..d3fa140 100644
+index e9751b96..d3fa140f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 @@ -1655,60 +1655,11 @@
@@ -54591,7 +54591,7 @@ index e9751b9..d3fa140 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
-index 7352ca0..af695f2 100644
+index 7352ca07..af695f2d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
 @@ -1,276 +1,278 @@
@@ -55150,7 +55150,7 @@ index 7352ca0..af695f2 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
-index a97af09..e8d6966 100644
+index a97af096..e8d69660 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 @@ -659,6 +659,19 @@
@@ -55174,7 +55174,7 @@ index a97af09..e8d6966 100644
      invoke-static {p1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
-index c90de28..6483da1 100644
+index c90de289..6483da12 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 @@ -388,7 +388,11 @@
@@ -55213,7 +55213,7 @@ index c90de28..6483da1 100644
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
-index 0bfdbee..7835852 100644
+index 0bfdbeec..78358520 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 @@ -1,1964 +1,1970 @@
@@ -59152,7 +59152,7 @@ index 0bfdbee..7835852 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df..38efffa 100644
+index a9542df1..38efffa4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -59260,7 +59260,7 @@ index a9542df..38efffa 100644
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
-index f207545..d86674a 100644
+index f2075450..d86674af 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 @@ -104,9 +104,22 @@
@@ -59288,7 +59288,7 @@ index f207545..d86674a 100644
      check-cast v1, Ljava/lang/CharSequence;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa8..bb45acf 100644
+index 0688aa89..bb45acff 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -3007,6 +3007,19 @@
@@ -59312,7 +59312,7 @@ index 0688aa8..bb45acf 100644
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
-index c952c2f..940bd91 100644
+index c952c2fd..940bd910 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
 @@ -1,293 +1,295 @@
@@ -59905,7 +59905,7 @@ index c952c2f..940bd91 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali
-index 601c490..aaf19ad 100644
+index 601c490a..aaf19ad5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali
 @@ -537,6 +537,8 @@
@@ -59918,7 +59918,7 @@ index 601c490..aaf19ad 100644
      sget-object v0, Lkotlinx/coroutines/GlobalScope;->INSTANCE:Lkotlinx/coroutines/GlobalScope;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$ClearUserDataObserver.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$ClearUserDataObserver.smali
-index 4f3366e..dacbafe 100644
+index 4f3366ed..dacbafe2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$ClearUserDataObserver.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$ClearUserDataObserver.smali
 @@ -75,6 +75,10 @@
@@ -59933,7 +59933,7 @@ index 4f3366e..dacbafe 100644
      :try_start_0
      invoke-static {p0}, Lcom/innioasis/y1/activity/SettingActivity;->access$getClearDialog$p(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali
-index a5a04dc..1bdae58 100644
+index a5a04dcd..1bdae584 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali
 @@ -57,9 +57,10 @@
@@ -59951,7 +59951,7 @@ index a5a04dc..1bdae58 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77..2a420f3 100644
+index 5e61f77d..2a420f3e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 @@ -2057,6 +2057,19 @@
@@ -59975,7 +59975,7 @@ index 5e61f77..2a420f3 100644
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$animator$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$animator$2$1$1.smali
-index f7ed916..be5c445 100644
+index f7ed916f..be5c4456 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$animator$2$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$animator$2$1$1.smali
 @@ -1,212 +1,214 @@
@@ -60406,7 +60406,7 @@ index f7ed916..be5c445 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
-index 66a7473..f530d02 100644
+index 66a74737..f530d028 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
 @@ -898,6 +898,19 @@
@@ -60442,7 +60442,7 @@ index 66a7473..f530d02 100644
      .line 329
      invoke-virtual {p1}, Landroid/view/KeyEvent;->getRepeatCount()I
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali
-index f2ab2f3..26868a4 100644
+index f2ab2f39..26868a48 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali
 @@ -1,205 +1,207 @@
@@ -60859,7 +60859,7 @@ index f2ab2f3..26868a4 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
-index 44fce9d..94ea226 100644
+index 44fce9d8..94ea2268 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 @@ -3057,7 +3057,9 @@
@@ -60903,7 +60903,7 @@ index 44fce9d..94ea226 100644
      move-result-object v10
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
-index b04c4d3..144d416 100644
+index b04c4d3d..144d4164 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
 @@ -96,25 +96,52 @@
@@ -60966,7 +60966,7 @@ index b04c4d3..144d416 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
-index 402025b..817cba5 100644
+index 402025b9..817cba56 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
 @@ -59,7 +59,33 @@
@@ -61070,7 +61070,7 @@ index 402025b..817cba5 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
-index 5ee057a..b3a7564 100644
+index 5ee057a4..b3a7564a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 @@ -59,7 +59,24 @@
@@ -61128,7 +61128,7 @@ index 5ee057a..b3a7564 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$askShutdown$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$askShutdown$1.smali
-index bedaedc..c6d756a 100644
+index bedaedce..c6d756a2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$askShutdown$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$askShutdown$1.smali
 @@ -93,9 +93,10 @@
@@ -61146,7 +61146,7 @@ index bedaedc..c6d756a 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
-index 78735fa..b00a865 100644
+index 78735fa1..b00a865d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
 @@ -203,16 +203,59 @@
@@ -61211,7 +61211,7 @@ index 78735fa..b00a865 100644
      sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
-index 4c89afa..1d49463 100644
+index 4c89afa4..1d494636 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
 @@ -81,6 +81,20 @@
@@ -61236,7 +61236,7 @@ index 4c89afa..1d49463 100644
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1$1.smali
-index 1929157..4f5bba4 100644
+index 19291573..4f5bba4d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1$1.smali
 @@ -268,6 +268,12 @@
@@ -61253,7 +61253,7 @@ index 1929157..4f5bba4 100644
  
      .line 429
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
-index 6e8fae3..ac85e29 100644
+index 6e8fae34..ac85e290 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
 @@ -253,60 +253,17 @@
@@ -61321,7 +61321,7 @@ index 6e8fae3..ac85e29 100644
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca00..dcb4ecc 100644
+index 510ca002..dcb4ecc0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -61654,7 +61654,7 @@ index 510ca00..dcb4ecc 100644
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali
-index c075f00..430c6df 100644
+index c075f005..430c6df5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali
 @@ -78,6 +78,8 @@
@@ -61706,7 +61706,7 @@ index c075f00..430c6df 100644
  
      move-result-object v0
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SortAlbumType.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SortAlbumType.smali
-index 7c377a5..ee69bca 100644
+index 7c377a56..ee69bca9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SortAlbumType.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SortAlbumType.smali
 @@ -61,6 +61,10 @@
@@ -61776,7 +61776,7 @@ index 7c377a5..ee69bca 100644
  
      move-result-object v0
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$insertSong$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$insertSong$1.smali
-index 3c6fa2a..8759230 100644
+index 3c6fa2a9..8759230f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$insertSong$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$insertSong$1.smali
 @@ -1,104 +1,107 @@
@@ -61992,7 +61992,7 @@ index 3c6fa2a..8759230 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
-index 189a7bb..64e738d 100644
+index 189a7bb9..64e738d9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
 @@ -1,199 +1,202 @@
@@ -62398,7 +62398,7 @@ index 189a7bb..64e738d 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$2$1.smali
-index d743826..347dfdc 100644
+index d7438262..347dfdc7 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$2$1.smali
 @@ -1,135 +1,138 @@
@@ -62676,7 +62676,7 @@ index d743826..347dfdc 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-index e937419..b6f5d08 100644
+index e9374192..b6f5d089 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 @@ -1,366 +1,377 @@
@@ -63424,7 +63424,7 @@ index e937419..b6f5d08 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
-index 09aab2a..aa0afec 100644
+index 09aab2a9..aa0afecf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
 @@ -73,7 +73,12 @@
@@ -63484,7 +63484,7 @@ index 09aab2a..aa0afec 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
-index 4d3bea7..d93b1ee 100644
+index 4d3bea7c..d93b1eec 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
 @@ -128,7 +128,8 @@
@@ -63532,7 +63532,7 @@ index 4d3bea7..d93b1ee 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$2.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$2.smali
-index e95eaea..4ba2be0 100644
+index e95eaea5..4ba2be02 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$2.smali
 @@ -86,12 +86,27 @@
@@ -63565,7 +63565,7 @@ index e95eaea..4ba2be0 100644
      goto :goto_0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
-index 79daca7..a99dfe4 100644
+index 79daca77..a99dfe4a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 @@ -891,6 +891,18 @@
@@ -63663,7 +63663,7 @@ index 79daca7..a99dfe4 100644
  
      const-string v1, "MONOSPACE"
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
-index 8590fe7..9f8751c 100644
+index 8590fe7c..9f8751ca 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
 @@ -554,6 +554,16 @@
@@ -63684,7 +63684,7 @@ index 8590fe7..9f8751c 100644
      iput-boolean p4, p0, Lcom/innioasis/y1/utils/DialogUtil;->isConfirm:Z
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
-index 2c02daf..8f624e8 100644
+index 2c02dafb..8f624e88 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
 @@ -9716,7 +9716,7 @@
@@ -63731,7 +63731,7 @@ index 2c02daf..8f624e8 100644
 +    throw v0
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
-index 01f8662..b54231a 100644
+index 01f8662e..b54231a5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
 @@ -97,256 +97,13 @@
@@ -63997,7 +63997,7 @@ index 01f8662..b54231a 100644
      return-object v0
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
-index 6e94945..ee7e05e 100644
+index 6e949456..ee7e05e5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 @@ -490,49 +490,58 @@
@@ -64303,7 +64303,7 @@ index 6e94945..ee7e05e 100644
      iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->callback:Lcom/innioasis/y1/utils/InputMethodDialog$Callback;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali b/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali
-index 1e05f27..668ad55 100644
+index 1e05f275..668ad554 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali
 @@ -585,17 +585,17 @@
@@ -64352,7 +64352,7 @@ index 1e05f27..668ad55 100644
      int-to-float v3, v3
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-index 97739f5..b4ca1e0 100644
+index 97739f51..b4ca1e0b 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 @@ -136,11 +136,11 @@
@@ -64373,7 +64373,7 @@ index 97739f5..b4ca1e0 100644
      iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali b/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
-index a8d4851..a19a56b 100644
+index a8d4851e..a19a56b8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
 @@ -334,6 +334,19 @@
@@ -64409,7 +64409,7 @@ index a8d4851..a19a56b 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ReflectImageView.smali b/build/src/smali_classes2/com/innioasis/y1/view/ReflectImageView.smali
-index 8ef242b..2e47ed1 100644
+index 8ef242b7..2e47ed1c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ReflectImageView.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ReflectImageView.smali
 @@ -68,7 +68,29 @@
@@ -64503,7 +64503,7 @@ index 8ef242b..2e47ed1 100644
  
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
-index 5308bc7..c317d05 100644
+index 5308bc70..c317d05f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
 @@ -235,6 +235,9 @@
@@ -64536,7 +64536,7 @@ index 5308bc7..c317d05 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
-index a8dc40f..f3f8baf 100644
+index a8dc40f3..f3f8baff 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 @@ -255,6 +255,19 @@
@@ -64572,7 +64572,7 @@ index a8dc40f..f3f8baf 100644
      invoke-virtual {p0}, Lcom/innioasis/y1_eBook/base/BaseActivity;->getApplicationContext()Landroid/content/Context;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
-index 858b0ba..fad635a 100644
+index 858b0ba9..fad635ac 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 @@ -326,6 +326,11 @@
@@ -64599,7 +64599,7 @@ index 858b0ba..fad635a 100644
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
-index 27f20fb..764c459 100644
+index 27f20fbd..764c4596 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 @@ -507,6 +507,12 @@
@@ -64713,7 +64713,7 @@ index 27f20fb..764c459 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833ea..20d4285 100644
+index b6833eac..20d4285a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 @@ -275,6 +275,12 @@
@@ -64740,7 +64740,7 @@ index b6833ea..20d4285 100644
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali
-index d349a42..76c04a8 100644
+index d349a428..76c04a86 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali
 @@ -463,7 +463,13 @@
@@ -64759,7 +64759,7 @@ index d349a42..76c04a8 100644
      invoke-virtual {p3, p2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/utils/FileEncodingDetector.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/utils/FileEncodingDetector.smali
-index 308f078..27de52c 100644
+index 308f0784..27de52ce 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/utils/FileEncodingDetector.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/utils/FileEncodingDetector.smali
 @@ -530,15 +530,20 @@
@@ -64790,7 +64790,7 @@ index 308f078..27de52c 100644
      .line 53
      :cond_3
 diff --git a/build/src/smali_classes2/me/wcy/lrcview/LrcView.smali b/build/src/smali_classes2/me/wcy/lrcview/LrcView.smali
-index 2eb294b..de4c017 100644
+index 2eb294bf..de4c0175 100644
 --- a/build/src/smali_classes2/me/wcy/lrcview/LrcView.smali
 +++ b/build/src/smali_classes2/me/wcy/lrcview/LrcView.smali
 @@ -1205,6 +1205,15 @@

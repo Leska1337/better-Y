@@ -21,7 +21,8 @@ param(
     [Parameter(ParameterSetName = "Apply", Mandatory = $true)] [string] $Apply,
     [Parameter(ParameterSetName = "Verify")] [switch] $Verify,
     [string] $Set = "",
-    [string] $Base = ""
+    [string] $Base = "",
+    [switch] $AllowDev     # export a -devN tree anyway (looking at the set, not publishing it)
 )
 
 $ErrorActionPreference = "Stop"
@@ -52,6 +53,17 @@ function Get-Base {
 function Get-ApktoolVersion {
     $v = & java -jar $apktool --version 2>&1 | Select-Object -First 1
     return "$v".Trim()
+}
+
+# The set in publish\ is what the public repository is built from, so it is exported off a release
+# tree, not off a build of the day. -Verify is not held to this: reproducing the tree is worth
+# checking at any point.
+function Assert-NotDev {
+    $sx = [IO.File]::ReadAllText("$src\res\values\strings.xml")
+    $v = [regex]::Match($sx, '<string name="ipp_version">([^<]+)</string>').Groups[1].Value
+    if (-not $AllowDev -and $v -match '-dev\d+$') {
+        throw "the tree is at $v - a dev build is not published; build with -Release, or pass -AllowDev"
+    }
 }
 
 # --------------------------------------------------------------------------------------- export
@@ -312,5 +324,5 @@ function Compare-Trees {
 switch ($PSCmdlet.ParameterSetName) {
     "Apply"  { Invoke-Apply -Tree $Apply }
     "Verify" { Invoke-Export; Invoke-Verify }
-    default  { Invoke-Export }
+    default  { Assert-NotDev; Invoke-Export }
 }

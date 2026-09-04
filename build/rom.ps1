@@ -38,7 +38,8 @@
 param(
     [string] $Apk = "",
     [string] $Out = "",
-    [switch] $Minimal      # rom.zip with system.img alone - see the note above before using it
+    [switch] $Minimal,     # rom.zip with system.img alone - see the note above before using it
+    [switch] $AllowDev     # pack a -devN build anyway (trying the pipeline out, not a release)
 )
 
 $ErrorActionPreference = "Stop"
@@ -61,6 +62,11 @@ if (-not $Apk) {
             Select-Object -First 1).FullName
 }
 if (-not (Test-Path $Apk)) { throw "APK not found: $Apk" }
+# rom.zip is what the updaters install, so the launcher in it is the one users end up with: a build
+# of the day has no business there. -AllowDev is for trying the pipeline out on one.
+if (-not $AllowDev -and (Split-Path -Leaf $Apk) -match '-dev\d+\.apk$') {
+    throw "$(Split-Path -Leaf $Apk) is a dev build - build with -Release first, or pass -AllowDev"
+}
 
 function ConvertTo-WslPath([string] $p) {
     $full = (Resolve-Path $p).Path

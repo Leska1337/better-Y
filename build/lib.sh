@@ -133,21 +133,59 @@ mod_version() {
     printf '%s' "$v"
 }
 
-# The mod version as an integer, written into apktool.yml so the APK's versionCode GROWS with it.
-# vA.B.C -> A*10000 + B*100 + C, which keeps the order of the versions and clears the stock 312 by
-# a wide margin. It must never go down: an APK put on the player with `adb install -r` survives the
-# next boot only while its code beats the one in /system, and losing that comparison does not merely
-# ignore the update -- see the note at the call site in build.sh.
-sync_version_code() {
-    local v="$1" y="$BUILD_DIR/src/apktool.yml" a b c code
+# vA.B.C[-devN] -> "A B C N", with N 0 on a release. The dev number is part of the version string
+# itself: vA.B.C is a release, vA.B.C-devN the Nth build after it.
+version_parts() {
+    local v="${1#v}" a b c n
     case "$v" in
-        v*) v="${v#v}" ;;
+        *-dev*) n="${v##*-dev}"; v="${v%-dev*}" ;;
+        *)      n=0 ;;
+    esac
+    # the shape is checked before the split: "1.0" would otherwise come apart into a perfectly
+    # digit-clean 1 0 0 and build under a version nobody wrote
+    case "$v" in
+        *.*.*) ;;
+        *) die "ipp_version '$1' is not vA.B.C or vA.B.C-devN" ;;
     esac
     a="${v%%.*}"; c="${v##*.}"; b="${v#*.}"; b="${b%.*}"
-    case "$a$b$c" in
-        *[!0-9]*|"") die "ipp_version '$1' is not vA.B.C - cannot derive a versionCode" ;;
+    case "$a$b$c$n" in
+        *[!0-9]*|"") die "ipp_version '$1' is not vA.B.C or vA.B.C-devN" ;;
     esac
-    code=$(( a * 10000 + b * 100 + c ))
+    printf '%s %s %s %s' "$a" "$b" "$c" "$n"
+}
+
+# Raise the dev number in strings.xml and answer the new version. This runs right before the build,
+# so no two APKs can go out under one number -- doing it by hand meant remembering it every time.
+# sed edits the one line and passes the rest of the file through as bytes (LC_ALL=C), so the UTF-8
+# of the other strings and the line endings stay exactly as they were.
+bump_dev_version() {
+    local s="$BUILD_DIR/src/res/values/strings.xml" parts a b c n new
+    parts="$(version_parts "$(mod_version)")"
+    set -- $parts
+    a="$1"; b="$2"; c="$3"; n="$4"
+    n=$(( n + 1 ))
+    # 999 dev builds is the room the versionCode formula leaves between two releases. Running out
+    # means the release is long overdue, not that the number should wrap.
+    [ "$n" -le 999 ] || die "dev number is out of room at $n - cut a release first"
+    new="v$a.$b.$c-dev$n"
+    LC_ALL=C sed "s|<string name=\"ipp_version\">[^<]*</string>|<string name=\"ipp_version\">$new</string>|" \
+        "$s" > "$s.new" && mv -f "$s.new" "$s"
+    printf '%s' "$new"
+}
+
+# The mod version as an integer, written into apktool.yml so the APK's versionCode GROWS with it.
+# (A*10000 + B*100 + C) * 1000 + N, which keeps the order of the versions and clears the stock 312
+# by a wide margin. The last three digits are what dev builds grow in: v1.0.0 is 10000000, its
+# seventh dev build 10000007, and the release after it, v1.0.1, 10001000 -- so the order holds
+# across the release too. It must never go down: an APK put on the player with `adb install -r`
+# survives the next boot only while its code beats the one in /system, and losing that comparison
+# does not merely ignore the update -- see the note at the call site in build.sh.
+sync_version_code() {
+    local y="$BUILD_DIR/src/apktool.yml" parts a b c n code
+    parts="$(version_parts "$1")"
+    set -- $parts
+    a="$1"; b="$2"; c="$3"; n="$4"
+    code=$(( (a * 10000 + b * 100 + c) * 1000 + n ))
     [ -f "$y" ] || die "no $y"
     # A temp file rather than sed -i: the flag needs an argument on BSD sed (macOS) and must not
     # have one on GNU sed. The expression keeps the line's trailing CR, which the whole tree uses.

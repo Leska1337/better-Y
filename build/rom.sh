@@ -29,11 +29,13 @@
 APK=""
 OUT=""
 MINIMAL=0
+ALLOW_DEV=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --apk)     shift; APK="${1:-}"; [ -n "$APK" ] || die "--apk needs a path" ;;
         --out)     shift; OUT="${1:-}"; [ -n "$OUT" ] || die "--out needs a path" ;;
         --minimal) MINIMAL=1 ;;
+        --allow-dev) ALLOW_DEV=1 ;;
         -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
         *) die "unknown option: $1" ;;
     esac
@@ -59,6 +61,13 @@ if [ -z "$APK" ]; then
     APK="$(ls -t "$BUILD_DIR"/out/*.apk 2>/dev/null | head -1)"
 fi
 [ -n "$APK" ] && [ -f "$APK" ] || die "APK not found: ${APK:-none in $BUILD_DIR/out}"
+# rom.zip is what the updaters install, so the launcher in it is the one users end up with: a build
+# of the day has no business there. --allow-dev is for trying the pipeline out on one.
+if [ "$ALLOW_DEV" -eq 0 ]; then
+    case "$(basename "$APK")" in
+        *-dev[0-9]*.apk) die "$(basename "$APK") is a dev build - build with --release first, or pass --allow-dev" ;;
+    esac
+fi
 
 printf 'launcher: %s (%s B)\n' "$(basename "$APK")" "$(wc -c < "$APK" | tr -d ' ')"
 
