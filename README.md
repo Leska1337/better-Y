@@ -4,7 +4,7 @@
 
 # better-Y
 
-A mod of the stock launcher for the **innioasis Y1**, based on 3.1.2 firmware.
+A mod of the stock launcher for the **innioasis Y1**, based on 3.1.2 firmware
 
 </div>
 
@@ -17,7 +17,8 @@ Within this tab press and hold the top button on the desired option to display i
 
 <details>
 <summary>⚙️ <b>Track numbers from metadata</b> — inside albums</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 It applies whatever the sort is: if sorted by file name - the numbers won't be in order.
 
@@ -30,7 +31,8 @@ If track numbers are specified for only some of the songs, the songs without num
 
 <details>
 <summary>⚙️ <b>Split artists that are divided by commas and semicolons</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
     System of a Down, RZA
     System of a Down; RZA
@@ -54,7 +56,8 @@ becomes two different artists, "Tyler, The Creator" and "Frank Ocean".
 
 <details>
 <summary>⚙️ <b>Split genres that are divided by commas, semicolons and slashes</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
     Indie Rock, Acoustic
     Indie Rock; Acoustic
@@ -66,13 +69,12 @@ becomes two different genres, "Indie Rock" and "Acoustic".
 </div>
 </details>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span>⚙️ <b>Song titles from metadata</b> — instead of file names</span></p>
+<p>&#9679;&ensp;⚙️ <b>Song titles from metadata</b> — instead of file names</p>
 
 <details>
 <summary><b>Album artist metadata tag support</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 Shown under the album names. If empty — the Artist tag is used instead.
 
@@ -81,7 +83,8 @@ Shown under the album names. If empty — the Artist tag is used instead.
 
 <details>
 <summary><b>External covers support</b> — <code>cover.*</code> and <code>folder.*</code></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 `cover.jpg` applies to every song with no embedded cover in that particular folder where it sits.
 
@@ -104,22 +107,23 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
 
 <details>
 <summary><b>Disk numbers support</b> — divide an album into CDs or vinyl Sides</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/CD_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/CD_1.png" alt="Album song list divided by a CD 1 header" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The list of songs in an album is divided into CD1, CD2 or Side A, Side B
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/CD_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/CD_2.png" alt="Album song list where CD 1 ends and CD 2 begins" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can achieve it either by splitting an album into different folders (CD1, CD2, Side A, Side B, Disk 1, Disk 2, etc.) or by using a disk number tag in the metadata
       </div>
     </td>
@@ -131,22 +135,23 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
 
 <details>
 <summary>⚙️ <b>Interactive buttons</b> — Like, Shuffle, Repeat, Lyrics, AB Loop, Queue; Bookmark, Playback speed, Sleep timer</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; margin: 0; width: auto;">
   <!-- ВЕРХНИЙ РЯД: ДВЕ КАРТИНКИ -->
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка (без отступа слева) -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/interactive_buttons_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/interactive_buttons_1.png" alt="Now Playing with the Like, Shuffle, Repeat, Lyrics and AB Loop buttons" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The set of interactive buttons changes depending on the "Top button hold" choice
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/interactive_buttons_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/interactive_buttons_2.png" alt="Now Playing with the interactive buttons in theme colors" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Supports Light / Dark / Theme colors
       </div>
     </td>
@@ -154,15 +159,15 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
 
   <!-- ОТСТУП МЕЖДУ РЯДАМИ -->
   <tr style="border: none; background: transparent; height: 20px;">
-    <td colspan="2" style="border: none; padding: 0;"></td>
+    <td colspan="2" valign="top" style="border: none; padding: 0;"></td>
   </tr>
 
   <!-- НИЖНИЙ РЯД: ТРЕТЬЯ КАРТИНКА ПО ЦЕНТРУ ПЕРВЫХ ДВУХ -->
   <tr style="border: none; background: transparent; vertical-align: top;">
-    <td colspan="2" style="border: none; padding: 0; text-align: center;">
+    <td colspan="2" align="center" valign="top" style="border: none; padding: 0; text-align: center;">
       <div style="display: inline-block; text-align: center;">
-        <img src="./screenshots/interactive_buttons_3.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-        <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+        <img src="./screenshots/interactive_buttons_3.png" alt="Audiobook player with the Bookmark, Playback speed and Sleep timer buttons" width="373" style="display: block; max-width: none; margin: 0 auto;">
+        <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
           Bookmark, Playback speed and Sleep timer are exclusive to the audiobook player
         </div>
       </div>
@@ -175,22 +180,23 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
 
 <details>
 <summary>⚙️ <b>Album cover changes</b> — they're bigger, automatic crop and fill added, broken tilt is fixed; option to disable the tilt</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cover_tilt_on.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/cover_tilt_on.png" alt="Now Playing with the album cover tilted" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Cover tilt On
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cover_tilt_off.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/cover_tilt_off.png" alt="Now Playing with the album cover flat" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Cover tilt Off
       </div>
     </td>
@@ -200,7 +206,8 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
 
 <details>
 <summary>⚙️ <b>A clean Now Playing screen</b> — hide artists and move them into the title</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 Two separate options: "Show only the first artist" and "Move hidden artists to the title" (the
 latter can be enabled only when the former is).
@@ -221,30 +228,25 @@ screen at the same time, without compromises and without editing metadata.
 </div>
 </details>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span>⚙️ <b>Top button hold to open Lyrics / Queue / Bookmark / AB Loop</b></span></p>
+<p>&#9679;&ensp;⚙️ <b>Top button hold to open Lyrics / Queue / Bookmark / AB Loop</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Long song titles scroll</b></span></p>
+<p>&#9679;&ensp;<b>Long song titles scroll</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Lyrics fix</b> — long lines no longer extend beyond the edges of the screen</span></p>
+<p>&#9679;&ensp;<b>Lyrics fix</b> — long lines no longer extend beyond the edges of the screen</p>
 
 ### Menu
 
 <details>
 <summary>⚙️ <b>Alphabetical scroll</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none;">
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/alpha_scroll.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/alpha_scroll.png" alt="All songs list with the alphabetical scroll letter over it" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Starts after a number of wheel scrolls you choose
       </div>
     </td>
@@ -255,7 +257,8 @@ screen at the same time, without compromises and without editing metadata.
 
 <details>
 <summary>⚙️ <b>Selection follows currently playing song</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 When the screen is locked, and while the scroll wheel is at rest, the selection automatically follows the song currently playing
 
@@ -270,21 +273,22 @@ When you open the list containing the currently playing song, the selection imme
 
 <details>
 <summary>⚙️ <b>Show songs only by the selected artist inside Artists → Album</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none;">
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/artist_scope_on.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/artist_scope_on.png" alt="Album opened from Artists showing only the selected artist's songs" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         On, Beat Culture artist is selected
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/artist_scope_off.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/artist_scope_off.png" alt="The same album showing every song on it" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Off, Beat Culture artist is selected
       </div>
     </td>
@@ -295,22 +299,23 @@ When you open the list containing the currently playing song, the selection imme
 
 <details>
 <summary>⚙️ <b>Main menu and Settings margins fixes</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/fixed_margins_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/fixed_margins_1.png" alt="Main menu with the fixed margins" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         On, fixed margins
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/fixed_margins_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/fixed_margins_2.png" alt="Main menu with the stock margins" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Off, stock margins
       </div>
     </td>
@@ -318,7 +323,7 @@ When you open the list containing the currently playing song, the selection imme
   </tr>
   <!-- Вторая строка: Общий текст по центру -->
   <tr style="border: none; background: transparent;">
-    <td colspan="2" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
+    <td colspan="2" align="center" valign="top" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
       Worth turning off with themes whose backgrounds are drawn for stock margins — bundled Melody Munchkin, for example.
     </td>
   </tr>
@@ -328,31 +333,33 @@ When you open the list containing the currently playing song, the selection imme
 
 <details>
 <summary>⚙️ <b>Release year in album names</b></summary>
-<div style="padding: 16px 0 0">
-<img src="./screenshots/cover_set_1.png">
+<div>
+<p></p>
+<img src="./screenshots/cover_set_1.png" alt="Album list with the release year in every album name" width="373">
 
 </div>
 </details>
 
 <details>
 <summary><b>Show albums instead of songs when opening an artist page</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/artists_show_albums.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/artists_show_albums.png" alt="Artist page listing albums, with the Show all songs button on top" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/artists_show_albums_all_songs.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/artists_show_albums_all_songs.png" alt="Artist page listing every song instead of albums" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
   </tr>
   <!-- Вторая строка: Общий текст по центру -->
   <tr style="border: none; background: transparent;">
-    <td colspan="2" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
+    <td colspan="2" align="center" valign="top" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
       You can use "Show all songs" button to replicate stock behaviour.
     </td>
   </tr>
@@ -362,97 +369,98 @@ When you open the list containing the currently playing song, the selection imme
 
 <details>
 <summary><b>"Show all songs" and "Shuffle" buttons in Folders</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none;">
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/folders_show_all.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/folders_show_all.png" alt="Folder holding sub-folders, with the Show all songs button on top" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         A folder holding sub-folders gets "Show all songs"
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/folders_shuffle.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/folders_shuffle.png" alt="Folder holding only songs, with the Shuffle button on top" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         A folder holding only songs gets "Shuffle"
       </div>
     </td>
   </tr>
 </table>
- <br>
 
 </div>
 </details>
 
 <details>
 <summary><b>Currently playing song indicator</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/playing_indicator.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/playing_indicator.png" alt="Song list with the currently playing track marked by an arrow" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
-<br>
 
 </div>
 </details>
 
 <details>
 <summary><b>Option to rename your Bluetooth devices</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/bluetooth_rename.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/bluetooth_rename.png" alt="Paired Bluetooth device with the Forget device and Rename device menu" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
-<br>
 
 </div>
 </details>
 
 <details>
 <summary><b>Library has been moved to its own section in E-books</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/ebook_library.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/ebook_library.png" alt="E-books section with Continue reading, Local files and Library" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
-<br>
 
 </div>
 </details>
 
 <details>
 <summary><b>Manual album thumbnail selection</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; margin: 0; width: auto;">
   <!-- ВЕРХНИЙ РЯД: ДВЕ КАРТИНКИ -->
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка (без отступа слева) -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cover_set_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/cover_set_1.png" alt="Album list using the CD 1 cover as the thumbnail" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Thumbnail from CD1 is selected by default
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cover_set_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/cover_set_2.png" alt="Context menu with the Set as album thumbnail item" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Changing the thumbnail
       </div>
     </td>
@@ -460,31 +468,24 @@ When you open the list containing the currently playing song, the selection imme
 
   <!-- ОТСТУП МЕЖДУ РЯДАМИ -->
   <tr style="border: none; background: transparent; height: 20px;">
-    <td colspan="2" style="border: none; padding: 0;"></td>
+    <td colspan="2" valign="top" style="border: none; padding: 0;"></td>
   </tr>
 
   <!-- НИЖНИЙ РЯД: ТРЕТЬЯ И ЧЕТВЕРТАЯ КАРТИНКИ РЯДОМ -->
   <tr style="border: none; background: transparent; vertical-align: top;">
-    <td colspan="2" style="border: none; padding: 0; text-align: center;">
-      <!-- Внутренняя таблица для идеального выравнивания пары снизу -->
-      <table border="0" style="border-collapse: collapse; border: none; margin: 0 auto; display: inline-table; width: auto;">
-        <tr style="border: none; background: transparent; vertical-align: top;">
-          <!-- Третья картинка -->
-          <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-            <img src="./screenshots/cover_set_3.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
-            <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
-              Thumbnail from CD2 is selected
-            </div>
-          </td>
-          <!-- Четвертая картинка -->
-          <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-            <img src="./screenshots/cover_set_4.png" alt="New screen" style="display: block; max-width: none; margin: 0;">
-            <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
-              Resetting to default, only visible if the thumbnail was manually set
-            </div>
-          </td>
-        </tr>
-      </table>
+    <!-- Третья картинка -->
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/cover_set_3.png" alt="Album list using the CD 2 cover as the thumbnail" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+        Thumbnail from CD2 is selected
+      </div>
+    </td>
+    <!-- Четвертая картинка -->
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/cover_set_4.png" alt="Context menu with the Reset thumbnail item" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+        Resetting to default, only visible if the thumbnail was manually set
+      </div>
     </td>
   </tr>
 </table>
@@ -492,54 +493,41 @@ When you open the list containing the currently playing song, the selection imme
 </div>
 </details>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Optimized album cover previews</b> — no more crashes, no need to resize covers manually</span></p>
+<p>&#9679;&ensp;<b>Optimized album cover previews</b> — no more crashes, no need to resize covers manually</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>"Open album", "Open artist", "Open source" buttons in context menu</b></span></p>
+<p>&#9679;&ensp;<b>"Open album", "Open artist", "Open source" buttons in context menu</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>"Sort by Date added"</b> — for songs within playlists</span></p>
+<p>&#9679;&ensp;<b>"Sort by Date added"</b> — for songs within playlists</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>"Sort by Release year"</b> — for albums</span></p>
+<p>&#9679;&ensp;<b>"Sort by Release year"</b> — for albums</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Reboot button</b></span></p>
+<p>&#9679;&ensp;<b>Reboot button</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>/Music/ and /Videos/ are opened by default in Folders</b> — instead of the SD card root</span></p>
+<p>&#9679;&ensp;<b>/Music/ and /Videos/ are opened by default in Folders</b> — instead of the SD card root</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Genres and Search menu rework</b> — revised to reflect the changes and align with the other sections</span></p>
+<p>&#9679;&ensp;<b>Genres and Search menu rework</b> — revised to reflect the changes and align with the other sections</p>
 
 ### System
 
 <details>
 <summary>⚙️ <b>Favorites system</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/favorites_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/favorites_1.png" alt="Now Playing with the song added to Favorites" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can add and remove songs from your favorites by tapping the heart icon in Now Playing
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/favorites_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/favorites_2.png" alt="Context menu with the Add to Favorites item" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Alternatively, you can add songs to the "Favorites" playlist just as you would to any other playlist; the likes will be added or removed automatically
       </div>
     </td>
@@ -547,7 +535,7 @@ When you open the list containing the currently playing song, the selection imme
   </tr>
   <!-- Вторая строка: Общий текст по центру -->
   <tr style="border: none; background: transparent;">
-    <td colspan="2" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
+    <td colspan="2" align="center" valign="top" style="border: none; padding-top: 20px; text-align: center; font-size: 15px; line-height: 1.5;">
       When you turn off this setting, the playlist and the likes you've given aren't deleted - they're simply hidden
     </td>
   </tr>
@@ -557,7 +545,8 @@ When you open the list containing the currently playing song, the selection imme
 
 <details>
 <summary>⚙️ <b>After deleting a song also delete the folder it was stored in</b> — only if it is empty</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 When songs or albums are deleted, the folders that held them are deleted as well, if they are left
 empty.
@@ -571,18 +560,19 @@ This does not apply to the Folders section, where deleting works as usual.
 
 <details>
 <summary>⚙️ <b>Better keyboard and typing</b> — case switch, caps lock, three layouts</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none; width: max-content;">
   <!-- Первая строка: Картинки и их отдельные подписи -->
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/keyboard_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/keyboard_1.png" alt="On-screen keyboard on the Latin layout, its EN badge shown" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/keyboard_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/keyboard_2.png" alt="On-screen keyboard on the punctuation and digits layout" width="373" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
 <br>
@@ -593,53 +583,52 @@ This does not apply to the Folders section, where deleting works as usual.
 </div>
 </details>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span>⚙️ <b>Disable auto screen lock while reading lyrics and books</b></span></p>
+<p>&#9679;&ensp;⚙️ <b>Disable auto screen lock while reading lyrics and books</b></p>
 
 <details>
 <summary><b>Play queue implementation</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none;">
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/queue_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/queue_1.png" alt="Queue screen listing what plays next" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Depending on your settings, you can open the queue by pressing the top button in "Now Playing" screen or by using the corresponding interactive button
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/queue_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/queue_2.png" alt="Context menu with the Add to queue item" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can add a song to the queue using the 'Add to Queue' button in the context menu, which appears almost everywhere. A queued track slots in right after the current song
       </div>
     </td>
   </tr>
 </table>
- <br>
 </div>
 </details>
 
 <details>
 <summary><b>A proper cache system</b> — no more text and images blinking, system works faster</summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 <table border="0" style="border-collapse: collapse; border: none;">
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
-    <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cache_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/cache_1.png" alt="better-Y menu with the Cache library dialog open" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The cache builds itself as you use the player, and "Cache library" button does the whole library in one go
       </div>
     </td>
     <!-- Вторая колонка -->
-    <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cache_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
-      <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/cache_2.png" alt="Clear cache dialog with the size of every category" width="373" style="display: block; max-width: none; margin: 0 auto;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         It costs roughly 4 MB per 1000 songs. It may be larger even with the same number of songs, depending on the number of albums
       </div>
     </td>
@@ -650,56 +639,35 @@ This does not apply to the Folders section, where deleting works as usual.
 
 <details>
 <summary><b>Existing song navigation logic changes</b></summary>
-<div style="padding: 16px 0 0">
+<div>
+<p></p>
 
 The track-switching functionality, repeat and shuffle behavior have been updated. <br>
 Also, selecting a currently playing song from the list no longer starts it from the beginning
 </div>
 </details>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Based on 3.1.2 firmware</b> — AirPods fix included</span></p>
+<p>&#9679;&ensp;<b>Based on 3.1.2 firmware</b> — AirPods fix included</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Themes support</b> — themes work as usual, and everything new adapts to them</span></p>
+<p>&#9679;&ensp;<b>Themes support</b> — themes work as usual, and everything new adapts to them</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Scroll and overall optimizations</b> — every menu is faster and more responsive, the library scans quicker</span></p>
+<p>&#9679;&ensp;<b>Scroll and overall optimizations</b> — every menu is faster and more responsive, the library scans quicker</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Double press of the play button opens "Now Playing"</b> — from everywhere</span></p>
+<p>&#9679;&ensp;<b>Double press of the play button opens "Now Playing"</b> — from everywhere</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>"Update library"</b> — re-reads metadata and cover art for songs already in the library if you have changed it</span></p>
+<p>&#9679;&ensp;<b>"Update library"</b> — re-reads metadata and cover art for songs already in the library if you have changed it</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Force reboot</b> — press and hold the top + bottom buttons</span></p>
+<p>&#9679;&ensp;<b>Force reboot</b> — press and hold the top + bottom buttons</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>"File extensions" setting fix</b> — folder names are no longer erased after a dot</span></p>
+<p>&#9679;&ensp;<b>"File extensions" setting fix</b> — folder names are no longer erased after a dot</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>UI, translations and text fixes</b></span></p>
+<p>&#9679;&ensp;<b>UI, translations and text fixes</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Improved support for text encodings</b> — for Cyrillic, Greek, Hebrew and Thai</span></p>
+<p>&#9679;&ensp;<b>Improved support for text encodings</b> — for Cyrillic, Greek, Hebrew and Thai</p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>Russian now supports fonts from custom themes</b></span></p>
+<p>&#9679;&ensp;<b>Russian now supports fonts from custom themes</b></p>
 
-<p style="display: flex; align-items: center">
-<span style="display: inline-block; width: 17px; font-size: 0.85em; user-select: none;">●</span>
-<span><b>And a lot of other minor fixes and corrections</b></span></p>
+<p>&#9679;&ensp;<b>And a lot of other minor fixes and corrections</b></p>
 
 ****
 
