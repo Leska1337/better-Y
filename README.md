@@ -1,8 +1,12 @@
+<div align="center">
+
 ![Logo](./screenshots/plus_logo.png)
 
 # better-Y
 
 A mod of the stock launcher for the **innioasis Y1**, based on 3.1.2 firmware.
+
+</div>
 
 ## What it adds
 
@@ -107,14 +111,14 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/CD_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/CD_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The list of songs in an album is divided into CD1, CD2 or Side A, Side B
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/CD_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/CD_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can achieve it either by splitting an album into different folders (CD1, CD2, Side A, Side B, Disk 1, Disk 2, etc.) or by using a disk number tag in the metadata
       </div>
@@ -134,14 +138,14 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка (без отступа слева) -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/interactive_buttons_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0;">
+      <img src="./screenshots/interactive_buttons_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The set of interactive buttons changes depending on the "Top button hold" choice
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/interactive_buttons_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0;">
+      <img src="./screenshots/interactive_buttons_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Supports Light / Dark / Theme colors
       </div>
@@ -157,7 +161,7 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
   <tr style="border: none; background: transparent; vertical-align: top;">
     <td colspan="2" style="border: none; padding: 0; text-align: center;">
       <div style="display: inline-block; text-align: center;">
-        <img src="./screenshots/interactive_buttons_3.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+        <img src="./screenshots/interactive_buttons_3.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
         <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
           Bookmark, Playback speed and Sleep timer are exclusive to the audiobook player
         </div>
@@ -178,14 +182,14 @@ embedded cover belongs to one song. "Set as album thumbnail" overrides all of it
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cover_tilt_on.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/cover_tilt_on.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Cover tilt On
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cover_tilt_off.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/cover_tilt_off.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Cover tilt Off
       </div>
@@ -239,7 +243,7 @@ screen at the same time, without compromises and without editing metadata.
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/alpha_scroll.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/alpha_scroll.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Starts after a number of wheel scrolls you choose
       </div>
@@ -272,14 +276,14 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/artist_scope_on.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/artist_scope_on.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         On, Beat Culture artist is selected
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/artist_scope_off.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/artist_scope_off.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Off, Beat Culture artist is selected
       </div>
@@ -298,14 +302,14 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/fixed_margins_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/fixed_margins_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         On, fixed margins
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/fixed_margins_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/fixed_margins_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Off, stock margins
       </div>
@@ -339,11 +343,11 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/artists_show_albums.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/artists_show_albums.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/artists_show_albums_all_songs.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/artists_show_albums_all_songs.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
     </td>
   </tr>
   <!-- Вторая строка: Общий текст по центру -->
@@ -364,14 +368,14 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/folders_show_all.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/folders_show_all.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         A folder holding sub-folders gets "Show all songs"
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/folders_shuffle.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/folders_shuffle.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         A folder holding only songs gets "Shuffle"
       </div>
@@ -391,7 +395,7 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/playing_indicator.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/playing_indicator.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
 <br>
@@ -407,7 +411,7 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/bluetooth_rename.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/bluetooth_rename.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
 <br>
@@ -423,7 +427,7 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/ebook_library.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/ebook_library.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
 <br>
@@ -440,14 +444,14 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка (без отступа слева) -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cover_set_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0;">
+      <img src="./screenshots/cover_set_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Thumbnail from CD1 is selected by default
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cover_set_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0;">
+      <img src="./screenshots/cover_set_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Changing the thumbnail
       </div>
@@ -467,14 +471,14 @@ When you open the list containing the currently playing song, the selection imme
         <tr style="border: none; background: transparent; vertical-align: top;">
           <!-- Третья картинка -->
           <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-            <img src="./screenshots/cover_set_3.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0;">
+            <img src="./screenshots/cover_set_3.png" alt="Add to queue" style="display: block; max-width: none; margin: 0;">
             <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
               Thumbnail from CD2 is selected
             </div>
           </td>
           <!-- Четвертая картинка -->
           <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-            <img src="./screenshots/cover_set_4.png" alt="New screen" style="display: block; width: 390px; max-width: none; margin: 0;">
+            <img src="./screenshots/cover_set_4.png" alt="New screen" style="display: block; max-width: none; margin: 0;">
             <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
               Resetting to default, only visible if the thumbnail was manually set
             </div>
@@ -527,14 +531,14 @@ When you open the list containing the currently playing song, the selection imme
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/favorites_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/favorites_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can add and remove songs from your favorites by tapping the heart icon in Now Playing
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/favorites_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/favorites_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Alternatively, you can add songs to the "Favorites" playlist just as you would to any other playlist; the likes will be added or removed automatically
       </div>
@@ -574,11 +578,11 @@ This does not apply to the Folders section, where deleting works as usual.
   <tr style="border: none; background: transparent; vertical-align: top;">
         <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/keyboard_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/keyboard_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/keyboard_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/keyboard_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
     </td>
 </table>
 <br>
@@ -601,14 +605,14 @@ This does not apply to the Folders section, where deleting works as usual.
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/queue_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/queue_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         Depending on your settings, you can open the queue by pressing the top button in "Now Playing" screen or by using the corresponding interactive button
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/queue_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/queue_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         You can add a song to the queue using the 'Add to Queue' button in the context menu, which appears almost everywhere. A queued track slots in right after the current song
       </div>
@@ -627,14 +631,14 @@ This does not apply to the Folders section, where deleting works as usual.
   <tr style="border: none; background: transparent; vertical-align: top;">
     <!-- Первая колонка -->
     <td style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/cache_1.png" alt="Queue screen" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/cache_1.png" alt="Queue screen" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         The cache builds itself as you use the player, and "Cache library" button does the whole library in one go
       </div>
     </td>
     <!-- Вторая колонка -->
     <td style="border: none; padding: 0 0 0 15px; width: 1px;">
-      <img src="./screenshots/cache_2.png" alt="Add to queue" style="display: block; width: 390px; max-width: none; margin: 0 auto;">
+      <img src="./screenshots/cache_2.png" alt="Add to queue" style="display: block; max-width: none; margin: 0 auto;">
       <div style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
         It costs roughly 4 MB per 1000 songs. It may be larger even with the same number of songs, depending on the number of albums
       </div>

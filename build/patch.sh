@@ -59,7 +59,14 @@ manifest_field() {   # manifest_field <file> <key>  — enough for the flat keys
 do_export() {
     local base
     base="$(get_base)"
-    rm -rf "$SET_DIR"
+    # The set is rebuilt from scratch, but NOT the git repository that lives in it: once the
+    # public repo has been cloned or pushed from here, publish/.git holds its history, its remote
+    # and its identity. Wiping it turns the next `git` run inside publish/ into a run against the
+    # PARENT repository -- git finds no .git beside it and walks up -- and that one carries the
+    # whole decompiled stock launcher and must never be pushed anywhere. Everything else goes.
+    if [ -d "$SET_DIR" ]; then
+        find "$SET_DIR" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+    fi
     mkdir -p "$SET_DIR/files"
 
     # a "-" line count marks a binary file: it cannot be carried as a diff hunk

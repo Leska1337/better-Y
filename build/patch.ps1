@@ -58,7 +58,15 @@ function Get-ApktoolVersion {
 
 function Invoke-Export {
     $base = Get-Base
-    if (Test-Path $Set) { Remove-Item -Recurse -Force $Set }
+    # The set is rebuilt from scratch, but NOT the git repository that lives in it: once the
+    # public repo has been cloned or pushed from here, publish\.git holds its history, its remote
+    # and its identity. Wiping it turns the next `git` run inside publish\ into a run against the
+    # PARENT repository -- git finds no .git beside it and walks up -- and that one carries the
+    # whole decompiled stock launcher and must never be pushed anywhere. Everything else goes.
+    if (Test-Path $Set) {
+        Get-ChildItem -Force $Set | Where-Object { $_.Name -ne ".git" } |
+            ForEach-Object { Remove-Item -Recurse -Force $_.FullName }
+    }
     New-Item -ItemType Directory -Force $Set | Out-Null
 
     $status = Run-Git @("diff", "--name-status", "$base", "HEAD", "--", "build/src")
