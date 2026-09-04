@@ -699,6 +699,9 @@ Download `rom.zip` from the Releases page, open the updater, press "Choose Packa
 6. Press Download
 7. Connect the player to the PC and wait for the installation to complete
 
+> [!TIP]
+> "Cache library" option in the better-Y menu is recommended after the first launch
+
 ## Reporting a bug
 
 - After the bug occurs, open "better-Y" → [Tools] → "Save diagnostic log". Create an issue, describe the bug and attach the log file. If possible, include the steps to reproduce it. 
