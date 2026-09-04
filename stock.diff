@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f6bb97cb 100644
+index 01b1f730..87bfadc6 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..f6bb97cb 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000002
++  versionCode: 10000006
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19196,7 +19196,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..1447c416 100644
+index 71fe29d0..09960daa 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20145,7 +20145,7 @@ index 71fe29d0..1447c416 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev2</string>
++    <string name="ipp_version">v1.0.0-dev6</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -49210,6 +49210,30 @@ index 1e17511e..2457719a 100644
      const-string v0, "type"
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$MyViewHolder.smali
+index b6aebb6e..85b58d22 100644
+--- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$MyViewHolder.smali
++++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$MyViewHolder.smali
+@@ -206,7 +206,8 @@
+ 
+     invoke-static {p2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/PlaylistsActivity$MyViewHolder;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- see FileListAdapter.
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 437
+     sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -281,7 +282,8 @@
+ 
+     invoke-static {p2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/PlaylistsActivity$MyViewHolder;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- free unless the line was moving.
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 445
+     sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
 index 6baad174..62ca8235 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
@@ -49831,10 +49855,30 @@ index 66c966fd..1603f3da 100644
  
      .line 271
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-index 64e6832c..da714362 100644
+index 64e6832c..93f74e23 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-@@ -409,138 +409,60 @@
+@@ -167,7 +167,8 @@
+ 
+     invoke-static {p2, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/SearchActivity$MyViewHolder;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- see FileListAdapter.
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 372
+     sget-object p2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+@@ -284,7 +285,8 @@
+ 
+     invoke-static {p2, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/SearchActivity$MyViewHolder;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- free unless the line was moving.
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 382
+     sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -409,138 +411,60 @@
  
      .line 392
      :cond_1
@@ -51412,10 +51456,10 @@ index b9220ba5..05cae465 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9f..193239fa 100644
+index 4ed7ef9f..3db20d5e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-@@ -135,358 +135,271 @@
+@@ -135,358 +135,279 @@
  
  # virtual methods
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
@@ -51718,7 +51762,12 @@ index 4ed7ef9f..193239fa 100644
 +    invoke-virtual { v0, v4 }, Lcom/innioasis/music/util/Other;->showV(Landroid/view/View;)V
 +  .line 76
 +    invoke-static { v11, v2 }, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-+    invoke-virtual { v7, v11 }, Lcom/innioasis/music/adapter/AlbumListAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's, on BOTH lines of the row -- and that
++    # is the case the shared lap exists for: the album name and the artist under it are of
++    # different lengths, so with a timer each they would rest and start at different moments in
++    # the same row (Scroll).
++    invoke-static { v11 }, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
++    invoke-static { v10 }, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
 +  .line 77
      sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 -
@@ -51861,7 +51910,10 @@ index 4ed7ef9f..193239fa 100644
 -
 +    invoke-virtual { v0, v11, v2, v14 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
 +  .line 84
-+    invoke-virtual { v7, v11 }, Lcom/innioasis/music/adapter/AlbumListAdapter;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- one line cut with an ellipsis.
++    # Free unless this line had actually started moving; the ellipsis is never switched on a bind.
++    invoke-static { v11 }, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
++    invoke-static { v10 }, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
 +  :L9
 +  .line 87
 +    invoke-virtual/range { p0 .. p0 }, Lcom/innioasis/music/adapter/AlbumListAdapter;->getSelectedIndexList()Ljava/util/List;
@@ -51963,7 +52015,7 @@ index 4ed7ef9f..193239fa 100644
      return-object v9
  .end method
  
-@@ -588,4 +501,4 @@
+@@ -588,4 +509,4 @@
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/AlbumListAdapter;->notifyDataSetChanged()V
  
      return-void
@@ -51971,7 +52023,7 @@ index 4ed7ef9f..193239fa 100644
 +.end method
 \ No newline at end of file
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
-index ce188cfe..9f65d4c9 100644
+index ce188cfe..65eb11b2 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 @@ -59,7 +59,27 @@
@@ -52067,7 +52119,7 @@ index ce188cfe..9f65d4c9 100644
      sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
  
      invoke-static {p3, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-@@ -181,7 +217,7 @@
+@@ -181,12 +217,15 @@
  
      const/4 v6, 0x1
  
@@ -52076,7 +52128,16 @@ index ce188cfe..9f65d4c9 100644
  
      .line 41
      invoke-static {v0, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-@@ -240,7 +276,7 @@
+ 
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/FileListAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- it scrolls a doubled copy of the
++    # string by scrollTo, shares one clock and one lap with every other line on screen, and takes
++    # nothing at all on a bind (Scroll).
++    invoke-static {v0}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 42
+     sget-object p3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -240,7 +279,7 @@
      invoke-virtual {p3, v7}, Lcom/innioasis/music/util/Other;->showV(Landroid/view/View;)V
  
      .line 49
@@ -52085,7 +52146,7 @@ index ce188cfe..9f65d4c9 100644
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/FileListAdapter;->getSelectedIndexList()Ljava/util/List;
  
      move-result-object p3
-@@ -253,13 +289,13 @@
+@@ -253,13 +292,13 @@
  
      move-result p3
  
@@ -52101,7 +52162,7 @@ index ce188cfe..9f65d4c9 100644
  
      .line 50
      sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -299,7 +335,15 @@
+@@ -299,7 +338,15 @@
      invoke-virtual {p1, p2, v2, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
      .line 54
@@ -52229,7 +52290,7 @@ index 754dc7c2..44333f33 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
-index 13bfb259..13b87a47 100644
+index 13bfb259..8e3e1b0c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 @@ -79,6 +79,19 @@
@@ -52283,7 +52344,29 @@ index 13bfb259..13b87a47 100644
      check-cast v2, Ljava/lang/CharSequence;
  
      invoke-virtual {p3, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -307,5 +325,12 @@
+@@ -204,7 +222,10 @@
+     .line 35
+     invoke-static {p3, v7}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p3}, Lcom/innioasis/music/adapter/MainAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- it scrolls a doubled copy of the
++    # string by scrollTo, so the line runs on without the platform's restart and fade, and it
++    # shares one clock and one lap with every other line on screen (Scroll).
++    invoke-static {p3}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     goto :goto_0
+ 
+@@ -253,7 +274,8 @@
+     .line 42
+     invoke-static {p3, v7}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p3}, Lcom/innioasis/music/adapter/MainAdapter;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- one line cut with an ellipsis.
++    invoke-static {p3}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 44
+     :goto_0
+@@ -307,5 +329,12 @@
      :cond_1
      invoke-static {p2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -52476,7 +52559,7 @@ index 1b2fd585..9674e109 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
-index c65cfdfe..f14f82ff 100644
+index c65cfdfe..47c4b6d0 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 @@ -1,4 +1,6 @@
@@ -52655,7 +52738,7 @@ index c65cfdfe..f14f82ff 100644
  
      .line 69
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getNowPosition()I
-@@ -356,7 +418,7 @@
+@@ -356,14 +418,17 @@
  
      const/4 v5, 0x1
  
@@ -52664,7 +52747,18 @@ index c65cfdfe..f14f82ff 100644
  
      .line 71
      iget-object p1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvSongName:Landroid/widget/TextView;
-@@ -419,7 +481,7 @@
+ 
+     invoke-static {p1, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p1}, Lcom/innioasis/music/adapter/SongListAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- it scrolls a doubled copy of the
++    # string by scrollTo, so the line runs on without the platform's restart and fade, and it
++    # shares one clock and one lap with every other line on screen (Scroll).
++    invoke-static {p1}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 72
+     sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -419,7 +484,7 @@
      goto/16 :goto_2
  
      .line 79
@@ -52673,7 +52767,7 @@ index c65cfdfe..f14f82ff 100644
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getSelectedIndexList()Ljava/util/List;
  
      move-result-object p3
-@@ -434,13 +496,13 @@
+@@ -434,20 +499,21 @@
  
      const-string v6, "vb.rightArrow"
  
@@ -52689,7 +52783,16 @@ index c65cfdfe..f14f82ff 100644
  
      .line 81
      iget-object p1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvSongName:Landroid/widget/TextView;
-@@ -489,7 +551,7 @@
+ 
+     invoke-static {p1, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p1}, Lcom/innioasis/music/adapter/SongListAdapter;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- one line cut with an ellipsis.
++    invoke-static {p1}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 82
+     sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+@@ -489,12 +555,13 @@
      goto :goto_2
  
      .line 89
@@ -52698,7 +52801,14 @@ index c65cfdfe..f14f82ff 100644
      iget-object p1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvSongName:Landroid/widget/TextView;
  
      invoke-static {p1, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-@@ -560,13 +622,13 @@
+ 
+-    invoke-virtual {p0, p1}, Lcom/innioasis/music/adapter/SongListAdapter;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: the resting look for a row that is not the cursor -- one line cut with an ellipsis.
++    invoke-static {p1}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 90
+     sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+@@ -560,13 +627,13 @@
  
      invoke-static {v2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -52714,7 +52824,7 @@ index c65cfdfe..f14f82ff 100644
      const/4 v6, 0x0
  
      :goto_3
-@@ -579,13 +641,13 @@
+@@ -579,13 +646,13 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -52730,7 +52840,7 @@ index c65cfdfe..f14f82ff 100644
      const/4 v4, 0x0
  
      :goto_4
-@@ -600,11 +662,11 @@
+@@ -600,11 +667,11 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -52744,7 +52854,7 @@ index c65cfdfe..f14f82ff 100644
      invoke-virtual {v1, v2, p1, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
      .line 99
-@@ -616,6 +678,14 @@
+@@ -616,6 +683,14 @@
  
      check-cast p1, Landroid/view/View;
  
@@ -53178,7 +53288,7 @@ index 306c059f..05023aa4 100644
  
      invoke-static {p2, p3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
-index fe02089c..bb0ec0a6 100644
+index fe02089c..aeb05287 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 @@ -411,6 +411,18 @@
@@ -53211,6 +53321,94 @@ index fe02089c..bb0ec0a6 100644
      if-eqz p1, :cond_1
  
      .line 131
+@@ -996,38 +1012,18 @@
+     iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+     :cond_0
+-    if-eqz p2, :cond_1
+-
++    # ipp: one Wheel.follow instead of the stock tail -- notifyDataSetChanged() (a full layout
++    # pass over every visible row) plus a fresh smoothScrollToPosition() on EVERY click, which
++    # restarts an animation the wheel has already run past: the list chases a target the cursor
++    # has left, and the highlight walks off the screen. follow() repaints the two rows whose
++    # highlight changed, drops the item animator and scrolls instantly, row-aligned. Where the
++    # rows cannot be reached -- a list that is not laid out yet, which is how initView calls this
++    # -- it falls back to notifyDataSetChanged() itself.
+     .line 60
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
+-
+-    .line 61
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
+-
+-    goto :goto_0
+-
+-    .line 62
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
+-
+-    .line 63
+-    :goto_0
+     iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+-    invoke-direct {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->positionIsValid(I)Z
+-
+-    move-result p2
+-
+-    if-eqz p2, :cond_2
++    invoke-static {p1, p2, p0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+-    .line 64
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
+-
+-    :cond_2
+     return-void
+ .end method
+ 
+@@ -1054,37 +1050,12 @@
+     iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+     :cond_0
+-    if-eqz p2, :cond_1
+-
++    # ipp: see toNext -- one Wheel.follow instead of notifyDataSetChanged() plus a fresh
++    # smoothScrollToPosition() on every click.
+     .line 72
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
+-
+-    .line 73
+     iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
++    invoke-static {p1, p2, p0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+-    goto :goto_0
+-
+-    .line 74
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
+-
+-    .line 75
+-    :goto_0
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-
+-    invoke-direct {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->positionIsValid(I)Z
+-
+-    move-result p2
+-
+-    if-eqz p2, :cond_2
+-
+-    .line 76
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
+-
+-    :cond_2
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
 index bf78e9a8..0bf8c44d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
@@ -60966,7 +61164,7 @@ index b04c4d3d..144d4164 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
-index 402025b9..817cba56 100644
+index 402025b9..031110b6 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
 @@ -59,7 +59,33 @@
@@ -61047,7 +61245,17 @@ index 402025b9..817cba56 100644
  
      move-result-object v3
  
-@@ -242,6 +269,10 @@
+@@ -187,7 +214,8 @@
+     .line 30
+     invoke-static {p3, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p3}, Lcom/innioasis/y1/adapter/AudiobookAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- see FileListAdapter.
++    invoke-static {p3}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 31
+     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -242,6 +270,10 @@
  
      invoke-virtual {v2, p2, v1, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -61058,7 +61266,7 @@ index 402025b9..817cba56 100644
      .line 37
      :goto_1
      invoke-virtual {p0}, Lcom/innioasis/y1/adapter/AudiobookAdapter;->getSelectedIndexList()Ljava/util/List;
-@@ -308,5 +339,10 @@
+@@ -308,5 +340,10 @@
      invoke-virtual {p1, v0, p3, v8}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
      :cond_2
@@ -61070,7 +61278,7 @@ index 402025b9..817cba56 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
-index 5ee057a4..471e37f0 100644
+index 5ee057a4..a410e464 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 @@ -59,7 +59,24 @@
@@ -61117,7 +61325,17 @@ index 5ee057a4..471e37f0 100644
      const p3, 0x7f0a02bc
  
      .line 23
-@@ -296,5 +316,9 @@
+@@ -181,7 +201,8 @@
+     .line 29
+     invoke-static {p3, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p3}, Lcom/innioasis/y1/adapter/BookmarkAdapter;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's own marquee instead of the platform's -- see FileListAdapter.
++    invoke-static {p3}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 30
+     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -296,5 +317,9 @@
      invoke-virtual {p1, v0, p3, v8}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
      :cond_3

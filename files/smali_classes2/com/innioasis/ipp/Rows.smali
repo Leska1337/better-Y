@@ -342,54 +342,52 @@
 .end method
 
 .method public static bookRow(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
-  .catchall { :L0 .. :L3 } :L4
-  .registers 6
+  .catchall { :L0 .. :L2 } :L3
+  .registers 5
   .line 58
     if-nez p1, :L0
     return-void
   :L0
   .line 60
     invoke-virtual { p1 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
-    move-result-object v0
-    const v1, 2131100267
-    invoke-virtual { v0, v1 }, Landroid/content/res/Resources;->getColor(I)I
-    move-result v0
-  .line 61
-    const v1, 2131362492
-    invoke-virtual { p1, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v1
-  .line 62
-    instance-of v2, v1, Landroid/widget/TextView;
-    const/4 v3, 0
-    if-eqz v2, :L2
-  .line 63
-    check-cast v1, Landroid/widget/TextView;
-  .line 64
-    if-eqz p0, :L1
-    invoke-virtual { p0, v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->makeItNormal(Landroid/widget/TextView;)V
-  :L1
-  .line 65
-    sget-object p0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    invoke-virtual { p0, v1, v0, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  :L2
-  .line 67
-    const p0, 2131362495
-    invoke-virtual { p1, p0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
+    const v0, 2131100267
+    invoke-virtual { p0, v0 }, Landroid/content/res/Resources;->getColor(I)I
+    move-result p0
+  .line 61
+    const v0, 2131362492
+    invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object v0
+  .line 62
+    instance-of v1, v0, Landroid/widget/TextView;
+    const/4 v2, 0
+    if-eqz v1, :L1
+  .line 63
+    check-cast v0, Landroid/widget/TextView;
+  .line 64
+    invoke-static { v0 }, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+  .line 65
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    invoke-virtual { v1, v0, p0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  :L1
+  .line 67
+    const v0, 2131362495
+    invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object p1
   .line 68
-    instance-of p1, p0, Landroid/widget/TextView;
-    if-eqz p1, :L3
+    instance-of v0, p1, Landroid/widget/TextView;
+    if-eqz v0, :L2
   .line 69
-    sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    check-cast p0, Landroid/widget/TextView;
-    invoke-virtual { p1, p0, v0, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  :L3
+    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    check-cast p1, Landroid/widget/TextView;
+    invoke-virtual { v0, p1, p0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  :L2
   .line 73
-    goto :L5
-  :L4
+    goto :L4
+  :L3
   .line 71
     move-exception p0
-  :L5
+  :L4
   .line 74
     return-void
 .end method
@@ -520,58 +518,56 @@
 .end method
 
 .method public static fileRow(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
-  .catchall { :L1 .. :L5 } :L6
+  .catchall { :L1 .. :L4 } :L5
   .registers 6
   .line 88
     if-nez p1, :L0
     return-void
   :L0
   .line 90
-    const v0, 2131362321
+    const p0, 2131362321
   :L1
-    invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v0
+    invoke-virtual { p1, p0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object p0
   .line 91
-    if-eqz v0, :L2
-    sget-object v1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-    invoke-virtual { v1, v0 }, Lcom/innioasis/music/util/Other;->hideV(Landroid/view/View;)V
+    if-eqz p0, :L2
+    sget-object v0, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+    invoke-virtual { v0, p0 }, Lcom/innioasis/music/util/Other;->hideV(Landroid/view/View;)V
   :L2
   .line 92
-    const v0, 2131362042
-    invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v0
+    const p0, 2131362042
+    invoke-virtual { p1, p0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object p0
   .line 93
-    instance-of v1, v0, Landroid/widget/TextView;
-    const/4 v2, 0
-    if-eqz v1, :L4
+    instance-of v0, p0, Landroid/widget/TextView;
+    const/4 v1, 0
+    if-eqz v0, :L3
   .line 94
-    check-cast v0, Landroid/widget/TextView;
+    check-cast p0, Landroid/widget/TextView;
   .line 95
-    if-eqz p0, :L3
-    invoke-virtual { p0, v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->makeItNormal(Landroid/widget/TextView;)V
-  :L3
+    invoke-static { p0 }, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
   .line 96
-    sget-object p0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
   .line 97
     invoke-virtual { p1 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
-    move-result-object v1
+    move-result-object v2
     const v3, 2131100267
-    invoke-virtual { v1, v3 }, Landroid/content/res/Resources;->getColor(I)I
-    move-result v1
+    invoke-virtual { v2, v3 }, Landroid/content/res/Resources;->getColor(I)I
+    move-result v2
   .line 96
-    invoke-virtual { p0, v0, v1, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  :L4
+    invoke-virtual { v0, p0, v2, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  :L3
   .line 99
     sget-object p0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     const v0, 2131231044
-    invoke-virtual { p0, p1, v0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  :L5
+    invoke-virtual { p0, p1, v0, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+  :L4
   .line 102
-    goto :L7
-  :L6
+    goto :L6
+  :L5
   .line 100
     move-exception p0
-  :L7
+  :L6
   .line 103
     return-void
 .end method

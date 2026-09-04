@@ -61,7 +61,7 @@ public final class Rows {
             View name = row.findViewById(R.id.tv_name);
             if (name instanceof TextView) {
                 TextView tv = (TextView) name;
-                if (a != null) a.makeItNormal(tv);
+                Scroll.rowPlain(tv);
                 ThemeManager.INSTANCE.itemSetTextColor(tv, white, false);
             }
             View progress = row.findViewById(R.id.tv_prograss);
@@ -92,7 +92,7 @@ public final class Rows {
             View name = row.findViewById(R.id.file_name);
             if (name instanceof TextView) {
                 TextView tv = (TextView) name;
-                if (a != null) a.makeItNormal(tv);
+                Scroll.rowPlain(tv);
                 ThemeManager.INSTANCE.itemSetTextColor(
                         tv, row.getResources().getColor(R.color.white), false);
             }
