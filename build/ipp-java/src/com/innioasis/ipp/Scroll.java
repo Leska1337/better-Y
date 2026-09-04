@@ -9,12 +9,12 @@ import com.innioasis.y1.R;
 /**
  * The mod's own marquee — the running title of the player and of the queue row.
  *
- * <p>Not the platform's: {@code android:ellipsize="marquee"} needs the view to be selected and
+ * Not the platform's: {@code android:ellipsize="marquee"} needs the view to be selected and
  * focused, restarts from scratch on every rebind and fades the ends out. This one scrolls a
  * doubled copy of the string ("text + gap + text") by {@code scrollTo}, so the line runs
  * continuously and reappears from the right without a jump.
  *
- * <p>One instance per TextView, kept on the view's own tag; {@link #apply(String)} is
+ * One instance per TextView, kept on the view's own tag; {@link #apply(String)} is
  * idempotent for the same string, which is what lets it be called from a bind that runs many times
  * a second.
  */
@@ -30,7 +30,7 @@ public final class Scroll implements Runnable {
      * Put this text on the view and run the marquee over it — the entry point every caller uses,
      * stock smali included ({@code MusicPlayerActivity}, {@code AudioPlayerActivity}).
      *
-     * <p>{@link #apply} early-outs on the same string, so calling this from a bind that runs many
+     * {@link #apply} early-outs on the same string, so calling this from a bind that runs many
      * times a second costs nothing once the text has settled.
      */
     public static void marqueeText(TextView tv, String text) {
@@ -100,7 +100,7 @@ public final class Scroll implements Runnable {
     /**
      * Stop scrolling and leave the row as it was before the marquee started.
      *
-     * <p>The tick is a self-posting Handler message, so nothing outside this class can cancel it —
+     * The tick is a self-posting Handler message, so nothing outside this class can cancel it —
      * {@code setEllipsize} / {@code setSelected} do not touch it, which is why a row kept animating
      * after the wheel had moved on. {@link #run} replaces the text with the doubled copy, so the
      * plain string has to be put back, and {@code last} is cleared so applying the SAME text again
@@ -169,12 +169,12 @@ public final class Scroll implements Runnable {
         //   (It also covers `tv_song_name2`, the title inside the lyrics window, which the stock
         //   layout leaves GONE.)
         //
-        // getWindowVisibility() used to stand between them and was removed (v0.32.9): it flips when
-        // the app TRANSITION starts, which is before the incoming screen has drawn anything — so
-        // opening the queue snapped the player's title back to its start while the player was still
-        // the thing on the screen, and that reads as the device having hung for a moment. isShown()
-        // goes false at onStop instead, i.e. once the new screen is actually up, which is the
-        // moment there is nothing left to see anyway. The few ticks in between cost nothing.
+        // NOT getWindowVisibility(): it flips when the app TRANSITION starts, which is before the
+        // incoming screen has drawn anything, so opening the queue snaps the player's title back to
+        // its start while the player is still the thing on the screen — and that reads as the device
+        // having hung for a moment. isShown() goes false at onStop instead, i.e. once the new screen
+        // is actually up, which is the moment there is nothing left to see anyway. The few ticks in
+        // between cost nothing.
         //
         // Stopping outright is not an option: apply() early-outs on the same text, so nothing would
         // ever start it again.

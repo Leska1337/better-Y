@@ -23,23 +23,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * #409 — the on-screen keyboard ({@code InputMethodDialog}): case, alphabet and the letter strip.
+ * The on-screen keyboard ({@code InputMethodDialog}): case, alphabet and the letter strip.
  *
  * Stock had one alphabet, fixed at build time by the interface language (Russian → Cyrillic,
  * everything else → Latin), always drawn in capitals and always typed in lower case. Here the
  * strip shows exactly what pressing centre will type, and the two side questions — WHICH case and
  * WHICH alphabet — are on the two buttons that had nothing to do in this dialog:
  *
- * <ul>
- *   <li><b>bottom, short</b> — case (lower ↔ capital), and it also releases caps lock;</li>
- *   <li><b>bottom, held</b> — caps lock: the case stops falling back after a letter, and an arrow
- *       appears at the right-hand end of the input box;</li>
- *   <li><b>top, held</b> — the next layout: Latin → digits and symbols → Cyrillic → Latin, with
+ *   - bottom, short — case (lower ↔ capital), and it also releases caps lock;
+ *   - bottom, held — caps lock: the case stops falling back after a letter, and an arrow
+ *       appears at the right-hand end of the input box;
+ *   - top, held — the next layout: Latin → digits and symbols → Cyrillic → Latin, with
  *       the Cyrillic step in the ring only while "Second keyboard language" says so. The code of
- *       the one switched to is flashed on {@code Alpha}'s plate and goes by itself.</li>
- * </ul>
+ *       the one switched to is flashed on {@code Alpha}'s plate and goes by itself.
  *
- * <h3>The state is static, and that is correct here</h3>
+ * The state is static, and that is correct here
  * There is exactly one of these dialogs on screen at a time, and each Activity keeps its own
  * lazily — {@code onCreate} therefore runs once per screen, while {@code show()} may run many
  * times. So the views are held weakly from {@link #attach} and the case is decided by what is in
@@ -47,7 +45,7 @@ import java.util.List;
  * alphabet is remembered in the preferences instead: having picked Cyrillic once, the next search
  * should open in it.
  *
- * <h3>The capital on an empty box</h3>
+ * The capital on an empty box
  * A name is typed with a capital and a search is not, but the dialog cannot tell those apart — so
  * the rule is the one every phone keyboard uses: an empty box means the next letter is a capital,
  * and the case falls back to lower as soon as anything is in it. That is decided in {@link #value},
@@ -63,7 +61,7 @@ public final class Keys {
     private static final int SHIFT = 1;   // one capital, then back to lower
     private static final int CAPS  = 2;   // caps lock: stays until switched off
 
-    /** innioasis++ → "Second keyboard language": 0 = off, 1 = Russian. */
+    /** better-Y → "Second keyboard language": 0 = off, 1 = Russian. */
     public static final String KEY_SECOND = "kb_lang2";
 
     /** The layout last used, one of {@link #LAT}/{@link #NUM}/{@link #CYR}. Not user-facing. */
@@ -216,19 +214,19 @@ public final class Keys {
      * What {@code setEditTextValue} actually puts in the box: the whole string while it fits, and
      * otherwise {@code "..."} plus as much of the TAIL as the box can hold.
      *
-     * <p><b>How much fits is a width, not a character count.</b> Stock cut at 6 characters, measured
+     * How much fits is a width, not a character count. Stock cut at 6 characters, measured
      * for the 110dip box it shared with the letter row; when the box became a full-width row that
      * number was raised to 18, which is the same mistake one size up — a count cannot know that
      * "iiii" and "WWWW" are not the same width. Eighteen narrow letters left a quarter of the box
      * empty (reported), and a theme with a wider font would have overflowed it instead. Measuring
      * against the box's own paint is right for every string and every theme at once.
      *
-     * <p>Three things come off the usable width: the box's padding, the CapsLock arrow when it is
+     * Three things come off the usable width: the box's padding, the CapsLock arrow when it is
      * showing (a compound drawable, which {@code getWidth()} knows nothing about), and a caret's
      * worth at the end — the caret sits after the last glyph and has to stay on screen, or typing
      * looks like it has stopped.
      *
-     * <p>Before the first layout the box has no width — the seeding of a rename gets there — and
+     * Before the first layout the box has no width — the seeding of a rename gets there — and
      * then the old count rule answers, which is what it was always doing at that moment anyway.
      */
     public static String fit(EditText box, String s) {
@@ -372,7 +370,7 @@ public final class Keys {
 
     // ---------------------------------------------------------------- settings
 
-    /** True while a second alphabet is enabled in innioasis++. */
+    /** True while a second alphabet is enabled in better-Y. */
     public static boolean secondOn() {
         try {
             return Prefs.val(ctx(), KEY_SECOND) == 1;

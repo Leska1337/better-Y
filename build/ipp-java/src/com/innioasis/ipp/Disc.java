@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * #291.3 (stage 2) — the disc a multi-disc album's song list is currently in, plus per-disc
+ * The disc a multi-disc album's song list is currently in, plus per-disc
  * track numbering.
  *
  * The disc is shown on a bar PINNED under the Shuffle row (`ipp_disc_bar` in
@@ -62,19 +62,18 @@ public final class Disc {
      * list it is building is a REAL album and cleared while it is one of the marker "Show all
      * songs" lists.
      *
-     * <p>Two references because that screen swaps between two song adapters, and a slot of its own
+     * Two references because that screen swaps between two song adapters, and a slot of its own
      * rather than {@link #albumAdapter} because the two screens are told apart elsewhere —
      * {@code Follow} wants the Albums screen alone, and the "is this list flat" question has a
      * different answer on each ({@code Albums.isAllSongsList} against {@code Genres.flat}).
      *
-     * <p>Everything the divider machinery does, this list gets: the strip in the row, the pinned
+     * Everything the divider machinery does, this list gets: the strip in the row, the pinned
      * bar, the per-disc restart of the numbering, the pixel scrolling that unequal rows need and
-     * the cursor following the playing track (v0.32.1–v0.32.2). It used to get the TRACK NUMBER
-     * column and nothing else, and that was the wrong half to give it on its own — the tag numbers
-     * of a two-disc album restart at 1 half way down the list, and with no strip and no bar there
-     * was nothing on screen saying why.
+     * the cursor following the playing track. The TRACK NUMBER column on its own would be the wrong
+     * half to give it: the tag numbers of a two-disc album restart at 1 half way down the list, and
+     * with no strip and no bar there is nothing on screen saying why.
      *
-     * <p>Whether the list is an album is decided by {@code Genres.flat()} — the marker byte of the
+     * Whether the list is an album is decided by {@code Genres.flat()} — the marker byte of the
      * name the list was built with — and not by "do all the rows carry one album name", because a
      * genre holding exactly one album gives a flat list indistinguishable from an album. That is
      * why registration itself is the answer here: an adapter is only ever registered for a list
@@ -100,12 +99,9 @@ public final class Disc {
      * real album. False for a playlist, a folder, the library — the adapter instance is the only
      * signal there is, see the class comment.
      *
-     * <p>Everything here asks this one question: the strip in the row, the pinned bar, the per-disc
-     * numbering and {@code Wheel}'s pixel scrolling. {@code Follow} used to ask it as well — an
-     * album was exempt from its radius, and from its shuffle rule, because "the list IS the record
-     * being played". Both of those exemptions went with the radius in v0.36.8, and with them
-     * {@code albumList()} (this question minus the artist's flat "Show all songs") lost its only
-     * caller and was removed.
+     * Everything here asks this one question: the strip in the row, the pinned bar, the per-disc
+     * numbering and {@code Wheel}'s pixel scrolling. {@code Follow} does NOT: it has no radius and no
+     * shuffle rule for an album to be exempt from, so it never asks.
      */
     public static boolean discList(Object adapter) {
         return isAlbumAdapter(adapter) || isGenreAdapter(adapter);
@@ -127,7 +123,7 @@ public final class Disc {
     private static int[] discs;        // disc number per row
     private static int[] groupStart;   // first row index of this row's disc group
     private static boolean singleAlbum;   // every row of this list is the same album
-    private static int[] tagNums;      // #220.1: TRACK NUMBER per row, or null = number the rows
+    private static int[] tagNums;      // TRACK NUMBER per row, or null = number the rows
     private static String warmSig;     // the list whose missing tags have already been asked for
 
     private static String path(Object o) {
@@ -146,7 +142,7 @@ public final class Disc {
         String s = (flat ? "F|" : "A|")
                 + n + "|" + (n > 0 ? path(songs.get(0)) : "") + "|" + (n > 0 ? path(songs.get(n - 1)) : "");
         if (s.equals(sig)) return;
-        // set BEFORE computing: compute() does not read it, and #220.1's warm-up needs the
+        // set BEFORE computing: compute() does not read it, and the tag warm-up needs the
         // signature of the list it is reading tags for, not of the one before it
         sig = s;
         compute(songs, flat);
@@ -201,7 +197,7 @@ public final class Disc {
         tagNums = tracks(songs);
     }
 
-    // ------------------------------------------------------------- #220.1 the TRACK NUMBER tag
+    // ------------------------------------------------------------- the TRACK NUMBER tag
 
     /** "Show the track number from the tag" — off by default, so nothing here runs unasked. */
     private static boolean tagsWanted() {
@@ -210,10 +206,10 @@ public final class Disc {
     }
 
     /**
-     * #220.1 — the TRACK NUMBER of every row, or null to number the rows the way this list always
+     * The TRACK NUMBER of every row, or null to number the rows the way this list always
      * has (position within its disc).
      *
-     * <b>A song without the tag shows "#"</b>, and does not take the numbers away
+     * A song without the tag shows "#", and does not take the numbers away
      * from the rest of the list. Both halves of that matter, and both come from the device: a
      * folder that holds an album together with loose tracks that are deliberately untagged (they
      * are not off any record) gives that album a few songs with no number — and numbering those
@@ -313,14 +309,13 @@ public final class Disc {
     }
 
     /**
-     * Row index text: the per-disc track number. The playing marker used to be a glyph returned
-     * from here; it is an icon now and lives in its own view, so it is applied at the END of
-     * getView instead (see {@link Rows#songMark}) — a tint has to be read from a colour that has
-     * already been set.
+     * Row index text: the per-disc track number, and nothing else. The playing marker is an icon in
+     * a view of its own, applied at the END of getView (see {@link Rows#songMark}), because its
+     * tint has to be read from a colour that has already been set.
      */
     public static String rowIndex(Song song, List songs, int pos, Object adapter) {
         int n = number(songs, pos, adapter);
-        // 0 is #220.1's "this song carries no track number": "#" rather than a made-up number.
+        // 0 means "this song carries no track number": "#" rather than a made-up number.
         // Only the cell is written -- the song still sorts by the MAX_VALUE TrackCache answers
         // for it, i.e. "sort by track number" keeps every one of them at the end of the list.
         return n <= 0 ? "#" : String.valueOf(n);
@@ -529,7 +524,7 @@ public final class Disc {
         // the bar for one step, and takes it over once its row has scrolled under the top edge.
         //
         // Handing over EARLIER — on the step that makes the new disc's first row the top one — was
-        // tried and reverted (v0.19.4). It does remove the moment when two CD labels stand one
+        // tried and reverted. It does remove the moment when two CD labels stand one
         // above the other, but the strip is 16dip of the row's own height: a row placed against the
         // top edge then shows that space as a gap between the bar and its text, and since the row
         // below has no such space, crossing a disc boundary shifted the list by 16px. Every way of
@@ -687,10 +682,8 @@ public final class Disc {
         }
     }
 
-    // The Shuffle row's height used to be adjusted from here — 54 with the bar, 70 without — so that
-    // 45 (status bar) + Shuffle + bar + 5 * 49 (rows) came to exactly 360 whichever album was open.
-    // Dropped: a screen that ends flush on a row boundary gives no sign that the list goes on. The
-    // row is 49 on every screen now, i.e. exactly one list row, and it rides away with the list
-    // (Head) instead of being pinned — so the bottom edge always cuts a row and the arithmetic that
-    // used to matter here does not exist any more.
+    // The Shuffle row is 49 on every screen — exactly one list row — and it rides away with the list
+    // (Head) rather than being pinned, so nothing here adjusts its height. Sizing it to make the
+    // screen come to exactly 360 is deliberately NOT done: a screen that ends flush on a row
+    // boundary gives no sign that the list goes on.
 }

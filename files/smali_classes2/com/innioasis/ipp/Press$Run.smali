@@ -15,19 +15,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/base/BaseActivity;)V
   .registers 2
-  .line 152
+  .line 150
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 153
+  .line 151
     iput-object p1, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
-  .line 154
+  .line 152
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 158
+  .line 156
     invoke-static { p0 }, Lcom/innioasis/ipp/Press;->clearPending(Ljava/lang/Runnable;)V
-  .line 159
+  .line 157
     iget-object v0, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
     if-eqz v0, :L3
     invoke-virtual { v0 }, Lcom/innioasis/y1/base/BaseActivity;->isFinishing()Z
@@ -35,32 +35,32 @@
     if-eqz v0, :L0
     goto :L3
   :L0
-  .line 163
+  .line 161
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 164
+  .line 162
     if-eqz v0, :L1
-  .line 165
+  .line 163
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/service/PlayerService;->muteOrNoMuteMusic(Z)V
   :L1
-  .line 167
+  .line 165
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 168
+  .line 166
     if-eqz v0, :L2
-  .line 169
+  .line 167
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->playOrPause()V
   :L2
-  .line 171
+  .line 169
     iget-object v0, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
     sget-object v1, Lcom/innioasis/y1/base/BaseActivity$Direction;->BOTTOM:Lcom/innioasis/y1/base/BaseActivity$Direction;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/base/BaseActivity;->direction(Lcom/innioasis/y1/base/BaseActivity$Direction;)V
-  .line 172
+  .line 170
     return-void
   :L3
-  .line 160
+  .line 158
     return-void
 .end method

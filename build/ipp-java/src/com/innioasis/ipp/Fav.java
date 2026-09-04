@@ -12,18 +12,18 @@ import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 
 /**
- * #231 — the Favorites playlist itself: creating it, and putting a track in or taking it out when
- * the heart on the Now-Playing row is pressed.
+ * The Favorites playlist itself: creating it, and putting a track in or taking it out when the
+ * heart on the Now-Playing row is pressed.
  *
- * <p>Its UUID is a constant, not a lookup. The playlist has to be found again after a rename, in
+ * Its UUID is a constant, not a lookup. The playlist has to be found again after a rename, in
  * another language, and from code that has no list in hand, so the id is what identifies it and the
  * name is only ever a label.
  *
- * <p>Everything here is wrapped in a {@code catch (Throwable)} and does nothing on failure: the
+ * Everything here is wrapped in a {@code catch (Throwable)} and does nothing on failure: the
  * heart is a button on the player's row, and a database that will not answer must not take the
  * player down with it.
  *
- * <p>The heart the user SEES is a preference ({@code like:<path>}, see {@code Likes}) — this class
+ * The heart the user SEES is a preference ({@code like:<path>}, see {@code Likes}) — this class
  * is the durable half, and the two are kept in step wherever the playlist is written.
  */
 public final class Fav {
@@ -32,8 +32,15 @@ public final class Fav {
         return Y1Application.Companion.getY1Repository();
     }
 
+    /**
+     * The Favorites playlist's fixed id — THE ONE PLACE it is written down. {@link Likes} reads
+     * this very constant: a second copy of it would let the heart and the playlist drift apart,
+     * and nothing would say so.
+     */
+    static final String UUID_STR = "1e5f0a00-0000-4000-8000-000000000001";
+
     private static UUID favUuid() {
-        return UUID.fromString("1e5f0a00-0000-4000-8000-000000000001");
+        return UUID.fromString(UUID_STR);
     }
 
     private static String nameFor(Context c) {
@@ -41,12 +48,12 @@ public final class Fav {
     }
 
     /**
-     * ipp #231: this only CREATES the playlist. It used to rename it back to the current locale's
-     * default whenever the name differed — which is every "add to favourites" after the user has
-     * renamed it by hand, so a manual name never survived the next heart press. Relabelling is the
-     * language switch's job alone ({@link #sync(Context)}, hooked into both language screens).
+     * Ipp: this only CREATES the playlist, and must never relabel an existing one. Relabelling here
+     * would fire on every "add to favourites", i.e. at the first heart press after the user has
+     * renamed the playlist by hand. That is the language switch's job alone
+     * ({@link #sync(Context)}, hooked into both language screens).
      *
-     * <p>Called from {@code Playlists.syncName} (i.e. {@code MainActivity.initView}) once per app
+     * Called from {@code Playlists.syncName} (i.e. {@code MainActivity.initView}) once per app
      * start, so the playlist exists by default whatever the "Likes system" setting says.
      */
     public static void ensure(Context c) {
@@ -113,7 +120,7 @@ public final class Fav {
      * and only because the default name is generated and therefore belongs to the UI rather than to
      * the user's data.
      *
-     * <p>Triggered by the language screens; {@code Playlists.syncName} is what decides that the
+     * Triggered by the language screens; {@code Playlists.syncName} is what decides that the
      * language has actually changed (it keeps the stored index, {@code fav_lang}), because a name
      * comparison cannot tell "renamed by hand" from "language switched".
      */

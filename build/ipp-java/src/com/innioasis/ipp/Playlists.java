@@ -34,25 +34,23 @@ import java.util.UUID;
  * Now-Playing row seen from the other side — so three things are true of it that are not true of
  * the others, and all three are decided here because both list sources in {@code Y1Repository}
  * ({@code getAllPlaylistSync} and {@code getPlayListBySort}) already run through {@link #first}:
- * <ul>
- *   <li>It is pinned to the top, whatever the chosen sort.</li>
- *   <li>It is <b>hidden entirely while "Likes system" is off</b> — the setting hides the heart, and
+ *   - It is pinned to the top, whatever the chosen sort.
+ *   - It is hidden entirely while "Likes system" is off — the setting hides the heart, and
  *       a playlist the user cannot fill from the player has no business being in the list either.
  *       Nothing is deleted: the playlist, its songs and the {@code like:} preferences all stay, so
- *       turning the setting back on brings everything back exactly as it was.</li>
- *   <li>It cannot be deleted ({@link #trimMenu} takes the entry out of the long-press menu, and
- *       {@code Y1Repository.deletePlaylist} refuses it outright for the multi-select path).</li>
- * </ul>
+ *       turning the setting back on brings everything back exactly as it was.
+ *   - It cannot be deleted ({@link #trimMenu} takes the entry out of the long-press menu, and
+ *       {@code Y1Repository.deletePlaylist} refuses it outright for the multi-select path).
  *
  * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
  */
 public final class Playlists {
 
-    /** Must match {@code Fav.favUuid()} (hand-written smali, where it is private). */
-    private static final String FAV_ID = "1e5f0a00-0000-4000-8000-000000000001";
+    /** The id itself lives in {@link Fav#UUID_STR} — never write a second copy of it here. */
+    private static final String FAV_ID = Fav.UUID_STR;
 
     /**
-     * The favourites playlist cannot be deleted by hand (#231). Ships as {@code true}; a test build
+     * The favourites playlist cannot be deleted by hand. Ships as {@code true}; a test build
      * that has to delete it — to check that switching "Likes system" on creates it again, which
      * otherwise needs a full reflash — sets this to false and nothing else.
      */
@@ -62,7 +60,7 @@ public final class Playlists {
      * True for the favourites playlist while it is protected, i.e. for the three guards that keep
      * it: the menu entry, the multi-select untick and the delete loop in {@code PlaylistsActivity}.
      *
-     * <p>Kept apart from {@link #isFav} because that one also answers "pin this row to the top" and
+     * Kept apart from {@link #isFav} because that one also answers "pin this row to the top" and
      * "hide it while likes are off", and those hold whether the delete guard is on or not.
      */
     public static boolean locked(Object o) {
@@ -133,12 +131,11 @@ public final class Playlists {
     public static void syncName(Context c) {
         try {
             if (c == null) return;
-            // #231 — the playlist EXISTS by default, whatever the "Likes system" setting says; the
-            // setting only decides whether it is shown (see first() above). It used to come into
-            // being when the system was switched on, so an install that never touched the toggle
-            // had no Favorites playlist at all — and turning the system on afterwards was the only
-            // way to get one. ensure() is a no-op once it is there, and this runs from
-            // MainActivity.initView, i.e. once per app start.
+            // the playlist EXISTS by default, whatever the "Likes system" setting says; the
+            // setting only decides whether it is shown (see first() above). Creating it when the
+            // system is switched on instead would leave an install that never touched the toggle
+            // with no Favorites playlist at all. ensure() is a no-op once it is there, and this runs
+            // from MainActivity.initView, i.e. once per app start.
             Fav.ensure(c);
 
             int lang = SharedPreferencesUtils.INSTANCE.getLanguage();
@@ -200,15 +197,15 @@ public final class Playlists {
     }
 
     /**
-     * The favourites row takes no part in a multi-selection at all (v0.32.6, the user's call).
+     * The favourites row takes no part in a multi-selection at all (the user's call).
      *
-     * <p>It could be ticked and swept up by "Select all" before, and the tick was only taken back
-     * at the moment a delete ran ({@link #untickFav}) — so the row highlighted itself, joined a
-     * count of "3 selected" and then quietly was not one of them. A row that cannot be acted on
+     * Ticked and swept up by "Select all", with the tick taken back only at the moment a delete
+     * runs ({@link #untickFav}), it would highlight itself, join a count of "3 selected" and then
+     * quietly not be one of them. A row that cannot be acted on
      * has no business being selectable, which is the rule the button rows of Genres and Folders
      * already follow ({@code Mark.blocked}, skill {@code ipp-genres}).
      *
-     * <p>Three places say it, because a tick has three ways in: this one is the tick itself
+     * Three places say it, because a tick has three ways in: this one is the tick itself
      * (injected at the top of {@code RVBaseAdapter.addOrRemoveMultiSelectIndex}, which also covers
      * the one the long press puts on the row it was raised on), {@link #untickFav} at the end of
      * {@code allSelect}, and {@link #skip} in the wheel handlers. The menu on that row loses
@@ -229,7 +226,7 @@ public final class Playlists {
      * tick there, so standing on it is a dead step. Called at the end of both wheel handlers of
      * {@code PlaylistsActivity}, which is where its own {@code isMultiSelect} can be read.
      *
-     * <p>Always pushes DOWNWARDS, the same rule {@code Mark.skip} follows for the button rows: the
+     * Always pushes DOWNWARDS, the same rule {@code Mark.skip} follows for the button rows: the
      * favourites row is pinned to the top of the list ({@link #first}), so it is the first row
      * whichever way the wheel came from.
      */
@@ -433,11 +430,11 @@ public final class Playlists {
      * through and did nothing. This answers it, and only ever claims an entry that really carries
      * a {@link Playlist}, so it can sit in front of the stock dispatch without hiding anything.
      *
-     * <p>The ticked songs, or the row under the cursor when nothing is ticked — the same rule
+     * The ticked songs, or the row under the cursor when nothing is ticked — the same rule
      * {@code Queue.addFromAdapter} follows, selection cleared afterwards for the same reason (the
      * rows stay highlighted otherwise and the next pick re-adds them).
      *
-     * <p>The toast is the stock one, and it goes through {@code BaseActivity.showToast} on purpose:
+     * The toast is the stock one, and it goes through {@code BaseActivity.showToast} on purpose:
      * that is where {@link #addMsg} turns it into "already in the playlist" when the songs were all
      * there already — which, adding from one playlist to another, is a thing that happens often.
      */
@@ -479,7 +476,7 @@ public final class Playlists {
      * quietly skips every song the playlist already holds — so adding a track twice looked like it
      * had worked and nothing changed.
      *
-     * <p>Noted at the one place that knows: the funnel where the rows that are actually NEW have
+     * Noted at the one place that knows: the funnel where the rows that are actually NEW have
      * just been counted (every add in the app ends up there, the single-song overload and
      * {@code addToPlayListByFile} included).
      */

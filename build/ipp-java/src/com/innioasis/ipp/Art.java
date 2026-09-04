@@ -21,7 +21,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 /**
- * #291.1 — external cover art from files.
+ * External cover art from files.
  *
  * Stock only ever reads the artwork embedded in the tags ({@code Other.getAlbumCover}); when a
  * track has none, the whole app shows no cover at all. This class is the fallback, hooked into the
@@ -31,27 +31,23 @@ import java.util.List;
  * cached by whatever cache the caller already has. Embedded artwork keeps priority: we are only
  * ever asked after the tags came up empty.
  *
- * <h3>Where a cover file is looked for</h3>
- * <ul>
- *   <li>{@code cover.jpg|jpeg|png} — <b>only</b> in the track's own folder. It covers the songs
- *       sitting next to it and is not inherited by subfolders.</li>
- *   <li>{@code folder.jpg|jpeg|png} — in the track's folder and in <b>every</b> parent folder, up
+ * Where a cover file is looked for
+ *   - {@code cover.jpg|jpeg|png} — only in the track's own folder. It covers the songs
+ *       sitting next to it and is not inherited by subfolders.
+ *   - {@code folder.jpg|jpeg|png} — in the track's folder and in every parent folder, up
  *       to the filesystem root. So {@code …/The Marshall Mathers LP/folder.jpg} serves the songs of
  *       that folder and of everything nested under it ({@code CD1/}, {@code CD1/whatever/}, …),
- *       whatever those subfolders are called.</li>
- * </ul>
+ *       whatever those subfolders are called.
  * The nearer folder always wins, and {@code cover} beats {@code folder} within one folder.
  *
- * <h3>Why the walk is not slow</h3>
+ * Why the walk is not slow
  * Three layers keep it off the hot path:
- * <ol>
- *   <li>It runs <b>only when there is no embedded artwork</b> — a tagged library never enters here.</li>
- *   <li>{@link #chain} memoises the {@code folder.*} answer <b>per directory</b>, including the
+ *   - It runs only when there is no embedded artwork — a tagged library never enters here.
+ *   - {@link #chain} memoises the {@code folder.*} answer per directory, including the
  *       "nothing anywhere above" answer, and it memoises every directory it walked through on the
- *       way. So a whole tree costs at most one stat per folder per run, not one per song.</li>
- *   <li>The bitmap itself is cached by the caller ({@code CoverCache}/{@code BigCover} keep both the
- *       covers found and the "no cover" answers, in memory and as JPEGs on disk).</li>
- * </ol>
+ *       way. So a whole tree costs at most one stat per folder per run, not one per song.
+ *   - The bitmap itself is cached by the caller ({@code CoverCache}/{@code BigCover} keep both the
+ *       covers found and the "no cover" answers, in memory and as JPEGs on disk).
  * The memo is dropped from {@code Ipp.libraryChanged}, i.e. whenever the Song table is written —
  * the same event that forgets the caches' "no cover" answers, so a cover file added later is picked
  * up by the next scan / "Update library" instead of being remembered as absent for good.
@@ -127,13 +123,13 @@ public final class Art {
      * An album's list thumbnail. Called from {@code CoverCache.get}, i.e. on a cache miss only —
      * once per album.
      *
-     * <b>A song pinned by the user wins outright</b> ("Set as album thumbnail"): its own artwork is
+     * A song pinned by the user wins outright ("Set as album thumbnail"): its own artwork is
      * read the way a track's cover is read anywhere else — the tags first, then a cover file next
      * to it. Anything less makes the pick a no-op in a folder that has a {@code folder.jpg}, since
-     * pinning changes which <i>song</i> is read and the automatic order below never gets that far.
+     * pinning changes which song is read and the automatic order below never gets that far.
      *
-     * Automatically, the order is <b>{@code folder.*} → {@code cover.*} → the artwork embedded in
-     * the song</b> — the opposite of a track's own cover ({@link #external}, which only ever runs
+     * Automatically, the order is {@code folder.*} → {@code cover.*} → the artwork embedded in
+     * the song — the opposite of a track's own cover ({@link #external}, which only ever runs
      * after the tags came up empty). The row stands for the whole album, and a {@code folder.jpg}
      * sitting next to the files was put there to be exactly that, while the embedded picture
      * belongs to whichever single song the cache happened to ask about.
@@ -231,8 +227,7 @@ public final class Art {
 
     /**
      * The pinned song's own cover, read exactly as a track's cover is read everywhere else:
-     * {@code getAlbumCover} is the tags, and its null path falls back to {@link #external}
-     * (#291.1), i.e. a cover file beside the song.
+     * {@code getAlbumCover} is the tags, and its null path falls back to {@link #external}, i.e. a cover file beside the song.
      */
     private static Bitmap pickedArt(String pick, int size) {
         try {
@@ -505,7 +500,7 @@ public final class Art {
     /**
      * The album key of the row the wheel is on in an album list, or null.
      *
-     * <b>One pick per album, whichever section it was made in.</b> The Albums screen puts
+     * One pick per album, whichever section it was made in. The Albums screen puts
      * FOLDER-ENCODED names into its rows; the Genres screen puts PLAIN ones into the very same
      * adapter. So every read and every write of a pick goes through {@code Albums.coverKey} - the
      * canonicalisation the cover, year and album-artist caches already apply. An encoded name comes
@@ -568,7 +563,7 @@ public final class Art {
     /**
      * Put the album's new thumbnail on screen right away.
      *
-     * There are <b>three</b> caches in front of an album row, and forgetting only the first left
+     * There are three caches in front of an album row, and forgetting only the first left
      * the old picture on screen until the Albums screen was rebuilt from scratch: the JPEG/memory
      * entry in {@link CoverCache}, and the Bitmap held by the {@code Album} model object itself —
      * which is what {@code AlbumListAdapter.getView} falls back to, and it only re-reads the cache
@@ -623,13 +618,13 @@ public final class Art {
     }
 
     /**
-     * <b>Byte-for-byte the rule stock uses</b> ({@code Other.calculateInSampleSize}) — the whole
+     * Byte-for-byte the rule stock uses ({@code Other.calculateInSampleSize}) — the whole
      * point of this class is that an external cover goes through the same pipeline as an embedded
      * one, and the sampling is the one step where "roughly the same" is visible.
      *
      * The obvious formulation ("halve until the image is no bigger than asked for") overshoots by
-     * one step: it stops at the first size <i>below</i> the requested one, and everything after it
-     * — {@code Ipp.square}, {@code Ipp.fitCover} — then scales that back <i>up</i> to 50 / 300 px.
+     * one step: it stops at the first size below the requested one, and everything after it
+     * — {@code Ipp.square}, {@code Ipp.fitCover} — then scales that back up to 50 / 300 px.
      * A 500x500 {@code folder.jpg} decoded to 31x31 and blown up to a 50px thumbnail is exactly the
      * "external covers are blurry" report; the same file reached the player as 250x250 stretched to
      * 300, and a wide cover lost its crop into the bargain (the centre crop was taken from a source

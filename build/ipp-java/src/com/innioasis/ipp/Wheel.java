@@ -15,7 +15,7 @@ import com.innioasis.y1.activity.SettingActivity;
 import java.lang.ref.WeakReference;
 
 /**
- * #228.5 — wheel navigation for the RecyclerView-based Settings screen.
+ * Wheel navigation for the RecyclerView-based Settings screen.
  *
  * Stock did {@code smoothScrollToPosition(mark)} + {@code notifyDataSetChanged()} on EVERY wheel
  * click, so one click restarted a smooth-scroll animation and rebound every visible row — and
@@ -38,14 +38,14 @@ public final class Wheel {
     // ------------------------------------------------------------------ ListView screens
     //
     // Replaces the body of Other.listViewScroll, which every list screen in the app goes through
-    // (music, video, folders, genres, audiobooks). Stock did, per step:
+    // (music, video, folders, genres, audiobooks). Stock does, per step:
     //     adapter.toNext()/toPrevious()  -> notifyDataSetChanged()
-    //     lv.setSelection(...)           -> even when the window did not have to move
+    //     lv.setSelection(...)           -> even when the window does not have to move
     // Both only call requestLayout(), so a burst of accelerated steps COALESCES into one layout —
-    // there was never an 11x rebuild here (SpeedUtil's runMultipleTimes is a plain synchronous
-    // loop). What the layout does cost is real though: `mDataChanged` makes ListView detach every
-    // visible child into the recycler and re-fill, i.e. ~8 getView + measure passes per key event,
-    // to move a highlight between two rows.
+    // there is no 11x rebuild here (SpeedUtil's runMultipleTimes is a plain synchronous loop). The
+    // layout itself is the cost: `mDataChanged` makes ListView detach every visible child into the
+    // recycler and re-fill, i.e. ~8 getView + measure passes per key event, to move a highlight
+    // between two rows.
     //
     // So: while the cursor stays inside the visible window, nothing is notified and nothing is
     // scrolled — the two affected rows are rebound in place, and even that is POSTED, so an
@@ -53,8 +53,8 @@ public final class Wheel {
     // the one it ended on) instead of 2N times. Leaving the window falls back to stock's
     // notify + setSelection, which is what actually has to happen there.
     //
-    // notifyDataSetChanged was removed from MyBaseAdapter.toNext/toPrevious (called from nowhere
-    // else) so the position can move without dragging a layout along.
+    // MyBaseAdapter.toNext/toPrevious (called from nowhere else) carry no notifyDataSetChanged, so
+    // the position can move without dragging a layout along.
     //
     // ---- where the rest of a click goes, and why nothing more is done about it here -------------
     //
@@ -71,28 +71,24 @@ public final class Wheel {
     // The row binds are ~5% of it. The cost is the measure and layout of the visible rows, and
     // inside those, largely Android 4.2's RTL resolution — View.measure() calls
     // resolveRtlPropertiesIfNeeded() over the whole subtree and canResolveTextDirection() walks up
-    // the parent chain for every view, 31 130 calls over those eight clicks. Two things follow, both
-    // of which were tried and rejected on measurements:
+    // the parent chain for every view, 31 130 calls over those eight clicks. Two ways at that were
+    // TRIED AND REJECTED on measurements — do not re-derive them:
     //
     //  - Dropping notifyDataSetChanged from the scroll path so the layout can reuse its active
-    //    views (AbsListView.setupChild skips measure AND layout for a reused child that is not
-    //    layout-dirty). Halves the getView calls — 24 -> 14 — and changes nothing else: the
-    //    ConstraintLayout measure/layout counts stayed at 19/24, because the rows are dirty anyway,
-    //    and repainting in place invalidates them on every click, so the traversal count went UP
-    //    (4 -> 11). Measured slightly WORSE in Albums (54 vs 46 ms per click) and level in All
-    //    songs. Posting that repaint instead is worse still (an extra layout pass) and, once the
-    //    wheel accelerates and one key event takes several steps, it only ever repaints the two ends
-    //    of the burst — v0.14.8 showed two highlighted rows at once.
-    //  - `android:supportsRtl="false"`, which is what would actually stop the RTL walk. Worth about
-    //    5% by call counts, and it would leave the Hebrew locale un-mirrored. Not done.
+    //    views. Halves the getView calls (24 -> 14) and changes nothing else — the rows are dirty
+    //    anyway and repainting in place invalidates them, so the traversal count goes UP (4 -> 11).
+    //    Slightly WORSE in Albums (54 vs 46 ms per click), level in All songs. Posting that repaint
+    //    instead is worse still (an extra layout pass) and repaints only the two ends of an
+    //    accelerated burst, which shows two highlighted rows at once.
+    //  - `android:supportsRtl="false"`, the one thing that would actually stop the RTL walk: ~5% by
+    //    call counts, at the price of leaving the Hebrew locale un-mirrored.
     //
-    // What was left after that is the row layout itself: the screens that feel right (Artists, the
-    // Music menu) use `item_main.xml`, a LinearLayout with a fixed height, while the song and album
-    // rows were wrap_content ConstraintLayouts — 25 against 46 ms per click on the same ListView code
-    // path. Both were rebuilt around a RelativeLayout for that reason: `item_songlist.xml` is worth
-    // ~17% (49.6 -> 41 ms per click) and `item_album.xml` ~25% (48 -> 36). Each layout carries the
-    // measurement and the traps in its own comment — including why a burst of injected input is
-    // useless for measuring this and made the album row look like a regression at first.
+    // What is left is the row layout itself. `item_main.xml` (Artists, the Music menu) is a
+    // LinearLayout with a fixed height and costs 25 ms per click; a wrap_content ConstraintLayout
+    // costs 46 on the same ListView code path. So `item_songlist.xml` and `item_album.xml` are built
+    // around a RelativeLayout — worth ~17% (49.6 -> 41 ms) and ~25% (48 -> 36). Each layout carries
+    // its own measurements and traps in its own comment, including why a burst of injected input is
+    // useless for measuring this.
 
     private static WeakReference pendLv;
     private static int pendFrom;
@@ -118,7 +114,7 @@ public final class Wheel {
             // See Follow.
             Follow.touched(lv, a);
 
-            // #362.3: spun fast enough, a long list moves by first letter instead of by row.
+            // spun fast enough, a long list moves by first letter instead of by row.
             // drop() first, so a repaint posted by the previous (row-wise) step cannot fire on
             // top of the jump.
             if (Alpha.step(lv, a, type)) {
@@ -143,7 +139,7 @@ public final class Wheel {
 
             // Going down it scrolls at `now >= last`, one step "early", because
             // getLastVisiblePosition() counts the partially visible bottom row — with `now > last`
-            // the cursor parked on that half-row and the list never followed it (fixed v0.3.7).
+            // the cursor parked on that half-row and the list never followed it.
             //
             // Going up needs the same correction, for the same reason: getFirstVisiblePosition()
             // also counts a row that is only PARTIALLY on screen, so `now < first` alone let the
@@ -173,7 +169,7 @@ public final class Wheel {
                 // leaves at the bottom.
                 boolean vary = type == 1 && Disc.variableRows(a);
                 int h = vary ? rowHeight(lv, now, first) : 0;
-                // The list's top edge is no longer its paddingTop: that padding is the space the
+                // The list's top edge is NOT its paddingTop: that padding is the space the
                 // Shuffle row rides through, and once it has gone the list begins at 0 (or at the
                 // disc bar). Head.top is that boundary; the offset setSelectionFromTop takes is
                 // measured FROM the padding, hence the subtraction.
@@ -183,7 +179,7 @@ public final class Wheel {
                 if (vary && h > 0 && h <= lb - lt) {
                     // The height above is exact, so no correcting pass is posted: a second
                     // setSelectionFromTop lays the list out twice and that shows as a flicker,
-                    // which is what crossing a disc boundary used to look like.
+                    // and that flicker is exactly what crossing a disc boundary would show.
                     Head.place(lv, now, lb - h);
                 } else if (type == 1) {
                     // Stock moves the window down by whole rows, and the Shuffle row is a row's
@@ -362,7 +358,7 @@ public final class Wheel {
      * now; note what it should show and let {@link Rest} paint it from a plain posted message.
      *
      * That panel — preview image and two captions — is stock-painted from inside a row's
-     * <b>bind</b>, i.e. in the middle of the list's layout. Its views change size, and the
+     * bind, i.e. in the middle of the list's layout. Its views change size, and the
      * re-measure they ask for there cannot be served in the same frame, so the new content was
      * drawn into the bounds of whatever the panel showed before: the image cut off at the bottom,
      * the captions cut off at the end. Painting it from outside any layout pass makes the request
@@ -370,7 +366,7 @@ public final class Wheel {
      *
      * Two earlier attempts at this are worth not repeating. Marking the panel's ancestors with
      * {@code forceLayout()} makes {@code isLayoutRequested()} true on them, and
-     * {@code View.requestLayout()} only walks up while the parent has <b>not</b> already requested
+     * {@code View.requestLayout()} only walks up while the parent has not already requested
      * layout — so it silently swallowed the requests the panel and the rows were raising
      * themselves. And re-measuring after the repaint instead of before only scheduled one more
      * pass, so the clipped version was drawn for a frame and then corrected — the flicker.
@@ -395,7 +391,7 @@ public final class Wheel {
      * the caption ends up crowded against it, so the dimen is non-zero for exactly the same
      * locales and zero everywhere else.
      *
-     * <b>About is the exception</b>: its panel carries {@code AboutView} plus several lines of
+     * About is the exception: its panel carries {@code AboutView} plus several lines of
      * device information, and there is no room below it — a shift there pushes the last line off
      * the screen. It is recognised the way stock recognises it in {@code refreshRight}, by the
      * title matching {@code setting_about}.
@@ -526,10 +522,10 @@ public final class Wheel {
                 // RecyclerView keeps the two most recently detached rows in a cache keyed BY
                 // POSITION and brings them back **without rebinding** — that is the whole point of
                 // that cache, and it is correct only for an adapter that notifies when a row's
-                // content changes. Ours does not any more (the highlight is moved by rebinding the
-                // two rows in place), so a row that had scrolled off came back still carrying the
-                // look it had then: stepping onto the row just below the window left it unhighlighted
-                // and the cursor vanished from the screen. With the cache at zero a row that comes into
+                // content changes. Ours does not — the highlight is moved by rebinding the two rows
+                // in place — so a row that had scrolled off would come back carrying the look it had
+                // then: stepping onto the row just below the window would leave it unhighlighted and
+                // the cursor would vanish from the screen. With the cache at zero a row that comes into
                 // view is taken from the pool, which always rebinds, so the state on screen can only
                 // ever be the state the adapter would paint now.
                 //
@@ -618,7 +614,7 @@ public final class Wheel {
     }
 
     /**
-     * Brings the row on screen — <b>at once</b>, not over an animation.
+     * Brings the row on screen — at once, not over an animation.
      *
      * Stock smooth-scrolled to the cursor on every click, and so did this method for a while. On a
      * wheel that is wrong twice over: an animation takes several frames of layout and draw, so a

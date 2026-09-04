@@ -1,4 +1,4 @@
-# Builds the release image for innioasis++: the rom.zip that Innioasis Updater installs.
+# Builds the release image for better-Y: the rom.zip that Innioasis Updater installs.
 #
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1            # newest APK in build\out
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Apk <path>

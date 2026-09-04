@@ -13,29 +13,29 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 1148
+  .line 1149
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Albums$1;)V
   .registers 2
-  .line 1148
+  .line 1149
     invoke-direct { p0 }, Lcom/innioasis/ipp/Albums$PathCmp;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 1150
+  .line 1151
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p1
-  .line 1151
+  .line 1152
     check-cast p2, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p2
-  .line 1152
+  .line 1153
     const-string v0, ""
     if-nez p1, :L0
     move-object p1, v0

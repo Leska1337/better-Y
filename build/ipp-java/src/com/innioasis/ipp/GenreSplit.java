@@ -15,41 +15,41 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * #393 — a genre tag that lists several genres at once ("Rock, Pop", "Electronic/Ambient") becomes
- * several genres, the way {@link Artists} splits a multi-artist tag (#281.2).
+ * A genre tag that lists several genres at once ("Rock, Pop", "Electronic/Ambient") becomes
+ * several genres, the way {@link Artists} splits a multi-artist tag.
  *
- * <p><b>The separator rule is NOT the artists' one</b>, and that is deliberate (the user's call).
+ * The separator rule is NOT the artists' one, and that is deliberate (the user's call).
  * There it is the punctuation plus the space after it, because a comma inside an artist's name is
  * common enough to need an exceptions file ("Tyler, the Creator"); a genre is a word out of a short
  * vocabulary, taggers write it every which way ("Rock,Pop", "Rock / Pop"), and a comma inside a
- * genre name is not a thing. So the separators are <b>{@code , ; /}</b> with any amount of space
+ * genre name is not a thing. So the separators are {@code , ; /} with any amount of space
  * around them or none. The cost is accepted and known: a genre whose NAME carries a slash
- * ("Folk/Rock", "R&amp;B/Soul") is split in two.
+ * ("Folk/Rock", "R&B/Soul") is split in two.
  *
- * <p><b>Where it applies.</b> Every genre-scoped query of {@code Y1Repository} — the genre list
+ * Where it applies. Every genre-scoped query of {@code Y1Repository} — the genre list
  * itself, the artists, the albums and the songs of a genre — plus the genre filters the mod already
  * does in Java ({@code Albums.songsSync}, {@code Genres.split}/{@code albumCount},
  * {@code Artists.byTag}). The three query redirects follow the pattern the data layer uses
  * everywhere here: answer in Java only when the genre really is one that a composite tag
- * contributes to, and return <b>null</b> otherwise so the ordinary genre keeps stock's indexed SQL
+ * contributes to, and return null otherwise so the ordinary genre keeps stock's indexed SQL
  * and its collation. That is what {@link #collect} decides, and it is the same test the genre LIST
  * is built with — a row and its contents must be found by one test, or the row opens empty (the
  * lesson of {@code Artists.byTag}, skill {@code ipp-albums-artists}).
  *
- * <p><b>With the toggle off nothing changes at all:</b> {@link #has} then makes the very comparison
+ * With the toggle off nothing changes at all: {@link #has} then makes the very comparison
  * stock's SQL makes (equality on the raw string), and the three redirects answer null.
  *
- * <p>Gated by {@link #KEY_SPLIT} ("Split genres that are divided by commas, semicolons and
+ * Gated by {@link #KEY_SPLIT} ("Split genres that are divided by commas, semicolons and
  * slashes"), On unless switched off — as the artist row is.
  *
- * <p>Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature
+ * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature
  * attributes.
  */
 public final class GenreSplit {
 
     private GenreSplit() { }
 
-    /** innioasis++ → "Split genres that are divided by commas, semicolons and slashes". */
+    /** better-Y → "Split genres that are divided by commas, semicolons and slashes". */
     public static final String KEY_SPLIT = "genre_split";
 
     public static boolean enabled() {
@@ -127,10 +127,10 @@ public final class GenreSplit {
     }
 
     /**
-     * The songs of a genre, gathered by {@link #has} — or <b>null</b> when this genre owes nothing
+     * The songs of a genre, gathered by {@link #has} — or null when this genre owes nothing
      * to a composite tag, which is the signal to let stock's indexed query answer.
      *
-     * <p>Read off the cached song table ({@code Albums.allSongs}), so a burst of these — the genre
+     * Read off the cached song table ({@code Albums.allSongs}), so a burst of these — the genre
      * list's subtitles ask per row — shares one Room load.
      */
     private static ArrayList collect(Genre g) {
@@ -205,7 +205,7 @@ public final class GenreSplit {
      * {@code getGenresSync}: the genre list itself, expanded into parts and de-duplicated
      * case-insensitively (the first spelling seen is the one kept).
      *
-     * <p>Re-sorted only under the query's own name order — exactly {@code Artists.listGenre}'s rule
+     * Re-sorted only under the query's own name order — exactly {@code Artists.listGenre}'s rule
      * and for the same two reasons: a by-date list sorted alphabetically would be a different list,
      * and the alphabetical jump ({@code Alpha}) reads "no sort chosen" on this level as "the order
      * the query gave, which IS A→Z" (skill {@code ipp-genres}). Leaving the parts where their
@@ -244,7 +244,7 @@ public final class GenreSplit {
      * {@code fileDate} otherwise, each with its reverse — the four DAO methods the repository picks
      * between.
      *
-     * <p>De-duplication is on the RAW value, case included, because SQL's {@code distinct} is: what
+     * De-duplication is on the RAW value, case included, because SQL's {@code distinct} is: what
      * comes out of here is a query key ({@code Genres.split} looks an album name up by
      * {@code equals}, and an artist row is what the songs behind it are matched by), so a name
      * folded to another case would be a row that opens empty.

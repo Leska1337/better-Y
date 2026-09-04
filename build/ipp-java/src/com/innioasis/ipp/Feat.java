@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * #358 -- multi-artist tags in Now Playing, VISUAL ONLY.
+ * Multi-artist tags in Now Playing, VISUAL ONLY.
  *
- * Two independent prefs, both default off:
+ * Two independent prefs, both off by default:
  *  - "first_artist_only": the player's artist line shows only the first artist of a
  *    "A, B, C" / "A; B" tag.
  *  - "feat_in_title" (a sub-row of the first one, hidden while it is off): the artists
@@ -29,19 +29,19 @@ public final class Feat {
         return Prefs.on(c, key);
     }
 
-    /** #358.1 -- hide everything after the first artist. */
+    /** Hide everything after the first artist. */
     public static boolean hideEnabled() {
         return pref("first_artist_only");
     }
 
-    /** #358.2 -- move the hidden artists into the title (only meaningful while .1 is on). */
+    /** Move the hidden artists into the title (only meaningful while {@link #hideEnabled} is on). */
     private static boolean featEnabled() {
         return pref("feat_in_title");
     }
 
     /**
      * The player's artist line: first part of a multi-artist tag, or the tag unchanged — and in
-     * either case with "; " read as ", " (#220.2).
+     * either case with "; " read as ", ".
      */
     public static String artist(String raw) {
         return Artists.display(first(raw));

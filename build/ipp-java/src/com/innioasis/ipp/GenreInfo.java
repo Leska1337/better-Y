@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The "&lt;n&gt; artists &lt;n&gt; albums" line under a genre's name.
+ * The "<n> artists <n> albums" line under a genre's name.
  *
  * Stock computes it per row, on a background thread started from {@code GenreListAdapter.getView},
  * and keeps the answer on the {@code Genre} object — which {@code setGenres} rebuilds every time
@@ -64,7 +64,7 @@ public final class GenreInfo {
     }
 
     /**
-     * Fill in every genre the cache does not know yet, in <b>one</b> background pass, and repaint
+     * Fill in every genre the cache does not know yet, in one background pass, and repaint
      * the list once at the end. Called from {@code GenreListAdapter.setGenres}.
      *
      * Stock's per-row thread is still there and still correct, but it starts when a row scrolls
@@ -111,7 +111,7 @@ public final class GenreInfo {
                 for (int i = 0; i < todo.size(); i++) {
                     Genre g = (Genre) todo.get(i);
                     int artists = repo.getArtistsByGenreSync(g).size();
-                    // #291.3: the ALBUM LIST of a genre splits a name shared by several folders
+                    // the ALBUM LIST of a genre splits a name shared by several folders
                     // into one row per folder ("Demo"), so the count under the genre has to be
                     // taken the same way or it names a number of albums the list does not show.
                     int albums = Genres.albumCount(g);
@@ -183,7 +183,7 @@ public final class GenreInfo {
     /**
      * Format marker, first line of the file. Bump it whenever the LINE ITSELF is computed
      * differently — the entries are answers, not raw data, so a file written by an older build is
-     * not stale in any way this class could notice. v2: the album count is the split one (#291.3).
+     * not stale in any way this class could notice. v2: the album count is the split one.
      */
     private static final String VERSION = "#v2";
 

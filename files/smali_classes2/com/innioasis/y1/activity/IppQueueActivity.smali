@@ -110,23 +110,23 @@
 
 .method private addToPlaylist(Ljava/util/UUID;)V
   .registers 6
-  .line 1045
+  .line 1043
     if-nez p1, :L0
     return-void
   :L0
-  .line 1046
+  .line 1044
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1047
+  .line 1045
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->pickedRows()Ljava/util/List;
     move-result-object v1
-  .line 1048
+  .line 1046
     const/4 v2, 0
   :L1
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v3
     if-ge v2, v3, :L3
-  .line 1049
+  .line 1047
     invoke-interface { v1, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Ljava/lang/Integer;
@@ -134,37 +134,37 @@
     move-result v3
     invoke-direct { p0, v3 }, Lcom/innioasis/y1/activity/IppQueueActivity;->songAt(I)Lcom/innioasis/y1/database/Song;
     move-result-object v3
-  .line 1050
+  .line 1048
     if-eqz v3, :L2
     invoke-virtual { v0, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L2
-  .line 1048
+  .line 1046
     add-int/lit8 v2, v2, 1
     goto :L1
   :L3
-  .line 1052
+  .line 1050
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->endMulti()V
-  .line 1053
+  .line 1051
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repaintAll()V
-  .line 1054
+  .line 1052
     invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v1
     if-eqz v1, :L4
     return-void
   :L4
-  .line 1055
+  .line 1053
     new-instance v1, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;
     invoke-direct { v2, v0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;-><init>(Ljava/util/List;Ljava/util/UUID;)V
     invoke-direct { v1, v2 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
-  .line 1056
+  .line 1054
     return-void
 .end method
 
 .method private artistsOf(I)Ljava/util/List;
   .registers 2
-  .line 1096
+  .line 1094
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->songAt(I)Lcom/innioasis/y1/database/Song;
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/Artists;->of(Lcom/innioasis/y1/database/Song;)Ljava/util/List;
@@ -538,20 +538,20 @@
 
 .method private endMulti()V
   .registers 2
-  .line 1124
+  .line 1122
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-nez v0, :L0
     return-void
   :L0
-  .line 1125
+  .line 1123
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
-  .line 1126
+  .line 1124
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v0 }, Ljava/util/HashSet;->clear()V
-  .line 1127
+  .line 1125
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->stopBlink()V
-  .line 1128
+  .line 1126
     return-void
 .end method
 
@@ -754,46 +754,46 @@
 
 .method private openAlbum()V
   .registers 2
-  .line 1073
+  .line 1071
     iget v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->songAt(I)Lcom/innioasis/y1/database/Song;
     move-result-object v0
-  .line 1074
+  .line 1072
     if-nez v0, :L0
     return-void
   :L0
-  .line 1075
+  .line 1073
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Albums;->openAlbumOfSong(Landroid/app/Activity;Lcom/innioasis/y1/database/Song;)V
-  .line 1076
+  .line 1074
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->finish()V
-  .line 1077
+  .line 1075
     return-void
 .end method
 
 .method private openArtist(Ljava/lang/String;)V
   .registers 4
-  .line 1081
+  .line 1079
     if-eqz p1, :L1
     invoke-virtual { p1 }, Ljava/lang/String;->length()I
     move-result v0
     if-nez v0, :L0
     goto :L1
   :L0
-  .line 1082
+  .line 1080
     new-instance v0, Landroid/content/Intent;
     const-class v1, Lcom/innioasis/music/AlbumsActivity;
     invoke-direct { v0, p0, v1 }, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-  .line 1083
+  .line 1081
     const-string v1, "ipp_artist"
     invoke-virtual { v0, v1, p1 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-  .line 1084
+  .line 1082
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->startActivity(Landroid/content/Intent;)V
-  .line 1085
+  .line 1083
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->finish()V
-  .line 1086
+  .line 1084
     return-void
   :L1
-  .line 1081
+  .line 1079
     return-void
 .end method
 
@@ -954,22 +954,22 @@
 
 .method private pickedRows()Ljava/util/List;
   .registers 4
-  .line 1060
+  .line 1058
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1061
+  .line 1059
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-eqz v1, :L2
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v1 }, Ljava/util/HashSet;->isEmpty()Z
     move-result v1
     if-nez v1, :L2
-  .line 1062
+  .line 1060
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v1 }, Ljava/util/HashSet;->iterator()Ljava/util/Iterator;
     move-result-object v1
   :L0
-  .line 1063
+  .line 1061
     invoke-interface { v1 }, Ljava/util/Iterator;->hasNext()Z
     move-result v2
     if-eqz v2, :L1
@@ -978,12 +978,12 @@
     invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L0
   :L1
-  .line 1064
+  .line 1062
     invoke-static { v0 }, Ljava/util/Collections;->sort(Ljava/util/List;)V
-  .line 1065
+  .line 1063
     return-object v0
   :L2
-  .line 1067
+  .line 1065
     iget v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     if-ltz v1, :L3
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rows:Ljava/util/List;
@@ -996,7 +996,7 @@
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L3
-  .line 1068
+  .line 1066
     return-object v0
 .end method
 
@@ -1161,22 +1161,22 @@
 
 .method private removePicked()V
   .registers 5
-  .line 1026
+  .line 1024
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1027
+  .line 1025
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-eqz v1, :L2
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v1 }, Ljava/util/HashSet;->isEmpty()Z
     move-result v1
     if-nez v1, :L2
-  .line 1028
+  .line 1026
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v1 }, Ljava/util/HashSet;->iterator()Ljava/util/Iterator;
     move-result-object v1
   :L0
-  .line 1029
+  .line 1027
     invoke-interface { v1 }, Ljava/util/Iterator;->hasNext()Z
     move-result v2
     if-eqz v2, :L1
@@ -1185,60 +1185,60 @@
     invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L0
   :L1
-  .line 1030
+  .line 1028
     invoke-static { v0 }, Ljava/util/Collections;->sort(Ljava/util/List;)V
     goto :L3
   :L2
-  .line 1031
+  .line 1029
     iget v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     if-lez v1, :L3
-  .line 1032
+  .line 1030
     invoke-static { v1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L4
   :L3
-  .line 1031
+  .line 1029
     nop
   :L4
-  .line 1034
+  .line 1032
     invoke-virtual { v0 }, Ljava/util/ArrayList;->size()I
     move-result v1
     add-int/lit8 v1, v1, -1
   :L5
     if-ltz v1, :L7
-  .line 1035
+  .line 1033
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
-  .line 1036
+  .line 1034
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->canRemoveRow(I)Z
     move-result v3
     if-eqz v3, :L6
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->removeRow(I)V
   :L6
-  .line 1034
+  .line 1032
     add-int/lit8 v1, v1, -1
     goto :L5
   :L7
-  .line 1038
+  .line 1036
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->endMulti()V
-  .line 1039
+  .line 1037
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->render()V
-  .line 1040
+  .line 1038
     return-void
 .end method
 
 .method private repaintAll()V
   .registers 3
-  .line 1147
+  .line 1145
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rowViews:[Landroid/view/View;
     if-nez v0, :L0
     return-void
   :L0
-  .line 1148
+  .line 1146
     const/4 v0, 0
   :L1
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rowViews:[Landroid/view/View;
@@ -1248,7 +1248,7 @@
     add-int/lit8 v0, v0, 1
     goto :L1
   :L2
-  .line 1149
+  .line 1147
     return-void
 .end method
 
@@ -1358,7 +1358,7 @@
 
 .method private songAt(I)Lcom/innioasis/y1/database/Song;
   .registers 4
-  .line 1101
+  .line 1099
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rows:Ljava/util/List;
     const/4 v1, 0
     if-eqz v0, :L2
@@ -1368,11 +1368,11 @@
     if-lt p1, v0, :L0
     goto :L2
   :L0
-  .line 1102
+  .line 1100
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rows:Ljava/util/List;
     invoke-interface { v0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
-  .line 1103
+  .line 1101
     instance-of v0, p1, Lcom/innioasis/y1/database/Song;
     if-eqz v0, :L1
     check-cast p1, Lcom/innioasis/y1/database/Song;
@@ -1381,24 +1381,24 @@
   :L1
     return-object v1
   :L2
-  .line 1101
+  .line 1099
     return-object v1
 .end method
 
 .method private startMulti()V
   .registers 5
-  .line 1109
+  .line 1107
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 1110
+  .line 1108
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
-  .line 1111
+  .line 1109
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
     invoke-virtual { v0 }, Ljava/util/HashSet;->clear()V
-  .line 1115
+  .line 1113
     iget v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     if-lez v0, :L1
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->marked:Ljava/util/HashSet;
@@ -1406,44 +1406,44 @@
     move-result-object v0
     invoke-virtual { v1, v0 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
   :L1
-  .line 1116
+  .line 1114
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blinkOn:Z
-  .line 1117
+  .line 1115
     new-instance v0, Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
     invoke-direct { v0, p0 }, Lcom/innioasis/y1/activity/IppQueueActivity$Blink;-><init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blink:Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
-  .line 1118
+  .line 1116
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->container:Landroid/widget/LinearLayout;
     if-eqz v1, :L2
     const-wide/16 v2, 500
     invoke-virtual { v1, v0, v2, v3 }, Landroid/widget/LinearLayout;->postDelayed(Ljava/lang/Runnable;J)Z
   :L2
-  .line 1119
+  .line 1117
     iget v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->paintFocus(I)V
-  .line 1120
+  .line 1118
     return-void
 .end method
 
 .method private stopBlink()V
   .registers 3
-  .line 1131
+  .line 1129
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blinkOn:Z
-  .line 1132
+  .line 1130
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blink:Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
     if-eqz v0, :L1
-  .line 1133
+  .line 1131
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->container:Landroid/widget/LinearLayout;
     if-eqz v1, :L0
     invoke-virtual { v1, v0 }, Landroid/widget/LinearLayout;->removeCallbacks(Ljava/lang/Runnable;)Z
   :L0
-  .line 1134
+  .line 1132
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blink:Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
   :L1
-  .line 1136
+  .line 1134
     return-void
 .end method
 
@@ -1673,31 +1673,31 @@
 
 .method blinkTick()V
   .registers 5
-  .line 1139
+  .line 1137
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-eqz v0, :L2
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blink:Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
     if-nez v0, :L0
     goto :L2
   :L0
-  .line 1140
+  .line 1138
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blinkOn:Z
     xor-int/lit8 v0, v0, 1
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blinkOn:Z
-  .line 1141
+  .line 1139
     iget v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->paintFocus(I)V
-  .line 1142
+  .line 1140
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->container:Landroid/widget/LinearLayout;
     if-eqz v0, :L1
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->blink:Lcom/innioasis/y1/activity/IppQueueActivity$Blink;
     const-wide/16 v2, 500
     invoke-virtual { v0, v1, v2, v3 }, Landroid/widget/LinearLayout;->postDelayed(Ljava/lang/Runnable;J)Z
   :L1
-  .line 1143
+  .line 1141
     return-void
   :L2
-  .line 1139
+  .line 1137
     return-void
 .end method
 
@@ -1837,23 +1837,23 @@
 
 .method public direction(Lcom/innioasis/y1/base/BaseActivity$Direction;)V
   .registers 3
-  .line 1153
+  .line 1151
     sget-object v0, Lcom/innioasis/y1/base/BaseActivity$Direction;->TOP:Lcom/innioasis/y1/base/BaseActivity$Direction;
     if-ne p1, v0, :L1
-  .line 1156
+  .line 1154
     iget-boolean p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     if-eqz p1, :L0
-  .line 1157
+  .line 1155
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->endMulti()V
-  .line 1158
+  .line 1156
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repaintAll()V
-  .line 1159
+  .line 1157
     return-void
   :L0
-  .line 1161
+  .line 1159
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->finish()V
   :L1
-  .line 1163
+  .line 1161
     return-void
 .end method
 
@@ -2056,9 +2056,9 @@
 
 .method public longConfirm()V
   .registers 6
-  .line 936
+  .line 934
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->buildTail()V
-  .line 937
+  .line 935
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->rows:Ljava/util/List;
     if-eqz v0, :L7
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
@@ -2066,25 +2066,25 @@
     if-eqz v0, :L0
     goto/16 :L7
   :L0
-  .line 938
+  .line 936
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 939
+  .line 937
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->multi:Z
     const v2, 2131821106
     if-eqz v1, :L1
-  .line 940
+  .line 938
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L6
   :L1
-  .line 941
+  .line 939
     iget v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     const v3, 2131821105
     const v4, 2131821071
     if-nez v1, :L3
-  .line 942
+  .line 940
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->artistsOf(I)Ljava/util/List;
     move-result-object v1
     if-eqz v1, :L2
@@ -2092,11 +2092,11 @@
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L2
-  .line 943
+  .line 941
     invoke-virtual { p0, v4 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 944
+  .line 942
     invoke-static { }, Lcom/innioasis/ipp/Queue;->hasSource()Z
     move-result v1
     if-eqz v1, :L6
@@ -2106,7 +2106,7 @@
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L6
   :L3
-  .line 946
+  .line 944
     invoke-static { v1 }, Lcom/innioasis/ipp/Queue;->canRemoveRow(I)Z
     move-result v1
     if-eqz v1, :L4
@@ -2114,12 +2114,12 @@
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L4
-  .line 947
+  .line 945
     const v1, 2131820844
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 948
+  .line 946
     iget v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->artistsOf(I)Ljava/util/List;
     move-result-object v1
@@ -2128,12 +2128,12 @@
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L5
-  .line 949
+  .line 947
     invoke-virtual { p0, v4 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L6
-  .line 953
+  .line 951
     new-instance v1, Lcom/innioasis/music/util/SubMenuDialog;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getActivity()Landroid/app/Activity;
     move-result-object v2
@@ -2142,15 +2142,15 @@
     const v4, 2131886360
     invoke-direct { v1, v2, v0, v3, v4 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
     iput-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->menuDlg:Lcom/innioasis/music/util/SubMenuDialog;
-  .line 954
+  .line 952
     invoke-virtual { v1 }, Lcom/innioasis/music/util/SubMenuDialog;->addPlaylistsToOptions()V
-  .line 955
+  .line 953
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->menuDlg:Lcom/innioasis/music/util/SubMenuDialog;
     invoke-virtual { v0 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
-  .line 956
+  .line 954
     return-void
   :L7
-  .line 937
+  .line 935
     return-void
 .end method
 
@@ -2214,111 +2214,111 @@
 
 .method pick(Lcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .registers 7
-  .line 964
+  .line 962
     const/4 v0, 1
     if-nez p1, :L0
     return v0
   :L0
-  .line 965
+  .line 963
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getPlaylist()Lcom/innioasis/y1/database/Playlist;
     move-result-object v1
-  .line 966
+  .line 964
     if-eqz v1, :L1
-  .line 967
+  .line 965
     invoke-virtual { v1 }, Lcom/innioasis/y1/database/Playlist;->getPlaylistId()Ljava/util/UUID;
     move-result-object p1
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->addToPlaylist(Ljava/util/UUID;)V
-  .line 968
+  .line 966
     return v0
   :L1
-  .line 970
+  .line 968
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p1
-  .line 971
+  .line 969
     if-nez p1, :L2
     return v0
   :L2
-  .line 972
+  .line 970
     const v1, 2131821106
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L3
-  .line 973
+  .line 971
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->removePicked()V
-  .line 974
+  .line 972
     return v0
   :L3
-  .line 976
+  .line 974
     const v1, 2131820844
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L4
-  .line 977
+  .line 975
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->startMulti()V
-  .line 978
+  .line 976
     return v0
   :L4
-  .line 980
+  .line 978
     const v1, 2131821071
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L5
-  .line 981
+  .line 979
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->openAlbum()V
-  .line 982
+  .line 980
     return v0
   :L5
-  .line 984
+  .line 982
     const v1, 2131821093
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L7
-  .line 987
+  .line 985
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->openSource(Landroid/app/Activity;)Z
     move-result p1
     if-eqz p1, :L6
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->finish()V
   :L6
-  .line 988
+  .line 986
     return v0
   :L7
-  .line 990
+  .line 988
     const v1, 2131821105
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
     if-eqz p1, :L10
-  .line 991
+  .line 989
     iget p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->sel:I
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->artistsOf(I)Ljava/util/List;
     move-result-object p1
-  .line 992
+  .line 990
     if-nez p1, :L8
     return v0
   :L8
-  .line 993
+  .line 991
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v1
     const/4 v2, 0
     if-ne v1, v0, :L9
-  .line 994
+  .line 992
     invoke-interface { p1, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Ljava/lang/String;
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->openArtist(Ljava/lang/String;)V
-  .line 995
+  .line 993
     return v0
   :L9
-  .line 998
+  .line 996
     new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->getActivity()Landroid/app/Activity;
     move-result-object v1
@@ -2327,35 +2327,35 @@
     const v4, 2131886360
     invoke-direct { v0, v1, p1, v3, v4 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
     invoke-virtual { v0 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
-  .line 999
+  .line 997
     return v2
   :L10
-  .line 1001
+  .line 999
     return v0
 .end method
 
 .method pickArtist(Ljava/lang/String;)V
   .registers 3
-  .line 1006
+  .line 1004
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->menuDlg:Lcom/innioasis/music/util/SubMenuDialog;
     if-eqz v0, :L0
-  .line 1007
+  .line 1005
     invoke-virtual { v0 }, Lcom/innioasis/music/util/SubMenuDialog;->dismiss()V
-  .line 1008
+  .line 1006
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity;->menuDlg:Lcom/innioasis/music/util/SubMenuDialog;
   :L0
-  .line 1010
+  .line 1008
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppQueueActivity;->openArtist(Ljava/lang/String;)V
-  .line 1011
+  .line 1009
     return-void
 .end method
 
 .method public quit()V
   .registers 1
-  .line 1167
+  .line 1165
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->finish()V
-  .line 1168
+  .line 1166
     return-void
 .end method
 

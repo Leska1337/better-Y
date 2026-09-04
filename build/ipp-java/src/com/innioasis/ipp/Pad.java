@@ -11,18 +11,17 @@ import com.innioasis.y1.R;
 /**
  * The main menu's and Settings' list geometry, put back the way stock had it.
  *
- * <p>v0.18.8 moved both lists to the screen's left edge and grew them down to its bottom (the 9dip
- * left margin went away and the width grew by exactly that, so a row's right edge did not move;
- * 307/305 became 315 = 360 − the 45px status bar). That is right for the default look and wrong for
+ * ON (the default) both lists run to the screen's left edge and down to its bottom: the 9dip left
+ * margin goes away and the width grows by exactly that, so a row's right edge does not move, and
+ * 307/305 becomes 315 = 360 − the 45px status bar. That is right for the default look and wrong for
  * some themes, whose row artwork is drawn expecting the stock inset — hence the toggle: with
  * {@code fixed_menu_pad} OFF, the two lists are handed the stock margin, width and height again.
  *
- * <p>The row is worded as the thing it does ("Fixed menu margins", default On) rather than as its
- * negation, which is why the key is {@code fixed_menu_pad} and not the {@code stock_menu_pad} it
- * replaced (v0.35.6): the same key under the opposite sentence would have flipped the geometry on
- * every device that had ever touched the row.
+ * The row is worded as the thing it does ("Fixed menu margins") rather than as its negation, and
+ * the key follows the wording. A key whose sentence is inverted without renaming it flips the
+ * geometry on every device that has ever touched the row.
  *
- * <p>Applied in code rather than by keeping two layouts because the layouts are shared with
+ * Applied in code rather than by keeping two layouts because the layouts are shared with
  * everything else the screens draw, and a preference cannot pick an XML file at inflate time here.
  * One call at the end of each {@code initView}; which of the two screens it is, is answered by the
  * list's own id, so both share one method (and one method reference in the full {@code classes.dex}

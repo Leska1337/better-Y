@@ -5,11 +5,11 @@ import java.util.Comparator;
 /**
  * Sorts ALBUM NAMES by the year of their songs, read through {@link YearCache}.
  *
- * <p>Its elements are the album name strings, not Song objects — that is what the album screens
+ * Its elements are the album name strings, not Song objects — that is what the album screens
  * hold. Raw {@code Comparator} for the same reason as {@link TrackComparator}: a generic one emits
  * a {@code Signature} attribute and d8 crashes on it.
  *
- * <p>An album with no year sorts LAST in either direction: its year is replaced by
+ * An album with no year sorts LAST in either direction: its year is replaced by
  * {@code Integer.MAX_VALUE} before the comparison and the descending flag is applied to the sign
  * afterwards, so "unknown" never floats to the top of a newest-first list.
  */

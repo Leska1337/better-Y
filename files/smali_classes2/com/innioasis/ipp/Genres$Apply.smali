@@ -19,7 +19,7 @@
 
 .method constructor <init>(Lcom/innioasis/music/GenresActivity;Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/util/List;)V
   .registers 4
-  .line 877
+  .line 875
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Genres$Apply;->a:Lcom/innioasis/music/GenresActivity;
     iput-object p2, p0, Lcom/innioasis/ipp/Genres$Apply;->ad:Lcom/innioasis/music/adapter/MyBaseAdapter;
@@ -31,7 +31,7 @@
   .catchall { :L0 .. :L4 } :L5
   .registers 4
   :L0
-  .line 881
+  .line 879
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->a:Lcom/innioasis/music/GenresActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Genres;->access$600(Lcom/innioasis/music/GenresActivity;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object v0
@@ -39,7 +39,7 @@
     if-eq v0, v1, :L1
     return-void
   :L1
-  .line 882
+  .line 880
     invoke-static { v1 }, Lcom/innioasis/ipp/Genres;->access$700(Ljava/lang/Object;)I
     move-result v0
     const/4 v1, 3
@@ -48,11 +48,11 @@
     iget-object v2, p0, Lcom/innioasis/ipp/Genres$Apply;->list:Ljava/util/List;
     invoke-virtual { v0, v2 }, Lcom/innioasis/music/GenresActivity;->setSongList(Ljava/util/List;)V
   :L2
-  .line 883
+  .line 881
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->ad:Lcom/innioasis/music/adapter/MyBaseAdapter;
     iget-object v2, p0, Lcom/innioasis/ipp/Genres$Apply;->list:Ljava/util/List;
     invoke-virtual { v0, v2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setItems(Ljava/util/List;)V
-  .line 886
+  .line 884
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->ad:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v0 }, Lcom/innioasis/ipp/Genres;->access$700(Ljava/lang/Object;)I
     move-result v0
@@ -64,17 +64,17 @@
     move-result-object v2
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;Landroid/widget/ListView;)V
   :L3
-  .line 887
+  .line 885
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->a:Lcom/innioasis/music/GenresActivity;
     iget-object v1, p0, Lcom/innioasis/ipp/Genres$Apply;->ad:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Genres;->access$900(Lcom/innioasis/music/GenresActivity;Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   :L4
-  .line 890
+  .line 888
     goto :L6
   :L5
-  .line 888
+  .line 886
     move-exception v0
   :L6
-  .line 891
+  .line 889
     return-void
 .end method

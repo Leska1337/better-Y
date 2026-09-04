@@ -49,12 +49,12 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * #227.2 — the "Up Next" screen. Row 0 is the track playing right now (marked ▶), then the
+ * The "Up Next" screen. Row 0 is the track playing right now (marked ▶), then the
  * tracks added via "Add to queue", then the next {@link Queue#LOOKAHEAD} playlist tracks
  * (sequential, or the shuffle plan when shuffle is on — see {@link Queue}).
  *
  * Click-wheel driven, like IppActivity: UP/DOWN move focus, centre plays the focused track
- * right away, long top opens the row's menu (#227.4/#227.5), top closes.
+ * right away, long top opens the row's menu, top closes.
  * The view is rebuilt from {@link Queue#upNext()} on every render and on every
  * {@code MY_PLAY_SONG} broadcast, so it follows track changes live.
  *
@@ -84,14 +84,14 @@ public final class IppQueueActivity extends BaseActivity {
      * Only what will be VISIBLE is built before the first frame; the rest is posted and lands one
      * frame later ({@link Tail}).
      *
-     * <p>This screen is opened from the player, and the player's title is SCROLLING while it opens
+     * This screen is opened from the player, and the player's title is SCROLLING while it opens
      * — the marquee is a Handler tick on the very thread that builds this list, so every
      * millisecond spent in {@link #initView} is a millisecond the title cannot move. Frozen on a
      * screen that has not changed yet, it reads as the device having hung, and that is what the
      * user reported: the scroll stops before the queue appears. Twenty-one rows were built for a
      * screen that shows about five.
      *
-     * <p>How many that is comes from the SCREEN, not from a constant — see {@link #syncRows()}.
+     * How many that is comes from the SCREEN, not from a constant — see {@link #syncRows()}.
      * A fixed six was one row short of a screenful, and once the tail stopped delaying the window
      * (see {@link #render()}) that missing row became visible: the list appeared with five songs
      * and the rest arrived a moment later, in plain sight. The floor below is what the count may
@@ -104,7 +104,7 @@ public final class IppQueueActivity extends BaseActivity {
      * Rows to build before the first frame: as many as the scroller can show, plus one for the row
      * the screen cuts in half and one to spare.
      *
-     * <p>It is the same arithmetic {@link #build} does — a row is 1.5x its text size plus its two
+     * It is the same arithmetic {@link #build} does — a row is 1.5x its text size plus its two
      * margins, and the playing row is that doubled — so it follows the theme's text size and the
      * screen without a second number to keep in step. Over-counting is the safe direction: a row
      * built and not shown costs a couple of milliseconds, a row shown and not built is the flash.
@@ -146,7 +146,7 @@ public final class IppQueueActivity extends BaseActivity {
      */
     private final java.util.HashMap markCache = new java.util.HashMap();
 
-    // #227.5 multi-select. The ticked rows carry the very highlight the cursor does — stock draws
+    // Multi-select. The ticked rows carry the very highlight the cursor does — stock draws
     // its multi-selection that way too — and the cursor is told apart by BLINKING, again as stock
     // does it (there from a 500 ms thread per screen; here one posted Runnable, stopped with the
     // screen). Row 0 can never be ticked: the track playing now is not something to remove.
@@ -571,7 +571,7 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * The tick of a ticked row (#227.5) — the second marker of a selection, the first being the
+     * The tick of a ticked row — the second marker of a selection, the first being the
      * highlight. Drawn, like the tick of the cache picker and for the same reason: two strokes on
      * a transparent square are one bitmap and follow the row's colour, where an asset would have
      * to be shipped per theme. Geometry is that dialog's 16px tick scaled to the marker column.
@@ -660,9 +660,9 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * The picture of the playing track — <b>the one Now Playing is showing</b>, not its album's.
+     * The picture of the playing track — the one Now Playing is showing, not its album's.
      *
-     * This row stands for one song, so the same rule #230.2 fixed for the big cover applies at
+     * This row stands for one song, so the same rule the big cover follows applies at
      * 50px: a track with artwork of its own inside an album that has different artwork (a folder
      * of singles, a compilation, a song falling back to {@code folder.jpg}) was drawn with its
      * neighbour's picture, and the player right underneath showed the other one. {@code peekTrack}
@@ -782,7 +782,7 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Stock stores an unknown tag as {@code Constant.UNKNOWN}, which is "&lt;unknown&gt;" behind
+     * Stock stores an unknown tag as {@code Constant.UNKNOWN}, which is "<unknown>" behind
      * four U+FFE6 — a sort-key prefix that keeps unknowns last, stripped for display by
      * {@code Other.unNamed}. Missing it is what drew the "￦￦￦￦" as four struck-through W's.
      */
@@ -890,7 +890,7 @@ public final class IppQueueActivity extends BaseActivity {
      * (this screen is always opened from the player, so finishing returns there).
      *
      * In multi-select the centre button ticks the row instead, exactly as it does in every stock
-     * list. Row 0 is not tickable (#227.5).
+     * list. Row 0 is not tickable.
      */
     @Override
     public void confirm() {
@@ -915,16 +915,14 @@ public final class IppQueueActivity extends BaseActivity {
     /**
      * Long TOP — the row's menu. {@code longConfirm} is what BaseActivity.dispatchKeyEvent calls
      * for a held top button ("长按 上"); {@code Direction.LTOP} exists in the enum but is dispatched
-     * by nothing in this APK, which is why everything that used to hang off it never fired at all.
+     * by nothing in this APK, so anything hung off THAT never fires at all.
      *
-     * Three menus, one per state of the screen (#227.4 / #227.5):
-     * <ul>
-     *   <li>the PLAYING row — nothing to remove and nothing to tick, so: its artist, its album,
+     * Three menus, one per state of the screen:
+     *   - the PLAYING row — nothing to remove and nothing to tick, so: its artist, its album,
      *       the screen it was started from ("Open source" — the one thing not on this screen),
-     *       and the playlists;</li>
-     *   <li>any other row — Remove, MultiSelect, its artist, its album, and the playlists;</li>
-     *   <li>in multi-select — only what several tracks at once can mean: Remove and a playlist.</li>
-     * </ul>
+     *       and the playlists;
+     *   - any other row — Remove, MultiSelect, its artist, its album, and the playlists;
+     *   - in multi-select — only what several tracks at once can mean: Remove and a playlist.
      *
      * Built per press and dispatched BY STRING, never by index: the playlists are appended by
      * stock's own {@code addPlaylistsToOptions} and their number is whatever the user has made it.
@@ -994,7 +992,7 @@ public final class IppQueueActivity extends BaseActivity {
                 openArtist((String) a.get(0));
                 return true;
             }
-            // Several artists on one tag (#281.2) — one entry each, in a menu of their own.
+            // Several artists on one tag — one entry each, in a menu of their own.
             new SubMenuDialog(getActivity(), a, new QArtists(this), R.style.Dialog_Common).show();
             return false;                          // QArtists dismisses this one on its pick
         }
@@ -1016,7 +1014,7 @@ public final class IppQueueActivity extends BaseActivity {
      * Remove — the ticked rows, or the row under the cursor when nothing is ticked. No confirm
      * dialog: picking the entry out of a menu is already the deliberate act.
      *
-     * <b>Descending order matters.</b> Everything {@link Queue} keeps is a POSITION: removing a
+     * Descending order matters. Everything {@link Queue} keeps is a POSITION: removing a
      * queued row takes its guest out of the playlist and shifts every index behind it down, and
      * the row → playlist-index table of the last projection is not shifted with them. Highest row
      * first means every projected row (they all stand below the queued ones) is dealt with before
@@ -1068,7 +1066,7 @@ public final class IppQueueActivity extends BaseActivity {
         return out;
     }
 
-    /** "Open album" — the album this song sits in, landing on the song (#362.2's machinery). */
+    /** "Open album" — the album this song sits in, landing on the song (the same machinery "Open album" uses elsewhere). */
     private void openAlbum() {
         Song s = songAt(sel);
         if (s == null) return;

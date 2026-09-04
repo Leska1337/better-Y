@@ -22,24 +22,23 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * #397 — the Search screen: its rows, its long-press menu.
+ * The Search screen: its rows, its long-press menu.
  *
  * Stock drew a result row from a background thread it started on EVERY bind: the song row's cover,
  * and the album row's cover, title AND subtitle. So scrolling showed rows whose text arrived a
  * thread hop after the row itself, and covers that were decoded again for every row that scrolled
  * past — with the decoded bitmap parked on the Item and thrown away again by the adapter's own
- * "±10 rows" cleanup. That is the blinking (#397.2).
+ * "±10 rows" cleanup. That is the blinking.
  *
  * Everything a row can answer from memory is written on the calling thread, exactly the shape the
  * album list already has (`AlbumListAdapter.getView`): the texts always, the cover from
  * {@link CoverCache} when it is there and the placeholder when it is not, and only a genuine cache
- * miss starts a thread — one per row subject per session, not one per bind (#397.3).
+ * miss starts a thread — one per row subject per session, not one per bind.
  *
  * The other fixes carried over from the sections that already have them: the song title obeys
- * "Show titles from tags" (#397.5, {@link Ipp#songTitle}), the artist line reads "; " as ", "
- * (#220.2), an ALBUM name is not a file name so it does not go through `processFileExtensions`
- * — that would cut "Vol.2" down to "Vol" (#397.4) — and a name shared by several folders is
- * several rows (#291.3, {@link Albums#splitAlbums}).
+ * "Show titles from tags" ({@link Ipp#songTitle}), the artist line reads "; " as ", ", an ALBUM name is not a file name so it does not go through `processFileExtensions`
+ * — that would cut "Vol.2" down to "Vol" — and a name shared by several folders is
+ * several rows ({@link Albums#splitAlbums}).
  */
 public final class Find {
 
@@ -55,7 +54,7 @@ public final class Find {
     private static final Hashtable reading = new Hashtable();
 
     /**
-     * track path -> its OWN 50px artwork, or {@link #SAME} when it has none of its own and the
+     * Track path -> its OWN 50px artwork, or {@link #SAME} when it has none of its own and the
      * album's thumbnail is the right picture. Memory only and bounded: a search list is short and
      * scrolled once, and the expensive half of the answer (BigCover's per-track note) is persisted
      * anyway.
@@ -76,12 +75,12 @@ public final class Find {
     public static void songRow(ImageView icon, TextView title, TextView info, Song song, Bitmap def) {
         if (song == null) return;
         if (title != null) {
-            // #397.5 — the tag title when "Show titles from tags" is on, the file name otherwise.
+            // the tag title when "Show titles from tags" is on, the file name otherwise.
             // unNamed() around it because a tagless song's name is Constant.UNKNOWN, not "".
             String t = Ipp.songTitle(title.getContext(), song.getSongName(), song.getName());
             title.setText(Other.INSTANCE.unNamed(t));
         }
-        // #220.2 — "; " reads as ", ", the same substitution every other song row makes.
+        // "; " reads as ", ", the same substitution every other song row makes.
         if (info != null) info.setText(Other.INSTANCE.unNamed(Artists.display(song.getArtist())));
         songCover(icon, song, def);
     }
@@ -89,9 +88,9 @@ public final class Find {
     public static void albumRow(ImageView icon, TextView title, TextView info, Album album, Bitmap def) {
         if (album == null) return;
         String name = album.getName();
-        // #397.4: an album name is not a file name — no extension stripping here. albumLabel is
+        // an album name is not a file name — no extension stripping here. albumLabel is
         // what every other album row in the mod shows: the real name out of the encoded key
-        // (#291.3), plus the year when "Show album year" is on — which is also what tells two
+        //, plus the year when "Show album year" is on — which is also what tells two
         // same-named albums apart now that they are separate rows.
         if (title != null) title.setText(Other.INSTANCE.unNamed(Prefs.albumLabel(name)));
         Info in = infoOf(name);
@@ -124,7 +123,7 @@ public final class Find {
     /**
      * A SONG row shows THAT SONG's artwork, not its album's — a compilation, a folder of singles
      * or one track carrying a cover of its own were all drawn with the album's picture, which is
-     * the same defect #230.2 fixed for the Now-Playing cover, at 50px.
+     * the same rule the Now-Playing cover follows, at 50px.
      *
      * The album's thumbnail is still what goes up instantly: for the overwhelming majority of
      * tracks it IS the track's picture, so painting it costs no read and nothing swaps afterwards.
@@ -278,7 +277,7 @@ public final class Find {
     /**
      * How many songs the album holds and which of them stands for it — taken from
      * {@link Albums#songsOf}, i.e. off the cached Song table the album lists are already built
-     * from, so the row needs no query of its own and the folder-encoded key (#291.3) is honoured.
+     * from, so the row needs no query of its own and the folder-encoded key is honoured.
      * Memoised per key, because a bind must not walk the library.
      *
      * The representative is the FIRST song in path order, the same one `Albums.songsSync` hands
@@ -359,7 +358,7 @@ public final class Find {
 
     /**
      * An untagged song does not carry an empty string, it carries {@code Constant.UNKNOWN} —
-     * "&lt;unknown&gt;" behind four U+FFE6 — so without this every one of them would answer to a
+     * "<unknown>" behind four U+FFE6 — so without this every one of them would answer to a
      * search for "unknown".
      */
     /**
@@ -434,7 +433,7 @@ public final class Find {
         l.add(a.getString(R.string.music_delete_file));
         l.add(a.getString(R.string.ipp_queue_add));
         // Both only on a song row: the album row IS the album, and the centre press already opens
-        // it. Same rule the flat song lists follow (#362.2), artist above album as everywhere.
+        // it. Same rule the flat song lists follow, artist above album as everywhere.
         if (Artists.of(songOf(adapter)) != null) l.add(a.getString(R.string.ipp_open_artist));
         if (songOf(adapter) != null) l.add(a.getString(R.string.ipp_open_album));
         dlg.setList(l);

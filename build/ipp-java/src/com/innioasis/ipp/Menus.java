@@ -30,26 +30,26 @@ import java.util.WeakHashMap;
  * song's album or its artist, renaming a playlist: none of that is an action on a selection, and
  * offering it there either does nothing or quietly acts on one arbitrary row of the tick list.
  *
- * <p><b>One hook for every screen.</b> Every menu in this app is a {@link SubMenuDialog}, and every
+ * One hook for every screen. Every menu in this app is a {@link SubMenuDialog}, and every
  * one of them is shown through {@code onStart} — so the filter sits there instead of in the eight
  * places menus are built. That also covers the ipp menus that are rebuilt per press
  * ({@code Albums.songMenu}, {@code Find.menu}, {@code Genres.menu}, {@code Playlists.favMenu}) with
  * nothing added to them.
  *
- * <p><b>The signal is MORE THAN ONE ticked row</b>, and it has to be that rather than "any tick at
+ * The signal is MORE THAN ONE ticked row, and it has to be that rather than "any tick at
  * all": a plain long press ticks the row under the cursor to highlight it, and the screens do not
  * agree on when — {@code AlbumsActivity} ticks it BEFORE {@code show()}, everything else after. So
  * one tick is ambiguous (a long press, or a selection of one), while two are not. With a single
  * ticked row the whole menu is shown, which is right either way: every entry in it means something
  * for one row.
  *
- * <p><b>The index a callback sees is the one the UNFILTERED menu would have given</b>
+ * The index a callback sees is the one the UNFILTERED menu would have given
  * ({@link #index}, injected in {@code shortUp}). Most screens dispatch on the item's string, but
  * {@code FilesActivity} and {@code GenresActivity} dispatch by INDEX ("anything past the fixed
  * items is a playlist"), and dropping an entry above those would silently change what every entry
  * below it does.
  *
- * <p>Raw types and named classes only — see CLAUDE.md on the bundled d8.
+ * Raw types and named classes only — see CLAUDE.md on the bundled d8.
  */
 public final class Menus {
 
@@ -89,7 +89,7 @@ public final class Menus {
      * point every menu of every screen goes through, and the only one that runs again when a lazily
      * built dialog is shown a second time.
      *
-     * <p>The unfiltered menu is remembered and put back before each pass, because the entries we
+     * The unfiltered menu is remembered and put back before each pass, because the entries we
      * drop must come back next time. Whether the screen has rebuilt the menu in the meantime is
      * answered by comparing what is there now against what we left ({@code shown}) — by reference,
      * so a rebuilt list is never mistaken for the one we filtered.
@@ -170,12 +170,10 @@ public final class Menus {
 
     /**
      * Whether this entry belongs in the menu as the screen stands. Two rules:
-     * <ul>
-     *   <li>"Add to <em>this</em> playlist" is not offered while standing INSIDE that playlist —
+     *   - "Add to this playlist" is not offered while standing INSIDE that playlist —
      *       every song there is in it by definition, so the entry can only ever answer "already in
-     *       the playlist";</li>
-     *   <li>with several rows ticked, only what a selection can mean (see {@link #MULTI}).</li>
-     * </ul>
+     *       the playlist";
+     *   - with several rows ticked, only what a selection can mean (see {@link #MULTI}).
      */
     private static boolean keeps(Activity host, Object o, boolean multi, UUID self) {
         if (!(o instanceof SubmenuAdapter.Item)) return true;

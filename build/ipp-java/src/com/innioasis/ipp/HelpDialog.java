@@ -26,28 +26,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * #228.1 — the help window of a row of the innioasis++ screen: hold the top button on a row and
+ * The help window of a row of the better-Y screen: hold the top button on a row and
  * this comes up with what that row does. Text and screenshots alike, paged with the wheel.
  *
- * <h3>The wheel pages; it does not scroll</h3>
+ * The wheel pages; it does not scroll
  * One gesture, one meaning: the wheel steps between whole pages, the top button closes, the centre
  * does nothing (the user's call — there is nothing here to confirm). Scrolling text with the same
  * wheel that pages the window would leave the reader unable to tell which of the two a click is
  * about to do, and a half-scrolled page has no honest page number to show.
  *
- * <h3>Pages are MEASURED, and so is the window</h3>
+ * Pages are MEASURED, and so is the window
  * Nothing in the asset says where a page ends: the text is broken where it stops fitting, using
  * the very {@link TextPaint} it will be drawn with. That matters because the eight translations
  * differ in length by a third or more — hand-placed breaks would be right in one language and
  * leave half-empty pages in the others. {@code ---} forces a break where the author wants one, and
  * a picture is always a page of its own.
  *
- * <p>The BOX is measured too, in both directions, and sized to the widest and tallest page of that
+ * The BOX is measured too, in both directions, and sized to the widest and tallest page of that
  * one description: a one-line row does not open a half-screen window, and a long one is not
  * cramped. Sized once per description rather than per page, so paging does not make the window
  * jump — the exception being a picture, which gets the height it needs to stay legible.
  *
- * <p>Built in code on the {@code PickDialog} pattern, for the same reasons: the theme's colours
+ * Built in code on the {@code PickDialog} pattern, for the same reasons: the theme's colours
  * come through {@code ThemeManager}, and the box is a {@link GradientDrawable} rather than
  * {@code bg_submenu} (a theme replaces the colour, and {@code setBackgroundColor} would take the
  * rounded corners with it).
@@ -218,7 +218,7 @@ public final class HelpDialog extends BaseDialog {
      * Break the text into pages against the largest box allowed, then record how wide and how tall
      * that description's biggest page actually came out — which is what the window is sized to.
      *
-     * <p>Shrinking the box to the widest LINE cannot re-wrap anything: by construction every line
+     * Shrinking the box to the widest LINE cannot re-wrap anything: by construction every line
      * already fits in that width. That is why the width may be measured after the break rather
      * than solved together with it.
      */
@@ -315,10 +315,9 @@ public final class HelpDialog extends BaseDialog {
     /**
      * How much height is left for the body once the title and the page counter have taken theirs.
      *
-     * <p>{@code BODY_MAX} alone was a constant sized for a ONE-LINE title, and a row whose name
-     * wraps to two lines pushed the counter off the bottom of the screen ("Show songs only by
-     * selected artist inside of Artists - Album", v0.35.6). Everything here is measured rather
-     * than assumed: the title is broken at the width the box actually came out at, and the
+     * A constant sized for a ONE-LINE title is not enough: a row whose name wraps to two lines
+     * ("Show songs only by selected artist inside of Artists - Album") then pushes the counter off
+     * the bottom of the screen. So everything here is measured rather than assumed: the title is broken at the width the box actually came out at, and the
      * counter is one line of its own paint.
      */
     private int room() {

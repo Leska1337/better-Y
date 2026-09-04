@@ -15,20 +15,19 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * #228.1 — the text behind the help windows of the innioasis++ screen: what each row does, in the
+ * The text behind the help windows of the better-Y screen: what each row does, in the
  * device's language, shown by holding the top button on it.
  *
- * <h3>Why this is an ASSET and not a string resource</h3>
+ * Why this is an ASSET and not a string resource
  * A description per row is a paragraph, not a label, and there are two dozen rows. As string
  * resources that would be ~24 entries in each of the eight locale files plus an id apiece in
  * {@code public.xml} — some 200 entries whose only reader is this one screen, and a translator
- * would have to be handed eight XML files to work in. As an asset it is <b>one plain text file per
- * language</b> ({@code assets/help/ru.txt}), which can be handed over, edited and diffed as itself,
+ * would have to be handed eight XML files to work in. As an asset it is one plain text file per
+ * language ({@code assets/help/ru.txt}), which can be handed over, edited and diffed as itself,
  * and a language nobody has translated yet simply falls back to English instead of needing empty
  * entries everywhere.
  *
- * <h3>The format</h3>
- * <pre>
+ * The format
  * [meta_title]                     ← the row's key, exactly as buildItems() spells it
  * Song titles are read from the tag rather than from the file name.
  * @img meta_title_1.png            ← a page that is nothing but this picture
@@ -36,9 +35,8 @@ import java.util.List;
  *
  * [alpha_scroll]
  * … {row:follow_playing} … {app:artists} … {On} … {Off} …
- * </pre>
  *
- * <p>{@code {row:<key>}} is the LABEL of another row of this menu, {@code {app:<name>}} is one
+ * {@code {row:<key>}} is the LABEL of another row of this menu, {@code {app:<name>}} is one
  * of the app's own names (a section, the favourites playlist), and {@code {On}} / {@code {Off}}
  * are a toggle's two values as the row itself shows them. All are resolved at display time,
  * in the language the device is in — a description that spelled another row's name out in words
@@ -66,7 +64,7 @@ public final class Help {
     }
 
     /**
-     * One row of the innioasis++ menu as the ASSET declares it: its name, the values of a choice
+     * One row of the better-Y menu as the ASSET declares it: its name, the values of a choice
      * row, which other row it is a sub-item of, and its description. What the row DOES — its kind,
      * its preference key, its default — stays in {@code IppActivity}: that is behaviour, not
      * wording, and it cannot be written in a text file without inventing a language for it.

@@ -19,18 +19,18 @@ import com.innioasis.y1.database.Y1Repository;
  * The year of an album, read from the tags of ONE of its songs and remembered in
  * {@code ipp_years.txt}.
  *
- * <p>A year is a property of the album, not of the track — one {@code MediaMetadataRetriever} per
+ * A year is a property of the album, not of the track — one {@code MediaMetadataRetriever} per
  * album, which is what makes it affordable at all. (A per-track year range "(2001 – 2004)" was
  * considered and deferred for exactly that reason: it needs every file of the library read.)
  *
- * <p>{@code ""} means "read, and this album has no year": without it every untagged album would be
+ * {@code ""} means "read, and this album has no year": without it every untagged album would be
  * opened again on every pass. {@link #get(String)} therefore answers "" and null differently, and
  * {@link YearComparator} treats both as "no year".
  *
- * <p>Keys go through {@link Albums#coverKey}, so an album asked about by its plain name from Genres
+ * Keys go through {@link Albums#coverKey}, so an album asked about by its plain name from Genres
  * and by its folder-encoded name from Albums is one entry, not two.
  *
- * <p>The map is a raw {@code HashMap} — a generic field type makes javac emit a class
+ * The map is a raw {@code HashMap} — a generic field type makes javac emit a class
  * {@code Signature} attribute and the bundled d8 crashes dexing those.
  */
 public final class YearCache {
@@ -90,7 +90,7 @@ public final class YearCache {
     /**
      * The album's year, "" for "read, no year", null for "never looked at".
      *
-     * <p>ipp: the key is canonicalised — the Genres screen asks with a PLAIN album name where the
+     * ipp: the key is canonicalised — the Genres screen asks with a PLAIN album name where the
      * Albums screen asks with a folder-encoded one (see {@link Albums#coverKey} / CoverCache.peek).
      */
     public static String get(String album) {
@@ -162,7 +162,7 @@ public final class YearCache {
      * {@code setDataSource}). Exactly {@link #warm}'s rule: YEAR first, DATE as the fallback, four
      * digits out of either, and "" for "read, no year" so it is not read again.
      *
-     * <p>It does not write the file — the caller's pass ends in {@link #warm}, which does.
+     * It does not write the file — the caller's pass ends in {@link #warm}, which does.
      */
     public static void put(String album, String year, String date) {
         album = Albums.coverKey(album);
@@ -195,7 +195,7 @@ public final class YearCache {
                 if (album == null) {
                     continue;
                 }
-                // ipp #281.1: the "Show all songs" row is not an album — never scan the artist
+                // ipp: the "Show all songs" row is not an album — never scan the artist
                 // for a year.
                 if (Albums.isAllSongs(album)) {
                     continue;

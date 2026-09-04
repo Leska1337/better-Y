@@ -28,13 +28,13 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..9c736614 100644
+index 01b1f730..f6bb97cb 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
  version: 2.11.1
 -apkFileName: com.innioasis.y1_3.1.2.apk
-+apkFileName: innioasis++_3.1.2_v0.1.23.apk
++apkFileName: better-Y_3.1.2.apk
  isFrameworkApk: false
  usesFramework:
    ids:
@@ -43,7 +43,7 @@ index 01b1f730..9c736614 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000001
++  versionCode: 10000002
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -61,12 +61,12 @@ index 2e99c3ad..8c3e1d4e 100644
          </com.bosphere.fadingedgelayout.FadingEdgeLayout>
          <TextView android:textSize="27.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/tv_song_name2" android:layout_width="fill_parent" android:layout_height="wrap_content" app:layout_constraintTop_toTopOf="parent" />
 diff --git a/build/src/res/layout-v22/dialog_input_method.xml b/build/src/res/layout-v22/dialog_input_method.xml
-index 82e89f7a..15f50434 100644
+index 82e89f7a..0df51da2 100644
 --- a/build/src/res/layout-v22/dialog_input_method.xml
 +++ b/build/src/res/layout-v22/dialog_input_method.xml
 @@ -1,6 +1,7 @@
  <?xml version="1.0" encoding="utf-8"?>
-+<!-- ipp #409: see res/layout/dialog_input_method.xml -->
++<!-- ipp: see res/layout/dialog_input_method.xml -->
  <androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/bg_input_method" android:layout_width="fill_parent" android:layout_height="wrap_content"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <EditText android:textSize="24.0sp" android:textStyle="bold" android:textColor="@color/black" android:id="@id/input_box" android:background="@drawable/bg_input_method_edittext" android:paddingLeft="7.0dip" android:paddingRight="7.0dip" android:layout_width="110.0dip" android:layout_height="37.0dip" android:layout_marginLeft="9.0dip" android:layout_marginTop="9.0dip" android:layout_marginRight="9.0dip" android:layout_marginBottom="9.0dip" android:maxLines="1" android:inputType="textNoSuggestions" android:textCursorDrawable="@drawable/text_cursor" android:layout_marginHorizontal="9.0dip" android:layout_marginVertical="9.0dip" android:paddingHorizontal="7.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
@@ -86,7 +86,7 @@ index 7b87d102..378d96df 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" android:layout_marginHorizontal="3.0dip" android:layout_marginVertical="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_albums.xml b/build/src/res/layout/activity_albums.xml
-index a65785d4..6017a86d 100644
+index a65785d4..9b81552c 100644
 --- a/build/src/res/layout/activity_albums.xml
 +++ b/build/src/res/layout/activity_albums.xml
 @@ -1,6 +1,26 @@
@@ -115,7 +115,7 @@ index a65785d4..6017a86d 100644
 +         tracks and no sliver of a sixth, which is precisely what was wrong with it: with nothing
 +         peeking out at the bottom edge there is no sign that the list goes on. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <!-- ipp #291.3: the disc the song list is currently in, under the Shuffle row and driven by
++    <!-- ipp: the disc the song list is currently in, under the Shuffle row and driven by
 +         Disc.Bar. It rides up together with that row and then STOPS at the top edge — it names the
 +         disc that has already scrolled off, so it is the one thing on this screen that stays pinned.
 +         GONE for everything that is not a multi-disc album, and then it collapses to a point at
@@ -169,14 +169,14 @@ index 3fff8427..9969b5b1 100644
          <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
      </LinearLayout>
 diff --git a/build/src/res/layout/activity_book_main.xml b/build/src/res/layout/activity_book_main.xml
-index cf5ce73a..80f97744 100644
+index cf5ce73a..4c396309 100644
 --- a/build/src/res/layout/activity_book_main.xml
 +++ b/build/src/res/layout/activity_book_main.xml
 @@ -3,7 +3,11 @@
    xmlns:android="http://schemas.android.com/apk/res/android">
      <include android:id="@id/continue_reading" layout="@layout/item_book_main" />
      <include android:id="@id/local_files" layout="@layout/item_book_main" />
-+    <!-- ipp #387.2: the Library is a section of its own now, so the caption below became a row.
++    <!-- ipp: the Library is a section of its own, reached by a row of the same name.
 +         Both are in the layout and one of them is hidden: this screen serves the menu (the three
 +         rows, no list) and the Library itself (the list, no rows). See Ebook. -->
 +    <include android:id="@id/ipp_library_row" layout="@layout/item_book_main" />
@@ -186,7 +186,7 @@ index cf5ce73a..80f97744 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
-index a65785d4..9754b9dc 100644
+index a65785d4..8c2b0d57 100644
 --- a/build/src/res/layout/activity_genres.xml
 +++ b/build/src/res/layout/activity_genres.xml
 @@ -1,6 +1,20 @@
@@ -206,7 +206,7 @@ index a65785d4..9754b9dc 100644
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <!-- ipp: 49dip (one list row) and NOT pinned - the row rides away with the list. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <!-- ipp #291.3: the disc the song list is currently in, under the Shuffle row and driven by
++    <!-- ipp: the disc the song list is currently in, under the Shuffle row and driven by
 +         Disc.Bar - the same view, the same id and the same geometry as on the Albums screen, so
 +         one class serves both. GONE for anything that is not a multi-disc album, and then it
 +         collapses to a point at spv's bottom and the list keeps the full height. -->
@@ -334,7 +334,7 @@ index 0ed053cd..7e8bc4e7 100644
              <ImageView android:layout_gravity="center" android:id="@id/right_image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/icon_setting_brightness" android:adjustViewBounds="true" app:layout_constraintTop_toTopOf="parent" />
              <com.innioasis.y1.utils.AboutView android:layout_gravity="center" android:id="@id/bzt_view" android:visibility="gone" android:layout_width="130.0dip" android:layout_height="130.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
 diff --git a/build/src/res/layout/activity_song_list.xml b/build/src/res/layout/activity_song_list.xml
-index d1f9fb86..a491623c 100644
+index d1f9fb86..e3ab7765 100644
 --- a/build/src/res/layout/activity_song_list.xml
 +++ b/build/src/res/layout/activity_song_list.xml
 @@ -1,7 +1,14 @@
@@ -346,7 +346,7 @@ index d1f9fb86..a491623c 100644
 -    <ListView android:id="@id/lv" android:focusable="false" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/spv" />
 -</androidx.constraintlayout.widget.ConstraintLayout>
 +<?xml version="1.0" encoding="utf-8"?>
-+<!-- ipp: the Shuffle row is NOT pinned above the list any more — it rides away with it (see Head).
++<!-- ipp: the Shuffle row is NOT pinned above the list — it rides away with it (see Head).
 +     The ListView therefore spans the whole screen and reserves the row's height as paddingTop with
 +     clipToPadding="false", so rows are really laid out inside that space instead of being dropped,
 +     while ListView's own correctTooLow still rests row 0 against the padding. The padding is set at
@@ -360,12 +360,12 @@ index d1f9fb86..a491623c 100644
 +    <ListView android:id="@id/lv" android:focusable="false" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/dialog_input_method.xml b/build/src/res/layout/dialog_input_method.xml
-index cfa3f963..c3c28834 100644
+index cfa3f963..63827bf9 100644
 --- a/build/src/res/layout/dialog_input_method.xml
 +++ b/build/src/res/layout/dialog_input_method.xml
 @@ -1,6 +1,9 @@
  <?xml version="1.0" encoding="utf-8"?>
-+<!-- ipp #409: the input box is a full-width row of its own and the letters run under it, so the
++<!-- ipp: the input box is a full-width row of its own and the letters run under it, so the
 +     strip shows ~14 letters instead of the ~9 that were left beside the box. The caps-lock arrow
 +     is a compound drawable at the box's right-hand end (Keys.markCaps), so it needs no view. -->
  <androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/bg_input_method" android:layout_width="fill_parent" android:layout_height="wrap_content"
@@ -474,7 +474,7 @@ index 4b9d1219..cb731bb9 100644
 +    </LinearLayout>
 +</RelativeLayout>
 diff --git a/build/src/res/layout/item_book_library.xml b/build/src/res/layout/item_book_library.xml
-index 47fb6a5a..dd78f130 100644
+index 47fb6a5a..755be867 100644
 --- a/build/src/res/layout/item_book_library.xml
 +++ b/build/src/res/layout/item_book_library.xml
 @@ -10,5 +10,12 @@
@@ -482,7 +482,7 @@ index 47fb6a5a..dd78f130 100644
          </LinearLayout>
      </LinearLayout>
 -    <ImageView android:layout_gravity="center" android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="30.0dip" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
-+    <!-- ipp #387.3: the arrow scales to the row instead of sitting in a fixed 30x30 box. A theme
++    <!-- ipp: the arrow scales to the row instead of sitting in a fixed 30x30 box. A theme
 +         supplies this image itself (2.png, drawn for a 640px-wide device: 20x54 on theme1/2/4,
 +         64x63 on Frutiger Aero), so a fixed square either squashed it into a sliver with dead
 +         space around it or showed it at a size that had nothing to do with the row. Height from
@@ -638,7 +638,7 @@ index ce45631a..5e5d5bed 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b91724..f6f18a67 100644
+index 60b91724..aca03ece 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
 @@ -1,8 +1,51 @@
@@ -676,7 +676,7 @@ index 60b91724..f6f18a67 100644
 +     one place in the app where list rows differ in height (see Disc and Wheel.list). -->
 +<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 +  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:test="http://schemas.android.com/apk/res-auto">
-+    <!-- ipp #291.3: the disc strip. In a multi-disc album it is INVISIBLE (i.e. still measured) on
++    <!-- ipp: the disc strip. In a multi-disc album it is INVISIBLE (i.e. still measured) on
 +         every row and VISIBLE with "CD N" on the first row of each disc, so all rows keep the same
 +         height — a strip on some rows only makes ListView's row-count scrolling land the cursor on
 +         a cut-off row. GONE (no space at all) in every list that is not a multi-disc album. -->
@@ -19196,7 +19196,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..3724b880 100644
+index 71fe29d0..1447c416 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20145,7 +20145,7 @@ index 71fe29d0..3724b880 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev1</string>
++    <string name="ipp_version">v1.0.0-dev2</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20204,7 +20204,7 @@ index 71fe29d0..3724b880 100644
 +    <string name="ipp_already_added">Already in the playlist</string>
 +</resources>
 diff --git a/build/src/smali/com/innioasis/music/util/Other.smali b/build/src/smali/com/innioasis/music/util/Other.smali
-index e5eeb74a..8cb91a2c 100644
+index e5eeb74a..73445d31 100644
 --- a/build/src/smali/com/innioasis/music/util/Other.smali
 +++ b/build/src/smali/com/innioasis/music/util/Other.smali
 @@ -412,7 +412,16 @@
@@ -20214,7 +20214,7 @@ index e5eeb74a..8cb91a2c 100644
 -    .locals 5
 +    .locals 8
 +
-+    # ipp #291.1: the arguments are saved here because the "no embedded artwork" exit (:goto_2)
++    # ipp: the arguments are saved here because the "no embedded artwork" exit (:goto_2)
 +    # is reached through paths that have already reused p1/p2/p3 as scratch (the catch block puts
 +    # its log string in p1), and that exit now calls Art.external with them.
 +    move-object v5, p1
@@ -20230,7 +20230,7 @@ index e5eeb74a..8cb91a2c 100644
  
      :goto_2
 -    const/4 p1, 0x0
-+    # ipp #291.1: no artwork in the tags -- fall back to an external cover.jpg/folder.jpg next to
++    # ipp: no artwork in the tags -- fall back to an external cover.jpg/folder.jpg next to
 +    # the file (or in any folder above it). Returns null exactly as stock did when there is none,
 +    # so every caller's "no cover" handling is untouched.
 +    invoke-static {v5, v6, v7}, Lcom/innioasis/ipp/Art;->external(Ljava/lang/String;II)Landroid/graphics/Bitmap;
@@ -20254,7 +20254,7 @@ index e5eeb74a..8cb91a2c 100644
      :try_start_0
      invoke-virtual {p1}, Landroid/widget/ListView;->getFirstVisiblePosition()I
 diff --git a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali b/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
-index 516036f6..efc4d990 100644
+index 516036f6..3edfb649 100644
 --- a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
 +++ b/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
 @@ -42,7 +42,46 @@
@@ -20396,7 +20396,7 @@ index 516036f6..efc4d990 100644
  
      invoke-static {p3, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
-+    # ipp #228.2: every message the app logs goes into our own ring, whatever its priority --
++    # ipp: every message the app logs goes into our own ring, whatever its priority --
 +    # that is what the "Save diagnostic log" button writes out. logcat cannot serve that purpose:
 +    # its ring is ~256 KB for the whole system and AudioFlinger wipes it in about twenty seconds
 +    # while music plays.
@@ -20419,7 +20419,7 @@ index 516036f6..efc4d990 100644
      new-instance v0, Ljava/lang/StringBuilder;
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
-index 74759f7b..95775174 100644
+index 74759f7b..3986c746 100644
 --- a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
 @@ -322,7 +322,7 @@
@@ -20436,7 +20436,7 @@ index 74759f7b..95775174 100644
  
      :cond_1
 -    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
-+    # ipp #228.5: same stock pattern as Settings and the main menu -- rebind every row and restart
++    # ipp: same stock pattern as Settings and the main menu -- rebind every row and restart
 +    # a smooth scroll on every click. Wheel.follow repaints only the two rows whose highlight
 +    # changed, drops the item animator, and scrolls only when the row is off screen.
 +    move-object v2, v0
@@ -20457,7 +20457,7 @@ index 74759f7b..95775174 100644
  
      :cond_1
 -    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
-+    # ipp #228.5: see clockwise
++    # ipp: see clockwise
 +    move-object v2, v0
  
      .line 87
@@ -20509,17 +20509,17 @@ index 74759f7b..95775174 100644
 -
 -    invoke-virtual {v0, v1, v2}, Ljava/lang/reflect/Field;->set(Ljava/lang/Object;Ljava/lang/Object;)V
 -
-+    # ipp #228.4 (2): stock threw the theme font away for language #4 (Русский) here as well --
-+    # ThemeManager.setGlobalFont had the same check (already removed). The theme fonts do carry
-+    # Cyrillic, so both checks are simply wrong; without this one the font survived until the
-+    # next theme re-apply only.
++    # ipp (second copy): stock throws the theme font away for language #4 (Русский) here as well --
++    # ThemeManager.setGlobalFont carries the same check. The theme fonts do carry
++    # Cyrillic, so both checks are simply wrong; without this one the font survives only until the
++    # next theme re-apply.
      .line 114
 -    :cond_0
      new-instance v0, Landroid/content/Intent;
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2a..17197797 100644
+index 675ebb2a..668ae0df 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,26 @@
@@ -20572,7 +20572,7 @@ index 675ebb2a..17197797 100644
 +.method public final ippRefreshRight(Ljava/lang/String;)V
 +    .locals 0
 +
-+    # ipp #228.5: repaint the preview panel from OUTSIDE a layout pass. Stock only ever paints it
++    # ipp: repaint the preview panel from OUTSIDE a layout pass. Stock only ever paints it
 +    # from a row's bind, i.e. in the middle of the list's own layout, where the re-measure the new
 +    # captions and image ask for cannot be served in the same frame -- they were drawn into the
 +    # previous row's bounds. Wheel defers the repaint to a plain posted message and calls this.
@@ -20584,7 +20584,7 @@ index 675ebb2a..17197797 100644
  .method private final refreshRight(Ljava/lang/String;)V
      .locals 4
  
-+    # ipp #228.5: this repaints the whole preview panel and is called from a row's BIND, so an
++    # ipp: this repaints the whole preview panel and is called from a row's BIND, so an
 +    # accelerated wheel burst rebuilt it once per row passed through -- different image, different
 +    # caption widths, every time, inside the list's own layout. Skip it while the wheel is moving;
 +    # Wheel re-binds the focused row once the burst settles, which is exactly what a single slow
@@ -21132,7 +21132,7 @@ index 675ebb2a..17197797 100644
 +    move-result-object v2
  
 -    invoke-virtual {v0}, Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;->notifyDataSetChanged()V
-+    # ipp #228.5: scroll only when the row is off screen, repaint only the two rows that changed
++    # ipp: scroll only when the row is off screen, repaint only the two rows that changed
 +    invoke-static {v0, v1, v2}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
      return-void
@@ -21157,7 +21157,7 @@ index 675ebb2a..17197797 100644
 +    move-result-object v2
  
 -    invoke-virtual {v0}, Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;->notifyDataSetChanged()V
-+    # ipp #228.5: scroll only when the row is off screen, repaint only the two rows that changed
++    # ipp: scroll only when the row is off screen, repaint only the two rows that changed
 +    invoke-static {v0, v1, v2}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
      return-void
@@ -21607,7 +21607,7 @@ index 675ebb2a..17197797 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..1fd46fa6 100644
+index 060ed6d1..46e9ab54 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -21627,7 +21627,7 @@ index 060ed6d1..1fd46fa6 100644
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 7
  
-+    # ipp #228: force reboot -- the top and bottom buttons held together for 3 s. While both are
++    # ipp: force reboot -- the top and bottom buttons held together for 3 s. While both are
 +    # down the pair is swallowed, so neither button's own long press fires; see Force.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
@@ -21678,7 +21678,7 @@ index 060ed6d1..1fd46fa6 100644
      new-array v6, v4, [Ljava/lang/Object;
  
 -    invoke-virtual {v1, v5, v6}, Ltimber/log/Timber$Forest;->i(Ljava/lang/String;[Ljava/lang/Object;)V
-+    # ipp #228.2: DEBUG, not INFO -- this fires on every key press and wheel click, and INFO is
++    # ipp: DEBUG, not INFO -- this fires on every key press and wheel click, and INFO is
 +    # what the diagnostic log KEEPS (Y1Application$TimberTree). 65 of the first 162 records in a
 +    # real report were this one line. Debug mode still shows it, as it shows everything.
 +    invoke-virtual {v1, v5, v6}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
@@ -21718,7 +21718,7 @@ index 060ed6d1..1fd46fa6 100644
      const-string v2, "save state successful"
  
 -    invoke-virtual {v0, v2, v1}, Ltimber/log/Timber$Forest;->e(Ljava/lang/String;[Ljava/lang/Object;)V
-+    # ipp #228.2: INFO, not ERROR. The message is the first statement of onStop(), i.e. it is
++    # ipp: INFO, not ERROR. The message is the first statement of onStop(), i.e. it is
 +    # printed BEFORE anything is saved and cannot be reporting success; and nothing is saved at
 +    # all unless an audiobook is playing (the call below is updateNowAudiobookProgress). What
 +    # it really marks is "some screen left the foreground", which is worth keeping in the
@@ -21741,7 +21741,7 @@ index 060ed6d1..1fd46fa6 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..1eab5ddf 100644
+index 4fcfcfff..6fce107a 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 @@ -1,7643 +1,7912 @@
@@ -31570,7 +31570,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {v9, v2}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #231: light the Now-Playing heart when the song goes into the Favorites playlist through
++    # ipp: light the Now-Playing heart when the song goes into the Favorites playlist through
 +    # an ordinary menu. This is the funnel -- addToPlayList(Song,UUID) and addToPlayListByFile both
 +    # end up here -- and any other playlist is dropped after one UUID compare.
 +    invoke-static {v1, v9}, Lcom/innioasis/ipp/Likes;->noteAdd(Ljava/util/List;Ljava/util/UUID;)V
@@ -31961,7 +31961,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    # ipp: the Song table changed -> drop the cached library list and the "no cover" answers
 +    invoke-static {}, Lcom/innioasis/ipp/Ipp;->libraryChanged()V
 +
-+    # ipp #228: the song's folder goes with it, once nothing but cover.*/folder.*/*.lrc is left in
++    # ipp: the song's folder goes with it, once nothing but cover.*/folder.*/*.lrc is left in
 +    # it. Here because this is the one place EVERY delete passes through -- an album is a loop of
 +    # this call, so the folder simply goes with the last song of it. Gated by the pref
 +    # "delete_folder" (default off) inside Del.
@@ -32015,7 +32015,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #228: this method IS the file browser's delete (FilesActivity, PhotosActivity,
++    # ipp: this method IS the file browser's delete (FilesActivity, PhotosActivity,
 +    # VideoListActivity go through it; the music screens call deleteSong directly), and there the
 +    # delete stays stock -- the folder is on screen and the user deletes it himself. So the whole
 +    # of it is bracketed, and Del.folder does nothing while inside. A counter, not a flag: the
@@ -32211,7 +32211,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    :catch_0
 +    :cond_3
 +    :goto_1
-+    # ipp #228: the other end of the bracket -- every path of this method converges here
++    # ipp: the other end of the bracket -- every path of this method converges here
 +    const/4 v0, 0x0
 +
 +    invoke-static {v0}, Lcom/innioasis/ipp/Del;->raw(Z)V
@@ -33443,8 +33443,8 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #393: same as getArtistsByGenreSync -- the albums of a genre a composite tag contributes
-+    # to are gathered in Java; null keeps the stock query. The same-name-album split (#291.3) runs
++    # ipp: same as getArtistsByGenreSync -- the albums of a genre a composite tag contributes
++    # to are gathered in Java; null keeps the stock query. The same-name-album split runs
 +    # at the caller (Genres.albumList), so returning straight from here loses nothing.
 +    invoke-static {p1}, Lcom/innioasis/ipp/GenreSplit;->albumsIn(Lcom/innioasis/music/data/Genre;)Ljava/util/List;
 +
@@ -33703,11 +33703,11 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    move-result-object p1
 +
-+    # ipp #291.2: the year sort used to happen HERE, on the plain album names -- i.e. before
-+    # Albums.listForView splits a name shared by several folders, so same-named albums shared one
-+    # year and stayed glued together whatever their real years. It now happens inside listForView,
++    # ipp: the year sort must NOT happen here, on the plain album names -- that is before
++    # Albums.listForView splits a name shared by several folders, so same-named albums would share
++    # one year and stay glued together whatever their real years. It happens inside listForView,
 +    # on the encoded names (YearCache is keyed by those, so every physical album has its own year).
-+    # v1 (asc/desc) is unused now; the sort reads the persisted SortAlbum itself.
++    # v1 (asc/desc) is unused here; the sort reads the persisted SortAlbum itself.
 +
 +    return-object p1
 +
@@ -34078,10 +34078,10 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #393: with the genre split on, `genre = (?)` cannot find the songs of a genre that a
++    # ipp: with the genre split on, `genre = (?)` cannot find the songs of a genre that a
 +    # COMPOSITE tag ("Rock, Pop") contributes to, so the list is gathered in Java. Null means an
 +    # ordinary genre and the stock indexed query below answers it, untouched. Falls into :goto_0
-+    # rather than returning, so the artist split (#281.2) applies to either answer.
++    # rather than returning, so the artist split applies to either answer.
 +    invoke-static {p1}, Lcom/innioasis/ipp/GenreSplit;->artistsIn(Lcom/innioasis/music/data/Genre;)Ljava/util/List;
 +
 +    move-result-object v0
@@ -34172,7 +34172,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    move-result-object p1
 +
 +    :goto_0
-+    # ipp #281.2: split multi-artist tags here too -- the Genres screen was the last list still
++    # ipp: split multi-artist tags here too -- the Genres screen was the last list still
 +    # showing raw "A, B" rows. Returns the query's own result untouched when splitting is off.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Artists;->listGenre(Ljava/util/List;)Ljava/util/List;
 +
@@ -34198,7 +34198,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p2, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #281.2: save SortArtistsType (p2 is clobbered below) for the split-wrap at :goto_0
++    # ipp: save SortArtistsType (p2 is clobbered below) for the split-wrap at :goto_0
 +    move-object v2, p2
 +
 +    .line 1237
@@ -34252,7 +34252,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    move-result-object p1
 +
 +    :goto_0
-+    # ipp #281.2: expand comma/semicolon-joined artists into separate entries
++    # ipp: expand comma/semicolon-joined artists into separate entries
 +    invoke-static {p1, v2}, Lcom/innioasis/ipp/Artists;->list(Ljava/util/List;Lcom/innioasis/y1/database/Y1Repository$SortArtistsType;)Ljava/util/List;
 +
 +    move-result-object p1
@@ -34408,7 +34408,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    move-result-object v0
 +
 +    :goto_0
-+    # ipp #393: a tag that lists several genres ("Rock, Pop", "Electronic/Ambient") becomes one row
++    # ipp: a tag that lists several genres ("Rock, Pop", "Electronic/Ambient") becomes one row
 +    # per genre. Returns the query's own list untouched when the split is off.
 +    invoke-static {v0}, Lcom/innioasis/ipp/GenreSplit;->list(Ljava/util/List;)Ljava/util/List;
 +
@@ -34743,13 +34743,13 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p2, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #281.1: remember the sort -- but the "Show all songs" marker list keeps its OWN key, so
++    # ipp: remember the sort -- but the "Show all songs" marker list keeps its OWN key, so
 +    # picking "Subdiv. by Album" there no longer becomes the sort of every real album.
 +    # (was: SharedPreferencesUtils.setSortAlbumSong(p2.getType()))
 +    .line 1213
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/Albums;->noteSort(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)V
 +
-+    # ipp #291.3: encoded album (name+artist) -> filter songs by name AND artist
++    # ipp: encoded album (name+artist) -> filter songs by name AND artist
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/Albums;->songs(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
 +
 +    move-result-object v0
@@ -34914,7 +34914,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #291.3: encoded album (name+artist) -> filter by name AND artist
++    # ipp: encoded album (name+artist) -> filter by name AND artist
 +    invoke-static {p1, p2, p3}, Lcom/innioasis/ipp/Albums;->songsSync(Lcom/innioasis/music/data/Album;ILcom/innioasis/music/data/Genre;)Ljava/util/List;
 +
 +    move-result-object v0
@@ -35136,7 +35136,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-virtual {v0, v1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->setSortArtistSong(I)V
 +
-+    # ipp #281.2: split-artist part match (null -> fall through to native exact query)
++    # ipp: split-artist part match (null -> fall through to native exact query)
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/Artists;->songs(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
 +
 +    move-result-object v2
@@ -35271,7 +35271,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #281.2: an artist split out of a multi-artist tag is not in the DB under that name, so
++    # ipp: an artist split out of a multi-artist tag is not in the DB under that name, so
 +    # the stock exact-match query would answer nothing for it. songsInGenre part-matches inside the
 +    # genre and returns null for an ordinary artist, leaving the stock query below untouched.
 +    # Only the genre branch: the genre-less case is already covered by getSongsByArtist.
@@ -35450,7 +35450,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #393: the songs of a genre a composite tag contributes to, in the order this query gives
++    # ipp: the songs of a genre a composite tag contributes to, in the order this query gives
 +    # (lower(pinyinName)); null for an ordinary genre. Everything that asks "what is in this genre"
 +    # comes through here -- the subtitle counts, "add to queue", and deleting a genre.
 +    invoke-static {p1}, Lcom/innioasis/ipp/GenreSplit;->songsIn(Lcom/innioasis/music/data/Genre;)Ljava/util/List;
@@ -37039,7 +37039,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    return-void
 +.end method
 +
-+# ipp #228.2 helper: re-read a file's metadata and REPLACE its Song row in place. Unlike
++# ipp helper: re-read a file's metadata and REPLACE its Song row in place. Unlike
 +# insertSong() this does NOT skip an already-scanned path, and unlike deleteSong() it NEVER
 +# touches the file on disk -- it only overwrites the DB row (songId = Base64(path) is the
 +# primary key, INSERT OR REPLACE). Used by IppActivity's "Update library" full metadata rescan.
@@ -37131,7 +37131,7 @@ index 4fcfcfff..1eab5ddf 100644
 +
 +    invoke-static {p2, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp #231: and put it out again when the song leaves Favorites (see addToPlayList above).
++    # ipp: and put it out again when the song leaves Favorites (see addToPlayList above).
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/Likes;->noteRemove(Ljava/lang/String;Ljava/util/UUID;)V
 +
 +    .line 230
@@ -37301,7 +37301,7 @@ index 4fcfcfff..1eab5ddf 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..0a8703bc 100644
+index 54919080..6e473923 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -747,17 +747,13 @@
@@ -37311,7 +37311,7 @@ index 54919080..0a8703bc 100644
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
-+    # ipp #384: repeat-off end of the audiobook list. Stock tested "index == size-1", which says
++    # ipp: repeat-off end of the audiobook list. Stock tested "index == size-1", which says
 +    # nothing under a shuffled pass and nothing while the queue still holds entries.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
@@ -37334,7 +37334,7 @@ index 54919080..0a8703bc 100644
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
-+    # ipp #227: repeat-off end-of-list. Stock only tested "index == size-1", which is meaningless
++    # ipp: repeat-off end-of-list. Stock only tested "index == size-1", which is meaningless
 +    # under shuffle; Queue.endOfList reports the spent shuffle cycle too (and never ends while
 +    # manually queued tracks are still pending).
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
@@ -37355,7 +37355,7 @@ index 54919080..0a8703bc 100644
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
-+    # ipp #384: the audiobook list is driven by the same queue as music -- the manual entries, the
++    # ipp: the audiobook list is driven by the same queue as music -- the manual entries, the
 +    # shuffle plan (so the queue screen shows what will actually play) and the end of the list.
 +    # 0 = nothing decided, stock advances; 1 = index set, fall through to restartPlay; 2 = handled.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->takeNext(Lcom/innioasis/y1/service/PlayerService;)I
@@ -37378,7 +37378,7 @@ index 54919080..0a8703bc 100644
  
      .line 745
      :cond_a
-+    # ipp #227: the play queue owns what comes next -- queued songs, the shuffle plan, and the
++    # ipp: the play queue owns what comes next -- queued songs, the shuffle plan, and the
 +    # end of the list. 0 = nothing decided, stock advances; 1 = index set, fall through to
 +    # restartPlay; 2 = handled (list over with "repeat list" off), return.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->takeNext(Lcom/innioasis/y1/service/PlayerService;)I
@@ -37401,7 +37401,7 @@ index 54919080..0a8703bc 100644
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
-+    # ipp #384: same Back rules as music -- restart past four seconds, retrace the played path
++    # ipp: same Back rules as music -- restart past four seconds, retrace the played path
 +    # under shuffle, bounded by the list's own first track otherwise.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->prevAction(Lcom/innioasis/y1/service/PlayerService;)I
 +
@@ -37426,7 +37426,7 @@ index 54919080..0a8703bc 100644
 -    sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
 -
 -    invoke-virtual {v1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getMusicIsShuffle()Z
-+    # ipp #227: Back retraces the path actually played (history), so it is correct under shuffle
++    # ipp: Back retraces the path actually played (history), so it is correct under shuffle
 +    # and after queued tracks. 0 = let stock do index-1, 1 = index already set (restartPlay),
 +    # 2 = blocked: we are back at the track this session was opened on.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->prevAction(Lcom/innioasis/y1/service/PlayerService;)I
@@ -37476,12 +37476,12 @@ index 54919080..0a8703bc 100644
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
-+    # ipp: the same head start audiobooks were missing -- setMusicPlaylist has had it since
-+    # #230.2, so a song opened from a menu has its cover read while the player Activity is still
-+    # being created, and a book did not. Same call, same reason.
++    # ipp: the same head start setMusicPlaylist takes, so a song opened from a menu has its
++    # cover read while the player Activity is still being created. A book needs it just as
++    # much: same call, same reason.
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/BigCover;->prefetch(Ljava/util/List;I)V
 +
-+    # ipp #384: a book opened from a list starts a new session, exactly as setMusicPlaylist does.
++    # ipp: a book opened from a list starts a new session, exactly as setMusicPlaylist does.
 +    # It has to name the kind: the service still says "music" here -- the player screen sets the
 +    # flag afterwards -- so a call that asked what is playing would answer for the wrong list.
 +    invoke-static {}, Lcom/innioasis/ipp/Queue;->onNewBookPlaylist()V
@@ -37502,13 +37502,13 @@ index 54919080..0a8703bc 100644
 +    return-void
 +
 +    :cond_ipp_proceed
-+    # ipp #230.2: start reading this track's cover NOW, in the background. The player Activity
++    # ipp: start reading this track's cover NOW, in the background. The player Activity
 +    # still has to be created and laid out (~200 ms), so by its first frame the cover is usually
 +    # already in the cache and paints instantly -- instead of popping in when the player's own
 +    # async load finishes, which is what made a first-time track flash an empty cover frame.
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/BigCover;->prefetch(Ljava/util/List;I)V
 +
-+    # ipp #227: opening a song from a menu starts a fresh session -- drop the queue, the shuffle
++    # ipp: opening a song from a menu starts a fresh session -- drop the queue, the shuffle
 +    # plan and the back-history (so Back cannot walk past the track just opened).
 +    invoke-static {}, Lcom/innioasis/ipp/Queue;->onNewPlaylist()V
 +
@@ -38321,7 +38321,7 @@ index c33ee0c6..e2107431 100644
      iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$showArtistsSortDialog$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
-index 2cbe1802..d98be469 100644
+index 2cbe1802..823b3ed1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialog$2.smali
 @@ -66,7 +66,7 @@
@@ -38387,7 +38387,7 @@ index 2cbe1802..d98be469 100644
 +    invoke-interface {v5, v1}, Ljava/util/List;->remove(I)Ljava/lang/Object;
 +
 +    :cond_0
-+    # ipp #227.3: "Add to queue" for the selected songs of this album
++    # ipp: "Add to queue" for the selected songs of this album
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$songMenuDialog$2;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -38402,14 +38402,14 @@ index 2cbe1802..d98be469 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
-index 5bb7e0bd..3f6b38b3 100644
+index 5bb7e0bd..b0ffd2a4 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$songMenuDialogCallback$1.smali
 @@ -71,7 +71,206 @@
  
      move-result-object p1
  
-+    # ipp #227.3: "Add to queue" for the selected songs
++    # ipp: "Add to queue" for the selected songs
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -38474,7 +38474,7 @@ index 5bb7e0bd..3f6b38b3 100644
 +    return v0
 +
 +    :cond_ipp_notthumb
-+    # ipp #362.2: "Open album" -- offered only in the flat "Show all songs" list. We are already
++    # ipp: "Open album" -- offered only in the flat "Show all songs" list. We are already
 +    # inside AlbumsActivity, so no new Activity: just switch this one's list to that album, the
 +    # same call the album rows use. Albums.focus then lands the cursor on the picked song.
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
@@ -38555,7 +38555,7 @@ index 5bb7e0bd..3f6b38b3 100644
 +    return v0
 +
 +    :cond_ipp_notartist
-+    # ipp #281.1: "Subdiv. by Album" -- offered only in the flat "Show all songs" list
++    # ipp: "Subdiv. by Album" -- offered only in the flat "Show all songs" list
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    const v1, 0x7f1101a2
@@ -38721,14 +38721,14 @@ index 5bb7e0bd..3f6b38b3 100644
  
      check-cast p2, Landroidx/lifecycle/LifecycleOwner;
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
-index 0bc3f6f7..699d7341 100644
+index 0bc3f6f7..fa52c511 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialog$2.smali
 @@ -127,6 +127,17 @@
  
      move-result-object v5
  
-+    # ipp #227.3: "Add to queue" (queues every song of the picked album)
++    # ipp: "Add to queue" (queues every song of the picked album)
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -38743,14 +38743,14 @@ index 0bc3f6f7..699d7341 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
-index 643e5c43..790e6980 100644
+index 643e5c43..7f34980c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$subMenuDialogCallback$1.smali
 @@ -71,6 +71,63 @@
  
      move-result-object p1
  
-+    # ipp #227.3: "Add to queue" -> queue every song of the picked album(s)
++    # ipp: "Add to queue" -> queue every song of the picked album(s)
 +    iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$subMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -38811,14 +38811,14 @@ index 643e5c43..790e6980 100644
      iget-object v0, p0, Lcom/innioasis/music/AlbumsActivity$subMenuDialogCallback$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
-index adfdd784..9a45fbfc 100644
+index adfdd784..1983695f 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$switchSongSortType$1$1.smali
 @@ -205,6 +205,11 @@
  
      invoke-virtual {p1, v0}, Lcom/innioasis/music/adapter/SongListAdapter;->setItems(Ljava/util/List;)V
  
-+    # ipp #291.3: put the pinned CD bar in place NOW, in the same call that hands the list its
++    # ipp: put the pinned CD bar in place NOW, in the same call that hands the list its
 +    # songs -- a posted update would show it one frame after the tracks, i.e. visibly blink in
 +    # and push the list down
 +    invoke-static {p1, v0}, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;)V
@@ -38830,7 +38830,7 @@ index adfdd784..9a45fbfc 100644
  
      .line 526
      :goto_0
-+    # ipp #362.2: the song list has just been filled and parked on row 0 -- if we got here from
++    # ipp: the song list has just been filled and parked on row 0 -- if we got here from
 +    # "Open album", move the cursor to the song that was picked. It has to happen here and not at
 +    # the call site: the list is loaded by this coroutine, so at the call site it is still empty.
 +    iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$switchSongSortType$1$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
@@ -38932,7 +38932,7 @@ index 9115da99..c5c0d24b 100644
      .end packed-switch
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
-index c3dbcf78..0372d2bd 100644
+index c3dbcf78..cf1e5418 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 @@ -318,6 +318,14 @@
@@ -38994,7 +38994,7 @@ index c3dbcf78..0372d2bd 100644
 +
      .line 462
 -    invoke-virtual {p0, p1}, Lcom/innioasis/music/AlbumsActivity;->setStateBarLeftText(Ljava/lang/String;)V
-+    # ipp #291.3: show the real album name in the title bar (p1 stays encoded for the query)
++    # ipp: show the real album name in the title bar (p1 stays encoded for the query)
 +    invoke-static {p1}, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
 +
 +    move-result-object v0
@@ -39100,7 +39100,7 @@ index c3dbcf78..0372d2bd 100644
  
      iput-object v0, p0, Lcom/innioasis/music/AlbumsActivity;->albumName:Ljava/lang/String;
  
-+    # ipp #281.1: the flat "Show all songs" list has its own remembered sort
++    # ipp: the flat "Show all songs" list has its own remembered sort
 +    # (was: SongSortType.Companion.fromType(SharedPreferencesUtils.getSortAlbumSong()))
      .line 88
 -    sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Companion:Lcom/innioasis/y1/database/Y1Repository$SongSortType$Companion;
@@ -39120,9 +39120,9 @@ index c3dbcf78..0372d2bd 100644
      .line 92
      invoke-virtual {v1, v2, v3}, Lcom/innioasis/y1/service/PlayerService;->setMusicPlaylist(Ljava/util/List;I)V
  
-+    # ipp #227: an album is an ordered whole -- keep stock Back past the opened track here
++    # ipp: an album is an ordered whole -- keep stock Back past the opened track here
 +    # (setMusicPlaylist has just reset this flag for every other entry point).
-+    # #281.1: the flat "Show all songs" list is not an album, so it is excluded by name.
++    # the flat "Show all songs" list is not an album, so it is excluded by name.
 +    iget-object v2, p0, Lcom/innioasis/music/AlbumsActivity;->albumName:Ljava/lang/String;
 +
 +    invoke-static {v2}, Lcom/innioasis/ipp/Queue;->markAlbum(Ljava/lang/String;)V
@@ -39134,7 +39134,7 @@ index c3dbcf78..0372d2bd 100644
      goto :goto_0
  
      :cond_2
-+    # ipp #362.2: an album opened by "Open album" goes back to where it was opened FROM, not up
++    # ipp: an album opened by "Open album" goes back to where it was opened FROM, not up
 +    # to the album list -- either by closing this screen (came from All songs) or by restoring the
 +    # flat "Show all songs" list, landing on the same song (Albums.backAlbum re-arms the focus).
 +    invoke-static {}, Lcom/innioasis/ipp/Albums;->backClose()Z
@@ -39165,7 +39165,7 @@ index c3dbcf78..0372d2bd 100644
 +    goto/16 :goto_0
 +
 +    :ipp_back_stock
-+    # ipp #291.3: drop the pinned CD bar before the album list is put back, not from the posted
++    # ipp: drop the pinned CD bar before the album list is put back, not from the posted
 +    # update -- otherwise it lingers over the album list until the next frame
 +    invoke-static {}, Lcom/innioasis/ipp/Disc;->offBarNow()V
 +
@@ -39190,10 +39190,10 @@ index c3dbcf78..0372d2bd 100644
  
      move-result-object v1
  
-+    # ipp #291.3 stage2: mark this song adapter as the album view (only it may show CD dividers)
++    # ipp: mark this song adapter as the album view (only it may show CD dividers)
 +    invoke-static {v1}, Lcom/innioasis/ipp/Disc;->setAlbumAdapter(Ljava/lang/Object;)V
 +
-+    # ipp #220.1: this is the only screen that shows track numbers, so its own creation is where
++    # ipp: this is the only screen that shows track numbers, so its own creation is where
 +    # the numbers are read off disk -- a row bind must not touch a file. No-op while the setting
 +    # is off, and after the first call.
 +    invoke-static {}, Lcom/innioasis/ipp/TrackCache;->warmIfWanted()V
@@ -39218,7 +39218,7 @@ index c3dbcf78..0372d2bd 100644
  
      invoke-direct {p0, v0}, Lcom/innioasis/music/AlbumsActivity;->getAlbumListBySort(Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;)V
  
-+    # ipp #362.2: opened by "Open album" from All songs -- go straight into that album's song
++    # ipp: opened by "Open album" from All songs -- go straight into that album's song
 +    # list. Safe here: the album list is filled by a coroutine that only feeds its own adapter,
 +    # it never re-attaches it to the ListView, and isShowAlbums() reads the attached adapter, so
 +    # the top button still steps back to the album list.
@@ -39258,7 +39258,7 @@ index c3dbcf78..0372d2bd 100644
 +.method public final ippSetAlbumName(Ljava/lang/String;)V
 +    .locals 0
 +
-+    # ipp #362.2: "Open album" switches the song list without going through confirm(), which is
++    # ipp: "Open album" switches the song list without going through confirm(), which is
 +    # where stock records which album the list belongs to. Everything acting on the current list
 +    # afterwards (sort by track, "Subdiv. by Album", the sort key) reads that field, so it has to
 +    # be kept honest. Public because the menu callback is a separate class.
@@ -39297,7 +39297,7 @@ index c3dbcf78..0372d2bd 100644
  
      if-eqz v0, :cond_0
  
-+    # ipp #281.1: the "Show all songs" row has no menu of its own (the artist row already has one)
++    # ipp: the "Show all songs" row has no menu of its own (the artist row already has one)
 +    invoke-direct {p0}, Lcom/innioasis/music/AlbumsActivity;->getAdapter()Lcom/innioasis/music/adapter/AlbumListAdapter;
 +
 +    move-result-object v0
@@ -39352,7 +39352,7 @@ index c3dbcf78..0372d2bd 100644
  
      move-result-object v0
  
-+    # ipp #281.1: the entries differ between an album and the flat "Show all songs" list,
++    # ipp: the entries differ between an album and the flat "Show all songs" list,
 +    # so the (lazily built, reused) menu is refilled for the list actually on screen.
 +    iget-object v1, p0, Lcom/innioasis/music/AlbumsActivity;->albumName:Ljava/lang/String;
 +
@@ -39403,14 +39403,14 @@ index c3dbcf78..0372d2bd 100644
  
      move-result-object v5
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
-index 15d905fa..35f5653b 100644
+index 15d905fa..16c3acf7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialog$2.smali
 @@ -127,6 +127,17 @@
  
      move-result-object v5
  
-+    # ipp #227.3: "Add to queue" (queues every song of the picked artist)
++    # ipp: "Add to queue" (queues every song of the picked artist)
 +    iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialog$2;->this$0:Lcom/innioasis/music/ArtistsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -40253,7 +40253,7 @@ index 3dbb1fda..4616ea33 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
-index 9357eb57..65e1241f 100644
+index 9357eb57..0e166206 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
 @@ -185,7 +185,11 @@
@@ -40261,7 +40261,7 @@ index 9357eb57..65e1241f 100644
      const/4 v8, 0x0
  
 -    invoke-static/range {v3 .. v8}, Lcom/innioasis/y1/database/Y1Repository;->getSongsByArtistSync$default(Lcom/innioasis/y1/database/Y1Repository;Ljava/lang/String;ILcom/innioasis/music/data/Genre;ILjava/lang/Object;)Ljava/util/List;
-+    # ipp #281.2: stock matched the artist tag EXACTLY, so an artist whose name also appears inside
++    # ipp: stock matched the artist tag EXACTLY, so an artist whose name also appears inside
 +    # multi-artist tags ("BEAT CRUSADERS, ASPARAGUS") put only their own songs in the playlist while
 +    # their screen listed all of them. Artists.forMenu is the same list the screen draws, and falls
 +    # back to this very query for an ordinary artist. v4 = the name, v6 = the genre (null here).
@@ -40270,14 +40270,14 @@ index 9357eb57..65e1241f 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
-index 37ee4b9f..ca123f2c 100644
+index 37ee4b9f..783becb9 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1.smali
 @@ -71,6 +71,34 @@
  
      move-result-object p1
  
-+    # ipp #227.3: "Add to queue" -> queue every song of the picked artist(s)
++    # ipp: "Add to queue" -> queue every song of the picked artist(s)
 +    iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -40309,7 +40309,7 @@ index 37ee4b9f..ca123f2c 100644
      iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
-index 19a1aba9..32f60867 100644
+index 19a1aba9..7b95f3b7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
 @@ -211,7 +211,13 @@
@@ -40317,7 +40317,7 @@ index 19a1aba9..32f60867 100644
      const/4 v8, 0x0
  
 -    invoke-static/range {v3 .. v8}, Lcom/innioasis/y1/database/Y1Repository;->getSongsByArtistSync$default(Lcom/innioasis/y1/database/Y1Repository;Ljava/lang/String;ILcom/innioasis/music/data/Genre;ILjava/lang/Object;)Ljava/util/List;
-+    # ipp #281.2: delete the songs the SCREEN listed under this artist, not only the ones whose tag
++    # ipp: delete the songs the SCREEN listed under this artist, not only the ones whose tag
 +    # matches exactly. Deliberate and asked for: a split artist's screen shows their collaborations
 +    # too, so deleting the artist took two of five rows and left the rest behind. The consequence
 +    # is that a song credited "BEAT CRUSADERS, ASPARAGUS" goes with ASPARAGUS -- and this path
@@ -40328,14 +40328,14 @@ index 19a1aba9..32f60867 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
-index 2ae0be0f..268f0899 100644
+index 2ae0be0f..1771362d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
 @@ -125,6 +125,17 @@
  
      invoke-interface {v5, v0}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
  
-+    # ipp #227.3: "Add to queue" for the selected songs of this artist
++    # ipp: "Add to queue" for the selected songs of this artist
 +    iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$songMenuDialog$2;->this$0:Lcom/innioasis/music/ArtistsActivity;
 +
 +    const v1, 0x7f1101f7
@@ -41178,14 +41178,14 @@ index a5ddd058..ae5bb54f 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
-index 9d6806a3..1531b1e7 100644
+index 9d6806a3..fedb0513 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
 @@ -75,6 +75,34 @@
  
      move-result-object v2
  
-+    # ipp #227.3: "Add to queue" for the selected songs of this artist
++    # ipp: "Add to queue" for the selected songs of this artist
 +    iget-object v3, v0, Lcom/innioasis/music/ArtistsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
 +
 +    const v4, 0x7f1101f7
@@ -41772,14 +41772,14 @@ index 717ead6e..2102d906 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-index 67d99812..a9561b1c 100644
+index 67d99812..9453f059 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 @@ -283,6 +283,17 @@
  
      invoke-virtual {p1, v2}, Landroid/widget/ListView;->setSelection(I)V
  
-+    # ipp #224: the cursor starts on the first real row, not on the "Show all songs"/"Shuffle" row
++    # ipp: the cursor starts on the first real row, not on the "Show all songs"/"Shuffle" row
 +    # above it -- that row is a button, and a folder is opened to look at its contents. The list
 +    # itself stays at the top (stock's setSelection(0) above), so the button is on screen.
 +    iget-object p1, p0, Lcom/innioasis/music/FilesActivity$refresh$1$6;->this$0:Lcom/innioasis/music/FilesActivity;
@@ -41794,14 +41794,14 @@ index 67d99812..a9561b1c 100644
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
-index d8dc6b04..2b3e6dae 100644
+index d8dc6b04..3eff4221 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 @@ -613,6 +613,30 @@
  
      invoke-interface {v2, v4}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
  
-+    # ipp #224: the rows this folder shows are complete here (its sub-folders, then its own songs),
++    # ipp: the rows this folder shows are complete here (its sub-folders, then its own songs),
 +    # which is where the "Show all songs" row is either added to them or -- in the flat mode that
 +    # row opens -- they are replaced by every song below the folder. A non-null answer is that flat
 +    # list and has to become nowSongFileList too, because that field is what playback is built from.
@@ -41829,14 +41829,14 @@ index d8dc6b04..2b3e6dae 100644
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
-index 64fce4ec..1adb666d 100644
+index 64fce4ec..c7805eaa 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 @@ -68,6 +68,41 @@
  
      const/4 v0, 0x1
  
-+    # ipp #227.3: "Add to queue". This menu dispatches by index, so match the entry by string
++    # ipp: "Add to queue". This menu dispatches by index, so match the entry by string
 +    # first; the ListView's current adapter holds the folder's files.
 +    const v1, 0x7f1101f7
 +
@@ -41875,14 +41875,14 @@ index 64fce4ec..1adb666d 100644
  
      if-eq p1, v0, :cond_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
-index d3742cc2..0cc7fdb3 100644
+index d3742cc2..a80e2b09 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 @@ -380,6 +380,13 @@
  
      invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
  
-+    # ipp #224: in multi-select the cursor does not stop on a marker row at all
++    # ipp: in multi-select the cursor does not stop on a marker row at all
 +    iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
 +
 +    iget-boolean v1, p0, Lcom/innioasis/music/FilesActivity;->isMultiSelect:Z
@@ -41896,7 +41896,7 @@ index d3742cc2..0cc7fdb3 100644
  
      invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
  
-+    # ipp #224: in multi-select the cursor does not stop on a marker row at all
++    # ipp: in multi-select the cursor does not stop on a marker row at all
 +    iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
 +
 +    iget-boolean v1, p0, Lcom/innioasis/music/FilesActivity;->isMultiSelect:Z
@@ -41910,7 +41910,7 @@ index d3742cc2..0cc7fdb3 100644
  
      check-cast v0, Ljava/io/File;
  
-+    # ipp #224: the "Show all songs" row is neither a file to play nor a folder to descend into --
++    # ipp: the "Show all songs" row is neither a file to play nor a folder to descend into --
 +    # it opens this same screen on this same folder in flat mode. v1 is reassigned right below.
 +    invoke-static {p0, v0, v2}, Lcom/innioasis/ipp/Folders;->open(Landroid/app/Activity;Ljava/io/File;Ljava/lang/Object;)Z
 +
@@ -41939,7 +41939,7 @@ index d3742cc2..0cc7fdb3 100644
      :goto_2
      move-object v6, v0
  
-+    # ipp #227.3: "Add to queue". The Constant sub-menu lists are shared with other screens,
++    # ipp: "Add to queue". The Constant sub-menu lists are shared with other screens,
 +    # so append to a COPY of the chosen one, never to the shared list itself.
 +    new-instance v0, Ljava/util/ArrayList;
 +
@@ -41966,7 +41966,7 @@ index d3742cc2..0cc7fdb3 100644
      :goto_3
      invoke-direct {p0, v3}, Lcom/innioasis/music/FilesActivity;->refresh(Ljava/lang/String;)V
  
-+    # ipp #224: the flat "all songs" list is not the folder view and must not be called the same --
++    # ipp: the flat "all songs" list is not the folder view and must not be called the same --
 +    # the queue's source and the playing marker identify a list by Activity class + state-bar title.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Folders;->title(Landroid/app/Activity;)V
 +
@@ -41976,7 +41976,7 @@ index d3742cc2..0cc7fdb3 100644
  .method public longConfirm()V
      .locals 5
  
-+    # ipp #224: no long-press menu on a marker row -- there is no file behind it to delete, move
++    # ipp: no long-press menu on a marker row -- there is no file behind it to delete, move
 +    # or add to a playlist, and its own press is the whole of what the row does.
 +    iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
 +
@@ -42030,7 +42030,7 @@ index 1d7196d6..2bd8932a 100644
      iget-object v0, p0, Lcom/innioasis/music/GenresActivity$confirm$1;->this$0:Lcom/innioasis/music/GenresActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
-index 72fdca8b..cbf62cb1 100644
+index 72fdca8b..284f32f0 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$2$1.smali
 @@ -105,6 +105,9 @@
@@ -42065,8 +42065,8 @@ index 72fdca8b..cbf62cb1 100644
  
      move-result-object v0
  
-+    # ipp #291.3: same-name albums of different folders are different albums here as well (the list
-+    # arrives as bare names), and #362.3: this level has a sort of its own. Both are done HERE and
++    # ipp: same-name albums of different folders are different albums here as well (the list
++    # arrives as bare names), and this level has a sort of its own. Both are done HERE and
 +    # not where the list is put on screen, because this is the background thread -- the split walks
 +    # the song table and a sort by year opens one file per album. The "Show all songs" button is put
 +    # on top afterwards (Mark.genreAlbums), so it is not moved by either.
@@ -42076,7 +42076,7 @@ index 72fdca8b..cbf62cb1 100644
      iget-object v1, p0, Lcom/innioasis/music/GenresActivity$confirm$2$1;->this$0:Lcom/innioasis/music/GenresActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
-index af9b5e7c..f900022e 100644
+index af9b5e7c..8eab594c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$confirm$4.smali
 @@ -100,6 +100,12 @@
@@ -42096,7 +42096,7 @@ index af9b5e7c..f900022e 100644
  
      invoke-virtual {p1, v0}, Lcom/innioasis/music/adapter/SongListAdapter2;->setItems(Ljava/util/List;)V
  
-+    # ipp #291.3: put the pinned CD bar in place NOW, in the same call that hands the list its
++    # ipp: put the pinned CD bar in place NOW, in the same call that hands the list its
 +    # songs -- a posted update would show it one frame after the tracks, i.e. visibly blink in
 +    # and push the list down. The ListView is passed along because this screen can reach a song
 +    # list without an album list having been drawn first (the queue's "open source"), and then
@@ -42133,7 +42133,7 @@ index 0c53af5e..348a8bd1 100644
  
      .line 56
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
-index bdc0ac32..2798d9fa 100644
+index bdc0ac32..c13299e4 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$isDeleteCallback$1$confirm$2.smali
 @@ -294,7 +294,9 @@
@@ -42141,7 +42141,7 @@ index bdc0ac32..2798d9fa 100644
      const/4 v8, 0x0
  
 -    invoke-static/range {v3 .. v8}, Lcom/innioasis/y1/database/Y1Repository;->getSongsByArtistSync$default(Lcom/innioasis/y1/database/Y1Repository;Ljava/lang/String;ILcom/innioasis/music/data/Genre;ILjava/lang/Object;)Ljava/util/List;
-+    # ipp #281.2: the same as the Artists screen -- delete what the level actually listed under this
++    # ipp: the same as the Artists screen -- delete what the level actually listed under this
 +    # artist. v4 = the name, v6 = the genre this level is showing, so it stays inside the genre.
 +    invoke-static {v4, v6}, Lcom/innioasis/ipp/Artists;->forMenu(Ljava/lang/String;Lcom/innioasis/music/data/Genre;)Ljava/util/List;
  
@@ -42957,7 +42957,7 @@ index 8400040c..b3761f6e 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
-index 1bef7acf..5c5ef87e 100644
+index 1bef7acf..d6ba2950 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity$subMenuDialogCallback$1$select$4.smali
 @@ -189,7 +189,9 @@
@@ -42965,7 +42965,7 @@ index 1bef7acf..5c5ef87e 100644
      const/4 v8, 0x0
  
 -    invoke-static/range {v3 .. v8}, Lcom/innioasis/y1/database/Y1Repository;->getSongsByArtistSync$default(Lcom/innioasis/y1/database/Y1Repository;Ljava/lang/String;ILcom/innioasis/music/data/Genre;ILjava/lang/Object;)Ljava/util/List;
-+    # ipp #281.2: the same fix as the Artists screen, for an artist row inside a genre --
++    # ipp: the same fix as the Artists screen, for an artist row inside a genre --
 +    # v4 = the name, v6 = the genre this level is showing.
 +    invoke-static {v4, v6}, Lcom/innioasis/ipp/Artists;->forMenu(Ljava/lang/String;Lcom/innioasis/music/data/Genre;)Ljava/util/List;
  
@@ -43010,7 +43010,7 @@ index 71316696..4aea78fd 100644
  
      if-eq v1, v2, :cond_5
 diff --git a/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali b/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
-index ff3e0fc0..86e24cc2 100644
+index ff3e0fc0..78e07bce 100644
 --- a/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/GenresActivity.smali
 @@ -1,2495 +1,2653 @@
@@ -47030,7 +47030,7 @@ index ff3e0fc0..86e24cc2 100644
 +
 +    .line 561
 +    :cond_0
-+    # ipp #227: this screen was started by the queue's "open source" straight on a song list, so the
++    # ipp: this screen was started by the queue's "open source" straight on a song list, so the
 +    # levels above it were never built -- the top button leaves it instead of climbing into an empty
 +    # album list, and what is underneath is the player the queue was opened from. Inside the
 +    # multi-select branch above, the top button still cancels the selection, as it should.
@@ -47045,7 +47045,7 @@ index ff3e0fc0..86e24cc2 100644
 +    return-void
 +
 +    :cond_ipp_gback
-+    # ipp #291.3: drop the pinned CD bar synchronously on the way OUT of the song level. The
++    # ipp: drop the pinned CD bar synchronously on the way OUT of the song level. The
 +    # album list re-fills this very ListView and its rows go through Disc.offBar, but that is a
 +    # POSTED update -- one frame with the bar still taking its 16dip, i.e. the album list drawn
 +    # a strip too low and then jumping up. Same call, same reason, as AlbumsActivity.direction.
@@ -47667,7 +47667,7 @@ index ff3e0fc0..86e24cc2 100644
 +
 +    move-result-object v10
 +
-+    # ipp #227.3: "Add to queue". Constant.getSubMenuList() is shared with the other screens,
++    # ipp: "Add to queue". Constant.getSubMenuList() is shared with the other screens,
 +    # so append to a COPY of it, never to the shared list itself.
 +    new-instance v1, Ljava/util/ArrayList;
 +
@@ -47718,7 +47718,7 @@ index ff3e0fc0..86e24cc2 100644
 +    .line 65
 +    iput-object v0, p0, Lcom/innioasis/music/GenresActivity;->subMenuDialog:Lcom/innioasis/music/util/SubMenuDialog;
 +
-+    # ipp #227: the queue's "open source" started this screen for one of its song lists -- come up
++    # ipp: the queue's "open source" started this screen for one of its song lists -- come up
 +    # on that list instead of on the genre list. Safe here for the same reason as on the Albums
 +    # screen: the genre list is filled by a coroutine that only feeds its own adapter and never
 +    # attaches it to the ListView.
@@ -48163,7 +48163,7 @@ index ff3e0fc0..86e24cc2 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f6278..ca6f7b89 100644
+index 132f6278..1b7e4bfe 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 @@ -123,7 +123,7 @@
@@ -48198,9 +48198,9 @@ index 132f6278..ca6f7b89 100644
      const-string v1, "now_path"
  
 -    const-string v2, "/storage/sdcard0"
-+    # ipp: Folders opens \Music\ directly. It used to open the card's root and then start a SECOND
-+    # FilesActivity on \Music\ on top of it, so that the top button stepped back to the root before
-+    # it left for the menu -- one screen the user never asked for. One Activity, one step back.
++    # ipp: Folders opens \Music\ directly, in ONE Activity. Opening the card's root and stacking a
++    # second FilesActivity on \Music\ over it would make the top button step back to the root before
++    # leaving for the menu -- one screen the user never asked for.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Prefs;->defaultFolderPath(Landroid/content/Context;)Ljava/lang/String;
 +
 +    move-result-object v2
@@ -48221,7 +48221,7 @@ index 132f6278..ca6f7b89 100644
      .packed-switch 0x0
          :pswitch_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-index 943028f8..54a7eab7 100644
+index 943028f8..1d143e94 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 @@ -397,6 +397,13 @@
@@ -48265,7 +48265,7 @@ index 943028f8..54a7eab7 100644
 +
 +    if-ne v0, v1, :cond_lyric
 +
-+    # ipp #227.2: top_hold = Queue -> open the play-queue screen
++    # ipp: top_hold = Queue -> open the play-queue screen
 +    invoke-static {p0}, Lcom/innioasis/ipp/Deck;->openQueue(Lcom/innioasis/y1/base/BasePlayerActivity;)V
 +
 +    return-void
@@ -48373,7 +48373,7 @@ index 943028f8..54a7eab7 100644
      invoke-static {v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 -    invoke-virtual {v3}, Lcom/innioasis/y1/service/PlayerService;->getMusicIndex()I
-+    # ipp #227.5: with shuffle on the track's place in the LIST says nothing about what has been
++    # ipp: with shuffle on the track's place in the LIST says nothing about what has been
 +    # played, so the counter shows its place in the shuffled pass instead (1 for the track the
 +    # pass started on). Shuffle off -> musicIndex + 1, exactly as stock.
 +    invoke-static {v3}, Lcom/innioasis/ipp/Queue;->trackNo(Lcom/innioasis/y1/service/PlayerService;)I
@@ -48937,7 +48937,7 @@ index 92a63b38..cff86b95 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
-index d4e64877..83972a5d 100644
+index d4e64877..86797e5d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuDialog$2.smali
 @@ -140,6 +140,56 @@
@@ -48959,7 +48959,7 @@ index d4e64877..83972a5d 100644
 +
 +    invoke-interface {v5, v1, v0}, Ljava/util/List;->add(ILjava/lang/Object;)V
 +
-+    # ipp #227.3: "Add to queue" for the selected songs of this playlist
++    # ipp: "Add to queue" for the selected songs of this playlist
 +    iget-object v0, p0, Lcom/innioasis/music/PlayListActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlayListActivity;
 +
 +    const v1, 0x7f1101f7
@@ -49010,7 +49010,7 @@ index d4e64877..83972a5d 100644
  
      .line 52
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
-index d16f4b98..41f0ed98 100644
+index d16f4b98..258e775b 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlayListActivity$subMenuSelectCallback$1.smali
 @@ -66,11 +66,127 @@
@@ -49043,7 +49043,7 @@ index d16f4b98..41f0ed98 100644
  
      move-result-object p1
  
-+    # ipp #227.3: "Add to queue" for the selected songs of this playlist
++    # ipp: "Add to queue" for the selected songs of this playlist
 +    iget-object p2, p0, Lcom/innioasis/music/PlayListActivity$subMenuSelectCallback$1;->this$0:Lcom/innioasis/music/PlayListActivity;
 +
 +    const v0, 0x7f1101f7
@@ -49108,7 +49108,7 @@ index d16f4b98..41f0ed98 100644
 +    return p1
 +
 +    :cond_ipp_notartist
-+    # ipp #362.2: "Open album" -- the album this song belongs to, landing on that song.
++    # ipp: "Open album" -- the album this song belongs to, landing on that song.
 +    iget-object p2, p0, Lcom/innioasis/music/PlayListActivity$subMenuSelectCallback$1;->this$0:Lcom/innioasis/music/PlayListActivity;
 +
 +    const v0, 0x7f11020f
@@ -49211,14 +49211,14 @@ index 1e17511e..2457719a 100644
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
-index 6baad174..98eb2d9f 100644
+index 6baad174..62ca8235 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$deletePlaylist$1$2$confirm$1.smali
 @@ -242,6 +242,19 @@
  
      if-eqz v1, :cond_2
  
-+    # ipp #231: the Favorites playlist is generated and always present -- deleting it would take the
++    # ipp: the Favorites playlist is generated and always present -- deleting it would take the
 +    # hearted songs with it and leave the like: preferences pointing at nothing. Its menu entry is
 +    # already hidden (Playlists.favMenu); this is the multi-select path, which deletes every ticked
 +    # row without ever asking which they are. Guarded here rather than in Y1Repository.deletePlaylist
@@ -49710,14 +49710,14 @@ index fc138862..ca98f3b3 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
-index e8778ff8..c2d13720 100644
+index e8778ff8..86d92054 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity$subMenuDialog$2.smali
 @@ -185,6 +185,17 @@
  
      move-result-object v2
  
-+    # ipp #227.3: "Add to queue" (queues every song of the picked playlist)
++    # ipp: "Add to queue" (queues every song of the picked playlist)
 +    iget-object v0, p0, Lcom/innioasis/music/PlaylistsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlaylistsActivity;
 +
 +    const v3, 0x7f1101f7
@@ -49732,14 +49732,14 @@ index e8778ff8..c2d13720 100644
      iget-object v0, p0, Lcom/innioasis/music/PlaylistsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlaylistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
-index 66c966fd..1562cf8e 100644
+index 66c966fd..1603f3da 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 @@ -477,6 +477,17 @@
  .method private final deletePlaylist()V
      .locals 9
  
-+    # ipp #231: untick the Favorites row before anything else. Guarding the repository call alone
++    # ipp: untick the Favorites row before anything else. Guarding the repository call alone
 +    # stopped only half of a delete -- removeMultiSelectItems drops every ticked row from the
 +    # adapter regardless, so the row vanished off the screen and stayed gone until the list was
 +    # rebuilt from the DB ("select all" made that the normal case). Here it is the main thread and
@@ -49757,7 +49757,7 @@ index 66c966fd..1562cf8e 100644
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toPrevious$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
-+    # ipp #231: the cursor does not stop on the Favorites row while multi-select is on -- there
++    # ipp: the cursor does not stop on the Favorites row while multi-select is on -- there
 +    # is nothing to tick there. isMultiSelect is this class's own field, which is why the test
 +    # lives here and not in the adapter.
 +    iget-boolean v1, p0, Lcom/innioasis/music/PlaylistsActivity;->isMultiSelect:Z
@@ -49771,7 +49771,7 @@ index 66c966fd..1562cf8e 100644
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toNext$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
-+    # ipp #231: the cursor does not stop on the Favorites row while multi-select is on -- there
++    # ipp: the cursor does not stop on the Favorites row while multi-select is on -- there
 +    # is nothing to tick there. isMultiSelect is this class's own field, which is why the test
 +    # lives here and not in the adapter.
 +    iget-boolean v1, p0, Lcom/innioasis/music/PlaylistsActivity;->isMultiSelect:Z
@@ -49785,7 +49785,7 @@ index 66c966fd..1562cf8e 100644
  
      move-result-object v0
  
-+    # ipp #231: "Delete playlist" is left out on the Favorites row. Here, before show(), rather than
++    # ipp: "Delete playlist" is left out on the Favorites row. Here, before show(), rather than
 +    # in the block above: stock only rebuilds the menu while canChangePlayList is set, and that flag
 +    # starts false and is only ever raised by creating or renaming a playlist -- so a trim applied
 +    # to stock's list took effect in one state and did nothing in the other. favMenu builds the
@@ -49803,7 +49803,7 @@ index 66c966fd..1562cf8e 100644
  
      move-result-object p1
  
-+    # ipp #227.3: "Add to queue" -> queue every song of the picked playlist(s)
++    # ipp: "Add to queue" -> queue every song of the picked playlist(s)
 +    const p2, 0x7f1101f7
 +
 +    invoke-virtual {p0, p2}, Lcom/innioasis/music/PlaylistsActivity;->getString(I)Ljava/lang/String;
@@ -49831,7 +49831,7 @@ index 66c966fd..1562cf8e 100644
  
      .line 271
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-index 64e6832c..ea4b3c97 100644
+index 64e6832c..da714362 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 @@ -409,138 +409,60 @@
@@ -49853,16 +49853,16 @@ index 64e6832c..ea4b3c97 100644
 -    .line 409
 -    :cond_2
 -    invoke-virtual {p1}, Lcom/innioasis/music/SearchActivity$Item;->getAlbum()Lcom/innioasis/music/data/Album;
-+    # ipp #397 -- the whole result row is drawn from what is already in memory (class Find).
++    # ipp -- the whole result row is drawn from what is already in memory (class Find).
 +    #
 +    # Stock started a background Thread on EVERY bind and set the row from it: the song row's
 +    # cover, and the album row's cover, title AND subtitle. So the text of an album row arrived a
 +    # thread hop after the row itself and covers were decoded again for every row scrolled past --
-+    # that is the blinking (#397.2). Find paints the cover from CoverCache (#397.3, the same entry
++    # that is the blinking. Find paints the cover from CoverCache (the same entry
 +    # the Albums screen uses) and writes both texts here; only a genuine cache miss starts a read,
 +    # once per album per session. It also carries the two fixes from the other sections: the song
-+    # title obeys "Show titles from tags" (#397.5) and an album NAME is not run through
-+    # processFileExtensions, which cut "Vol.2" down to "Vol" (#397.4).
++    # title obeys "Show titles from tags" and an album NAME is not run through
++    # processFileExtensions, which cut "Vol.2" down to "Vol".
 +    invoke-direct {p0}, Lcom/innioasis/music/SearchActivity$MyViewHolder;->getBinding()Lcom/innioasis/y1/databinding/ItemSearchResultBinding;
  
      move-result-object p2
@@ -50005,14 +50005,14 @@ index 64e6832c..ea4b3c97 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
-index 4772cdd7..edb3e9fd 100644
+index 4772cdd7..6dcaa402 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$albums$1.smali
 @@ -186,6 +186,13 @@
  
      move-result-object p1
  
-+    # ipp #291.3 in the search results: one row per FOLDER an album name lives in, exactly as on
++    # ipp: in the search results, one row per FOLDER an album name lives in, exactly as on
 +    # the Albums screen, so the row's thumbnail, its song count and the album it opens all mean
 +    # one physical album. Runs here because this is the IO coroutine that builds the list.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Albums;->splitAlbums(Ljava/util/List;)Ljava/util/List;
@@ -50023,7 +50023,7 @@ index 4772cdd7..edb3e9fd 100644
  
      :cond_0
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
-index 5a7ef8c8..4ae83552 100644
+index 5a7ef8c8..e2b5ab60 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$searchFun$songs$1.smali
 @@ -163,7 +163,7 @@
@@ -50039,7 +50039,7 @@ index 5a7ef8c8..4ae83552 100644
  
      iget-object v0, p0, Lcom/innioasis/music/SearchActivity$searchFun$songs$1;->$searchKey:Ljava/lang/String;
  
-+    # ipp #397: the search matches the TAGS as well, not only the file name -- stock's query is
++    # ipp: the search matches the TAGS as well, not only the file name -- stock's query is
 +    # `lowerName like ?` and nothing else. Find.songs answers off the cached Song table (the same
 +    # list the album half of this search walks); null means it could not, and the stock query below
 +    # stands. Runs here because this is the IO coroutine that builds the list.
@@ -50533,14 +50533,14 @@ index 28a27055..0c252973 100644
 +    throw p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
-index ee8709a5..e6170966 100644
+index ee8709a5..6204cbaf 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$subMenuDialog$2$1.smali
 @@ -66,6 +66,113 @@
  
      invoke-static {p2, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
-+    # ipp #227.3: "Add to queue". This menu dispatches BY INDEX ("anything past 2 is a playlist"),
++    # ipp: "Add to queue". This menu dispatches BY INDEX ("anything past 2 is a playlist"),
 +    # so the entry has to be matched by string in front of that dispatch. The results adapter
 +    # holds SearchActivity.Item rows, which Queue.addFromSearch unwraps into songs and albums.
 +    iget-object v0, p0, Lcom/innioasis/music/SearchActivity$subMenuDialog$2$1;->this$0:Lcom/innioasis/music/SearchActivity;
@@ -50574,7 +50574,7 @@ index ee8709a5..e6170966 100644
 +    return v0
 +
 +    :cond_ipp_notqueue
-+    # ipp #362.2: "Open album" -- offered by Find.menu on a song row only.
++    # ipp: "Open album" -- offered by Find.menu on a song row only.
 +    iget-object v0, p0, Lcom/innioasis/music/SearchActivity$subMenuDialog$2$1;->this$0:Lcom/innioasis/music/SearchActivity;
 +
 +    const v1, 0x7f11020f
@@ -50664,7 +50664,7 @@ index 74b3d42d..fe2825db 100644
  
      iget-object v3, p0, Lcom/innioasis/music/SearchActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/SearchActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
-index 104ab128..ce98d429 100644
+index 104ab128..5e695fcc 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 @@ -341,13 +341,15 @@
@@ -50674,7 +50674,7 @@ index 104ab128..ce98d429 100644
 -    sget-object v0, Lcom/innioasis/music/ShowSongListActivity;->Companion:Lcom/innioasis/music/ShowSongListActivity$Companion;
 -
 -    move-object v1, p0
-+    # ipp #397.6: an album from the search results opens the Albums screen's own song list --
++    # ipp: an album from the search results opens the Albums screen's own song list --
 +    # track numbers, CD dividers, the Shuffle row, the sort menu, the queue -- instead of
 +    # ShowSongListActivity, which drew bare file names the way the Folders list does.
 +    # (was: ShowSongListActivity.Companion.startActivityByAlbum(this, name))
@@ -50692,7 +50692,7 @@ index 104ab128..ce98d429 100644
  
      move-result-object v0
  
-+    # ipp #227.3 / #362.2: the menu is rebuilt for the row under the cursor right before show() --
++    # ipp: the menu is rebuilt for the row under the cursor right before show() --
 +    # "Add to queue" always, "Open album" only on a song row. The dialog is a lazy singleton, so
 +    # this is the one place reached on every long press.
 +    move-object v1, p0
@@ -51094,14 +51094,14 @@ index 50686851..b65fb0e6 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
-index 51980e1a..3574c265 100644
+index 51980e1a..b3c1cc1a 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity$mSubMenuDialog$2.smali
 @@ -112,6 +112,42 @@
  
      invoke-interface {v5, v0}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
  
-+    # ipp #227.3: "Add to queue" entry (after the stock actions, before the playlists)
++    # ipp: "Add to queue" entry (after the stock actions, before the playlists)
 +    iget-object v0, p0, Lcom/innioasis/music/SongListActivity$mSubMenuDialog$2;->this$0:Lcom/innioasis/music/SongListActivity;
 +
 +    const v1, 0x7f1101f7
@@ -51126,7 +51126,7 @@ index 51980e1a..3574c265 100644
 +
 +    invoke-interface {v5, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
 +
-+    # ipp #362.2: "Open album" -- the same reasoning for the album a track came from
++    # ipp: "Open album" -- the same reasoning for the album a track came from
 +    iget-object v0, p0, Lcom/innioasis/music/SongListActivity$mSubMenuDialog$2;->this$0:Lcom/innioasis/music/SongListActivity;
 +
 +    const v1, 0x7f11020f
@@ -51141,14 +51141,14 @@ index 51980e1a..3574c265 100644
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
-index 2ffd8b91..2a819e77 100644
+index 2ffd8b91..428b35e9 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
 @@ -978,6 +978,157 @@
  
      move-result-object p1
  
-+    # ipp #362.2: "Open album" -- open the album of the focused song, landing on that song
++    # ipp: "Open album" -- open the album of the focused song, landing on that song
 +    const v0, 0x7f11020f
 +
 +    invoke-virtual {p0, v0}, Lcom/innioasis/music/SongListActivity;->getString(I)Ljava/lang/String;
@@ -51202,7 +51202,7 @@ index 2ffd8b91..2a819e77 100644
 +    return v0
 +
 +    :cond_ipp_notartist
-+    # ipp #227.3: "Add to queue" -- append the selected songs to the play queue, then close the
++    # ipp: "Add to queue" -- append the selected songs to the play queue, then close the
 +    # menu (returning true dismisses it). Selection is gathered exactly like the stock
 +    # "add to playlist" path: adapter.getSelectedIndexList() -> adapter.getItem(i).
 +    const v0, 0x7f1101f7
@@ -51971,7 +51971,7 @@ index 4ed7ef9f..193239fa 100644
 +.end method
 \ No newline at end of file
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
-index ce188cfe..f43ee546 100644
+index ce188cfe..9f65d4c9 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/FileListAdapter.smali
 @@ -59,7 +59,27 @@
@@ -51986,7 +51986,7 @@ index ce188cfe..f43ee546 100644
 +    # the old file until the cursor was touched.
 +    invoke-static {p0}, Lcom/innioasis/ipp/ListWatch;->tick(Landroid/widget/BaseAdapter;)V
 +
-+    # ipp #228.5: reuse the recycled row. Stock inflated a fresh item_file_kt on EVERY call and
++    # ipp: reuse the recycled row. Stock inflated a fresh item_file_kt on EVERY call and
 +    # ignored convertView, which (a) made every wheel click re-inflate the whole visible window
 +    # and (b) disabled the in-place repaint in Wheel.list -- Folders was the one list left
 +    # scrolling the slow way. Since the row is now recycled, Rows.fileRow below has to put it
@@ -52018,7 +52018,7 @@ index ce188cfe..f43ee546 100644
 +    :goto_ipp_haveview
 +    invoke-static {p0, p2}, Lcom/innioasis/ipp/Rows;->fileRow(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
 +
-+    # ipp #362.1: note this list so the cursor can follow the playing track here too. p3 is still
++    # ipp: note this list so the cursor can follow the playing track here too. p3 is still
 +    # the parent ViewGroup (which IS the ListView) -- it is reused as the left icon on the next line.
 +    invoke-static {p0, p3}, Lcom/innioasis/ipp/Follow;->note(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/ViewGroup;)V
 +
@@ -52111,7 +52111,7 @@ index ce188cfe..f43ee546 100644
 +    # the row's name has just been given -- so it follows the theme and the focus highlight.
 +    invoke-static {p2, v9, p0}, Lcom/innioasis/ipp/Rows;->filePlaying(Landroid/view/View;ILjava/lang/Object;)V
 +
-+    # ipp #224: the "Show all songs" row's own label and icon. Last, for the same reason as the
++    # ipp: the "Show all songs" row's own label and icon. Last, for the same reason as the
 +    # marker above -- the icon is tinted with the colour the row's name has just been given.
 +    invoke-static {p2, v9, p0}, Lcom/innioasis/ipp/Folders;->row(Landroid/view/View;ILjava/lang/Object;)V
 +
@@ -52119,14 +52119,14 @@ index ce188cfe..f43ee546 100644
  
      return-object p2
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
-index 3087ba8e..c2c17ad9 100644
+index 3087ba8e..b9ad8091 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter$getView$1.smali
 @@ -84,6 +84,18 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
-+    # ipp #228.5: rows are recycled now, so by the time this counting thread finishes its row may
++    # ipp: rows are recycled now, so by the time this counting thread finishes its row may
 +    # already be showing a different genre -- writing then would leave the wrong subtitle under it
 +    # until the next rebind. Bail out unless the row is still this genre's.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Rows;->genreInfo(Landroid/widget/TextView;Ljava/lang/Object;)Z
@@ -52157,14 +52157,14 @@ index 3087ba8e..c2c17ad9 100644
      iget-object v0, p0, Lcom/innioasis/music/adapter/GenreListAdapter$getView$1;->this$0:Lcom/innioasis/music/adapter/GenreListAdapter;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
-index 754dc7c2..a3d2aa12 100644
+index 754dc7c2..44333f33 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 @@ -70,19 +70,29 @@
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
      .locals 12
  
-+    # ipp #228.5: reuse the recycled row (see MainAdapter). This getView also paints both states,
++    # ipp: reuse the recycled row (see MainAdapter). This getView also paints both states,
 +    # so no reset is needed -- but it does start a background thread to count a genre's artists
 +    # and albums and writes the result into the row later, which recycling makes unsafe; the tag
 +    # set below is what lets that write check it is still looking at its own row (Rows.genreInfo).
@@ -52229,14 +52229,14 @@ index 754dc7c2..a3d2aa12 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
-index 13bfb259..a69b43c1 100644
+index 13bfb259..13b87a47 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MainAdapter.smali
 @@ -79,6 +79,19 @@
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
      .locals 10
  
-+    # ipp #228.5: reuse the recycled row (stock inflated a fresh item_main every call and ignored
++    # ipp: reuse the recycled row (stock inflated a fresh item_main every call and ignored
 +    # convertView, which kept Wheel.list's in-place repaint switched off for the Artists list and
 +    # the Music menu). No reset needed here: unlike FileListAdapter, this getView paints BOTH
 +    # states -- its else-branch already restores background, text colour, arrow and marquee.
@@ -52272,7 +52272,7 @@ index 13bfb259..a69b43c1 100644
  
      move-result-object v2
  
-+    # ipp #220.2: "; " reads as ", " -- but this adapter is also the Music menu and the Genres
++    # ipp: "; " reads as ", " -- but this adapter is also the Music menu and the Genres
 +    # levels, so Artists.rowName applies it only where the rows ARE artists (ArtistsActivity and
 +    # GenresActivity's second level). Row text only: the list still holds the name the songs of
 +    # that artist are queried by.
@@ -52297,14 +52297,14 @@ index 13bfb259..a69b43c1 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
-index 1b2fd585..e159bc48 100644
+index 1b2fd585..9674e109 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 @@ -229,6 +229,28 @@
  .method public final addItemToSelectedIndex(II)V
      .locals 3
  
-+    # ipp #224: the Folders marker rows ("Show all songs" / "Shuffle") are buttons, not files --
++    # ipp: the Folders marker rows ("Show all songs" / "Shuffle") are buttons, not files --
 +    # they cannot be ticked in multi-select. Every list ticks through this method; only a Folders
 +    # list can hold a marker, so everything else is answered on the first test in Folders.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Folders;->noSelect(Ljava/lang/Object;I)Z
@@ -52333,7 +52333,7 @@ index 1b2fd585..e159bc48 100644
      goto :goto_0
  
      :cond_0
-+    # ipp #224: "Select all" ticks every row -- the Folders marker rows are taken back out
++    # ipp: "Select all" ticks every row -- the Folders marker rows are taken back out
 +    invoke-static {p0}, Lcom/innioasis/ipp/Folders;->dropMarks(Ljava/lang/Object;)V
 +
 +    # ipp: and the "Show all albums" / "Show all songs" buttons of Genres and Artists with them.
@@ -52395,7 +52395,7 @@ index 1b2fd585..e159bc48 100644
 +    :ipp_undo_marquee
 +
 +    # ipp: undo makeItMarquee properly. Stock only put the ellipsize back, which was enough while
-+    # it inflated a fresh row per bind; once rows are recycled (#228.5) whatever the marquee left
++    # it inflated a fresh row per bind; once rows are recycled whatever the marquee left
 +    # behind stayed on the row for good. Three parts, and the order of them matters:
 +    #
 +    # setSelected(false) FIRST, while the ellipsize is still MARQUEE: TextView stops its Marquee
@@ -52413,7 +52413,7 @@ index 1b2fd585..e159bc48 100644
 +    # 43px not -- measured on the device), and the ellipsize is the whole point. The GLYPHS sit at
 +    # the same offset from their view's own top either way, so the row absorbs it by aligning the
 +    # title to its top edge instead of centring it in the row -- see item_main.xml.
-+    # ipp v0.22.9: the horizontal scrolling is NOT taken back any more, i.e. the row is left in
++    # ipp: the horizontal scrolling is NOT taken back, i.e. the row is left in
 +    # exactly the state its layout gives it (every list row declares android:singleLine, which is
 +    # what turns the scrolling on at inflate time). Turning it off makes StaticLayout break the
 +    # text BY WORDS at the view's width, and with maxLines=1 only the first line survives: a title
@@ -52435,13 +52435,13 @@ index 1b2fd585..e159bc48 100644
  
      invoke-interface {v0, p1}, Lkotlin/jvm/functions/Function1;->invoke(Ljava/lang/Object;)Ljava/lang/Object;
  
-+    # ipp #227: a list rebuilt in a NEW ORDER (a sort change) has to drag the play order with it —
++    # ipp: a list rebuilt in a NEW ORDER (a sort change) has to drag the play order with it —
 +    # the player otherwise keeps the order it was handed when the track was opened. Every ListView
 +    # list in the app goes through here; Queue.relist does nothing unless this really is the list
 +    # the queue was started from and its order really did change.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->relist(Ljava/lang/Object;)V
 +
-+    # ipp #362.1: and a list that has just been handed its rows has had its cursor touched by
++    # ipp: and a list that has just been handed its rows has had its cursor touched by
 +    # nobody, so it belongs to playback -- this is what makes "the list has only just been opened"
 +    # work on AlbumsActivity and GenresActivity, which page their levels through one Activity and
 +    # one ListView and so never resume. See Follow.rebuilt.
@@ -52454,7 +52454,7 @@ index 1b2fd585..e159bc48 100644
  
      iput v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;->nowPosition:I
  
-+    # ipp: no notifyDataSetChanged here any more -- moving the cursor must not drag a full
++    # ipp: deliberately no notifyDataSetChanged -- moving the cursor must not drag a full
 +    # ListView re-fill along. Wheel.list (the only caller, via Other.listViewScroll) repaints the
 +    # two affected rows instead, or notifies itself when the window really has to scroll.
      .line 34
@@ -52476,12 +52476,12 @@ index 1b2fd585..e159bc48 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
-index c65cfdfe..71fbb190 100644
+index c65cfdfe..f14f82ff 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 @@ -1,4 +1,6 @@
 -.class public final Lcom/innioasis/music/adapter/SongListAdapter;
-+# ipp: NOT final any more -- SongListAdapter2 (the song lists of Genres) extends this instead of
++# ipp: NOT final -- SongListAdapter2 (the song lists of Genres) extends this instead of
 +# drawing its own file-name row, and extending a final class is a VerifyError at class load.
 +.class public Lcom/innioasis/music/adapter/SongListAdapter;
  .super Lcom/innioasis/music/adapter/MyBaseAdapter;
@@ -52500,11 +52500,11 @@ index c65cfdfe..71fbb190 100644
 +    # scratch register on the way down.
 +    move v7, p1
 +
-+    # ipp #362.1: remember this list (parent IS the ListView) so the cursor can follow the
++    # ipp: remember this list (parent IS the ListView) so the cursor can follow the
 +    # playing track when it is switched by hand
 +    invoke-static {p0, p3}, Lcom/innioasis/ipp/Follow;->note(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/ViewGroup;)V
 +
-+    # ipp #291.3: keep the pinned "CD N" bar in step with this list (no-op for every list that is
++    # ipp: keep the pinned "CD N" bar in step with this list (no-op for every list that is
 +    # not a multi-disc album's song list). Must use `parent` -- on the first fill the row itself
 +    # is not attached yet, so row.getParent() is null.
 +    invoke-static {p0, p3}, Lcom/innioasis/ipp/Disc;->note(Ljava/lang/Object;Landroid/view/View;)V
@@ -52515,7 +52515,7 @@ index c65cfdfe..71fbb190 100644
  
      check-cast p3, Lcom/innioasis/y1/database/Song;
  
-+    # ipp #291.3: the disc strip of this row (reserved on every row of a multi-disc album, labelled
++    # ipp: the disc strip of this row (reserved on every row of a multi-disc album, labelled
 +    # on the first row of each disc; GONE for every other list)
 +    invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getMList()Ljava/util/List;
 +
@@ -52531,7 +52531,7 @@ index c65cfdfe..71fbb190 100644
      iget-object v1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvSongIndex:Landroid/widget/TextView;
  
 -    add-int/lit8 v2, p1, 0x1
-+    # ipp #291.3 stage2: per-disc track numbering (falls back to pos+1 for non-album lists)
++    # ipp: per-disc track numbering (falls back to pos+1 for non-album lists)
 +    invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getMList()Ljava/util/List;
 +
 +    move-result-object v2
@@ -52554,11 +52554,11 @@ index c65cfdfe..71fbb190 100644
  
      .line 49
 -    iget-boolean v2, p0, Lcom/innioasis/music/adapter/SongListAdapter;->canShowSongName:Z
-+    # ipp: the title is decided by the "meta_title" setting and NOTHING else. It used to be forced
-+    # to the tag whenever the list was sorted by song name -- the canShowSongName flag stock
-+    # sets in every switchSortType -- so with the setting OFF a list sorted by song name still
-+    # showed tag titles, which is the one screen state where the setting looked dead. The flag
-+    # is still set by stock and still answers for the second line; it no longer names the row.
++    # ipp: the title is decided by the "meta_title" setting and NOTHING else. Forcing it to the
++    # tag whenever the list is sorted by song name -- the canShowSongName flag stock sets in
++    # every switchSortType -- means that with the setting OFF a list sorted by song name still
++    # shows tag titles, which is the one screen state where the setting looks dead. The flag
++    # is still set by stock and still answers for the second line; it does not name the row.
 +    # (what stood here: iget-boolean canShowSongName / if-nez v2, :cond_1)
 +
 +    invoke-virtual {v1}, Landroid/widget/TextView;->getContext()Landroid/content/Context;
@@ -52569,8 +52569,8 @@ index c65cfdfe..71fbb190 100644
 +    const-string v3, "meta_title"
 +
 +    # ipp: the default is NOT stated here. Prefs.on looks it up in the one table this reader and
-+    # the innioasis++ row both consult, so the two cannot drift apart -- which is how a setting
-+    # used to come to say "On" over a feature still behaving as "Off".
++    # the better-Y row both consult, so the two cannot drift apart -- that drift is how a setting
++    # comes to say "On" over a feature still behaving as "Off".
 +    invoke-static {v2, v3}, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
 +
 +    move-result v2
@@ -52605,7 +52605,7 @@ index c65cfdfe..71fbb190 100644
  
      move-result-object v3
  
-+    # ipp #220.2: a tag that separates its artists with "; " reads as ", " in the row. Visual only
++    # ipp: a tag that separates its artists with "; " reads as ", " in the row. Visual only
 +    # -- the Song is untouched, and so is every key anything is looked up by.
 +    invoke-static {v3}, Lcom/innioasis/ipp/Artists;->display(Ljava/lang/String;)Ljava/lang/String;
 +
@@ -53178,14 +53178,14 @@ index 306c059f..05023aa4 100644
  
      invoke-static {p2, p3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
-index fe02089c..dedb18c3 100644
+index fe02089c..bb0ec0a6 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 @@ -411,6 +411,18 @@
  .method public final addOrRemoveMultiSelectIndex(IZ)V
      .locals 1
  
-+    # ipp #231: the Favorites row takes no part in a multi-selection -- it cannot be deleted,
++    # ipp: the Favorites row takes no part in a multi-selection -- it cannot be deleted,
 +    # so a tick on it counted towards a selection it was then quietly left out of. This covers
 +    # every way a tick arrives, including the one longConfirm puts on the row it was raised on.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Playlists;->tickBlocked(Ljava/lang/Object;I)Z
@@ -53204,7 +53204,7 @@ index fe02089c..dedb18c3 100644
      goto :goto_0
  
      :cond_0
-+    # ipp #231: and "Select all" does not sweep it up either. untickFav drops every locked row
++    # ipp: and "Select all" does not sweep it up either. untickFav drops every locked row
 +    # and repaints; on every other screen this adapter serves it finds nothing and does nothing.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Playlists;->untickFav(Ljava/lang/Object;)V
 +
@@ -53282,7 +53282,7 @@ index bf78e9a8..0bf8c44d 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali b/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
-index 6681baa9..7b44c234 100644
+index 6681baa9..54fa1dec 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
 @@ -1,152 +1,76 @@
@@ -53504,10 +53504,10 @@ index 6681baa9..7b44c234 100644
 +
 +    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    # ipp: the whole cpdetector stack that used to live here is gone -- it had no Cyrillic
-+    # verifier at all and answered a Chinese codepage for Cyrillic text (see Lyrics). The
-+    # packages themselves (info.monitorenter.cpdetector, org.mozilla.intl.chardet, antlr) were
-+    # deleted with it, so nothing may reference them from here.
++    # ipp: no cpdetector here -- it has no Cyrillic
++    # verifier at all and answers a Chinese codepage for Cyrillic text (see Lyrics). The
++    # packages themselves (info.monitorenter.cpdetector, org.mozilla.intl.chardet, antlr) are
++    # deleted from the tree, so nothing may reference them from here.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Lyrics;->charset(Ljava/io/File;)Ljava/nio/charset/Charset;
 +
 +    move-result-object p1
@@ -53515,7 +53515,7 @@ index 6681baa9..7b44c234 100644
 +    return-object p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
-index 3f62d183..469fc212 100644
+index 3f62d183..317e7388 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 @@ -662,6 +662,10 @@
@@ -53539,7 +53539,7 @@ index 3f62d183..469fc212 100644
      .line 136
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseDialog;->onStop()V
  
-+    # ipp #362.1: the menu is gone, so the list underneath starts its "the wheel has fallen silent"
++    # ipp: the menu is gone, so the list underneath starts its "the wheel has fallen silent"
 +    # clock again. The other half is Menus.onShow, off onStart above. See Follow.hold.
 +    const/4 v0, 0x0
 +
@@ -53563,16 +53563,16 @@ index 3f62d183..469fc212 100644
  
      move-result p1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
-index 2b24d8d3..f17397e2 100644
+index 2b24d8d3..3a4ea9a2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AboutActivity.smali
 @@ -77,6 +77,12 @@
  .method public confirm()V
      .locals 0
  
-+    # ipp #228.2: five centre presses on this screen toggle the debug mode -- the debug_log
++    # ipp: five centre presses on this screen toggle the debug mode -- the debug_log
 +    # marker on the card that Y1Application$TimberTree reads at <clinit>, plus the
-+    # SurfaceFlinger row in the innioasis++ menu. Stock's confirm() is empty, i.e. the centre
++    # SurfaceFlinger row in the better-Y menu. Stock's confirm() is empty, i.e. the centre
 +    # press does nothing at all here, so counting presses takes nothing away.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Diag;->about(Landroid/app/Activity;)V
 +
@@ -54173,14 +54173,14 @@ index 2ae02d9c..da3a63e0 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
-index c4ec82ef..12f4526f 100644
+index c4ec82ef..ae25dc6f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 @@ -76,6 +76,24 @@
  
      if-eq p1, v0, :cond_0
  
-+    # ipp #227.3: "Add to queue" -- the fourth entry, appended by longConfirm to the list stock
++    # ipp: "Add to queue" -- the fourth entry, appended by longConfirm to the list stock
 +    # builds there. This dispatch has explicit cases and no "anything past N" fallback, so an
 +    # entry at the end moves nothing; the adapter is reached through the synthetic accessor
 +    # Kotlin generated for the private field (a smali call can use it, Java source cannot).
@@ -54202,14 +54202,14 @@ index c4ec82ef..12f4526f 100644
  
      .line 141
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
-index f8a19b28..6f364126 100644
+index f8a19b28..6774e023 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 @@ -732,6 +732,16 @@
  
      move-result-object v6
  
-+    # ipp #227.3: "Add to queue". Appended to the list stock has just built rather than woven into
++    # ipp: "Add to queue". Appended to the list stock has just built rather than woven into
 +    # the String[] above, so no index of an existing entry moves.
 +    const v0, 0x7f1101f7
 +
@@ -54377,14 +54377,14 @@ index f12a7726..56fac334 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
-index 92290be6..c5e483e5 100644
+index 92290be6..4a1c2fd4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 @@ -636,6 +636,27 @@
  .method public longPressMenu()V
      .locals 5
  
-+    # ipp #384: what the long top press does here is a setting. 1 = open the play queue; the
++    # ipp: what the long top press does here is a setting. 1 = open the play queue; the
 +    # bookmark it displaces becomes the button at the head of the player's row (Deck slot 8),
 +    # and with 0 (stock) that button is the queue instead. Exactly one of the two is ever hidden.
 +    invoke-static {}, Lcom/innioasis/ipp/Audio;->bookTopHold()I
@@ -54412,7 +54412,7 @@ index 92290be6..c5e483e5 100644
      .line 121
      invoke-super {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->refreshUI()V
  
-+    # ipp #384.1: paint the button row for an audiobook -- shuffle / repeat / speed / timer.
++    # ipp: paint the button row for an audiobook -- shuffle / repeat / speed / timer.
 +    # The music player does the same from its own refreshUI; without it this screen would keep
 +    # the icons the layout ships and the stock pair initView sets.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
@@ -54443,7 +54443,7 @@ index 92290be6..c5e483e5 100644
 -    check-cast v2, Ljava/lang/CharSequence;
 -
 -    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-+    # ipp #384: a chapter name is as long as a song title, and this screen simply truncated it.
++    # ipp: a chapter name is as long as a song title, and this screen simply truncated it.
 +    # Same marquee the music player's two title views use.
 +    invoke-static {v1, v2}, Lcom/innioasis/ipp/Scroll;->marqueeText(Landroid/widget/TextView;Ljava/lang/String;)V
  
@@ -54479,7 +54479,7 @@ index 92290be6..c5e483e5 100644
      invoke-static {v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 -    invoke-virtual {v3}, Lcom/innioasis/y1/service/PlayerService;->getAudiobookIndex()I
-+    # ipp #384: under shuffle the number is the place in the shuffled PASS, exactly as the music
++    # ipp: under shuffle the number is the place in the shuffled PASS, exactly as the music
 +    # player shows it -- read off the queue's plan, never counted. Shuffle off it is index+1.
 +    invoke-static {v3}, Lcom/innioasis/ipp/Queue;->trackNo(Lcom/innioasis/y1/service/PlayerService;)I
  
@@ -54491,7 +54491,7 @@ index 92290be6..c5e483e5 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
-index 6a25d7cf..282fa946 100644
+index 6a25d7cf..2ffc4d6c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -54499,14 +54499,14 @@ index 6a25d7cf..282fa946 100644
      iget-object v0, p1, Lcom/innioasis/y1/databinding/ItemBlutoothBinding;->tvName:Landroid/widget/TextView;
  
 -    invoke-virtual {p2}, Landroid/bluetooth/BluetoothDevice;->getName()Ljava/lang/String;
-+    # ipp #395: the name the user gave this device wins over the one it advertises
++    # ipp: the name the user gave this device wins over the one it advertises
 +    # (was: p2.getName())
 +    invoke-static {p2}, Lcom/innioasis/ipp/Blue;->name(Landroid/bluetooth/BluetoothDevice;)Ljava/lang/String;
  
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
-index 552a1de3..067bed78 100644
+index 552a1de3..0f20aef0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -54514,14 +54514,14 @@ index 552a1de3..067bed78 100644
      iget-object v0, p1, Lcom/innioasis/y1/databinding/ItemBlutoothBinding;->tvName:Landroid/widget/TextView;
  
 -    invoke-virtual {p2}, Landroid/bluetooth/BluetoothDevice;->getName()Ljava/lang/String;
-+    # ipp #395: the name the user gave this device wins over the one it advertises -- a device that
++    # ipp: the name the user gave this device wins over the one it advertises -- a device that
 +    # was renamed while paired keeps that name if it turns up here again (was: p2.getName())
 +    invoke-static {p2}, Lcom/innioasis/ipp/Blue;->name(Landroid/bluetooth/BluetoothDevice;)Ljava/lang/String;
  
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b96..d3fa140f 100644
+index e9751b96..28b0e252 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 @@ -1655,60 +1655,11 @@
@@ -54582,7 +54582,7 @@ index e9751b96..d3fa140f 100644
 -
 -    .line 246
 -    invoke-static/range {v1 .. v8}, Lcom/innioasis/y1/utils/DialogUtil;->setDialogTitle$default(Lcom/innioasis/y1/utils/DialogUtil;Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;ZZILjava/lang/Object;)Landroid/app/Dialog;
-+    # ipp #395: a long top press on a paired device opens a MENU -- "Forget device" (the stock
++    # ipp: a long top press on a paired device opens a MENU -- "Forget device" (the stock
 +    # unpair confirm, word for word) and "Rename device". Stock went straight to that confirm; its
 +    # dialog and callback (BluetoothActivity$longConfirm$1) are rebuilt inside Blue, so the class
 +    # is no longer referenced from here.
@@ -55150,14 +55150,14 @@ index 7352ca07..af695f2d 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
-index a97af096..e8d69660 100644
+index a97af096..aae3cb92 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 @@ -659,6 +659,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
-+    # ipp #228: force reboot (this screen does not call super) -- see Force
++    # ipp: force reboot (this screen does not call super) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -55174,7 +55174,7 @@ index a97af096..e8d69660 100644
      invoke-static {p1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
-index c90de289..6483da12 100644
+index c90de289..534c67e1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 @@ -388,7 +388,11 @@
@@ -55182,7 +55182,7 @@ index c90de289..6483da12 100644
      check-cast v1, Landroid/content/Context;
  
 -    const/4 v2, 0x6
-+    # ipp #384.1: five rows, not six -- Settings is gone, its Speed and Timer moved onto the
++    # ipp: five rows, not six -- Settings is gone, its Speed and Timer moved onto the
 +    # audiobook's own Now-Playing button row (Deck/Audio), and Shuffle/Repeat live there too.
 +    # The position 5 branch below is left in place, unreachable, so the numbering above it is
 +    # untouched.
@@ -55213,7 +55213,7 @@ index c90de289..6483da12 100644
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
-index 0bfdbeec..78358520 100644
+index 0bfdbeec..c540a48c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 @@ -1,1964 +1,1970 @@
@@ -57512,7 +57512,7 @@ index 0bfdbeec..78358520 100644
 +    invoke-static {p0}, Lcom/innioasis/ipp/Eq;->preview(Lcom/innioasis/y1/activity/EqActivity;)V
 +
 +    .line 246
-+    # ipp #228.5: see clockwise
++    # ipp: see clockwise
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/EqActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
 +    move-result-object v0
@@ -57562,7 +57562,7 @@ index 0bfdbeec..78358520 100644
 +    invoke-static {p0}, Lcom/innioasis/ipp/Eq;->preview(Lcom/innioasis/y1/activity/EqActivity;)V
 +
 +    .line 236
-+    # ipp #228.5: stock rebound every row and restarted a smooth scroll on every click; Wheel.follow
++    # ipp: stock rebound every row and restarted a smooth scroll on every click; Wheel.follow
 +    # repaints only the two rows whose highlight changed and scrolls only when needed.
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/EqActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
@@ -59152,7 +59152,7 @@ index 0bfdbeec..78358520 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..38efffa4 100644
+index a9542df1..7d44cf56 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -59180,7 +59180,7 @@ index a9542df1..38efffa4 100644
      :goto_1
 -    invoke-virtual {v1}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
 -
-+    # ipp #228.5: the main menu had the same pattern SettingActivity did -- notifyDataSetChanged()
++    # ipp: the main menu had the same pattern SettingActivity did -- notifyDataSetChanged()
 +    # plus a fresh smoothScrollToPosition() on EVERY click. Wheel.follow repaints only the two
 +    # rows whose highlight changed, drops the item animator, and scrolls only when the row is off
 +    # screen -- and it jumps instantly (row-aligned) when the target is far away, which is what
@@ -59206,7 +59206,7 @@ index a9542df1..38efffa4 100644
      :goto_1
 -    invoke-virtual {v2}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
 -
-+    # ipp #228.5: see antiClockwise -- one Wheel.follow instead of notifyDataSetChanged() plus a
++    # ipp: see antiClockwise -- one Wheel.follow instead of notifyDataSetChanged() plus a
 +    # fresh smoothScrollToPosition() on every click.
      .line 278
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
@@ -59224,7 +59224,7 @@ index a9542df1..38efffa4 100644
  .method public initView()V
      .locals 6
  
-+    # ipp #231: relabel the Favorites playlist when the interface language has changed. Here rather
++    # ipp: relabel the Favorites playlist when the interface language has changed. Here rather
 +    # than in either language screen: the switch goes through the system configuration, so a
 +    # getString taken right after it still answers in the OLD language -- and this is where both
 +    # screens land afterwards. Guarded by the stored language index, so a manual rename survives
@@ -59288,14 +59288,14 @@ index f2075450..d86674af 100644
      check-cast v1, Ljava/lang/CharSequence;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..bb45acff 100644
+index 0688aa89..c0a831b4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -3007,6 +3007,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
-+    # ipp #228: force reboot (this screen does not call super) -- see Force
++    # ipp: force reboot (this screen does not call super) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -59951,14 +59951,14 @@ index a5a04dcd..1bdae584 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..2a420f3e 100644
+index 5e61f77d..e404c79e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 @@ -2057,6 +2057,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
-+    # ipp #228: force reboot (this screen does not call super) -- see Force
++    # ipp: force reboot (this screen does not call super) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -60406,14 +60406,14 @@ index f7ed916f..be5c4456 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
-index 66a74737..f530d028 100644
+index 66a74737..73002895 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoActivity.smali
 @@ -898,6 +898,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 7
  
-+    # ipp #228: force reboot (this screen does not call super) -- see Force
++    # ipp: force reboot (this screen does not call super) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -60434,7 +60434,7 @@ index 66a74737..f530d028 100644
      new-array v6, v4, [Ljava/lang/Object;
  
 -    invoke-virtual {v1, v5, v6}, Ltimber/log/Timber$Forest;->i(Ljava/lang/String;[Ljava/lang/Object;)V
-+    # ipp #228.2: DEBUG, not INFO -- this fires on every key press and wheel click, and INFO is
++    # ipp: DEBUG, not INFO -- this fires on every key press and wheel click, and INFO is
 +    # what the diagnostic log KEEPS (Y1Application$TimberTree). 65 of the first 162 records in a
 +    # real report were this one line. Debug mode still shows it, as it shows everything.
 +    invoke-virtual {v1, v5, v6}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
@@ -61070,7 +61070,7 @@ index 402025b9..817cba56 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
-index 5ee057a4..b3a7564a 100644
+index 5ee057a4..471e37f0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/adapter/BookmarkAdapter.smali
 @@ -59,7 +59,24 @@
@@ -61110,7 +61110,7 @@ index 5ee057a4..b3a7564a 100644
      move-result-object p2
  
 +    :ipp_recycled
-+    # ipp: the unselected look a fresh inflate used to provide -- both labels back to white and the
++    # ipp: the unselected look a fresh inflate would provide -- both labels back to white and the
 +    # marquee taken off the name.
 +    invoke-static {p0, p2}, Lcom/innioasis/ipp/Rows;->bookRow(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
 +
@@ -61211,14 +61211,14 @@ index 78735fa1..b00a865d 100644
      sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
-index 4c89afa4..1d494636 100644
+index 4c89afa4..9d31e492 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
 @@ -81,6 +81,20 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 4
  
-+    # ipp #228: force reboot -- a dialog takes the keys away from the Activity under it, so the
++    # ipp: force reboot -- a dialog takes the keys away from the Activity under it, so the
 +    # hold has to work here too. See Force.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
@@ -61321,7 +61321,7 @@ index 6e8fae34..ac85e290 100644
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca002..dcb4ecc0 100644
+index 510ca002..6dd2ed4d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -61402,7 +61402,7 @@ index 510ca002..dcb4ecc0 100644
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 2
  
-+    # ipp #228: force reboot (the player has its own dispatchKeyEvent) -- see Force
++    # ipp: force reboot (the player has its own dispatchKeyEvent) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -61623,7 +61623,7 @@ index 510ca002..dcb4ecc0 100644
 +    invoke-virtual {v0, v1}, Lcom/innioasis/music/util/Other;->hideV(Landroid/view/View;)V
 +
 +    :goto_done
-+    # ipp #230: the Lyrics window is read, not glanced at -- while it is open the screen does not
++    # ipp: the Lyrics window is read, not glanced at -- while it is open the screen does not
 +    # go out. Both directions, because this method is also how it is closed again.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Awake;->lyrics(Landroid/app/Activity;)V
 +
@@ -62676,7 +62676,7 @@ index d7438262..347dfdc7 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-index e9374192..b6f5d089 100644
+index e9374192..bf8b378c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 @@ -1,366 +1,377 @@
@@ -63182,9 +63182,9 @@ index e9374192..b6f5d089 100644
 +
 +    move-result-object v0
 +
-+    # ipp #228.2 (v0.2.3): back to stock -- a path already in the DB is skipped, so the automatic
-+    # scan (after a reboot / USB detach) stays as fast as it was. Refreshing the metadata of
-+    # already-known songs is now the innioasis++ "Update library" button's job alone.
++    # ipp: stock behaviour, deliberately kept -- a path already in the DB is skipped, so the automatic
++    # scan (after a reboot / USB detach) stays fast. Refreshing the metadata of
++    # already-known songs is the better-Y "Update library" button's job alone.
 +    if-nez v0, :cond_2
 +
 +    .line 637
@@ -63565,7 +63565,7 @@ index e95eaea5..4ba2be02 100644
      goto :goto_0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
-index 79daca77..a99dfe4a 100644
+index 79daca77..523f69d1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 @@ -891,6 +891,18 @@
@@ -63656,21 +63656,21 @@ index 79daca77..a99dfe4a 100644
 -    sget-object p1, Landroid/graphics/Typeface;->DEFAULT:Landroid/graphics/Typeface;
 -
 -    :cond_8
-+    # ipp #228.4: stock threw the theme font away for language #4 (Russian) and forced
++    # ipp: stock threw the theme font away for language #4 (Russian) and forced
 +    # Typeface.DEFAULT here. Theme fonts do carry Cyrillic (they render fine under every other
 +    # language), so the theme's font is kept for Russian too.
      const-class v0, Landroid/graphics/Typeface;
  
      const-string v1, "MONOSPACE"
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
-index 8590fe7c..9f8751ca 100644
+index 8590fe7c..ba3c2594 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
 @@ -554,6 +554,16 @@
  
      invoke-static {p3, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
-+    # ipp #228: the delete confirmation of a SONG says that the folder may go with it, while the
++    # ipp: the delete confirmation of a SONG says that the folder may go with it, while the
 +    # "delete_folder" pref is on. Here because every one of those dialogs passes through this one
 +    # method; Del.msg decides by the screen that raised it and never touches a message that is
 +    # already set (the same "Delete?" title is used for playlists, photos and bookmarks too).
@@ -63731,7 +63731,7 @@ index 2c02dafb..8f624e88 100644
 +    throw v0
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
-index 01f8662e..b54231a5 100644
+index 01f8662e..7ba78384 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
 @@ -97,256 +97,13 @@
@@ -63742,7 +63742,7 @@ index 01f8662e..b54231a5 100644
 -    new-instance v0, Ljava/util/ArrayList;
  
 -    invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
-+    # ipp #409: the alphabet AND its case come from Keys now -- stock chose the alphabet by
++    # ipp: the alphabet AND its case come from Keys now -- stock chose the alphabet by
 +    # interface language (Russian -> Cyrillic, everything else -> Latin) and always returned
 +    # capitals, whatever was then typed. Keys.apply re-fills the strip when either changes.
 +    invoke-static {}, Lcom/innioasis/ipp/Keys;->table()Ljava/util/List;
@@ -63997,14 +63997,14 @@ index 01f8662e..b54231a5 100644
      return-object v0
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
-index 6e949456..ee7e05e5 100644
+index 6e949456..d79b6927 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 @@ -490,49 +490,58 @@
  .method private final leftMove()V
      .locals 5
  
-+    # ipp #409: stock was notifyDataSetChanged() + smoothScrollToPosition() on every click -- the
++    # ipp: stock was notifyDataSetChanged() + smoothScrollToPosition() on every click -- the
 +    # very pattern Wheel.follow exists to replace. Keys.prev moves the cursor and repaints the two
 +    # cells whose look changed; this is the one HORIZONTAL list the wheel drives (Wheel.scrollTo).
      .line 139
@@ -64038,7 +64038,7 @@ index 6e949456..ee7e05e5 100644
 +    goto :ipp_long_end
  
 -    const/4 v2, 0x0
-+    # ipp #409: held top button -- the other alphabet (Keys.alphabet); held bottom -- caps lock
++    # ipp: held top button -- the other alphabet (Keys.alphabet); held bottom -- caps lock
 +    # (Keys.caps). The centre keeps stock's "screen off"; see Keys.hold for the thresholds.
 +    :cond_0
 +    sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
@@ -64084,7 +64084,7 @@ index 6e949456..ee7e05e5 100644
  .method private final rightMove()V
      .locals 5
  
-+    # ipp #409: see leftMove.
++    # ipp: see leftMove.
      .line 135
 -    invoke-direct {p0}, Lcom/innioasis/y1/utils/InputMethodDialog;->getAdapter()Lcom/innioasis/y1/utils/InputMethodDialog$MyAdapter;
 -
@@ -64125,7 +64125,7 @@ index 6e949456..ee7e05e5 100644
 -    const/4 v1, 0x6
 -
 -    if-le v0, v1, :cond_0
-+    # ipp #409: the ONE place both paths go through -- a typed character and a box seeded for a
++    # ipp: the ONE place both paths go through -- a typed character and a box seeded for a
 +    # rename. Empty box => the next letter is a capital; anything in it => lower case (Keys.value).
 +    invoke-static {p1}, Lcom/innioasis/ipp/Keys;->value(Ljava/lang/String;)V
  
@@ -64154,7 +64154,7 @@ index 6e949456..ee7e05e5 100644
 -
 -    const-string v1, "this as java.lang.String\u2026ing(startIndex, endIndex)"
 +    .line 32
-+    # ipp #409: how much fits is a WIDTH, not a character count. Stock cut at 6 characters, measured
++    # ipp: how much fits is a WIDTH, not a character count. Stock cut at 6 characters, measured
 +    # for the 110dip box it shared with the letter row; the full-width box was given 18, which is
 +    # the same mistake one size up -- 19 narrow glyphs left a quarter of the box empty, while a
 +    # theme with a wider font would have overflowed it. Keys.fit measures against the box itself.
@@ -64189,7 +64189,7 @@ index 6e949456..ee7e05e5 100644
 -    const-string v0, "this as java.lang.String).toLowerCase(Locale.ROOT)"
 -
 -    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-+    # ipp #409: the strip already shows the case that will be typed (Keys.table), so the letter is
++    # ipp: the strip already shows the case that will be typed (Keys.table), so the letter is
 +    # taken as it stands -- stock lower-cased it here, which is why the row was capitals and the
 +    # text was not.
  
@@ -64201,7 +64201,7 @@ index 6e949456..ee7e05e5 100644
  
 +    goto :goto_0
 +
-+    # ipp #409: bottom button, short press -- capitals <-> lower case (Keys.shift). Stock ignored
++    # ipp: bottom button, short press -- capitals <-> lower case (Keys.shift). Stock ignored
 +    # this key here entirely.
      :cond_4
 +    sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
@@ -64221,7 +64221,7 @@ index 6e949456..ee7e05e5 100644
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 4
  
-+    # ipp #228: force reboot (this dialog does not call super) -- see Force
++    # ipp: force reboot (this dialog does not call super) -- see Force
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -64242,7 +64242,7 @@ index 6e949456..ee7e05e5 100644
      iput v0, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->downCount:I
  
 -    const/4 v3, 0x5
-+    # ipp #409: the hold threshold is per key now -- 1 repeat for the top and bottom buttons, whose
++    # ipp: the hold threshold is per key now -- 1 repeat for the top and bottom buttons, whose
 +    # held actions are ordinary work, and stock's 6 for the centre, which puts the screen to sleep.
 +    invoke-virtual {p1}, Landroid/view/KeyEvent;->getKeyCode()I
  
@@ -64274,7 +64274,7 @@ index 6e949456..ee7e05e5 100644
      .line 81
      invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/InputMethodDialog;->setCancelable(Z)V
  
-+    # ipp #409: hand the keyboard's own views to Keys -- binding and adapter are private, so it
++    # ipp: hand the keyboard's own views to Keys -- binding and adapter are private, so it
 +    # cannot read them back out of here. Before onInit, which is where the caller seeds the box:
 +    # the seeded value must be what decides the case, not the empty box before it.
 +    iget-object v0, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->activity:Landroid/app/Activity;
@@ -64352,7 +64352,7 @@ index 1e05f275..668ad554 100644
      int-to-float v3, v3
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-index 97739f51..b4ca1e0b 100644
+index 97739f51..211140bc 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 @@ -136,11 +136,11 @@
@@ -64364,7 +64364,7 @@ index 97739f51..b4ca1e0b 100644
 -
 -    if-lez v2, :cond_1
 -
-+    # ipp #228.5: this reset (gap of 200-500ms = not a fast scroll -> restart the run, so no
++    # ipp: this reset (gap of 200-500ms = not a fast scroll -> restart the run, so no
 +    # acceleration) was gated on debounceCount > 0. But debounceCount is only ever DECREMENTED
 +    # elsewhere and re-armed nowhere, so after the very first fast scroll it stays <= 0 for the
 +    # life of the screen and this branch never ran again: the run start kept ageing and
@@ -64536,14 +64536,14 @@ index 5308bc70..c317d05f 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
-index a8dc40f3..f3f8baff 100644
+index a8dc40f3..328f30f2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 @@ -255,6 +255,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 10
  
-+    # ipp #228: force reboot -- the e-book screens have a key handler of their own. See Force.
++    # ipp: force reboot -- the e-book screens have a key handler of their own. See Force.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Force;->key(Landroid/view/KeyEvent;)Z
 +
 +    move-result v0
@@ -64563,7 +64563,7 @@ index a8dc40f3..f3f8baff 100644
      .line 98
      invoke-super {p0, p1}, Lcom/innioasis/y1/base/BaseActivity;->onCreate(Landroid/os/Bundle;)V
  
-+    # ipp #230: an open book holds the screen on. This is the base of EVERY e-book screen, so the
++    # ipp: an open book holds the screen on. This is the base of EVERY e-book screen, so the
 +    # four reader Activities are named inside Awake.book -- the library screen is an ordinary list
 +    # and has no business keeping the screen alive.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Awake;->book(Landroid/app/Activity;)V
@@ -64572,14 +64572,14 @@ index a8dc40f3..f3f8baff 100644
      invoke-virtual {p0}, Lcom/innioasis/y1_eBook/base/BaseActivity;->getApplicationContext()Landroid/content/Context;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
-index 858b0ba9..fad635ac 100644
+index 858b0ba9..73d098be 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 @@ -326,6 +326,11 @@
  
      invoke-virtual {p2, p3, v0, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp #387.3: the row is wrap_content, and a theme's itemSelectedBackground is a 640x91 bitmap
++    # ipp: the row is wrap_content, and a theme's itemSelectedBackground is a 640x91 bitmap
 +    # -- View.getSuggestedMinimumHeight() takes the background's own minimum, so the row grew as
 +    # soon as the cursor landed on it. Same defect and same wrapper as the song and album rows.
 +    invoke-static {p3}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
@@ -64591,7 +64591,7 @@ index 858b0ba9..fad635ac 100644
  
      invoke-virtual {p2, p3, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp #387.3: the unselected state too -- the row that LOSES the cursor keeps whatever the
++    # ipp: the unselected state too -- the row that LOSES the cursor keeps whatever the
 +    # theme put on it, and rows are recycled.
 +    invoke-static {p3}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
 +
@@ -64599,14 +64599,14 @@ index 858b0ba9..fad635ac 100644
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
-index 27f20fbd..764c4596 100644
+index 27f20fbd..9c926e5f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 @@ -507,6 +507,12 @@
  .method private final showItem()V
      .locals 5
  
-+    # ipp #387.2: settle the mark for this mode and paint the "Library" row -- at the TOP, so the
++    # ipp: settle the mark for this mode and paint the "Library" row -- at the TOP, so the
 +    # mark stock reads two lines down is the one this leaves behind.
 +    iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
 +
@@ -64620,7 +64620,7 @@ index 27f20fbd..764c4596 100644
      move-result p1
  
 -    if-gez p1, :cond_1
-+    # ipp #387.2: the first row this mode has -- 0 in the menu, the first BOOK in the Library,
++    # ipp: the first row this mode has -- 0 in the menu, the first BOOK in the Library,
 +    # whose three fixed rows are hidden but keep their numbers.
 +    iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
 +
@@ -64642,7 +64642,7 @@ index 27f20fbd..764c4596 100644
  
 -    sub-int/2addr v0, v2
 -
-+    # ipp #387.2: the last row this mode has. In the menu that is the "Library" row whatever the
++    # ipp: the last row this mode has. In the menu that is the "Library" row whatever the
 +    # book list holds -- the list is not on this screen.
      iget v3, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
  
@@ -64659,7 +64659,7 @@ index 27f20fbd..764c4596 100644
  
 -    sub-int/2addr p1, v2
 -
-+    # ipp #387.2: same ceiling as the test just above.
++    # ipp: same ceiling as the test just above.
      iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
  
 -    add-int/2addr p1, v0
@@ -64673,7 +64673,7 @@ index 27f20fbd..764c4596 100644
  
      iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
  
-+    # ipp #387.2: the remove/delete menu belongs to a book. In the menu mode there is none under
++    # ipp: the remove/delete menu belongs to a book. In the menu mode there is none under
 +    # the cursor, so the floor is out of reach and the long press does nothing.
 +    invoke-static {p0, v0}, Lcom/innioasis/ipp/Ebook;->menuFloor(Landroid/app/Activity;I)I
 +
@@ -64686,7 +64686,7 @@ index 27f20fbd..764c4596 100644
  
      move-result p1
  
-+    # ipp #387.2: the "Library" row of the menu opens this screen as the Library, and a press in an
++    # ipp: the "Library" row of the menu opens this screen as the Library, and a press in an
 +    # empty Library does nothing -- stock would index the book list, which the cursor still points
 +    # into. Anything else falls through to the stock branches below untouched.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Ebook;->confirm(Landroid/app/Activity;I)Z
@@ -64705,7 +64705,7 @@ index 27f20fbd..764c4596 100644
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
-+    # ipp #387.2: decide which of the two screens this is and hide the other half. Before stock's
++    # ipp: decide which of the two screens this is and hide the other half. Before stock's
 +    # showItem() below, because in Library mode this is what puts the cursor on the first book.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Ebook;->setup(Landroid/app/Activity;)V
 +
@@ -64713,14 +64713,14 @@ index 27f20fbd..764c4596 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833eac..20d4285a 100644
+index b6833eac..7743d577 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 @@ -275,6 +275,12 @@
  
      invoke-virtual {p2, v1, v0, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp #387.3: same defect as the Library rows -- the row is wrap_content and a theme's
++    # ipp: same defect as the Library rows -- the row is wrap_content and a theme's
 +    # itemSelectedBackground is a 640x91 bitmap, whose intrinsic height becomes the row's minimum.
 +    # Here it showed as the list creeping: RecyclerView scrolls by row, and one row taller than
 +    # the rest leaves a few pixels over on every step.
@@ -64733,7 +64733,7 @@ index b6833eac..20d4285a 100644
  
      invoke-virtual {p2, v1, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp #387.3: the unselected state too -- rows are recycled.
++    # ipp: the unselected state too -- rows are recycled.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
 +
      .line 191

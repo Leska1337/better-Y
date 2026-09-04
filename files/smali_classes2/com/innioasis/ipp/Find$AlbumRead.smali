@@ -21,49 +21,49 @@
 
 .method constructor <init>(Landroid/widget/ImageView;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/Bitmap;)V
   .registers 5
-  .line 168
+  .line 167
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 169
+  .line 168
     iput-object p1, p0, Lcom/innioasis/ipp/Find$AlbumRead;->icon:Landroid/widget/ImageView;
-  .line 170
+  .line 169
     iput-object p2, p0, Lcom/innioasis/ipp/Find$AlbumRead;->key:Ljava/lang/String;
-  .line 171
+  .line 170
     iput-object p3, p0, Lcom/innioasis/ipp/Find$AlbumRead;->path:Ljava/lang/String;
-  .line 172
+  .line 171
     iput-object p4, p0, Lcom/innioasis/ipp/Find$AlbumRead;->def:Landroid/graphics/Bitmap;
-  .line 173
+  .line 172
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
   .registers 5
-  .line 176
+  .line 175
     nop
   :L0
-  .line 178
+  .line 177
     iget-object v0, p0, Lcom/innioasis/ipp/Find$AlbumRead;->key:Ljava/lang/String;
     iget-object v1, p0, Lcom/innioasis/ipp/Find$AlbumRead;->path:Ljava/lang/String;
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/CoverCache;->get(Ljava/lang/String;Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L1
-  .line 181
+  .line 180
     goto :L3
   :L2
-  .line 179
+  .line 178
     move-exception v0
-  .line 180
+  .line 179
     const/4 v0, 0
   :L3
-  .line 182
+  .line 181
     if-nez v0, :L4
     return-void
   :L4
-  .line 183
+  .line 182
     iget-object v1, p0, Lcom/innioasis/ipp/Find$AlbumRead;->icon:Landroid/widget/ImageView;
     iget-object v2, p0, Lcom/innioasis/ipp/Find$AlbumRead;->key:Ljava/lang/String;
     iget-object v3, p0, Lcom/innioasis/ipp/Find$AlbumRead;->def:Landroid/graphics/Bitmap;
     invoke-static { v1, v2, v0, v3 }, Lcom/innioasis/ipp/Find;->access$000(Landroid/widget/ImageView;Ljava/lang/String;Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;)V
-  .line 184
+  .line 183
     return-void
 .end method

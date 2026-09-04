@@ -13,14 +13,14 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 370
+  .line 368
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Force$1;)V
   .registers 2
-  .line 370
+  .line 368
     invoke-direct { p0 }, Lcom/innioasis/ipp/Force$Ping;-><init>()V
     return-void
 .end method
@@ -29,22 +29,22 @@
   .catch Ljava/lang/InterruptedException; { :L0 .. :L1 } :L3
   .catchall { :L0 .. :L1 } :L2
   .registers 7
-  .line 372
+  .line 370
     new-instance v0, Lcom/innioasis/ipp/Force$Pong;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/Force$Pong;-><init>(Lcom/innioasis/ipp/Force$1;)V
   :L0
-  .line 375
+  .line 373
     invoke-static { }, Lcom/innioasis/ipp/Force;->access$1100()Landroid/os/Handler;
     move-result-object v1
     invoke-virtual { v1, v0 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 376
+  .line 374
     const-wide/16 v1, 2000
     invoke-static { v1, v2 }, Ljava/lang/Thread;->sleep(J)V
   :L1
-  .line 381
+  .line 379
     nop
-  .line 382
+  .line 380
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     invoke-static { }, Lcom/innioasis/ipp/Force;->access$900()J
@@ -53,13 +53,13 @@
     const-wide/16 v3, 20000
     cmp-long v5, v1, v3
     if-ltz v5, :L0
-  .line 383
+  .line 381
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "main thread wedged for "
     invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 384
+  .line 382
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     invoke-static { }, Lcom/innioasis/ipp/Force;->access$900()J
@@ -72,21 +72,21 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 383
+  .line 381
     const-string v1, "ippForce"
     invoke-static { v1, v0 }, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
-  .line 385
+  .line 383
     invoke-static { }, Lcom/innioasis/ipp/Force;->access$200()V
-  .line 386
+  .line 384
     return-void
   :L2
-  .line 379
-    move-exception v0
-  .line 380
-    return-void
-  :L3
   .line 377
     move-exception v0
   .line 378
+    return-void
+  :L3
+  .line 375
+    move-exception v0
+  .line 376
     return-void
 .end method

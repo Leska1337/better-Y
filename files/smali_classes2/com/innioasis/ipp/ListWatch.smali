@@ -55,8 +55,8 @@
     invoke-static { }, Lcom/innioasis/ipp/Lists;->refresh()V
   .line 55
     invoke-static { }, Lcom/innioasis/ipp/Follow;->onSongChanged()V
-  .line 62
+  .line 61
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->prefetchPlaying()V
-  .line 63
+  .line 62
     return-void
 .end method

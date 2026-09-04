@@ -1,4 +1,4 @@
-# Builds (and verifies) the publishable form of innioasis++.
+# Builds (and verifies) the publishable form of better-Y.
 #
 # The mod is a set of edits to a decompiled stock launcher, and the stock tree is not ours to
 # republish. So what goes out is: our own files as they are, a unified diff of the stock files we

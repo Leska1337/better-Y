@@ -32,19 +32,17 @@ import java.util.List;
  * The "Show all …" rows of Genres and Artists: they are buttons, not entries, and everything a list
  * does to an entry has to pass them by.
  *
- * <p>Two of them live here — Genres' <b>Show all albums</b> (row 0 of the artist level, stock's
- * "All Albums", relabelled and given an icon) and the <b>Show all songs</b> row of an album list
+ * Two of them live here — Genres' Show all albums (row 0 of the artist level, stock's
+ * "All Albums", relabelled and given an icon) and the Show all songs row of an album list
  * ({@code Albums.isAllSongs}, used by an artist's albums and by Genres' album level). Folders has
  * rows of the same kind and answers for itself ({@code Folders}, skill {@code ipp-folders}); the
  * rules are the ones written down there:
  *
- * <ul>
- *   <li>no tick in multi-select ({@code MyBaseAdapter.addItemToSelectedIndex}, and "select all"
- *       drops it again),</li>
- *   <li>no long-press menu,</li>
- *   <li>the cursor does not START on it — opening the screen puts it on the row below, because the
- *       list is what the user came to look at and the button is one click up.</li>
- * </ul>
+ *   - no tick in multi-select ({@code MyBaseAdapter.addItemToSelectedIndex}, and "select all"
+ *       drops it again),
+ *   - no long-press menu,
+ *   - the cursor does not START on it — opening the screen puts it on the row below, because the
+ *       list is what the user came to look at and the button is one click up.
  */
 public final class Mark {
 
@@ -91,13 +89,11 @@ public final class Mark {
      * "Show all albums" above it now has a counterpart here. The list is built by hand because
      * stock has no query for "this artist's albums within this genre":
      *
-     * <ul>
-     *   <li>the artist's songs in this genre (the very query stock's own branch used), then</li>
-     *   <li>their album keys, in first-seen order, deduplicated — the same encoded name a row
+     *   - the artist's songs in this genre (the very query stock's own branch used), then
+     *   - their album keys, in first-seen order, deduplicated — the same encoded name a row
      *       carries everywhere else, so opening one lands in {@code Albums.songsSync} and the genre
-     *       is applied there as well, and</li>
-     *   <li>the artist's "Show all songs" marker on top, which is what the old behaviour becomes.</li>
-     * </ul>
+     *       is applied there as well, and
+     *   - the artist's "Show all songs" marker on top, which is what the old behaviour becomes.
      *
      * Returns false when there is nothing to show, and then stock's own branch runs untouched.
      */
@@ -150,7 +146,7 @@ public final class Mark {
      * Put the "Show all songs" row at the top of a genre's album list, exactly as an artist's album
      * list gets one.
      *
-     * <p>The list handed to {@code AlbumListAdapter.setAlbums} is a list of NAMES — the adapter
+     * The list handed to {@code AlbumListAdapter.setAlbums} is a list of NAMES — the adapter
      * builds the {@link Album} objects itself — so the row is the marker STRING, not an Album.
      * (Putting an Album in threw {@code ClassCastException} inside setAlbums.) From there it
      * travels the stock path: the bind paints it ({@code Albums.allSongsRow}) and picking it ends
@@ -172,7 +168,7 @@ public final class Mark {
      * The artist's songs found the way the LIST that shows them is built, for when the query comes
      * back empty.
      *
-     * <p>The names on the artist level of Genres are produced by {@code Artists.listGenre}, which
+     * The names on the artist level of Genres are produced by {@code Artists.listGenre}, which
      * splits composite tags apart — so a row can be one name out of "A; B", while the query behind
      * it (stock, and the hook in front of it) matches the artist column as written. Anything the
      * split normalised away — a stray space, a difference in case — leaves the row on screen with
@@ -226,7 +222,7 @@ public final class Mark {
     /**
      * Just after a list that may begin with a button has been filled: move the cursor off it.
      *
-     * <p>Only when the cursor is still on row 0, i.e. the list has just been built — re-sorting a
+     * Only when the cursor is still on row 0, i.e. the list has just been built — re-sorting a
      * list the user has already walked leaves their row alone.
      */
     public static void afterFill(Object adapter) {
@@ -278,7 +274,7 @@ public final class Mark {
      * text colour has to be set already, because the icon copies it (the rule every menu icon in the
      * mod follows, so it tracks the theme and the focus highlight).
      *
-     * <p>Both states are written on every bind: the rows are recycled, so an ordinary artist row
+     * Both states are written on every bind: the rows are recycled, so an ordinary artist row
      * that once was this one would keep the icon.
      */
     public static void mainRow(View row, TextView tv, Object adapter) {

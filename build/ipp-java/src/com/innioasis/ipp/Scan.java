@@ -17,10 +17,10 @@ import java.util.List;
  * The stock library scan ({@code Y1Repository.refreshDatabase}) — two things bolted onto it, both
  * through single-call injections into its per-file lambda.
  *
- * <h3>1. The songs are built ahead of the scan, on several threads</h3>
- * The scan's cost is {@code fileToSong}: one {@code MediaMetadataRetriever} open per <b>new</b> file.
+ * 1. The songs are built ahead of the scan, on several threads
+ * The scan's cost is {@code fileToSong}: one {@code MediaMetadataRetriever} open per new file.
  * Its walk cannot be split — the queue, the batching and the inserts are stock's and stay on stock's
- * thread — so the work is moved <b>in front</b> of it instead: when the scan asks for a file, this
+ * thread — so the work is moved in front of it instead: when the scan asks for a file, this
  * hands back a {@code Song} that a worker has already built, and the workers run on down the same
  * folder, a few files ahead. The scan thread keeps doing its own share (the first file of each
  * folder, the walk, the row lookups, the inserts) while they read.
@@ -31,22 +31,22 @@ import java.util.List;
  * (a path already in the library) — otherwise an ordinary scan of an unchanged library would read
  * every file on the device for nothing.
  *
- * <b>{@code fileToSong} is only thread-safe because of one stock patch</b>: it calls
+ * {@code fileToSong} is only thread-safe because of one stock patch: it calls
  * {@code HanziToPinyin.getString} five times per song, and that walks a single static ICU
  * {@code Collator} for every character above U+00FF (i.e. for every Cyrillic tag). That method is
  * now {@code synchronized} — the calls are short and the collator is the only shared thing in the
  * whole path, so serialising them costs nothing next to the file reads.
  *
- * <h3>An earlier attempt, and why it is gone</h3>
- * Before this, the same structure was used to pull the next files into the <b>page cache</b> (head
- * and tail) rather than to parse them. Measured on the device it was consistently <b>slower</b> —
- * 15-17 s against 11 s for 887 songs — because the card was already the limit and the read-ahead
- * added ~576 KB of reading per file on top of what the tag read actually touches. Overlapping is
- * only worth anything when the extra thread does the <i>same</i> work sooner, not more of it.
+ * DO NOT turn this into read-ahead
+ * Using the same structure to pull the next files into the page cache (head and tail) rather than
+ * to parse them measures consistently SLOWER on the device — 15-17 s against 11 s for 887 songs —
+ * because the card is already the limit and the read-ahead adds ~576 KB of reading per file on top
+ * of what the tag read actually touches. Overlapping is only worth anything when the extra thread
+ * does the same work sooner, not more of it.
  *
- * <h3>2. Whether a file is already in the library is answered from memory</h3>
- * That test used to be an indexed query per file — for every file the walk meets, not only for the
- * music it keeps. It is now {@link #known}, answered from a set of every path the Song table holds.
+ * 2. Whether a file is already in the library is answered from memory
+ * {@link #known} answers it from a set of every path the Song table holds. An indexed query per
+ * file would run for every file the walk meets, not only for the music it keeps.
  */
 public final class Scan {
 
@@ -55,7 +55,7 @@ public final class Scan {
     // ----------------------------------------------------------------- the "already known" test
 
     /**
-     * <b>Replaces</b> the scan's {@code songDao.getSongByPathSync(path)}: same answer — null means
+     * Replaces the scan's {@code songDao.getSongByPathSync(path)}: same answer — null means
      * "not in the library, read it" — out of a set of every path the Song table holds, loaded once
      * per scan instead of one indexed query per file on the device.
      *
@@ -82,7 +82,7 @@ public final class Scan {
     private static final long GAP_MS = 5000L;
 
     /**
-     * <b>The path has to be normalised first.</b> What was replaced here is not a plain query:
+     * The path has to be normalised first. What was replaced here is not a plain query:
      * {@code SongDao.getSongByPathSync} is a default method whose body is
      * {@code getSongByPathSyncDB(Constant.normalizeAudioBookPath(path))}, and {@code fileToSong}
      * stores the normalised form too — so for an audiobook (whose folder differs in case) the raw

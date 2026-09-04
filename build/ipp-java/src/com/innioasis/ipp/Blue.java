@@ -23,7 +23,7 @@ import com.innioasis.y1.utils.InputMethodDialog;
 import java.util.ArrayList;
 
 /**
- * #395 — the Bluetooth screen's paired devices: a long press on one opens a menu instead of going
+ * The Bluetooth screen's paired devices: a long press on one opens a menu instead of going
  * straight to the unpair dialog, and the second entry renames it.
  *
  * The rename is OURS, not the system's: Android 4.2 has no public way to set a device's alias
@@ -129,8 +129,8 @@ public final class Blue {
     /**
      * Seeding the keyboard takes TWO calls, and that is not a detail: {@code setEditText} writes the
      * display box only, while every key the dialog handles works on {@code valueLiveData}. With the
-     * model left empty, Delete ({@code inputChar("-")}) took its early exit — "nothing to delete" —
-     * and the name on screen could only be added to, never shortened, until a character had been
+     * model left empty, Delete ({@code inputChar("-")}) takes its early exit — "nothing to delete" —
+     * and the name on screen can only be added to, never shortened, until a character has been
      * typed. Stock's own seeded input (SearchActivity) sets both for exactly this reason.
      *
      * The model is reachable only through {@code onInit}, which the dialog calls from

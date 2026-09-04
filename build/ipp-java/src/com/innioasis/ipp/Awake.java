@@ -10,8 +10,8 @@ import com.innioasis.y1_eBook.ui.text.TextActivity;
 import com.innioasis.y1_eBook.ui.word.WordActivity;
 
 /**
- * #230 — the screen does not go out while there is something on it to read: the Lyrics window of
- * the player, and an open book.
+ * The screen does not go out while there is something on it to read: the Lyrics window of the
+ * player, and an open book.
  *
  * Both are the same situation and neither is covered by the device's own timeout, which counts
  * from the last key press: reading is exactly the case where nothing is pressed for minutes, and
@@ -21,7 +21,7 @@ import com.innioasis.y1_eBook.ui.word.WordActivity;
  * {@code FLAG_KEEP_SCREEN_ON} rather than a WakeLock: it belongs to the window, so it cannot leak
  * (an Activity that dies takes it with it) and needs no permission.
  *
- * Gated by the pref "keep_awake", default off.
+ * Gated by the pref "keep_awake" (default in Prefs.DEFAULTS).
  */
 public final class Awake {
 

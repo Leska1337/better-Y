@@ -12,12 +12,12 @@ import java.io.File;
  * The cache size shown under "Clear cache" in Settings — measured off the drawing path.
  *
  * Stock computes it inside {@code updateClearCache}, which is called from {@code refreshRight},
- * which is called from a row's <b>bind</b>. Measuring means walking {@code /data/data/*}{@code
+ * which is called from a row's bind. Measuring means walking {@code /data/data/*}{@code
  * /cache} recursively plus the app's external cache directory — a full directory tree per call, on
  * the main thread, inside the list's layout. The logcat trace for it (Android 4.2 prints a whole
  * stack from {@code getExternalCacheDir} on this device) is what put us onto it.
  *
- * So the panel now asks {@link #text} for a <b>value</b>, never for a measurement: it gets the last
+ * So the panel now asks {@link #text} for a value, never for a measurement: it gets the last
  * known one straight away, and a background thread refreshes it when it is missing or stale. When
  * the thread finishes it repaints the panel — but only if that row is still the one on screen
  * ({@code Wheel.panelShows}), otherwise a late measurement would overwrite whatever the user has

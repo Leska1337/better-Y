@@ -19,7 +19,7 @@
 
 .method constructor <init>(Lcom/innioasis/music/GenresActivity;II)V
   .registers 4
-  .line 780
+  .line 778
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Genres$SongPick;->a:Lcom/innioasis/music/GenresActivity;
     iput p2, p0, Lcom/innioasis/ipp/Genres$SongPick;->asc:I
@@ -29,7 +29,7 @@
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .registers 5
-  .line 783
+  .line 781
     if-nez p2, :L0
     const/4 p1, 0
     goto :L1
@@ -37,9 +37,9 @@
     invoke-virtual { p2 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p1
   :L1
-  .line 784
+  .line 782
     iget p2, p0, Lcom/innioasis/ipp/Genres$SongPick;->asc:I
-  .line 785
+  .line 783
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$SongPick;->a:Lcom/innioasis/music/GenresActivity;
     const v1, 2131820971
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/GenresActivity;->getString(I)Ljava/lang/String;
@@ -50,7 +50,7 @@
     iget p2, p0, Lcom/innioasis/ipp/Genres$SongPick;->desc:I
     goto :L4
   :L2
-  .line 786
+  .line 784
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$SongPick;->a:Lcom/innioasis/music/GenresActivity;
     const v1, 2131820969
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/GenresActivity;->getString(I)Ljava/lang/String;
@@ -61,7 +61,7 @@
     const/4 p2, 4
     goto :L4
   :L3
-  .line 787
+  .line 785
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$SongPick;->a:Lcom/innioasis/music/GenresActivity;
     const v1, 2131820970
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/GenresActivity;->getString(I)Ljava/lang/String;
@@ -71,10 +71,10 @@
     if-eqz p1, :L4
     const/4 p2, 5
   :L4
-  .line 788
+  .line 786
     iget-object p1, p0, Lcom/innioasis/ipp/Genres$SongPick;->a:Lcom/innioasis/music/GenresActivity;
     invoke-static { p1, p2 }, Lcom/innioasis/ipp/Genres;->access$300(Lcom/innioasis/music/GenresActivity;I)V
-  .line 789
+  .line 787
     invoke-static { }, Lcom/innioasis/ipp/Genres;->access$200()Lcom/innioasis/music/util/SubMenuDialog;
     move-result-object p1
     if-eqz p1, :L5
@@ -82,7 +82,7 @@
     move-result-object p1
     invoke-virtual { p1 }, Lcom/innioasis/music/util/SubMenuDialog;->dismiss()V
   :L5
-  .line 790
+  .line 788
     const/4 p1, 1
     return p1
 .end method

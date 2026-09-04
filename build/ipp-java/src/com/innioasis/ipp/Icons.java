@@ -18,14 +18,14 @@ import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * #228.1 — light / dark / themed icons.
+ * Light / dark / themed icons.
  *
  * The set encodes state ACROSS FILES, not inside them: "shuffle on" and "shuffle off" are two
  * drawings, and each file is filled with exactly one flat colour — #FFFFFF for an on state,
  * #C5C5C5 for an off one. That is what makes the dark mode a recolour rather than a second set of
  * artwork: SRC_IN replaces RGB and keeps alpha, so tinting the light file is pixel-for-pixel what
- * a dark file would be, antialiased edges included. The 15 {@code *_dark.png} that used to ship
- * for this were dropped in v0.21.2 for that reason.
+ * a dark file would be, antialiased edges included — so there is no second, dark set of PNGs to
+ * keep in step.
  *
  * Three modes ({@code icon_tint}):
  *   0 LIGHT — the artwork's own colours (stock look).
@@ -141,7 +141,7 @@ public final class Icons {
         apply(iv, light, NO_COLOR);
     }
 
-    // ---- icons that carry a value: audiobook speed and sleep timer (#384) ---------------------
+    // ---- icons that carry a value: audiobook speed and sleep timer ---------------------
     //
     // Five rates and five timer steps cannot be told apart by artwork, so the value is written
     // into the window the "on" drawings leave empty. Beside the icon it does not work: the number

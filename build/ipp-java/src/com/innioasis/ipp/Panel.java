@@ -23,33 +23,31 @@ import java.util.Locale;
  * turning it back on clears it at once. It is not reproducible on demand, which is exactly why the
  * test has to be a button on the device rather than a command from a PC.
  *
- * <h3>What the test actually separates</h3>
+ * What the test actually separates
  * Blanking the screen re-initialises the panel, so "it goes away when the screen is blanked" tells
  * us nothing on its own — everything from our own drawing down to the display controller is
  * re-done at once. What separates them is restarting the COMPOSITOR and nothing else:
  * SurfaceFlinger comes back with fresh state while the kernel's framebuffer and the panel are left
  * exactly as they were.
  *
- * <ul>
- *   <li><b>Shift gone</b> — it lived in software above the driver (SurfaceFlinger's composition,
+ *   - Shift gone — it lived in software above the driver (SurfaceFlinger's composition,
  *       or something an app did to it). Then there is something to look for, and our own code is
- *       a candidate again.</li>
- *   <li><b>Shift still there</b> — nothing above the kernel display driver is responsible, and the
- *       app cannot be. That closes the question.</li>
- * </ul>
+ *       a candidate again.
+ *   - Shift still there — nothing above the kernel display driver is responsible, and the
+ *       app cannot be. That closes the question.
  *
- * <p>{@code adb shell stop; start} would have been the obvious way to do this and is not available:
+ * {@code adb shell stop; start} would have been the obvious way to do this and is not available:
  * adb on this device runs as uid {@code shell}, which may not set the {@code ctl.*} properties, and
  * our boot images only add {@code adb} to {@code persist.sys.usb.config} — they do not make the
  * build debuggable. It is also the weaker test, because it restarts zygote and {@code system_server}
  * while usually leaving SurfaceFlinger alive, which is the one process this is about.
  *
- * <h3>Why the app can do what adb cannot</h3>
+ * Why the app can do what adb cannot
  * SurfaceFlinger runs as uid {@code system}, and so do we ({@code sharedUserId}), so {@code kill(2)}
  * on it is permitted — the same fact {@code Force} already leans on to kill {@code system_server}
  * when a reboot cannot be asked for politely.
  *
- * <p>The report is written to the CARD, not to logcat or the app's cache, because the whole point
+ * The report is written to the CARD, not to logcat or the app's cache, because the whole point
  * is that the defect turns up when there is no PC within reach: it has to be readable later, over
  * USB, next to {@code comma_artists.txt}.
  */
@@ -67,10 +65,10 @@ public final class Panel {
     private static final String DIR = "better-Y";
 
     /**
-     * Our folder on the card, <b>without</b> creating it — the caller decides whether an absent
+     * Our folder on the card, without creating it — the caller decides whether an absent
      * folder means "make one" or "there is nothing here".
      *
-     * <p>The card is named by {@code Constant.ROOT_PATH} — never
+     * The card is named by {@code Constant.ROOT_PATH} — never
      * {@code getExternalStorageDirectory()}, which the platform refuses for uid {@code system} with
      * a {@code wtf} and a full stack.
      */
@@ -91,12 +89,12 @@ public final class Panel {
     /**
      * Turn adb on, from {@code MainActivity.initView} — once per app start.
      *
-     * <p>adb is how a build reaches a player that cannot be flashed: {@code adb install -r} replaces
+     * adb is how a build reaches a player that cannot be flashed: {@code adb install -r} replaces
      * the launcher and leaves {@code usrdata} — settings, playlists, likes, bookmarks and the
      * library — exactly where it was. So the mod switches it on itself rather than leaving it to
      * the firmware, and it is on unconditionally: there is no row for it in the better-Y menu.
      *
-     * <p><b>The property is the lever; the setting is not.</b> What starts {@code adbd} is
+     * The property is the lever; the setting is not. What starts {@code adbd} is
      * {@code init.usb.rc}: it reacts to {@code persist.sys.usb.config} by copying it into
      * {@code sys.usb.config}, and every function set that contains {@code adb} has a block that
      * starts the daemon. On this firmware nothing else has a say — with
@@ -107,10 +105,10 @@ public final class Panel {
      * leaves the boot partition alone — the official Innioasis Updater is one, it writes system and
      * usrdata only. Setting the property directly works whatever boot image the player carries.
      *
-     * <p>Permitted because the app runs as uid {@code system}: init's property ACL gives
+     * Permitted because the app runs as uid {@code system}: init's property ACL gives
      * {@code persist.sys.} to that uid. {@code SystemProperties} is hidden API, hence reflection.
      *
-     * <p>Read first, written only when {@code adb} is missing from it: the write is what makes init
+     * Read first, written only when {@code adb} is missing from it: the write is what makes init
      * reconfigure USB, and a launch has no business doing that when the answer is already yes. The
      * value is extended rather than replaced, so a player set to MTP or PTP keeps it — every such
      * combination has its own block in {@code init.usb.rc}.
@@ -203,14 +201,14 @@ public final class Panel {
     /**
      * Kill the compositor, then make sure the device comes back to something usable.
      *
-     * <p>Killing SurfaceFlinger alone is the clean test: init restarts it, and if
+     * Killing SurfaceFlinger alone is the clean test: init restarts it, and if
      * {@code system_server} notices and goes down with it the whole framework comes back anyway.
      * If it does NOT notice, the screen is left frozen on the last frame it composed — which would
      * turn a diagnostic into a power-cycle — so after {@link #SETTLE_MS} the same ladder
      * {@code Force} uses takes {@code system_server} down deliberately. Neither step re-initialises
      * the panel, so the answer the test is after is not spoiled by the fallback.
      *
-     * <p>On a daemon thread with no Handler: our own process is very likely to be killed half way
+     * On a daemon thread with no Handler: our own process is very likely to be killed half way
      * through, and none of this may be allowed to hold a frame up.
      */
     public static void restart() {

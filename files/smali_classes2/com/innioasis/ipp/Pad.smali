@@ -22,7 +22,7 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 33
+  .line 32
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -30,18 +30,18 @@
 .method public static list(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L13 } :L15
   .registers 8
-  .line 57
+  .line 56
     if-nez p0, :L0
     return-void
   :L0
-  .line 58
+  .line 57
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getContext()Landroid/content/Context;
     move-result-object v0
-  .line 59
+  .line 58
     if-nez v0, :L1
     return-void
   :L1
-  .line 60
+  .line 59
     const-string v1, "fixed_menu_pad"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v1
@@ -52,68 +52,68 @@
   :L2
     const/4 v1, 0
   :L3
-  .line 62
+  .line 61
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getId()I
     move-result v3
-  .line 65
+  .line 64
     const v4, 2131362308
     const/16 v5, 315
     if-ne v3, v4, :L6
-  .line 66
+  .line 65
     if-eqz v1, :L4
     const/16 v3, 204
     goto :L5
   :L4
     const/16 v3, 213
   :L5
-  .line 67
+  .line 66
     if-eqz v1, :L9
     const/16 v5, 307
     goto :L9
   :L6
-  .line 68
+  .line 67
     const v4, 2131362310
     if-ne v3, v4, :L14
-  .line 69
+  .line 68
     if-eqz v1, :L7
     const/16 v3, 218
     goto :L8
   :L7
     const/16 v3, 227
   :L8
-  .line 70
+  .line 69
     if-eqz v1, :L9
     const/16 v5, 305
   :L9
-  .line 75
+  .line 74
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v4
-  .line 76
+  .line 75
     instance-of v6, v4, Landroid/view/ViewGroup$MarginLayoutParams;
     if-nez v6, :L10
     return-void
   :L10
-  .line 77
+  .line 76
     check-cast v4, Landroid/view/ViewGroup$MarginLayoutParams;
-  .line 78
+  .line 77
     invoke-virtual { v0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v0
     iget v0, v0, Landroid/util/DisplayMetrics;->density:F
-  .line 79
+  .line 78
     invoke-static { v3, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
     move-result v3
-  .line 80
+  .line 79
     invoke-static { v5, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
     move-result v5
-  .line 81
+  .line 80
     if-eqz v1, :L11
     const/16 v1, 9
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
     move-result v2
   :L11
-  .line 82
+  .line 81
     iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
     if-ne v0, v3, :L12
     iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
@@ -122,31 +122,31 @@
     if-ne v0, v2, :L12
     return-void
   :L12
-  .line 83
+  .line 82
     iput v3, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
-  .line 84
+  .line 83
     iput v5, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
-  .line 85
+  .line 84
     iput v2, v4, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
-  .line 86
+  .line 85
     invoke-virtual { p0, v4 }, Landroidx/recyclerview/widget/RecyclerView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
   :L13
-  .line 89
+  .line 88
     goto :L16
   :L14
-  .line 72
+  .line 71
     return-void
   :L15
-  .line 87
+  .line 86
     move-exception p0
   :L16
-  .line 90
+  .line 89
     return-void
 .end method
 
 .method private static px(IF)I
   .registers 2
-  .line 93
+  .line 92
     int-to-float p0, p0
     mul-float p0, p0, p1
     const/high16 p1, 0x3F000000

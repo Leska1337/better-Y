@@ -15,21 +15,21 @@ import java.util.Map;
 /**
  * The ALBUM ARTIST tag of an album, for the artist line under an album's name.
  *
- * <h3>Why a tag read at all</h3>
- * The album list has always shown the artist of the album's <b>first song</b>, which is wrong the
+ * Why a tag read at all
+ * The album list has always shown the artist of the album's first song, which is wrong the
  * moment the album has guests on some tracks or is a compilation — and it is the tag that says what
  * the album as a whole is by. API 17's {@code MediaMetadataRetriever} does declare
  * {@code METADATA_KEY_ALBUMARTIST}, so it can simply be asked; if this device's extractor does not
  * fill it, every album answers "" and the list looks exactly as it did before.
  *
- * <h3>Why a cache, and how big</h3>
+ * Why a cache, and how big
  * Reading it means opening the file's metadata, so the answer is remembered — one entry per
  * ALBUM (like the release year), not one per song the way track numbers are. The file lives beside
  * the other caches in the app's cache dir, so "Clear cache" wipes it with the rest, and
  * "Cache library" fills it in the same pass that fills the covers.
  *
- * <h3>What the toggle does and does not touch</h3>
- * "Show only the first artist" splits a multi-artist <i>tag</i> — it must not touch an album artist,
+ * What the toggle does and does not touch
+ * "Show only the first artist" splits a multi-artist tag — it must not touch an album artist,
  * which is a single deliberate value ("Various Artists" is not two artists). So {@link #line} uses
  * the album artist as it stands and only falls back to {@link Feat#artist} when there is none.
  *
@@ -192,7 +192,7 @@ public final class AlbumArtist {
      * about the "; "-over-", " priority and the comma_artists.txt exceptions).
      *
      * {@link Feat#first}, not {@code Feat.artist} — this line is shown as the tag is written, so
-     * the ';' -> ',' of #220.2 is deliberately not applied to it. It is the one artist line that
+     * the "; " -> ", " substitution is deliberately not applied to it. It is the one artist line that
      * is not an artist of the library: it never becomes a row of the Artists list and is never
      * split, so there is nothing here for that substitution to make consistent.
      */

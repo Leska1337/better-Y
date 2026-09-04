@@ -21,7 +21,7 @@ import java.lang.ref.WeakReference;
  * back = exit / cancel AB / close lyrics. Visibility of buttons depends on the
  * {@code top_hold} setting. State (shuffle/repeat) lives in SharedPreferencesUtils.
  *
- * On an audiobook the same row is shuffle / repeat / speed / timer instead (#384.1), all four
+ * On an audiobook the same row is shuffle / repeat / speed / timer instead, all four
  * on the audiobook's own preferences — see {@link #book} and {@link Audio}.
  *
  * Java source of the ipp Deck helper; compiled to smali by build/ipp-java.ps1.
@@ -72,7 +72,7 @@ public final class Deck {
 
     private static boolean curLiked() {
         // Likes owns the preference now: adding the song to the Favorites playlist from an
-        // ordinary menu writes the same key, so the heart follows that too (#231).
+        // ordinary menu writes the same key, so the heart follows that too.
         return Likes.get(curPath());
     }
 
@@ -91,7 +91,7 @@ public final class Deck {
     }
 
     /**
-     * #384.1 — the same row, on an audiobook. The screen is the one that decides, not the player
+     * The same row, on an audiobook. The screen is the one that decides, not the player
      * service: {@code AudioPlayerActivity} shares this layout with the music player, so without
      * the distinction its buttons went on toggling the MUSIC shuffle, liking the music track and
      * opening the music queue. In book mode the row is shuffle / repeat / speed / timer, and all
@@ -114,7 +114,7 @@ public final class Deck {
      */
     private static void toggleShuffle(BasePlayerActivity a) {
         SharedPreferencesUtils s = SharedPreferencesUtils.INSTANCE;
-        // #384: an audiobook goes through the same plan as music now, so both write their own
+        // an audiobook goes through the same plan as music now, so both write their own
         // preference and then let Queue start (or end) a shuffled pass on the list that is playing.
         if (book(a)) s.setAudiobookIsShuffle(!s.getAudiobookIsShuffle());
         else s.setMusicIsShuffle(!s.getMusicIsShuffle());
@@ -199,17 +199,17 @@ public final class Deck {
      * Where each A/B point's time is written under the progress bar
      * ({@code ProgressMaskView.onDraw}, one call in place of each label's own x).
      *
-     * <p>Stock puts BOTH labels the same way — a little to the left of their own pin — and the A and
+     * Stock puts BOTH labels the same way — a little to the left of their own pin — and the A and
      * B points of a loop are routinely a few seconds apart, so the two strings were drawn on top of
      * each other and read as one ("000:26" for 0:04 and 0:26). Only the label moves: the pins mark
      * the real positions and must stay where they are.
      *
-     * <p>The B label is the one that gives way, because A is drawn first and is already in place.
+     * The B label is the one that gives way, because A is drawn first and is already in place.
      * It keeps stock's position while that is free, steps to the other side of its own pin when it
      * is not, and past A's label altogether when even that overlaps — the last case being two pins
      * within a second of each other.
      *
-     * <p><b>Direction is never assumed.</b> The bar is mirrored in Hebrew ({@code isIW}), where A
+     * Direction is never assumed. The bar is mirrored in Hebrew ({@code isIW}), where A
      * is the RIGHT-hand pin, so a fixed "A left, B right" rule would collide there instead. This
      * reacts to the overlap that actually happened, which is the same answer in both directions.
      */
@@ -331,7 +331,7 @@ public final class Deck {
     /**
      * Paints (or clears) that wash. Cheap ONLY because every button already has a background.
      *
-     * <p>{@code setBackgroundColor} is not the harmless setter it looks like: with nothing behind
+     * {@code setBackgroundColor} is not the harmless setter it looks like: with nothing behind
      * the view it goes through {@code View.setBackgroundDrawable}, which compares the old and the
      * new drawable's minimum size and calls {@code requestLayout()} when they differ — and "no old
      * drawable" counts as differing. Nine buttons painted from {@link #render} therefore dirtied
@@ -395,7 +395,7 @@ public final class Deck {
         } else {
             iv.setVisibility(0);
             if (icon != 0) {
-                // #228.1: light / dark artwork, or the theme mode painted in the timeline's own
+                // light / dark artwork, or the theme mode painted in the timeline's own
                 // colour -- the button row sits right under it, so they read as one element.
                 Icons.apply(iv, icon, tint);
             }
@@ -428,7 +428,7 @@ public final class Deck {
         lastAct = a == null ? null : new WeakReference(a);
         boolean bk = book(a);
         int tint = Icons.timelineColor((android.app.Activity) a);   // once per pass, memoised
-        // #384: bookmark at the head of the book row, queue at its end; whichever of the two the
+        // bookmark at the head of the book row, queue at its end; whichever of the two the
         // long top press is not doing is the one shown, so exactly one is ever on the screen.
         apply(a, R.id.ipp_bookmark, 8, visible(a, 8), R.mipmap.ipp_bookmark, tint);
         // the hidden buttons are passed icon 0: reading a "like" or an A-B point that nothing is
@@ -496,7 +496,7 @@ public final class Deck {
     }
 
     /**
-     * #227.2 — open the play-queue screen (queue button, or top-button hold when top_hold=Queue).
+     * Open the play-queue screen (queue button, or top-button hold when top_hold=Queue).
      * Leaves the button row deactivated and repainted first: the deck is reset in onPause anyway,
      * so without repainting here the highlight would stay burned onto the button while the row
      * is no longer active.

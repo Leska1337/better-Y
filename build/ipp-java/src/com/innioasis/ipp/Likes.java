@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * #231 — the heart on the Now-Playing button row, and the Favorites playlist behind it.
+ * The heart on the Now-Playing button row, and the Favorites playlist behind it.
  *
  * The heart is a preference ({@code like:<path>}), not a database query: {@code Deck.render} runs
  * on every track change and every wheel click over the button row, and a playlist membership query
@@ -22,23 +22,14 @@ import java.util.UUID;
  * long-press "Add to Playlist N" submenu and on the Playlists screen, where a song can be added or
  * removed without the heart ever being touched. The hooks are in {@code Y1Repository}, at the two
  * points every one of those paths funnels through:
- * <ul>
- *   <li>{@code addToPlayList(List, UUID)} — also the body of the single-song overload and of
- *       {@code addToPlayListByFile}, so one injection covers all three.</li>
- *   <li>{@code removeFromPlayList(String songId, UUID)}.</li>
- * </ul>
+ *   - {@code addToPlayList(List, UUID)} — also the body of the single-song overload and of
+ *       {@code addToPlayListByFile}, so one injection covers all three.
+ *   - {@code removeFromPlayList(String songId, UUID)}.
  * Anything aimed at another playlist is ignored after one UUID compare.
  */
 public final class Likes {
 
     private Likes() { }
-
-    /**
-     * The Favorites playlist's fixed id. Duplicated from {@code Fav} rather than shared: that class
-     * is hand-written smali and its {@code favUuid()} is private, and making it public would need a
-     * two-phase build for the sake of one constant that has never changed and never will.
-     */
-    private static final String FAV_UUID = "1e5f0a00-0000-4000-8000-000000000001";
 
     /** Preference key for one song's heart. */
     public static String key(String path) {
@@ -88,7 +79,8 @@ public final class Likes {
         }
     }
 
+    /** The id itself lives in {@link Fav#UUID_STR} — never write a second copy of it here. */
     private static boolean isFav(UUID playlist) {
-        return playlist != null && FAV_UUID.equals(playlist.toString());
+        return playlist != null && Fav.UUID_STR.equals(playlist.toString());
     }
 }

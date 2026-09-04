@@ -20,48 +20,45 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 /**
- * #362.1 — the list cursor follows the playing track.
+ * The list cursor follows the playing track.
  *
- * <p><b>One rule, and it is about ownership of the cursor:</b> the cursor belongs to the USER while
+ * One rule, and it is about ownership of the cursor: the cursor belongs to the USER while
  * they are turning the wheel, and to PLAYBACK the rest of the time. Nothing else is asked — not how
  * the track changed, not how far away it is, not whether shuffle is on.
  *
- * <p>A list is <b>busy</b> (the user's) while the screen is lit <i>and</i> its own cursor has moved
- * within the last {@link #idleMs()}. It is <b>free</b> (playback's) otherwise, which is exactly the
+ * A list is busy (the user's) while the screen is lit and its own cursor has moved
+ * within the last {@link #idleMs()}. It is free (playback's) otherwise, which is exactly the
  * three cases worth naming:
- * <ul>
- *   <li>the screen is off — there is nobody looking at the list, let alone turning the wheel;</li>
- *   <li>the wheel has been silent for {@link #idleMs()} — the user has stopped browsing;</li>
- *   <li>the list has only just been opened, or uncovered from under the player — nothing has been
- *       done to its cursor yet at all ({@link #resumed}).</li>
- * </ul>
+ *   - the screen is off — there is nobody looking at the list, let alone turning the wheel;
+ *   - the wheel has been silent for {@link #idleMs()} — the user has stopped browsing;
+ *   - the list has only just been opened, or uncovered from under the player — nothing has been
+ *       done to its cursor yet at all ({@link #resumed}).
  *
- * <p>While the list is free, a track change moves the cursor onto the new track — a <b>step</b>,
- * scrolled by the wheel's own arithmetic ({@link #moveTo}). And the moment a busy list <i>becomes</i>
- * free, it catches up with whatever is playing in one move — a <b>jump</b> ({@link #land}) — rather
+ * While the list is free, a track change moves the cursor onto the new track — a step,
+ * scrolled by the wheel's own arithmetic ({@link #moveTo}). And the moment a busy list becomes
+ * free, it catches up with whatever is playing in one move — a jump ({@link #land}) — rather
  * than sitting on a stale row until the next track happens to start. That is the whole of it.
  *
- * <p><b>What this replaced, and why.</b> Until v0.36.8 the same question was answered by two
- * separate sets of conditions — one for a track change ({@code onSongChanged}), one for coming back
- * from the player ({@code resumed}) — each with its own take on "manual switch only", on shuffle,
- * on a radius of rows round the cursor and on an exemption for albums. They disagreed, and the
- * shuffle rule in particular had to be turned round twice in one sitting: with a radius, following
- * a shuffled track is a jump out of nowhere and must be refused, while on leaving the player it is
- * exactly what is wanted. Neither is a rule about shuffle — both are the same rule about who was
- * last touching the wheel, read through two different proxies. Asking that directly costs one
- * timestamp and makes every one of those special cases disappear.
+ * ONE question, asked directly. The tempting shape is a set of conditions per entry point — one
+ * for a track change ({@code onSongChanged}), one for coming back from the player
+ * ({@code resumed}) — each with its own take on "manual switch only", on shuffle, on a radius of
+ * rows round the cursor and on an exemption for albums. Those disagree, and the shuffle rule in
+ * particular points both ways: with a radius, following a shuffled track is a jump out of nowhere
+ * and must be refused, while on leaving the player it is exactly what is wanted. Neither is a rule
+ * about shuffle — both are the same rule about who was last touching the wheel, read through two
+ * different proxies. Asking that directly costs one timestamp and every special case disappears.
  *
- * <p>The consequence to know about: <b>with the screen on and the wheel idle, a long list scrolls
- * by itself</b> as playback moves through it. That is what "the cursor belongs to playback" means,
+ * The consequence to know about: with the screen on and the wheel idle, a long list scrolls
+ * by itself as playback moves through it. That is what "the cursor belongs to playback" means,
  * it is what Winamp and foobar2000 do with follow-playback on, and it is what the master toggle
  * "Selection follows playing song" is for.
  *
- * <p>Two things deliberately sit outside the toggle, because the user asked for them by name rather
+ * Two things deliberately sit outside the toggle, because the user asked for them by name rather
  * than by setting: leaving the player ({@link #leftPlayer}) and the queue's "open the source"
  * ({@link #toPlaying}, {@link #armPending}).
  *
- * <p>The adapter and its ListView are noted from {@code SongListAdapter.getView} (its {@code parent}
- * argument <i>is</i> the ListView), so every screen built on that adapter is covered without a
+ * The adapter and its ListView are noted from {@code SongListAdapter.getView} (its {@code parent}
+ * argument is the ListView), so every screen built on that adapter is covered without a
  * per-Activity hook. No BroadcastReceiver of its own: {@code ListWatch} already listens for
  * {@code MY_PLAY_SONG} to refresh the playing indicator and calls {@link #onSongChanged} from
  * there.
@@ -74,7 +71,7 @@ public final class Follow {
      * How long the cursor stays the user's after it last moved — the "Return delay" sub-row of
      * "Selection follows playing song", in seconds.
      *
-     * <p>It is the one number the whole rule rests on, and how long "still browsing" lasts is not
+     * It is the one number the whole rule rests on, and how long "still browsing" lasts is not
      * something one number can answer for everybody: reading a screenful takes as long as it takes.
      * Public because the menu row is built from this very array ({@code IppActivity.buildItems}) —
      * the stored preference is an INDEX into it, so the two can never disagree. Same shape as
@@ -96,7 +93,7 @@ public final class Follow {
     /**
      * When each list's cursor was last moved by the wheel, keyed by the ADAPTER.
      *
-     * <p>Per list, never global: the long-press menu, the queue screen and every other list in the
+     * Per list, never global: the long-press menu, the queue screen and every other list in the
      * app come through the same {@code Wheel.list}, and a global stamp would let scrolling one of
      * them freeze the following in another. The adapter is the natural key — it is what
      * {@code Wheel} has in its hand, it is what {@code Queue.atSource} and {@code Disc} identify a
@@ -126,14 +123,14 @@ public final class Follow {
      * The cursor of this list has just been moved by the wheel — it is the user's for the next
      * {@link #idleMs()}.
      *
-     * <p><b>Called from {@code Wheel.list}, i.e. from where the CURSOR moves, and that placement is
-     * the whole trap.</b> The obvious hook is the key event, and it is wrong: in the player the
+     * Called from {@code Wheel.list}, i.e. from where the CURSOR moves, and that placement is
+     * the whole trap. The obvious hook is the key event, and it is wrong: in the player the
      * wheel is volume, so a naive stamp there would count turning the volume up as working with the
      * list, and leaving the player after a nudge of the volume would stop landing on the playing
      * track. {@code Wheel.list} has exactly one caller (stock {@code Other.listViewScroll}) and the
      * player, having no ListView, never reaches it.
      *
-     * <p>At the TOP of {@code Wheel.list}, before {@code Alpha.step} takes the fast-scroll branch
+     * At the TOP of {@code Wheel.list}, before {@code Alpha.step} takes the fast-scroll branch
      * and before the "clamped at an end, nothing changed" return: both are the user turning the
      * wheel, whether or not the cursor ended up anywhere new.
      */
@@ -143,7 +140,7 @@ public final class Follow {
         // up to WATCH_MS after a jump, watching for the list to move under it and putting it back —
         // which is right while the list is still assembling itself and WRONG the moment the move it
         // sees is the user's own: it undid the wheel's scroll, so the cursor walked off the bottom
-        // edge and the list stood still (v0.37.1). Cancelled here rather than merely ignored,
+        // edge and the list stood still. Cancelled here rather than merely ignored,
         // because Wheel.list runs this before it scrolls anything.
         stopLanding();
         lastMove.put(a, Long.valueOf(android.os.SystemClock.uptimeMillis()));
@@ -164,14 +161,14 @@ public final class Follow {
     }
 
     /**
-     * A long-press menu is open over the list ({@code SubMenuDialog}), which <b>stops the clock</b>.
+     * A long-press menu is open over the list ({@code SubMenuDialog}), which stops the clock.
      *
-     * <p>The menu is the user working with the row it was raised on, and it stays up for as long as
+     * The menu is the user working with the row it was raised on, and it stays up for as long as
      * they read it — so without this the delay simply ran out underneath it and the cursor walked
      * away to the playing track while the menu went on standing over the row it had been opened
      * for, about to act on a row that was no longer there.
      *
-     * <p>Held from {@code Menus.onShow} ({@code SubMenuDialog.onStart}, which every menu in the app
+     * Held from {@code Menus.onShow} ({@code SubMenuDialog.onStart}, which every menu in the app
      * goes through) and released from {@code SubMenuDialog.onStop}. A count and not a flag, so a
      * dialog raised over a dialog cannot release the hold early; {@code onStart}/{@code onStop} are
      * paired by the framework, and a stray release cannot take it below zero.
@@ -218,7 +215,7 @@ public final class Follow {
      * How long until this list becomes playback's again, or 0 if it already is. One place, so the
      * test and the timer that waits for it can never read the clock differently.
      *
-     * <p>A held clock <b>keeps its own stamp current</b> rather than merely reporting "not yet":
+     * A held clock keeps its own stamp current rather than merely reporting "not yet":
      * held means the time is not passing at all, so when the hold ends the full delay must still be
      * there. Reporting alone would let the delay run out underneath the hold and the cursor would
      * jump the instant the menu closed — the very thing the hold exists to stop.
@@ -245,7 +242,7 @@ public final class Follow {
      * The busy → free transition, which has no event of its own: the wheel only ever reports
      * clicks, never a finger being lifted, so the end of browsing can only be a timer.
      *
-     * <p>One outstanding watcher per list is enough — a further click while it is queued does not
+     * One outstanding watcher per list is enough — a further click while it is queued does not
      * re-post, it lets the watcher fire, notice the list is busy again and re-arm itself for the
      * remainder. Otherwise a fast scroll (which reaches {@code Wheel.list} several times per click,
      * see {@code SpeedUtil}) would queue a message per step.
@@ -322,7 +319,7 @@ public final class Follow {
     /**
      * Called from {@code ListWatch.onReceive}, i.e. on every {@code MY_PLAY_SONG}.
      *
-     * <p>A track change while the list is free is a STEP: playback has moved on by one, so the
+     * A track change while the list is free is a STEP: playback has moved on by one, so the
      * cursor moves on with it and the list scrolls exactly as the wheel would have scrolled it. A
      * track change while the list is busy is ignored outright — the catch-up happens by itself when
      * the wheel falls silent.
@@ -352,13 +349,13 @@ public final class Follow {
 
     /**
      * Land on row {@code pos}: the cursor goes there and the list is placed so the row rests against
-     * the <b>bottom</b> edge, with everything before it on screen — what the list looks like when it
+     * the bottom edge, with everything before it on screen — what the list looks like when it
      * has simply been scrolled down to that track. Near the start of the list nothing can be scrolled
      * above row 0, so it rests at the top instead and the Shuffle row is showing, which is where that
      * row belongs: putting the TRACK against the top edge pushed the Shuffle row off the screen for
      * track 1, and left an album opened at its last track resting a row short of it.
      *
-     * <p>The placement waits for a pre-draw. It needs a row's height, and that can only be had from
+     * The placement waits for a pre-draw. It needs a row's height, and that can only be had from
      * the list's own children — while the caller is usually the code that has just handed the list
      * its songs, when the children still belong to whatever the list was showing before.
      */
@@ -402,7 +399,7 @@ public final class Follow {
      * Every corrective pass returns false, i.e. cancels that frame, so none of it is ever drawn: the
      * first thing on screen is the finished placement.
      *
-     * <p><b>And it keeps watching for a moment afterwards</b>, which is the second half of the same
+     * And it keeps watching for a moment afterwards, which is the second half of the same
      * problem. A correct placement does not stay correct: this list is still assembling itself, and
      * the "CD N" bar arriving grows the ListView's top padding from 49 to 65 — a padding change
      * carries the content with it (see {@code Head}), so the row that was resting exactly on the
@@ -447,21 +444,21 @@ public final class Follow {
          * The list is only allowed to be scrolled at all when the row we came for needs it — and
          * that is the floor {@code Head.top} cannot express.
          *
-         * <p>{@code Head.top(lv)} is where the visible list begins <b>right now</b>, so it shrinks
+         * {@code Head.top(lv)} is where the visible list begins right now, so it shrinks
          * as the Shuffle row rides away. Correcting a row "to the top edge" against it therefore
          * accepts whatever ride the placement arithmetic happened to leave and settles on it: half
-         * a Shuffle row (v0.36.9) or none of one at all (v0.37.0), differing from one album to the
+         * a Shuffle row or none of one at all, differing from one album to the
          * next because what leaks in is where the list before it stood.
          *
-         * <p>So the question is asked the other way round. Row 0 is still attached, so the distance
-         * from where it rests to where it is <i>is</i> how far this list has been scrolled from its
+         * So the question is asked the other way round. Row 0 is still attached, so the distance
+         * from where it rests to where it is is how far this list has been scrolled from its
          * own start. With the list back at rest the row we came for would sit exactly that much
          * lower — and if it would still fit above the bottom edge there, there was never any reason
          * to have scrolled: the list belongs at its start, with the Shuffle row fully shown. Only
          * when the row genuinely does not fit is a scroll real, and then the ride is not an
          * artefact but the answer.
          *
-         * <p>Bounded by {@link #snaps} because the two corrections must never be able to push each
+         * Bounded by {@link #snaps} because the two corrections must never be able to push each
          * other back and forth; it converges on its own (after resting the scroll is 0, so the test
          * cannot fire again), and the bound is for the case where something else is moving the list
          * at the same time.
@@ -554,13 +551,13 @@ public final class Follow {
     /**
      * Put the cursor on row {@code pos} and bring it into view.
      *
-     * <p><b>Stepping</b> (a track change while the list is free) scrolls by exactly the rule the
+     * Stepping (a track change while the list is free) scrolls by exactly the rule the
      * wheel uses ({@code Wheel.list}): going down at {@code pos >= last}, because
      * {@code getLastVisiblePosition()} counts the half-visible bottom row; going up when the row is
      * above the window or cut off by its top edge. Keeping the two in step matters — otherwise the
      * list a switched track scrolled to sits differently from the same list scrolled there by hand.
      *
-     * <p>A JUMP — catching up after the wheel falls silent, or landing after "open the source" — is
+     * A JUMP — catching up after the wheel falls silent, or landing after "open the source" — is
      * a different question and is {@link #land}: the row can be anywhere, and this arithmetic only
      * describes a step.
      */
@@ -581,7 +578,7 @@ public final class Follow {
 
     /**
      * Land on the playing track in this screen's list — what "open the source" asks of the screen it
-     * comes back to (#227, the queue). Outside the toggle and outside the busy/free rule alike: the
+     * comes back to (the queue). Outside the toggle and outside the busy/free rule alike: the
      * user has just asked for this one thing, about this one list.
      *
      * The ListView is found by walking the screen instead of by id — every section has its own
@@ -607,15 +604,15 @@ public final class Follow {
 
     /**
      * The player is going away. Set from {@code BasePlayerActivity.onPause} and only while the
-     * player is <b>finishing</b> — that is what tells "the user left it" from "something was opened
+     * player is finishing — that is what tells "the user left it" from "something was opened
      * over it" (the queue screen, an "Open album" out of a menu).
      *
-     * <p><b>{@code onDestroy} is too late</b> and is the trap here: the lifecycle is
+     * {@code onDestroy} is too late and is the trap here: the lifecycle is
      * player.onPause → list.onResume → player.onStop → player.onDestroy, so a flag armed there is
      * set after the screen underneath has already asked for it. Covers both players —
      * {@code MusicPlayerActivity} and {@code AudioPlayerActivity} share the base.
      *
-     * <p>It matters because leaving the player is deliberately kept OUTSIDE the "Selection follows
+     * It matters because leaving the player is deliberately kept OUTSIDE the "Selection follows
      * playing song" toggle: that toggle is about a list the user is looking at, and while the
      * player was on top there was nothing to look at.
      */
@@ -628,12 +625,12 @@ public final class Follow {
     /**
      * Called from {@code BaseActivity.onResume}, i.e. on every screen there is.
      *
-     * <p>A list that has just been built, or has just been uncovered, is <b>free</b> by definition:
+     * A list that has just been built, or has just been uncovered, is free by definition:
      * nothing has been done to its cursor since it came up, so it points at whatever is playing. So
      * this both clears the list's own busy stamp — wheel clicks from before the screen was covered
      * are not "the user is browsing this list right now" — and catches up straight away.
      *
-     * <p>{@code Queue.atSource} as everywhere else, so another section holding the same file is left
+     * {@code Queue.atSource} as everywhere else, so another section holding the same file is left
      * alone; and {@link Jump} answers "this list does not hold that track" for itself. Posted rather
      * than done here: the screen is still coming back up. A list that is still EMPTY at this point —
      * the usual case for a freshly built one, whose songs arrive from a coroutine a frame or more
@@ -655,7 +652,7 @@ public final class Follow {
             // it: a screen being built for the first time has no adapter at onResume — its songs
             // arrive from a coroutine a frame or more later — so arming after the adapter check
             // armed nothing at all on the one path this was written for, and opening a list did
-            // not land on the playing track (v0.36.8). Both guards live in tryPending and cost
+            // not land on the playing track. Both guards live in tryPending and cost
             // nothing when the list turns out not to be the source.
             armPending(player, null);
             Object ad = lv.getAdapter();
@@ -679,7 +676,7 @@ public final class Follow {
      * it must actually hold the track. {@link #PENDING_MS} is the backstop for the case where the
      * screen never comes up at all.
      *
-     * <p>{@code force} is what the queue asks with: an explicit "show me the source" is outside the
+     * {@code force} is what the queue asks with: an explicit "show me the source" is outside the
      * toggle, while an ordinary screen coming up is not. A weak request never overwrites an
      * outstanding strong one.
      */
@@ -699,7 +696,7 @@ public final class Follow {
      * levels through a single Activity and a single ListView, so entering an album or descending a
      * genre fires no lifecycle callback at all — but it always sets items.
      *
-     * <p>Armed FOR THIS ADAPTER, which is what keeps it honest: the long-press menu is a
+     * Armed FOR THIS ADAPTER, which is what keeps it honest: the long-press menu is a
      * {@code MyBaseAdapter} too and sets its items every time it opens, and a request left open to
      * whoever binds next would be taken by the song list underneath — raising a menu would jump the
      * list to the playing track. A menu's own request is simply never claimed and expires.

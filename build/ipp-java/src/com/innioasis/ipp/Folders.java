@@ -23,16 +23,16 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * #224 — "Show all songs" in Folders: every music file below the folder on screen, in one list.
+ * "Show all songs" in Folders: every music file below the folder on screen, in one list.
  *
- * <h3>Why it exists</h3>
+ * Why it exists
  * A folder that holds only sub-folders can be listened to only one sub-folder at a time, and there
  * is no way to shuffle or queue the whole thing. The row appears exactly where that is the case:
  * the open folder has no songs of its own, does have folders, and there is something to play
  * underneath it. Anywhere else it would either duplicate the list already on screen or open an
  * empty one.
  *
- * <h3>How it works — one screen, two modes</h3>
+ * How it works — one screen, two modes
  * There is no new Activity. The row opens {@code FilesActivity} again on the SAME folder with the
  * {@link #EXTRA} flag, and {@link #build} then fills that screen with the songs found recursively
  * instead of with the folder's own children. Everything the folder view already does then applies
@@ -44,7 +44,7 @@ import java.util.List;
  * class showing different lists under one title would be taken for the same list. Hence
  * {@link #title}.
  *
- * <h3>The row itself</h3>
+ * The row itself
  * A sentinel {@code File} at index 0 — the same shape of trick as the artist view's "Show all
  * songs" marker album ({@code Albums.isAllSongs}), for the same reason: the list's item type is
  * fixed, and a marker item rides every path a real one does. Its name can never collide with a
@@ -61,7 +61,7 @@ public final class Folders {
     public static final String EXTRA = "ipp_all";
 
     /**
-     * Sentinel row name. It really does start with a raw <b>U+0001</b> — invisible in an editor,
+     * Sentinel row name. It really does start with a raw U+0001 — invisible in an editor,
      * and that is the point: no file on a card can be called this, so the marker can never be
      * confused with a real row. Do not "tidy" the literal.
      */
@@ -209,14 +209,12 @@ public final class Folders {
      * Which button, if any, an ordinary folder gets — and it is never both, because the two answer
      * different situations:
      *
-     * <ul>
-     *   <li><b>Any sub-folders</b> (with or without songs of its own) → <b>Show all songs</b>:
+     *   - Any sub-folders (with or without songs of its own) → Show all songs:
      *       what is on screen is not the music, it is the way to it, and this is the one row that
-     *       opens all of it at once.</li>
-     *   <li><b>Songs and nothing else</b> → <b>Shuffle</b>: everything is already on screen, so
+     *       opens all of it at once.
+     *   - Songs and nothing else → Shuffle: everything is already on screen, so
      *       there is nothing to "show"; the only thing missing is playing it in a random order,
-     *       which is what the same row does in every other song list in the app.</li>
-     * </ul>
+     *       which is what the same row does in every other song list in the app.
      *
      * "Sub-folders that are not empty either" is checked as what it is for — there must be songs
      * somewhere below, or the row opens an empty list. A folder of folders of folders passes;
@@ -326,7 +324,7 @@ public final class Folders {
      * nothing else, the way {@code FilesActivity} builds them everywhere else — Now Playing and
      * the queue screen both re-read a song whose name is blank.
      *
-     * <b>{@code new Song()} then {@code setPath}, never the 17-argument constructor with nulls.</b>
+     * {@code new Song()} then {@code setPath}, never the 17-argument constructor with nulls.
      * {@code Song} is a Kotlin data class whose every String parameter is non-null, so that
      * constructor opens with a {@code checkNotNullParameter} per argument and a null throws
      * immediately. Stock's {@code new Song(null, …, path, …)} is not that constructor at all — it
@@ -435,7 +433,7 @@ public final class Folders {
     /**
      * A theme's icon arriving LATE must not land on a marker row.
      *
-     * <p>{@code ThemeManager.setBackground(ImageView…)} reads the theme's picture through a cache
+     * {@code ThemeManager.setBackground(ImageView…)} reads the theme's picture through a cache
      * and, when it is not there yet, hands the load a callback that calls {@code setImageBitmap}
      * whenever it finishes. On the first visit to Folders the cache is empty, so our icon is set
      * first and the theme's folder icon overwrites it a moment later — "Win98 Refix shows the wrong

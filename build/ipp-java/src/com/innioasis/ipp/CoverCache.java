@@ -13,17 +13,17 @@ import com.innioasis.y1.Y1Application;
 /**
  * The 50px thumbnail of an album row: in memory, and as a JPEG under {@code ipp_covers/}.
  *
- * <p>Three parts, and the middle one is the easy one to lose: {@code mem} holds the bitmaps,
+ * Three parts, and the middle one is the easy one to lose: {@code mem} holds the bitmaps,
  * {@code miss} holds the albums we have already established have no artwork at all, and the folder
  * holds the JPEGs. Without {@code miss} an album with no cover is re-read on every bind; because of
  * it, artwork added later would never be noticed — which is why {@link #clearMiss()} exists and is
  * called from {@code Ipp.libraryChanged}, i.e. from every point that writes the Song table.
  *
- * <p>Both maps are raw {@code Hashtable}s: {@code Hashtable} because the drawing thread reads them
+ * Both maps are raw {@code Hashtable}s: {@code Hashtable} because the drawing thread reads them
  * while background readers write, raw because a generic field type makes javac emit a class
  * {@code Signature} attribute and the bundled d8 crashes dexing those.
  *
- * <p>This cache and {@code BigCover} are independent and both read the ORIGINAL — a thumbnail is
+ * This cache and {@code BigCover} are independent and both read the ORIGINAL — a thumbnail is
  * never made from the 300px JPEG, so there is no second compression anywhere.
  */
 public final class CoverCache {
@@ -35,7 +35,7 @@ public final class CoverCache {
     /**
      * The cache folder, created on demand and swept once per run.
      *
-     * <p>The quality is not part of a file name, so a changed encoding scheme would be invisible
+     * The quality is not part of a file name, so a changed encoding scheme would be invisible
      * until every entry happened to be rewritten. The suffix carries it instead ({@code -50q.jpg}),
      * and everything that does not end in the current one is deleted here — so bumping the suffix
      * retires the old files by itself instead of the user being told to clear the cache.
@@ -91,8 +91,8 @@ public final class CoverCache {
      * The thumbnail if it is already known — memory, then the JPEG on disk. Never reads a tag, so
      * it is what the bind calls.
      *
-     * <p>ipp: the key is canonicalised — the Genres screen puts PLAIN album names in the same
-     * {@code AlbumListAdapter} the Albums screen fills with folder-encoded ones (#291.3), so
+     * ipp: the key is canonicalised — the Genres screen puts PLAIN album names in the same
+     * {@code AlbumListAdapter} the Albums screen fills with folder-encoded ones, so
      * entering All Albums under a genre decoded and re-wrote every thumbnail the Albums screen had
      * already cached. {@link Albums#coverKey} returns an encoded name untouched.
      */
@@ -177,7 +177,7 @@ public final class CoverCache {
     }
 
     /**
-     * ipp: drop ONE album's cached thumbnail — memory entry, "no cover" answer and the JPEG on disk
+     * Ipp: drop ONE album's cached thumbnail — memory entry, "no cover" answer and the JPEG on disk
      * — so the next lookup re-reads the tags. Needed when a track's artwork is REPLACED:
      * {@link #clearMiss()} only helps where there was no cover at all, since a cached one is still
      * served from mem/disk. Called per song from {@code Ipp.songChanged} (the "Update library" path).
@@ -198,7 +198,7 @@ public final class CoverCache {
     }
 
     /**
-     * ipp: forget only the "this album has no cover" answers, keeping the covers we DID find (mem +
+     * Ipp: forget only the "this album has no cover" answers, keeping the covers we DID find (mem +
      * the JPEG file cache). Without this, adding artwork to a track that had none was never
      * noticed: the album stayed in {@code miss} for good, so the list thumbnail remained empty even
      * after "Update library", and only wiping the whole cache helped. Called from

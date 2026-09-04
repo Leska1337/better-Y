@@ -9,8 +9,8 @@ import java.nio.charset.Charset;
  * Character-encoding detection for {@code .lrc} files, and the name-to-{@link Charset} step for
  * everything that goes through the app's detector.
  *
- * <h3>Why not stock's detector</h3>
- * {@code LyricParse.judgeCharset} asked <b>cpdetector</b>, whose actual engine here is a jchardet
+ * Why not stock's detector
+ * {@code LyricParse.judgeCharset} asked cpdetector, whose actual engine here is a jchardet
  * build with these verifiers and no others: {@code BIG5, CP1252, EUC-JP, EUC-KR, EUC-TW, GB18030,
  * GB2312, HZ, ISO-2022-CN/JP/KR, SJIS, UCS2BE, UCS2LE, UTF8}. There is not one Cyrillic verifier in
  * it. Worse, its {@code ALL} mode walks the CJK group first, and a pair of Cyrillic bytes
@@ -21,13 +21,13 @@ import java.nio.charset.Charset;
  * The app already ships a detector that gets this right, in the e-book reader:
  * {@code FileEncodingDetector} tries the BOM, then a strict UTF-8 decode, then
  * {@code org.mozilla.universalchardet}, whose bundled models cover Big5 / GB18030 / EUC-KR /
- * Shift_JIS / EUC-JP / EUC-TW and the ISO-2022 family <i>plus</i> windows-1251, KOI8-R, IBM866,
+ * Shift_JIS / EUC-JP / EUC-TW and the ISO-2022 family plus windows-1251, KOI8-R, IBM866,
  * IBM855, ISO-8859-5, MacCyrillic, windows-1253, ISO-8859-7, windows-1255, ISO-8859-8, TIS-620 and
  * windows-1252. A strict superset of what cpdetector could do. Lyrics go through it now, so a lyric
  * file and a book in the same encoding are read the same way.
  *
- * <h3>The name is not always a name Android knows</h3>
- * The detector answers with a <i>name</i>, and stock then does {@code Charset.forName(name)}
+ * The name is not always a name Android knows
+ * The detector answers with a name, and stock then does {@code Charset.forName(name)}
  * unguarded. Several names it can return are not in Android 4.2's charset table —
  * {@code MACCYRILLIC}, {@code TIS620}, {@code IBM855}, {@code EUC-TW}, the {@code X-ISO-10646-UCS-4}
  * pair — and {@code forName} throws on them, which threw away a correct detection. {@link #resolve}

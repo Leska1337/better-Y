@@ -13,21 +13,21 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 947
+  .line 948
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Albums$1;)V
   .registers 2
-  .line 947
+  .line 948
     invoke-direct { p0 }, Lcom/innioasis/ipp/Albums$StrCmp;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 949
+  .line 950
     check-cast p1, Ljava/lang/String;
     sget-object v0, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p1, v0 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;

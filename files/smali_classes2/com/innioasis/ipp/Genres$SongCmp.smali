@@ -15,7 +15,7 @@
 
 .method constructor <init>(I)V
   .registers 2
-  .line 1051
+  .line 1049
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput p1, p0, Lcom/innioasis/ipp/Genres$SongCmp;->code:I
     return-void
@@ -23,11 +23,11 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 5
-  .line 1053
+  .line 1051
     check-cast p1, Lcom/innioasis/y1/database/Song;
-  .line 1054
+  .line 1052
     check-cast p2, Lcom/innioasis/y1/database/Song;
-  .line 1055
+  .line 1053
     iget v0, p0, Lcom/innioasis/ipp/Genres$SongCmp;->code:I
     const/4 v1, 4
     if-ne v0, v1, :L0
@@ -39,7 +39,7 @@
     move-result p1
     return p1
   :L0
-  .line 1056
+  .line 1054
     const/4 v1, 5
     if-ne v0, v1, :L1
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getFileDate()J
@@ -51,7 +51,7 @@
     neg-int p1, p1
     return p1
   :L1
-  .line 1057
+  .line 1055
     if-nez v0, :L2
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinSongName()Ljava/lang/String;
     move-result-object p1
@@ -61,7 +61,7 @@
     move-result p1
     return p1
   :L2
-  .line 1058
+  .line 1056
     const/4 v1, 1
     if-ne v0, v1, :L3
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinSongName()Ljava/lang/String;
@@ -73,7 +73,7 @@
     neg-int p1, p1
     return p1
   :L3
-  .line 1059
+  .line 1057
     const/4 v1, 7
     if-ne v0, v1, :L4
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinAlbum()Ljava/lang/String;
@@ -84,7 +84,7 @@
     move-result p1
     return p1
   :L4
-  .line 1060
+  .line 1058
     const/4 v1, 3
     if-ne v0, v1, :L5
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
@@ -96,7 +96,7 @@
     neg-int p1, p1
     return p1
   :L5
-  .line 1061
+  .line 1059
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object p1
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;

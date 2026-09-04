@@ -291,7 +291,7 @@
   .catchall { :L2 .. :L3 } :L10
   .catchall { :L4 .. :L6 } :L10
   .registers 6
-  .line 297
+  .line 295
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/File;
@@ -299,31 +299,31 @@
     invoke-direct { v1, v2 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v1
-  .line 298
+  .line 296
     const/4 v2, 0
   :L1
     if-eqz v1, :L9
     array-length v3, v1
     if-ge v2, v3, :L9
-  .line 299
+  .line 297
     aget-object v3, v1, v2
     invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v3
   :L2
-  .line 302
+  .line 300
     invoke-static { v3 }, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
     move-result v3
   :L3
-  .line 305
+  .line 303
     nop
   :L4
-  .line 306
+  .line 304
     invoke-static { }, Landroid/os/Process;->myPid()I
     move-result v4
     if-ne v3, v4, :L5
     goto :L8
   :L5
-  .line 307
+  .line 305
     aget-object v4, v1, v2
     invoke-static { v4 }, Lcom/innioasis/ipp/Force;->readCmdline(Ljava/io/File;)Ljava/lang/String;
     move-result-object v4
@@ -333,22 +333,22 @@
     if-eqz v4, :L8
     return v3
   :L7
-  .line 303
+  .line 301
     move-exception v3
-  .line 304
+  .line 302
     nop
   :L8
-  .line 298
+  .line 296
     add-int/lit8 v2, v2, 1
     goto :L1
   :L9
-  .line 311
+  .line 309
     goto :L11
   :L10
-  .line 309
+  .line 307
     move-exception p0
   :L11
-  .line 312
+  .line 310
     return v0
 .end method
 
@@ -373,9 +373,9 @@
   .catchall { :L12 .. :L13 } :L14
   .catchall { :L19 .. :L20 } :L21
   .registers 7
-  .line 316
+  .line 314
     nop
-  .line 318
+  .line 316
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/FileInputStream;
@@ -384,34 +384,34 @@
     invoke-direct { v2, p0, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-direct { v1, v2 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
   :L1
-  .line 319
+  .line 317
     const/16 p0, 128
   :L2
     new-array p0, p0, [B
-  .line 320
+  .line 318
     invoke-virtual { v1, p0 }, Ljava/io/FileInputStream;->read([B)I
     move-result v2
   :L3
-  .line 321
+  .line 319
     if-gtz v2, :L8
   :L4
-  .line 329
+  .line 327
     invoke-virtual { v1 }, Ljava/io/FileInputStream;->close()V
   :L5
-  .line 332
+  .line 330
     goto :L7
   :L6
-  .line 330
+  .line 328
     move-exception p0
   :L7
-  .line 321
+  .line 319
     return-object v0
   :L8
-  .line 322
+  .line 320
     const/4 v3, 0
     const/4 v4, 0
   :L9
-  .line 323
+  .line 321
     if-ge v4, v2, :L11
   :L10
     aget-byte v5, p0, v4
@@ -419,75 +419,75 @@
     add-int/lit8 v4, v4, 1
     goto :L9
   :L11
-  .line 324
+  .line 322
     new-instance v2, Ljava/lang/String;
     const-string v5, "UTF-8"
     invoke-direct { v2, p0, v3, v4, v5 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
   :L12
-  .line 329
+  .line 327
     invoke-virtual { v1 }, Ljava/io/FileInputStream;->close()V
   :L13
-  .line 332
+  .line 330
     goto :L15
   :L14
-  .line 330
+  .line 328
     move-exception p0
   :L15
-  .line 324
+  .line 322
     return-object v2
   :L16
-  .line 325
+  .line 323
     move-exception p0
     goto :L18
   :L17
     move-exception p0
     move-object v1, v0
   :L18
-  .line 326
+  .line 324
     nop
-  .line 329
+  .line 327
     if-eqz v1, :L22
   :L19
     invoke-virtual { v1 }, Ljava/io/FileInputStream;->close()V
   :L20
     goto :L22
   :L21
-  .line 330
+  .line 328
     move-exception p0
     goto :L23
   :L22
-  .line 332
+  .line 330
     nop
   :L23
-  .line 326
+  .line 324
     return-object v0
 .end method
 
 .method private static reboot()V
   .registers 4
-  .line 203
+  .line 201
     sget-boolean v0, Lcom/innioasis/ipp/Force;->fired:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 204
+  .line 202
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Force;->fired:Z
-  .line 207
+  .line 205
     const-string v1, "force reboot (top + bottom held)"
     const/4 v2, 0
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Diag;->spill(Ljava/lang/String;Ljava/lang/Throwable;)V
-  .line 208
+  .line 206
     new-instance v1, Ljava/lang/Thread;
     new-instance v3, Lcom/innioasis/ipp/Force$Boot;
     invoke-direct { v3, v2 }, Lcom/innioasis/ipp/Force$Boot;-><init>(Lcom/innioasis/ipp/Force$1;)V
     const-string v2, "ipp-force-boot"
     invoke-direct { v1, v3, v2 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 209
+  .line 207
     invoke-virtual { v1, v0 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 210
+  .line 208
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
-  .line 211
+  .line 209
     return-void
 .end method
 
@@ -511,21 +511,21 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 1
   :L0
-  .line 227
+  .line 225
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 228
+  .line 226
     if-eqz v0, :L1
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->saveState()V
   :L1
-  .line 231
+  .line 229
     goto :L3
   :L2
-  .line 229
+  .line 227
     move-exception v0
   :L3
-  .line 232
+  .line 230
     return-void
 .end method
 
@@ -533,26 +533,26 @@
   .catch Ljava/lang/InterruptedException; { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 276
+  .line 274
     invoke-static { p0, p1 }, Ljava/lang/Thread;->sleep(J)V
   :L1
-  .line 279
+  .line 277
     goto :L3
   :L2
-  .line 277
+  .line 275
     move-exception p0
-  .line 278
+  .line 276
     invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
     move-result-object p0
     invoke-virtual { p0 }, Ljava/lang/Thread;->interrupt()V
   :L3
-  .line 280
+  .line 278
     return-void
 .end method
 
 .method private static systemServer()I
   .registers 1
-  .line 284
+  .line 282
     const-string v0, "system_server"
     invoke-static { v0 }, Lcom/innioasis/ipp/Force;->pidOf(Ljava/lang/String;)I
     move-result v0
@@ -562,37 +562,37 @@
 .method private static watch()V
   .catchall { :L1 .. :L2 } :L3
   .registers 4
-  .line 345
+  .line 343
     sget-boolean v0, Lcom/innioasis/ipp/Force;->watching:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 346
+  .line 344
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Force;->watching:Z
   :L1
-  .line 348
+  .line 346
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     sput-wide v1, Lcom/innioasis/ipp/Force;->pong:J
-  .line 349
+  .line 347
     new-instance v1, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/ipp/Force$Ping;
     const/4 v3, 0
     invoke-direct { v2, v3 }, Lcom/innioasis/ipp/Force$Ping;-><init>(Lcom/innioasis/ipp/Force$1;)V
     const-string v3, "ipp-force"
     invoke-direct { v1, v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 350
+  .line 348
     invoke-virtual { v1, v0 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 351
+  .line 349
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
   :L2
-  .line 354
+  .line 352
     goto :L4
   :L3
-  .line 352
+  .line 350
     move-exception v0
   :L4
-  .line 355
+  .line 353
     return-void
 .end method

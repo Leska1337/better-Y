@@ -27,43 +27,43 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity$CacheTask;Ljava/util/List;Lcom/innioasis/y1/activity/IppActivity$Blocks;ZZ)V
   .registers 7
-  .line 1331
+  .line 1330
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1328
+  .line 1327
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
-  .line 1329
+  .line 1328
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
-  .line 1332
+  .line 1331
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-  .line 1333
+  .line 1332
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->byPath:Ljava/util/List;
-  .line 1334
+  .line 1333
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
-  .line 1335
+  .line 1334
     iput-boolean p4, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->tags:Z
-  .line 1336
+  .line 1335
     iput-boolean p5, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->covers:Z
-  .line 1337
+  .line 1336
     return-void
 .end method
 
 .method private one(Lcom/innioasis/ipp/BigCover$Walk;Lcom/innioasis/y1/database/Song;)V
   .registers 7
-  .line 1356
+  .line 1355
     if-eqz p2, :L8
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
     if-nez v0, :L0
     goto :L8
   :L0
-  .line 1357
+  .line 1356
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p2
-  .line 1358
+  .line 1357
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->tags:Z
     const/4 v1, 1
     const/4 v2, 0
@@ -76,7 +76,7 @@
   :L1
     const/4 v0, 0
   :L2
-  .line 1359
+  .line 1358
     iget-boolean v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->covers:Z
     if-eqz v3, :L3
     invoke-static { p2 }, Lcom/innioasis/ipp/BigCover;->needs(Ljava/lang/String;)Z
@@ -86,45 +86,45 @@
   :L3
     const/4 v1, 0
   :L4
-  .line 1360
+  .line 1359
     if-nez v0, :L5
     if-nez v1, :L5
     return-void
   :L5
-  .line 1361
+  .line 1360
     invoke-static { p2, v0, v1 }, Lcom/innioasis/ipp/DiscCache;->read(Ljava/lang/String;ZZ)Lcom/innioasis/ipp/DiscCache$Tags;
     move-result-object v2
-  .line 1362
+  .line 1361
     if-eqz v1, :L6
     iget-object v1, v2, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
     invoke-static { p1, p2, v1 }, Lcom/innioasis/ipp/BigCover;->cache(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;[B)V
   :L6
-  .line 1363
+  .line 1362
     if-eqz v0, :L7
-  .line 1364
+  .line 1363
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
     invoke-virtual { p1, p2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1365
+  .line 1364
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
     invoke-virtual { p1, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L7
-  .line 1367
+  .line 1366
     return-void
   :L8
-  .line 1356
+  .line 1355
     return-void
 .end method
 
 .method commit()V
   .registers 4
-  .line 1371
+  .line 1370
     const/4 v0, 0
   :L0
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v1
     if-ge v0, v1, :L1
-  .line 1372
+  .line 1371
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
     invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v1
@@ -134,27 +134,27 @@
     move-result-object v2
     check-cast v2, Lcom/innioasis/ipp/DiscCache$Tags;
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/DiscCache;->commit(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
-  .line 1371
+  .line 1370
     add-int/lit8 v0, v0, 1
     goto :L0
   :L1
-  .line 1374
+  .line 1373
     return-void
 .end method
 
 .method public run()V
   .catchall { :L2 .. :L3 } :L4
   .registers 5
-  .line 1340
+  .line 1339
     new-instance v0, Lcom/innioasis/ipp/BigCover$Walk;
     invoke-direct { v0 }, Lcom/innioasis/ipp/BigCover$Walk;-><init>()V
   :L0
-  .line 1342
+  .line 1341
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->take()I
     move-result v1
     if-ltz v1, :L7
-  .line 1343
+  .line 1342
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v2, v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from(I)I
     move-result v2
@@ -164,30 +164,30 @@
     move-result v3
     if-ge v2, v3, :L6
   :L2
-  .line 1345
+  .line 1344
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->byPath:Ljava/util/List;
     invoke-interface { v3, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Lcom/innioasis/y1/database/Song;
     invoke-direct { p0, v0, v3 }, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->one(Lcom/innioasis/ipp/BigCover$Walk;Lcom/innioasis/y1/database/Song;)V
   :L3
-  .line 1348
+  .line 1347
     goto :L5
   :L4
-  .line 1346
+  .line 1345
     move-exception v3
   :L5
-  .line 1349
+  .line 1348
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
     invoke-virtual { v3 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick()V
-  .line 1343
+  .line 1342
     add-int/lit8 v2, v2, 1
     goto :L1
   :L6
-  .line 1351
+  .line 1350
     invoke-virtual { v0 }, Lcom/innioasis/ipp/BigCover$Walk;->done()V
     goto :L0
   :L7
-  .line 1353
+  .line 1352
     return-void
 .end method

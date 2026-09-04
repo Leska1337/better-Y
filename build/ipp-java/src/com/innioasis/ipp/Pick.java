@@ -20,17 +20,17 @@ import kotlin.jvm.functions.Function0;
  * What "Cache library" fills and "Clear cache" wipes, as a handful of categories the user ticks in
  * {@link PickDialog}.
  *
- * <h3>Why categories at all</h3>
- * The two buttons used to be all-or-nothing, and the expensive half of each is the covers: filling
- * them is one file open per song, and throwing them away means every list and every player screen
- * reads its artwork again. Re-reading the track numbers after a tag edit, or dropping only the
- * pictures, are both perfectly ordinary things to want — and neither was possible.
+ * Why categories at all
+ * All-or-nothing buttons are not enough. The expensive half of each is the covers: filling them is
+ * one file open per song, and throwing them away means every list and every player screen reads its
+ * artwork again. Re-reading the track numbers after a tag edit, or dropping only the pictures, are
+ * both perfectly ordinary things to want.
  *
- * <h3>The system category is not ours</h3>
- * Stock's "Clear cache" asks the package manager to empty the cache directory of <b>every installed
- * package</b>, and ours is one of them: that single call is what deletes {@code ipp_covers/},
+ * The system category is not ours
+ * Stock's "Clear cache" asks the package manager to empty the cache directory of every installed
+ * package, and ours is one of them: that single call is what deletes {@code ipp_covers/},
  * {@code ipp_big/} and the {@code ipp_*.txt} files, whatever the user ticked. So when the ipp
- * categories are not <i>all</i> selected, {@link #packages} drops our own package from that loop and
+ * categories are not all selected, {@link #packages} drops our own package from that loop and
  * empties the rest of our cache directory ({@code Glide}'s theme covers and anything else that is
  * not ours) by hand — otherwise unticking "Covers" would still lose the covers.
  */
@@ -155,7 +155,7 @@ public final class Pick {
      *
      * Deleting a few hundred cover JPEGs is not instant, and there the system half is under way at
      * the same time behind stock's own progress dialog: doing ours inline would freeze the frame
-     * that dialog is drawn in. When the system category was picked <i>as well as</i> an ipp one, the
+     * that dialog is drawn in. When the system category was picked as well as an ipp one, the
      * rest of our own cache directory (Glide's theme covers) is emptied here too, because
      * {@link #packages} has just taken us out of the package manager's loop to protect the ipp
      * caches the user kept.
@@ -236,7 +236,7 @@ public final class Pick {
     }
 
     /**
-     * Empty our own cache directory of everything that is <b>not</b> an ipp cache — Glide's theme
+     * Empty our own cache directory of everything that is not an ipp cache — Glide's theme
      * covers and whatever else the app keeps there. Used when the package manager is not allowed to
      * do it for us because the user kept one of the ipp categories.
      */

@@ -164,8 +164,8 @@ $produced | ForEach-Object {
 #     (`5t 0t 0t 0t` for the int 5 inside a `.array-data 4` block), but apktool's smali assembler
 #     reads each of those as an element of its own -- a 12-int array assembles into 48 entries,
 #     `fill-array-data` then overruns the `new-array` and throws at RUNTIME, inside <clinit>:
-#     the class fails to initialise and the first use of it kills the app (v0.10.7 did exactly
-#     that on entering the innioasis++ screen). Regroup the bytes into one literal per element,
+#     the class fails to initialise and the first use of it kills the app (a build cost: the
+#     better-Y screen died on entry). Regroup the bytes into one literal per element,
 #     little-endian, and emit it in the declared width.
 $arrData = [regex]'(?ms)^([ \t]*)\.array-data[ \t]+(\d+)[ \t]*\r?\n(.*?)^([ \t]*)\.end array-data'
 $produced | ForEach-Object {

@@ -17,32 +17,32 @@
 
 .method constructor <init>(Ljava/util/HashMap;Z)V
   .registers 3
-  .line 409
+  .line 406
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 410
+  .line 407
     iput-object p1, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->order:Ljava/util/HashMap;
-  .line 411
+  .line 408
     iput-boolean p2, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->desc:Z
-  .line 412
+  .line 409
     return-void
 .end method
 
 .method private rank(Ljava/lang/Object;)I
   .registers 4
-  .line 415
+  .line 412
     instance-of v0, p1, Lcom/innioasis/y1/database/Song;
     const/4 v1, -1
     if-nez v0, :L0
     return v1
   :L0
-  .line 416
+  .line 413
     iget-object v0, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->order:Ljava/util/HashMap;
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getSongId()Ljava/lang/String;
     move-result-object p1
     invoke-virtual { v0, p1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p1
-  .line 417
+  .line 414
     instance-of v0, p1, Ljava/lang/Integer;
     if-eqz v0, :L1
     check-cast p1, Ljava/lang/Integer;
@@ -54,17 +54,17 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 421
+  .line 418
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Playlists$AddedCmp;->rank(Ljava/lang/Object;)I
     move-result p1
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Playlists$AddedCmp;->rank(Ljava/lang/Object;)I
     move-result p2
-  .line 423
+  .line 420
     if-ltz p1, :L3
     if-gez p2, :L0
     goto :L3
   :L0
-  .line 424
+  .line 421
     iget-boolean v0, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->desc:Z
     if-eqz v0, :L1
     sub-int/2addr p2, p1
@@ -74,7 +74,7 @@
   :L2
     return p2
   :L3
-  .line 423
+  .line 420
     if-gez p1, :L4
     if-gez p2, :L4
     const/4 p1, 0

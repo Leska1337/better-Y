@@ -15,20 +15,18 @@ import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1_eBook.ui.main.MainActivity;
 
 /**
- * #387.2 — the e-book Library becomes a section of its own, reached by a row of the same name.
+ * The e-book Library becomes a section of its own, reached by a row of the same name.
  *
- * <h3>One Activity, two modes</h3>
+ * One Activity, two modes
  * There is no second Activity: {@code MainActivity} is opened again with {@link #EXTRA}, and which
  * of its own views are shown decides what the screen is. That is the whole point — "don't touch
  * the functionality" is satisfied literally, because opening a book, the delete menu, the book
  * list and "Continue Reading" all stay exactly where stock put them.
  *
- * <pre>
  *   menu mode     rows 0..2 = Continue Reading / Local file / Library, the list hidden
  *   library mode  the list alone, the three rows hidden
- * </pre>
  *
- * <h3>Why the cursor never goes below fixedSum in library mode</h3>
+ * Why the cursor never goes below fixedSum in library mode
  * Stock's {@code mark} counts the fixed rows first and the books after them ({@code fixedSum} = 2),
  * and its centre-press tests {@code mark == 0} and {@code mark == 1} before treating the mark as a
  * book. Rather than renumber any of that, library mode simply keeps the cursor at or above

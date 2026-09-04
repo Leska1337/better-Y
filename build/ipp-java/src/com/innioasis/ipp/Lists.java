@@ -9,13 +9,12 @@ import java.util.ArrayList;
  * Every song list that is still alive, so a track change repaints all of them — not just the one
  * the user happens to be looking at.
  *
- * {@code ListWatch} used to hold ONE adapter, the last one to bind a row, which is right until a
- * list screen is stacked on top of another. Every folder of Folders is its own {@code FilesActivity}
- * (that is why {@code setStateBarLeftText} is only called from {@code initView}), and the same
- * holds for a song list under an album list: the screen underneath is not destroyed, it is merely
- * covered, and nothing rebinds its rows when it comes back. So a track started in the folder on top
- * left the playing marker sitting on the old file in the folder underneath, until the wheel next
- * happened to repaint that one row.
+ * A registry rather than one adapter, because list screens stack. Every folder of Folders is its own
+ * {@code FilesActivity} (that is why {@code setStateBarLeftText} is only called from
+ * {@code initView}), and the same holds for a song list under an album list: the screen underneath
+ * is not destroyed, only covered, and nothing rebinds its rows when it comes back. Remember just the
+ * last adapter to bind a row and a track started in the folder on top leaves the playing marker on
+ * the old file in the folder underneath, until the wheel happens to repaint that one row.
  *
  * A weak reference each: an adapter is kept alive by its ListView and its Activity, and once those
  * are gone the entry drops out on the next pass. Registered adapters are only the ones that draw a

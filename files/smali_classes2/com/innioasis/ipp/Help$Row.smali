@@ -24,12 +24,12 @@
 
 .method constructor <init>(Ljava/lang/String;Z)V
   .registers 3
-  .line 82
+  .line 80
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 83
+  .line 81
     iput-object p1, p0, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
-  .line 84
+  .line 82
     iput-boolean p2, p0, Lcom/innioasis/ipp/Help$Row;->group:Z
-  .line 85
+  .line 83
     return-void
 .end method

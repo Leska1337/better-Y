@@ -60,7 +60,7 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * innioasis++ settings screen (reuses ActivityAboutBinding). Click-wheel driven:
+ * better-Y settings screen (reuses ActivityAboutBinding). Click-wheel driven:
  * UP/DOWN move focus over the visible selectable rows, centre/ENTER activates, top button
  * (MENU short-press) closes.
  *
@@ -90,11 +90,11 @@ public final class IppActivity extends BaseActivity {
     /**
      * One menu entry. Headers use only the label; the rest is per-kind.
      *
-     * <p>Every word of it comes from the help asset — {@code label}, {@code values} and
+     * Every word of it comes from the help asset — {@code label}, {@code values} and
      * {@code showIf} are filled in by {@link #buildItems()} from {@code Help.rows}. Nothing here
-     * carries a string resource any more: keeping the names in {@code strings.xml} as well meant
-     * writing every new row twice, and a second copy that is only ever a fallback is a copy that
-     * silently goes stale. A row the asset does not name shows its KEY instead, which is never
+     * carries a string resource: keeping the names in {@code strings.xml} as well would mean writing
+     * every new row twice, and a second copy that is only ever a fallback is a copy that silently
+     * goes stale. A row the asset does not name shows its KEY instead, which is never
      * blank and says exactly which line of which file is missing.
      */
     private static final class Item {
@@ -139,17 +139,17 @@ public final class IppActivity extends BaseActivity {
     /**
      * The menu, arranged the way the help asset says and behaving the way {@link #registry()} says.
      *
-     * <p>Order, grouping, names and {@code showIf} all come from {@code assets/help/en.txt} —
+     * Order, grouping, names and {@code showIf} all come from {@code assets/help/en.txt} —
      * English alone, so a translator can regroup nothing by accident. The registry supplies what a
      * text file cannot: the kind of each row, its preference key, its default, and the numbers a
      * NUMBER row runs over.
      *
-     * <p>Nothing the asset says can LOSE a setting, which is the whole reason the registry keeps
+     * Nothing the asset says can LOSE a setting, which is the whole reason the registry keeps
      * its own order: a row the file forgets is appended at the end rather than dropped, a key the
      * file invents is skipped, and an asset that cannot be read at all leaves the menu exactly as
      * it was before any of this existed.
      *
-     * <p>A row whose {@code showIf} is set is a SUB-ITEM of the row it depends on and is drawn
+     * A row whose {@code showIf} is set is a SUB-ITEM of the row it depends on and is drawn
      * with the arrow that says so; there is no separate flag, because a row that only exists while
      * another one is on IS that row's sub-item.
      */
@@ -193,7 +193,7 @@ public final class IppActivity extends BaseActivity {
     /**
      * Every row the app can actually draw, with what it DOES and a sane order to fall back on.
      *
-     * <p>The groups here are the user's ([Tools], [Now Playing], [Menu], [Metadata], [System]) —
+     * The groups here are the user's ([Tools], [Now Playing], [Menu], [Metadata], [System]) —
      * the rows are grouped by WHERE their effect is seen, not by what they technically are, which
      * is why the two "titles from metadata" switches sit with the tags and the two "top button
      * hold" ones sit with the player. The asset may rearrange all of it; this is what stands when
@@ -207,7 +207,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(ACTION, "reboot", 0, null, null));
         l.add(new Item(ACTION, "cache", 0, null, null));
         l.add(new Item(ACTION, "scan", 0, null, null));
-        // #228.2: one file to attach to a bug report -- build, settings, library, logcat. See Diag.
+        // one file to attach to a bug report -- build, settings, library, logcat. See Diag.
         l.add(new Item(ACTION, "log", 0, null, null));
         // A diagnostic, not a feature: restarts SurfaceFlinger and writes a report to the card, so
         // the one defect we cannot reproduce -- the whole screen drawn shifted sideways -- can be
@@ -661,12 +661,12 @@ public final class IppActivity extends BaseActivity {
             // and then need two presses to turn it off. (Prefs had exactly such a helper; it was
             // unused for this reason and has been removed.)
             Prefs.setBool(this, it.key, !toggleOn(it));
-            // #231: the Favorites playlist exists by default (Playlists.syncName, from
+            // the Favorites playlist exists by default (Playlists.syncName, from
             // MainActivity.initView) and the setting only shows or hides it. This stays as the
             // backstop for the one case startup cannot cover — a build with the delete protection
             // off, where the playlist can actually be removed while the app is running.
             if ("likes".equals(it.key) && Prefs.on(this, it.key)) Fav.ensure(this);
-            // #393: the line under a genre ("N artists N albums") is a written-down ANSWER, and
+            // the line under a genre ("N artists N albums") is a written-down ANSWER, and
             // the split changes it. GenreInfo is invalidated by library writes and by nothing
             // else, so a toggle has to say so itself, or the subtitles keep yesterday's counts.
             if (GenreSplit.KEY_SPLIT.equals(it.key)) GenreInfo.clear();
@@ -725,7 +725,7 @@ public final class IppActivity extends BaseActivity {
     /**
      * Write the report, tell the user where it went, and only then take the compositor down.
      *
-     * <p>The report is collected on a worker: it execs {@code dumpsys SurfaceFlinger}, a binder
+     * The report is collected on a worker: it execs {@code dumpsys SurfaceFlinger}, a binder
      * round trip into the very process this is about, and a screen that is already drawing wrong
      * is not a screen to block the main thread on. The toast is shown from the main thread and
      * given a moment to be read — after the kill there may be nothing left to show it on.
@@ -796,11 +796,10 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * #228.2 -- "Update library" = refresh the metadata of songs ALREADY in the library, nothing
+     * "Update library" = refresh the metadata of songs ALREADY in the library, nothing
      * else. It does not look for new or deleted files: that is the stock scan's job (after a
-     * reboot / USB detach), and it is left untouched so it stays fast — which is also why this
-     * button no longer starts it, so the stock "Scanning files" dialog can no longer appear on
-     * top of ours.
+     * reboot / USB detach), and it is left untouched so it stays fast — which is also why this button
+     * does not start it: the stock "Scanning files" dialog would then appear on top of ours.
      *
      * A song is re-read only when its file's mtime differs from the row's fileDate (a tag edit
      * bumps it), so an unchanged library costs one lastModified() per row instead of a full
@@ -1116,12 +1115,12 @@ public final class IppActivity extends BaseActivity {
                 // to be parsed before any key can be answered, and after that each key is nearly
                 // free. So everything a song is needed for comes out of ONE open
                 // (DiscCache.readTrack): the disc number, the track number and the artwork bytes.
-                // The pass used to open every file twice — once here, once inside BigCover — and a
-                // third time from TrackCache.ensure for every song with no track-number tag.
+                // Opening each file once matters: a separate open here, inside BigCover and from
+                // TrackCache.ensure is three opens per song with no track-number tag.
                 //
-                // The Now-Playing cover is per-track (#230.2), so it belongs in this half — without
-                // it the player still had to read a tag the first time each song was opened, which
-                // is the flash the caching pass exists to remove. Walked in PATH order rather than
+                // The Now-Playing cover is per-track, so it belongs in this half: without it the
+                // player still reads a tag the first time each song is opened, which is the flash
+                // the caching pass exists to remove. Walked in PATH order rather than
                 // the library's own (name/date) order: BigCover holds one album representative at a
                 // time to compare against, and that only works when a folder's songs arrive
                 // together.
@@ -1378,11 +1377,11 @@ public final class IppActivity extends BaseActivity {
      * Everything one ALBUM needs, out of a single {@code setDataSource} on its representative song:
      * the ALBUM ARTIST tag, the release year and the 50px thumbnail.
      *
-     * These are three separate caches and each used to open the file for itself — the thumbnail
-     * through {@code Other.getAlbumCover}, the album artist inside {@code AlbumArtist.read} and the
-     * year inside {@code YearCache.warm} (which also ran a Room query per album to find the very
-     * song we already have here). Opening the file is what a metadata read costs, so on a library
-     * with a few hundred albums those two extra opens were a sizeable part of the whole pass.
+     * These are three separate caches, and each opening the file for itself — the thumbnail through
+     * {@code Other.getAlbumCover}, the album artist inside {@code AlbumArtist.read}, the year inside
+     * {@code YearCache.warm} (plus a Room query per album to find the very song we already have
+     * here) — is two extra opens per album. Opening the file is what a metadata read costs, so on a
+     * library with a few hundred albums that is a sizeable part of the whole pass.
      *
      * Nothing is read that the ticked categories do not need, so this does not tie the two
      * categories together: with only "Metadata" on, no picture is asked for; with only "Album
@@ -1526,11 +1525,11 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * #228.1: hold the top button on a row and it explains itself. The text lives in
+     * Hold the top button on a row and it explains itself. The text lives in
      * {@code assets/help/<lang>.txt}, keyed by the row's own key, and is paged with the wheel
      * ({@link HelpDialog}).
      *
-     * <p>Long top press is free on this screen: stock routes it to {@code longConfirm}, which
+     * Long top press is free on this screen: stock routes it to {@code longConfirm}, which
      * every list uses for its long-press menu and which this screen has never had one for.
      */
     @Override

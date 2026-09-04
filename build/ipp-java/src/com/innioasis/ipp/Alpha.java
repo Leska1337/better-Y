@@ -32,37 +32,35 @@ import com.innioasis.y1.utils.SharedPreferencesUtils;
 import java.lang.ref.WeakReference;
 
 /**
- * #362.3 — jump-scrolling long lists by first letter (or, for albums sorted by date, by year).
+ * Jump-scrolling long lists by first letter (or, for albums sorted by date, by year).
  *
  * Spin the wheel; once {@link #threshold()} clicks have come in quick succession the list stops
- * moving by rows and starts moving by <b>group</b>, with the group's key shown large in the middle
- * of the screen. Off by default; the toggle is "Alphabetical fast scroll" in innioasis++, with a
+ * moving by rows and starts moving by group, with the group's key shown large in the middle
+ * of the screen. Off by default; the toggle is "Alphabetical fast scroll" in better-Y, with a
  * sub-row for the number of clicks that arms it.
  *
- * <h3>Where it applies</h3>
- * Only where a jump means something, decided by <b>screen + that screen's own sort setting</b>:
- * <ul>
- *   <li>All songs, sorted by song name → by letter</li>
- *   <li>Artists (A–Z / Z–A, its only sorts) → by letter</li>
- *   <li>Albums, A–Z / Z–A → by letter; Albums, oldest/newest first → <b>by year</b></li>
- * </ul>
+ * Where it applies
+ * Only where a jump means something, decided by screen + that screen's own sort setting:
+ *   - All songs, sorted by song name → by letter
+ *   - Artists (A–Z / Z–A, its only sorts) → by letter
+ *   - Albums, A–Z / Z–A → by letter; Albums, oldest/newest first → by year
  * Under any other sort the letters are scattered and a "next letter" would land one row further
  * on, over and over — so nothing changes there at all. The screen is identified by its Activity
  * class and the level by its adapter, which is the only thing available here: a ListAdapter is all
  * {@code Wheel.list} has, and {@code SongListAdapter} alone serves All songs, an album, an artist
  * and a playlist, each with its own stored sort.
  *
- * <h3>No acceleration in those lists</h3>
+ * No acceleration in those lists
  * One wheel click reaches {@code Wheel.list} once, and then several more times in a row, because
  * {@code SpeedUtil.runMultipleTimes} replays the step synchronously to accelerate long scrolls.
- * Where this feature applies, those replays are <b>dropped</b> ({@link #BURST_MS} tells a replay
+ * Where this feature applies, those replays are dropped ({@link #BURST_MS} tells a replay
  * from a real click): below the threshold that means one click = one row, above it one click = one
  * group. Otherwise the acceleration both flies past the rows the user is reading and makes the
  * threshold nearly unreachable. Every other list keeps stock acceleration untouched.
  *
- * <h3>Leaving jump mode</h3>
+ * Leaving jump mode
  * Only by letting go of the wheel: {@link #IDLE_MS} after the last click the key comes off screen
- * and the next click steps by row again. Slowing down deliberately does <b>not</b> drop out — the
+ * and the next click steps by row again. Slowing down deliberately does not drop out — the
  * point is to be able to step group by group and read them.
  */
 public final class Alpha {
@@ -115,13 +113,13 @@ public final class Alpha {
      * The group of rows that have no key of their own: a "Show all songs" button row, and a song
      * with no title tag.
      *
-     * <p>Its key is <b>not a character</b>, and that is the whole point. A real key is now always
+     * Its key is not a character, and that is the whole point. A real key is always
      * exactly one character — the row's own first one — so any marker chosen out of the alphabet
      * can be a real key as well: "#" collides with a song called "#Selfie", "?" with one called
      * "?" and so on for whatever gets picked next. A key of a different LENGTH cannot collide with
      * any of them, whatever a song turns out to be called.
      *
-     * <p>{@link #OTHER_TEXT} is what the plate DRAWS for it. A label may repeat — "#Selfie" is
+     * {@link #OTHER_TEXT} is what the plate DRAWS for it. A label may repeat — "#Selfie" is
      * shown "#" as well — but the two are separate groups and the jump steps between them; it is
      * the identity that has to be unique, not the glyph.
      */
@@ -147,14 +145,14 @@ public final class Alpha {
 
     /**
      * The same plate, borrowed by the on-screen keyboard to say which alphabet it has just
-     * switched to (`Keys`, #409). It is not a jump key: it appears on the switch, sits there for
+     * switched to (`Keys`). It is not a jump key: it appears on the switch, sits there for
      * {@link #FLASH_MS} and goes — nothing on the keyboard has to be scrolled to find it, so
      * leaving it up would only cover the screen.
      *
-     * <p>It is the jump key's own square, at its own size — the two are the same object as far as
+     * It is the jump key's own square, at its own size — the two are the same object as far as
      * the user is concerned, so nothing about it is re-measured for the shorter text. What differs
      * is the window it lives in (see below) and that the Activity is passed in rather than taken
-     * from the host view's context: the host here is a view of the <b>dialog's</b> window, whose
+     * from the host view's context: the host here is a view of the dialog's window, whose
      * context is a {@code ContextThemeWrapper}, not the Activity itself.
      */
     public static void flash(Activity act, View host, String text) {
@@ -317,7 +315,7 @@ public final class Alpha {
              || s == Y1Repository.SortAlbumType.Date_Desc.getType()) return YEAR;
         }
         // Genres pages all four of its levels through one ListView, so the adapter is the level and
-        // each level has a sort of its own to ask about (v0.26.3). Genres answers for all four.
+        // each level has a sort of its own to ask about. Genres answers for all four.
         if (screen.endsWith(".GenresActivity")) {
             int k = Genres.alphaKind(a);
             if (k == Genres.A_LETTER) return LETTER;
@@ -332,7 +330,7 @@ public final class Alpha {
      * the SONG-NAME sort and only it: the list is then in the order of the tag titles
      * ({@code order by lower(pinyinSongName)}), which is what {@link #label} reads.
      *
-     * <p>Deliberately NOT the file-name sorts, even though with "Song titles from metadata" off
+     * Deliberately NOT the file-name sorts, even though with "Song titles from metadata" off
      * those are the ones whose order the rows visibly show. The keys would then be file names, and
      * a file name of a track routinely opens with its track number — every group would be a digit
      * and the jump would be a jump between numbers, not between letters.
@@ -413,7 +411,7 @@ public final class Alpha {
     /**
      * The text a row is GROUPED by, which is not always the text it shows.
      *
-     * <p>For a song it is the tag title whenever the list is sorted by song name, and the file name
+     * For a song it is the tag title whenever the list is sorted by song name, and the file name
      * otherwise — i.e. it follows the SORT, because a group only means anything while the list is
      * in the order of the keys ({@code canShowSongName} is set by every screen's own
      * {@code switchSortType}, and by {@code Genres.flags}). With "Song titles from metadata" off

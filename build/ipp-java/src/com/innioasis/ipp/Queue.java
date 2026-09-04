@@ -32,7 +32,7 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * #227 — "Up Next": the authority on what plays next, and the model behind the queue screen.
+ * "Up Next": the authority on what plays next, and the model behind the queue screen.
  *
  * The screen shows a live projection, not just what the user queued:
  *   row 0            = the track playing right now
@@ -55,7 +55,7 @@ import java.util.UUID;
  * {@link #hist} keeps the last {@link #HIST_MAX} play positions so the Back/prev button
  * returns along the path actually taken (including shuffle hops), instead of index-1.
  *
- * Everything here works on the list that is PLAYING — the music list or, since #384, the audiobook
+ * Everything here works on the list that is PLAYING — the music list or the audiobook
  * one. The two are never live at the same time: {@link #syncKind} notices the switch and starts a
  * new session, because every index kept here means something only inside one list.
  *
@@ -70,9 +70,9 @@ public final class Queue {
      * tracks it shows. The two are counted apart because they answer different questions, but both
      * are bounded: a row on that screen is a view built before the first frame, so an unbounded
      * queue is an unbounded opening cost, and a few hundred queued tracks is what made it crawl.
-     * The manual queue used to be shown in full, on the grounds that a row has to be reachable to
-     * be removed; the cut is at the far end, so as the front of it is played or removed the rest
-     * comes into view, and the caption says how many there are in all.
+     * Showing the manual queue in full — on the grounds that a row has to be reachable to be removed
+     * — is what makes it crawl. The cut is at the far end instead, so as the front is played or
+     * removed the rest comes into view, and the caption says how many there are in all.
      */
     public static final int LOOKAHEAD = 20;
     public static final int MANUAL_MAX = 20;
@@ -107,7 +107,7 @@ public final class Queue {
     private static final int MAX_PAST = 4;
 
     /**
-     * Which player the state below belongs to: 0 = music, 1 = audiobook (#384). Everything here
+     * Which player the state below belongs to: 0 = music, 1 = audiobook. Everything here
      * holds indices into ONE list, so the two cannot share it — {@link #syncKind} notices the
      * change and starts over.
      */
@@ -158,7 +158,7 @@ public final class Queue {
         return Y1Application.Companion.getPlayerService();
     }
 
-    // ------------------------------------------------------- music or audiobook (#384, this file)
+    // ------------------------------------------------------- music or audiobook (this file)
     //
     // The audiobook player is the music player's screen with another list behind it, and stock's own
     // next/prev for it is a plain (index ± 1) wrap with no notion of a shuffled pass, a queue or the
@@ -282,20 +282,20 @@ public final class Queue {
      * whatever is already waiting there). Returns the position it went to, or -1 if there was no
      * playlist to put it in.
      *
-     * <p>Also when the list ALREADY holds that song: it gets an entry of its own, and the original
+     * Also when the list ALREADY holds that song: it gets an entry of its own, and the original
      * keeps its turn later on. That is what queueing a track off the album you are listening to
      * means — it plays now as well as in its place — and it is what the old "jump to it instead"
      * did anyway, only without ever admitting it: the jump remembered where it had come from and
      * came back, so the track played twice while the counter said the list was still three long.
      *
-     * <p>Why on adding, and not when the track is finally reached (v0.24.9): the list IS the play
+     * Why on adding, and not when the track is finally reached: the list IS the play
      * order, and the number Now Playing shows is the track's place in it. Appended at the end when
-     * it started playing, a track queued into a list of three read <b>4/4</b> the moment it played,
+     * it started playing, a track queued into a list of three read 4/4 the moment it played,
      * and the total only grew then — until it did, the user was looking at 1/3 with a fourth track
-     * already queued. Spliced in behind the current one it reads 1/3 → <b>1/4</b> on adding and
-     * <b>2/4</b> when it plays, and the track that used to follow keeps its place after it.
+     * already queued. Spliced in behind the current one it reads 1/3 → 1/4 on adding and
+     * 2/4 when it plays, and the track that followed keeps its place after it.
      *
-     * <p>Everything else here holds musicList INDICES — the shuffle plan, the back history, the
+     * Everything else here holds musicList INDICES — the shuffle plan, the back history, the
      * removed rows, {@link #resume} — so they all move up with the splice ({@link #shiftUp}). The
      * plan is not rebuilt: a guest is a queue entry, not part of the shuffled pass, so it is simply
      * absent from it (and {@link #newCycle} leaves pending guests out for the same reason).
@@ -449,12 +449,12 @@ public final class Queue {
      * A boundary has been reached and a remembered pass stands on the other side of it: put that
      * pass back whole — its list, its guests, its history and its counter — and land inside it.
      *
-     * <p>{@code atStart} says which way we are crossing. Walking BACK, the pass behind us is
+     * {@code atStart} says which way we are crossing. Walking BACK, the pass behind us is
      * entered at the track it ended on ({@code past}); walking FORWARD, the pass ahead of us is one
      * we previously walked backwards out of, so it is entered at its first track ({@code future})
      * and its old history is not ours — the run through it starts again.
      *
-     * <p>Returns false when there is nothing remembered on that side, and then the ordinary rules
+     * Returns false when there is nothing remembered on that side, and then the ordinary rules
      * (wrap with "repeat list" on, restart otherwise) apply unchanged.
      */
     private static boolean restorePass(PlayerService ps, ArrayList stack, boolean atStart) {
@@ -531,14 +531,14 @@ public final class Queue {
      * A queued track's turn has come: move it out of the slot it was parked in and stand it
      * immediately behind the track being left. Returns where it ended up.
      *
-     * <p>It is parked behind whatever was playing when it was QUEUED, and that is only where it
+     * It is parked behind whatever was playing when it was QUEUED, and that is only where it
      * belongs if playback reaches it from there. Back and Forward can leave from somewhere else
      * entirely — go back round to the album's last track and step forward, and the queued track is
      * the fourth thing heard, not the second. Leaving it parked showed it as 2/4 and then carried
      * on into the middle of the album; moved, it reads 4/4, Back off it walks the album from its
      * last track, and one more step forward is the end of the list, which is what it now is.
      *
-     * <p>Everything here holds positions, so the removal and the insertion are both announced
+     * Everything here holds positions, so the removal and the insertion are both announced
      * ({@link #shiftDown} / {@link #shiftUp}). The play index is not: the caller overwrites it with
      * the value returned here.
      */
@@ -688,7 +688,7 @@ public final class Queue {
     }
 
     /**
-     * #397 — the Search results. Same gather as {@link #addFromRvAdapter}, but its rows are
+     * The Search results. Same gather as {@link #addFromRvAdapter}, but its rows are
      * `SearchActivity.Item` wrappers rather than the model objects themselves, so each is unwrapped
      * into the Song or the Album it stands for and {@link #addPicked} then treats it like any other
      * menu selection (an album row queues the whole album, folder-encoded name included).
@@ -840,10 +840,10 @@ public final class Queue {
                 } else if (o instanceof Album) {
                     String an = ((Album) o).getName();
                     if (Albums.isAllSongs(an)) {
-                        // #281.1: the "Show all songs" row stands for the whole artist
+                        // the "Show all songs" row stands for the whole artist
                         collect(songs, artistSongs(repo, Albums.allSongsArtist(an)));
                     } else {
-                        // keeps #291.3's encoded album name working (songsSync filters by folder)
+                        // keeps the folder-encoded album name working (songsSync filters by folder)
                         collect(songs, repo.getSongsByAlbumSync((Album) o, 0, null));
                     }
                 } else if (o instanceof Playlist) {
@@ -870,7 +870,7 @@ public final class Queue {
     }
 
     /**
-     * Artist rows go through {@link Artists#songs} first so a split artist (#281.2) matches its
+     * Artist rows go through {@link Artists#songs} first so a split artist matches its
      * collaborations; null means an ordinary artist, which the indexed query handles. The
      * sync query is used rather than {@code getSongsByArtist}, whose side effect would rewrite
      * the user's artist-song sort preference.
@@ -1134,16 +1134,15 @@ public final class Queue {
      * Opening a song from a menu starts a fresh session: the shuffle plan, the back-history, the
      * removed-row set and the MANUAL QUEUE all reset.
      *
-     * <p>The manual queue used to survive this deliberately ("the user put them there on purpose"),
-     * and that is what the user asked to change: a queued track is a guest of the list it was
-     * queued into, so it goes when that list does. Same in {@link #relist}.
+     * The manual queue resets with the rest (the user's call): a queued track is a guest of the
+     * list it was queued into, so it goes when that list does. Same in {@link #relist}.
      */
     public static void onNewPlaylist() {
         newPlaylist(0);
     }
 
     /**
-     * The same for a book (#384): injected into {@code setAudiobookPlaylist}. It has to be a call of
+     * The same for a book: injected into {@code setAudiobookPlaylist}. It has to be a call of
      * its own rather than one that asks the service what is playing, because the list is handed over
      * BEFORE the player screen sets the flag — at this moment the service still says "music".
      */
@@ -1172,25 +1171,25 @@ public final class Queue {
      * play order has to follow it. Injected at the end of {@code MyBaseAdapter.setItems}, the one
      * call every ListView-based list in the app goes through.
      *
-     * <p>What was wrong without it: a sort change rewrites the SCREEN's list and nothing else. The
+     * What was wrong without it: a sort change rewrites the SCREEN's list and nothing else. The
      * player keeps the order it was handed when the track was opened, so track 1 of 4 goes on
      * calling itself 1/4 after the sort has made it the last one, "Up next" still lists what used
      * to follow it, and the two only come right when some song is started again — which is the one
      * thing that hands the player a new list.
      *
-     * <p>So the player's list and index are replaced in place. Deliberately NOT through
+     * So the player's list and index are replaced in place. Deliberately NOT through
      * {@code setMusicPlaylist}: that is "a song was opened", and {@code Ipp.noteReopen} sitting at
      * the top of it would early-return for the very song that is playing. Nothing is started or
      * stopped here — only the order changes, and the track keeps playing through it.
      *
-     * <p>The plan, the back-history and the removed rows all hold INDICES into the old order, so
+     * The plan, the back-history and the removed rows all hold INDICES into the old order, so
      * they mean nothing now and go; the manual queue holds songs and stays, as it does across a
      * session reset. There is nothing to repaint: the Now-Playing counter is read in
      * {@code refreshUI} and the player Activity is finished when it is left, so it is rebuilt from
      * the new index the next time it opens; the queue screen and the ▶ marker are projections of
      * exactly what has just been updated.
      *
-     * <p>Guards, in order of cost: the adapter must be a song list, it must be the screen the queue
+     * Guards, in order of cost: the adapter must be a song list, it must be the screen the queue
      * was actually started from (strictly — "unknown" must NOT mean "yes" here, or every list build
      * in the app would rewrite the playlist), and the ORDER must really have changed. That last
      * test is what keeps re-entering the source screen from resetting a live shuffle pass; it walks
@@ -1404,7 +1403,7 @@ public final class Queue {
      * Called from {@code PlayerService.saveState()} — the one moment stock writes down what is
      * playing, so this is written in the same breath and by the same trigger.
      *
-     * <p>{@code commit()}, not {@code apply()}: the process is on its way down when this runs.
+     * {@code commit()}, not {@code apply()}: the process is on its way down when this runs.
      */
     public static void saveSource(PlayerService ps) {
         try {
@@ -1518,20 +1517,20 @@ public final class Queue {
      * Go back to the screen the playing track was started from — the album, the folder, the
      * playlist, the artist's song list.
      *
-     * <p>Not by starting its Intent: an Activity here is a whole SECTION, not a screen. Albums,
+     * Not by starting its Intent: an Activity here is a whole SECTION, not a screen. Albums,
      * Artists and Genres walk their levels inside one instance and never start a second one, so the
      * Intent that launched it names the level it was ENTERED at — restarting it landed on the album
      * list instead of the album, on the artist list instead of the artist. (Folders looked right
      * only because a folder there really is its own Activity.)
      *
-     * <p>So the live instance is what is remembered, and it is brought to the front over everything
+     * So the live instance is what is remembered, and it is brought to the front over everything
      * that was covering it (`FLAG_ACTIVITY_REORDER_TO_FRONT` — the one way to raise an instance
      * without building a second one). The section comes back exactly as it was left, on the list the
      * song was started from, and nothing is created or re-initialised. If it is gone from the stack
      * after all — the user walked out of it before coming here, which finishes it — then it is built
      * again from its Intent, with the level inside it restored on top of that.
      *
-     * <p><b>The player is deliberately left where it is</b>, underneath: one press back from the list
+     * The player is deliberately left where it is, underneath: one press back from the list
      * returns to it, and from there on the stack is the one the user came up. It stops being wanted
      * the moment a track is started from this list — a new player opens then, and the old one is
      * only a leftover of the way here, so {@link #onNewPlaylist} drops it (see {@link #dropPlayer}).
@@ -1628,7 +1627,7 @@ public final class Queue {
      * which answers with {@code getPlayingSong()} — whichever of music and audiobook is actually
      * playing.
      *
-     * <p>The one word matters here: {@link #noteReopen} is asked from
+     * The one word matters here: {@link #noteReopen} is asked from
      * {@code PlayerService.setMusicPlaylist}, i.e. about a song being opened from a MUSIC list, and
      * with {@code getPlayingSong()} a playing audiobook could answer for it. The other way round
      * would be wrong too — that is the {@code getPlayingMusic()} trap, which goes on answering with
@@ -1644,11 +1643,11 @@ public final class Queue {
     }
 
     /**
-     * ipp: "reopening the song that is already playing continues it" holds only in the list it was
+     * Ipp: "reopening the song that is already playing continues it" holds only in the list it was
      * started from. Opening the same file from another section starts it THERE, which is also what
      * makes that section the new source ({@link #onNewPlaylist} runs on the proceed path).
      *
-     * <p>Injected into {@code PlayerService.setMusicPlaylist}: it answers the question and arms the
+     * Injected into {@code PlayerService.setMusicPlaylist}: it answers the question and arms the
      * flag in one call, because the two must be decided from the same instant.
      */
     public static boolean noteReopen(List list, int index) {
@@ -1709,10 +1708,9 @@ public final class Queue {
     }
 
     /**
-     * Kept because AlbumsActivity's play call site calls them. They used to mark "started from an
-     * album", which decided whether Back walked the played path or stock's index-1 — a distinction
-     * that no longer exists: with shuffle off Back is index-1 everywhere, bounded by the list's own
-     * first and last track, and with shuffle on it is the history everywhere.
+     * No-ops, kept only because AlbumsActivity's play call site calls them. There is nothing to mark:
+     * with shuffle off Back is index-1 on every screen, bounded by the list's own first and last
+     * track, and with shuffle on it is the played history on every screen.
      */
     public static void markAlbum() {
     }
@@ -1747,7 +1745,7 @@ public final class Queue {
     /**
      * Take entry {@code row} of the manual queue and answer the musicList index it plays at.
      *
-     * <p>A GUEST is already standing in the list exactly where the queue put it, so playback just
+     * A GUEST is already standing in the list exactly where the queue put it, so playback just
      * carries on into it and {@link #resume} is left alone — what follows it in the list IS what
      * follows it in the queue. An entry the list already held is somewhere else entirely, so that
      * jump remembers the run it interrupts and comes back to it once the queue is drained.

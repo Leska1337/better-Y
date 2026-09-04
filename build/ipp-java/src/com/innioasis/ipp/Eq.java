@@ -17,8 +17,8 @@ import java.util.List;
  * The Equalizer's preview — the big icon and the caption beside the list — painted once at the end
  * of a burst of wheel clicks instead of once per click.
  *
- * <p>Stock calls {@code EqActivity.showThisEq()} at the top of {@code clockwise()} /
- * {@code antiClockwise()}, i.e. <b>before</b> the list is even told the cursor moved, and it is by
+ * Stock calls {@code EqActivity.showThisEq()} at the top of {@code clockwise()} /
+ * {@code antiClockwise()}, i.e. before the list is even told the cursor moved, and it is by
  * far the most expensive thing a click there can do: {@code ThemeManager.commonSetIcon} swaps the
  * image of a 200dip {@code wrap_content} + {@code adjustViewBounds} ImageView, so every click asks
  * for a layout of the whole screen (and, with a theme that ships its own equaliser icons, decodes a
@@ -26,7 +26,7 @@ import java.util.List;
  * never scrolls and only rebinds the two rows whose highlight changed. That is the whole of "the
  * equaliser scrolls thick and unresponsive": the highlight was waiting behind the picture.
  *
- * <p>Same answer as the panel beside the Settings list ({@code Wheel.postRest} /
+ * Same answer as the panel beside the Settings list ({@code Wheel.postRest} /
  * {@code Wheel.Rest}), and it rides on the same timer: {@link #preview} only notes which screen is
  * asking, {@code Wheel.follow} — called immediately after it — (re-)posts {@code Rest}, and
  * {@link #rest} paints when the clicks stop. A single click therefore shows the icon ~70 ms later,
@@ -69,13 +69,13 @@ public final class Eq {
     /**
      * The preset rows share the list's whole height instead of leaving a strip under the last one.
      *
-     * <p>The rows are a fixed 30dip in the layout and there are ten of them, so they came to 300 of
+     * The rows are a fixed 30dip in the layout and there are ten of them, so they came to 300 of
      * the 315 the screen has below the status bar. 315 / 10 is not a whole number, which is why the
      * height cannot simply be written into {@code item_eq.xml}: the remainder is handed out one
      * pixel at a time to the topmost rows, and that is what makes the last row end exactly at the
      * bottom edge.
      *
-     * <p>Applied from a layout listener because the height has to come from the list's measured
+     * Applied from a layout listener because the height has to come from the list's measured
      * one, and re-checked on every pass so a rebound row cannot come back at its layout height. It
      * settles after one pass — nothing is written once every row already has the height it wants,
      * so the {@code requestLayout} this causes is not repeated.

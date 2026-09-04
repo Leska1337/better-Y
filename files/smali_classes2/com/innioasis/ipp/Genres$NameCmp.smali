@@ -15,7 +15,7 @@
 
 .method constructor <init>(Z)V
   .registers 2
-  .line 927
+  .line 925
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-boolean p1, p0, Lcom/innioasis/ipp/Genres$NameCmp;->desc:Z
     return-void
@@ -23,17 +23,17 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 5
-  .line 931
+  .line 929
     invoke-static { p1 }, Lcom/innioasis/ipp/Genres;->access$1000(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p1
-  .line 932
+  .line 930
     invoke-static { p2 }, Lcom/innioasis/ipp/Genres;->access$1000(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p2
     invoke-static { p2 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p2
-  .line 933
+  .line 931
     const-string v0, ""
     if-nez p1, :L0
     move-object p1, v0
@@ -43,7 +43,7 @@
     invoke-virtual { p1, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p1
   :L1
-  .line 934
+  .line 932
     if-nez p2, :L2
     goto :L3
   :L2
@@ -51,10 +51,10 @@
     invoke-virtual { p2, v0 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v0
   :L3
-  .line 935
+  .line 933
     invoke-virtual { p1, v0 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result p1
-  .line 936
+  .line 934
     iget-boolean p2, p0, Lcom/innioasis/ipp/Genres$NameCmp;->desc:Z
     if-eqz p2, :L4
     neg-int p1, p1

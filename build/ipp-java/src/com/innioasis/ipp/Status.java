@@ -21,21 +21,19 @@ import java.io.File;
  * marker the lists draw ({@link Rows#playMark}).
  *
  * Two jobs, both about that one icon:
- * <ul>
- *   <li><b>What a track change publishes on its way is not a state.</b> Switching tracks pauses the
+ *   - What a track change publishes on its way is not a state. Switching tracks pauses the
  *       old one and leaves {@code playing == None} while the next is prepared — and
  *       {@code setPlayValue} turns None into 0 whatever it was asked for. So the sequence is
  *       1 → 3 → 0 → 1, which flashed ❚❚ in the lists and blinked the status icon out. Both are
- *       held back, but <b>only between the start of a track change and the moment playback settles
- *       on something real</b>; outside that window nothing is delayed at all.</li>
- *   <li><b>The icon steps aside for the list.</b> While the list on screen is showing this very
+ *       held back, but only between the start of a track change and the moment playback settles
+ *       on something real; outside that window nothing is delayed at all.
+ *   - The icon steps aside for the list. While the list on screen is showing this very
  *       state next to the track itself, the status bar repeating it says nothing — so the icon is
  *       hidden, and it comes back the moment the marked row scrolls out of view or the user leaves
- *       for a screen that does not show one.</li>
- * </ul>
+ *       for a screen that does not show one.
  *
  * Cost: {@link #check} is one boolean test per bound row, and at most one posted runnable per
- * layout, which walks the <b>visible</b> rows only (six to eight of them) and compares a path. It
+ * layout, which walks the visible rows only (six to eight of them) and compares a path. It
  * never scans the list.
  */
 public final class Status {
@@ -80,7 +78,7 @@ public final class Status {
     }
 
     /**
-     * The stronger of the two: a song was opened <b>from a menu</b>, so the player Activity is on
+     * The stronger of the two: a song was opened from a menu, so the player Activity is on
      * its way up over this list. Only in that case does the icon wait before stepping aside — see
      * {@link #STEP_ASIDE_MS}. Skipping tracks with the side buttons goes through
      * {@link #switching()} alone and is not affected.
@@ -98,8 +96,8 @@ public final class Status {
      * Injected at the top of {@code Static.setPlayValue}: true = swallow this call.
      *
      * Only two states are ever held back, and only while a track change is in flight:
-     * <b>3 (paused)</b>, because switching tracks pauses the old one on the way, and
-     * <b>0 (nothing loaded)</b>, which is not even asked for — {@code setPlayValue} substitutes it
+     * 3 (paused), because switching tracks pauses the old one on the way, and
+     * 0 (nothing loaded), which is not even asked for — {@code setPlayValue} substitutes it
      * for whatever it was given whenever {@code playing == None}, and that is exactly what the
      * player is between two tracks. Those two are what flashed: ❚❚ in the lists, and the status
      * bar's icon blinking out and coming back on the player.
@@ -161,7 +159,7 @@ public final class Status {
     }
 
     /**
-     * How long the icon waits before stepping aside — <b>only</b> when a song was just opened from
+     * How long the icon waits before stepping aside — only when a song was just opened from
      * a menu ({@link #playerOpening()}), and for nothing else.
      *
      * That one case is special because the marker appears on the very row the cursor is on and the
@@ -246,7 +244,7 @@ public final class Status {
 
     /**
      * The other injection: the play-state observer, i.e. stock has just repainted the icon because
-     * the state changed <b>while this screen was up</b>.
+     * the state changed while this screen was up.
      *
      * The difference from {@link #apply} is the whole of what was blinking. Starting a track from a
      * list publishes "playing" right there, which makes the marker appear on the row under the
@@ -308,7 +306,7 @@ public final class Status {
         if (a == null || lv.getAdapter() != a) return false;
         if (lv.getVisibility() != View.VISIBLE || lv.getWindowToken() == null) return false;
         PlayerService s = Y1Application.Companion.getPlayerService();
-        // getPlayingSong, not getPlayingMusic: the audiobook lists draw the marker too since #384,
+        // getPlayingSong, not getPlayingMusic: the audiobook lists draw the marker too,
         // and asked for the music track this compared a path no book list can ever hold — so the
         // icon never stepped aside there, and while a book played it could have stepped aside for
         // a music list showing a track that was not playing at all.

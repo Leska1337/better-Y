@@ -17,17 +17,17 @@ import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 
 /**
- * The TRACK NUMBER tag of a song (#220.1, #220.2), kept per path in {@code ipp_tracks.txt}.
+ * The TRACK NUMBER tag of a song, kept per path in {@code ipp_tracks.txt}.
  *
- * <p>{@link #get(String)} answers {@code Integer.MAX_VALUE} for a song with no number — which is
+ * {@link #get(String)} answers {@code Integer.MAX_VALUE} for a song with no number — which is
  * what puts untagged songs at the end of "Sort by track" — and it deliberately does NOT read the
  * file: it is the drawing path, so the one read is done by {@link #warmIfWanted()} from the two
  * screens that show track numbers — {@code AlbumsActivity.initView} and {@code Genres.songs}.
  *
- * <p>A tagless file is written down as that same MAX_VALUE by {@link #ensure}, so it is not opened
+ * A tagless file is written down as that same MAX_VALUE by {@link #ensure}, so it is not opened
  * again on the next pass.
  *
- * <p>The map is a raw {@code HashMap} — a generic field type makes javac emit a class
+ * The map is a raw {@code HashMap} — a generic field type makes javac emit a class
  * {@code Signature} attribute and the bundled d8 crashes dexing those.
  */
 public final class TrackCache {
@@ -52,7 +52,7 @@ public final class TrackCache {
     /**
      * Reads the track number of every song of the list that has none cached.
      *
-     * <p>A file whose tag gives nothing is written down as MAX_VALUE — the very value {@link #get}
+     * A file whose tag gives nothing is written down as MAX_VALUE — the very value {@link #get}
      * would have answered — so it is not opened again. Without that, every untagged song in the
      * library was re-read on every sort.
      */
@@ -87,7 +87,7 @@ public final class TrackCache {
     }
 
     /**
-     * ipp #220.1: this song's file was re-read ("Update library"), so its TRACK NUMBER tag may have
+     * Ipp: this song's file was re-read ("Update library"), so its TRACK NUMBER tag may have
      * changed — drop the remembered one. Its counterpart in {@code DiscCache.forget} is called from
      * the same place ({@code Ipp.songChanged}); the two must be dropped together, because
      * {@code DiscCache} is what records for both of them that a file has been looked at.
@@ -105,12 +105,12 @@ public final class TrackCache {
     }
 
     /**
-     * ipp #220.1: read the cache file in NOW, before any album row asks for a track number.
+     * Ipp: read the cache file in NOW, before any album row asks for a track number.
      * {@link #get} answers from memory only, and a row bind is the drawing path — so the one file
      * read is done here, once, from {@code AlbumsActivity.initView} and from {@code Genres.songs}
      * (the Genres screen shows the column for a real album too).
      *
-     * <p>Gated on the setting, because with it off nothing on any screen asks for a track number
+     * Gated on the setting, because with it off nothing on any screen asks for a track number
      * and the read would be pure cost.
      */
     public static void warmIfWanted() {
@@ -180,7 +180,7 @@ public final class TrackCache {
     }
 
     /**
-     * ipp #220.1: skip whatever stands in FRONT of the number, then read it — the first number in
+     * Ipp: skip whatever stands in FRONT of the number, then read it — the first number in
      * the value, which is the rule {@code DiscCache.parse} has always used and the one the docs
      * claimed this method used too. It did not: it read digits from index 0 and stopped at the
      * first non-digit, so "1/12" worked but " 1", "A1" (vinyl side numbering) and "Track 3" all

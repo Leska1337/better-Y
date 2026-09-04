@@ -31,7 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * #291.3 — treat same-named albums that are actually DIFFERENT albums as distinct.
+ * Treat same-named albums that are actually DIFFERENT albums as distinct.
  *
  * There is no album-artist column in the DB and API 17's MediaMetadataRetriever can't read
  * the ALBUMARTIST tag, so the physical-album identity is the **folder** the tracks live in
@@ -50,7 +50,7 @@ public final class Albums {
 
     private static final char SEP = (char) 1;   // SOH (0x01) -- never appears in tag text
 
-    // #281.1 -- the "Show all songs" pseudo-row of the artist view is a second marker: STX + artist.
+    // the "Show all songs" pseudo-row of the artist view is a second marker: STX + artist.
     // It travels through the very same paths an album name does (list -> confirm -> albumName ->
     // switchSongSortType -> getSongsByAlbum), so the flat artist song list, its sort menu and the
     // Shuffle bar all come from stock code; only the three decoding points below know about it.
@@ -264,7 +264,7 @@ public final class Albums {
         Prefs.setInt(c, CACHE_M, Prefs.getInt(c, CACHE_M, 0) & ~mask);
     }
 
-    // package-private: Folders (#224) walks the same cached list to find a folder's songs
+    // package-private: Folders walks the same cached list to find a folder's songs
     public static List allSongs() {
         List c = songCache;
         if (c != null && System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return c;
@@ -278,7 +278,7 @@ public final class Albums {
     // ---- the canonical cache key of an album --------------------------------------------------
     //
     // Every per-album cache (CoverCache, AlbumInfo, AlbumArtist, YearCache) is keyed by the album
-    // string the row carries, and on the Albums screen that string is folder-encoded (#291.3). The
+    // string the row carries, and on the Albums screen that string is folder-encoded. The
     // Genres screen is not ours: it puts PLAIN album names in the very same AlbumListAdapter, so
     // the same album asked under two different keys — the thumbnails were decoded a second time,
     // written to the cache a second time, and flashed in on entry even though the Albums screen
@@ -342,7 +342,7 @@ public final class Albums {
             Intent it = activity.getIntent();
             if (it != null) artist = it.getStringExtra("ipp_artist");
         }
-        scope = artist;   // #281.4: remember whose album list this is (cleared by the main view)
+        scope = artist;   // remember whose album list this is (cleared by the main view)
         artistList = artist != null;   // which of the two stored sorts this list uses
         if (artist == null) return split(names);
 
@@ -356,7 +356,7 @@ public final class Albums {
         if (asongs == null || asongs.isEmpty()) return new ArrayList();
         LinkedHashMap byName = foldersByName(asongs);
         ArrayList out = new ArrayList();
-        if (!asongs.isEmpty()) out.add(allMark(artist));   // #281.1: first row = "Show all songs"
+        if (!asongs.isEmpty()) out.add(allMark(artist));   // first row = "Show all songs"
         for (int i = 0; i < names.size(); i++) {
             String name = (String) names.get(i);
             Object o = byName.get(name == null ? "" : name);
@@ -369,7 +369,7 @@ public final class Albums {
     }
 
     /**
-     * #291.2 — order by release year, per PHYSICAL album.
+     * Order by release year, per PHYSICAL album.
      *
      * Stock sorted the plain album names in {@code getAlbumsBySort}, i.e. before the split below
      * runs, so two same-named albums in different folders shared one year (the first one's) and
@@ -393,7 +393,7 @@ public final class Albums {
     }
 
     /**
-     * #281.1 — paint the "Show all songs" pseudo-row. Called from AlbumListAdapter.getView before
+     * Paint the "Show all songs" pseudo-row. Called from AlbumListAdapter.getView before
      * it looks up a cover/artist; true means "this row is ours, skip the whole album lookup"
      * (which also keeps the row off the background cover thread).
      *
@@ -410,7 +410,7 @@ public final class Albums {
         }
         if (artistTv != null) artistTv.setVisibility(mine ? View.GONE : View.VISIBLE);
         if (!mine) {
-            // Rows are recycled: a leftover #228.1 tint/dim would paint a real album cover.
+            // Rows are recycled: a leftover tint/dim would paint a real album cover.
             Icons.reset(cover);
             pendingIcon = null;
             return false;
@@ -427,7 +427,7 @@ public final class Albums {
     }
 
     /**
-     * #228.1 — finish the "Show all songs" icon at the END of AlbumListAdapter.getView.
+     * Finish the "Show all songs" icon at the END of AlbumListAdapter.getView.
      *
      * {@link #allSongsRow} runs near the top of getView, before the row's ThemeManager text
      * colours are applied, so the colour the icon should copy does not exist yet. The handoff is a
@@ -509,11 +509,12 @@ public final class Albums {
         SharedPreferencesUtils.INSTANCE.setSortAlbum(type);
     }
 
-    // ---- #281.1: the flat list keeps its own sort ---------------------------------------------
+    // ---- the flat list keeps its own sort ---------------------------------------------
     // Stock persists ONE preference (sortAlbumSong) for "the song list of an album", written as a
     // side effect of getSongsByAlbum and read back by AlbumsActivity.confirm. The "Show all songs"
-    // list rides the very same path, so picking "Subdiv. by Album" there used to become the sort
-    // of every real album afterwards. The marker list now writes/reads its own key instead.
+    // list rides the very same path, so sharing that preference would make "Subdiv. by Album"
+    // picked there the sort of every real album afterwards. The marker list writes and reads its
+    // own key instead.
     private static final String ALL_SORT = "all_sort";
 
     /** Replaces the stock {@code setSortAlbumSong} in getSongsByAlbum. */
@@ -521,14 +522,14 @@ public final class Albums {
      * The sort of the song list AlbumsActivity is showing right now.
      *
      * There is no way to ask the Activity: {@code albumName} is private and reachable only through
-     * a synthetic accessor, which Java cannot call. But {@link #noteSort} runs on every build of
-     * that list (it replaced stock's {@code setSortAlbumSong} inside {@code getSongsByAlbum}), so
+     * a synthetic accessor, which Java cannot call. But {@link #noteSort} runs on every build of that
+     * list — it stands in for stock's {@code setSortAlbumSong} inside {@code getSongsByAlbum} — so
      * recording it there answers the question without touching stock code. Read by {@code Alpha},
      * which needs to know whether jumping by letter would mean anything on this list.
      */
     private static int songSort = -1;
 
-    /** Which list that is — the encoded album key, or one of the marker names (#281.1). */
+    /** Which list that is — the encoded album key, or one of the marker names. */
     private static String listKey;
 
     public static int songListSort() {
@@ -552,10 +553,10 @@ public final class Albums {
     /**
      * Re-open that level in a freshly started AlbumsActivity and land on the playing track.
      *
-     * The same two steps as "Open album" (#362.2), and for the same reason: an album is chosen
+     * The same two steps as "Open album", and for the same reason: an album is chosen
      * INSIDE the Activity, so its own Intent names the section, not the list. The Intent handed in
      * is a copy of the one the screen was started with, which is what carries the artist scope
-     * (#281.4) when the source was an artist's album list.
+     * when the source was an artist's album list.
      */
     public static void restore(Intent i, String key, String focusPath) {
         if (i == null || key == null) return;
@@ -600,7 +601,7 @@ public final class Albums {
     }
 
     /**
-     * #281.1 — refill the song-level menu of AlbumsActivity for the list currently on screen.
+     * Refill the song-level menu of AlbumsActivity for the list currently on screen.
      * The dialog is a per-activity lazy singleton but serves two different lists: a real album
      * (track order makes sense, album subdivision does not) and the flat artist list built by the
      * "Show all songs" row (the other way round). Called right before every show().
@@ -640,10 +641,10 @@ public final class Albums {
         return Artists.openFrom(a, songDlg, songs);
     }
 
-    // ------------------------------------------------------------------ #362.2 "Open album"
+    // ------------------------------------------------------------------ "Open album"
 
     /**
-     * #362.2 — open the album a song belongs to, landing on that song.
+     * Open the album a song belongs to, landing on that song.
      *
      * Offered only in the two flat "everything at once" lists (All songs, and the artist's
      * "Show all songs"), where the album a track came from is not on screen; inside an album it
@@ -683,7 +684,7 @@ public final class Albums {
         closeOnBack = false;
         returnAlbum = null;
         returnFocus = null;
-        // #362.2: an album reached this way is shown WHOLE. The artist scope (#281.4) is armed by
+        // an album reached this way is shown WHOLE. The artist scope is armed by
         // the artist's album list and would otherwise still be in force, hiding the other artists
         // of the very album the user asked to see.
         scope = null;
@@ -692,13 +693,13 @@ public final class Albums {
     }
 
     /**
-     * #397.6 — open an album by NAME, from a screen that has no song adapter to ask (the Search
+     * Open an album by NAME, from a screen that has no song adapter to ask (the Search
      * results). Same two steps as "Open album" above, so what comes up is the Albums screen's own
      * song list — track numbers, CD dividers, the Shuffle row, its sort menu and the queue — rather
      * than the bare file names ShowSongListActivity drew.
      *
      * The name goes through {@link #coverKey}, i.e. it is folder-encoded whenever it belongs to
-     * exactly one folder (#291.3): the album then opens exactly as it does from the Albums screen,
+     * exactly one folder: the album then opens exactly as it does from the Albums screen,
      * cover cache and all. A name shared by several folders keeps its own and opens merged, which
      * is what the search result row itself stands for — one row per distinct name.
      */
@@ -708,9 +709,9 @@ public final class Albums {
     }
 
     /**
-     * #397 — "Open album" on a search result: the album that song belongs to, landing on the song
+     * "Open album" on a search result: the album that song belongs to, landing on the song
      * itself. {@link #keyOf} is the folder-encoded key, so the album that opens is the physical one
-     * the file sits in even when the name is shared (#291.3).
+     * the file sits in even when the name is shared.
      */
     public static void openAlbumOfSong(Activity a, Song s) {
         if (a == null || s == null) return;
@@ -723,7 +724,7 @@ public final class Albums {
         closeOnBack = true;                     // top button goes back to the screen we came from
         returnAlbum = null;
         returnFocus = null;
-        scope = null;                           // no artist scope (#281.4) is in force here
+        scope = null;                           // no artist scope is in force here
         Intent i = new Intent(a, com.innioasis.music.AlbumsActivity.class);
         i.putExtra(EXTRA_OPEN, key);
         a.startActivity(i);
@@ -810,7 +811,7 @@ public final class Albums {
     //
     // So: note the first visible row and its pixel offset on the way in, put them back on the way
     // out. The note is consumed on use and guarded by the selected row, because the same ListView
-    // is also restored on paths that never noted anything (#362.2's "Open album").
+    // is also restored on paths that never noted anything ("Open album").
 
     private static int listFirst = -1;
     private static int listTop;
@@ -896,7 +897,7 @@ public final class Albums {
     }
 
     /**
-     * #397 — the same split for the SEARCH results, which arrive as `Album` objects and must keep
+     * The same split for the SEARCH results, which arrive as `Album` objects and must keep
      * the query's own order (no `byYear` here: this list is not an album list, it is what was
      * found). One row per folder the name lives in, encoded exactly as everywhere else, so the
      * row's thumbnail, its song count and the album it opens all agree with the Albums screen.
@@ -960,7 +961,7 @@ public final class Albums {
     }
 
     /**
-     * #281.1 — the artist's whole song list, for the "Show all songs" row. Never null (a null
+     * The artist's whole song list, for the "Show all songs" row. Never null (a null
      * would fall through to the stock query, which would look for an album literally named
      * "Artist"). Track_Number is remapped: the stock artist query has no case for it and
      * would throw, and grouping by album is what a track order means for a whole artist anyway.
@@ -974,7 +975,7 @@ public final class Albums {
         return l == null ? new ArrayList() : l;
     }
 
-    // ---- #281.4: an album opened from an artist shows only that artist's tracks ---------------
+    // ---- an album opened from an artist shows only that artist's tracks ---------------
     //
     // The album name that travels to getSongsByAlbum carries a folder but no artist, and the
     // repository has no Activity to ask, so the scope is remembered here: listForView is called
@@ -987,7 +988,7 @@ public final class Albums {
     private static String scope;
 
     /**
-     * innioasis++ → "Show songs only by the selected artist inside Artists → Album", ON by
+     * better-Y → "Show songs only by the selected artist inside Artists → Album", ON by
      * default; Off is stock behaviour, i.e. the whole album. Was the inverted
      * "full_artist_albums", worded backwards for the same reason `Artists.KEY_SPLIT` was — see
      * there for why the key changed along with the wording.
@@ -1060,15 +1061,15 @@ public final class Albums {
      * Group a song list by disc, keeping the order within each disc — a stable sort with the disc
      * as the PRIMARY key, applied on top of whatever order was asked for.
      *
-     * <p>This is what makes the dividers possible at all: {@code Disc} shows them only for a list
+     * This is what makes the dividers possible at all: {@code Disc} shows them only for a list
      * that is contiguous by disc, and no ordinary sort produces one. A multi-disc album whose CDs
      * live in {@code CD1/}, {@code CD2/} looks contiguous in plain path order and hides the
      * omission; a record whose SIDES are one folder and differ only by the "A1"/"B1" track tag does
-     * not — sorted by name or by path the two sides interleave, so the whole album fell back to row
-     * numbers with nothing to explain it. That was the Genres screen on v0.32.1, which ordered its
-     * song list by path and stopped there: CD albums showed their strips, records showed none.
+     * not — sorted by name or by path the two sides interleave, so without this the whole album falls
+     * back to row numbers with nothing to explain it, while its CD-per-folder neighbour shows its
+     * strips. A screen that orders its song list by path and stops there gets exactly that.
      *
-     * <p>Public because both screens have to apply the SAME rule — the Albums screen through
+     * Public because both screens have to apply the SAME rule — the Albums screen through
      * {@link #songs}, the Genres screen through {@code Genres.songs}, which owns its own sorts.
      */
     public static List byDisc(List songs) {

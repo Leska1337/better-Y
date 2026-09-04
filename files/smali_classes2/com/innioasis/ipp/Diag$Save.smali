@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroid/app/Activity;)V
   .registers 2
-  .line 350
+  .line 348
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Diag$Save;->a:Landroid/app/Activity;
     return-void
@@ -25,33 +25,33 @@
   .catchall { :L0 .. :L1 } :L2
   .catchall { :L3 .. :L4 } :L5
   .registers 4
-  .line 353
+  .line 351
     nop
   :L0
-  .line 355
+  .line 353
     iget-object v0, p0, Lcom/innioasis/ipp/Diag$Save;->a:Landroid/app/Activity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->report(Landroid/content/Context;)Ljava/io/File;
     move-result-object v0
   :L1
-  .line 358
+  .line 356
     goto :L3
   :L2
-  .line 356
+  .line 354
     move-exception v0
     const/4 v0, 0
   :L3
-  .line 360
+  .line 358
     iget-object v1, p0, Lcom/innioasis/ipp/Diag$Save;->a:Landroid/app/Activity;
     new-instance v2, Lcom/innioasis/ipp/Diag$Note;
     invoke-direct { v2, v1, v0 }, Lcom/innioasis/ipp/Diag$Note;-><init>(Landroid/app/Activity;Ljava/io/File;)V
     invoke-virtual { v1, v2 }, Landroid/app/Activity;->runOnUiThread(Ljava/lang/Runnable;)V
   :L4
-  .line 363
+  .line 361
     goto :L6
   :L5
-  .line 361
+  .line 359
     move-exception v0
   :L6
-  .line 364
+  .line 362
     return-void
 .end method

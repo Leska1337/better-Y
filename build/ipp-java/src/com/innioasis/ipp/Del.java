@@ -17,7 +17,7 @@ import com.innioasis.y1.activity.PlayerActivity;
 import java.io.File;
 
 /**
- * #228 — deleting a song takes its folder with it, once nothing is left in that folder.
+ * Deleting a song takes its folder with it, once nothing is left in that folder.
  *
  * "Nothing left" is deliberately narrow: any file that is not the album's own leftovers keeps the
  * folder. The leftovers are the files that belong to the songs and to nothing else —
@@ -172,7 +172,7 @@ public final class Del {
     }
 
     /**
-     * #228 — the delete confirmation says that the folder may go too, so the setting never
+     * The delete confirmation says that the folder may go too, so the setting never
      * surprises anyone. Injected at the single point every one of those dialogs passes through,
      * {@code DialogUtil.setDialogTitle(title, msg, callback, isConfirm, cancelable)}.
      *

@@ -12,27 +12,25 @@ import com.innioasis.y1.Y1Application;
  * The mod's own preferences — the {@code "innioasis_plus"} SharedPreferences file — plus the
  * handful of small answers that are read out of it everywhere.
  *
- * <p>Nothing here is cached: {@code getSharedPreferences} hands back a process-wide instance whose
+ * Nothing here is cached: {@code getSharedPreferences} hands back a process-wide instance whose
  * values are already in memory, so a get is a map lookup and the wrapper costs nothing.
  *
- * <p>Some of these questions no longer have a preference behind them. When a toggle turns out to be
- * the right behaviour rather than a choice, the row leaves the innioasis++ menu and the method
- * stays, answering a constant — that keeps the call sites (stock smali among them) untouched, which
- * is the whole point of them going through here.
+ * Some of these questions have no preference behind them: where a toggle turned out to be the
+ * right behaviour rather than a choice, the row is absent from the better-Y menu and the method
+ * answers a constant. That keeps the call sites (stock smali among them) untouched, which is the
+ * whole point of them going through here.
  */
 public final class Prefs {
 
     /**
-     * What every innioasis++ setting answers before anyone has touched it — <b>the one place</b>.
+     * What every better-Y setting answers before anyone has touched it — the one place.
      *
-     * <p>It used to be two: the menu carried {@code Item.def} and every feature carried the same
-     * number again in its own {@code getBool(key, def)}. Nothing keeps two such lists in step, and
-     * the failure is silent in the worst way — the row shows "On" over a feature still behaving as
-     * "Off". v0.34.5 moved nine defaults to On and the work was not in the menu at all but in twelve
-     * readers plus one stock one, which is exactly the shape of the problem. So the readers stopped
-     * stating a default: they ask {@link #on} / {@link #val}, and the answer lives here.
+     * A default named twice — once by the menu row, once by the feature's own
+     * {@code getBool(key, def)} — is a default that drifts, and the failure is silent in the worst
+     * way: the row shows "On" over a feature still behaving as "Off". So readers never state one;
+     * they ask {@link #on} / {@link #val} and the answer lives here.
      *
-     * <p>Booleans are 0/1. A key that is not listed answers 0 (Off / the first choice), which is
+     * Booleans are 0/1. A key that is not listed answers 0 (Off / the first choice), which is
      * what an unlisted key should mean anyway. Preferences that are not menu settings — sort modes,
      * cache stamps, the per-song {@code like:} flags — have no business here and keep passing their
      * own default to {@link #getBool} / {@link #getInt}.
@@ -75,7 +73,7 @@ public final class Prefs {
     /**
      * The default of a CHOICE/NUMBER setting.
      *
-     * <p>One of them is not a constant and cannot be tabled: the keyboard's second layout depends
+     * One of them is not a constant and cannot be tabled: the keyboard's second layout depends
      * on the language the device is in, because stock gives a Russian device no way to type Latin
      * at all. It is asked of {@link Keys} instead.
      */
@@ -93,7 +91,7 @@ public final class Prefs {
     /**
      * Is this toggle on? The reader does not get to state a default — that is the whole point.
      * A null Context answers the default rather than false: "the app is not up yet" is not the
-     * same as "the user turned it off", and every caller of this used to guard for it by hand.
+     * same as "the user turned it off", and without this every caller would guard for it by hand.
      */
     public static boolean on(Context c, String key) {
         return c == null ? defBool(key) : getBool(c, key, defBool(key));
@@ -105,10 +103,11 @@ public final class Prefs {
     }
 
     /**
-     * The album row's label: the real album name (#291.3 strips the {@code name<SOH>folder}
-     * encoding) with the year appended when "Show album year" is on.
+     * The album row's label: the real album name (stripped of the {@code name<SOH>folder} encoding
+     * that keeps same-named albums of different folders apart) with the year appended when
+     * "Show album year" is on.
      *
-     * <p>{@link YearCache} is still asked with the ENCODED name — that is its key, one entry per
+     * {@link YearCache} is still asked with the ENCODED name — that is its key, one entry per
      * physical album — while what is shown is the decoded one.
      */
     public static String albumLabel(String album) {
@@ -129,26 +128,24 @@ public final class Prefs {
     }
 
     /**
-     * ipp #281.1: artist → albums is now the only mode (the flat song list is reachable from the
-     * "Show all songs" row), so the toggle was dropped from the innioasis++ menu.
+     * Ipp: an artist opens on his ALBUMS, always — the flat song list is reachable from the
+     * "Show all songs" row.
      */
     public static boolean artistAlbumsEnabled() {
         return true;
     }
 
     /**
-     * ipp: Music → Folders opens {@code \Music\}, always. It used to be the "default_music" toggle,
-     * off by default; it is now the behaviour and the row is gone from the innioasis++ menu. The
-     * card's root is the fallback when there is no {@code \Music\} folder at all. See also
-     * {@link #videoFolderPath()}.
+     * Ipp: Music → Folders opens {@code \Music\}, always; the card's root is the fallback when
+     * there is no {@code \Music\} folder at all. See also {@link #videoFolderPath()}.
      *
-     * <p>The Context is unused and kept because the call sites are stock smali.
+     * The Context is unused and kept because the call sites are stock smali.
      */
     public static String defaultFolderPath(Context c) {
         return isDir("/storage/sdcard0/Music") ? "/storage/sdcard0/Music" : "/storage/sdcard0";
     }
 
-    /** ipp: the same for Videos → Folders, which used to list the card's root. */
+    /** ipp: the same for Videos → Folders. */
     public static String videoFolderPath() {
         return isDir("/storage/sdcard0/Videos") ? "/storage/sdcard0/Videos" : "/storage/sdcard0";
     }
@@ -187,11 +184,10 @@ public final class Prefs {
     }
 
     /**
-     * ipp: on for good, and the "track_sort" row is gone from the innioasis++ menu. The track
-     * numbers it needs are read by "Cache library" in the same file open as the disc numbers, so
-     * there is nothing left to opt out of. The DEFAULT sort of an album's song list is unaffected:
-     * stock's {@code getSortAlbumSong()} answers {@code FileName_A_To_Z} until the user picks
-     * something else.
+     * Ipp: on for good — the track numbers it needs are read by "Cache library" in the same file
+     * open as the disc numbers, so there is nothing to opt out of. The DEFAULT sort of an album's
+     * song list is unaffected: stock's {@code getSortAlbumSong()} answers {@code FileName_A_To_Z}
+     * until the user picks something else.
      */
     public static boolean trackSortEnabled() {
         return true;

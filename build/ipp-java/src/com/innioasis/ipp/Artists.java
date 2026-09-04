@@ -30,11 +30,11 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * #281.2 — split artists that a tag glues together with "," or ";" into separate
+ * Split artists that a tag glues together with "," or ";" into separate
  * entries (e.g. "Lil Wayne, Eminem" -> "Lil Wayne" + "Eminem"). Separator priority:
  * if the string contains "; " split on that only, otherwise split on ", ".
  *
- * <b>The separator is the punctuation AND the space after it</b> (#220.2). "A;B" and "A,B"
+ * The separator is the punctuation AND the space after it. "A;B" and "A,B"
  * are one artist, not two: without a space the character is at least as likely to be part of
  * a name as to be separating two of them, and a wrong split here is not cosmetic — it invents
  * an artist in the list and takes the songs of a real one away. The same rule decides the
@@ -52,7 +52,7 @@ import java.util.Set;
  *  - Y1Repository.getSongsByArtist -> {@link #songs} returns the union of songs where
  *    the picked name is one of the parts; returns null for ordinary (non-split) artists
  *    so the native SQL query + ordering is used unchanged. This also fixes the
- *    artist->albums path (#281.1), which routes through getSongsByArtist.
+ *    artist->albums path, which routes through getSongsByArtist.
  *
  * Gated by {@link #KEY_SPLIT} ("Split artists that are divided by commas and semicolons"),
  * which is On unless switched off.
@@ -78,13 +78,11 @@ public final class Artists {
     private static Set exceptions;   // canonicalised names to keep whole (lazy-loaded)
 
     /**
-     * innioasis++ → "Split artists that are divided by commas and semicolons", ON by default.
+     * better-Y → "Split artists that are divided by commas and semicolons", ON by default.
      *
-     * It used to be the inverted "hide_artist_split" ("Merge multi-artist tags"), worded backwards
-     * only so that a pref read with a false default showed the right On/Off. The menu can carry a
-     * default now (IppActivity's Item.def), so the row says what switching it on does — and the
-     * key changed with it, because the same key under the opposite wording would have turned every
-     * device that had ever touched the old row into its opposite.
+     * The row says what switching it ON does, and the key follows that wording. Inverting a row's
+     * sentence without renaming its key turns every device that has ever touched the row into its
+     * opposite.
      */
     public static final String KEY_SPLIT = "artist_split";
 
@@ -224,7 +222,7 @@ public final class Artists {
 
     /**
      * Split one raw artist tag into its parts using the "; "-over-", " priority + exceptions.
-     * Public because {@link Feat} (#358) reuses exactly this splitting — including the
+     * Public because {@link Feat} reuses exactly this splitting — including the
      * comma_artists.txt exceptions — to decide which artists the player may hide.
      */
     public static List parts(String raw) {
@@ -244,7 +242,7 @@ public final class Artists {
     }
 
     /**
-     * #220.2 — visual only: a tag that separates its artists with "; " reads as ", ".
+     * Visual only: a tag that separates its artists with "; " reads as ", ".
      *
      * Same rule as {@link #parts}: only the separator with a space after it, so a ';' that is
      * part of the text itself is left where it is. Nothing here reaches the database or a query
@@ -353,7 +351,7 @@ public final class Artists {
     }
 
     /**
-     * Songs of one artist <b>within one genre</b>, part-matching multi-artist tags — the genre
+     * Songs of one artist within one genre, part-matching multi-artist tags — the genre
      * counterpart of {@link #songs}, injected into {@code getSongsByArtistSync}'s genre branch.
      * Same contract: null means "not a split artist, use the stock exact-match query".
      *
@@ -363,7 +361,7 @@ public final class Artists {
      */
     public static List songsInGenre(String artist, Genre genre) {
         if (genre == null) return null;
-        // #393: a genre that a composite tag contributes to has no exact-match query to fall back
+        // a genre that a composite tag contributes to has no exact-match query to fall back
         // to -- stock's `genre = (?)` answers with nothing for it -- so this method has to answer
         // whether or not the ARTIST is a split one, and even with artist splitting switched off.
         boolean splitGenre = GenreSplit.composite(genre);
@@ -401,7 +399,7 @@ public final class Artists {
      * True when {@code tag} credits {@code artist}: an exact tag match, and — while splitting
      * is on — any of the tag's parts. The exact check comes first on purpose: with splitting
      * off ("Merge multi-artist tags") the artist list shows whole tags, so "A, B" must match
-     * itself rather than being compared against its own parts. Used by {@link Albums} (#281.4).
+     * itself rather than being compared against its own parts. Used by {@link Albums}.
      */
     public static boolean has(String tag, String artist) {
         String target = norm(artist);
@@ -428,14 +426,14 @@ public final class Artists {
      * An artist's songs for a MENU action — "Add to Playlist N" on an artist row, and anything
      * else that gathers an artist's songs to act on them rather than to draw them.
      *
-     * <p>Never null: unlike {@link #songs}, whose null means "let the indexed query answer", a call
+     * Never null: unlike {@link #songs}, whose null means "let the indexed query answer", a call
      * site here has nowhere to fall back to, so the fallback is made inside. Stock's own
-     * {@code getSongsByArtistSync} matches the tag EXACTLY, which for a split artist (#281.2) is a
+     * {@code getSongsByArtistSync} matches the tag EXACTLY, which for a split artist is a
      * different set from the one the screen is showing — an artist with two songs of their own and
      * three credited as "BEAT CRUSADERS, ASPARAGUS" had five rows on screen and put two in the
      * playlist. The list drawn and the list acted on have to be the same list.
      *
-     * <p>And it is never EMPTY either, while the artist really has songs — which is the second half
+     * And it is never EMPTY either, while the artist really has songs — which is the second half
      * of the same rule and cost its own report (VADDY_NN in the genre Acoustic, then the same
      * artist on the Artists screen). A row of the artist list is a name this class produced:
      * {@link #parts} splits the tag and {@link #norm} trims and lower-cases what comes out. The
@@ -550,8 +548,8 @@ public final class Artists {
 
     // ================================================================== "Open artist" in a menu
     //
-    // The entry the queue screen has had since #227.4, offered on the song lists that do not stand
-    // for one artist: All songs, an album inside Albums, and the "Show all songs" lists of Genres.
+    // The queue screen's entry, offered on the song lists that do not stand for one artist:
+    // All songs, an album inside Albums, and the "Show all songs" lists of Genres.
     // One implementation for all of them, because the split, the submenu and the Intent must not
     // be able to drift apart between screens.
 
@@ -630,7 +628,7 @@ public final class Artists {
                 open(a, (String) names.get(0));
                 return true;
             }
-            // Several artists on one tag (#281.2) — one entry each, in a menu of their own. Stock's
+            // Several artists on one tag — one entry each, in a menu of their own. Stock's
             // own submenu pattern: the parent's select returns false and the child dismisses it on
             // its pick, so the two dialogs are never both waiting for a press.
             new SubMenuDialog(a, names, new Pick(a, parent), R.style.Dialog_Common).show();

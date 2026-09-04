@@ -31,10 +31,10 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Re-opening the song list of the Genres screen — the last piece of the queue's "open source"
- * (#227), for the case where that screen is no longer in the stack.
+ * Re-opening the song list of the Genres screen — the last piece of the queue's "open source",
+ * for the case where that screen is no longer in the stack.
  *
- * <p><b>Why it needs a class of its own.</b> Genres pages FOUR lists through one Activity (genres →
+ * Why it needs a class of its own. Genres pages FOUR lists through one Activity (genres →
  * artists → albums → songs), and the only way in is {@code confirm()} on a row of whichever list is
  * attached at the time. So "open it at the song list" cannot be expressed as an Intent, and walking
  * back down would mean replaying three descents — each of which runs its query on a thread of its
@@ -43,14 +43,14 @@ import java.util.Locale;
  * rows sit at index 0, and an artist row is a SPLIT name that has to be matched by the same test the
  * list was built with — skill {@code ipp-albums-artists}).
  *
- * <p><b>What it does instead.</b> The intermediate levels are not what the user asked for — the song
+ * What it does instead. The intermediate levels are not what the user asked for — the song
  * list is — so only that one is rebuilt, from the album (or marker) it was built from in the first
  * place. That is the whole of stock's own album→songs step, which is short: query, title, the
  * Shuffle row, the adapter, and attach it. The top button then LEAVES the screen instead of climbing
  * to an album list that was never filled, which is also what the user wants there: one press back to
  * the player the queue was opened from.
  *
- * <p>The album and the genre are held as the objects themselves rather than put in the Intent: the
+ * The album and the genre are held as the objects themselves rather than put in the Intent: the
  * Activity died, the process did not, so there is nothing to serialise — the same way {@code Albums}
  * carries its "Open album" focus. The Intent only carries the flag that says a jump was asked for,
  * which is what tells this apart from opening Genres by hand.
@@ -87,12 +87,12 @@ public final class Genres {
      * True while the song list on screen is one of the two "Show all songs" lists rather than an
      * album.
      *
-     * <p>The menu (which entries a song row gets) and the sort (which of the two stored orders
+     * The menu (which entries a song row gets) and the sort (which of the two stored orders
      * applies) both read it, and they must get the SAME answer, so it comes from the album name the
      * list was BUILT with — the marker byte is what makes a marker list one — and not from the
      * songs. Deriving it from the songs, "they all carry one album name", is the tempting version
      * and it is wrong: a genre or an artist holding exactly one album gives a flat list that looks
-     * like an album, and the album's menu then appeared over it (reported on v0.26.2).
+     * like an album, and the album's menu then appeared over it.
      */
     private static boolean listFlat;
 
@@ -195,10 +195,9 @@ public final class Genres {
     // added to it: an entry inserted anywhere shifts the meaning of every entry after it, and the
     // "anything past index 2 is a playlist" rule is what the playlist half rests on.
     //
-    // So the menu is now built per level (see #menu) exactly as Albums builds its two, and the
-    // dispatch is done BY STRING in front of stock's (see #pick), which hands back the index stock
-    // should see. Albums and Artists dispatch by string already; this brings the third screen into
-    // line rather than inventing a third way.
+    // So the menu is built PER LEVEL (see #menu) exactly as Albums builds its two, and the dispatch
+    // is done BY STRING in front of stock's (see #pick), which hands back the index stock should
+    // see. That is how Albums and Artists dispatch too — one way for all three screens.
 
     private static final int L_NONE = -1, L_GENRES = 0, L_ARTISTS = 1, L_ALBUMS = 2, L_SONGS = 3;
 
@@ -242,7 +241,7 @@ public final class Genres {
      * {@code Albums.songMenu} is called there: the dialog is a single per-activity instance serving
      * four different lists, and two of the entries depend on the focused ROW rather than the screen.
      *
-     * <p>Stock calls the delete entry "Delete file" on all four levels, because it has one menu for
+     * Stock calls the delete entry "Delete file" on all four levels, because it has one menu for
      * all four. Here each level names what it actually deletes, the way Albums and Artists name
      * theirs; the ACTION is untouched — the index handed back for it is stock's 2 either way.
      */
@@ -423,12 +422,11 @@ public final class Genres {
     public static final int A_NONE = 0, A_LETTER = 1, A_YEAR = 2;
 
     /**
-     * #362.3 — whether the wheel's fast jump applies to this level, and by what.
+     * Whether the wheel's fast jump applies to this level, and by what.
      *
-     * <p>Same rule as everywhere else it applies ({@code Alpha.mode}): only under a sort that puts
+     * Same rule as everywhere else it applies ({@code Alpha.mode}): only under a sort that puts
      * the keys in order, or "next letter" lands one row further on over and over. All four levels
-     * of this screen can be in such a sort now, which is what makes the jump possible here at all —
-     * before v0.26.3 the section had no sorts and so no rule to hang it on.
+     * of this screen can be in such a sort, which is what makes the jump possible here at all.
      */
     public static int alphaKind(Object adapter) {
         int level = levelOf(adapter);
@@ -500,13 +498,13 @@ public final class Genres {
      * The album list of a GENRE, as the screen's background thread has just got it from
      * {@code getAlbumsByGenreSync}: plain album names, one per name.
      *
-     * <p><b>#291.3 reaches this list too.</b> The Albums screen encodes every album as
-     * {@code name<SOH>folder} ({@code Albums.listForView} → {@code split}), so a name that several
-     * folders share — "Demo", "Greatest Hits" — is several albums with their own covers, years and
-     * songs. This list was the last one still built from bare names: every "Demo" in the library
-     * collapsed into one row here and opening it gave all of them at once.
+     * Same-named albums of different folders have to be split here too. The Albums screen encodes
+     * every album as {@code name<SOH>folder} ({@code Albums.listForView} → {@code split}), so a name
+     * that several folders share — "Demo", "Greatest Hits" — is several albums with their own
+     * covers, years and songs. Built from bare names, this list would collapse every "Demo" in the
+     * library into one row that opens with all of them at once.
      *
-     * <p>It cannot reuse {@code Albums.split}, because that one asks the whole library which
+     * It cannot reuse {@code Albums.split}, because that one asks the whole library which
      * folders a name lives in, and this list is scoped to a genre: a folder whose tracks are all in
      * some other genre would become a row that opens empty. So the folders are collected from the
      * genre's own songs, which is the same set the row will show when it is opened
@@ -519,7 +517,7 @@ public final class Genres {
         try {
             split(names, g == null ? null : g.getName());
         } catch (Throwable t) {
-            // an unsplit list is the list this screen showed before v0.26.4
+            // an unsplit list still draws; it only merges the same-named albums
         }
         albums(names);
     }
@@ -536,7 +534,7 @@ public final class Genres {
             if (!(o instanceof Song)) continue;
             Song s = (Song) o;
             // The very test the query behind the row makes, so a row cannot open empty — which
-            // since #393 means GenreSplit, not equality: with the split on, a song reaches this
+            // which means GenreSplit, not equality: with the split on, a song reaches this
             // genre through a composite tag as well.
             if (!GenreSplit.has(s.getGenre(), genre)) continue;
             String name = s.getAlbum() == null ? "" : s.getAlbum();
@@ -640,19 +638,19 @@ public final class Genres {
     }
 
     /**
-     * #291.3 / #220.1 — hand this screen's song adapters to {@link Disc}, which is what puts the CD
+     * Hand this screen's song adapters to {@link Disc}, which is what puts the CD
      * dividers, the pinned bar and the TRACK NUMBER column on them.
      *
-     * <p>It is decided per LIST rather than per screen: an album gets all of it, the two "Show all
+     * It is decided per LIST rather than per screen: an album gets all of it, the two "Show all
      * songs" lists get none of it, for the same reason the Albums screen keeps its dividers out of
      * the artist's flat list — a disc or a track number there names a record the list is not
      * showing. Which of the two this is comes from {@link #flat()}, i.e. from the marker byte of
      * the name the list was built with, never from "do all these songs share an album".
      *
-     * <p>Unregistering is therefore not tidiness but the answer itself: {@code Disc} takes a
+     * Unregistering is therefore not tidiness but the answer itself: {@code Disc} takes a
      * registered adapter to mean "a real album" and does not ask a second time.
      *
-     * <p>The cache file has to be read before the first row binds, because {@code TrackCache.get}
+     * The cache file has to be read before the first row binds, because {@code TrackCache.get}
      * answers from memory only — that read is what {@code warmIfWanted} does, gated on the setting,
      * exactly as {@code AlbumsActivity.initView} does it for the album screen. This is the
      * counterpart call for this one.
@@ -698,7 +696,7 @@ public final class Genres {
      * {@code AlbumsActivity.switchSongSortType}: the artist always, plus the file date under a time
      * sort and the ALBUM only under "Subdiv. by Album" — which is offered in a "Show all songs"
      * list and nowhere else, so an album's own name never repeats itself down its own song list.
-     * <p>The title itself is the tag's, as this screen has always shown it, and becomes the FILE
+     * The title itself is the tag's, as this screen has always shown it, and becomes the FILE
      * NAME under the two file-name sorts and the two time sorts — where the name being sorted on is
      * the point of the sort, which is stock's rule as well. Stock also drops to the file name under
      * a track sort; here it does not, because that would look like a defect on a screen whose rows

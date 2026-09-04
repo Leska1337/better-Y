@@ -79,7 +79,6 @@ java -jar "$ws\sdk\lib\apksigner.jar" verify --min-sdk-version 17 --print-certs 
   Select-String "SHA-1 digest|Verifies" | ForEach-Object { $_.Line }
 
 Remove-Item $unsigned,$aligned -ErrorAction SilentlyContinue
-# builds live only in build/out - they used to be copied to 'modded apk' as well, which just
-# duplicated every APK; adb now runs from the 'platform-tools' folder instead.
+# builds live only in build/out; adb runs from the 'platform-tools' folder
 Write-Host "`nOK -> $final" -ForegroundColor Green
 Write-Host "Push: adb push `"$final`" $dest"

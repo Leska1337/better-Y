@@ -22,20 +22,19 @@ import java.lang.ref.WeakReference;
 /**
  * The Now-Playing cover: its bitmap geometry, its 3D tilt and its reflection.
  *
- * <p>The geometry half moved here from {@code Ipp} in v0.31.9. It had to: {@link #fitCover} is
- * memoised by {@link #fitMemo}/{@link #fitPut}, and while the two halves sat in different classes
- * the memo and its only user could not be read together — which is the whole reason that memo is
- * subtle (it keys on the SOURCE bitmap, because the result's identity changes on every call).
+ * The geometry lives here WITH the tilt, not in {@code Ipp}: {@link #fitCover} is memoised by
+ * {@link #fitMemo}/{@link #fitPut}, and that memo is subtle — it keys on the SOURCE bitmap,
+ * because the result's identity changes on every call — so it has to be readable next to its
+ * only user.
  *
- * <p>Now-Playing cover tilt.
+ * Now-Playing cover tilt.
  *
  * Stock applies the 3D look once, from {@code initView} via {@code coverBg.post{ … }}:
  * {@code setPivotX(0); setPivotY(getHeight()/3f); setRotationY(20f)}. But {@code cover_bg} starts
  * out {@code android:visibility="gone"} — it is only shown once a cover has been loaded — so when
  * that posted runnable happens to run while the view is still GONE, {@code getHeight()} is **0**:
- * the pivot lands on the top edge and the cover renders visibly wrong (the "broken" cover that
- * only re-applying the theme used to fix, because that re-created the Activity with different
- * timing).
+ * the pivot lands on the top edge and the cover renders visibly wrong (the "broken" cover that only re-applying the
+ * theme puts right, because that re-creates the Activity with different timing).
  *
  * {@link #tilt} does the same maths but falls back to the height declared in the layout
  * (345dp, already in px on the LayoutParams at inflation time), so it is correct no matter
@@ -50,7 +49,7 @@ public final class Cover {
     /**
      * "Tilt the cover", [Now Playing]. On by default — that is the stock, iPod-like look.
      *
-     * <p>It is the ROTATION alone. The reflection stays either way (the user's call, v0.39.3):
+     * It is the ROTATION alone. The reflection stays either way (the user's call):
      * a cover drawn straight on still reads as standing on a reflective surface, and the two
      * views of the player disagreed without it — the placeholder shown for a track with no
      * artwork was never tilted, so turning the setting off would have changed nothing there
@@ -65,7 +64,7 @@ public final class Cover {
      * True while the cover is drawn straight on: no rotation, and none of the things the rotation
      * is the reason for — the transparent frame, and the full width of the box (see {@link #inset}).
      *
-     * <p><b>Asking is also what keeps the caches honest.</b> {@link #fitCover}'s result carries
+     * Asking is also what keeps the caches honest. {@link #fitCover}'s result carries
      * {@link #softEdge}'s frame under the rotation and does not without it, so it is a bitmap built
      * for ONE of the two looks — and the memo is keyed on the SOURCE bitmap, which does not change
      * when the setting does, so it would go on serving the look the user has just left. Both memos
@@ -73,7 +72,7 @@ public final class Cover {
      * before consulting its own. The references are dropped, never recycled: one of those bitmaps
      * is on screen.
      *
-     * <p>What is on DISK is unaffected and needs no second copy: {@code BigCover} stores the cover
+     * What is on DISK is unaffected and needs no second copy: {@code BigCover} stores the cover
      * itself, which is the same picture either way — the tilt is a transform on the view, and the
      * reflection is built at display time.
      */
@@ -228,7 +227,7 @@ public final class Cover {
             // BOTH dimensions, and that is the whole of the first attempt's failure: the box is
             // 2:3 and so is the picture, so a wider box alone changed nothing at all -- the fit
             // stayed limited by the HEIGHT and the image went on being drawn at the width it
-            // always had (v0.39.4 did exactly that and was invisible on the device). The box has
+            // always had — a widened box alone is invisible on the device. The box has
             // to grow in proportion.
             int w = tiltWidth(v, side);
             int nh = Math.round((float) w * boxH / boxW);
@@ -242,7 +241,7 @@ public final class Cover {
     /**
      * How much narrower than its box the flat cover is drawn, in pixels.
      *
-     * <p><b>The cover view OVERLAPS the info rows and always has.</b> It sits at x = 10 and is 230
+     * The cover view OVERLAPS the info rows and always has. It sits at x = 10 and is 230
      * wide, i.e. it ends at 240, while {@code music_info_ll} is 235 wide against a right margin of
      * 10 and therefore begins at 235 — the last five pixels of the cover are behind the rows'
      * translucent background (the rows are declared after it, so they are drawn on top). The tilt
@@ -250,7 +249,7 @@ public final class Cover {
      * cos 20° of the width, so the tilted cover happens to end just short of the rows. Drawn
      * straight on there is nothing to pull it back, and it runs under them.
      *
-     * <p>So the flat cover is drawn as wide as the space between the rows and the screen edge
+     * So the flat cover is drawn as wide as the space between the rows and the screen edge
      * really allows, with the same margin on the right as the view has on the left. Read off the
      * two views' own LayoutParams rather than written down as a number: they are the layout's, and
      * a layout change has to move this with it. LayoutParams are resolved at inflation, so this
@@ -282,7 +281,7 @@ public final class Cover {
         // resolveLayoutDirection copies it over leftMargin on EVERY layout pass. Setting
         // leftMargin alone is undone before it is ever used -- the placeholder stayed at its own
         // 25 while the box grew to the cover's width, so it ran to the right instead of moving to
-        // where the cover starts (v0.39.9).
+        // where the cover starts.
         lp.setMarginStart(left);
         v.setLayoutParams(lp);
     }
@@ -299,16 +298,16 @@ public final class Cover {
 
     /**
      * How wide the view has to be for the TILTED cover's right-hand edge to land where the flat
-     * one's does (a test, the user's call, v0.39.4).
+     * one's does (a test, the user's call).
      *
-     * <p>The rotation is applied to the whole view, so there is no "edge" to move on its own: a
+     * The rotation is applied to the whole view, so there is no "edge" to move on its own: a
      * point at local x is drawn foreshortened by the angle and then again by the perspective
      * divide, so the view's own right edge is drawn well to the left of where it sits. That is why
      * the tilted cover stands clear of the rows while the flat one runs up to them, and it is what
      * "move the right edge" has to undo — by making the view wide enough that its edge lands where
      * the flat cover's does.
      *
-     * <p><b>The projection is MEASURED, not predicted.</b> The obvious closed form —
+     * The projection is MEASURED, not predicted. The obvious closed form —
      * {@code x·cos θ · d/(d + x·sin θ)}, solved for the width — needs the camera distance in the
      * same units as the view's own coordinates, and {@code setCameraDistance}'s "depth pixels" are
      * not those units. Predicting it with the documented default (1280 at this density) came out
@@ -318,7 +317,7 @@ public final class Cover {
      * finds the width whose edge lands on {@code target}, and no camera distance is set at all —
      * the platform's own is left alone.
      *
-     * <p><b>The caller has to grow the box in PROPORTION, not just widen it.</b> The declared box
+     * The caller has to grow the box in PROPORTION, not just widen it. The declared box
      * is 2:3 and so is the cover with its reflection, so the fit is limited by the height by a
      * hair: widening the box alone leaves the picture drawn at exactly the width it was, and the
      * change is invisible.
@@ -352,18 +351,17 @@ public final class Cover {
 
     /**
      * Where the cover's top edge belongs, as a top margin, so that the cover is centred against
-     * the block of rows beside it (the user's call, v0.39.4 for the flat look, v0.39.6 for the
-     * tilted one).
+     * the block of rows beside it (the user's call, for the flat look and the tilted one alike).
      *
-     * <p><b>A margin, not a top padding.</b> Padding can only push down, and the two looks want
+     * A margin, not a top padding. Padding can only push down, and the two looks want
      * opposite directions: the flat cover (215) is a little shorter than the rows (222) and goes
      * down about nine pixels, the tilted one (244) is taller and goes UP about five.
      *
-     * <p>{@code side} is the cover's own height, which is its drawn width — it is a square. For the
+     * {@code side} is the cover's own height, which is its drawn width — it is a square. For the
      * tilted look that is the box's width, since the picture is fitted to it; the rotation is about
      * Y, so it foreshortens the far side and leaves the near edge's height alone.
      *
-     * <p>The rows' height is asked of the view when it has been laid out and summed from its
+     * The rows' height is asked of the view when it has been laid out and summed from its
      * children's own params when it has not, because {@code tilt} is called before the first
      * layout as well as after it and a number that changed between the two calls would be a
      * visible jump. The two agree here: {@code music_info_ll} is a plain vertical chain of
@@ -417,19 +415,19 @@ public final class Cover {
 
     /**
      * {@code cover_bg2} — the placeholder shown for a track with no artwork — put in exactly the
-     * box a cover gets (the user's call, v0.39.9).
+     * box a cover gets (the user's call).
      *
-     * <p>The layout gives it one of its own: 200 wide at a left margin of 25 and a top margin of
+     * The layout gives it one of its own: 200 wide at a left margin of 25 and a top margin of
      * 35, so it sat narrower than the cover, further from the screen's edge and closer to the rows
      * than to it. It now takes the cover's own left margin and the cover's drawn width, which puts
      * the same gap on both sides of it as on both sides of a cover, and it is centred against the
      * rows by the same rule. The height follows the box's 2:3, or the fit would be limited by it
      * and the picture would come out at the width it was — the trap {@code tiltWidth} explains.
      *
-     * <p>{@code FIT_START} and no padding, so the picture starts at the box's top-left corner and
+     * {@code FIT_START} and no padding, so the picture starts at the box's top-left corner and
      * the box IS the geometry; nothing here depends on the placeholder's own resolution.
      *
-     * <p>It has nothing to do with the tilt and never did — stock does not tilt this view — so this
+     * It has nothing to do with the tilt and never did — stock does not tilt this view — so this
      * runs in both looks, and it is applied from {@link #instantCover}, i.e. once per track before
      * anything has decided whether there is a cover at all. That is the only place guaranteed to
      * run: a track that is neither cached nor recorded as coverless reaches the placeholder through
@@ -467,7 +465,7 @@ public final class Cover {
      * {@code BigCover} synchronously; a track WITHOUT any showed an empty frame until the async
      * read came back null some 200 ms later and stock's own branch made {@code cover_bg2} visible
      * — which is the blink at the start of every songless-cover track. So do the same thing the
-     * cached-cover path does: when the track is <b>recorded</b> as having no artwork
+     * cached-cover path does: when the track is recorded as having no artwork
      * ({@link BigCover#knownNone}), swap the views here and now.
      *
      * Nothing is built: both {@code cover_bg} and {@code cover_bg2} already hold the reflected
@@ -491,7 +489,7 @@ public final class Cover {
     // ---- the placeholder's reflection, built once per process ---------------------------------
 
     /**
-     * ipp: the reflected placeholder cover, built once at the first {@code ReflectImageView}
+     * Ipp: the reflected placeholder cover, built once at the first {@code ReflectImageView}
      * inflation and shared by every later one (see {@code ReflectImageView.<init>}). One immutable
      * bitmap, never recycled. {@code activity_music_player.xml} holds TWO of those views, so
      * without this every player open paid for the same ~834 KB composite twice.
@@ -517,22 +515,22 @@ public final class Cover {
     // ---- the cover's geometry -----------------------------------------------------------------
 
     /**
-     * ipp #230: the Now-Playing cover is drawn rotated 20 deg around Y ({@link #tilt}), which turns
+     * Ipp: the Now-Playing cover is drawn rotated 20 deg around Y ({@link #tilt}), which turns
      * its top and bottom edges into slanted lines. Neither the software nor the hardware pipeline
      * antialiases the EDGE of a transformed bitmap, so those two edges came out as visible stair
      * steps.
      *
-     * <p>Fix: give the bitmap a fully transparent 2px frame. The outermost texels are then
+     * Fix: give the bitmap a fully transparent 2px frame. The outermost texels are then
      * transparent, so the bilinear filtering that already applies inside the transformed image
      * fades the boundary out over ~1px instead of cutting it off at a hard texel row. Cheap, and it
      * needs no change to the ImageView, the layout or the rotation itself.
      *
-     * <p>LEFT / RIGHT / TOP only - NOT the bottom. {@code ReflectImageView} builds the mirrored
+     * LEFT / RIGHT / TOP only - NOT the bottom. {@code ReflectImageView} builds the mirrored
      * reflection from the bitmap's own lower half and butts it against the bottom edge, so a
      * transparent row there became a 4px transparent seam between cover and reflection. The bottom
      * edge needs no antialiasing anyway: the reflection is drawn right up against it.
      *
-     * <p>Applied at display time, never on the way into the cache: {@link BigCover} stores JPEG,
+     * Applied at display time, never on the way into the cache: {@link BigCover} stores JPEG,
      * which has no alpha channel to store the frame in.
      */
     private static Bitmap softEdge(Bitmap src) {
@@ -568,11 +566,11 @@ public final class Cover {
         if (memo != null) {
             return memo;
         }
-        // ipp: CENTRE CROP TO 1:1, whatever the aspect ratio. This used to scale the picture to fit
-        // the HEIGHT and centre it horizontally, which is a centre crop only for a landscape cover
-        // - a portrait one was squeezed to fit the full height and came out with transparent bars
-        // beside it, i.e. not cropped at all. Now the source's centred square (side = min(w, h)) is
-        // taken and scaled into the target square, so both axes are cropped symmetrically.
+        // ipp: CENTRE CROP TO 1:1, whatever the aspect ratio. The source's centred square
+        // (side = min(w, h)) is taken and scaled into the target square, so both axes are cropped
+        // symmetrically. Fitting the HEIGHT and centring horizontally is a centre crop only for a
+        // landscape cover: a portrait one is squeezed to the full height and comes out with
+        // transparent bars beside it, i.e. not cropped at all.
         try {
             int w = src.getWidth();
             int hgt = src.getHeight();
@@ -604,13 +602,13 @@ public final class Cover {
     }
 
     /**
-     * ipp: CENTRE CROP TO 1:1, whatever the aspect ratio - the source's centred square
-     * (side = min(w, h)) scaled into a {@code size x size} bitmap. It used to fit the HEIGHT and
-     * centre horizontally, which crops a landscape cover correctly but leaves a portrait one whole,
-     * with transparent bars beside it. Both axes are cropped symmetrically now; for a square source
-     * nothing changes.
+     * Ipp: CENTRE CROP TO 1:1, whatever the aspect ratio - the source's centred square
+     * (side = min(w, h)) scaled into a {@code size x size} bitmap. Both axes are cropped
+     * symmetrically; for a square source nothing changes. Fitting the HEIGHT and centring
+     * horizontally instead would crop a landscape cover correctly but leave a portrait one whole,
+     * with transparent bars beside it.
      *
-     * <p>The list thumbnails go through this one too ({@link CoverCache}, {@link BigCover},
+     * The list thumbnails go through this one too ({@link CoverCache}, {@link BigCover},
      * {@link Find}), which is why it takes the size rather than assuming the player's.
      */
     public static Bitmap square(Bitmap src, int size) {
@@ -675,11 +673,12 @@ public final class Cover {
     // ---- what the player asks for -------------------------------------------------------------
 
     /**
-     * ipp #230.2: the body of this lives in {@link BigCover#track} - the cover is keyed by the
+     * Ipp: the body of this lives in {@link BigCover#track} - the cover is keyed by the
      * TRACK (with the album's representative shared on disk), not by the folder, so two songs
-     * sitting in one folder with different artwork no longer inherit whichever was opened first.
-     * The DB gate that used to sit here (song known + non-empty album) is gone: it only decided
-     * whether the result was worth caching, and a per-track key is worth caching for any file.
+     * sitting in one folder with different artwork do not inherit whichever was opened first.
+     * There is deliberately no DB gate here (song known + non-empty album): such a gate only
+     * decides whether the result is worth caching, and a per-track key is worth caching for any
+     * file.
      */
     public static Bitmap bigCover(String path) {
         if (path == null) {

@@ -77,13 +77,12 @@ public final class Rows {
      * Put a recycled Folders row back to its unselected look, at the START of
      * {@code FileListAdapter.getView}.
      *
-     * That adapter used to inflate a fresh row every single call and ignore {@code convertView},
-     * so every wheel click re-inflated the whole visible window, and {@code Wheel.list} could not
-     * use its in-place repaint either (it only does that for adapters that honour convertView) —
-     * Folders was the last list still scrolling the slow way. Recycling it costs one thing: stock
-     * paints only the <b>selected</b> state and has no else-branch, because a newly inflated row
-     * was unselected by definition. This is that missing branch — text colour, background, arrow
-     * and marquee, exactly the four things the selected branch changes.
+     * Stock ignores {@code convertView} there and inflates a fresh row on every call, so every wheel
+     * click re-inflates the whole visible window and {@code Wheel.list} cannot use its in-place
+     * repaint either (it only does that for adapters that honour convertView). Recycling the row
+     * costs one thing: stock paints only the selected state and has no else-branch, because a newly
+     * inflated row is unselected by definition. This is that missing branch — text colour,
+     * background, arrow and marquee, exactly the four things the selected branch changes.
      */
     public static void fileRow(MyBaseAdapter a, View row) {
         if (row == null) return;
@@ -108,22 +107,22 @@ public final class Rows {
      * {@code ThemeManager.itemSetBackground(row, item_selected_no_arrow / item_no_selected, on)}
      * every screen with multi-select toggles from its own 500 ms thread.
      *
-     * <p>The background alone is not the whole highlight: the cursor row also carries the right
+     * The background alone is not the whole highlight: the cursor row also carries the right
      * arrow, and a theme supplies that arrow as a PICTURE ({@code itemRightArrow}), which may have
      * the selection colour baked into it — "Win98 Refix" ships a white triangle on the same
      * opaque #0000A8 block its {@code itemSelectedBackground} is. So while the row's background
      * blinked off, a rectangle of selection colour stayed sitting at the right-hand end of it. The
      * arrow is therefore blinked with the background.
      *
-     * <p>Only VISIBLE ↔ INVISIBLE, never GONE: GONE means "this row has no arrow at all", which is
+     * Only VISIBLE ↔ INVISIBLE, never GONE: GONE means "this row has no arrow at all", which is
      * every row that is not the cursor, and it must stay that way. INVISIBLE also keeps the row's
      * measurement identical between the two halves of the blink, so nothing moves as it flashes.
      *
-     * <p>The arrow is looked for on the row AND on its parent, because the view the blink is handed
+     * The arrow is looked for on the row AND on its parent, because the view the blink is handed
      * is not always the row's root: {@code VideoListActivity} paints {@code video_layout} /
      * {@code file_layout}, and {@code iv_arrow} is their SIBLING inside the item's FrameLayout.
      *
-     * <p>The drawable is passed through rather than chosen here: the sites are not unanimous —
+     * The drawable is passed through rather than chosen here: the sites are not unanimous —
      * {@code SearchActivity} highlights with {@code item_selected} where everything else uses
      * {@code item_selected_no_arrow} — and this is a fix for the arrow, not a change of highlight.
      */
@@ -258,12 +257,12 @@ public final class Rows {
     /**
      * The number column of an audiobook row, and the marker that stands in it.
      *
-     * <p>Both audiobook lists share {@code item_player.xml}, and neither had a column of its own —
+     * Both audiobook lists share {@code item_player.xml}, and neither had a column of its own —
      * which is why the number was added at all: a marker needs somewhere to be. Bookmarks get the
      * number and nothing else ({@link #bookIndex}), since a bookmark is a position in a book and
      * not a track the player can be on.
      *
-     * <p>Call at the END of getView, for the same reason the song and Folders markers are: the
+     * Call at the END of getView, for the same reason the song and Folders markers are: the
      * colour it is tinted with (and the number is painted in) is the one the row's own name has
      * just been given, which is what makes both follow the theme and the focus highlight.
      */
@@ -318,7 +317,7 @@ public final class Rows {
     /**
      * Start the marquee that {@code makeItMarquee} could not, because the row had no width yet.
      *
-     * <p>{@code TextView.setSelected(true)} is what starts a marquee, and it only does so on the
+     * {@code TextView.setSelected(true)} is what starts a marquee, and it only does so on the
      * TRANSITION into selected — after which {@code startMarquee} gives up unless the text is
      * already known to be wider than the view. On the FIRST fill of a list the row is bound before
      * it has ever been measured, so the width is 0, the marquee never starts, and nothing asks
@@ -326,7 +325,7 @@ public final class Rows {
      * which rebinds a row that has a width by then. Every screen opened with the cursor already on
      * a long title showed it.
      *
-     * <p>So when the width is not there yet, ask once more after the layout that follows. Only
+     * So when the width is not there yet, ask once more after the layout that follows. Only
      * then — a bound row that already has a width has started it in the ordinary way, and this
      * costs nothing at all on the wheel path, where every row is laid out.
      */
@@ -376,9 +375,8 @@ public final class Rows {
      * ({@code Icons.menu}), the rule every menu icon in the mod follows.
      *
      * One condition on top of the path matching: {@link Queue#atSource} — the marker belongs only
-     * to the list the track was started from. (There was a "Hide playing indicator" setting as
-     * well; it was dropped in v0.29.7 — the marker is what tells the list what is playing, and a
-     * list with it off says nothing at all.)
+     * to the list the track was started from. (There is deliberately no "hide the marker" setting:
+     * the marker is what tells the list what is playing, and a list without it says nothing.)
      *
      * A play/pause does NOT broadcast MY_PLAY_SONG (only a track change does), so the lists are
      * repainted from {@code Static.setPlayValue} instead — see {@link Lists}.
@@ -391,7 +389,7 @@ public final class Rows {
             if (c == null) return 0;
             if (!Queue.atSource(adapter)) return 0;
             PlayerService s = Y1Application.Companion.getPlayerService();
-            // getPlayingSong, not getPlayingMusic: since #384 an audiobook list carries the marker
+            // getPlayingSong, not getPlayingMusic: an audiobook list carries the marker
             // too, and the music one must NOT while a book is playing — getPlayingMusic goes on
             // answering with the last song it held, so a music row would have marked itself.
             Song song = (s == null) ? null : s.getPlayingSong();
@@ -569,7 +567,7 @@ public final class Rows {
             // An album row has the same defect and no disc strip to keep clear of. `album_name` is
             // unique to item_album.xml, the way tv_song_index is to item_songlist.xml.
             if (row.findViewById(R.id.album_name) != null) { noSize(row); return; }
-            // #387.3 -- the e-book rows, Library (item_book_library) and Local Files
+            // the e-book rows, Library (item_book_library) and Local Files
             // (item_book_search). The synchronous wrap where they are bound is not the last word:
             // a theme bitmap that is not cached yet is decoded on a coroutine and applied long
             // after the bind, unwrapped, and the row stretches again. `progress` is shared with
@@ -624,7 +622,7 @@ public final class Rows {
 
     /**
      * The same for ThemeManager's fallback to an APK resource. That call early-outs by itself
-     * <b>unless</b> the view's background was last set as a Drawable — which is exactly what
+     * unless the view's background was last set as a Drawable — which is exactly what
      * {@link #flat} does to every song row, so the selected row re-read its resource and requested
      * a layout on every bind even with no theme at all.
      */
@@ -637,7 +635,7 @@ public final class Rows {
             // Library and Local Files rows say exactly that). It must never be compared against
             // Flat.res, which is also 0 whenever the wrapper holds a THEME BITMAP — the two look
             // alike and the row was left wearing the selection it had just been told to drop.
-            // Cost a build: #387.3 wrapped those rows for the first time and they stayed
+            // Cost a build: the first time those rows were wrapped they stayed
             // highlighted after the cursor moved on (theme1/2/4).
             if (resid == 0) {
                 if (cur != null) v.setBackgroundResource(0);

@@ -21,7 +21,7 @@ import java.util.WeakHashMap;
 /**
  * The Shuffle row rides with the list instead of being pinned above it.
  *
- * <h3>Why it is not simply a header view</h3>
+ * Why it is not simply a header view
  * {@code lv.addHeaderView(spv)} is the obvious answer and it is unusable here: it shifts every
  * ListView position by one relative to the adapter's, and that correspondence is what the whole of
  * this mod's navigation is built on ({@code Wheel}, {@code Follow}, {@code Disc}, {@code Alpha},
@@ -32,7 +32,7 @@ import java.util.WeakHashMap;
  * the content jumps by 60px, and "hide it once first > 0" oscillates — hiding it lets the list fill
  * upwards, first goes back to 0, and the row comes back.
  *
- * <h3>What is done instead — the virtual header</h3>
+ * What is done instead — the virtual header
  * The ListView is given the FULL height of the screen (its top is constrained to the parent, not to
  * the Shuffle row) plus {@code paddingTop} = the height of everything above it, and
  * {@code clipToPadding="false"}. With that flag {@code ListView.fillUp}/{@code fillDown} use 0 and
@@ -45,7 +45,7 @@ import java.util.WeakHashMap;
  * ({@code setTranslationY(-ridden)}), so the row's bottom edge and row 0's top edge stay glued
  * together to the pixel. Neither the ListView's size nor any position arithmetic changes.
  *
- * <h3>The disc bar</h3>
+ * The disc bar
  * It stays PINNED — it names the disc that has already scrolled off — so once the Shuffle row is
  * gone it sits at the top edge and rows pass under it. That is what a sticky header looks like, and
  * it needs the bar to be opaque: on the stock themes it is deliberately transparent (their list rows
@@ -53,11 +53,11 @@ import java.util.WeakHashMap;
  * #backdrop} puts a copy of the wallpaper behind it — drawn aligned to the SCREEN, so it matches
  * whatever is behind the bar at any point of its travel, not just where it comes to rest.
  *
- * <h3>The effective top edge</h3>
- * {@code lv.getPaddingTop()} is no longer where the visible list begins: once the Shuffle row has
- * ridden away that is 0 (or the disc bar's height). {@link #top} answers that question and every
- * place that used to read {@code getPaddingTop()} — {@code Wheel.cutAtTop}, {@code Wheel.Fit},
- * {@code Disc.under} — goes through it. Likewise a plain {@code setSelection(pos)} would park the
+ * The effective top edge
+ * {@code lv.getPaddingTop()} is NOT where the visible list begins: once the Shuffle row has ridden
+ * away that is 0 (or the disc bar's height). {@link #top} answers that question, and every place
+ * that needs the top edge — {@code Wheel.cutAtTop}, {@code Wheel.Fit}, {@code Disc.under} — goes
+ * through it. Likewise a plain {@code setSelection(pos)} would park the
  * row at {@code paddingTop}, i.e. bring the Shuffle row back into the middle of the list, so the
  * scroll calls go through {@link #selectPinned} instead.
  *
@@ -121,9 +121,9 @@ public final class Head {
     /**
      * Put the row's top at {@code y}, in the ListView's own coordinates.
      *
-     * <b>Not</b> {@code setSelectionFromTop(pos, y - getPaddingTop())}, and this is the trap the
-     * whole class turns on: that method computes {@code mSpecificTop = mListPadding.top + y} <i>at
-     * the moment of the call</i>, and {@code mListPadding} is only refreshed in
+     * Not {@code setSelectionFromTop(pos, y - getPaddingTop())}, and this is the trap the
+     * whole class turns on: that method computes {@code mSpecificTop = mListPadding.top + y} at
+     * the moment of the call, and {@code mListPadding} is only refreshed in
      * {@code AbsListView.onMeasure}. So immediately after a {@code setPadding} the two disagree by
      * exactly the change, and the placement silently lands where it would have without it — which
      * is why an initial "shift the list down by the Shuffle row's height" did nothing at all.
@@ -141,7 +141,7 @@ public final class Head {
      * Put a list back exactly where it was left, in list coordinates, when the padding is about to
      * change underneath — the way out of an album or of a level of Genres.
      *
-     * Those restores run <b>before</b> the Shuffle row is hidden, so the padding at the moment of
+     * Those restores run before the Shuffle row is hidden, so the padding at the moment of
      * the call is still the song list's. Placing it now and again once the padding has settled is
      * what makes it land right without a frame in between: the pending placement is fixed, so the
      * padding change carries it rather than shifting it.
@@ -194,7 +194,7 @@ public final class Head {
      * Bring the list back to rest at its very START: row 0 against the padding, so the Shuffle row
      * is fully shown where there is one and the list is simply at the top where there is not.
      *
-     * <p>This is the one position {@link #top} cannot describe — that method answers "where does
+     * This is the one position {@link #top} cannot describe — that method answers "where does
      * the visible list begin right now", which shrinks as the header rides away, so it is the right
      * boundary for a step and the wrong floor for a jump.
      */

@@ -25,39 +25,38 @@ import java.util.Map;
 /**
  * The Now-Playing cover: memory cache + a JPEG file cache under {@code getCacheDir()}.
  *
- * <h3>#230.2 — one cover per track, one file per album</h3>
- * The cache used to be keyed by the track's <b>folder</b> (#291.3, so that same-named albums and
- * separate CDs got their own picture). That is wrong as soon as two songs sitting in one folder
- * carry different artwork — a folder of singles, a compilation, or (since #291.1) a folder where
- * one song has an embedded cover and its neighbour falls back to {@code folder.jpg}: whichever
- * song was opened first defined the cover for all of them.
+ * ONE COVER PER TRACK, ONE FILE PER ALBUM
  *
- * So the cache is keyed by the <b>track path</b> now, while the disk still holds roughly one file
- * per album:
- * <ul>
- *   <li>The first track opened in a folder writes its cover under the <b>folder</b> key — the
- *       album's <i>representative</i>.</li>
- *   <li>Every later track is compared against that representative ({@link Bitmap#sameAs}), which is
- *       true for an ordinary album. It then simply <b>shares</b> that one Bitmap: no second entry on
+ * The memory key is the track PATH, not its folder. A folder key is wrong as soon as two songs
+ * sitting in one folder carry different artwork — a folder of singles, a compilation, or a folder
+ * where one song has an embedded cover and its neighbour falls back to {@code folder.jpg}:
+ * whichever song is opened first would define the cover for all of them.
+ *
+ * The disk still holds roughly one file per album:
+ *   - The first track opened in a folder writes its cover under the folder key — the
+ *       album's representative.
+ *   - Every later track is compared against that representative ({@link Bitmap#sameAs}), which is
+ *       true for an ordinary album. It then simply shares that one Bitmap: no second entry on
  *       disk, no second allocation in memory, and {@code Cover.fitMemo}/{@code Cover.reflect} keep
- *       hitting their memo because the object identity is unchanged.</li>
- *   <li>Only a track whose artwork genuinely differs gets a file of its own.</li>
- * </ul>
+ *       hitting their memo because the object identity is unchanged.
+ *   - Only a track whose artwork genuinely differs gets a file of its own.
  *
- * <h3>The answer per track is written down ({@link #note})</h3>
- * "This track shares the album's picture" used to live in memory only, so it died with the process
- * — after a reboot (or a theme switch, which kills the process) every track had to have its tags
- * read again before its cover could be shown, and "Cache library" could not usefully pre-fill
- * anything for the player: for the overwhelming majority of tracks there is nothing to write to
- * disk, only that one bit to remember. It is now a small text file beside {@code ipp_discs.txt}
- * mapping a track path to one of {@link #NONE} / {@link #SHARED} / {@link #OWN}, so the per-track
- * guarantee survives a restart and costs one line per song instead of one JPEG per song.
+ * THE ANSWER PER TRACK IS WRITTEN DOWN ({@link #note})
  *
- * <h3>Resolution</h3>
- * {@link #SIZE} is a <b>cap</b>, not a target: a cover that is already smaller is kept at its own
+ * For the overwhelming majority of tracks there is nothing to put on disk, only the one bit
+ * "this track shares the album's picture" — and kept in memory alone that bit dies with the
+ * process, so after a reboot (or a theme switch, which kills the process) every track has to have
+ * its tags read again before its cover can be shown, and "Cache library" can pre-fill nothing for
+ * the player. So it is a small text file beside {@code ipp_discs.txt} mapping a track path to one
+ * of {@link #NONE} / {@link #SHARED} / {@link #OWN}: the per-track guarantee survives a restart at
+ * one line per song instead of one JPEG per song.
+ *
+ * RESOLUTION
+ *
+ * {@link #SIZE} is a cap, not a target: a cover that is already smaller is kept at its own
  * resolution and only compressed, because scaling 200x200 up to 300x300 stores (and displays) a
- * blurred version of a picture we have in full. Anything larger is scaled down to 300 as before.
- * The crop is unchanged either way — {@code Ipp.square} fits by height and centre-crops the width,
+ * blurred version of a picture we have in full. Anything larger is scaled down to 300.
+ * The crop is the same either way — {@code Ipp.square} fits by height and centre-crops the width,
  * and at the source's own height that fit is a no-op, so only the crop happens. The JPEG quality
  * follows from that same side: see {@link #quality}.
  *
@@ -72,10 +71,10 @@ public final class BigCover {
 
     private static final int SIZE = 300;
     /**
-     * Bumped from {@code -300.jpg} when the compression scheme changed: the sweep in {@link #dir}
-     * deletes everything that does not end with this, so the previous scheme's files go on the
-     * first run instead of being served forever. Quality is not part of a file name, so without
-     * this a changed setting is invisible until the user clears the cache by hand.
+     * The compression scheme's version marker: the sweep in {@link #dir} deletes every cached file
+     * that does not end with this, so changing the scheme means changing this string and the old
+     * files go on the first run. Quality is not part of a file name, so without that a changed
+     * setting stays invisible until the user clears the cache by hand.
      */
     private static final String SUFFIX = "-300q.jpg";
 
@@ -95,7 +94,7 @@ public final class BigCover {
     private static final int Q_MAX = 92;       // ~ Photoshop 90
 
     /**
-     * The most a cached cover may weigh. A source that already fits is stored <b>verbatim</b> —
+     * The most a cached cover may weigh. A source that already fits is stored verbatim —
      * whatever its pixel size — so an already-compressed cover is never compressed a second time;
      * {@link #peek} caps the decode instead, which is where the pixel size actually matters.
      */
@@ -175,10 +174,10 @@ public final class BigCover {
      * enough for {@code Ipp.instantCover} to find the cover already there and paint it with the
      * first frame.
      *
-     * Why this and not a stand-in: the album's own cover used to be painted instantly and then
-     * replaced when the track's real one arrived, which is wrong for a track whose artwork differs
-     * (#230.2). Reading early is the only way to be both instant and right; it costs nothing when
-     * the track is already cached, and nothing on the main thread either way.
+     * Why this and not a stand-in: painting the album's own cover instantly and swapping it when
+     * the track's real one arrives is wrong for a track whose artwork differs. Reading early is the
+     * only way to be both instant and right; it costs nothing when the track is already cached, and
+     * nothing on the main thread either way.
      */
     public static void prefetch(List playlist, int pos) {
         try {
@@ -192,7 +191,7 @@ public final class BigCover {
     }
 
     /**
-     * Same head start for a track the user switched to <b>by hand</b> while a list is on screen.
+     * Same head start for a track the user switched to by hand while a list is on screen.
      *
      * {@link #prefetch} only fires from {@code setMusicPlaylist} / {@code setAudiobookPlaylist},
      * i.e. when a song is opened from a menu — the side buttons never go through those, so
@@ -237,10 +236,10 @@ public final class BigCover {
     }
 
     /**
-     * Cover for the instant paint: strictly what we already have <b>for this exact track</b>.
+     * Cover for the instant paint: strictly what we already have for this exact track.
      * Never reads tags, so it is safe on the UI thread.
      *
-     * It deliberately does <b>not</b> fall back to the album's representative as a guess. It does
+     * It deliberately does not fall back to the album's representative as a guess. It does
      * hand back that very bitmap for a track {@link #note}d as {@link #SHARED} — but that is not a
      * guess, it is a recorded pixel comparison, which is the whole reason the note is persisted.
      */
@@ -336,9 +335,9 @@ public final class BigCover {
     /**
      * One folder being walked, and its representative — the ONLY picture a walk holds.
      *
-     * This used to be three statics, which was fine while the caching pass was one thread. It is
-     * now several, each taking whole folders at a time, and a representative belongs to a folder,
-     * not to the pass: two workers in two folders must not see each other's. Everything else the
+     * An object per walk, not three statics: the caching pass is several threads, each taking whole
+     * folders at a time, and a representative belongs to a FOLDER rather than to the pass — two
+     * workers in two folders must not see each other's. Everything else the
      * walk touches is already safe for that — {@code mem}/{@code miss} are Hashtables, the notes are
      * synchronized, and the JPEGs are written under keys no two folders share.
      */
@@ -373,7 +372,7 @@ public final class BigCover {
      * the old behaviour rather than being shown a placeholder it may not need.
      */
     /**
-     * #397 — this track carries artwork of its OWN, different from its folder's representative.
+     * This track carries artwork of its OWN, different from its folder's representative.
      * The search row asks so it can show the song's picture rather than the album's; the answer is
      * the persisted note, so it costs a map lookup once the track has been read (by the player, the
      * prefetch or "Cache library").
@@ -387,13 +386,13 @@ public final class BigCover {
     }
 
     /**
-     * Fill the cache for one track from "Cache library" ([Tools] in innioasis++), so the player
+     * Fill the cache for one track from "Cache library" ([Tools] in better-Y), so the player
      * never has to read a tag while the user is waiting for it.
      *
      * Two things separate this from {@link #track}. The answer is written down for every song,
      * which is what makes the pass worth anything after a restart — for most tracks there is
-     * nothing to put on disk, only the note that they share their album's picture. And <b>nothing
-     * is kept in memory</b> beyond the album currently being walked: a 300px cover is ~360 KB
+     * nothing to put on disk, only the note that they share their album's picture. And nothing
+     * is kept in memory beyond the album currently being walked: a 300px cover is ~360 KB
      * decoded, so a few hundred albums of them would be hundreds of megabytes and the pass would
      * run out of memory long before it finished. The representative is held in a field rather than
      * read back through {@link #peek}, because what is on disk is a lossy JPEG and comparing a
@@ -403,7 +402,7 @@ public final class BigCover {
      * The artwork comes from the caller ({@code DiscCache.readTrack}), which already had the file
      * open for the disc and track numbers; only a track with no embedded picture is looked up on
      * disk here. Between that and the byte comparison below, an ordinary album now costs one file
-     * open per song and one decode per <i>album</i> — and often not even that.
+     * open per song and one decode per album — and often not even that.
      *
      * Never call from the UI thread.
      */
@@ -421,8 +420,8 @@ public final class BigCover {
             // The cheap answer, and the one that applies to nearly every track: an album's songs
             // carry the very same picture BYTE FOR BYTE, so the comparison the cache needs can be
             // made without decoding anything at all — neither this track's artwork nor the
-            // representative's. Decoding both and comparing pixels ({@link #same}) is what the
-            // pass used to do for every song of every album.
+            // representative's. Decoding both and comparing pixels ({@link #same}) would be that work for
+            // every song of every album.
             if (w.raw != null && Arrays.equals(w.raw, raw)) {
                 noteSet(path, SHARED);
                 return;
@@ -463,7 +462,7 @@ public final class BigCover {
         }
     }
 
-    /** The external {@code cover.*}/{@code folder.*} serving a track (#291.1), as bytes. */
+    /** The external {@code cover.*}/{@code folder.*} serving a track, as bytes. */
     private static byte[] external(String path) {
         try {
             File f = Art.file(path);
@@ -640,13 +639,13 @@ public final class BigCover {
     }
 
     /**
-     * Read a track's artwork: the tags first, then #291.1's external cover files.
+     * Read a track's artwork: the tags first, then the external cover files.
      *
      * This is stock's {@code Other.getAlbumCover} unrolled, for one reason — that method decodes the
      * embedded bytes and drops them, and the bytes are exactly what decides whether anything needs
      * re-compressing at all. Cost is unchanged: the same single {@code setDataSource}, the same
      * sampling rule ({@code Art.sample} is a transcription of stock's), and the external-file
-     * fallback that #291.1 injects into stock's null-return path is done here explicitly instead.
+     * fallback that Art injects into stock's null-return path is done here explicitly instead.
      *
      * {@link #SIZE} caps the picture rather than defining it. {@code Ipp.square} centre-crops the
      * source's largest square, whose side is {@code min(w, h)} — ask it for exactly that side and
@@ -777,7 +776,7 @@ public final class BigCover {
     /**
      * The bytes to put on disk.
      *
-     * A source that already fits {@link #LIMIT} is written <b>as it is</b>, whatever its pixel size:
+     * A source that already fits {@link #LIMIT} is written as it is, whatever its pixel size:
      * re-encoding it could only take quality away, and it cannot make the file smaller than the
      * budget it already meets. The pixel cap is applied when it is read back instead ({@link #peek}
      * decodes with sampling and crops), so a big-but-light cover costs nothing extra in memory.

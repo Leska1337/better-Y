@@ -9,7 +9,7 @@ import android.os.PowerManager;
 /**
  * Is the screen on? One boolean, kept current by the two broadcasts that say so.
  *
- * <p>It exists because <b>nothing a View can be asked answers that question on this device</b>.
+ * It exists because nothing a View can be asked answers that question on this device.
  * With the screen off the Activity really is stopped ({@code dumpsys activity} says
  * {@code state=STOPPED}), but the window it owns goes on reporting {@code mViewVisibility=0x0} to
  * its own client and even keeps the focus — so {@code getWindowVisibility()}, {@code isShown()} and
@@ -17,12 +17,12 @@ import android.os.PowerManager;
  * that builds, runs and does nothing. That was measured, not assumed: a first fix along those lines
  * changed the CPU figure by nothing at all.
  *
- * <p>{@code PowerManager.isScreenOn()} does answer, but it is a binder call, and the caller this
+ * {@code PowerManager.isScreenOn()} does answer, but it is a binder call, and the caller this
  * was written for asks 25 times a second ({@link Scroll}). So the answer is cached and the two
  * broadcasts keep it right; the initial value is taken from {@code PowerManager} once, at
  * registration, because a broadcast only ever tells us about the NEXT change.
  *
- * <p>Registration is lazy and self-contained — {@link #watch(Context)} from the first caller that
+ * Registration is lazy and self-contained — {@link #watch(Context)} from the first caller that
  * has a Context, on the application context so nothing holds an Activity. No stock file is touched.
  */
 public final class Lit {

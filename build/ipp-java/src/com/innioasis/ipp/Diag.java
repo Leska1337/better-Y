@@ -27,10 +27,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * #228.2 — one file the user can attach to a bug report, and the debug mode that makes the device
+ * One file the user can attach to a bug report, and the debug mode that makes the device
  * worth logging in the first place.
  *
- * <h3>The report</h3>
+ * The report
  * "Save diagnostic log" in [Tools] writes {@code better-Y/log_<date>_<time>.log} to the CARD,
  * next to {@code comma_artists.txt} and {@code Panel}'s SurfaceFlinger reports — the same reasoning
  * as there: the report has to be readable later, over USB, from a device that may never be next to
@@ -38,19 +38,19 @@ import java.util.Map;
  * round of questions: what build this is and what it is running on, what the mod is set to, what
  * the library looks like, and the tail of both logcat buffers.
  *
- * <p>The one thing the button cannot fix is the age of the buffer. `logcat`'s ring is small and,
+ * The one thing the button cannot fix is the age of the buffer. `logcat`'s ring is small and,
  * while music plays, `AudioFlinger` fills it in about twenty seconds (skill `ipp-device-testing`),
  * so a snapshot taken minutes after a defect may no longer carry it. That is what the debug mode is
  * for, and it is also why it is worth saying plainly: the log is most useful pressed straight away.
  *
- * <h3>The debug mode</h3>
+ * The debug mode
  * Stock Timber logging is off in this build for a measured reason ({@code Y1Application$TimberTree}
  * — skill `ipp-perf-profiling`), and it is switched back on by a file on the card, read once at
- * {@code <clinit>}. That file used to be creatable only from a PC, which is exactly the case a bug
- * report is not in. So it is toggled from the device instead: **five centre presses on Settings →
+ * {@code <clinit>}. Creating that file needs a PC, which is exactly what a user filing a bug report
+ * does not have to hand. So it is toggled from the device instead: **five centre presses on Settings →
  * About**. Not a menu row, because it is not a feature — it costs speed everywhere, needs a reboot
  * to take effect, and a user who has not been asked for it has no business finding it. The same
- * five presses turn it off again, and while it is on the innioasis++ menu grows the SurfaceFlinger
+ * five presses turn it off again, and while it is on the better-Y menu grows the SurfaceFlinger
  * diagnostic ({@link Panel}), which is the other thing that is only ever wanted by someone who was
  * asked for it.
  */
@@ -92,26 +92,24 @@ public final class Diag {
      * The last {@value #RING} messages the app logged, kept in memory — the half of the report that
      * logcat cannot be relied on for.
      *
-     * <p>Three facts decide this design, and all three are measured (skill `ipp-perf-profiling`):
+     * Three facts decide this design, and all three are measured (skill `ipp-perf-profiling`):
      *
-     * <ul>
-     *   <li><b>The messages are already built.</b> A Kotlin {@code Timber.d("… $x")} assembles its
+     *   - The messages are already built. A Kotlin {@code Timber.d("… $x")} assembles its
      *       string at the call site, before any tree, any tag and any filter — so today the app
      *       pays for ~905 call sites' worth of text and then throws it away. Keeping a reference to
-     *       what already exists costs a store, not a formatting pass.</li>
-     *   <li><b>What was expensive is the TAG, not the text.</b> {@code DebugTree.getTag} takes a
+     *       what already exists costs a store, not a formatting pass.
+     *   - What was expensive is the TAG, not the text. {@code DebugTree.getTag} takes a
      *       stack trace per call; that is why quiet mode exists at all, and it stays off here — the
-     *       ring keeps the constant tag.</li>
-     *   <li><b>logcat's ring is not ours.</b> It holds ~256 KB for the whole system, and while
+     *       ring keeps the constant tag.
+     *   - logcat's ring is not ours. It holds ~256 KB for the whole system, and while
      *       music plays {@code AudioFlinger} fills it in about twenty seconds, so a report saved a
      *       minute after a defect has already lost it. These 2000 entries are the app's alone, so
-     *       they cover minutes of its work whatever the system is shouting about.</li>
-     * </ul>
+     *       they cover minutes of its work whatever the system is shouting about.
      *
-     * <p>Nothing here writes to a file or to the log driver: a record is a timestamp, a priority
+     * Nothing here writes to a file or to the log driver: a record is a timestamp, a priority
      * and two references. The file is only ever built in {@link #report}.
      *
-     * <p><b>What reaches it is decided in {@code TimberTree.isLoggable}, at INFO.</b> Keeping
+     * What reaches it is decided in {@code TimberTree.isLoggable}, at INFO. Keeping
      * DEBUG as well was measured and dropped: it is where stock's per-bind and per-click chatter
      * lives — several messages per wheel click, hundreds per screen open — and letting it through
      * cost ~9 ms on opening a list, because Timber then stops taking its early exit and the
@@ -198,7 +196,7 @@ public final class Diag {
      * The ring lives in the process, so a crash takes it with it — and a crash is exactly the case
      * the report is wanted for. So the last thing the process does is write the ring out.
      *
-     * <p>Installed from the first {@link #ring} call rather than from {@code Y1Application}: the
+     * Installed from the first {@link #ring} call rather than from {@code Y1Application}: the
      * app's first Timber message is "Y1Application Init start", i.e. this is armed a few
      * milliseconds into the process and no stock file has to be edited for it. Whatever handler
      * was in place is kept and called afterwards — xCrash is initialised just before this point
@@ -579,7 +577,7 @@ public final class Diag {
      * The two accounts of a crash, side by side: ours, which knows what the app was doing, and
      * xCrash's, which knows how it died.
      *
-     * <p>xCrash is initialised by stock ({@code XCrash.init} in {@code Y1Application}) and was
+     * xCrash is initialised by stock ({@code XCrash.init} in {@code Y1Application}) and was
      * simply never read by anybody — it writes a tombstone per Java crash, per native crash and
      * per ANR, with the stack, every thread, the memory map and the logcat it could reach. So the
      * report does not need a crash catcher of its own for the stack; what it adds is
@@ -655,13 +653,13 @@ public final class Diag {
      * behind the debug mode, so a user who runs into it has nothing to switch on — they press the
      * one button they already know about and the frame's geometry at that moment is in the file.
      *
-     * <p>The app cannot detect the shift itself: a {@code screencap} of the same moment comes out
+     * The app cannot detect the shift itself: a {@code screencap} of the same moment comes out
      * clean, so everything up to and including composition is right and the app has nothing to
      * look at. What it can do is record how the panel is being driven, against the healthy frame
      * measured on 2026-08-22 (skill `ipp-device-testing`): 480x1080 of virtual size (triple
      * buffer), stride 1920 = 480 x 4 bytes, rotate 0.
      *
-     * <p>This section and the SurfaceFlinger row in [Tools] are a pair, and both come out together
+     * This section and the SurfaceFlinger row in [Tools] are a pair, and both come out together
      * once the defect is either fixed or has stopped happening to anyone.
      */
     private static void display(StringBuilder s) {

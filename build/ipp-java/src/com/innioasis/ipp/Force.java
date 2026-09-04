@@ -16,31 +16,31 @@ import java.io.File;
 import java.io.FileInputStream;
 
 /**
- * #228 — force reboot: hold the TOP and BOTTOM buttons together for three seconds. Plus a watchdog
+ * Force reboot: hold the TOP and BOTTOM buttons together for three seconds. Plus a watchdog
  * for the case the buttons cannot get through at all.
  *
- * <p><b>It has to work whatever state the device is in</b>, which is what {@link #reboot} is built
+ * It has to work whatever state the device is in, which is what {@link #reboot} is built
  * around: the real reboot first, and two harder fallbacks under it for when the system itself has
  * stopped answering. Nothing here goes through a Handler — the main thread is the one thing that
  * cannot be relied on at the moment any of this is wanted.
  *
- * <p><b>The buttons</b> are {@code KEY_MENU} (keycode 4, the top one) and {@code KEY_PLAY} (85, the
+ * The buttons are {@code KEY_MENU} (keycode 4, the top one) and {@code KEY_PLAY} (85, the
  * bottom one) — the same pair every screen reads through {@link KeyMap}. While both are held the
  * pair is SWALLOWED: without that, the top button's own long press opens the long-press menu and
  * the bottom one stops playback about half a second in, so letting go to change your mind would
  * leave both behind. Releasing either before the three seconds are up cancels it and costs nothing.
  *
- * <p>State is static because the keys are the device's, not a screen's — a press can start on one
+ * State is static because the keys are the device's, not a screen's — a press can start on one
  * Activity and end on the next. A DOWN whose UP never arrives (the Activity it belonged to went
  * away with it) would otherwise leave a button "held" forever and swallow the other one from then
  * on, so a press older than {@link #STALE_MS} is dropped.
  *
- * <p>Hooked into the top of every {@code dispatchKeyEvent} in the app that does not delegate to
+ * Hooked into the top of every {@code dispatchKeyEvent} in the app that does not delegate to
  * another one: the two base Activities (music and e-book), {@code BasePlayerActivity},
  * {@code BaseDialog} (a dialog takes the keys away from the Activity under it),
  * {@code InputMethodDialog}, and the four screens that override the method without calling super.
  *
- * <p><b>The watchdog</b> exists because all of the above hangs off {@code dispatchKeyEvent}, i.e.
+ * The watchdog exists because all of the above hangs off {@code dispatchKeyEvent}, i.e.
  * off the MAIN THREAD — which is exactly the thread that is not running when a screen is stuck, so
  * the one moment the combination is wanted is the one moment it cannot be noticed. A plain thread
  * therefore pings the main thread every {@link #PING_MS} and restarts the process when the answer
@@ -143,12 +143,12 @@ public final class Force {
     /**
      * Fires three seconds into the hold.
      *
-     * <p>The swallowing stays ARMED — only the pending fire is dropped. The buttons are still down
+     * The swallowing stays ARMED — only the pending fire is dropped. The buttons are still down
      * at this point and their releases are yet to come: the top one's short press is delivered on
      * the UP, so clearing {@code armed} here handed the app a "back" the moment the user let go,
      * i.e. the screen changed underneath the system's shutdown window. {@link #key} disarms itself
      * when both buttons are up, swallowing the release that does it, exactly as it does when the
-     * hold is abandoned early.</p>
+     * hold is abandoned early.
      */
     private static final class Boom implements Runnable {
         public void run() {
@@ -163,7 +163,7 @@ public final class Force {
     // `dismiss()` only AFTER the callback returns — but `Other.shutdown()` never returns: it
     // reflects into IPowerManager and blocks in the system while the shutdown screen comes up. So
     // the confirm dialog stayed on screen underneath it. Exactly the same shape as the Reboot row
-    // of the innioasis++ screen (`IppActivity.postReboot`), and the same answer: hand the frame
+    // of the better-Y screen (`IppActivity.postReboot`), and the same answer: hand the frame
     // back first, shut down 400 ms later. The delay is not a race to win — nothing after this
     // point matters, the device is going down either way.
 
@@ -184,20 +184,18 @@ public final class Force {
      * Both paths end here, and only one of them may get through. Three steps, each a fallback for
      * the one before, so that something happens whatever state the device is in:
      *
-     * <ol>
-     *   <li><b>{@code PowerManager.reboot}</b> — the real thing, a full reboot. Called from a
+     *   - {@code PowerManager.reboot} — the real thing, a full reboot. Called from a
      *       thread of our own, never from a Handler: a wedged main thread must not be able to hold
      *       it up, and the call is a Binder round trip to {@code system_server} either way. It does
-     *       not return when it works.</li>
-     *   <li><b>kill {@code system_server}</b> — if we are still here seconds later, the system
+     *       not return when it works.
+     *   - kill {@code system_server} — if we are still here seconds later, the system
      *       process is not answering, and a reboot that has to be asked for politely is exactly
      *       what cannot work then. The app runs as uid {@code system} ({@code sharedUserId}), which
      *       is the same uid {@code system_server} runs as, so {@code kill(2)} is permitted; init
      *       restarts zygote and the whole framework comes back up. Not a kernel reboot, but from
-     *       the outside it is a full restart of everything the user can see.</li>
-     *   <li><b>kill ourselves</b> — the last resort; the launcher is the HOME app, so the system
-     *       starts it again at once.</li>
-     * </ol>
+     *       the outside it is a full restart of everything the user can see.
+     *   - kill ourselves — the last resort; the launcher is the HOME app, so the system
+     *       starts it again at once.
      */
     private static void reboot() {
         if (fired) return;
@@ -213,13 +211,13 @@ public final class Force {
     /**
      * Write down what is playing before going down.
      *
-     * <p>Stock saves that state in exactly two places — {@code Other.shutdown()} and a 2% battery
+     * Stock saves that state in exactly two places — {@code Other.shutdown()} and a 2% battery
      * warning — so a REBOOT came back to whatever the last shutdown had left behind: the wrong
      * track, the wrong list, and (since the queue's source is written in the same breath) the
      * wrong screen behind "Open source". Always the same wrong one, too, which is what it looked
      * like on the device. Both of our reboot paths call this first.
      *
-     * <p>It is the whole playlist through Gson and a file write, which is a moment's work — and
+     * It is the whole playlist through Gson and a file write, which is a moment's work — and
      * this is a reboot, so the moment is free.
      */
     public static void saveState() {
@@ -289,7 +287,7 @@ public final class Force {
      * {@code /proc}, which needs no permission — and no {@code ps}, which is a process of its own
      * and might be exactly what a wedged system cannot start.
      *
-     * <p>Public because {@code Panel} restarts SurfaceFlinger the same way ({@code /system/bin/
+     * Public because {@code Panel} restarts SurfaceFlinger the same way ({@code /system/bin/
      * surfaceflinger}), and one implementation of "find this process" is enough for both.
      */
     public static int pidOf(String name) {

@@ -11,87 +11,87 @@
 
 .method public static libraryChanged()V
   .registers 0
-  .line 39
+  .line 37
     invoke-static { }, Lcom/innioasis/ipp/Albums;->invalidate()V
-  .line 40
+  .line 38
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->clearMiss()V
-  .line 41
+  .line 39
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->clearMiss()V
-  .line 44
+  .line 42
     invoke-static { }, Lcom/innioasis/ipp/Art;->clear()V
-  .line 47
+  .line 45
     invoke-static { }, Lcom/innioasis/ipp/GenreInfo;->invalidate()V
-  .line 48
+  .line 46
     return-void
 .end method
 
 .method public static songChanged(Lcom/innioasis/y1/database/Song;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 2
-  .line 59
+  .line 56
     invoke-static { }, Lcom/innioasis/ipp/Ipp;->libraryChanged()V
-  .line 60
+  .line 57
     if-nez p0, :L0
-  .line 61
+  .line 58
     return-void
   :L0
-  .line 64
+  .line 61
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->keyOf(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object v0
-  .line 65
+  .line 62
     invoke-static { v0 }, Lcom/innioasis/ipp/CoverCache;->forget(Ljava/lang/String;)V
-  .line 67
+  .line 64
     invoke-static { v0 }, Lcom/innioasis/ipp/AlbumArtist;->forget(Ljava/lang/String;)V
-  .line 68
+  .line 65
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
-  .line 70
+  .line 67
     invoke-static { p0 }, Lcom/innioasis/ipp/DiscCache;->forget(Ljava/lang/String;)V
-  .line 75
+  .line 72
     invoke-static { p0 }, Lcom/innioasis/ipp/TrackCache;->forget(Ljava/lang/String;)V
-  .line 79
+  .line 76
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->forget(Ljava/lang/String;)V
-  .line 80
+  .line 77
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->forget(Ljava/lang/String;)V
   :L1
-  .line 82
+  .line 79
     goto :L3
   :L2
-  .line 81
+  .line 78
     move-exception p0
   :L3
-  .line 83
+  .line 80
     return-void
 .end method
 
 .method public static songTitle(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 4
-  .line 97
+  .line 94
     const-string v0, "meta_title"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result p0
     if-eqz p0, :L0
     if-eqz p1, :L0
-  .line 98
+  .line 95
     invoke-virtual { p1 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object p0
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result p0
     if-lez p0, :L0
-  .line 99
+  .line 96
     sget-object p0, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
     invoke-virtual { p0, p1 }, Lcom/innioasis/music/util/Other;->unNamed(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     return-object p0
   :L0
-  .line 101
+  .line 98
     if-nez p2, :L1
-  .line 102
+  .line 99
     const-string p2, ""
   :L1
-  .line 104
+  .line 101
     sget-object p0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
     invoke-virtual { p0, p2 }, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->processFileExtensions(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0

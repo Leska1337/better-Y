@@ -16,13 +16,13 @@ import java.util.Map;
  * The DISC NUMBER tag of a track (ID3 {@code TPOS}), for albums that are not split into CD
  * folders.
  *
- * <h3>Why the tag at all</h3>
+ * Why the tag at all
  * The disc a track belongs to is otherwise read off its folder name ("CD1", "Disc 2", "Диск3"),
  * which is free and reflects how the files were actually laid out — but it is blind to an album
  * that sits in ONE folder and says "1/2" and "2/2" in its tags. So: the folder answers first, and
  * the tag only where the folder says nothing ({@link Albums#discOf}).
  *
- * <h3>Cost</h3>
+ * Cost
  * Unlike the album artist, this is a property of the TRACK, so it is one metadata read per song —
  * the expensive class. It is therefore read only by "Cache library", and in the same file open as
  * the track number ({@link #read}), which that pass reads anyway: having both makes the disc
@@ -146,14 +146,14 @@ public final class DiscCache {
     }
 
     /**
-     * Everything the caching pass wants from one track, out of a <b>single</b> {@code
+     * Everything the caching pass wants from one track, out of a single {@code
      * setDataSource} — the two tags above and, for the Now-Playing cover, the artwork bytes.
      *
      * Opening the file is what a metadata read costs (the container has to be parsed before any
      * key can be answered); pulling three values out of one open is practically free, while asking
-     * for them separately pays that price again each time. The pass used to do exactly that: one
-     * open here, a second one inside {@code BigCover} for the picture, and a third from
-     * {@code TrackCache.ensure} for every song whose file has no track number at all.
+     * for them separately pays that price again each time — one open here, a second inside
+     * {@code BigCover} for the picture, and a third from {@code TrackCache.ensure} for every song
+     * whose file carries no track number at all.
      *
      * Writes nothing anywhere, so any number of threads may call it at once. Never call from the
      * UI thread.

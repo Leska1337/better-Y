@@ -372,41 +372,41 @@
 
 .method private resize(I)V
   .registers 4
-  .line 360
+  .line 359
     iget-object v0, p0, Lcom/innioasis/ipp/HelpDialog;->hole:Landroid/widget/LinearLayout;
     if-nez v0, :L0
     return-void
   :L0
-  .line 361
+  .line 360
     iget v1, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
     if-le p1, v1, :L1
     move p1, v1
   :L1
-  .line 362
+  .line 361
     invoke-virtual { v0 }, Landroid/widget/LinearLayout;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 363
+  .line 362
     if-eqz v0, :L3
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-ne v1, p1, :L2
     goto :L3
   :L2
-  .line 364
+  .line 363
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
-  .line 365
+  .line 364
     iget-object p1, p0, Lcom/innioasis/ipp/HelpDialog;->hole:Landroid/widget/LinearLayout;
     invoke-virtual { p1, v0 }, Landroid/widget/LinearLayout;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 366
+  .line 365
     return-void
   :L3
-  .line 363
+  .line 362
     return-void
 .end method
 
 .method private room()I
   .catchall { :L0 .. :L3 } :L7
   .registers 12
-  .line 326
+  .line 325
     const/16 v0, 268
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
@@ -415,7 +415,7 @@
     invoke-virtual { v1 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v1
     iget v1, v1, Landroid/util/DisplayMetrics;->heightPixels:I
-  .line 327
+  .line 326
     iget v2, p0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->head:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingLeft()I
@@ -425,13 +425,13 @@
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingRight()I
     move-result v3
     sub-int/2addr v2, v3
-  .line 328
+  .line 327
     const/4 v3, 1
     if-ge v2, v3, :L1
     iget v2, p0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
   :L1
     move v5, v2
-  .line 329
+  .line 328
     new-instance v10, Landroid/text/StaticLayout;
     iget-object v2, p0, Lcom/innioasis/ipp/HelpDialog;->title:Ljava/lang/String;
     if-nez v2, :L2
@@ -447,7 +447,7 @@
     const/4 v9, 0
     move-object v2, v10
     invoke-direct/range { v2 .. v9 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 331
+  .line 330
     invoke-virtual { v10 }, Landroid/text/StaticLayout;->getHeight()I
     move-result v2
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->head:Landroid/widget/TextView;
@@ -458,7 +458,7 @@
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingBottom()I
     move-result v3
     add-int/2addr v2, v3
-  .line 332
+  .line 331
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->foot:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
@@ -469,7 +469,7 @@
     move-result-wide v3
     double-to-int v3, v3
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->foot:Landroid/widget/TextView;
-  .line 333
+  .line 332
     invoke-virtual { v4 }, Landroid/widget/TextView;->getPaddingTop()I
     move-result v4
     add-int/2addr v3, v4
@@ -478,40 +478,40 @@
     move-result v4
   :L3
     add-int/2addr v3, v4
-  .line 334
+  .line 333
     add-int/lit8 v1, v1, -20
     add-int/lit8 v1, v1, -16
     sub-int/2addr v1, v2
     sub-int/2addr v1, v3
-  .line 335
+  .line 334
     if-le v1, v0, :L4
     goto :L5
   :L4
     move v0, v1
   :L5
-  .line 336
+  .line 335
     const/16 v1, 60
     if-ge v0, v1, :L6
     const/16 v0, 60
   :L6
-  .line 337
+  .line 336
     return v0
   :L7
-  .line 338
+  .line 337
     move-exception v1
-  .line 339
+  .line 338
     return v0
 .end method
 
 .method private shotHeight(Landroid/graphics/Bitmap;Ljava/lang/String;)I
   .registers 12
-  .line 345
+  .line 344
     iget v0, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
-  .line 346
+  .line 345
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v1
     if-lez v1, :L0
-  .line 347
+  .line 346
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v0
     int-to-long v0, v0
@@ -523,16 +523,16 @@
     int-to-long v2, v2
     div-long/2addr v0, v2
     long-to-int v0, v0
-  .line 348
+  .line 347
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v1
     if-le v0, v1, :L0
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v0
   :L0
-  .line 350
+  .line 349
     if-eqz p2, :L1
-  .line 351
+  .line 350
     new-instance p1, Landroid/text/StaticLayout;
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     invoke-virtual { v1 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
@@ -545,7 +545,7 @@
     move-object v1, p1
     move-object v2, p2
     invoke-direct/range { v1 .. v8 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 353
+  .line 352
     invoke-virtual { p1 }, Landroid/text/StaticLayout;->getHeight()I
     move-result p1
     iget-object p2, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
@@ -554,7 +554,7 @@
     add-int/2addr p1, p2
     add-int/2addr v0, p1
   :L1
-  .line 355
+  .line 354
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
     if-le v0, p1, :L2
     move v0, p1
@@ -719,7 +719,7 @@
 
 .method public longDown(II)V
   .registers 4
-  .line 385
+  .line 384
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_ENTER()I
     move-result v0
@@ -729,17 +729,17 @@
     iget-object p1, p0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
     instance-of p2, p1, Lcom/innioasis/y1/base/BaseActivity;
     if-eqz p2, :L0
-  .line 387
+  .line 386
     check-cast p1, Lcom/innioasis/y1/base/BaseActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/base/BaseActivity;->askShutdown()V
   :L0
-  .line 389
+  .line 388
     return-void
 .end method
 
 .method public longDownFinish(I)V
   .registers 2
-  .line 393
+  .line 392
     return-void
 .end method
 
@@ -980,9 +980,9 @@
 
 .method public shortUp(I)V
   .registers 4
-  .line 372
+  .line 371
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
-  .line 373
+  .line 372
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_UP()I
     move-result v1
     if-eq p1, v1, :L3
@@ -991,7 +991,7 @@
     if-ne p1, v1, :L0
     goto :L3
   :L0
-  .line 375
+  .line 374
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_DOWN()I
     move-result v1
     if-eq p1, v1, :L2
@@ -1000,25 +1000,25 @@
     if-ne p1, v1, :L1
     goto :L2
   :L1
-  .line 377
+  .line 376
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_MENU()I
     move-result v0
     if-ne p1, v0, :L4
-  .line 378
+  .line 377
     invoke-virtual { p0 }, Lcom/innioasis/ipp/HelpDialog;->dismiss()V
     goto :L4
   :L2
-  .line 376
+  .line 375
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->page:I
     add-int/lit8 p1, p1, 1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->show(I)V
     goto :L4
   :L3
-  .line 374
+  .line 373
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->page:I
     add-int/lit8 p1, p1, -1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->show(I)V
   :L4
-  .line 380
+  .line 379
     return-void
 .end method

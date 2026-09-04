@@ -21,11 +21,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * #384 — the audiobook side of the Now-Playing screen.
+ * The audiobook side of the Now-Playing screen.
  *
  * Two things live here:
  *
- * 1. The playback speed and the sleep timer, which used to be reachable only through
+ * 1. The playback speed and the sleep timer, on the player row rather than only in
  *    Audiobooks -> Settings ({@code SetupActivity}). They are ordinary preferences that
  *    {@code PlayerService} reads live, so a button on the player row only has to write them —
  *    plus {@code setSpeed} for the track that is already playing, and the countdown itself,
@@ -33,7 +33,7 @@ import java.util.UUID;
  *    The Settings row is gone, so this is the only place that starts that timer besides
  *    {@code TempUtil.startAudiobookShutdown} (which restores it after a theme switch).
  *
- * 2. Which player screen "what is playing now" means (#384.2). Stock's own Now-Playing menu
+ * 2. Which player screen "what is playing now" means. Stock's own Now-Playing menu
  *    entry already dispatches on {@code PlayerService.getPlaying()}; the double-press of the
  *    bottom button did not, and always opened the music player.
  *
@@ -205,7 +205,7 @@ public final class Audio {
      * is "Track 07" in the tag and "07 — The Lighthouse" on disk), which is the opposite of how
      * music usually goes, so the two cannot share one switch.
      *
-     * <p>{@code Other.unNamed} is applied on both paths, because a book taken off the card by the
+     * {@code Other.unNamed} is applied on both paths, because a book taken off the card by the
      * file browser carries {@code Constant.UNKNOWN} in every field it has no tag for.
      */
     public static String title(Context c, String tagTitle, String fileName) {
@@ -306,7 +306,7 @@ public final class Audio {
         }
     }
 
-    // ---- #384.2: which player screen is "now playing" ----------------------------------------
+    // ---- which player screen is "now playing" ----------------------------------------
 
     /**
      * Open the player of whatever is actually playing, when that is NOT music. Returns false for

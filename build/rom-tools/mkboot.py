@@ -61,7 +61,7 @@ exit 0
 """
 
 INIT_BLOCK = """
-# innioasis++ installer
+# better-Y installer
 on boot
     mount ext4 /emmc@android /system remount wait
     exec /system/bin/sh /ipp_installer.sh
