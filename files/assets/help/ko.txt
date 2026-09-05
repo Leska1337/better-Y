@@ -87,6 +87,15 @@
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
+[artist_album_scroll] 긴 아티스트/앨범 스크롤
+* 꺼짐
+* 아티스트
+* 앨범
+* 모두
+선택한 줄에서 긴 텍스트가 흐르도록 합니다.
+
+긴 곡 제목은 이 설정과 상관없이 항상 흐릅니다.
+
 [[menu]] 메뉴
 
 [alpha_scroll] 가나다순 빠른 스크롤

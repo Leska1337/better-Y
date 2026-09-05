@@ -1,18 +1,20 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
+import android.text.TextUtils;
+import android.widget.TextView;
 
 import com.innioasis.music.util.Other;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.utils.SharedPreferencesUtils;
 
 /**
- * The three answers that belong to no subsystem of their own.
+ * The answers that belong to no subsystem of their own.
  *
  * Two of them are the mod's one global rule — a write to the Song table invalidates caches
  * — and they are named by name in {@code CLAUDE.md} and in half the skills, because every future
- * write path has to call one of them. The third is what a song is CALLED, which every list and both
- * players ask.
+ * write path has to call one of them. The others are what a song is CALLED, which every list and
+ * both players ask, and which of a player's lines the marquee runs on.
  *
  * It stays this small on purpose: a helper that grows a subsystem's worth of state belongs in a
  * class of its own, next to that state. The cover's geometry is in {@link Cover}, the marquee's
@@ -99,5 +101,35 @@ public final class Ipp {
             fileName = "";
         }
         return SharedPreferencesUtils.INSTANCE.processFileExtensions(fileName);
+    }
+
+    /** "Long artist/album scroll": 0 neither, 1 the artist line, 2 the album line, 3 both. */
+    public static final String KEY_LINE_SCROLL = "artist_album_scroll";
+
+    /**
+     * The artist or the album line of a player: run it under the marquee, or leave it truncated.
+     *
+     * Both players draw the same three lines, and only the TITLE runs unconditionally — a track is
+     * told apart by its title, so a title cut off says the least. Under it a running line is as
+     * often a distraction as a help, which is what the setting is for; it is off by default.
+     *
+     * The off branch is not merely "do not start one": a line that was running when the setting
+     * was changed still carries the doubled copy and no ellipsis, and the player is not rebuilt
+     * for a preference. So it is put back explicitly — and both calls cost nothing when there is
+     * nothing to undo, {@code setEllipsize} comparing against what the view already has.
+     */
+    public static void playerLine(TextView tv, String text, boolean album) {
+        if (tv == null) {
+            return;
+        }
+        String s = text == null ? "" : text;
+        int v = Prefs.val(tv.getContext(), KEY_LINE_SCROLL);
+        if (album ? (v == 2 || v == 3) : (v == 1 || v == 3)) {
+            Scroll.marqueeText(tv, s);
+            return;
+        }
+        Scroll.stopMarquee(tv);
+        tv.setEllipsize(TextUtils.TruncateAt.END);
+        tv.setText(s);
     }
 }

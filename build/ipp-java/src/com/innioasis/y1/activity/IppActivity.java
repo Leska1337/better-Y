@@ -29,6 +29,7 @@ import com.innioasis.ipp.GenreInfo;
 import com.innioasis.ipp.GenreSplit;
 import com.innioasis.ipp.Help;
 import com.innioasis.ipp.HelpDialog;
+import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Panel;
@@ -232,6 +233,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));
         l.add(new Item(TOGGLE, "first_artist_only", 0, null, null));
         l.add(new Item(TOGGLE, "feat_in_title", 0, null, "first_artist_only"));
+        l.add(new Item(CHOICE, Ipp.KEY_LINE_SCROLL, 4, null, null));
 
         // [Menu] -- how the lists behave under the wheel
         l.add(new Item(HEADER, "menu", 0, null, null));

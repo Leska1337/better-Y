@@ -87,6 +87,15 @@
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
+[artist_album_scroll] 滚动过长的艺术家/专辑
+* 关
+* 艺术家
+* 专辑
+* 两者
+在所选的行中启用长文本滚动。
+
+过长的歌曲标题始终滚动，与此设置无关。
+
 [[menu]] 菜单
 
 [alpha_scroll] 按字母快速滚动

@@ -87,6 +87,15 @@ Solo funciona en la línea del artista del reproductor.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
+[artist_album_scroll] Desplazar artistas/álbumes largos
+* Desactivado
+* Artistas
+* Álbumes
+* Ambos
+Activa el desplazamiento del texto largo en las líneas seleccionadas.
+
+Los títulos largos de las canciones se desplazan siempre, sea cual sea esta opción.
+
 [[menu]] Menú
 
 [alpha_scroll] Desplazamiento alfabético rápido

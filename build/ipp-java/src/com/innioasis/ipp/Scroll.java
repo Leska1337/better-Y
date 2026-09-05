@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -26,8 +27,13 @@ import com.innioasis.y1.R;
  *   neighbour is halfway across, which is what independent timers look like;
  * - they travel at the same speed. The lap lasts as long as the LONGEST line needs; a shorter one
  *   finishes its own round earlier and waits at its start until the lap ends. Giving every line
- *   the same DURATION instead would mean a different speed each, and text that scrolls at a speed
- *   of its own cannot be read alongside text that does not;
+ *   the same DURATION instead would mean a different speed each, and text scrolling at a speed of
+ *   its own cannot be read alongside text that does not; equalising the DISTANCE instead — one
+ *   period for every line, the gap stretched to fill it — costs a gap so wide on a short line
+ *   that the row reads as empty for seconds at a time;
+ * - the wait is invisible, because a round ends exactly where it began. The period is MEASURED
+ *   off the string that was built, so the offset a line wraps at really is where its second copy
+ *   starts, and the line rests at its own first pixel rather than a pixel or two off it;
  * - they cost one frame between them. A {@code scrollTo} is an invalidate of a
  *   hardware-accelerated window and on this device that is ~3.4 ms of main thread whatever moved,
  *   so the bill is per FRAME and not per view — sixteen labels moved in one tick cost what one
@@ -58,6 +64,16 @@ public final class Scroll {
     /** The rest at the head of every lap, in ticks — 1.5 s of standing still to be read. */
     private static final int LEAD = 38;
 
+    /** The gap between one copy of a line and the next. */
+    private static final String GAP = "     ";
+
+    /**
+     * How long the lines hold still for a screen that is being built, in ms. Long enough for the
+     * heaviest screen here (the queue takes some 400 ms from its first bound row to its window),
+     * short enough that a line bound into something that never appears is not frozen for long.
+     */
+    private static final int SETTLE = 1200;
+
     /** The heartbeat while nothing may move: the screen is off, or no line is on screen. */
     private static final int IDLE = 1000;
 
@@ -70,10 +86,29 @@ public final class Scroll {
 
     /**
      * Ticks since the current lap began — the shared phase, and the whole of the synchronisation.
-     * Up to {@link #LEAD} every line rests at its start; past it, every line stands at
-     * {@code (phase - LEAD) * STEP} of its own text, clamped to its own width.
+     * Up to {@link #LEAD} every line rests at its start; past it, every line has covered
+     * {@code (phase - LEAD) * STEP} pixels of the lap, and stands wherever that leaves it within
+     * its own round.
      */
     private static int phase;
+
+    /**
+     * While a screen is being BUILT, nothing moves — the deadline by which it must have appeared.
+     *
+     * The lines cannot move then anyway: the marquee is a message on the very thread that builds
+     * the screen, so a screen coming up blocks it, and what shows through is not a pause but a
+     * judder — the ticks that land between one chunk of that work and the next each carry the text
+     * 2px and stop again. The queue is the worst of them, building its visible rows and then its
+     * tail a frame later. Holding the lines still from the first row bound turns that into what it
+     * really is: a line that stopped, and then a new screen.
+     *
+     * The signal is a line joining with NO WINDOW TOKEN — a view that is not attached to a window
+     * at all, which is a screen still being put together. Merely "not shown" is not the same thing
+     * and must not be used here: a covered Activity's rows are rebound on every track change
+     * ({@code Lists.refresh}), and taking those for a screen being built would hold the marquee on
+     * the screen the user IS looking at, every time a track starts.
+     */
+    private static long settleUntil;
 
     /**
      * Put this text on the view and run the marquee over it — the entry point of the screens that
@@ -171,15 +206,18 @@ public final class Scroll {
     private final TextView tv;
     /** The plain string, i.e. what the line really says. */
     private String last;
-    /** The doubled copy actually on the view once it is known to overflow, or null. */
+    /** The characters of the doubled copy once it is on the view, or null. */
     private String shown;
     private int x;
+    /** One round of this line: from one copy of the text to the start of the next, MEASURED. */
     private int period;
     private boolean hscroll;
     private boolean running;
     private boolean doubled;
     private boolean measured;
     private boolean seen;
+    /** Whether the tick found this line on screen last time — the transition is what restarts a lap. */
+    private boolean wasShown;
 
     public Scroll(TextView tv) {
         this.tv = tv;
@@ -286,6 +324,16 @@ public final class Scroll {
      *
      * That is also what keeps a moving list cheap: every rebind lands here, so while the wheel is
      * turning the lap never reaches its running half and no text is ever doubled.
+     *
+     * BUT ONLY A LINE THAT IS ITSELF ON SCREEN MAY RESTART THE LAP. A screen is built well before
+     * it is shown — the queue's rows are bound in {@code onCreate}, some 400 ms before its window
+     * covers the player — so a line joining from there would snap the lines the user is still
+     * looking at back to their start, in the middle of reading them, for no visible reason. The
+     * lap is restarted by the OLD screen going instead, which is the tick's business.
+     *
+     * A line joining unseen means something else as well, and it is the only warning there is:
+     * a screen is being built on this thread right now. Everything holds still from here — see
+     * {@link #settleUntil}.
      */
     private void join() {
         // ipp: the screen-state receiver is registered from here — the first place in the mod that
@@ -294,7 +342,11 @@ public final class Scroll {
         if (!LIVE.contains(this)) {
             LIVE.add(this);
         }
-        phase = 0;
+        if (tv.isShown()) {
+            phase = 0;
+        } else if (tv.getWindowToken() == null) {
+            settleUntil = android.os.SystemClock.uptimeMillis() + SETTLE;
+        }
         if (clock == null) {
             clock = new Handler(Looper.getMainLooper());
         }
@@ -340,9 +392,15 @@ public final class Scroll {
      * reaches this point after 1.5 s of the list standing still.
      *
      * **The width is measured with the PAINT, not off {@code getLayout()}**, and that is not a
-     * detail: until the line above runs, the view is still ellipsized, so its layout's line width
-     * is exactly the view's width whatever the text says — asking it would answer "it fits" for
-     * every string there is, and nothing would ever scroll.
+     * detail: until the ellipsis is dropped, the view's layout line width is exactly the view's
+     * width whatever the text says — asking it would answer "it fits" for every string there is,
+     * and nothing would ever scroll.
+     *
+     * THE PERIOD IS THE MEASURE OF WHAT WAS BUILT, ROUNDED — not the measure plus a pixel, and not
+     * a width worked out from anything else. It is the offset at which the second copy begins, so
+     * a line standing there is standing exactly where it started, which is what lets it wrap and
+     * then wait out the rest of the lap with nothing moving on screen. A period a pixel past that
+     * offset is a pixel of correction every time the lap turns over.
      */
     private void wrap() {
         int room = tv.getWidth() - tv.getPaddingLeft() - tv.getPaddingRight();
@@ -351,24 +409,33 @@ public final class Scroll {
         }
         measured = true;
         String base = last != null ? last : "";
-        if (tv.getPaint().measureText(base) <= room) {
+        Paint paint = tv.getPaint();
+        if (paint.measureText(base) <= room) {
             return;                       // it fits
         }
+        String head = base + GAP;
+        int per = Math.round(paint.measureText(head));
+        if (per < 1) {
+            return;
+        }
         scrollable();
-        String one = base + "     ";
-        period = (int) tv.getPaint().measureText(one) + 1;
-        shown = one + base;
+        shown = head + base;
+        period = per;
         doubled = true;
         tv.setText(shown);
     }
 
-    /** Where this line stands at that phase of the shared lap. */
+    /**
+     * Where this line stands at that phase of the shared lap: at {@code (phase - LEAD) * STEP} of
+     * its own round, and back at its start once that round is done — where it waits for the lines
+     * still running.
+     */
     private void move(int p) {
         int nx = 0;
         if (p > LEAD && doubled) {
-            nx = (p - LEAD) * STEP;
-            if (nx > period) {
-                nx = period;
+            int d = (p - LEAD) * STEP;
+            if (d < period) {
+                nx = d;
             }
         }
         if (nx != x) {
@@ -419,9 +486,23 @@ public final class Scroll {
 
             boolean lit = Lit.screenOn();
             boolean any = false;
+            boolean was = false;
+            boolean appeared = false;
+            boolean vanished = false;
             for (int i = 0; i < n; i++) {
                 Scroll s = (Scroll) LIVE.get(i);
-                if (!lit || !s.tv.isShown()) {
+                boolean on = lit && s.tv.isShown();
+                if (s.wasShown) {
+                    was = true;
+                }
+                if (on && !s.wasShown) {
+                    appeared = true;
+                }
+                if (!on && s.wasShown) {
+                    vanished = true;
+                }
+                s.wasShown = on;
+                if (!on) {
                     s.park();
                 } else {
                     any = true;
@@ -432,12 +513,36 @@ public final class Scroll {
                 post(IDLE);
                 return;
             }
+            // A LAP IS RESTARTED BY A SCREEN GOING, NOT BY ONE ARRIVING. A window is up and its
+            // views report themselves shown a good while before it covers what is under it — the
+            // queue binds its rows in onCreate and takes some 400 ms to appear — so a line
+            // restarting the lap as it arrives snaps the lines the user is still reading back to
+            // their start, in front of them. The screen it came to replace going away is the
+            // moment nothing of the old one is left to disturb, and the new line gets its full
+            // rest from there.
+            if (vanished || (appeared && !was)) {
+                phase = 0;
+                settleUntil = 0;
+            }
+            // A screen is being built on this very thread: hold everything where it stands until
+            // the screen it replaces has gone, or until it turns out not to be coming. Not until
+            // the new one APPEARS: the two windows overlap for a tick or two, and moving in that
+            // window is the last of the judder rather than the end of it. See settleUntil.
+            if (settleUntil != 0) {
+                if (android.os.SystemClock.uptimeMillis() > settleUntil) {
+                    settleUntil = 0;
+                } else {
+                    post(TICK);
+                    return;
+                }
+            }
 
-            // The lead-in is over: find out which lines overflow and how far the longest has to go.
+            // The lead-in is over: work out which lines are too long for their view, and how far
+            // the longest of them has to go.
             if (phase == LEAD) {
                 for (int i = 0; i < n; i++) {
                     Scroll s = (Scroll) LIVE.get(i);
-                    if (!s.measured && s.tv.isShown()) {
+                    if (!s.measured && s.wasShown) {
                         s.wrap();
                     }
                 }
@@ -446,7 +551,7 @@ public final class Scroll {
             int longest = 0;
             for (int i = 0; i < n; i++) {
                 Scroll s = (Scroll) LIVE.get(i);
-                if (s.doubled && s.tv.isShown() && s.period > longest) {
+                if (s.doubled && s.wasShown && s.period > longest) {
                     longest = s.period;
                 }
             }
@@ -460,7 +565,7 @@ public final class Scroll {
 
             for (int i = 0; i < n; i++) {
                 Scroll s = (Scroll) LIVE.get(i);
-                if (s.tv.isShown()) {
+                if (s.wasShown) {
                     s.move(phase);
                 }
             }

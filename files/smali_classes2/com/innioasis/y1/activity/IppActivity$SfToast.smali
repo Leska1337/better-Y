@@ -17,13 +17,13 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;Ljava/lang/String;)V
   .registers 3
-  .line 763
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 764
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SfToast;->a:Lcom/innioasis/y1/activity/IppActivity;
   .line 765
-    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$SfToast;->path:Ljava/lang/String;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 766
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SfToast;->a:Lcom/innioasis/y1/activity/IppActivity;
+  .line 767
+    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$SfToast;->path:Ljava/lang/String;
+  .line 768
     return-void
 .end method
 
@@ -31,7 +31,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 770
+  .line 772
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SfToast;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v0
@@ -41,12 +41,12 @@
     move-result-object v0
     invoke-virtual { v0 }, Landroid/widget/Toast;->show()V
   :L1
-  .line 773
+  .line 775
     goto :L3
   :L2
-  .line 771
+  .line 773
     move-exception v0
   :L3
-  .line 774
+  .line 776
     return-void
 .end method

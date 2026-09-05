@@ -89,6 +89,15 @@ Works only in the artist line of the player.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
+[artist_album_scroll] Long artist/album scroll
+* Off
+* Artists
+* Albums
+* Both
+Enables long text scroll in the selected lines.
+
+Long song titles always scroll, regardless of the setting.
+
 [[menu]] Menu
 
 [alpha_scroll] Alphabetical fast scroll

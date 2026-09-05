@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..87bfadc6 100644
+index 01b1f730..ab274315 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..87bfadc6 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000006
++  versionCode: 10000011
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19196,7 +19196,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..09960daa 100644
+index 71fe29d0..b7fe5477 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20145,7 +20145,7 @@ index 71fe29d0..09960daa 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev6</string>
++    <string name="ipp_version">v1.0.0-dev11</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -48221,7 +48221,7 @@ index 132f6278..1b7e4bfe 100644
      .packed-switch 0x0
          :pswitch_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-index 943028f8..1d143e94 100644
+index 943028f8..35f9ff86 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 @@ -397,6 +397,13 @@
@@ -48357,18 +48357,38 @@ index 943028f8..1d143e94 100644
  
      .line 96
      invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -804,6 +853,10 @@
+@@ -804,9 +853,16 @@
  
      move-result-object v2
  
+-    check-cast v2, Ljava/lang/CharSequence;
 +    invoke-static {v2}, Lcom/innioasis/ipp/Feat;->artist(Ljava/lang/String;)Ljava/lang/String;
-+
+ 
+-    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 +    move-result-object v2
 +
-     check-cast v2, Ljava/lang/CharSequence;
++    # ipp: the artist and the album line under the title run the title's marquee too, if the
++    # user has asked for it -- "Long artist/album scroll", off by default. The title itself is
++    # never gated: a track is told apart by its title.
++    const/4 v3, 0x0
++
++    invoke-static {v1, v2, v3}, Lcom/innioasis/ipp/Ipp;->playerLine(Landroid/widget/TextView;Ljava/lang/String;Z)V
  
-     invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -853,12 +906,13 @@
+     .line 97
+     invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -827,9 +883,9 @@
+ 
+     move-result-object v2
+ 
+-    check-cast v2, Ljava/lang/CharSequence;
++    const/4 v3, 0x1
+ 
+-    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
++    invoke-static {v1, v2, v3}, Lcom/innioasis/ipp/Ipp;->playerLine(Landroid/widget/TextView;Ljava/lang/String;Z)V
+ 
+     .line 98
+     invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -853,12 +909,13 @@
  
      invoke-static {v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
@@ -54575,7 +54595,7 @@ index f12a7726..56fac334 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
-index 92290be6..4a1c2fd4 100644
+index 92290be6..83006c02 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AudioPlayerActivity.smali
 @@ -636,6 +636,27 @@
@@ -54672,7 +54692,34 @@ index 92290be6..4a1c2fd4 100644
  
      .line 129
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/AudioPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -941,12 +971,12 @@
+@@ -823,9 +853,12 @@
+ 
+     move-result-object v2
+ 
+-    check-cast v2, Ljava/lang/CharSequence;
++    # ipp: the artist and the album line under the title run the title's marquee too, if the
++    # user has asked for it -- "Long artist/album scroll", off by default. The title itself is
++    # never gated: a track is told apart by its title.
++    const/4 v3, 0x0
+ 
+-    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
++    invoke-static {v1, v2, v3}, Lcom/innioasis/ipp/Ipp;->playerLine(Landroid/widget/TextView;Ljava/lang/String;Z)V
+ 
+     .line 130
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/AudioPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -846,9 +879,9 @@
+ 
+     move-result-object v2
+ 
+-    check-cast v2, Ljava/lang/CharSequence;
++    const/4 v3, 0x1
+ 
+-    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
++    invoke-static {v1, v2, v3}, Lcom/innioasis/ipp/Ipp;->playerLine(Landroid/widget/TextView;Ljava/lang/String;Z)V
+ 
+     .line 131
+     sget-object v1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+@@ -941,12 +974,12 @@
  
      invoke-static {v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
