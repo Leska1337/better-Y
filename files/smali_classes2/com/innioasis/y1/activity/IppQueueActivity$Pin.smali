@@ -1,6 +1,6 @@
-.class final Lcom/innioasis/y1/activity/IppQueueActivity$Tail;
+.class final Lcom/innioasis/y1/activity/IppQueueActivity$Pin;
 .super Ljava/lang/Object;
-.implements Ljava/lang/Runnable;
+.implements Landroid/view/ViewTreeObserver$OnScrollChangedListener;
 .source "IppQueueActivity.java"
 
 .annotation system Ldalvik/annotation/EnclosingClass;
@@ -8,23 +8,26 @@
 .end annotation
 .annotation system Ldalvik/annotation/InnerClass;
   accessFlags = 24
-  name = "Tail"
+  name = "Pin"
 .end annotation
 
 .field private final a:Lcom/innioasis/y1/activity/IppQueueActivity;
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 532
+  .line 793
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Tail;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
+  .line 794
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
+  .line 795
     return-void
 .end method
 
-.method public run()V
+.method public onScrollChanged()V
   .registers 2
-  .line 533
-    iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Tail;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->buildTail()V
+  .line 798
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repin()V
+  .line 799
     return-void
 .end method

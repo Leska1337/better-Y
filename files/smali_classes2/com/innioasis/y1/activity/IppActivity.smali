@@ -38,13 +38,21 @@
 
 .field private final static ACT_SF:I = 2
 
+.field final static BAND_ALPHA:I = 1493172224
+
 .field private final static BLINK_MS:J = 400L
 
 .field private final static CHOICE:I = 2
 
+.field private final static HAIR_ALPHA:I = 520093696
+
+.field private final static HAIR_H:I = 1
+
 .field private final static HEADER:I = 0
 
 .field private final static NUMBER:I = 4
+
+.field final static RULE_ALPHA:I = 1493172224
 
 .field private final static TOGGLE:I = 1
 
@@ -58,6 +66,8 @@
 
 .field private editing:Z
 
+.field private hairColor:I
+
 .field private items:Ljava/util/List;
 
 .field private labels:[Landroid/widget/TextView;
@@ -65,6 +75,8 @@
 .field private marks:[Landroid/widget/TextView;
 
 .field private progress:Lcom/innioasis/y1/utils/LoadingDialog;
+
+.field private rowBoxes:[Landroid/view/View;
 
 .field private rowViews:[Landroid/view/View;
 
@@ -148,40 +160,40 @@
   .catchall { :L10 .. :L11 } :L12
   .catchall { :L14 .. :L15 } :L16
   .registers 4
-  .line 1396
+  .line 1450
     if-eqz p0, :L18
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->path:Ljava/lang/String;
     if-nez v0, :L0
     goto/16 :L18
   :L0
-  .line 1397
+  .line 1451
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->artist:Z
     if-nez v0, :L2
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->year:Z
     if-nez v0, :L2
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->art:Z
     if-nez v0, :L2
-  .line 1400
+  .line 1454
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->thumb:Z
     if-eqz v0, :L1
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->key:Ljava/lang/String;
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->path:Ljava/lang/String;
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/CoverCache;->get(Ljava/lang/String;Ljava/lang/String;)Landroid/graphics/Bitmap;
   :L1
-  .line 1401
+  .line 1455
     return-void
   :L2
-  .line 1404
+  .line 1458
     nop
-  .line 1405
+  .line 1459
     new-instance v0, Landroid/media/MediaMetadataRetriever;
     invoke-direct { v0 }, Landroid/media/MediaMetadataRetriever;-><init>()V
-  .line 1407
+  .line 1461
     const/4 v1, 0
   :L3
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->path:Ljava/lang/String;
     invoke-virtual { v0, v2 }, Landroid/media/MediaMetadataRetriever;->setDataSource(Ljava/lang/String;)V
-  .line 1408
+  .line 1462
     iget-boolean v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->artist:Z
     if-eqz v2, :L4
     const/16 v2, 13
@@ -189,21 +201,21 @@
     move-result-object v2
     iput-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->gotArtist:Ljava/lang/String;
   :L4
-  .line 1409
+  .line 1463
     iget-boolean v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->year:Z
     if-eqz v2, :L5
-  .line 1410
+  .line 1464
     const/16 v2, 8
     invoke-virtual { v0, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->gotYear:Ljava/lang/String;
-  .line 1411
+  .line 1465
     const/4 v2, 5
     invoke-virtual { v0, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->gotDate:Ljava/lang/String;
   :L5
-  .line 1413
+  .line 1467
     iget-boolean v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->art:Z
     if-eqz v2, :L7
     invoke-virtual { v0 }, Landroid/media/MediaMetadataRetriever;->getEmbeddedPicture()[B
@@ -213,88 +225,88 @@
   :L7
     move-object v2, v1
   :L8
-  .line 1416
+  .line 1470
     goto :L10
   :L9
-  .line 1414
+  .line 1468
     move-exception v2
     move-object v2, v1
   :L10
-  .line 1417
+  .line 1471
     invoke-virtual { v0 }, Landroid/media/MediaMetadataRetriever;->release()V
   :L11
     goto :L13
   :L12
     move-exception v0
   :L13
-  .line 1419
+  .line 1473
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->thumb:Z
     if-eqz v0, :L17
-  .line 1423
+  .line 1477
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->art:Z
     if-eqz v0, :L14
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->path:Ljava/lang/String;
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
   :L14
-  .line 1425
+  .line 1479
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->key:Ljava/lang/String;
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->path:Ljava/lang/String;
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/CoverCache;->get(Ljava/lang/String;Ljava/lang/String;)Landroid/graphics/Bitmap;
   :L15
-  .line 1427
+  .line 1481
     invoke-static { v1, v1 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
-  .line 1428
+  .line 1482
     goto :L17
   :L16
-  .line 1427
+  .line 1481
     move-exception p0
     invoke-static { v1, v1 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
-  .line 1428
+  .line 1482
     throw p0
   :L17
-  .line 1430
+  .line 1484
     return-void
   :L18
-  .line 1396
+  .line 1450
     return-void
 .end method
 
 .method private buildItems()Ljava/util/List;
   .registers 11
-  .line 158
+  .line 172
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->registry()Ljava/util/List;
     move-result-object v0
-  .line 159
+  .line 173
     invoke-static { p0 }, Lcom/innioasis/ipp/Help;->rows(Landroid/content/Context;)Ljava/util/List;
     move-result-object v1
-  .line 160
+  .line 174
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L0
     return-object v0
   :L0
-  .line 162
+  .line 176
     new-instance v2, Ljava/util/ArrayList;
     invoke-direct { v2 }, Ljava/util/ArrayList;-><init>()V
-  .line 163
+  .line 177
     new-instance v3, Ljava/util/HashSet;
     invoke-direct { v3 }, Ljava/util/HashSet;-><init>()V
-  .line 164
+  .line 178
     const/4 v4, 0
     const/4 v5, 0
   :L1
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v6
     if-ge v5, v6, :L5
-  .line 165
+  .line 179
     invoke-interface { v1, v5 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v6
     check-cast v6, Lcom/innioasis/ipp/Help$Row;
-  .line 166
+  .line 180
     iget-object v7, v6, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
     invoke-static { v0, v7 }, Lcom/innioasis/y1/activity/IppActivity;->find(Ljava/util/List;Ljava/lang/String;)Lcom/innioasis/y1/activity/IppActivity$Item;
     move-result-object v7
-  .line 167
+  .line 181
     if-eqz v7, :L4
     iget-object v8, v6, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
     invoke-virtual { v3, v8 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
@@ -302,16 +314,16 @@
     if-eqz v8, :L2
     goto :L4
   :L2
-  .line 168
+  .line 182
     iget-object v8, v6, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
     invoke-virtual { v3, v8 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
-  .line 169
+  .line 183
     iget-object v8, v6, Lcom/innioasis/ipp/Help$Row;->label:Ljava/lang/String;
     iput-object v8, v7, Lcom/innioasis/y1/activity/IppActivity$Item;->label:Ljava/lang/String;
-  .line 170
+  .line 184
     iget-object v8, v6, Lcom/innioasis/ipp/Help$Row;->showIf:Ljava/lang/String;
     iput-object v8, v7, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
-  .line 171
+  .line 185
     iget v8, v7, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v9, 2
     if-ne v8, v9, :L3
@@ -321,45 +333,45 @@
     array-length v8, v8
     iget v9, v7, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
     if-ne v8, v9, :L3
-  .line 172
+  .line 186
     iget-object v6, v6, Lcom/innioasis/ipp/Help$Row;->values:[Ljava/lang/String;
     iput-object v6, v7, Lcom/innioasis/y1/activity/IppActivity$Item;->values:[Ljava/lang/String;
   :L3
-  .line 174
+  .line 188
     invoke-interface { v2, v7 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L4
-  .line 164
+  .line 178
     add-int/lit8 v5, v5, 1
     goto :L1
   :L5
-  .line 178
+  .line 192
     nop
   :L6
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v1
     if-ge v4, v1, :L8
-  .line 179
+  .line 193
     invoke-interface { v0, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 180
+  .line 194
     iget-object v5, v1, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v3, v5 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result v5
     if-nez v5, :L7
     invoke-interface { v2, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L7
-  .line 178
+  .line 192
     add-int/lit8 v4, v4, 1
     goto :L6
   :L8
-  .line 182
+  .line 196
     return-object v2
 .end method
 
 .method private clampSel()V
   .registers 3
-  .line 301
+  .line 315
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     if-ltz v0, :L0
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
@@ -371,37 +383,37 @@
     move-result v0
     if-nez v0, :L1
   :L0
-  .line 302
+  .line 316
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->firstSelectable()I
     move-result v0
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
   :L1
-  .line 304
+  .line 318
     return-void
 .end method
 
 .method private confirmCache()V
   .registers 3
-  .line 785
+  .line 839
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v0
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$CachePick;
     invoke-direct { v1, p0 }, Lcom/innioasis/y1/activity/IppActivity$CachePick;-><init>(Lcom/innioasis/y1/activity/IppActivity;)V
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Pick;->askCache(Landroid/app/Activity;Lcom/innioasis/ipp/PickDialog$Go;)V
-  .line 786
+  .line 840
     return-void
 .end method
 
 .method private confirmLog(Ljava/lang/String;)V
   .registers 8
-  .line 716
+  .line 770
     new-instance v0, Lcom/innioasis/y1/utils/DialogUtil;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v1
     const/4 v2, 0
     const v3, 2131886360
     invoke-direct { v0, v1, v2, v3 }, Lcom/innioasis/y1/utils/DialogUtil;-><init>(Landroid/app/Activity;ZI)V
-  .line 717
+  .line 771
     const v1, 2131821112
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v2
@@ -412,20 +424,20 @@
     const/4 v5, 1
     move-object v1, p1
     invoke-virtual/range { v0 .. v5 }, Lcom/innioasis/y1/utils/DialogUtil;->setDialogTitle(Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;ZZ)Landroid/app/Dialog;
-  .line 719
+  .line 773
     return-void
 .end method
 
 .method private confirmReboot(Ljava/lang/String;)V
   .registers 9
-  .line 704
+  .line 758
     new-instance v0, Lcom/innioasis/y1/utils/DialogUtil;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v1
     const v2, 2131886360
     const/4 v3, 0
     invoke-direct { v0, v1, v3, v2 }, Lcom/innioasis/y1/utils/DialogUtil;-><init>(Landroid/app/Activity;ZI)V
-  .line 705
+  .line 759
     const v1, 2131821040
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v2
@@ -438,20 +450,20 @@
     move v4, v5
     move v5, v6
     invoke-virtual/range { v0 .. v5 }, Lcom/innioasis/y1/utils/DialogUtil;->setDialogTitle(Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;ZZ)Landroid/app/Dialog;
-  .line 707
+  .line 761
     return-void
 .end method
 
 .method private confirmScan(Ljava/lang/String;)V
   .registers 8
-  .line 710
+  .line 764
     new-instance v0, Lcom/innioasis/y1/utils/DialogUtil;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v1
     const/4 v2, 0
     const v3, 2131886360
     invoke-direct { v0, v1, v2, v3 }, Lcom/innioasis/y1/utils/DialogUtil;-><init>(Landroid/app/Activity;ZI)V
-  .line 711
+  .line 765
     const v1, 2131821042
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v2
@@ -462,20 +474,20 @@
     const/4 v5, 1
     move-object v1, p1
     invoke-virtual/range { v0 .. v5 }, Lcom/innioasis/y1/utils/DialogUtil;->setDialogTitle(Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;ZZ)Landroid/app/Dialog;
-  .line 713
+  .line 767
     return-void
 .end method
 
 .method private confirmSf(Ljava/lang/String;)V
   .registers 8
-  .line 722
+  .line 776
     new-instance v0, Lcom/innioasis/y1/utils/DialogUtil;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v1
     const/4 v2, 0
     const v3, 2131886360
     invoke-direct { v0, v1, v2, v3 }, Lcom/innioasis/y1/utils/DialogUtil;-><init>(Landroid/app/Activity;ZI)V
-  .line 723
+  .line 777
     const v1, 2131821109
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v2
@@ -486,85 +498,85 @@
     const/4 v5, 1
     move-object v1, p1
     invoke-virtual/range { v0 .. v5 }, Lcom/innioasis/y1/utils/DialogUtil;->setDialogTitle(Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;ZZ)Landroid/app/Dialog;
-  .line 725
+  .line 779
     return-void
 .end method
 
 .method private endEdit(Z)V
   .registers 6
-  .line 636
+  .line 690
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     if-nez v0, :L0
     return-void
   :L0
-  .line 637
+  .line 691
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
-  .line 638
+  .line 692
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     iget v2, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
     invoke-interface { v1, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 639
+  .line 693
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
     iget v3, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
     aget-object v2, v2, v3
-  .line 640
+  .line 694
     if-eqz v2, :L1
-  .line 641
+  .line 695
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
     invoke-virtual { v2, v3 }, Landroid/widget/TextView;->removeCallbacks(Ljava/lang/Runnable;)Z
-  .line 642
+  .line 696
     invoke-virtual { v2, v0 }, Landroid/widget/TextView;->setVisibility(I)V
   :L1
-  .line 644
+  .line 698
     if-eqz p1, :L2
     iget-object p1, v1, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
   :L2
-  .line 645
+  .line 699
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->render()V
-  .line 646
+  .line 700
     return-void
 .end method
 
 .method private static find(Ljava/util/List;Ljava/lang/String;)Lcom/innioasis/y1/activity/IppActivity$Item;
   .registers 6
-  .line 186
+  .line 200
     const/4 v0, 0
     if-nez p1, :L0
     return-object v0
   :L0
-  .line 187
+  .line 201
     const/4 v1, 0
   :L1
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L3
-  .line 188
+  .line 202
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 189
+  .line 203
     iget-object v3, v2, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { p1, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L2
     return-object v2
   :L2
-  .line 187
+  .line 201
     add-int/lit8 v1, v1, 1
     goto :L1
   :L3
-  .line 191
+  .line 205
     return-object v0
 .end method
 
 .method private firstSelectable()I
   .registers 4
-  .line 294
+  .line 308
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -572,23 +584,23 @@
     invoke-interface { v2 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L2
-  .line 295
+  .line 309
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->selectable(I)Z
     move-result v2
     if-eqz v2, :L1
     return v1
   :L1
-  .line 294
+  .line 308
     add-int/lit8 v1, v1, 1
     goto :L0
   :L2
-  .line 297
+  .line 311
     return v0
 .end method
 
 .method private static font()Landroid/graphics/Typeface;
   .registers 2
-  .line 276
+  .line 290
     sget-object v0, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
     const/4 v1, 1
     invoke-static { v0, v1 }, Landroid/graphics/Typeface;->create(Landroid/graphics/Typeface;I)Landroid/graphics/Typeface;
@@ -596,9 +608,47 @@
     return-object v0
 .end method
 
+.method private hair()Landroid/view/View;
+  .registers 5
+  .line 539
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->hairColor:I
+    if-nez v0, :L0
+  .line 540
+    new-instance v0, Landroid/widget/TextView;
+    invoke-direct { v0, p0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+  .line 541
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+  .line 542
+    invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getResources()Landroid/content/res/Resources;
+    move-result-object v2
+    const v3, 2131100252
+    invoke-virtual { v2, v3 }, Landroid/content/res/Resources;->getColor(I)I
+    move-result v2
+  .line 541
+    const/4 v3, 0
+    invoke-virtual { v1, v0, v2, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  .line 543
+    invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result v0
+    const v1, 16777215
+    and-int/2addr v0, v1
+    const/high16 v1, 0x1F000000
+    or-int/2addr v0, v1
+    iput v0, p0, Lcom/innioasis/y1/activity/IppActivity;->hairColor:I
+  :L0
+  .line 545
+    new-instance v0, Landroid/view/View;
+    invoke-direct { v0, p0 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
+  .line 546
+    iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->hairColor:I
+    invoke-virtual { v0, v1 }, Landroid/view/View;->setBackgroundColor(I)V
+  .line 547
+    return-object v0
+.end method
+
 .method private static label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
   .registers 2
-  .line 1568
+  .line 1622
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->label:Ljava/lang/String;
     if-eqz v0, :L0
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->label:Ljava/lang/String;
@@ -611,25 +661,25 @@
 
 .method public static labelOf(Ljava/lang/String;)Ljava/lang/String;
   .registers 6
-  .line 1557
+  .line 1611
     sget-object v0, Lcom/innioasis/y1/activity/IppActivity;->lastItems:Ljava/util/List;
-  .line 1558
+  .line 1612
     const/4 v1, 0
     if-eqz v0, :L4
     if-nez p0, :L0
     goto :L4
   :L0
-  .line 1559
+  .line 1613
     const/4 v2, 0
   :L1
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v3
     if-ge v2, v3, :L3
-  .line 1560
+  .line 1614
     invoke-interface { v0, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 1561
+  .line 1615
     iget-object v4, v3, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { p0, v4 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v4
@@ -638,67 +688,70 @@
     move-result-object p0
     return-object p0
   :L2
-  .line 1559
+  .line 1613
     add-int/lit8 v2, v2, 1
     goto :L1
   :L3
-  .line 1563
+  .line 1617
     return-object v1
   :L4
-  .line 1558
+  .line 1612
     return-object v1
 .end method
 
 .method private move(I)V
   .registers 3
-  .line 484
+  .line 516
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->clampSel()V
-  .line 485
+  .line 517
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     if-ne p1, v0, :L0
     return-void
   :L0
-  .line 486
+  .line 518
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->paint(I)V
-  .line 487
+  .line 519
     iget p1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->paint(I)V
-  .line 488
+  .line 520
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->postScroll()V
-  .line 489
+  .line 521
     return-void
 .end method
 
 .method private paint(I)V
   .registers 7
-  .line 501
+  .line 553
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-    if-eqz v0, :L10
-    if-ltz p1, :L10
+    if-eqz v0, :L11
+    if-ltz p1, :L11
     array-length v0, v0
     if-lt p1, v0, :L0
-    goto :L10
+    goto :L11
   :L0
-  .line 502
+  .line 554
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     invoke-interface { v0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 503
+  .line 555
     iget v0, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
-    if-eqz v0, :L9
+    if-eqz v0, :L10
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
     aget-object v0, v0, p1
     if-nez v0, :L1
-    goto :L9
+    goto :L10
   :L1
-  .line 504
+  .line 556
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
+    aget-object v0, v0, p1
+    if-eqz v0, :L9
     invoke-virtual { v0 }, Landroid/view/View;->getVisibility()I
     move-result v0
     if-eqz v0, :L2
-    return-void
+    goto :L9
   :L2
-  .line 505
+  .line 557
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     const/4 v1, 0
     if-ne p1, v0, :L3
@@ -707,14 +760,14 @@
   :L3
     const/4 v0, 0
   :L4
-  .line 506
+  .line 558
     if-eqz v0, :L5
     sget v2, Lcom/innioasis/y1/activity/IppActivity;->ACCENT:I
     goto :L6
   :L5
     const/4 v2, -1
   :L6
-  .line 507
+  .line 559
     sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
     aget-object v4, v4, p1
@@ -722,17 +775,17 @@
     const v1, 2131231052
   :L7
     invoke-virtual { v3, v4, v1, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 508
+  .line 560
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
     aget-object v3, v3, p1
     invoke-virtual { v1, v3, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 509
+  .line 561
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
     aget-object v3, v3, p1
     invoke-virtual { v1, v3, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 510
+  .line 562
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->marks:[Landroid/widget/TextView;
     aget-object v1, v1, p1
     if-eqz v1, :L8
@@ -741,45 +794,48 @@
     aget-object p1, v3, p1
     invoke-virtual { v1, p1, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
   :L8
-  .line 511
+  .line 563
     return-void
   :L9
-  .line 503
+  .line 556
     return-void
   :L10
-  .line 501
+  .line 555
+    return-void
+  :L11
+  .line 553
     return-void
 .end method
 
 .method private postScroll()V
   .registers 3
-  .line 515
+  .line 567
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     if-eqz v0, :L1
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppActivity;->scrollPending:Z
     if-eqz v1, :L0
     goto :L1
   :L0
-  .line 516
+  .line 568
     const/4 v1, 1
     iput-boolean v1, p0, Lcom/innioasis/y1/activity/IppActivity;->scrollPending:Z
-  .line 517
+  .line 569
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Scroll;
     invoke-direct { v1, p0 }, Lcom/innioasis/y1/activity/IppActivity$Scroll;-><init>(Lcom/innioasis/y1/activity/IppActivity;)V
     invoke-virtual { v0, v1 }, Landroid/widget/ScrollView;->post(Ljava/lang/Runnable;)Z
-  .line 518
+  .line 570
     return-void
   :L1
-  .line 515
+  .line 567
     return-void
 .end method
 
 .method private registry()Ljava/util/List;
   .registers 15
-  .line 204
+  .line 218
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 207
+  .line 221
     new-instance v7, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v2, 0
     const-string v3, "tools"
@@ -789,7 +845,7 @@
     move-object v1, v7
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v7 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 208
+  .line 222
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 3
     const-string v10, "reboot"
@@ -799,7 +855,7 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 209
+  .line 223
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 3
     const-string v4, "cache"
@@ -808,19 +864,19 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 210
+  .line 224
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v10, "scan"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 212
+  .line 226
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "log"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 223
+  .line 237
     invoke-static { }, Lcom/innioasis/ipp/Diag;->on()Z
     move-result v1
     if-eqz v1, :L0
@@ -834,7 +890,7 @@
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L0
-  .line 226
+  .line 240
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 0
     const-string v10, "player"
@@ -844,7 +900,7 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 227
+  .line 241
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 2
     const-string v4, "icon_tint"
@@ -854,20 +910,20 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 228
+  .line 242
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 1
     const-string v10, "cover_tilt"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 232
+  .line 246
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "top_hold"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 233
+  .line 247
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 2
     const-string v10, "book_top_hold"
@@ -875,7 +931,7 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 234
+  .line 248
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 1
     const-string v4, "first_artist_only"
@@ -883,7 +939,7 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 235
+  .line 249
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 1
     const-string v10, "feat_in_title"
@@ -892,7 +948,7 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 236
+  .line 250
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 2
     const-string v4, "artist_album_scroll"
@@ -900,7 +956,7 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 239
+  .line 253
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 0
     const-string v10, "menu"
@@ -908,7 +964,7 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 240
+  .line 254
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 1
     const-string v4, "alpha_scroll"
@@ -916,7 +972,7 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 241
+  .line 255
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 4
     const-string v10, "alpha_threshold"
@@ -926,13 +982,13 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 242
+  .line 256
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "follow_playing"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 243
+  .line 257
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v10, "follow_idle"
     sget-object v2, Lcom/innioasis/ipp/Follow;->IDLES:[I
@@ -941,13 +997,13 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 244
+  .line 258
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "fixed_menu_pad"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 247
+  .line 261
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 0
     const-string v10, "metadata"
@@ -956,76 +1012,76 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 248
+  .line 262
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "meta_title"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 249
+  .line 263
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 1
     const-string v10, "book_meta_title"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 250
+  .line 264
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "album_year"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 251
+  .line 265
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v10, "track_numbers"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 252
+  .line 266
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "artist_split"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 253
+  .line 267
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v10, "genre_split"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 254
+  .line 268
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "artist_scope"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 257
+  .line 271
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 0
     const-string v10, "system"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 258
+  .line 272
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "delete_folder"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 259
+  .line 273
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 1
     const-string v10, "keep_awake"
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 260
+  .line 274
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const-string v4, "likes"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 263
+  .line 277
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 2
     const-string v10, "kb_lang2"
@@ -1033,15 +1089,15 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 265
+  .line 279
     return-object v0
 .end method
 
 .method private render()V
-  .registers 8
-  .line 431
+  .registers 10
+  .line 454
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->clampSel()V
-  .line 432
+  .line 455
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -1049,110 +1105,116 @@
     invoke-interface { v2 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L9
-  .line 433
+  .line 456
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     invoke-interface { v2, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 434
+  .line 457
     iget v3, v2, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     if-nez v3, :L4
-  .line 435
+  .line 458
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
     aget-object v2, v2, v1
-  .line 441
+  .line 459
     sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-  .line 442
+    sget v4, Lcom/innioasis/y1/activity/IppActivity;->ACCENT:I
+    const/4 v5, 1
+    invoke-virtual { v3, v2, v4, v5 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  .line 460
+    invoke-virtual { v2 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result v3
+    const v4, 16777215
+    and-int/2addr v3, v4
+  .line 466
+    sget-object v5, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+  .line 467
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getResources()Landroid/content/res/Resources;
-    move-result-object v4
-    const v5, 2131100252
-    invoke-virtual { v4, v5 }, Landroid/content/res/Resources;->getColor(I)I
-    move-result v4
-  .line 441
-    invoke-virtual { v3, v2, v4, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 446
+    move-result-object v6
+    const v7, 2131100252
+    invoke-virtual { v6, v7 }, Landroid/content/res/Resources;->getColor(I)I
+    move-result v6
+  .line 466
+    invoke-virtual { v5, v2, v6, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+  .line 471
     invoke-virtual { v2 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result v2
-    const v3, 16777215
-    and-int/2addr v2, v3
-  .line 447
-    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-    aget-object v3, v3, v1
-    check-cast v3, Landroid/widget/LinearLayout;
-  .line 448
-    const/4 v4, 0
+    and-int/2addr v2, v4
+  .line 472
+    iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
+    aget-object v4, v4, v1
+    check-cast v4, Landroid/widget/LinearLayout;
+  .line 473
+    const/4 v5, 0
   :L1
-    invoke-virtual { v3 }, Landroid/widget/LinearLayout;->getChildCount()I
-    move-result v5
-    if-ge v4, v5, :L3
-  .line 449
-    invoke-virtual { v3, v4 }, Landroid/widget/LinearLayout;->getChildAt(I)Landroid/view/View;
-    move-result-object v5
-  .line 450
-    instance-of v6, v5, Landroid/widget/TextView;
-    if-nez v6, :L2
-    const/high16 v6, 0x59000000
-    or-int/2addr v6, v2
-    invoke-virtual { v5, v6 }, Landroid/view/View;->setBackgroundColor(I)V
+    invoke-virtual { v4 }, Landroid/widget/LinearLayout;->getChildCount()I
+    move-result v6
+    const/high16 v7, 0x59000000
+    if-ge v5, v6, :L3
+  .line 474
+    invoke-virtual { v4, v5 }, Landroid/widget/LinearLayout;->getChildAt(I)Landroid/view/View;
+    move-result-object v6
+  .line 475
+    instance-of v8, v6, Landroid/widget/TextView;
+    if-nez v8, :L2
+    or-int/2addr v7, v2
+    invoke-virtual { v6, v7 }, Landroid/view/View;->setBackgroundColor(I)V
   :L2
-  .line 448
-    add-int/lit8 v4, v4, 1
+  .line 473
+    add-int/lit8 v5, v5, 1
     goto :L1
   :L3
-  .line 457
-    const/high16 v4, 0x2E000000
-    or-int/2addr v2, v4
-    invoke-virtual { v3, v2 }, Landroid/widget/LinearLayout;->setBackgroundColor(I)V
-  .line 458
+  .line 488
+    or-int v2, v3, v7
+    invoke-virtual { v4, v2 }, Landroid/widget/LinearLayout;->setBackgroundColor(I)V
+  .line 489
     goto :L8
   :L4
-  .line 461
-    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-    aget-object v3, v3, v1
-    check-cast v3, Landroid/widget/LinearLayout;
-  .line 462
+  .line 494
     invoke-direct { p0, v2 }, Lcom/innioasis/y1/activity/IppActivity;->visible(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
-    move-result v4
-  .line 463
-    if-eqz v4, :L5
+    move-result v3
+  .line 495
+    iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
+    aget-object v4, v4, v1
+    if-eqz v3, :L5
     const/4 v5, 0
     goto :L6
   :L5
     const/16 v5, 8
   :L6
-    invoke-virtual { v3, v5 }, Landroid/widget/LinearLayout;->setVisibility(I)V
-  .line 464
-    if-nez v4, :L7
+    invoke-virtual { v4, v5 }, Landroid/view/View;->setVisibility(I)V
+  .line 496
+    if-nez v3, :L7
     goto :L8
   :L7
-  .line 466
+  .line 498
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
     aget-object v3, v3, v1
     invoke-static { v2 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
     move-result-object v4
     invoke-virtual { v3, v4 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 467
+  .line 499
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
     aget-object v3, v3, v1
     invoke-direct { p0, v2 }, Lcom/innioasis/y1/activity/IppActivity;->valueText(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/CharSequence;
     move-result-object v2
     invoke-virtual { v3, v2 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 469
+  .line 501
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->paint(I)V
   :L8
-  .line 432
+  .line 455
     add-int/lit8 v1, v1, 1
     goto/16 :L0
   :L9
-  .line 471
+  .line 503
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->scrollToSel()V
-  .line 472
+  .line 504
     return-void
 .end method
 
 .method private rule()Landroid/view/View;
   .registers 2
-  .line 497
+  .line 529
     new-instance v0, Landroid/view/View;
     invoke-direct { v0, p0 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
     return-object v0
@@ -1160,10 +1222,10 @@
 
 .method private scrollToSel()V
   .registers 6
-  .line 546
+  .line 598
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     if-eqz v0, :L5
-    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
     if-eqz v0, :L5
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     if-ltz v1, :L5
@@ -1171,67 +1233,67 @@
     if-lt v1, v2, :L0
     goto :L5
   :L0
-  .line 547
+  .line 601
     aget-object v0, v0, v1
-  .line 548
+  .line 602
     if-nez v0, :L1
     return-void
   :L1
-  .line 551
+  .line 605
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->firstSelectable()I
     move-result v2
     const/4 v3, 0
     if-ne v1, v2, :L2
-  .line 552
+  .line 606
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     invoke-virtual { v0, v3, v3 }, Landroid/widget/ScrollView;->smoothScrollTo(II)V
-  .line 553
+  .line 607
     return-void
   :L2
-  .line 555
+  .line 609
     invoke-virtual { v0 }, Landroid/view/View;->getTop()I
     move-result v1
-  .line 556
+  .line 610
     invoke-virtual { v0 }, Landroid/view/View;->getBottom()I
     move-result v0
-  .line 557
+  .line 611
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     invoke-virtual { v2 }, Landroid/widget/ScrollView;->getScrollY()I
     move-result v2
-  .line 558
+  .line 612
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     invoke-virtual { v4 }, Landroid/widget/ScrollView;->getHeight()I
     move-result v4
-  .line 559
+  .line 613
     if-ge v1, v2, :L3
-  .line 560
+  .line 614
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     invoke-virtual { v0, v3, v1 }, Landroid/widget/ScrollView;->smoothScrollTo(II)V
     goto :L4
   :L3
-  .line 561
+  .line 615
     add-int/2addr v2, v4
     if-le v0, v2, :L4
-  .line 562
+  .line 616
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
     sub-int/2addr v0, v4
     invoke-virtual { v1, v3, v0 }, Landroid/widget/ScrollView;->smoothScrollTo(II)V
   :L4
-  .line 564
+  .line 618
     return-void
   :L5
-  .line 546
+  .line 598
     return-void
 .end method
 
 .method private selectable(I)Z
   .registers 3
-  .line 289
+  .line 303
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     invoke-interface { v0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 290
+  .line 304
     iget v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     if-eqz v0, :L0
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->visible(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
@@ -1247,118 +1309,118 @@
 
 .method private showCandidate(Lcom/innioasis/y1/activity/IppActivity$Item;)V
   .registers 5
-  .line 618
+  .line 672
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
     aget-object v0, v0, v1
-  .line 619
+  .line 673
     if-nez v0, :L0
     return-void
   :L0
-  .line 620
+  .line 674
     iget-object p1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->choices:[I
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
     aget p1, p1, v1
     invoke-static { p1 }, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
     move-result-object p1
     invoke-virtual { v0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 621
+  .line 675
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
     invoke-virtual { v0, p1 }, Landroid/widget/TextView;->removeCallbacks(Ljava/lang/Runnable;)Z
-  .line 622
+  .line 676
     const/4 p1, 0
     invoke-virtual { v0, p1 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 623
+  .line 677
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
     const-wide/16 v1, 400
     invoke-virtual { v0, p1, v1, v2 }, Landroid/widget/TextView;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 624
+  .line 678
     return-void
 .end method
 
 .method private spin(I)V
   .registers 5
-  .line 610
+  .line 664
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
     invoke-interface { v0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 611
+  .line 665
     iget v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
-  .line 612
+  .line 666
     iget v2, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
     add-int/2addr v2, p1
     rem-int/2addr v2, v1
     add-int/2addr v2, v1
     rem-int/2addr v2, v1
     iput v2, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
-  .line 613
+  .line 667
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->showCandidate(Lcom/innioasis/y1/activity/IppActivity$Item;)V
-  .line 614
+  .line 668
     return-void
 .end method
 
 .method private static spread([Ljava/lang/Runnable;)V
   .catchall { :L3 .. :L4 } :L5
   .registers 7
-  .line 1200
+  .line 1254
     array-length v0, p0
     new-array v1, v0, [Ljava/lang/Thread;
-  .line 1201
+  .line 1255
     const/4 v2, 0
     const/4 v3, 0
   :L0
     array-length v4, p0
     if-ge v3, v4, :L1
-  .line 1202
+  .line 1256
     new-instance v4, Ljava/lang/Thread;
     aget-object v5, p0, v3
     invoke-direct { v4, v5 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     aput-object v4, v1, v3
-  .line 1203
+  .line 1257
     invoke-virtual { v4 }, Ljava/lang/Thread;->start()V
-  .line 1201
+  .line 1255
     add-int/lit8 v3, v3, 1
     goto :L0
   :L1
-  .line 1205
+  .line 1259
     nop
   :L2
     if-ge v2, v0, :L7
   :L3
-  .line 1207
+  .line 1261
     aget-object p0, v1, v2
     invoke-virtual { p0 }, Ljava/lang/Thread;->join()V
   :L4
-  .line 1210
+  .line 1264
     goto :L6
   :L5
-  .line 1208
+  .line 1262
     move-exception p0
   :L6
-  .line 1205
+  .line 1259
     add-int/lit8 v2, v2, 1
     goto :L2
   :L7
-  .line 1212
+  .line 1266
     return-void
 .end method
 
 .method private startEdit(Lcom/innioasis/y1/activity/IppActivity$Item;)V
   .registers 4
-  .line 600
+  .line 654
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
-  .line 601
+  .line 655
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
-  .line 602
+  .line 656
     iget-object v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result v0
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
-  .line 603
+  .line 657
     if-ltz v0, :L0
     iget v1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
     if-lt v0, v1, :L1
@@ -1368,47 +1430,47 @@
     move-result v0
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editVal:I
   :L1
-  .line 604
+  .line 658
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
     if-nez v0, :L2
     new-instance v0, Lcom/innioasis/y1/activity/IppActivity$Blink;
     invoke-direct { v0, p0 }, Lcom/innioasis/y1/activity/IppActivity$Blink;-><init>(Lcom/innioasis/y1/activity/IppActivity;)V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
   :L2
-  .line 605
+  .line 659
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->showCandidate(Lcom/innioasis/y1/activity/IppActivity$Item;)V
-  .line 606
+  .line 660
     return-void
 .end method
 
 .method private step(II)I
   .registers 5
-  .line 567
+  .line 621
     add-int v0, p1, p2
   :L0
-  .line 568
+  .line 622
     if-ltz v0, :L2
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
     if-ge v0, v1, :L2
-  .line 569
+  .line 623
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->selectable(I)Z
     move-result v1
     if-eqz v1, :L1
     return v0
   :L1
-  .line 570
+  .line 624
     add-int/2addr v0, p2
     goto :L0
   :L2
-  .line 572
+  .line 626
     return p1
 .end method
 
 .method private toggleOn(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
   .registers 2
-  .line 285
+  .line 299
     iget-object p1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result p1
@@ -1417,11 +1479,11 @@
 
 .method private valueText(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/CharSequence;
   .registers 5
-  .line 533
+  .line 585
     iget v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v1, 1
     if-ne v0, v1, :L2
-  .line 534
+  .line 586
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->toggleOn(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
     move-result p1
     if-eqz p1, :L0
@@ -1434,7 +1496,7 @@
     move-result-object p1
     return-object p1
   :L2
-  .line 536
+  .line 588
     iget v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v1, 2
     const/4 v2, 4
@@ -1443,15 +1505,15 @@
     if-ne v0, v2, :L3
     goto :L4
   :L3
-  .line 542
+  .line 594
     const-string p1, ""
     return-object p1
   :L4
-  .line 537
+  .line 589
     iget-object v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result v0
-  .line 538
+  .line 590
     if-ltz v0, :L5
     iget v1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
     if-lt v0, v1, :L6
@@ -1460,7 +1522,7 @@
     invoke-static { v0 }, Lcom/innioasis/ipp/Prefs;->defInt(Ljava/lang/String;)I
     move-result v0
   :L6
-  .line 539
+  .line 591
     iget v1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     if-ne v1, v2, :L7
     iget-object p1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->choices:[I
@@ -1469,7 +1531,7 @@
     move-result-object p1
     return-object p1
   :L7
-  .line 540
+  .line 592
     iget-object v1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->values:[Ljava/lang/String;
     if-eqz v1, :L8
     iget-object p1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->values:[Ljava/lang/String;
@@ -1484,7 +1546,7 @@
 
 .method private visible(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
   .registers 3
-  .line 280
+  .line 294
     iget-object v0, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
     if-eqz v0, :L1
     iget-object p1, p1, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
@@ -1503,64 +1565,64 @@
 
 .method private static workers()I
   .registers 2
-  .line 1191
+  .line 1245
     invoke-static { }, Ljava/lang/Runtime;->getRuntime()Ljava/lang/Runtime;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Runtime;->availableProcessors()I
     move-result v0
-  .line 1192
+  .line 1246
     const/4 v1, 1
     if-ge v0, v1, :L0
     const/4 v0, 1
   :L0
-  .line 1193
+  .line 1247
     add-int/2addr v0, v1
-  .line 1194
+  .line 1248
     const/4 v1, 4
     if-le v0, v1, :L1
     const/4 v0, 4
   :L1
-  .line 1195
+  .line 1249
     return v0
 .end method
 
 .method public antiClockwise()V
   .registers 3
-  .line 585
+  .line 639
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     const/4 v1, -1
     if-eqz v0, :L0
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->spin(I)V
     return-void
   :L0
-  .line 586
+  .line 640
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
-  .line 587
+  .line 641
     invoke-direct { p0, v0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->step(II)I
     move-result v1
     iput v1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
-  .line 588
+  .line 642
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->move(I)V
-  .line 589
+  .line 643
     return-void
 .end method
 
 .method blinkTick()V
   .registers 5
-  .line 627
+  .line 681
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     if-nez v0, :L0
     return-void
   :L0
-  .line 628
+  .line 682
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->editIndex:I
     aget-object v0, v0, v1
-  .line 629
+  .line 683
     if-nez v0, :L1
     return-void
   :L1
-  .line 630
+  .line 684
     invoke-virtual { v0 }, Landroid/widget/TextView;->getVisibility()I
     move-result v1
     if-nez v1, :L2
@@ -1570,72 +1632,72 @@
     const/4 v1, 0
   :L3
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 631
+  .line 685
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->blink:Lcom/innioasis/y1/activity/IppActivity$Blink;
     const-wide/16 v2, 400
     invoke-virtual { v0, v1, v2, v3 }, Landroid/widget/TextView;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 632
+  .line 686
     return-void
 .end method
 
 .method cacheFinished(I)V
   .registers 3
-  .line 856
+  .line 910
     new-instance v0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;
     invoke-direct { v0, p0, p1 }, Lcom/innioasis/y1/activity/IppActivity$CacheDone;-><init>(Lcom/innioasis/y1/activity/IppActivity;I)V
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
-  .line 857
+  .line 911
     return-void
 .end method
 
 .method public clockwise()V
   .registers 3
-  .line 577
+  .line 631
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     const/4 v1, 1
     if-eqz v0, :L0
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->spin(I)V
     return-void
   :L0
-  .line 578
+  .line 632
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
-  .line 579
+  .line 633
     invoke-direct { p0, v0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->step(II)I
     move-result v1
     iput v1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
-  .line 580
+  .line 634
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->move(I)V
-  .line 581
+  .line 635
     return-void
 .end method
 
 .method public confirm()V
   .registers 5
-  .line 657
+  .line 711
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     const/4 v1, 1
     if-eqz v0, :L0
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->endEdit(Z)V
     return-void
   :L0
-  .line 658
+  .line 712
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->clampSel()V
-  .line 659
+  .line 713
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     iget v2, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     invoke-interface { v0, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 660
+  .line 714
     iget v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     if-ne v2, v1, :L3
-  .line 665
+  .line 719
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->toggleOn(Lcom/innioasis/y1/activity/IppActivity$Item;)Z
     move-result v3
     xor-int/2addr v1, v3
     invoke-static { p0, v2, v1 }, Lcom/innioasis/ipp/Prefs;->setBool(Landroid/content/Context;Ljava/lang/String;Z)V
-  .line 670
+  .line 724
     const-string v1, "likes"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -1647,7 +1709,7 @@
     if-eqz v1, :L1
     invoke-static { p0 }, Lcom/innioasis/ipp/Fav;->ensure(Landroid/content/Context;)V
   :L1
-  .line 674
+  .line 728
     const-string v1, "genre_split"
     iget-object v0, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -1655,121 +1717,121 @@
     if-eqz v0, :L2
     invoke-static { }, Lcom/innioasis/ipp/GenreInfo;->clear()V
   :L2
-  .line 675
+  .line 729
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->render()V
     goto/16 :L11
   :L3
-  .line 676
+  .line 730
     iget v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v3, 4
     if-ne v2, v3, :L4
-  .line 677
+  .line 731
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->startEdit(Lcom/innioasis/y1/activity/IppActivity$Item;)V
     goto/16 :L11
   :L4
-  .line 678
+  .line 732
     iget v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v3, 2
     if-ne v2, v3, :L5
-  .line 679
+  .line 733
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, v2 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result v2
     add-int/2addr v2, v1
     iget v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
     rem-int/2addr v2, v1
-  .line 680
+  .line 734
     iget-object v0, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, v0, v2 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
-  .line 681
+  .line 735
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->render()V
     goto :L10
   :L5
-  .line 682
+  .line 736
     iget v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     const/4 v2, 3
     if-ne v1, v2, :L10
-  .line 683
+  .line 737
     const-string v1, "reboot"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L6
-  .line 684
+  .line 738
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
     move-result-object v0
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->confirmReboot(Ljava/lang/String;)V
     goto :L11
   :L6
-  .line 685
+  .line 739
     const-string v1, "scan"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L7
-  .line 686
+  .line 740
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
     move-result-object v0
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->confirmScan(Ljava/lang/String;)V
     goto :L11
   :L7
-  .line 687
+  .line 741
     const-string v1, "cache"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L8
-  .line 688
+  .line 742
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity;->confirmCache()V
     goto :L11
   :L8
-  .line 689
+  .line 743
     const-string v1, "sf"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L9
-  .line 690
+  .line 744
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
     move-result-object v0
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->confirmSf(Ljava/lang/String;)V
     goto :L11
   :L9
-  .line 691
+  .line 745
     const-string v1, "log"
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L11
-  .line 692
+  .line 746
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
     move-result-object v0
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->confirmLog(Ljava/lang/String;)V
     goto :L11
   :L10
-  .line 682
+  .line 736
     nop
   :L11
-  .line 695
+  .line 749
     return-void
 .end method
 
 .method public direction(Lcom/innioasis/y1/base/BaseActivity$Direction;)V
   .registers 3
-  .line 1521
+  .line 1575
     sget-object v0, Lcom/innioasis/y1/base/BaseActivity$Direction;->TOP:Lcom/innioasis/y1/base/BaseActivity$Direction;
     if-ne p1, v0, :L1
-  .line 1524
+  .line 1578
     iget-boolean p1, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     if-eqz p1, :L0
     const/4 p1, 0
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppActivity;->endEdit(Z)V
     return-void
   :L0
-  .line 1525
+  .line 1579
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->finish()V
   :L1
-  .line 1527
+  .line 1581
     return-void
 .end method
 
@@ -1783,7 +1845,7 @@
 
 .method public getViewBinding()Lcom/innioasis/y1/databinding/ActivityAboutBinding;
   .registers 2
-  .line 308
+  .line 322
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getLayoutInflater()Landroid/view/LayoutInflater;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/y1/databinding/ActivityAboutBinding;->inflate(Landroid/view/LayoutInflater;)Lcom/innioasis/y1/databinding/ActivityAboutBinding;
@@ -1793,278 +1855,293 @@
 
 .method public initView()V
   .registers 17
-  .line 313
+  .line 327
     move-object/from16 v0, p0
     const v1, 2131821015
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->setStateBarLeftText(Ljava/lang/String;)V
-  .line 315
+  .line 329
     invoke-virtual/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v1
     invoke-interface { v1 }, Landroidx/viewbinding/ViewBinding;->getRoot()Landroid/view/View;
     move-result-object v1
     check-cast v1, Landroid/view/ViewGroup;
-  .line 316
+  .line 330
     invoke-virtual { v1 }, Landroid/view/ViewGroup;->removeAllViews()V
-  .line 318
+  .line 335
     new-instance v2, Landroid/widget/LinearLayout;
     invoke-direct { v2, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
-  .line 319
+  .line 336
     const/4 v3, 1
     invoke-virtual { v2, v3 }, Landroid/widget/LinearLayout;->setOrientation(I)V
-  .line 320
-    const/16 v4, 8
-    const/4 v5, 0
-    invoke-virtual { v2, v4, v5, v4, v5 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
-  .line 322
-    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->buildItems()Ljava/util/List;
-    move-result-object v6
-    iput-object v6, v0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
-  .line 323
-    sput-object v6, Lcom/innioasis/y1/activity/IppActivity;->lastItems:Ljava/util/List;
-  .line 324
-    invoke-interface { v6 }, Ljava/util/List;->size()I
-    move-result v6
-  .line 325
-    new-array v7, v6, [Landroid/view/View;
-    iput-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-  .line 326
-    new-array v7, v6, [Landroid/widget/TextView;
-    iput-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
-  .line 327
-    new-array v7, v6, [Landroid/widget/TextView;
-    iput-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
-  .line 328
-    new-array v7, v6, [Landroid/widget/TextView;
-    iput-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->marks:[Landroid/widget/TextView;
-  .line 330
-    const/4 v7, 0
-  :L0
-    const/4 v9, -1
-    if-ge v7, v6, :L4
-  .line 331
-    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
-    invoke-interface { v10, v7 }, Ljava/util/List;->get(I)Ljava/lang/Object;
-    move-result-object v10
-    check-cast v10, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 332
-    iget v11, v10, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
-    const/high16 v12, 0x41500000
-    const/4 v13, 2
-    const/16 v14, 16
-    const/4 v15, 6
-    if-nez v11, :L1
   .line 338
-    new-instance v11, Landroid/widget/LinearLayout;
-    invoke-direct { v11, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
+    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->buildItems()Ljava/util/List;
+    move-result-object v4
+    iput-object v4, v0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
   .line 339
-    invoke-virtual { v11, v3 }, Landroid/widget/LinearLayout;->setOrientation(I)V
+    sput-object v4, Lcom/innioasis/y1/activity/IppActivity;->lastItems:Ljava/util/List;
+  .line 340
+    invoke-interface { v4 }, Ljava/util/List;->size()I
+    move-result v4
   .line 341
-    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->rule()Landroid/view/View;
-    move-result-object v8
-    new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
-    invoke-direct { v4, v9, v13 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-    invoke-virtual { v11, v8, v4 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    new-array v5, v4, [Landroid/view/View;
+    iput-object v5, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
+  .line 342
+    new-array v5, v4, [Landroid/view/View;
+    iput-object v5, v0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
   .line 343
-    new-instance v4, Landroid/widget/TextView;
-    invoke-direct { v4, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+    new-array v5, v4, [Landroid/widget/TextView;
+    iput-object v5, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
   .line 344
-    invoke-virtual { v4, v12 }, Landroid/widget/TextView;->setTextSize(F)V
+    new-array v5, v4, [Landroid/widget/TextView;
+    iput-object v5, v0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
+  .line 345
+    new-array v5, v4, [Landroid/widget/TextView;
+    iput-object v5, v0, Lcom/innioasis/y1/activity/IppActivity;->marks:[Landroid/widget/TextView;
   .line 347
-    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
-    move-result-object v8
-    invoke-virtual { v4, v8, v3 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;I)V
+    const/4 v5, 0
+    const/4 v6, 0
+  :L0
+    const/4 v8, -1
+    if-ge v6, v4, :L4
   .line 348
-    invoke-virtual { v4, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
+    iget-object v9, v0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
+    invoke-interface { v9, v6 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v9
+    check-cast v9, Lcom/innioasis/y1/activity/IppActivity$Item;
   .line 349
-    invoke-virtual { v4, v14 }, Landroid/widget/TextView;->setGravity(I)V
-  .line 350
-    const/16 v8, 8
-    invoke-virtual { v4, v15, v8, v15, v8 }, Landroid/widget/TextView;->setPadding(IIII)V
-  .line 351
-    invoke-static { v10 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
-    move-result-object v10
-    invoke-virtual { v4, v10 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 352
-    new-instance v10, Landroid/widget/LinearLayout$LayoutParams;
-    const/4 v12, -2
-    invoke-direct { v10, v9, v12 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-    invoke-virtual { v11, v4, v10 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 354
-    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->rule()Landroid/view/View;
-    move-result-object v10
-    new-instance v12, Landroid/widget/LinearLayout$LayoutParams;
-    invoke-direct { v12, v9, v13 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-    invoke-virtual { v11, v10, v12 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    iget v10, v9, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
+    const/high16 v11, 0x41500000
+    const/4 v12, 6
+    const/16 v13, 16
+    if-nez v10, :L1
+  .line 355
+    new-instance v10, Landroid/widget/LinearLayout;
+    invoke-direct { v10, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
   .line 356
-    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-    aput-object v11, v10, v7
-  .line 357
-    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
-    aput-object v4, v10, v7
+    invoke-virtual { v10, v3 }, Landroid/widget/LinearLayout;->setOrientation(I)V
   .line 358
-    new-instance v4, Landroid/widget/LinearLayout$LayoutParams;
-    const/4 v10, -2
-    invoke-direct { v4, v9, v10 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-  .line 359
-    iput v15, v4, Landroid/widget/LinearLayout$LayoutParams;->topMargin:I
+    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->rule()Landroid/view/View;
+    move-result-object v14
+    new-instance v15, Landroid/widget/LinearLayout$LayoutParams;
+    const/4 v7, 2
+    invoke-direct { v15, v8, v7 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v10, v14, v15 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
   .line 360
-    const/4 v9, 4
-    iput v9, v4, Landroid/widget/LinearLayout$LayoutParams;->bottomMargin:I
+    new-instance v14, Landroid/widget/TextView;
+    invoke-direct { v14, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
   .line 361
-    invoke-virtual { v2, v11, v4 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 362
+    invoke-virtual { v14, v11 }, Landroid/widget/TextView;->setTextSize(F)V
+  .line 364
+    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
+    move-result-object v11
+    invoke-virtual { v14, v11, v3 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;I)V
+  .line 365
+    invoke-virtual { v14, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
+  .line 366
+    invoke-virtual { v14, v13 }, Landroid/widget/TextView;->setGravity(I)V
+  .line 367
+    const/16 v11, 8
+    invoke-virtual { v14, v12, v11, v12, v11 }, Landroid/widget/TextView;->setPadding(IIII)V
+  .line 368
+    invoke-static { v9 }, Lcom/innioasis/y1/activity/IppActivity;->label(Lcom/innioasis/y1/activity/IppActivity$Item;)Ljava/lang/String;
+    move-result-object v9
+    invoke-virtual { v14, v9 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+  .line 369
+    new-instance v9, Landroid/widget/LinearLayout$LayoutParams;
+    const/4 v11, -2
+    invoke-direct { v9, v8, v11 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v10, v14, v9 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 371
+    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->rule()Landroid/view/View;
+    move-result-object v9
+    new-instance v11, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-direct { v11, v8, v7 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v10, v9, v11 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 373
+    iget-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
+    aput-object v10, v7, v6
+  .line 374
+    iget-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
+    aput-object v10, v7, v6
+  .line 375
+    iget-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
+    aput-object v14, v7, v6
+  .line 379
+    new-instance v7, Landroid/widget/LinearLayout$LayoutParams;
+    const/4 v9, -2
+    invoke-direct { v7, v8, v9 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v2, v10, v7 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 380
     goto/16 :L3
   :L1
-  .line 366
-    const/16 v8, 8
-    new-instance v4, Landroid/widget/LinearLayout;
-    invoke-direct { v4, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
-  .line 367
-    invoke-virtual { v4, v5 }, Landroid/widget/LinearLayout;->setOrientation(I)V
-  .line 368
-    invoke-virtual { v4, v5 }, Landroid/widget/LinearLayout;->setBaselineAligned(Z)V
-  .line 369
-    invoke-virtual { v4, v14 }, Landroid/widget/LinearLayout;->setGravity(I)V
-  .line 370
-    const/4 v11, 5
-    invoke-virtual { v4, v11, v5, v11, v5 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
-  .line 379
-    iget-object v10, v10, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
-    if-eqz v10, :L2
-  .line 380
-    new-instance v10, Landroid/widget/TextView;
-    invoke-direct { v10, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
-  .line 381
-    invoke-virtual { v10, v12 }, Landroid/widget/TextView;->setTextSize(F)V
-  .line 382
-    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
-    move-result-object v11
-    invoke-virtual { v10, v11 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
-  .line 383
-    invoke-virtual { v10, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
   .line 384
-    const/16 v11, 17
-    invoke-virtual { v10, v11 }, Landroid/widget/TextView;->setGravity(I)V
+    new-instance v7, Landroid/widget/LinearLayout;
+    invoke-direct { v7, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
   .line 385
-    const-string v11, "\u21b4"
-    invoke-virtual { v10, v11 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+    invoke-virtual { v7, v5 }, Landroid/widget/LinearLayout;->setOrientation(I)V
   .line 386
-    const/high16 v11, 0x43340000
-    invoke-virtual { v10, v11 }, Landroid/widget/TextView;->setRotation(F)V
+    invoke-virtual { v7, v5 }, Landroid/widget/LinearLayout;->setBaselineAligned(Z)V
   .line 387
-    new-instance v11, Landroid/widget/LinearLayout$LayoutParams;
-    const/4 v12, -2
-    invoke-direct { v11, v12, v9 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v7, v13 }, Landroid/widget/LinearLayout;->setGravity(I)V
   .line 388
-    const/4 v12, 3
-    iput v12, v11, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
-  .line 389
-    invoke-virtual { v4, v10, v11 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 390
-    iget-object v11, v0, Lcom/innioasis/y1/activity/IppActivity;->marks:[Landroid/widget/TextView;
-    aput-object v10, v11, v7
-  :L2
-  .line 393
-    new-instance v10, Landroid/widget/TextView;
-    invoke-direct { v10, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
-  .line 394
-    const/high16 v11, 0x41880000
-    invoke-virtual { v10, v11 }, Landroid/widget/TextView;->setTextSize(F)V
-  .line 395
-    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
-    move-result-object v12
-    invoke-virtual { v10, v12 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
-  .line 396
-    invoke-virtual { v10, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
+    const/4 v10, 5
+    invoke-virtual { v7, v10, v5, v10, v5 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
   .line 397
-    invoke-virtual { v10, v14 }, Landroid/widget/TextView;->setGravity(I)V
+    iget-object v9, v9, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
+    if-eqz v9, :L2
   .line 398
-    new-instance v12, Landroid/widget/LinearLayout$LayoutParams;
-    invoke-direct { v12, v5, v9 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    new-instance v9, Landroid/widget/TextView;
+    invoke-direct { v9, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
   .line 399
-    const/high16 v3, 0x3F800000
-    iput v3, v12, Landroid/widget/LinearLayout$LayoutParams;->weight:F
+    invoke-virtual { v9, v11 }, Landroid/widget/TextView;->setTextSize(F)V
   .line 400
-    invoke-virtual { v4, v10, v12 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
+    move-result-object v10
+    invoke-virtual { v9, v10 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+  .line 401
+    invoke-virtual { v9, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
   .line 402
-    new-instance v3, Landroid/widget/TextView;
-    invoke-direct { v3, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+    const/16 v10, 17
+    invoke-virtual { v9, v10 }, Landroid/widget/TextView;->setGravity(I)V
   .line 403
-    invoke-virtual { v3, v11 }, Landroid/widget/TextView;->setTextSize(F)V
+    const-string v10, "\u21b4"
+    invoke-virtual { v9, v10 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   .line 404
+    const/high16 v10, 0x43340000
+    invoke-virtual { v9, v10 }, Landroid/widget/TextView;->setRotation(F)V
+  .line 405
+    new-instance v10, Landroid/widget/LinearLayout$LayoutParams;
+    const/4 v11, -2
+    invoke-direct { v10, v11, v8 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+  .line 406
+    const/4 v11, 3
+    iput v11, v10, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
+  .line 407
+    invoke-virtual { v7, v9, v10 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 408
+    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->marks:[Landroid/widget/TextView;
+    aput-object v9, v10, v6
+  :L2
+  .line 411
+    new-instance v9, Landroid/widget/TextView;
+    invoke-direct { v9, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+  .line 412
+    const/high16 v10, 0x41880000
+    invoke-virtual { v9, v10 }, Landroid/widget/TextView;->setTextSize(F)V
+  .line 413
     invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
     move-result-object v11
-    invoke-virtual { v3, v11 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
-  .line 405
-    invoke-virtual { v3, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
-  .line 406
-    invoke-virtual { v3, v14 }, Landroid/widget/TextView;->setGravity(I)V
-  .line 407
-    invoke-virtual { v3, v15, v5, v15, v5 }, Landroid/widget/TextView;->setPadding(IIII)V
-  .line 408
-    const/4 v11, -2
-    invoke-virtual { v4, v3, v11, v11 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;II)V
-  .line 410
-    iget-object v11, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
-    aput-object v4, v11, v7
-  .line 411
-    iget-object v11, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
-    aput-object v10, v11, v7
-  .line 412
-    iget-object v11, v0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
-    aput-object v3, v11, v7
+    invoke-virtual { v9, v11 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
   .line 414
-    new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-virtual { v9, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
   .line 415
-    invoke-virtual { v10 }, Landroid/widget/TextView;->getTextSize()F
-    move-result v10
-    const/high16 v11, 0x40400000
-    mul-float v10, v10, v11
-    float-to-int v10, v10
-    invoke-direct { v3, v9, v10 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v9, v13 }, Landroid/widget/TextView;->setGravity(I)V
   .line 416
-    iput v13, v3, Landroid/widget/LinearLayout$LayoutParams;->topMargin:I
+    new-instance v11, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-direct { v11, v5, v8 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
   .line 417
-    iput v13, v3, Landroid/widget/LinearLayout$LayoutParams;->bottomMargin:I
+    const/high16 v14, 0x3F800000
+    iput v14, v11, Landroid/widget/LinearLayout$LayoutParams;->weight:F
   .line 418
-    invoke-virtual { v2, v4, v3 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    invoke-virtual { v7, v9, v11 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 420
+    new-instance v11, Landroid/widget/TextView;
+    invoke-direct { v11, v0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+  .line 421
+    invoke-virtual { v11, v10 }, Landroid/widget/TextView;->setTextSize(F)V
+  .line 422
+    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->font()Landroid/graphics/Typeface;
+    move-result-object v10
+    invoke-virtual { v11, v10 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+  .line 423
+    invoke-virtual { v11, v5 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
+  .line 424
+    invoke-virtual { v11, v13 }, Landroid/widget/TextView;->setGravity(I)V
+  .line 425
+    invoke-virtual { v11, v12, v5, v12, v5 }, Landroid/widget/TextView;->setPadding(IIII)V
+  .line 426
+    const/4 v10, -2
+    invoke-virtual { v7, v11, v10, v10 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;II)V
+  .line 428
+    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->rowViews:[Landroid/view/View;
+    aput-object v7, v10, v6
+  .line 429
+    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->labels:[Landroid/widget/TextView;
+    aput-object v9, v10, v6
+  .line 430
+    iget-object v10, v0, Lcom/innioasis/y1/activity/IppActivity;->values:[Landroid/widget/TextView;
+    aput-object v11, v10, v6
+  .line 434
+    new-instance v10, Landroid/widget/LinearLayout;
+    invoke-direct { v10, v0 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
+  .line 435
+    invoke-virtual { v10, v3 }, Landroid/widget/LinearLayout;->setOrientation(I)V
+  .line 436
+    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->hair()Landroid/view/View;
+    move-result-object v11
+    new-instance v12, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-direct { v12, v8, v3 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v10, v11, v12 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 437
+    new-instance v11, Landroid/widget/LinearLayout$LayoutParams;
+  .line 438
+    invoke-virtual { v9 }, Landroid/widget/TextView;->getTextSize()F
+    move-result v9
+    const/high16 v12, 0x40400000
+    mul-float v9, v9, v12
+    float-to-int v9, v9
+    invoke-direct { v11, v8, v9 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+  .line 437
+    invoke-virtual { v10, v7, v11 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 439
+    invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->hair()Landroid/view/View;
+    move-result-object v7
+    new-instance v9, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-direct { v9, v8, v3 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v10, v7, v9 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+  .line 440
+    iget-object v7, v0, Lcom/innioasis/y1/activity/IppActivity;->rowBoxes:[Landroid/view/View;
+    aput-object v10, v7, v6
+  .line 441
+    new-instance v7, Landroid/widget/LinearLayout$LayoutParams;
+    const/4 v9, -2
+    invoke-direct { v7, v8, v9 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    invoke-virtual { v2, v10, v7 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
   :L3
-  .line 330
-    add-int/lit8 v7, v7, 1
-    const/4 v3, 1
-    const/16 v4, 8
+  .line 347
+    add-int/lit8 v6, v6, 1
     goto/16 :L0
   :L4
-  .line 422
+  .line 445
     new-instance v3, Landroid/widget/ScrollView;
     invoke-direct { v3, v0 }, Landroid/widget/ScrollView;-><init>(Landroid/content/Context;)V
     iput-object v3, v0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
-  .line 423
+  .line 446
     const/4 v4, -2
-    invoke-virtual { v3, v2, v9, v4 }, Landroid/widget/ScrollView;->addView(Landroid/view/View;II)V
-  .line 424
+    invoke-virtual { v3, v2, v8, v4 }, Landroid/widget/ScrollView;->addView(Landroid/view/View;II)V
+  .line 447
     iget-object v2, v0, Lcom/innioasis/y1/activity/IppActivity;->scroller:Landroid/widget/ScrollView;
-    invoke-virtual { v1, v2, v9, v9 }, Landroid/view/ViewGroup;->addView(Landroid/view/View;II)V
-  .line 426
+    invoke-virtual { v1, v2, v8, v8 }, Landroid/view/ViewGroup;->addView(Landroid/view/View;II)V
+  .line 449
     invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->firstSelectable()I
     move-result v1
     iput v1, v0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
-  .line 427
+  .line 450
     invoke-direct/range { p0 .. p0 }, Lcom/innioasis/y1/activity/IppActivity;->render()V
-  .line 428
+  .line 451
     return-void
 .end method
 
 .method public longConfirm()V
   .registers 5
-  .line 1539
+  .line 1593
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity;->editing:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 1540
+  .line 1594
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     if-eqz v0, :L5
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
@@ -2074,30 +2151,30 @@
     if-lt v1, v0, :L1
     goto :L5
   :L1
-  .line 1541
+  .line 1595
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->items:Ljava/util/List;
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity;->sel:I
     invoke-interface { v0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/activity/IppActivity$Item;
-  .line 1542
+  .line 1596
     iget v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
     if-eqz v1, :L4
     iget-object v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     if-nez v1, :L2
     goto :L4
   :L2
-  .line 1543
+  .line 1597
     iget-object v1, v0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Help;->blocks(Landroid/content/Context;Ljava/lang/String;)Ljava/util/List;
     move-result-object v1
-  .line 1544
+  .line 1598
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L3
     return-void
   :L3
-  .line 1545
+  .line 1599
     new-instance v2, Lcom/innioasis/ipp/HelpDialog;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getActivity()Landroid/app/Activity;
     move-result-object v3
@@ -2105,13 +2182,13 @@
     move-result-object v0
     invoke-direct { v2, v3, v0, v1 }, Lcom/innioasis/ipp/HelpDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;Ljava/util/List;)V
     invoke-virtual { v2 }, Lcom/innioasis/ipp/HelpDialog;->show()V
-  .line 1546
+  .line 1600
     return-void
   :L4
-  .line 1542
+  .line 1596
     return-void
   :L5
-  .line 1540
+  .line 1594
     return-void
 .end method
 
@@ -2119,7 +2196,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 869
+  .line 923
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     invoke-interface { v0 }, Landroidx/viewbinding/ViewBinding;->getRoot()Landroid/view/View;
@@ -2129,40 +2206,40 @@
     const-wide/16 v2, 400
     invoke-virtual { v0, v1, v2, v3 }, Landroid/view/View;->postDelayed(Ljava/lang/Runnable;J)Z
   :L1
-  .line 872
+  .line 926
     goto :L3
   :L2
-  .line 870
+  .line 924
     move-exception v0
-  .line 871
+  .line 925
     sget-object v0, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v1
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/util/Other;->reboot(Landroid/content/Context;)V
   :L3
-  .line 873
+  .line 927
     return-void
 .end method
 
 .method public quit()V
   .registers 2
-  .line 1573
+  .line 1627
     const/4 v0, 0
     invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->endEdit(Z)V
-  .line 1574
+  .line 1628
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppActivity;->finish()V
-  .line 1575
+  .line 1629
     return-void
 .end method
 
 .method runCacheLibrary(I)V
   .catchall { :L1 .. :L2 } :L3
   .registers 10
-  .line 844
+  .line 898
     if-nez p1, :L0
     return-void
   :L0
-  .line 846
+  .line 900
     const/4 v0, 0
   :L1
     new-instance v7, Lcom/innioasis/y1/utils/LoadingDialog;
@@ -2178,31 +2255,31 @@
     move-object v1, v7
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
     iput-object v7, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 848
+  .line 902
     invoke-virtual { v7 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V
   :L2
-  .line 851
+  .line 905
     goto :L4
   :L3
-  .line 849
+  .line 903
     move-exception v1
-  .line 850
+  .line 904
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
   :L4
-  .line 852
+  .line 906
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$CacheTask;
     invoke-direct { v1, p0, p1 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;-><init>(Lcom/innioasis/y1/activity/IppActivity;I)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 853
+  .line 907
     return-void
 .end method
 
 .method runFullRescan()V
   .catchall { :L0 .. :L1 } :L2
   .registers 9
-  .line 814
+  .line 868
     const/4 v0, 0
   :L0
     new-instance v7, Lcom/innioasis/y1/utils/LoadingDialog;
@@ -2218,60 +2295,60 @@
     move-object v1, v7
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
     iput-object v7, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 816
+  .line 870
     invoke-virtual { v7 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V
   :L1
-  .line 819
+  .line 873
     goto :L3
   :L2
-  .line 817
+  .line 871
     move-exception v1
-  .line 818
+  .line 872
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
   :L3
-  .line 820
+  .line 874
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$RescanTask;
     invoke-direct { v1, p0 }, Lcom/innioasis/y1/activity/IppActivity$RescanTask;-><init>(Lcom/innioasis/y1/activity/IppActivity;)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 821
+  .line 875
     return-void
 .end method
 
 .method scanFinished(I)V
   .registers 3
-  .line 829
+  .line 883
     new-instance v0, Lcom/innioasis/y1/activity/IppActivity$Done;
     invoke-direct { v0, p0, p1 }, Lcom/innioasis/y1/activity/IppActivity$Done;-><init>(Lcom/innioasis/y1/activity/IppActivity;I)V
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
-  .line 830
+  .line 884
     return-void
 .end method
 
 .method scanTick(Ljava/lang/String;)V
   .registers 3
-  .line 825
+  .line 879
     new-instance v0, Lcom/innioasis/y1/activity/IppActivity$Tick;
     invoke-direct { v0, p0, p1 }, Lcom/innioasis/y1/activity/IppActivity$Tick;-><init>(Lcom/innioasis/y1/activity/IppActivity;Ljava/lang/String;)V
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
-  .line 826
+  .line 880
     return-void
 .end method
 
 .method startSfRestart()V
   .registers 4
-  .line 736
+  .line 790
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$SfRun;
     invoke-direct { v1, p0 }, Lcom/innioasis/y1/activity/IppActivity$SfRun;-><init>(Lcom/innioasis/y1/activity/IppActivity;)V
     const-string v2, "ipp-sf-report"
     invoke-direct { v0, v1, v2 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 737
+  .line 791
     const/4 v1, 1
     invoke-virtual { v0, v1 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 738
+  .line 792
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 739
+  .line 793
     return-void
 .end method

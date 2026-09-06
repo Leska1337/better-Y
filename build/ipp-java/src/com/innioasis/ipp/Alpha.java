@@ -2,9 +2,16 @@ package com.innioasis.ipp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -102,6 +109,12 @@ public final class Alpha {
     private static final int PAD_DP = 14;
     private static final int RADIUS_DP = 12;
 
+    /** The plate's shadow, dp: blur radius and how far below the square it falls. */
+    private static final int SHADOW_DP = 10;
+    private static final int SHADOW_DY_DP = 2;
+    /** Black at a fifth — a shadow, not a second plate. */
+    private static final int SHADOW_COLOR = 0x33000000;
+
     /** Key text size, sp: one letter, vs a four-digit year that needs four glyphs. */
     private static final int LETTER_SP = 56;
     private static final int YEAR_SP = 40;
@@ -163,14 +176,14 @@ public final class Alpha {
             TextView tv = plateView(act, d);
             tv.setText(text);
             tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, YEAR_SP);
-            int side = side(tv, d);            // the jump key's own square, same size, fixed
+            int size = dress(tv, d);           // the jump key's own square, same size, fixed
 
             // A window of its own, and that is the whole point: the jump key is a child of the
             // Activity's content view, which the keyboard's DIALOG covers — the plate came up
             // BEHIND it. A PopupWindow is a sub-window hung off the host's own window token, so it
             // is drawn over the window the host belongs to, dialog included.
             hidePop();
-            PopupWindow pw = new PopupWindow(tv, side, side);
+            PopupWindow pw = new PopupWindow(tv, size, size);
             pw.setBackgroundDrawable(null);
             pw.setTouchable(false);
             pw.setFocusable(false);
@@ -189,8 +202,8 @@ public final class Alpha {
             // shifted down by half the bar to sit in the middle of the list it belongs to
             // (barOffset). Here there is no list under the plate: the keyboard covers the bottom
             // of the screen and the plate is simply in the middle of what is left.
-            int x = (dm.widthPixels - side) / 2 - (onScreen[0] - inWindow[0]);
-            int y = (dm.heightPixels - side) / 2 - (onScreen[1] - inWindow[1]);
+            int x = (dm.widthPixels - size) / 2 - (onScreen[0] - inWindow[0]);
+            int y = (dm.heightPixels - size) / 2 - (onScreen[1] - inWindow[1]);
             pw.showAtLocation(host, Gravity.NO_GRAVITY, x, y);
             pop = pw;
 
@@ -229,15 +242,12 @@ public final class Alpha {
 
     /** The plate as a standalone view, for {@link #flash} — same look, no parent of its own. */
     private static TextView plateView(Activity act, float d) {
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(plate());
-        bg.setCornerRadius(RADIUS_DP * d);
-
         TextView tv = new TextView(act);
-        tv.setTextColor(Color.WHITE);
+        tv.setTextColor(ink());
         tv.setGravity(Gravity.CENTER);
         tv.setIncludeFontPadding(false);
-        tv.setBackgroundDrawable(bg);
+        // Before the plate is dressed: the square is measured with the view's own paint, theme
+        // font included, so the typeface has to be on it by then.
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         return tv;
     }
@@ -468,22 +478,18 @@ public final class Alpha {
 
         float d = c.getResources().getDisplayMetrics().density;
 
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(plate());
-        bg.setCornerRadius(RADIUS_DP * d);
-
         TextView tv = new TextView(c);
         tv.setText("");
-        tv.setTextColor(Color.WHITE);
+        tv.setTextColor(ink());
         tv.setGravity(Gravity.CENTER);
         tv.setIncludeFontPadding(false);
-        tv.setBackgroundDrawable(bg);
         // Per call, and the two-argument form: it is what follows a theme's font.ttf (ThemeManager
         // swaps the static Typeface.MONOSPACE) and what fakes bold when that font has no bold cut.
+        // Before dress(), which measures the square with this very paint.
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
 
-        int side = side(tv, d);
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(side, side);
+        int size = dress(tv, d);
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(size, size);
         lp.gravity = Gravity.CENTER;
         lp.topMargin = barOffset(act, d);
         root.addView(tv, lp);
@@ -557,6 +563,88 @@ public final class Alpha {
             // malformed theme colour -> treat as absent
         }
         return PLATE_RGB | PLATE_ALPHA;
+    }
+
+    /**
+     * The key's colour: the theme's {@code menuItemTextColor}, the text of its submenus — the
+     * SAME section the plate's own fill comes from ({@link #plate}, {@code menuBackgroundColor}).
+     * That pairing is the point: a theme is free to set the menu's colours against each other
+     * rather than against the list, and reading the key from {@code itemTextColor} instead gives
+     * black on black the moment it does ("InnoPod Rev_2": #000000 rows over a #000000 menu, whose
+     * own text is #ffffff). {@code ThemeManager} keeps its parsed config private and
+     * {@link Icons#menuColor()} is the only door to it. With no theme, or a theme that names no
+     * menu colour, the key stays white.
+     */
+    private static int ink() {
+        int c = Icons.menuColor();
+        return c == 0 ? Color.WHITE : c;
+    }
+
+    /** The room the shadow needs on every side of the square, px. */
+    private static int margin(float d) {
+        return (int) ((SHADOW_DP + SHADOW_DY_DP) * d + 0.5f);
+    }
+
+    /**
+     * Put the plate on the view, and answer the size the VIEW has to be: the square itself plus
+     * the margin the shadow needs around it. The square keeps the size it is measured at
+     * ({@link #side}); it is the view that grows, so the key stays centred on the plate and the
+     * plate stays where it was on screen.
+     */
+    private static int dress(TextView tv, float d) {
+        int side = side(tv, d);
+        tv.setBackgroundDrawable(new BitmapDrawable(tv.getResources(), plateBitmap(side, d)));
+        return side + margin(d) * 2;
+    }
+
+    // The plate is one picture and it is drawn ONCE: nothing about it changes as the key does, and
+    // a blurred shadow is a software operation (Android 4.2 hardware canvas ignores a shadow layer
+    // on anything but text). Rendered into a bitmap here, it is an ordinary hardware-path blit
+    // afterwards, and the key above it is never taken off that path either — which is what the
+    // alternative, a software layer on the view, would have done to it on every jump.
+    // Keyed on the square and the fill, so a theme change rebuilds it and nothing else does.
+    private static Bitmap plateBm;
+    private static int plateKey;
+
+    /**
+     * The square, with its shadow, on a transparent ground.
+     *
+     * The shadow is punched out under the plate rather than drawn behind it: the fill is
+     * translucent, so a shadow left underneath would show through and darken the plate's own
+     * middle. CLEAR takes the shape and the shadow beneath it away together, with an antialiased
+     * edge — a {@code clipPath} would leave a hard-edged one.
+     */
+    private static Bitmap plateBitmap(int side, float d) {
+        int fill = plate();
+        int key = side * 31 + fill;
+        Bitmap b = plateBm;
+        if (b != null && !b.isRecycled() && key == plateKey) return b;
+
+        int m = margin(d);
+        int w = side + m * 2;
+        float r = RADIUS_DP * d;
+        b = Bitmap.createBitmap(w, w, Bitmap.Config.ARGB_8888);
+        Canvas cv = new Canvas(b);
+
+        Path path = new Path();
+        path.addRoundRect(new RectF(m, m, m + side, m + side), r, r, Path.Direction.CW);
+
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setColor(SHADOW_COLOR);
+        p.setShadowLayer(SHADOW_DP * d, 0.0f, SHADOW_DY_DP * d, SHADOW_COLOR);
+        cv.drawPath(path, p);
+
+        p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+        cv.drawPath(path, p);
+
+        p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setColor(fill);
+        cv.drawPath(path, p);
+
+        plateBm = b;
+        plateKey = key;
+        return b;
     }
 
     private static boolean enabled() {

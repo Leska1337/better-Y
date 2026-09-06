@@ -89,6 +89,19 @@ public final class IppActivity extends BaseActivity {
     private static final int ACCENT = Color.parseColor("#3CFFDE");
 
     /**
+     * A group caption's two rules and the strip between them, as alpha over the theme's colours:
+     * the rules carry the item colour, the strip the selected one. Package-visible because the
+     * queue screen draws the same caption ({@code IppQueueActivity.divider}) — one number, so the
+     * two cannot drift apart.
+     */
+    static final int RULE_ALPHA = 0x59000000;
+    static final int BAND_ALPHA = 0x59000000;
+
+    /** The hairlines a menu row is being tried with: a caption's rule, thinner and far weaker. */
+    private static final int HAIR_H = 1;
+    private static final int HAIR_ALPHA = 0x1F000000;
+
+    /**
      * One menu entry. Headers use only the label; the rest is per-kind.
      *
      * Every word of it comes from the help asset — {@code label}, {@code values} and
@@ -122,7 +135,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     private List items;                 // List<Item>
-    private View[] rowViews;            // container child per item (header TextView or row LinearLayout)
+    private View[] rowViews;            // the header box or the row itself — what carries the look
+    private View[] rowBoxes;            // the container's own child: the row inside its hairlines
     private TextView[] labels;          // per item (null for headers)
     private TextView[] values;          // per item (null for headers)
     private TextView[] marks;           // the sub-item arrow, where a row has one
@@ -315,14 +329,17 @@ public final class IppActivity extends BaseActivity {
         ViewGroup root = (ViewGroup) getVb().getRoot();
         root.removeAllViews();
 
+        // No side padding: a row's background is the theme's, and 8px of it either side let the
+        // wallpaper through as a stripe down both edges of the screen. The text keeps its distance
+        // from the edge through the row's OWN padding, which is inside that background.
         LinearLayout container = new LinearLayout(this);
         container.setOrientation(LinearLayout.VERTICAL);
-        container.setPadding(8, 0, 8, 0);
 
         items = buildItems();
         lastItems = items;
         int n = items.size();
         rowViews = new View[n];
+        rowBoxes = new View[n];
         labels = new TextView[n];
         values = new TextView[n];
         marks = new TextView[n];
@@ -354,11 +371,12 @@ public final class IppActivity extends BaseActivity {
                 hb.addView(rule(), new LinearLayout.LayoutParams(-1, 2));
 
                 rowViews[i] = hb;
+                rowBoxes[i] = hb;       // a caption IS the container's child, it has no box
                 labels[i] = h;          // headers keep their caption here so render() can paint it
-                LinearLayout.LayoutParams hp = new LinearLayout.LayoutParams(-1, -2);
-                hp.topMargin = 6;
-                hp.bottomMargin = 4;
-                container.addView(hb, hp);
+                // No margin, here or on a row: the theme paints the rows, so every gap between two
+                // of them is a line of wallpaper across the list. What separates a group from the
+                // one above is the caption's own rules.
+                container.addView(hb, new LinearLayout.LayoutParams(-1, -2));
             } else {
                 // Full-width row carries the highlight, but its height is fixed to the text:
                 // a theme's selected background can be a large bitmap and would otherwise
@@ -411,11 +429,16 @@ public final class IppActivity extends BaseActivity {
                 labels[i] = label;
                 values[i] = value;
 
-                LinearLayout.LayoutParams rp = new LinearLayout.LayoutParams(-1,
-                        (int) (label.getTextSize() * 3.0f));   // 2x the text-fitted height
-                rp.topMargin = 2;
-                rp.bottomMargin = 2;
-                container.addView(row, rp);
+                // Inside a box that carries a hairline along its top and bottom edge — the group
+                // caption's rules, thinner and far weaker, since these run between every two rows.
+                LinearLayout box = new LinearLayout(this);
+                box.setOrientation(LinearLayout.VERTICAL);
+                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
+                box.addView(row, new LinearLayout.LayoutParams(-1,
+                        (int) (label.getTextSize() * 3.0f)));   // 2x the text-fitted height
+                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
+                rowBoxes[i] = box;
+                container.addView(box, new LinearLayout.LayoutParams(-1, -2));
             }
         }
 
@@ -433,6 +456,8 @@ public final class IppActivity extends BaseActivity {
             Item it = (Item) items.get(i);
             if (it.type == HEADER) {
                 TextView h = labels[i];
+                ThemeManager.INSTANCE.itemSetTextColor(h, ACCENT, true);
+                int wash = h.getCurrentTextColor() & 0x00FFFFFF;
                 // Ask the theme for its ORDINARY item colour ("false"), the same one the CD strip
                 // takes: a theme is free to highlight with a colour that barely shows against its
                 // own background, and a caption painted in it is hard to read wherever it does.
@@ -443,24 +468,31 @@ public final class IppActivity extends BaseActivity {
                 // The rules are the caption own colour, thinned out, and read AFTER the theme has
                 // had its say -- so they follow whatever colour the caption actually ended up
                 // with, dark on a light theme and light on a dark one, with nothing to configure.
-                int rgb = h.getCurrentTextColor() & 0x00FFFFFF;
+                int rule = h.getCurrentTextColor() & 0x00FFFFFF;
                 LinearLayout hb = (LinearLayout) rowViews[i];
                 for (int c = 0; c < hb.getChildCount(); c++) {
                     View kid = hb.getChildAt(c);
-                    if (!(kid instanceof TextView)) kid.setBackgroundColor(rgb | 0x59000000);
+                    if (!(kid instanceof TextView)) kid.setBackgroundColor(rule | RULE_ALPHA);
                 }
-                // The strip between the rules is washed with the same colour, far weaker: enough
-                // to read as a band at a glance, not enough to look like the cursor is standing on
-                // it. (setBackgroundColor on a view that had no background asks for a layout —
+                // The strip between the rules is washed with the theme's SELECTED colour instead,
+                // far weaker: enough to read as a band at a glance, not enough to look like the
+                // cursor is standing on it. Two colours rather than one because that is what a
+                // theme balances against its own background -- and it is read the same way, by
+                // painting the caption with it and looking, since itemSetTextColor answers with
+                // the theme's colour and ignores the one it is passed. Asked FIRST so the caption
+                // is left in the colour it keeps; ACCENT is passed for the same reason paint()
+                // passes it, that being what a focused row shows when the theme names none.
+                // (setBackgroundColor on a view that had no background asks for a layout —
                 // harmless here, this runs when the screen is built and on a value change, never
                 // on the wheel's own path, which repaints two rows through paint().)
-                hb.setBackgroundColor(rgb | 0x2E000000);
+                hb.setBackgroundColor(wash | BAND_ALPHA);
                 continue;
             }
 
-            LinearLayout row = (LinearLayout) rowViews[i];
+            // The BOX, not the row: hiding the row alone would leave its two hairlines behind as a
+            // stripe where a sub-item is not currently shown.
             boolean vis = visible(it);
-            row.setVisibility(vis ? View.VISIBLE : View.GONE);
+            rowBoxes[i].setVisibility(vis ? View.VISIBLE : View.GONE);
             if (!vis) continue;
 
             labels[i].setText(label(it));
@@ -497,11 +529,31 @@ public final class IppActivity extends BaseActivity {
         return new View(this);
     }
 
+    /**
+     * A row's hairline. Unlike a caption's rule its colour cannot wait for {@link #render()} —
+     * a row has no caption of its own to copy it from — so it is read here, off a scratch TextView
+     * painted with the theme's ordinary item colour ({@code itemSetTextColor} answers with the
+     * theme's own and ignores what it is passed, so painting and looking is the only way to ask).
+     */
+    private View hair() {
+        if (hairColor == 0) {
+            TextView probe = new TextView(this);
+            ThemeManager.INSTANCE.itemSetTextColor(probe,
+                    getResources().getColor(R.color.selected_text_color), false);
+            hairColor = (probe.getCurrentTextColor() & 0x00FFFFFF) | HAIR_ALPHA;
+        }
+        View v = new View(this);
+        v.setBackgroundColor(hairColor);
+        return v;
+    }
+
+    private int hairColor;
+
     private void paint(int i) {
         if (rowViews == null || i < 0 || i >= rowViews.length) return;
         Item it = (Item) items.get(i);
         if (it.type == HEADER || rowViews[i] == null) return;
-        if (rowViews[i].getVisibility() != View.VISIBLE) return;
+        if (rowBoxes[i] == null || rowBoxes[i].getVisibility() != View.VISIBLE) return;
         boolean on = (i == sel);
         int fg = on ? ACCENT : -1;
         ThemeManager.INSTANCE.itemSetBackground(rowViews[i], on ? R.drawable.item_setting_sel : 0, on);
@@ -543,8 +595,10 @@ public final class IppActivity extends BaseActivity {
     }
 
     private void scrollToSel() {
-        if (scroller == null || rowViews == null || sel < 0 || sel >= rowViews.length) return;
-        View v = rowViews[sel];
+        if (scroller == null || rowBoxes == null || sel < 0 || sel >= rowBoxes.length) return;
+        // The box: it is the container's own child, so its top and bottom are the coordinates the
+        // scroller works in. The row inside it is offset by a hairline.
+        View v = rowBoxes[sel];
         if (v == null) return;
         // When focus is on the top-most selectable row, snap to the very top so the group
         // header sitting above it stays visible (otherwise scrolling up stops at the row's top).

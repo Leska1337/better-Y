@@ -484,15 +484,20 @@ public final class Rows {
 
     /**
      * Height of the row's disc strip, i.e. how much of the row's top the background must not
-     * cover. Computed from the font rather than read back with {@code getHeight()}: at bind time
-     * the row has not been laid out with this state yet, and a recycled row would answer with the
-     * previous one's. A single-line TextView is exactly its line height plus its vertical padding.
+     * cover. Asked of {@link Disc#stripPx}, which is the single answer to that question: the strip
+     * has a FIXED height in the layout, so its LayoutParams are what it is really laid out at, and
+     * a second opinion here is a gap or an overlap of exactly their difference.
+     *
+     * Computing it from the font instead is what this used to do, and a theme with a font of its
+     * own is where that breaks: at 10sp the line height of "Cupertino"'s opensans-condbold is 17
+     * against the layout's 16, so the background started one pixel below the strip's bottom edge
+     * and the wallpaper showed through the row as a dark line across the screen. Nothing about it
+     * looks like a font problem, which is why it was chased in the theme's PNGs first.
      */
     private static int headerInset(View row) {
         View hv = row.findViewById(R.id.tv_disc_header);
         if (!(hv instanceof TextView) || hv.getVisibility() != View.VISIBLE) return 0;
-        TextView tv = (TextView) hv;
-        return tv.getLineHeight() + tv.getPaddingTop() + tv.getPaddingBottom();
+        return Disc.stripPx(row);
     }
 
     /**

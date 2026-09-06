@@ -62,19 +62,39 @@ public final class Icons {
         return Prefs.val(c, "icon_tint");
     }
 
+    /** The theme's LIST row text colour ({@code itemTextColor}), or 0 when it names none. */
+    public static int themeColor() {
+        return probeColor(false);
+    }
+
     /**
-     * The theme's item text colour, read through the only public door there is: ThemeManager
-     * keeps its parsed config private, but {@code itemSetTextColor} substitutes the theme's own
-     * colour for the one passed in whenever it has one — so paint a scratch TextView with a
-     * sentinel and see whether it survived. Read live (never memoised) so a theme switch is
-     * picked up without restarting the app; the parse itself is memoised in Theme.parseColor.
+     * The theme's MENU text colour ({@code menuItemTextColor}) — the text of the sort and
+     * long-press submenus, which a theme sets independently of its list rows and often has to:
+     * the menu has a background of its own ({@code menuBackgroundColor}), so a theme with dark
+     * text on light rows may well need light text over it ("InnoPod Rev_2": #000000 against
+     * #ffffff). Anything drawn on that background asks for this one rather than for the row colour.
+     *
+     * Public for the fast-scroll plate ({@link Alpha}), which is the submenu's background carrying
+     * a letter, so both of its colours come from the same section of the theme.
      */
-    private static int themeColor() {
+    public static int menuColor() {
+        return probeColor(true);
+    }
+
+    /**
+     * Read through the only public door there is: ThemeManager keeps its parsed config private,
+     * but its text-colour setters substitute the theme's own colour for the one passed in whenever
+     * it has one — so paint a scratch TextView with a sentinel and see whether it survived. Read
+     * live (never memoised) so a theme switch is picked up without restarting the app; the parse
+     * itself is memoised in Theme.parseColor.
+     */
+    private static int probeColor(boolean menu) {
         Context c = Y1Application.Companion.getAppContext();
         if (c == null) return NO_COLOR;
         try {
             if (probe == null) probe = new TextView(c);
-            ThemeManager.INSTANCE.itemSetTextColor(probe, PROBE, false);
+            if (menu) ThemeManager.INSTANCE.menuItemSetTextColor(probe, PROBE, false);
+            else ThemeManager.INSTANCE.itemSetTextColor(probe, PROBE, false);
             int v = probe.getCurrentTextColor();
             return v == PROBE ? NO_COLOR : v;
         } catch (Throwable t) {

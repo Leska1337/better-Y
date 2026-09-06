@@ -19,29 +19,29 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity$CacheTask;Ljava/util/List;Lcom/innioasis/y1/activity/IppActivity$Blocks;)V
   .registers 4
-  .line 1301
+  .line 1355
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1302
+  .line 1356
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-  .line 1303
+  .line 1357
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->jobs:Ljava/util/List;
-  .line 1304
+  .line 1358
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
-  .line 1305
+  .line 1359
     return-void
 .end method
 
 .method public run()V
   .catchall { :L2 .. :L3 } :L4
   .registers 4
-  .line 1309
+  .line 1363
     nop
   :L0
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->take()I
     move-result v0
     if-ltz v0, :L6
-  .line 1310
+  .line 1364
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v1, v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from(I)I
     move-result v1
@@ -51,26 +51,26 @@
     move-result v2
     if-ge v1, v2, :L0
   :L2
-  .line 1312
+  .line 1366
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->jobs:Ljava/util/List;
     invoke-interface { v2, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;
     invoke-static { v2 }, Lcom/innioasis/y1/activity/IppActivity;->access$600(Lcom/innioasis/y1/activity/IppActivity$AlbumJob;)V
   :L3
-  .line 1315
+  .line 1369
     goto :L5
   :L4
-  .line 1313
+  .line 1367
     move-exception v2
   :L5
-  .line 1316
+  .line 1370
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
     invoke-virtual { v2 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick()V
-  .line 1310
+  .line 1364
     add-int/lit8 v1, v1, 1
     goto :L1
   :L6
-  .line 1319
+  .line 1373
     return-void
 .end method
