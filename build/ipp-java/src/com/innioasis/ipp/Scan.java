@@ -117,6 +117,13 @@ public final class Scan {
             fill(p, r.getSongsSync(0));                   // music
             fill(p, r.getSongsSync(1));                   // audiobooks
             Diag.note("library scan: " + p.size() + " path(s) already known");
+            // A scan that starts on an EMPTY table fills it through fileToSong, i.e. with the
+            // current reader, so there is nothing left for "Update library" to go looking for
+            // (Meta.libraryRead). A scan over a table that already holds rows says nothing about
+            // those rows — it skips every path it knows — so the mark belongs here and only here.
+            // Being interrupted half way is harmless for the same reason: whatever did not reach
+            // the table is not in it, and the next scan reads it with this reader too.
+            if (p.isEmpty()) Meta.noteLibraryRead(Y1Application.Companion.getAppContext());
             paths = p;
             return p;
         } catch (Throwable t) {

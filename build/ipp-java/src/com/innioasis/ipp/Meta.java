@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.content.Context;
 import android.media.MediaMetadataRetriever;
 
 import com.innioasis.y1.database.Song;
@@ -64,6 +65,38 @@ public final class Meta {
 
     /** A picture larger than this is not read into memory even when one was asked for. */
     private static final int MAX_ART = 8 * 1024 * 1024;
+
+    // ------------------------------------------------------------------ has the library been read
+
+    /**
+     * Which version of this reader the rows of the Song table were read with.
+     *
+     * A library scanned before this class existed holds what the platform made of an oversized tag,
+     * and nothing re-reads it on its own: the scan skips paths it already knows and "Update library"
+     * skips files whose date has not changed. So the number below says whether that has been dealt
+     * with, and "Update library" does the one pass that deals with it while it has not.
+     *
+     * Bump it whenever this class starts reading something it could not read before (an ASF tag,
+     * say), and the same single pass brings every existing library up to date.
+     */
+    private static final int READER = 1;
+
+    private static final String KEY_READER = "meta_v";
+
+    /** True when this library's rows were read by this reader, i.e. nothing needs re-reading. */
+    public static boolean libraryRead(Context c) {
+        return c != null && Prefs.getInt(c, KEY_READER, 0) >= READER;
+    }
+
+    /**
+     * Write that down. Called from the end of the "Update library" pass, and from the scan when it
+     * starts with an empty table — everything such a scan inserts goes through {@link #fixSong},
+     * so there is nothing for the pass to find and a fresh install need not pay for the search.
+     */
+    public static void noteLibraryRead(Context c) {
+        if (c == null) return;
+        Prefs.setInt(c, KEY_READER, READER);
+    }
 
     // ------------------------------------------------------------------ the one entry point
 
@@ -184,12 +217,13 @@ public final class Meta {
     // ------------------------------------------------------------------ is the second path needed
 
     /**
-     * True when the file starts with an ID3v2 tag the platform's parser will refuse.
+     * True when the file starts with an ID3v2 tag the platform's parser will refuse — i.e. when
+     * whatever the platform said about this file is the ID3v1 block and not the tag.
      *
      * Ten bytes, and only for the extensions that carry ID3 at all — this runs once per file of a
      * scan, so it may not cost more than that.
      */
-    private static boolean oversized(String path) {
+    public static boolean oversized(String path) {
         if (path == null) return false;
         int dot = path.lastIndexOf('.');
         if (dot < 0) return false;

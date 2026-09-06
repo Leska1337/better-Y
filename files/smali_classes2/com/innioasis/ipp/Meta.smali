@@ -11,13 +11,17 @@
 
 .field private final static HUGE:J = 3080192L
 
+.field private final static KEY_READER:Ljava/lang/String; = "meta_v"
+
 .field private final static MAX_ART:I = 8388608
 
 .field private final static MAX_TEXT:I = 65536
 
+.field private final static READER:I = 1
+
 .method private constructor <init>()V
   .registers 1
-  .line 36
+  .line 37
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -26,39 +30,39 @@
   .catchall { :L1 .. :L2 } :L3
   .catchall { :L4 .. :L5 } :L6
   .registers 4
-  .line 112
+  .line 145
     const/4 v0, 0
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 113
+  .line 146
     nop
-  .line 114
+  .line 147
     new-instance v1, Landroid/media/MediaMetadataRetriever;
     invoke-direct { v1 }, Landroid/media/MediaMetadataRetriever;-><init>()V
   :L1
-  .line 116
+  .line 149
     invoke-virtual { v1, p0 }, Landroid/media/MediaMetadataRetriever;->setDataSource(Ljava/lang/String;)V
-  .line 117
+  .line 150
     invoke-virtual { v1 }, Landroid/media/MediaMetadataRetriever;->getEmbeddedPicture()[B
     move-result-object v0
   :L2
-  .line 120
+  .line 153
     goto :L4
   :L3
-  .line 118
+  .line 151
     move-exception v2
   :L4
-  .line 122
+  .line 155
     invoke-virtual { v1 }, Landroid/media/MediaMetadataRetriever;->release()V
   :L5
-  .line 125
+  .line 158
     goto :L7
   :L6
-  .line 123
+  .line 156
     move-exception v1
   :L7
-  .line 126
+  .line 159
     if-eqz v0, :L8
     array-length v1, v0
     if-lez v1, :L8
@@ -74,23 +78,23 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 484
+  .line 518
     new-instance v0, Ljava/lang/String;
     const-string v1, "ISO-8859-1"
     invoke-direct { v0, p0, p1, p2, v1 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
   :L1
     return-object v0
   :L2
-  .line 485
+  .line 519
     move-exception p0
-  .line 486
+  .line 520
     const-string p0, ""
     return-object p0
 .end method
 
 .method private static be32([BI)J
   .registers 9
-  .line 496
+  .line 530
     aget-byte v0, p0, p1
     int-to-long v0, v0
     const-wide/16 v2, 255
@@ -122,20 +126,20 @@
 .method private static close(Ljava/io/RandomAccessFile;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 1
-  .line 501
+  .line 535
     if-nez p0, :L0
     return-void
   :L0
-  .line 503
+  .line 537
     invoke-virtual { p0 }, Ljava/io/RandomAccessFile;->close()V
   :L1
-  .line 506
+  .line 540
     goto :L3
   :L2
-  .line 504
+  .line 538
     move-exception p0
   :L3
-  .line 507
+  .line 541
     return-void
 .end method
 
@@ -146,19 +150,19 @@
     }
   .end annotation
   .registers 6
-  .line 362
+  .line 396
     const/4 v0, 4
     new-array v1, v0, [B
-  .line 363
+  .line 397
     invoke-virtual { p0, p1, p2 }, Ljava/io/RandomAccessFile;->seek(J)V
-  .line 364
+  .line 398
     invoke-virtual { p0, v1 }, Ljava/io/RandomAccessFile;->read([B)I
     move-result p0
     if-eq p0, v0, :L0
     const-wide/16 p0, 0
     return-wide p0
   :L0
-  .line 366
+  .line 400
     const/4 p0, 0
     if-lt p3, v0, :L1
     invoke-static { v1, p0 }, Lcom/innioasis/ipp/Meta;->syncsafe([BI)J
@@ -176,99 +180,99 @@
 .method public static fixSong(Lcom/innioasis/y1/database/Song;)V
   .catchall { :L0 .. :L5 } :L6
   .registers 5
-  .line 153
+  .line 186
     if-nez p0, :L0
     return-void
   :L0
-  .line 155
+  .line 188
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
-  .line 156
+  .line 189
     invoke-static { v0 }, Lcom/innioasis/ipp/Meta;->oversized(Ljava/lang/String;)Z
     move-result v1
     if-nez v1, :L1
     return-void
   :L1
-  .line 158
+  .line 191
     new-instance v1, Lcom/innioasis/ipp/Meta$Info;
     invoke-direct { v1 }, Lcom/innioasis/ipp/Meta$Info;-><init>()V
-  .line 159
+  .line 192
     const/4 v2, 0
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Meta;->id3(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;Z)V
-  .line 160
+  .line 193
     invoke-static { }, Lcom/innioasis/y1/utils/HanziToPinyin;->getInstance()Lcom/innioasis/y1/utils/HanziToPinyin;
     move-result-object v0
-  .line 162
+  .line 195
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
     if-eqz v2, :L2
-  .line 163
+  .line 196
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setSongName(Ljava/lang/String;)V
-  .line 164
+  .line 197
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/utils/HanziToPinyin;->getString(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setPinyinSongName(Ljava/lang/String;)V
   :L2
-  .line 166
+  .line 199
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     if-eqz v2, :L3
-  .line 167
+  .line 200
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setAlbum(Ljava/lang/String;)V
-  .line 168
+  .line 201
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     sget-object v3, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v2, v3 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v2
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setLowAlbum(Ljava/lang/String;)V
-  .line 169
+  .line 202
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/utils/HanziToPinyin;->getString(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setPinyinAlbum(Ljava/lang/String;)V
   :L3
-  .line 171
+  .line 204
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
     if-eqz v2, :L4
-  .line 172
+  .line 205
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setArtist(Ljava/lang/String;)V
-  .line 173
+  .line 206
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/utils/HanziToPinyin;->getString(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setPinyinArtist(Ljava/lang/String;)V
   :L4
-  .line 175
+  .line 208
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
     if-eqz v2, :L5
-  .line 176
+  .line 209
     iget-object v2, v1, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/database/Song;->setGenre(Ljava/lang/String;)V
-  .line 177
+  .line 210
     iget-object v1, v1, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/utils/HanziToPinyin;->getString(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/database/Song;->setPinyinGenre(Ljava/lang/String;)V
   :L5
-  .line 181
+  .line 214
     goto :L7
   :L6
-  .line 179
+  .line 212
     move-exception p0
   :L7
-  .line 182
+  .line 215
     return-void
 .end method
 
 .method private static frameLen([BI)J
   .registers 8
-  .line 354
+  .line 388
     const/4 v0, 2
     const/4 v1, 4
     if-ne p1, v0, :L0
-  .line 355
+  .line 389
     const/4 p1, 3
     aget-byte p1, p0, p1
     int-to-long v2, p1
@@ -289,7 +293,7 @@
     or-long/2addr p0, v0
     return-wide p0
   :L0
-  .line 357
+  .line 391
     if-lt p1, v1, :L1
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Meta;->syncsafe([BI)J
     move-result-wide p0
@@ -303,20 +307,20 @@
 
 .method private static genre(Ljava/lang/String;)Ljava/lang/String;
   .registers 7
-  .line 332
+  .line 366
     invoke-virtual { p0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object p0
-  .line 333
+  .line 367
     const-string v0, "("
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v0
     const/4 v1, 1
     if-eqz v0, :L0
-  .line 334
+  .line 368
     const/16 v0, 41
     invoke-virtual { p0, v0 }, Ljava/lang/String;->indexOf(I)I
     move-result v0
-  .line 335
+  .line 369
     if-lez v0, :L0
     add-int/2addr v0, v1
     invoke-virtual { p0, v0 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
@@ -324,23 +328,23 @@
     invoke-virtual { p0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object p0
   :L0
-  .line 337
+  .line 371
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v0
     const/4 v2, 0
     if-nez v0, :L1
     return-object v2
   :L1
-  .line 338
+  .line 372
     nop
-  .line 339
+  .line 373
     const/4 v0, 0
     const/4 v3, 0
   :L2
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v4
     if-ge v3, v4, :L5
-  .line 340
+  .line 374
     invoke-virtual { p0, v3 }, Ljava/lang/String;->charAt(I)C
     move-result v4
     const/16 v5, 48
@@ -351,14 +355,14 @@
     if-le v4, v5, :L3
     goto :L4
   :L3
-  .line 339
+  .line 373
     add-int/lit8 v3, v3, 1
     goto :L2
   :L4
-  .line 340
+  .line 374
     const/4 v1, 0
   :L5
-  .line 342
+  .line 376
     if-eqz v1, :L6
     move-object p0, v2
   :L6
@@ -370,9 +374,9 @@
   .catchall { :L2 .. :L3 } :L37
   .catchall { :L5 .. :L34 } :L37
   .registers 25
-  .line 226
+  .line 260
     move-object/from16 v0, p1
-  .line 228
+  .line 262
     const/4 v1, 0
   :L0
     new-instance v2, Ljava/io/RandomAccessFile;
@@ -380,21 +384,21 @@
     move-object/from16 v4, p0
     invoke-direct { v2, v4, v3 }, Ljava/io/RandomAccessFile;-><init>(Ljava/lang/String;Ljava/lang/String;)V
   :L1
-  .line 229
+  .line 263
     const/16 v3, 10
   :L2
     new-array v4, v3, [B
-  .line 230
+  .line 264
     invoke-virtual { v2, v4 }, Ljava/io/RandomAccessFile;->read([B)I
     move-result v5
   :L3
     if-eq v5, v3, :L4
-  .line 282
+  .line 316
     invoke-static { v2 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 230
+  .line 264
     return-void
   :L4
-  .line 231
+  .line 265
     const/4 v5, 0
   :L5
     aget-byte v6, v4, v5
@@ -410,21 +414,21 @@
     if-eq v8, v9, :L6
     goto/16 :L36
   :L6
-  .line 233
+  .line 267
     const/4 v8, 3
     aget-byte v9, v4, v8
     and-int/lit16 v9, v9, 255
-  .line 234
+  .line 268
     if-lt v9, v7, :L35
     const/4 v10, 4
     if-le v9, v10, :L7
     goto/16 :L35
   :L7
-  .line 235
+  .line 269
     const/4 v11, 5
     aget-byte v11, v4, v11
     and-int/lit16 v11, v11, 255
-  .line 236
+  .line 270
     and-int/lit16 v12, v11, 128
     if-eqz v12, :L8
     const/4 v12, 1
@@ -432,69 +436,69 @@
   :L8
     const/4 v12, 0
   :L9
-  .line 237
+  .line 271
     const/4 v13, 6
     invoke-static { v4, v13 }, Lcom/innioasis/ipp/Meta;->syncsafe([BI)J
     move-result-wide v14
     const-wide/16 v3, 10
     add-long/2addr v14, v3
-  .line 239
+  .line 273
     nop
-  .line 240
+  .line 274
     and-int/lit8 v11, v11, 64
     if-eqz v11, :L10
     invoke-static { v2, v3, v4, v9 }, Lcom/innioasis/ipp/Meta;->extendedHeader(Ljava/io/RandomAccessFile;JI)J
     move-result-wide v16
     add-long v3, v16, v3
   :L10
-  .line 242
+  .line 276
     if-ne v9, v7, :L11
     goto :L12
   :L11
     const/4 v8, 4
   :L12
-  .line 243
+  .line 277
     if-ne v9, v7, :L13
     goto :L14
   :L13
     const/16 v13, 10
   :L14
-  .line 244
+  .line 278
     new-array v7, v13, [B
-  .line 245
+  .line 279
     nop
   :L15
-  .line 247
+  .line 281
     int-to-long v10, v13
     add-long/2addr v10, v3
     cmp-long v16, v10, v14
     if-gtz v16, :L33
-  .line 248
+  .line 282
     invoke-virtual { v2, v3, v4 }, Ljava/io/RandomAccessFile;->seek(J)V
-  .line 249
+  .line 283
     invoke-virtual { v2, v7 }, Ljava/io/RandomAccessFile;->read([B)I
     move-result v3
     if-eq v3, v13, :L16
     goto/16 :L33
   :L16
-  .line 250
+  .line 284
     aget-byte v3, v7, v5
     if-nez v3, :L17
     goto/16 :L33
   :L17
-  .line 251
+  .line 285
     invoke-static { v7, v5, v8 }, Lcom/innioasis/ipp/Meta;->ascii([BII)Ljava/lang/String;
     move-result-object v3
-  .line 252
+  .line 286
     invoke-static { v3 }, Lcom/innioasis/ipp/Meta;->isFrameId(Ljava/lang/String;)Z
     move-result v4
     if-nez v4, :L18
     goto/16 :L33
   :L18
-  .line 254
+  .line 288
     invoke-static { v7, v9 }, Lcom/innioasis/ipp/Meta;->frameLen([BI)J
     move-result-wide v5
-  .line 255
+  .line 289
     const-wide/16 v16, 0
     cmp-long v18, v5, v16
     if-ltz v18, :L33
@@ -503,11 +507,11 @@
     if-lez v18, :L19
     goto/16 :L33
   :L19
-  .line 256
+  .line 290
     nop
-  .line 257
+  .line 291
     nop
-  .line 259
+  .line 293
     const-string v4, "APIC"
     invoke-virtual { v3, v4 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v4
@@ -523,7 +527,7 @@
   :L21
     const/4 v4, 1
   :L22
-  .line 260
+  .line 294
     if-eqz v4, :L24
     if-eqz p2, :L23
     const-wide/32 v19, 8388608
@@ -534,7 +538,7 @@
     move/from16 v19, v8
     goto/16 :L32
   :L24
-  .line 261
+  .line 295
     if-nez v4, :L26
     const-wide/16 v19, 1
     cmp-long v21, v5, v19
@@ -547,7 +551,7 @@
     move/from16 v19, v8
     goto :L32
   :L26
-  .line 262
+  .line 296
     if-nez v4, :L27
     invoke-static { v3 }, Lcom/innioasis/ipp/Meta;->wanted(Ljava/lang/String;)Z
     move-result v19
@@ -556,12 +560,12 @@
     move/from16 v19, v8
     goto :L32
   :L27
-  .line 264
+  .line 298
     invoke-virtual { v2, v10, v11 }, Ljava/io/RandomAccessFile;->seek(J)V
-  .line 265
+  .line 299
     long-to-int v10, v5
     new-array v10, v10, [B
-  .line 266
+  .line 300
     invoke-virtual { v2, v10 }, Ljava/io/RandomAccessFile;->read([B)I
     move-result v11
     move-object/from16 v20, v7
@@ -571,17 +575,17 @@
     if-eqz v11, :L28
     goto :L33
   :L28
-  .line 267
+  .line 301
     if-eqz v12, :L29
     invoke-static { v10 }, Lcom/innioasis/ipp/Meta;->resync([B)[B
     move-result-object v10
   :L29
-  .line 269
+  .line 303
     if-eqz v4, :L31
-  .line 272
+  .line 306
     invoke-static { v10, v9 }, Lcom/innioasis/ipp/Meta;->picture([BI)Lcom/innioasis/ipp/Meta$Pic;
     move-result-object v3
-  .line 273
+  .line 307
     if-eqz v3, :L32
     if-eqz v1, :L30
     iget-boolean v4, v3, Lcom/innioasis/ipp/Meta$Pic;->front:Z
@@ -597,14 +601,14 @@
     const/4 v6, 1
     goto/16 :L15
   :L31
-  .line 276
+  .line 310
     invoke-static { v10 }, Lcom/innioasis/ipp/Meta;->text([B)Ljava/lang/String;
     move-result-object v4
     invoke-static { v0, v3, v4 }, Lcom/innioasis/ipp/Meta;->put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
-  .line 277
+  .line 311
     nop
   :L32
-  .line 247
+  .line 281
     move-wide/from16 v3, v16
     move/from16 v8, v19
     move-object/from16 v7, v20
@@ -612,53 +616,53 @@
     const/4 v6, 1
     goto/16 :L15
   :L33
-  .line 278
+  .line 312
     if-eqz v1, :L34
     iget-object v1, v1, Lcom/innioasis/ipp/Meta$Pic;->data:[B
     iput-object v1, v0, Lcom/innioasis/ipp/Meta$Info;->art:[B
   :L34
-  .line 282
+  .line 316
     invoke-static { v2 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
     goto :L40
   :L35
     invoke-static { v2 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 234
+  .line 268
     return-void
   :L36
-  .line 282
+  .line 316
     invoke-static { v2 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 231
+  .line 265
     return-void
   :L37
-  .line 279
+  .line 313
     move-exception v0
     move-object v1, v2
     goto :L39
   :L38
     move-exception v0
   :L39
-  .line 282
+  .line 316
     invoke-static { v1 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
   :L40
-  .line 283
+  .line 317
     nop
-  .line 284
+  .line 318
     return-void
 .end method
 
 .method private static isFrameId(Ljava/lang/String;)Z
   .registers 5
-  .line 475
+  .line 509
     const/4 v0, 0
     const/4 v1, 0
   :L0
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v2
     if-ge v1, v2, :L4
-  .line 476
+  .line 510
     invoke-virtual { p0, v1 }, Ljava/lang/String;->charAt(I)C
     move-result v2
-  .line 477
+  .line 511
     const/16 v3, 65
     if-lt v2, v3, :L1
     const/16 v3, 90
@@ -670,14 +674,14 @@
     if-le v2, v3, :L2
     goto :L3
   :L2
-  .line 475
+  .line 509
     add-int/lit8 v1, v1, 1
     goto :L0
   :L3
-  .line 477
+  .line 511
     return v0
   :L4
-  .line 479
+  .line 513
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result p0
     if-lez p0, :L5
@@ -686,25 +690,54 @@
     return v0
 .end method
 
-.method private static oversized(Ljava/lang/String;)Z
+.method public static libraryRead(Landroid/content/Context;)Z
+  .registers 3
+  .line 88
+    const/4 v0, 0
+    if-eqz p0, :L0
+    const-string v1, "meta_v"
+    invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Prefs;->getInt(Landroid/content/Context;Ljava/lang/String;I)I
+    move-result p0
+    const/4 v1, 1
+    if-lt p0, v1, :L0
+    const/4 v0, 1
+  :L0
+    return v0
+.end method
+
+.method public static noteLibraryRead(Landroid/content/Context;)V
+  .registers 3
+  .line 97
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 98
+    const-string v0, "meta_v"
+    const/4 v1, 1
+    invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
+  .line 99
+    return-void
+.end method
+
+.method public static oversized(Ljava/lang/String;)Z
   .catchall { :L3 .. :L4 } :L13
   .catchall { :L5 .. :L6 } :L12
   .catchall { :L7 .. :L9 } :L12
   .registers 9
-  .line 193
+  .line 227
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 194
+  .line 228
     const/16 v1, 46
     invoke-virtual { p0, v1 }, Ljava/lang/String;->lastIndexOf(I)I
     move-result v1
-  .line 195
+  .line 229
     if-gez v1, :L1
     return v0
   :L1
-  .line 196
+  .line 230
     const/4 v2, 1
     add-int/2addr v1, v2
     invoke-virtual { p0, v1 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
@@ -712,7 +745,7 @@
     sget-object v3, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v1, v3 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v1
-  .line 197
+  .line 231
     const-string v3, "mp3"
     invoke-virtual { v1, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
@@ -729,33 +762,33 @@
     invoke-virtual { v1, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-nez v1, :L2
-  .line 198
+  .line 232
     return v0
   :L2
-  .line 200
+  .line 234
     nop
-  .line 202
+  .line 236
     const/4 v1, 0
   :L3
     new-instance v3, Ljava/io/RandomAccessFile;
     const-string v4, "r"
     invoke-direct { v3, p0, v4 }, Ljava/io/RandomAccessFile;-><init>(Ljava/lang/String;Ljava/lang/String;)V
   :L4
-  .line 203
+  .line 237
     const/16 p0, 10
   :L5
     new-array v1, p0, [B
-  .line 204
+  .line 238
     invoke-virtual { v3, v1 }, Ljava/io/RandomAccessFile;->read([B)I
     move-result v4
   :L6
     if-eq v4, p0, :L7
-  .line 210
+  .line 244
     invoke-static { v3 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 204
+  .line 238
     return v0
   :L7
-  .line 205
+  .line 239
     aget-byte p0, v1, v0
     const/16 v4, 73
     if-ne p0, v4, :L11
@@ -768,7 +801,7 @@
     if-eq p0, v4, :L8
     goto :L11
   :L8
-  .line 206
+  .line 240
     const/4 p0, 6
     invoke-static { v1, p0 }, Lcom/innioasis/ipp/Meta;->syncsafe([BI)J
     move-result-wide v4
@@ -778,57 +811,57 @@
     if-ltz p0, :L10
     const/4 v0, 1
   :L10
-  .line 210
+  .line 244
     invoke-static { v3 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 206
+  .line 240
     return v0
   :L11
-  .line 210
+  .line 244
     invoke-static { v3 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 205
+  .line 239
     return v0
   :L12
-  .line 207
+  .line 241
     move-exception p0
     move-object v1, v3
     goto :L14
   :L13
     move-exception p0
   :L14
-  .line 208
+  .line 242
     nop
-  .line 210
+  .line 244
     invoke-static { v1 }, Lcom/innioasis/ipp/Meta;->close(Ljava/io/RandomAccessFile;)V
-  .line 208
+  .line 242
     return v0
 .end method
 
 .method private static picture([BI)Lcom/innioasis/ipp/Meta$Pic;
   .registers 10
-  .line 378
+  .line 412
     array-length v0, p0
     const/4 v1, 0
     const/4 v2, 4
     if-ge v0, v2, :L0
     return-object v1
   :L0
-  .line 379
+  .line 413
     const/4 v0, 0
     aget-byte v3, p0, v0
     and-int/lit16 v3, v3, 255
-  .line 380
+  .line 414
     nop
-  .line 381
+  .line 415
     const/4 v4, 2
     const/4 v5, 1
     if-ne p1, v4, :L1
-  .line 382
+  .line 416
     goto :L4
   :L1
-  .line 381
+  .line 415
     const/4 p1, 1
   :L2
-  .line 384
+  .line 418
     array-length v2, p0
     if-ge p1, v2, :L3
     aget-byte v2, p0, p1
@@ -836,18 +869,18 @@
     add-int/lit8 p1, p1, 1
     goto :L2
   :L3
-  .line 385
+  .line 419
     add-int/lit8 v2, p1, 1
   :L4
-  .line 387
+  .line 421
     array-length p1, p0
     if-lt v2, p1, :L5
     return-object v1
   :L5
-  .line 388
+  .line 422
     new-instance p1, Lcom/innioasis/ipp/Meta$Pic;
     invoke-direct { p1, v1 }, Lcom/innioasis/ipp/Meta$Pic;-><init>(Lcom/innioasis/ipp/Meta$1;)V
-  .line 389
+  .line 423
     aget-byte v6, p0, v2
     and-int/lit16 v6, v6, 255
     const/4 v7, 3
@@ -858,9 +891,9 @@
     const/4 v6, 0
   :L7
     iput-boolean v6, p1, Lcom/innioasis/ipp/Meta$Pic;->front:Z
-  .line 390
+  .line 424
     add-int/2addr v2, v5
-  .line 391
+  .line 425
     if-eq v3, v5, :L9
     if-ne v3, v4, :L8
     goto :L9
@@ -870,10 +903,10 @@
   :L9
     const/4 v3, 1
   :L10
-  .line 392
+  .line 426
     if-eqz v3, :L14
   :L11
-  .line 393
+  .line 427
     add-int/lit8 v3, v2, 1
     array-length v5, p0
     if-ge v3, v5, :L13
@@ -885,11 +918,11 @@
     add-int/lit8 v2, v2, 2
     goto :L11
   :L13
-  .line 394
+  .line 428
     add-int/2addr v2, v4
     goto :L16
   :L14
-  .line 396
+  .line 430
     array-length v3, p0
     if-ge v2, v3, :L15
     aget-byte v3, p0, v2
@@ -897,38 +930,38 @@
     add-int/lit8 v2, v2, 1
     goto :L14
   :L15
-  .line 397
+  .line 431
     add-int/2addr v2, v5
   :L16
-  .line 399
+  .line 433
     array-length v3, p0
     if-lt v2, v3, :L17
     return-object v1
   :L17
-  .line 400
+  .line 434
     array-length v1, p0
     sub-int/2addr v1, v2
     new-array v1, v1, [B
     iput-object v1, p1, Lcom/innioasis/ipp/Meta$Pic;->data:[B
-  .line 401
+  .line 435
     iget-object v1, p1, Lcom/innioasis/ipp/Meta$Pic;->data:[B
     iget-object v3, p1, Lcom/innioasis/ipp/Meta$Pic;->data:[B
     array-length v3, v3
     invoke-static { p0, v2, v1, v0, v3 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 402
+  .line 436
     return-object p1
 .end method
 
 .method private static put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
   .registers 4
-  .line 310
+  .line 344
     if-eqz p2, :L19
     invoke-virtual { p2 }, Ljava/lang/String;->length()I
     move-result v0
     if-nez v0, :L0
     goto/16 :L19
   :L0
-  .line 311
+  .line 345
     const-string v0, "TIT2"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -939,7 +972,7 @@
     if-eqz v0, :L1
     goto/16 :L17
   :L1
-  .line 312
+  .line 346
     const-string v0, "TPE1"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -950,7 +983,7 @@
     if-eqz v0, :L2
     goto/16 :L16
   :L2
-  .line 313
+  .line 347
     const-string v0, "TPE2"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -961,7 +994,7 @@
     if-eqz v0, :L3
     goto/16 :L15
   :L3
-  .line 314
+  .line 348
     const-string v0, "TALB"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -972,7 +1005,7 @@
     if-eqz v0, :L4
     goto/16 :L14
   :L4
-  .line 315
+  .line 349
     const-string v0, "TCON"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -983,7 +1016,7 @@
     if-eqz v0, :L5
     goto :L13
   :L5
-  .line 316
+  .line 350
     const-string v0, "TRCK"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -994,7 +1027,7 @@
     if-eqz v0, :L6
     goto :L12
   :L6
-  .line 317
+  .line 351
     const-string v0, "TPOS"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1005,7 +1038,7 @@
     if-eqz v0, :L7
     goto :L11
   :L7
-  .line 318
+  .line 352
     const-string v0, "TYER"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1016,7 +1049,7 @@
     if-eqz v0, :L8
     goto :L10
   :L8
-  .line 319
+  .line 353
     const-string v0, "TDRC"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1029,43 +1062,43 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->date:Ljava/lang/String;
     goto :L18
   :L10
-  .line 318
+  .line 352
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->year:Ljava/lang/String;
     goto :L18
   :L11
-  .line 317
+  .line 351
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
     goto :L18
   :L12
-  .line 316
+  .line 350
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
     goto :L18
   :L13
-  .line 315
+  .line 349
     invoke-static { p2 }, Lcom/innioasis/ipp/Meta;->genre(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
     goto :L18
   :L14
-  .line 314
+  .line 348
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     goto :L18
   :L15
-  .line 313
+  .line 347
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
     goto :L18
   :L16
-  .line 312
+  .line 346
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
     goto :L18
   :L17
-  .line 311
+  .line 345
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
   :L18
-  .line 320
+  .line 354
     return-void
   :L19
-  .line 310
+  .line 344
     return-void
 .end method
 
@@ -1073,100 +1106,100 @@
   .catchall { :L1 .. :L2 } :L3
   .catchall { :L4 .. :L5 } :L6
   .registers 5
-  .line 78
+  .line 111
     new-instance v0, Lcom/innioasis/ipp/Meta$Info;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Meta$Info;-><init>()V
-  .line 79
+  .line 112
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 81
+  .line 114
     new-instance v1, Landroid/media/MediaMetadataRetriever;
     invoke-direct { v1 }, Landroid/media/MediaMetadataRetriever;-><init>()V
   :L1
-  .line 83
+  .line 116
     invoke-virtual { v1, p0 }, Landroid/media/MediaMetadataRetriever;->setDataSource(Ljava/lang/String;)V
-  .line 84
+  .line 117
     const/4 v2, 7
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
-  .line 85
+  .line 118
     const/4 v2, 2
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
-  .line 86
+  .line 119
     const/16 v2, 13
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-  .line 87
+  .line 120
     const/4 v2, 1
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
-  .line 88
+  .line 121
     const/4 v2, 6
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
-  .line 89
+  .line 122
     const/4 v2, 0
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
-  .line 90
+  .line 123
     const/16 v2, 14
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
-  .line 91
+  .line 124
     const/16 v2, 8
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->year:Ljava/lang/String;
-  .line 92
+  .line 125
     const/4 v2, 5
     invoke-virtual { v1, v2 }, Landroid/media/MediaMetadataRetriever;->extractMetadata(I)Ljava/lang/String;
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->date:Ljava/lang/String;
-  .line 93
+  .line 126
     if-eqz p1, :L2
     invoke-virtual { v1 }, Landroid/media/MediaMetadataRetriever;->getEmbeddedPicture()[B
     move-result-object v2
     iput-object v2, v0, Lcom/innioasis/ipp/Meta$Info;->art:[B
   :L2
-  .line 96
+  .line 129
     goto :L4
   :L3
-  .line 94
+  .line 127
     move-exception v2
   :L4
-  .line 98
+  .line 131
     invoke-virtual { v1 }, Landroid/media/MediaMetadataRetriever;->release()V
   :L5
-  .line 101
+  .line 134
     goto :L7
   :L6
-  .line 99
+  .line 132
     move-exception v1
   :L7
-  .line 103
+  .line 136
     invoke-static { p0 }, Lcom/innioasis/ipp/Meta;->oversized(Ljava/lang/String;)Z
     move-result v1
     if-eqz v1, :L8
     invoke-static { p0, v0, p1 }, Lcom/innioasis/ipp/Meta;->id3(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;Z)V
   :L8
-  .line 104
+  .line 137
     return-object v0
 .end method
 
 .method private static resync([B)[B
   .registers 7
-  .line 457
+  .line 491
     nop
-  .line 458
+  .line 492
     const/4 v0, 0
     const/4 v1, 0
     const/4 v2, 0
@@ -1174,7 +1207,7 @@
     array-length v3, p0
     const/16 v4, 255
     if-ge v1, v3, :L3
-  .line 459
+  .line 493
     if-lez v1, :L1
     aget-byte v3, p0, v1
     and-int/2addr v3, v4
@@ -1185,28 +1218,28 @@
     if-ne v3, v4, :L1
     goto :L2
   :L1
-  .line 460
+  .line 494
     add-int/lit8 v2, v2, 1
   :L2
-  .line 458
+  .line 492
     add-int/lit8 v1, v1, 1
     goto :L0
   :L3
-  .line 462
+  .line 496
     array-length v1, p0
     if-ne v2, v1, :L4
     return-object p0
   :L4
-  .line 463
+  .line 497
     new-array v1, v2, [B
-  .line 464
+  .line 498
     nop
-  .line 465
+  .line 499
     const/4 v2, 0
   :L5
     array-length v3, p0
     if-ge v0, v3, :L8
-  .line 466
+  .line 500
     if-lez v0, :L6
     aget-byte v3, p0, v0
     and-int/2addr v3, v4
@@ -1217,23 +1250,23 @@
     if-ne v3, v4, :L6
     goto :L7
   :L6
-  .line 467
+  .line 501
     add-int/lit8 v3, v2, 1
     aget-byte v5, p0, v0
     aput-byte v5, v1, v2
     move v2, v3
   :L7
-  .line 465
+  .line 499
     add-int/lit8 v0, v0, 1
     goto :L5
   :L8
-  .line 469
+  .line 503
     return-object v1
 .end method
 
 .method private static syncsafe([BI)J
   .registers 9
-  .line 491
+  .line 525
     aget-byte v0, p0, p1
     int-to-long v0, v0
     const-wide/16 v2, 127
@@ -1264,20 +1297,20 @@
 
 .method public static tagArt(Ljava/lang/String;)[B
   .registers 3
-  .line 137
+  .line 170
     invoke-static { p0 }, Lcom/innioasis/ipp/Meta;->oversized(Ljava/lang/String;)Z
     move-result v0
     if-nez v0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 138
+  .line 171
     new-instance v0, Lcom/innioasis/ipp/Meta$Info;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Meta$Info;-><init>()V
-  .line 139
+  .line 172
     const/4 v1, 1
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Meta;->id3(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;Z)V
-  .line 140
+  .line 173
     iget-object p0, v0, Lcom/innioasis/ipp/Meta$Info;->art:[B
     return-object p0
 .end method
@@ -1285,23 +1318,23 @@
 .method private static text([B)Ljava/lang/String;
   .catchall { :L10 .. :L11 } :L12
   .registers 10
-  .line 413
+  .line 447
     const/4 v0, 0
     aget-byte v1, p0, v0
     const/16 v2, 255
     and-int/2addr v1, v2
-  .line 414
+  .line 448
     nop
-  .line 415
+  .line 449
     array-length v3, p0
     const/4 v4, 1
     sub-int/2addr v3, v4
-  .line 417
+  .line 451
     const-string v5, "UTF-16BE"
     const/4 v6, 3
     const/4 v7, 2
     if-ne v1, v4, :L2
-  .line 419
+  .line 453
     const/16 v1, 254
     if-lt v3, v7, :L0
     aget-byte v8, p0, v4
@@ -1310,17 +1343,17 @@
     aget-byte v8, p0, v7
     and-int/2addr v8, v2
     if-ne v8, v1, :L0
-  .line 420
+  .line 454
     nop
-  .line 421
+  .line 455
     nop
-  .line 422
+  .line 456
     add-int/lit8 v3, v3, -2
     const-string v5, "UTF-16LE"
     const/4 v4, 3
     goto :L5
   :L0
-  .line 423
+  .line 457
     if-lt v3, v7, :L1
     aget-byte v8, p0, v4
     and-int/2addr v8, v2
@@ -1328,42 +1361,42 @@
     aget-byte v1, p0, v7
     and-int/2addr v1, v2
     if-ne v1, v2, :L1
-  .line 424
+  .line 458
     nop
-  .line 425
+  .line 459
     nop
-  .line 426
+  .line 460
     add-int/lit8 v3, v3, -2
     const/4 v4, 3
     goto :L5
   :L1
-  .line 428
+  .line 462
     goto :L5
   :L2
-  .line 430
+  .line 464
     if-ne v1, v7, :L3
-  .line 431
+  .line 465
     goto :L5
   :L3
-  .line 432
+  .line 466
     if-ne v1, v6, :L4
-  .line 433
+  .line 467
     const-string v5, "UTF-8"
     goto :L5
   :L4
-  .line 435
+  .line 469
     const-string v5, "ISO-8859-1"
   :L5
-  .line 437
+  .line 471
     const-string v1, "UTF-16"
     invoke-virtual { v5, v1 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v1
-  .line 438
+  .line 472
     nop
-  .line 439
+  .line 473
     if-eqz v1, :L8
   :L6
-  .line 440
+  .line 474
     add-int/lit8 v1, v0, 1
     if-ge v1, v3, :L9
     add-int v1, v4, v0
@@ -1376,7 +1409,7 @@
     add-int/lit8 v0, v0, 2
     goto :L6
   :L8
-  .line 442
+  .line 476
     if-ge v0, v3, :L9
     add-int v1, v4, v0
     aget-byte v1, p0, v1
@@ -1384,12 +1417,12 @@
     add-int/lit8 v0, v0, 1
     goto :L8
   :L9
-  .line 444
+  .line 478
     const/4 v1, 0
     if-gtz v0, :L10
     return-object v1
   :L10
-  .line 446
+  .line 480
     new-instance v2, Ljava/lang/String;
     invoke-direct { v2, p0, v4, v0, v5 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
     invoke-virtual { v2 }, Ljava/lang/String;->trim()Ljava/lang/String;
@@ -1397,15 +1430,15 @@
   :L11
     return-object p0
   :L12
-  .line 447
+  .line 481
     move-exception p0
-  .line 448
+  .line 482
     return-object v1
 .end method
 
 .method private static wanted(Ljava/lang/String;)Z
   .registers 2
-  .line 298
+  .line 332
     const-string v0, "TIT2"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1414,7 +1447,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 299
+  .line 333
     const-string v0, "TPE1"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1423,7 +1456,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 300
+  .line 334
     const-string v0, "TPE2"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1432,7 +1465,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 301
+  .line 335
     const-string v0, "TALB"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1441,7 +1474,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 302
+  .line 336
     const-string v0, "TCON"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1450,7 +1483,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 303
+  .line 337
     const-string v0, "TRCK"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1459,7 +1492,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 304
+  .line 338
     const-string v0, "TPOS"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1468,7 +1501,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 305
+  .line 339
     const-string v0, "TYER"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1477,7 +1510,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-nez v0, :L1
-  .line 306
+  .line 340
     const-string v0, "TDRC"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1493,6 +1526,6 @@
   :L1
     const/4 p0, 1
   :L2
-  .line 298
+  .line 332
     return p0
 .end method

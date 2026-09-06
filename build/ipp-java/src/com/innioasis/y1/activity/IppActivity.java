@@ -31,6 +31,7 @@ import com.innioasis.ipp.Help;
 import com.innioasis.ipp.HelpDialog;
 import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
+import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Panel;
 import com.innioasis.ipp.Pick;
@@ -1031,6 +1032,10 @@ public final class IppActivity extends BaseActivity {
                 List songs = repo.getSongsSync(0);
                 int n = songs == null ? 0 : songs.size();
                 String label = a.getString(R.string.ipp_scan_running);
+                // Once per library: rows read before this build carry what the platform made of an
+                // oversized tag. Asked here rather than per row, so a library already dealt with
+                // costs not one extra file open.
+                boolean migrate = !Meta.libraryRead(a);
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
@@ -1052,10 +1057,17 @@ public final class IppActivity extends BaseActivity {
                         if (cover == Art.COVER_CHANGED) updated++;
                     }
 
-                    if (f.lastModified() == s.getFileDate()) continue;   // untouched since last read
+                    // A file whose ID3 tag the platform refused was read wrong whatever its date
+                    // says: what stands in its row is the 30-byte ID3v1 block, with no album
+                    // artist, no disc number and mojibake for anything not written in Latin. Such
+                    // a row is re-read once — the pass then marks the library (Meta.libraryRead)
+                    // and this question is not asked again on any later run.
+                    if (f.lastModified() == s.getFileDate()
+                            && !(migrate && Meta.oversized(s.getPath()))) continue;
                     repo.ippReplaceSong(f);
                     updated++;
                 }
+                Meta.noteLibraryRead(a);        // only on a pass that ran to the end
             } catch (Throwable t) {
                 // never leave the dialog up: the report below runs either way
             } finally {

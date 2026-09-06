@@ -44,15 +44,15 @@
     new-instance v0, Lcom/innioasis/y1/database/Song;
     invoke-direct { v0 }, Lcom/innioasis/y1/database/Song;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->MARKER:Lcom/innioasis/y1/database/Song;
-  .line 146
+  .line 153
     new-instance v0, Ljava/lang/Object;
     invoke-direct { v0 }, Ljava/lang/Object;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
-  .line 154
+  .line 161
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
-  .line 155
+  .line 162
     new-instance v0, Ljava/util/HashSet;
     invoke-direct { v0 }, Ljava/util/HashSet;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
@@ -137,28 +137,28 @@
   .catchall { :L2 .. :L3 } :L8
   .catchall { :L4 .. :L5 } :L6
   .registers 8
-  .line 249
+  .line 256
     invoke-virtual { p1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p1
-  .line 250
+  .line 257
     const/4 v0, 0
     if-nez p1, :L0
     new-array p0, v0, [Ljava/io/File;
     return-object p0
   :L0
-  .line 251
+  .line 258
     array-length v1, p1
     new-array v1, v1, [Ljava/io/File;
-  .line 252
+  .line 259
     nop
-  .line 253
+  .line 260
     const/4 v2, 0
     const/4 v3, 0
   :L1
     array-length v4, p1
     if-ge v2, v4, :L10
   :L2
-  .line 255
+  .line 262
     aget-object v4, p1, v2
     invoke-virtual { v4 }, Ljava/io/File;->isFile()Z
     move-result v4
@@ -176,62 +176,62 @@
     move v3, v4
     goto :L7
   :L6
-  .line 256
+  .line 263
     move-exception v3
     move v3, v4
     goto :L9
   :L7
-  .line 258
+  .line 265
     goto :L9
   :L8
-  .line 256
+  .line 263
     move-exception v4
   :L9
-  .line 253
+  .line 260
     add-int/lit8 v2, v2, 1
     goto :L1
   :L10
-  .line 260
+  .line 267
     new-array p0, v3, [Ljava/io/File;
-  .line 261
+  .line 268
     invoke-static { v1, v0, p0, v0, v3 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 262
+  .line 269
     return-object p0
 .end method
 
 .method private static fill(Ljava/util/HashSet;Ljava/util/List;)V
   .registers 5
-  .line 128
+  .line 135
     if-nez p1, :L0
     return-void
   :L0
-  .line 129
+  .line 136
     const/4 v0, 0
   :L1
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v1
     if-ge v0, v1, :L4
-  .line 130
+  .line 137
     invoke-interface { p1, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
-  .line 131
+  .line 138
     instance-of v2, v1, Lcom/innioasis/y1/database/Song;
     if-nez v2, :L2
     goto :L3
   :L2
-  .line 132
+  .line 139
     check-cast v1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { v1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v1
-  .line 133
+  .line 140
     if-eqz v1, :L3
     invoke-virtual { p0, v1 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
   :L3
-  .line 129
+  .line 136
     add-int/lit8 v0, v0, 1
     goto :L1
   :L4
-  .line 135
+  .line 142
     return-void
 .end method
 
@@ -260,19 +260,19 @@
 
 .method private static indexAfter(Ljava/lang/String;)I
   .registers 4
-  .line 224
+  .line 231
     sget-object v0, Lcom/innioasis/ipp/Scan;->files:[Ljava/io/File;
     const/4 v1, 0
     if-nez v0, :L0
     return v1
   :L0
-  .line 225
+  .line 232
     nop
   :L1
     sget-object v0, Lcom/innioasis/ipp/Scan;->files:[Ljava/io/File;
     array-length v2, v0
     if-ge v1, v2, :L3
-  .line 226
+  .line 233
     aget-object v0, v0, v1
     invoke-virtual { v0 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v0
@@ -282,11 +282,11 @@
     add-int/lit8 v1, v1, 1
     return v1
   :L2
-  .line 225
+  .line 232
     add-int/lit8 v1, v1, 1
     goto :L1
   :L3
-  .line 228
+  .line 235
     sget p0, Lcom/innioasis/ipp/Scan;->next:I
     return p0
 .end method
@@ -306,7 +306,7 @@
 .end method
 
 .method private static load()Ljava/util/HashSet;
-  .catchall { :L0 .. :L2 } :L3
+  .catchall { :L0 .. :L3 } :L4
   .registers 3
   :L0
   .line 113
@@ -349,59 +349,68 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 120
-    sput-object v1, Lcom/innioasis/ipp/Scan;->paths:Ljava/util/HashSet;
+  .line 126
+    invoke-virtual { v1 }, Ljava/util/HashSet;->isEmpty()Z
+    move-result v0
+    if-eqz v0, :L2
+    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v0
+    invoke-static { v0 }, Lcom/innioasis/ipp/Meta;->noteLibraryRead(Landroid/content/Context;)V
   :L2
-  .line 121
-    return-object v1
+  .line 127
+    sput-object v1, Lcom/innioasis/ipp/Scan;->paths:Ljava/util/HashSet;
   :L3
-  .line 122
+  .line 128
+    return-object v1
+  :L4
+  .line 129
     move-exception v0
-  .line 123
+  .line 130
     sget-object v0, Lcom/innioasis/ipp/Scan;->paths:Ljava/util/HashSet;
     return-object v0
 .end method
 
 .method private static pool()I
   .registers 2
-  .line 241
+  .line 248
     invoke-static { }, Ljava/lang/Runtime;->getRuntime()Ljava/lang/Runtime;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Runtime;->availableProcessors()I
     move-result v0
-  .line 242
+  .line 249
     const/4 v1, 1
     if-ge v0, v1, :L0
     const/4 v0, 1
   :L0
-  .line 243
+  .line 250
     const/4 v1, 3
     if-le v0, v1, :L1
     const/4 v0, 3
   :L1
-  .line 244
+  .line 251
     return v0
 .end method
 
 .method public static song(Lcom/innioasis/y1/database/Y1Repository;Ljava/io/File;)Lcom/innioasis/y1/database/Song;
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 162
+  .line 169
     nop
   :L0
-  .line 164
+  .line 171
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Scan;->take(Lcom/innioasis/y1/database/Y1Repository;Ljava/io/File;)Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L1
-  .line 167
+  .line 174
     goto :L3
   :L2
-  .line 165
+  .line 172
     move-exception v0
-  .line 166
+  .line 173
     const/4 v0, 0
   :L3
-  .line 168
+  .line 175
     if-eqz v0, :L4
     goto :L5
   :L4
@@ -413,17 +422,17 @@
 
 .method private static start()V
   .registers 3
-  .line 233
+  .line 240
     invoke-static { }, Lcom/innioasis/ipp/Scan;->pool()I
     move-result v0
   :L0
-  .line 234
+  .line 241
     sget v1, Lcom/innioasis/ipp/Scan;->live:I
     if-ge v1, v0, :L1
-  .line 235
+  .line 242
     add-int/lit8 v1, v1, 1
     sput v1, Lcom/innioasis/ipp/Scan;->live:I
-  .line 236
+  .line 243
     new-instance v1, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/ipp/Scan$Builder;
     invoke-direct { v2 }, Lcom/innioasis/ipp/Scan$Builder;-><init>()V
@@ -431,7 +440,7 @@
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
     goto :L0
   :L1
-  .line 238
+  .line 245
     return-void
 .end method
 
@@ -475,95 +484,95 @@
   .catchall { :L7 .. :L8 } :L9
   .catchall { :L10 .. :L12 } :L11
   .registers 11
-  .line 176
+  .line 183
     invoke-virtual { p1 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v0
-  .line 177
+  .line 184
     invoke-virtual { p1 }, Ljava/io/File;->getParent()Ljava/lang/String;
     move-result-object p1
-  .line 178
+  .line 185
     const/4 v1, 0
     if-eqz v0, :L13
     if-nez p1, :L0
     goto/16 :L13
   :L0
-  .line 180
+  .line 187
     sget-object v2, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     monitor-enter v2
   :L1
-  .line 181
+  .line 188
     sput-object p0, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
-  .line 182
+  .line 189
     sget-object v3, Lcom/innioasis/ipp/Scan;->dir:Ljava/lang/String;
     invoke-virtual { p1, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-nez v3, :L2
-  .line 184
+  .line 191
     sput-object p1, Lcom/innioasis/ipp/Scan;->dir:Ljava/lang/String;
-  .line 185
+  .line 192
     new-instance v3, Ljava/io/File;
     invoke-direct { v3, p1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-static { p0, v3 }, Lcom/innioasis/ipp/Scan;->audio(Lcom/innioasis/y1/database/Y1Repository;Ljava/io/File;)[Ljava/io/File;
     move-result-object p0
     sput-object p0, Lcom/innioasis/ipp/Scan;->files:[Ljava/io/File;
-  .line 186
+  .line 193
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->indexAfter(Ljava/lang/String;)I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Scan;->next:I
-  .line 187
+  .line 194
     sget-object p0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
     invoke-virtual { p0 }, Ljava/util/HashMap;->clear()V
-  .line 188
+  .line 195
     sget-object p0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
     invoke-virtual { p0 }, Ljava/util/HashSet;->clear()V
-  .line 189
+  .line 196
     invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
-  .line 190
+  .line 197
     monitor-exit v2
     return-object v1
   :L2
-  .line 192
+  .line 199
     sget p0, Lcom/innioasis/ipp/Scan;->next:I
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->indexAfter(Ljava/lang/String;)I
     move-result v3
     invoke-static { p0, v3 }, Ljava/lang/Math;->max(II)I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Scan;->next:I
-  .line 194
+  .line 201
     sget-object p0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
     invoke-virtual { p0, v0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/database/Song;
-  .line 195
+  .line 202
     if-eqz p0, :L3
-  .line 196
+  .line 203
     invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
-  .line 197
+  .line 204
     invoke-virtual { v2 }, Ljava/lang/Object;->notifyAll()V
-  .line 198
+  .line 205
     monitor-exit v2
     return-object p0
   :L3
-  .line 200
+  .line 207
     sget-object p0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
     invoke-virtual { p0, v0 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result p0
     if-nez p0, :L4
-  .line 201
+  .line 208
     invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
-  .line 202
+  .line 209
     invoke-virtual { v2 }, Ljava/lang/Object;->notifyAll()V
-  .line 203
+  .line 210
     monitor-exit v2
     return-object v1
   :L4
-  .line 206
+  .line 213
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v3
     const-wide/16 v5, 20000
     add-long/2addr v3, v5
   :L5
-  .line 207
+  .line 214
     sget-object p0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
     invoke-virtual { p0, v0 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result p0
@@ -572,49 +581,49 @@
     invoke-virtual { p1, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p0
     if-eqz p0, :L10
-  .line 208
+  .line 215
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v5
   :L6
     sub-long v5, v3, v5
-  .line 209
+  .line 216
     const-wide/16 v7, 0
     cmp-long p0, v5, v7
     if-gtz p0, :L7
     goto :L10
   :L7
-  .line 211
+  .line 218
     sget-object p0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     invoke-virtual { p0, v5, v6 }, Ljava/lang/Object;->wait(J)V
   :L8
-  .line 214
+  .line 221
     nop
-  .line 215
+  .line 222
     goto :L5
   :L9
-  .line 212
+  .line 219
     move-exception p0
-  .line 213
+  .line 220
     nop
   :L10
-  .line 216
+  .line 223
     sget-object p0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
     invoke-virtual { p0, v0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/database/Song;
-  .line 217
+  .line 224
     sget-object p1, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     invoke-virtual { p1 }, Ljava/lang/Object;->notifyAll()V
-  .line 218
+  .line 225
     monitor-exit v2
     return-object p0
   :L11
-  .line 219
+  .line 226
     move-exception p0
     monitor-exit v2
   :L12
     throw p0
   :L13
-  .line 178
+  .line 185
     return-object v1
 .end method
