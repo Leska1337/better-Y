@@ -1,7 +1,6 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -212,21 +211,13 @@ public final class YearCache {
                     continue;
                 }
                 String year = "";
-                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                try {
-                    mmr.setDataSource(path);
-                    String y = digits4(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR));
-                    if (y == null) {
-                        y = digits4(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE));
-                    }
-                    if (y != null) {
-                        year = y;
-                    }
-                } catch (Throwable t) {
+                Meta.Info info = Meta.read(path, false);
+                String y = digits4(info.year);
+                if (y == null) {
+                    y = digits4(info.date);
                 }
-                try {
-                    mmr.release();
-                } catch (Throwable t) {
+                if (y != null) {
+                    year = y;
                 }
                 map.put(album, year);
                 dirty = true;

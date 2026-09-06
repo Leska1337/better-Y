@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..be37e0a4 100644
+index 01b1f730..092fe638 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..be37e0a4 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000030
++  versionCode: 10000031
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19199,7 +19199,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..03ee6870 100644
+index 71fe29d0..de00f5be 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20148,7 +20148,7 @@ index 71fe29d0..03ee6870 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev30</string>
++    <string name="ipp_version">v1.0.0-dev31</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21744,10 +21744,10 @@ index 060ed6d1..46e9ab54 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..6fce107a 100644
+index 4fcfcfff..d588bb7c 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7912 @@
+@@ -1,7643 +1,7914 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -33332,6 +33332,8 @@ index 4fcfcfff..6fce107a 100644
 +    .line 997
 +    :cond_1
 +    :goto_0
++    invoke-static {v5}, Lcom/innioasis/ipp/Meta;->fixSong(Lcom/innioasis/y1/database/Song;)V
++
 +    sget-object v1, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
 +
 +    invoke-virtual {v5}, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;

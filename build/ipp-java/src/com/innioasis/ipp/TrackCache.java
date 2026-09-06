@@ -1,7 +1,6 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -69,16 +68,7 @@ public final class TrackCache {
             if (map.containsKey(path)) {
                 continue;
             }
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            try {
-                mmr.setDataSource(path);
-                put(path, mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
-            } catch (Throwable t) {
-            }
-            try {
-                mmr.release();
-            } catch (Throwable t) {
-            }
+            put(path, Meta.read(path, false).track);
             if (!map.containsKey(path)) {
                 map.put(path, Integer.valueOf(Integer.MAX_VALUE));
                 dirty = true;

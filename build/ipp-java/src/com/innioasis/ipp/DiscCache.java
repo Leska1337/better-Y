@@ -1,7 +1,6 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 
 import com.innioasis.y1.Y1Application;
 
@@ -162,19 +161,12 @@ public final class DiscCache {
         Tags out = new Tags();
         out.wanted = tags;
         if (path == null) return out;
-        MediaMetadataRetriever r = new MediaMetadataRetriever();
-        try {
-            r.setDataSource(path);
-            if (tags) {
-                out.disc = parse(r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER));
-                out.track = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
-            }
-            if (art) out.art = r.getEmbeddedPicture();
-        } catch (Throwable t) {
-            out.disc = 0;                   // an unreadable file is "read, nothing there"
-            out.track = null;
+        Meta.Info info = Meta.read(path, art);
+        if (tags) {
+            out.disc = parse(info.disc);    // an unreadable file is "read, nothing there"
+            out.track = info.track;
         }
-        try { r.release(); } catch (Throwable t) { }
+        out.art = info.art;
         return out;
     }
 

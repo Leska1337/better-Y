@@ -3,7 +3,6 @@ package com.innioasis.ipp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.MediaMetadataRetriever;
 
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
@@ -670,19 +669,7 @@ public final class BigCover {
     }
 
     private static byte[] embedded(String path) {
-        MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-        try {
-            mmr.setDataSource(path);
-            return mmr.getEmbeddedPicture();
-        } catch (Throwable t) {
-            return null;
-        } finally {
-            try {
-                mmr.release();
-            } catch (Throwable t) {
-                // nothing to do
-            }
-        }
+        return Meta.art(path);
     }
 
     private static byte[] readAll(File f) throws IOException {

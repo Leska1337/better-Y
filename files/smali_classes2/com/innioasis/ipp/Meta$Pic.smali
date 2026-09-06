@@ -1,29 +1,29 @@
-.class final Lcom/innioasis/ipp/Art$Hint;
+.class final Lcom/innioasis/ipp/Meta$Pic;
 .super Ljava/lang/Object;
-.source "Art.java"
+.source "Meta.java"
 
 .annotation system Ldalvik/annotation/EnclosingClass;
-  value = Lcom/innioasis/ipp/Art;
+  value = Lcom/innioasis/ipp/Meta;
 .end annotation
 .annotation system Ldalvik/annotation/InnerClass;
   accessFlags = 26
-  name = "Hint"
+  name = "Pic"
 .end annotation
 
-.field art:[B
+.field data:[B
 
-.field path:Ljava/lang/String;
+.field front:Z
 
 .method private constructor <init>()V
   .registers 1
-  .line 189
+  .line 291
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
-.method synthetic constructor <init>(Lcom/innioasis/ipp/Art$1;)V
+.method synthetic constructor <init>(Lcom/innioasis/ipp/Meta$1;)V
   .registers 2
-  .line 189
-    invoke-direct { p0 }, Lcom/innioasis/ipp/Art$Hint;-><init>()V
+  .line 291
+    invoke-direct { p0 }, Lcom/innioasis/ipp/Meta$Pic;-><init>()V
     return-void
 .end method

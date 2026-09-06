@@ -91,6 +91,15 @@ public final class Art {
      */
     public static Bitmap external(String path, int w, int h) {
         try {
+            // The tags come first for a track's own cover, and stock has just failed to read them:
+            // an ID3 tag over 3 MB is refused whole by the platform, artwork and all (see Meta).
+            // Answering null here for a file that does carry a picture would put the folder's
+            // cover — or nothing — on a track that has one of its own.
+            byte[] raw = Meta.tagArt(path);
+            if (raw != null) {
+                Bitmap b = decode(raw, w, h);
+                if (b != null) return b;
+            }
             File f = file(path);
             return f == null ? null : decode(f, w, h);
         } catch (Throwable t) {

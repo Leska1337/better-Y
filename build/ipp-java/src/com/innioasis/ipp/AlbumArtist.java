@@ -1,7 +1,6 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
-import android.media.MediaMetadataRetriever;
 
 import com.innioasis.y1.Y1Application;
 
@@ -124,15 +123,8 @@ public final class AlbumArtist {
         if (cached != null) return cached;
         String v = "";
         if (path != null) {
-            MediaMetadataRetriever r = new MediaMetadataRetriever();
-            try {
-                r.setDataSource(path);
-                String s = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
-                if (s != null) v = s.trim();
-            } catch (Throwable t) {
-                v = "";
-            }
-            try { r.release(); } catch (Throwable t) { }
+            String s = Meta.read(path, false).albumArtist;
+            if (s != null) v = s.trim();
         }
         map.put(key, v);
         dirty = true;
