@@ -1,6 +1,7 @@
 .class final Lcom/innioasis/y1/activity/IppQueueActivity$Pin;
 .super Ljava/lang/Object;
 .implements Landroid/view/ViewTreeObserver$OnScrollChangedListener;
+.implements Landroid/view/ViewTreeObserver$OnPreDrawListener;
 .source "IppQueueActivity.java"
 
 .annotation system Ldalvik/annotation/EnclosingClass;
@@ -15,19 +16,32 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 793
+  .line 878
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 794
+  .line 879
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 795
+  .line 880
     return-void
+.end method
+
+.method public onPreDraw()Z
+  .registers 2
+  .line 887
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repin()V
+  .line 890
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->stretch()Z
+    move-result v0
+    xor-int/lit8 v0, v0, 1
+    return v0
 .end method
 
 .method public onScrollChanged()V
   .registers 2
-  .line 798
+  .line 883
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repin()V
-  .line 799
+  .line 884
     return-void
 .end method

@@ -17,27 +17,27 @@
 
 .method constructor <init>(Ljava/lang/String;I)V
   .registers 3
-  .line 1002
+  .line 1126
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1003
+  .line 1127
     if-nez p1, :L0
     const-string p1, ""
   :L0
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->plain:Ljava/lang/String;
-  .line 1004
+  .line 1128
     iput p2, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->titleLen:I
-  .line 1005
+  .line 1129
     return-void
 .end method
 
 .method public getTransformation(Ljava/lang/CharSequence;Landroid/view/View;)Ljava/lang/CharSequence;
   .registers 7
-  .line 1008
+  .line 1132
     if-nez p1, :L0
     const-string p1, ""
     return-object p1
   :L0
-  .line 1009
+  .line 1133
     iget p2, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->titleLen:I
     if-lez p2, :L4
     iget-object p2, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->plain:Ljava/lang/String;
@@ -46,19 +46,19 @@
     if-nez p2, :L1
     goto :L4
   :L1
-  .line 1010
+  .line 1134
     invoke-interface { p1 }, Ljava/lang/CharSequence;->toString()Ljava/lang/String;
     move-result-object p1
-  .line 1011
+  .line 1135
     new-instance p2, Landroid/text/SpannableString;
     invoke-direct { p2, p1 }, Landroid/text/SpannableString;-><init>(Ljava/lang/CharSequence;)V
-  .line 1012
+  .line 1136
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->plain:Ljava/lang/String;
     invoke-virtual { p1, v0 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v0
   :L2
     if-ltz v0, :L3
-  .line 1013
+  .line 1137
     new-instance v1, Landroid/text/style/StyleSpan;
     const/4 v2, 1
     invoke-direct { v1, v2 }, Landroid/text/style/StyleSpan;-><init>(I)V
@@ -66,22 +66,22 @@
     add-int/2addr v2, v0
     const/16 v3, 33
     invoke-virtual { p2, v1, v0, v2, v3 }, Landroid/text/SpannableString;->setSpan(Ljava/lang/Object;III)V
-  .line 1012
+  .line 1136
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$BoldTitle;->plain:Ljava/lang/String;
     add-int/lit8 v0, v0, 1
     invoke-virtual { p1, v1, v0 }, Ljava/lang/String;->indexOf(Ljava/lang/String;I)I
     move-result v0
     goto :L2
   :L3
-  .line 1016
+  .line 1140
     return-object p2
   :L4
-  .line 1009
+  .line 1133
     return-object p1
 .end method
 
 .method public onFocusChanged(Landroid/view/View;Ljava/lang/CharSequence;ZILandroid/graphics/Rect;)V
   .registers 6
-  .line 1020
+  .line 1144
     return-void
 .end method

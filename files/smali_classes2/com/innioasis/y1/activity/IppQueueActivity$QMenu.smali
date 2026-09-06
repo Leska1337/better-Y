@@ -15,17 +15,17 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 1439
+  .line 1600
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1440
+  .line 1601
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$QMenu;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 1441
+  .line 1602
     return-void
 .end method
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .registers 3
-  .line 1445
+  .line 1606
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$QMenu;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { p1, p2 }, Lcom/innioasis/y1/activity/IppQueueActivity;->pick(Lcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
     move-result p1

@@ -15,19 +15,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 1411
+  .line 1572
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1412
+  .line 1573
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$ScrollTask;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 1413
+  .line 1574
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 1417
+  .line 1578
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$ScrollTask;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->doScroll()V
-  .line 1418
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->doScroll()Z
+  .line 1579
     return-void
 .end method

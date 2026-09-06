@@ -15,24 +15,24 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;)V
   .registers 2
-  .line 936
+  .line 974
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 937
+  .line 975
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$RebootRun;->a:Lcom/innioasis/y1/activity/IppActivity;
-  .line 938
+  .line 976
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 943
+  .line 981
     invoke-static { }, Lcom/innioasis/ipp/Force;->saveState()V
-  .line 944
+  .line 982
     sget-object v0, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$RebootRun;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v1
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/util/Other;->reboot(Landroid/content/Context;)V
-  .line 945
+  .line 983
     return-void
 .end method

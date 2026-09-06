@@ -128,8 +128,8 @@ public final class IppQueueActivity extends BaseActivity {
      * Rows to build before the first frame: as many as the scroller can show, plus one for the row
      * the screen cuts in half and one to spare.
      *
-     * It is the same arithmetic {@link #build} does — a song row is 1.5x its text size plus its two
-     * hairlines, and the playing row is its two lines — so it follows the theme's text size and the
+     * It is the same arithmetic {@link #build} does — a song row is 1.5x its text size plus its
+     * hairline, and the playing row is its two lines — so it follows the theme's text size and the
      * screen without a second number to keep in step. Over-counting is the safe direction: a row
      * built and not shown costs a couple of milliseconds, a row shown and not built is the flash.
      */
@@ -144,7 +144,7 @@ public final class IppQueueActivity extends BaseActivity {
             int play = px(PLAY_NAME_SP, m) + px(PLAY_SUB_SP, m);
             if (play < COVER_PX) play = COVER_PX;
             int head = cap * 2 + play;
-            int step = px(textSize(1), m) + HAIR_H * 2;
+            int step = px(textSize(1), m) + HAIR_H;
             if (step <= 0) return SYNC_ROWS_MIN;
             int fits = (screen - bar - head) / step;
             int n = 1 + fits + 2;
@@ -175,6 +175,9 @@ public final class IppQueueActivity extends BaseActivity {
     private String pinnedFirst;
     private final ArrayList capViews = new ArrayList();
     private final ArrayList capLabels = new ArrayList();
+    private View lastHair;              // the hairline of the last row added, if it still has one
+    private int playBase;               // the playing row without the remainder stretch() gives it
+    private int playExtra;
     private String[] labels;            // one label() per row per render, not one per paint
 
     /**
@@ -246,7 +249,9 @@ public final class IppQueueActivity extends BaseActivity {
         // Every frame of a scroll, animated ones included. Registered on the tree rather than on
         // the view (ScrollView.setOnScrollChangeListener is API 23, the device is 17) and never
         // removed by hand: the observer dies with the window.
-        scroller.getViewTreeObserver().addOnScrollChangedListener(new Pin(this));
+        Pin pin = new Pin(this);
+        scroller.getViewTreeObserver().addOnScrollChangedListener(pin);
+        scroller.getViewTreeObserver().addOnPreDrawListener(pin);
 
         sel = 0;
         render();
@@ -312,6 +317,9 @@ public final class IppQueueActivity extends BaseActivity {
         capViews.clear();
         capLabels.clear();
         pinnedFirst = null;
+        lastHair = null;
+        playBase = 0;
+        playExtra = 0;
         pinnedShown = null;
         if (pinned != null) pinned.setVisibility(View.GONE);
 
@@ -468,8 +476,12 @@ public final class IppQueueActivity extends BaseActivity {
             // Fixed height derived from the text: a theme background bitmap would otherwise
             // stretch the row to its own intrinsic height (the tall blue block on HoloBubble).
             int h = rowHeight(title);
-            // Both lines, and never less than the cover standing beside them.
-            if (playing) h = Math.max(h + rowHeight(sub), COVER_PX);
+            // Both lines, and never less than the cover standing beside them. What stretch() adds
+            // on top of it is measured from this, so it is remembered rather than read back.
+            if (playing) {
+                h = Math.max(h + rowHeight(sub), COVER_PX);
+                playBase = h;
+            }
             if (playing) {
                 // Its own caption, so the top of the screen says what that row IS rather than
                 // leaving it to be told from the two groups by its size. The words are the main
@@ -488,8 +500,7 @@ public final class IppQueueActivity extends BaseActivity {
                 // are drawn INSIDE the box instead, so they separate without letting anything
                 // through.
                 childIndex[i] = container.getChildCount();
-                container.addView(band(row, h, HAIR_ALPHA, HAIR_H, 0),
-                        new LinearLayout.LayoutParams(-1, -2));
+                container.addView(rowBox(row, h), new LinearLayout.LayoutParams(-1, -2));
             }
         }
     }
@@ -743,6 +754,9 @@ public final class IppQueueActivity extends BaseActivity {
             setPinned(text);
             return;
         }
+        // The row above this caption gives its hairline up: the caption's own rule is what draws
+        // that boundary, and the two together are a line of a different thickness from every other.
+        dropHair();
         View box = divider(text);
         capViews.add(box);
         capLabels.add(text);
@@ -755,8 +769,9 @@ public final class IppQueueActivity extends BaseActivity {
      * its words — the next one covering the last exactly as "CD 2" covers "CD 1" on the album
      * screen. Captions are in list order, so the walk stops at the first one still below the edge.
      *
-     * Driven by a scroll listener rather than by the key handler: the scroll is animated
-     * ({@code smoothScrollTo}), so the position it is asked for is not the position it has.
+     * Driven by a scroll listener rather than by the key handler: a key press is not the only thing
+     * that moves this list, and the answer depends on where it ended up rather than on what was
+     * asked for.
      */
     void repin() {
         try {
@@ -769,7 +784,16 @@ public final class IppQueueActivity extends BaseActivity {
             String label = pinnedFirst;
             for (int i = 0; i < capViews.size(); i++) {
                 View v = (View) capViews.get(i);
-                if (v.getTop() - y > 0) break;
+                // A view that has not been laid out yet answers top 0, i.e. "I am at the very top"
+                // — and this runs from render() and buildTail() with the captions just added, so
+                // without this the bar took the last group's name the moment the screen opened and
+                // only came right once something had scrolled. Height is the tell: a laid-out
+                // caption has one. Captions are in list order, so the walk stops at the first.
+                if (v.getHeight() <= 0) break;
+                // Its BOTTOM edge, not its top: until the caption itself has gone above the edge it
+                // is still on screen doing its job, and the bar naming the same group above it
+                // reads as the heading printed twice.
+                if (v.getTop() + v.getHeight() - y > 0) break;
                 label = (String) capLabels.get(i);
             }
             setPinned(label);
@@ -786,8 +810,69 @@ public final class IppQueueActivity extends BaseActivity {
         pinned.setVisibility(View.VISIBLE);
     }
 
-    /** Watches the scroller, including the frames of a smooth scroll. */
-    static final class Pin implements android.view.ViewTreeObserver.OnScrollChangedListener {
+    /**
+     * Give every song row the same height, and make that height divide the space the list has, so
+     * the row at the bottom of the screen ends exactly on its edge instead of being cut in half.
+     *
+     * The height cannot be settled in {@code build()}: what it has to divide is known only once the
+     * screen is laid out, the block above the list (the "Now playing" caption, the playing row, the
+     * pinned bar) being measured from the theme's own font. So the rows are built at their natural
+     * height and this runs from the pre-draw, the way the equaliser's rows are stretched
+     * ({@code Eq.stretch}) — a pass that changed anything cancels the frame, so the first thing
+     * drawn is already the finished layout.
+     *
+     * The remainder — under one row's worth — goes into the PLAYING row, the one thing on screen
+     * whose height nothing else is measured against. Spreading it over the song rows instead makes
+     * them unequal, and a list scrolled by whole rows then lands differently every time.
+     *
+     * {@code playExtra} is what keeps this from oscillating: growing the playing row shrinks the
+     * scroller, so the height being divided has to be measured back to the state before our own
+     * adjustment — otherwise the next pass divides a different number and undoes this one.
+     */
+    boolean stretch() {
+        try {
+            if (scroller == null || rowViews == null || rowViews.length < 2) return false;
+            int avail = scroller.getHeight() + playExtra;
+            if (avail <= 0) return false;
+
+            int natural = px(textSize(1), getResources().getDisplayMetrics());
+            int fits = avail / (natural + HAIR_H);
+            if (fits < 1) return false;
+            int step = avail / fits;                  // at least the natural one, never less
+            int rem = avail - fits * step;            // 0 .. fits-1
+            int rowH = step - HAIR_H;
+
+            boolean changed = false;
+            for (int i = 1; i < rowViews.length; i++) {
+                if (setHeight(rowViews[i], rowH)) changed = true;
+            }
+            if (playBase > 0 && setHeight(rowViews[0], playBase + rem)) {
+                playExtra = rem;
+                changed = true;
+            }
+            return changed;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    private static boolean setHeight(View v, int h) {
+        if (v == null) return false;
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp == null || lp.height == h) return false;
+        lp.height = h;
+        v.setLayoutParams(lp);
+        return true;
+    }
+
+    /**
+     * Watches the scroller, including the frames of a smooth scroll — and every layout as well,
+     * because the answer depends on where the captions were laid out and a freshly built list has
+     * not been laid out when {@code render()} asks. Costs an int comparison per frame over at most
+     * two captions, and the bar is only ever written to when the words actually change.
+     */
+    static final class Pin implements android.view.ViewTreeObserver.OnScrollChangedListener,
+            android.view.ViewTreeObserver.OnPreDrawListener {
         private final IppQueueActivity a;
 
         Pin(IppQueueActivity a) {
@@ -796,6 +881,13 @@ public final class IppQueueActivity extends BaseActivity {
 
         public void onScrollChanged() {
             a.repin();
+        }
+
+        public boolean onPreDraw() {
+            a.repin();
+            // A pass that resized the rows has made this frame stale — cancel it and let the
+            // layout it just asked for produce the finished one.
+            return !a.stretch();
         }
     }
 
@@ -847,6 +939,38 @@ public final class IppQueueActivity extends BaseActivity {
         if (ruleAlpha != 0) box.addView(rule(rule, ruleAlpha), new LinearLayout.LayoutParams(-1, ruleH));
         box.setBackgroundColor(wash | washAlpha);
         return box;
+    }
+
+    /**
+     * A song row inside its box, with a hairline along the BOTTOM edge only.
+     *
+     * One line per boundary, and the row below owns none: with a line on each edge every boundary
+     * carried two of them, and a boundary with a caption carried its rule as well — three
+     * thicknesses on one screen where there should be one. The last row's line is the only one
+     * nothing sits under, and it is off the bottom of the screen anyway.
+     */
+    private LinearLayout rowBox(View row, int h) {
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.addView(row, new LinearLayout.LayoutParams(-1, h));
+        View hair = rule(itemRgb(), HAIR_ALPHA);
+        box.addView(hair, new LinearLayout.LayoutParams(-1, HAIR_H));
+        lastHair = hair;
+        return box;
+    }
+
+    /** Take the last row's hairline away — something with a rule of its own follows it. */
+    private void dropHair() {
+        if (lastHair != null) lastHair.setVisibility(View.GONE);
+        lastHair = null;
+    }
+
+    /** The theme's ordinary item colour, read the only way there is (see {@link #band}). */
+    private int itemRgb() {
+        TextView probe = new TextView(this);
+        ThemeManager.INSTANCE.itemSetTextColor(probe,
+                getResources().getColor(R.color.selected_text_color), false);
+        return probe.getCurrentTextColor() & 0x00FFFFFF;
     }
 
     /** One band of a caption or of a row, in the text's own colour thinned out. */
@@ -1069,26 +1193,45 @@ public final class IppQueueActivity extends BaseActivity {
      * pass — scrolling has to be posted, otherwise every getTop() is still 0 and the selection
      * walks off screen.
      */
+    /**
+     * Scroll in the VERY frame the highlight moved, and only fall back to a posted one when the
+     * geometry to scroll by does not exist yet (a list just built has not been laid out).
+     *
+     * A posted scroll lands one frame later, and that frame is drawn: the row that lost the
+     * highlight has already given it up while the row that took it is still off the screen, so for
+     * one frame nothing on the screen is highlighted at all — which is what "the highlight blinks"
+     * is. Doing it now costs nothing to defer: the scroll is a {@code scrollTo}, an offset and an
+     * invalidate, with no layout behind it.
+     */
     private void scrollToSel() {
-        if (scroller == null || scrollPending) return;
-        scrollPending = true;                    // one scroll per burst of clicks, not one each
+        if (scroller == null) return;
+        if (!doScroll()) postScroll();
+    }
+
+    private void postScroll() {
+        if (scrollPending) return;
+        scrollPending = true;
         scroller.post(new ScrollTask(this));
     }
 
-    void doScroll() {
+    /** False when the rows are not laid out yet and there is nothing to measure a scroll by. */
+    boolean doScroll() {
         scrollPending = false;
-        if (scroller == null || container == null) return;
+        if (scroller == null || container == null) return false;
         // Row 0 is pinned, and the scroller also holds the group captions, so a row's position
         // among the scroller's children is not its position in the list.
-        if (childIndex == null || sel < 0 || sel >= childIndex.length) return;
+        if (childIndex == null || sel < 0 || sel >= childIndex.length) return false;
         int idx = childIndex[sel];
         if (idx < 0) {
-            scroller.smoothScrollTo(0, 0);
-            return;
+            glide(0);
+            return true;
         }
-        if (idx >= container.getChildCount()) return;
+        if (idx >= container.getChildCount()) return false;
         View v = container.getChildAt(idx);
-        if (v == null) return;
+        if (v == null) return false;
+        // A row that has never been laid out answers 0 for both edges, i.e. "I am at the very top":
+        // scrolling by that lands the list somewhere it was never asked to go.
+        if (v.getHeight() <= 0) return false;
         int top = v.getTop();
         int bottom = v.getBottom();
         // The caption above a row belongs with it: scrolling to the row alone would leave the
@@ -1099,10 +1242,28 @@ public final class IppQueueActivity extends BaseActivity {
         int scrollY = scroller.getScrollY();
         int h = scroller.getHeight();
         if (top < scrollY) {
-            scroller.smoothScrollTo(0, top);
+            glide(top);
         } else if (bottom > scrollY + h) {
-            scroller.smoothScrollTo(0, bottom - h);
+            glide(bottom - h);
         }
+        return true;
+    }
+
+    /**
+     * Move the list to {@code y}, at once.
+     *
+     * The wheel is faster than any animation worth watching, and a list that is still travelling
+     * when the next click arrives is a list the cursor has already left: the highlight ends up off
+     * the screen. Every ListView screen in the app moves its window in one step for the same
+     * reason ({@code Wheel.list}), and this is the same rule for the two screens that scroll a
+     * ScrollView instead. What was tried before settling on it: skill {@code wip-scroll-animation}.
+     */
+    private void glide(int y) {
+        int max = container.getHeight() - scroller.getHeight();
+        if (max < 0) max = 0;
+        if (y < 0) y = 0;
+        if (y > max) y = max;
+        scroller.scrollTo(0, y);
     }
 
     @Override

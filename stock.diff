@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..e650eb39 100644
+index 01b1f730..be37e0a4 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..e650eb39 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000024
++  versionCode: 10000030
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -760,7 +760,7 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..3ebf4ae0 100644
+index 50446006..fe323540 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,472 @@
@@ -1375,7 +1375,7 @@ index 50446006..3ebf4ae0 100644
 +    <string name="main_book">E-Books</string>
 +    <string name="main_fm">UKW-Radio</string>
 +    <string name="main_music">Musik</string>
-+    <string name="main_now">Gerade läuft</string>
++    <string name="main_now">Jetzt läuft</string>
 +    <string name="main_photos">Fotos</string>
 +    <string name="main_random">Schnell-Zufall</string>
 +    <string name="main_setting">Einstellungen</string>
@@ -1654,7 +1654,7 @@ index 50446006..3ebf4ae0 100644
 +    <string name="ipp_already_added">Bereits in der Liste</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
-index a2f30ff6..bea496bf 100644
+index a2f30ff6..24563267 100644
 --- a/build/src/res/values-en/strings.xml
 +++ b/build/src/res/values-en/strings.xml
 @@ -4,7 +4,7 @@
@@ -1790,7 +1790,7 @@ index a2f30ff6..bea496bf 100644
      <string name="fm_recording_error_nosdcard">SD card is not ready</string>
      <string name="fm_recording_error_notenough">SD card space is insufficient</string>
      <string name="fm_recording_error_notwrite">SD card cannot be written</string>
-@@ -150,17 +150,17 @@ completed successfully"</string>
+@@ -150,19 +150,19 @@ completed successfully"</string>
      <string name="genre_artist">artist</string>
      <string name="genre_artists">artists</string>
      <string name="give_up">Give up</string>
@@ -1810,8 +1810,11 @@ index a2f30ff6..bea496bf 100644
 +    <string name="main_book">E-books</string>
 +    <string name="main_fm">FM Radio</string>
      <string name="main_music">Music</string>
-     <string name="main_now">Now playing</string>
+-    <string name="main_now">Now playing</string>
++    <string name="main_now">Now Playing</string>
      <string name="main_photos">Photos</string>
+     <string name="main_random">Shuffle quick</string>
+     <string name="main_setting">Settings</string>
 @@ -176,8 +176,8 @@ completed successfully"</string>
      <string name="music_all_audiobooks">All audiobooks</string>
      <string name="music_all_songs">All songs</string>
@@ -2863,7 +2866,7 @@ index 6f5a555d..3e13a5f1 100644
 +    <string name="ipp_already_added">Ya está en la lista</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..d6642601 100644
+index c242cee4..f2f6b690 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,472 @@
@@ -3478,7 +3481,7 @@ index c242cee4..d6642601 100644
 +    <string name="main_book">Livres électroniques</string>
 +    <string name="main_fm">Radio FM</string>
 +    <string name="main_music">Musique</string>
-+    <string name="main_now">En lecture</string>
++    <string name="main_now">À l\'écoute</string>
 +    <string name="main_photos">Photos</string>
 +    <string name="main_random">Aléatoire rapide</string>
 +    <string name="main_setting">Paramètres</string>
@@ -4651,7 +4654,7 @@ index d82ac6bb..93e0f4cd 100644
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..0735d9f4 100644
+index f71d0cb1..dd9cec3d 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
 @@ -1,334 +1,389 @@
@@ -5026,7 +5029,7 @@ index f71d0cb1..0735d9f4 100644
 +    <string name="bl_state_on">켜기</string>
 +    <string name="bl_state_on_ing">켜는 중...</string>
 +    <string name="bl_unpair">이 기기를 삭제하시겠습니까?</string>
-+    <string name="bluetooth">Bluetooth</string>
++    <string name="bluetooth">블루투스</string>
 +    <string name="book_chapter_is_first">이미 첫 장임</string>
 +    <string name="book_chapter_is_last">이미 마지막 장임</string>
 +    <string name="book_continue_read">계속 읽기</string>
@@ -5128,7 +5131,7 @@ index f71d0cb1..0735d9f4 100644
 +    <string name="fm_search_to">검색 위치:</string>
 +    <string name="fm_searching">검색 중...</string>
 +    <string name="fm_sound_recording">녹음 중</string>
-+    <string name="fm_speaker_bl">Bluetooth 연결 중 스피커 켤 수 없음!</string>
++    <string name="fm_speaker_bl">블루투스 연결 중 스피커 켤 수 없음!</string>
 +    <string name="format">포맷</string>
 +    <string name="friday">금요일</string>
 +    <string name="genre_album">앨범</string>
@@ -5144,11 +5147,11 @@ index f71d0cb1..0735d9f4 100644
 +    <string name="jun">6월</string>
 +    <string name="loading">로드 중...</string>
 +    <string name="main_audiobook">오디오북</string>
-+    <string name="main_bluetooth">Bluetooth</string>
++    <string name="main_bluetooth">블루투스</string>
 +    <string name="main_book">전자책</string>
 +    <string name="main_fm">FM 라디오</string>
 +    <string name="main_music">음악</string>
-+    <string name="main_now">현재 재생 중</string>
++    <string name="main_now">지금 재생 중</string>
 +    <string name="main_photos">사진</string>
 +    <string name="main_random">빠른 무작위</string>
 +    <string name="main_setting">설정</string>
@@ -5843,7 +5846,7 @@ index 4c84fd2b..9410edd8 100644
 +    <string name="ipp_already_added">Уже в плейлисте</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..01d2ef94 100644
+index 5665bdd9..597548c1 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
 @@ -1,426 +1,481 @@
@@ -6337,7 +6340,7 @@ index 5665bdd9..01d2ef94 100644
 +    <string name="bl_state_on">开启</string>
 +    <string name="bl_state_on_ing">开启中...</string>
 +    <string name="bl_unpair">忘记此设备？</string>
-+    <string name="bluetooth">Bluetooth</string>
++    <string name="bluetooth">蓝牙</string>
 +    <string name="book_chapter_is_first">已是第一章</string>
 +    <string name="book_chapter_is_last">已是最后一章</string>
 +    <string name="book_continue_read">继续阅读</string>
@@ -6445,7 +6448,7 @@ index 5665bdd9..01d2ef94 100644
 +    <string name="fm_search_to">搜索至:</string>
 +    <string name="fm_searching">搜索中...</string>
 +    <string name="fm_sound_recording">录音</string>
-+    <string name="fm_speaker_bl">Bluetooth 连接中无法开启扬声器！</string>
++    <string name="fm_speaker_bl">蓝牙连接中无法开启扬声器！</string>
 +    <string name="format">格式化</string>
 +    <string name="fri">五</string>
 +    <string name="friday">星期五</string>
@@ -6464,7 +6467,7 @@ index 5665bdd9..01d2ef94 100644
 +    <string name="jun">六月</string>
 +    <string name="loading">加载中...</string>
 +    <string name="main_audiobook">有声读物</string>
-+    <string name="main_bluetooth">Bluetooth</string>
++    <string name="main_bluetooth">蓝牙</string>
 +    <string name="main_book">电子书</string>
 +    <string name="main_calc">计算器</string>
 +    <string name="main_calendar">日历</string>
@@ -19196,7 +19199,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b0f9c402 100644
+index 71fe29d0..03ee6870 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -19900,7 +19903,7 @@ index 71fe29d0..b0f9c402 100644
 +    <string name="main_calendar">Calendar</string>
 +    <string name="main_fm">FM Radio</string>
 +    <string name="main_music">Music</string>
-+    <string name="main_now">Now playing</string>
++    <string name="main_now">Now Playing</string>
 +    <string name="main_photos">Photos</string>
 +    <string name="main_random">Shuffle quick</string>
 +    <string name="main_setting">Settings</string>
@@ -20145,7 +20148,7 @@ index 71fe29d0..b0f9c402 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev24</string>
++    <string name="ipp_version">v1.0.0-dev30</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

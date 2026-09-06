@@ -340,6 +340,7 @@ public final class IppActivity extends BaseActivity {
         int n = items.size();
         rowViews = new View[n];
         rowBoxes = new View[n];
+        lastHair = null;
         labels = new TextView[n];
         values = new TextView[n];
         marks = new TextView[n];
@@ -352,6 +353,11 @@ public final class IppActivity extends BaseActivity {
                 // smaller, bolder font is not enough to read as a heading. It is BANDED instead —
                 // a rule along its top edge and another along its bottom — because a line is a
                 // shape rather than a shade, and nothing else on this screen has one.
+                // The row above gives its hairline up: this caption's own rule draws that boundary,
+                // and the two together are a line of a different thickness from every other.
+                if (lastHair != null) lastHair.setVisibility(View.GONE);
+                lastHair = null;
+
                 LinearLayout hb = new LinearLayout(this);
                 hb.setOrientation(LinearLayout.VERTICAL);
 
@@ -429,14 +435,17 @@ public final class IppActivity extends BaseActivity {
                 labels[i] = label;
                 values[i] = value;
 
-                // Inside a box that carries a hairline along its top and bottom edge — the group
-                // caption's rules, thinner and far weaker, since these run between every two rows.
+                // Inside a box carrying a hairline along its BOTTOM edge — the group caption's rule,
+                // thinner and far weaker, since these run between every two rows. One line per
+                // boundary and the row below owns none: a line on each edge doubles up between two
+                // rows, and adds to a caption's own rule where a group begins.
                 LinearLayout box = new LinearLayout(this);
                 box.setOrientation(LinearLayout.VERTICAL);
-                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
                 box.addView(row, new LinearLayout.LayoutParams(-1,
                         (int) (label.getTextSize() * 3.0f)));   // 2x the text-fitted height
-                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
+                View h = hair();
+                box.addView(h, new LinearLayout.LayoutParams(-1, HAIR_H));
+                lastHair = h;
                 rowBoxes[i] = box;
                 container.addView(box, new LinearLayout.LayoutParams(-1, -2));
             }
@@ -517,7 +526,7 @@ public final class IppActivity extends BaseActivity {
         if (old == sel) return;
         paint(old);
         paint(sel);
-        postScroll();
+        scrollToSel();
     }
 
     /** Apply the focused/unfocused look to one row. */
@@ -548,6 +557,7 @@ public final class IppActivity extends BaseActivity {
     }
 
     private int hairColor;
+    private View lastHair;              // the hairline of the last row added, if it still has one
 
     private void paint(int i) {
         if (rowViews == null || i < 0 || i >= rowViews.length) return;
@@ -577,7 +587,7 @@ public final class IppActivity extends BaseActivity {
         Scroll(IppActivity a) { this.a = a; }
         public void run() {
             a.scrollPending = false;
-            a.scrollToSel();
+            a.scrollToSel(false);            // one retry, never a chain of them
         }
     }
 
@@ -595,15 +605,25 @@ public final class IppActivity extends BaseActivity {
     }
 
     private void scrollToSel() {
+        scrollToSel(true);
+    }
+
+    private void scrollToSel(boolean mayPost) {
         if (scroller == null || rowBoxes == null || sel < 0 || sel >= rowBoxes.length) return;
         // The box: it is the container's own child, so its top and bottom are the coordinates the
         // scroller works in. The row inside it is offset by a hairline.
         View v = rowBoxes[sel];
         if (v == null) return;
+        // Not laid out yet — a list just built answers 0 for every edge. Try again next frame; the
+        // posted path never re-posts, so this cannot loop.
+        if (v.getHeight() <= 0) {
+            if (mayPost) postScroll();
+            return;
+        }
         // When focus is on the top-most selectable row, snap to the very top so the group
         // header sitting above it stays visible (otherwise scrolling up stops at the row's top).
         if (sel == firstSelectable()) {
-            scroller.smoothScrollTo(0, 0);
+            glide(0);
             return;
         }
         int top = v.getTop();
@@ -611,10 +631,28 @@ public final class IppActivity extends BaseActivity {
         int scrollY = scroller.getScrollY();
         int h = scroller.getHeight();
         if (top < scrollY) {
-            scroller.smoothScrollTo(0, top);
+            glide(top);
         } else if (bottom > scrollY + h) {
-            scroller.smoothScrollTo(0, bottom - h);
+            glide(bottom - h);
         }
+    }
+
+    /**
+     * Move the list to {@code y}, at once.
+     *
+     * The wheel is faster than any animation worth watching, and a list still travelling when the
+     * next click arrives is a list the cursor has already left. Every ListView screen in the app
+     * moves its window in one step for the same reason ({@code Wheel.list}); this is that rule for
+     * the two screens that scroll a ScrollView instead. What was tried first, and what it cost:
+     * skill {@code wip-scroll-animation}.
+     */
+    private void glide(int y) {
+        View content = scroller.getChildCount() > 0 ? scroller.getChildAt(0) : null;
+        int max = content == null ? 0 : content.getHeight() - scroller.getHeight();
+        if (max < 0) max = 0;
+        if (y < 0) y = 0;
+        if (y > max) y = max;
+        scroller.scrollTo(0, y);
     }
 
     private int step(int from, int dir) {

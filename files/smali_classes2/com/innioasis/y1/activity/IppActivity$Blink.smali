@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;)V
   .registers 2
-  .line 705
+  .line 743
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Blink;->a:Lcom/innioasis/y1/activity/IppActivity;
     return-void
@@ -23,7 +23,7 @@
 
 .method public run()V
   .registers 2
-  .line 706
+  .line 744
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blink;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->blinkTick()V
     return-void
