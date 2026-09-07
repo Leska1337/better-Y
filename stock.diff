@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..5a301101 100644
+index 01b1f730..f91d1d9f 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..5a301101 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000032
++  versionCode: 10000033
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19199,7 +19199,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f61c291d 100644
+index 71fe29d0..6c282dd5 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20148,7 +20148,7 @@ index 71fe29d0..f61c291d 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev32</string>
++    <string name="ipp_version">v1.0.0-dev33</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -37306,7 +37306,7 @@ index 4fcfcfff..d588bb7c 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..6e473923 100644
+index 54919080..f3e47f73 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -747,17 +747,13 @@
@@ -37489,7 +37489,7 @@ index 54919080..6e473923 100644
 +    # ipp: a book opened from a list starts a new session, exactly as setMusicPlaylist does.
 +    # It has to name the kind: the service still says "music" here -- the player screen sets the
 +    # flag afterwards -- so a call that asked what is playing would answer for the wrong list.
-+    invoke-static {}, Lcom/innioasis/ipp/Queue;->onNewBookPlaylist()V
++    invoke-static {p1}, Lcom/innioasis/ipp/Queue;->onNewBookPlaylist(Ljava/util/List;)V
 +
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
@@ -37515,7 +37515,7 @@ index 54919080..6e473923 100644
 +
 +    # ipp: opening a song from a menu starts a fresh session -- drop the queue, the shuffle
 +    # plan and the back-history (so Back cannot walk past the track just opened).
-+    invoke-static {}, Lcom/innioasis/ipp/Queue;->onNewPlaylist()V
++    invoke-static {p1}, Lcom/innioasis/ipp/Queue;->onNewPlaylist(Ljava/util/List;)V
 +
      .line 208
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;

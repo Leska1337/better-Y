@@ -1137,8 +1137,8 @@ public final class Queue {
      * The manual queue resets with the rest (the user's call): a queued track is a guest of the
      * list it was queued into, so it goes when that list does. Same in {@link #relist}.
      */
-    public static void onNewPlaylist() {
-        newPlaylist(0);
+    public static void onNewPlaylist(List handed) {
+        newPlaylist(0, handed);
     }
 
     /**
@@ -1146,11 +1146,16 @@ public final class Queue {
      * its own rather than one that asks the service what is playing, because the list is handed over
      * BEFORE the player screen sets the flag — at this moment the service still says "music".
      */
-    public static void onNewBookPlaylist() {
-        newPlaylist(1);
+    public static void onNewBookPlaylist(List handed) {
+        newPlaylist(1, handed);
     }
 
-    private static void newPlaylist(int k) {
+    /**
+     * @param handed the list being given to the player, which is what {@link #srcOrdered} is
+     *               decided from — the caller has it, and here it is still the only place it can
+     *               be compared against the screen that supplied it.
+     */
+    private static void newPlaylist(int k, List handed) {
         // The list about to be replaced wholesale is the one of kind k, so its guests go with it and
         // there is nothing to take out. A queue live on the OTHER list is a different matter: that
         // list is not being touched, and a track the queue spliced into it has to leave it now.
@@ -1158,7 +1163,7 @@ public final class Queue {
         kind = k;
         clearSession();
         dropStalePlayer();      // a track started from a re-opened source: see openSource
-        noteSource();
+        noteSource(handed);
         // A song was opened from a menu: a track change starts here rather than at restartPlay
         // (MusicPlayerActivity publishes its first play state from onCreate, before the player has
         // been told to start anything), AND the player Activity is on its way up over this list,
@@ -1189,16 +1194,20 @@ public final class Queue {
      * the new index the next time it opens; the queue screen and the ▶ marker are projections of
      * exactly what has just been updated.
      *
-     * Guards, in order of cost: the adapter must be a song list, it must be the screen the queue
-     * was actually started from (strictly — "unknown" must NOT mean "yes" here, or every list build
-     * in the app would rewrite the playlist), and the ORDER must really have changed. That last
-     * test is what keeps re-entering the source screen from resetting a live shuffle pass; it walks
-     * the two lists comparing paths and stops at the first difference, which for a re-sort is
-     * usually the first row.
+     * Guards, in order of cost: the session must have started in the screen's own order at all
+     * ({@link #srcOrdered} — a Shuffle row's list is a permutation of the screen's on purpose, and
+     * without this the section merely being re-entered wiped it), the adapter must be a song list,
+     * it must be the screen the queue was actually started from (strictly — "unknown" must NOT
+     * mean "yes" here, or every list build in the app would rewrite the playlist), and the ORDER
+     * must really have changed. That last test is what keeps re-entering the source screen from
+     * resetting a live session; it walks the two lists comparing paths and stops at the first
+     * difference, which for a re-sort is usually the first row.
      */
     public static void relist(Object adapter) {
         try {
-            if (srcKey == null || !(adapter instanceof MyBaseAdapter)) return;
+            if (!(adapter instanceof MyBaseAdapter)) return;
+            noteBuilt((MyBaseAdapter) adapter);
+            if (srcKey == null || !srcOrdered) return;
             PlayerService ps = Y1Application.Companion.getPlayerService();
             if (ps == null) return;
             syncKind();
@@ -1232,6 +1241,17 @@ public final class Queue {
             clearSession();
         } catch (Throwable t) {
             // the play order not following a sort is a nuisance; a crash in a list build is not
+        }
+    }
+
+    /** Remember a song list as it was built, for {@link #ordered}. Two field writes, no copy. */
+    private static void noteBuilt(MyBaseAdapter a) {
+        try {
+            List items = a.getItemList();
+            if (items == null || items.isEmpty() || !(items.get(0) instanceof Song)) return;
+            lastList = new WeakReference(a);
+        } catch (Throwable t) {
+            // as above: nothing here is worth a crash in a list build
         }
     }
 
@@ -1287,12 +1307,13 @@ public final class Queue {
      * Safe to read here: this runs inside {@code setMusicPlaylist}, which every screen calls
      * BEFORE starting the player, so the list screen is still the one on top.
      */
-    private static void noteSource() {
+    private static void noteSource(List handed) {
         try {
             Activity a = ActivityUtils.getTopActivity();
             String t = (a instanceof BaseActivity) ? ((BaseActivity) a).getStateBarLeftText() : null;
             source = (t == null) ? "" : t;
             srcKey = keyOf(a);
+            srcOrdered = ordered(a, handed);
             // A COPY of the screen's own Intent, which is what makes "open the source" possible at
             // all: the key above only names the screen (class + title), and an album, a folder or
             // a playlist is that class plus the extras it was started with. The copy is taken here
@@ -1320,6 +1341,38 @@ public final class Queue {
             srcAct = null;
             srcLevel = null;
             srcGenre = false;
+            srcOrdered = true;
+        }
+    }
+
+    /**
+     * Is {@code handed} the very list the screen on top is showing, row for row? See
+     * {@link #srcOrdered} for what turns on the answer.
+     *
+     * "Cannot tell" is answered YES, which is what the code did before this test existed: the two
+     * lists have to be the same length and to be built of songs, and the list last built has to
+     * belong to the screen the track is being started from. A folder's list is not a song list at
+     * all ({@code FileListAdapter} holds {@code File}s), and nothing is remembered for it — but
+     * {@code relist} passes over such a screen for the same reason, so it can never act there.
+     */
+    private static boolean ordered(Activity a, List handed) {
+        try {
+            if (a == null || handed == null || handed.isEmpty()) return true;
+            WeakReference r = lastList;
+            Object o = (r == null) ? null : r.get();
+            if (!(o instanceof MyBaseAdapter)) return true;
+            MyBaseAdapter built = (MyBaseAdapter) o;
+            if (built.getContext() != a) return true;      // some other screen built that list
+            List items = built.getItemList();
+            if (items == null || items.size() != handed.size()) return true;
+            for (int i = 0; i < items.size(); i++) {
+                Object x = items.get(i), y = handed.get(i);
+                if (!(x instanceof Song) || !(y instanceof Song)) return true;
+                if (!eq(((Song) x).getPath(), ((Song) y).getPath())) return false;
+            }
+            return true;
+        } catch (Throwable t) {
+            return true;
         }
     }
 
@@ -1328,6 +1381,35 @@ public final class Queue {
     private static String srcLevel;         // the list inside that screen, when it has levels
     private static boolean srcGenre;        // ...and the same for the Genres screen (see Genres)
     private static WeakReference dropPlayer;// the player "open source" left behind, if any
+
+    /**
+     * Whether this session's list was handed to the player in the SOURCE SCREEN'S OWN ORDER.
+     *
+     * The Shuffle row hands over {@code shuffled(itemList)} — a permutation of the screen's list,
+     * on purpose — so from that moment the two orders differ and are MEANT to. {@link #relist}
+     * reads a difference as "the screen was re-sorted, drag the play order after it", which here
+     * is exactly backwards: merely walking out of the section and back in builds its list in the
+     * ordinary sort order again, and the shuffled play order was replaced by it, taking the manual
+     * queue and the passes with it. So a session that did not start in the screen's order is left
+     * alone by {@code relist} for its whole life — re-sorting the screen under a shuffled queue
+     * does not reorder it either, which is the same answer: the order was asked to be random.
+     *
+     * Only a comparison can tell: the Shuffle rows of six stock screens, the marker rows of
+     * Folders and Genres and "Shuffle Quick" all reach {@code setMusicPlaylist} the same way an
+     * ordinary tap on a song does.
+     */
+    private static boolean srcOrdered = true;
+
+    /**
+     * The last SONG list an adapter built, weakly — the only handle on what the source screen was
+     * showing at the moment a track was started from it. {@code MyBaseAdapter.setItems} is where
+     * every such list is handed over, and {@link #relist} is already injected there.
+     *
+     * The adapter goes on owning that list and mutating it in place, which is why this is the
+     * adapter and not a copy of its rows: the question is asked one call later, from
+     * {@code setMusicPlaylist}, and nothing re-sorts a list in between.
+     */
+    private static WeakReference lastList;  // WeakReference<MyBaseAdapter>
 
     /**
      * The player the queue was opened from, remembered while the source list is put in front of it.
@@ -1390,6 +1472,7 @@ public final class Queue {
     private static final String P_UUID = "src_uuid";
     private static final String P_LEVEL = "src_level";
     private static final String P_GENRE = "src_genre";
+    private static final String P_ORDERED = "src_ordered";
 
     /** The stored source has been looked at (or a live one was noted): do not look again. */
     private static boolean srcLoaded;
@@ -1421,6 +1504,7 @@ public final class Queue {
                 e.putString(P_UUID, uuidExtras(srcIntent));
                 e.putString(P_LEVEL, srcLevel == null ? "" : srcLevel);
                 e.putBoolean(P_GENRE, srcGenre);
+                e.putBoolean(P_ORDERED, srcOrdered);
             }
             e.commit();
         } catch (Throwable t) {
@@ -1508,6 +1592,9 @@ public final class Queue {
             String lvl = p.getString(P_LEVEL, "");
             srcLevel = (lvl.length() == 0) ? null : lvl;
             srcGenre = p.getBoolean(P_GENRE, false);
+            // A shuffled session restored after a reboot is still a shuffled session: without
+            // this, walking into the section it came from rebuilt the play order in sort order.
+            srcOrdered = p.getBoolean(P_ORDERED, true);
         } catch (Throwable t) {
             srcLoaded = true;                          // a stored source that cannot be read is gone
         }
