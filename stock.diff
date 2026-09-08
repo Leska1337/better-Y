@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c4b264c5 100644
+index 01b1f730..5aefbab6 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..c4b264c5 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000036
++  versionCode: 10000040
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19199,7 +19199,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f40cdc4b 100644
+index 71fe29d0..bae71acd 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20148,7 +20148,7 @@ index 71fe29d0..f40cdc4b 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev36</string>
++    <string name="ipp_version">v1.0.0-dev40</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

@@ -218,6 +218,11 @@ public final class Scroll {
     private boolean seen;
     /** Whether the tick found this line on screen last time — the transition is what restarts a lap. */
     private boolean wasShown;
+    /**
+     * This line has been given text nobody has read yet, and owes a lap from the rest — spent by
+     * the tick when the line is on screen. See {@link #join}.
+     */
+    private boolean fresh;
 
     public Scroll(TextView tv) {
         this.tv = tv;
@@ -344,8 +349,17 @@ public final class Scroll {
         }
         if (tv.isShown()) {
             phase = 0;
-        } else if (tv.getWindowToken() == null) {
-            settleUntil = android.os.SystemClock.uptimeMillis() + SETTLE;
+        } else {
+            // A LIST ROW IS BOUND WHILE IT IS DETACHED, so the branch above is never the one a list
+            // takes: ListView scraps its children and re-attaches them after getView, and
+            // isShown() answers false for every row of every list. The lap restart is therefore
+            // asked for here and granted by the tick, once the line is really on screen — which
+            // also keeps the other half of the rule, that a screen being BUILT must not restart
+            // the lap of the screen the user is still reading.
+            fresh = true;
+            if (tv.getWindowToken() == null) {
+                settleUntil = android.os.SystemClock.uptimeMillis() + SETTLE;
+            }
         }
         if (clock == null) {
             clock = new Handler(Looper.getMainLooper());
@@ -489,6 +503,7 @@ public final class Scroll {
             boolean was = false;
             boolean appeared = false;
             boolean vanished = false;
+            boolean unread = false;
             for (int i = 0; i < n; i++) {
                 Scroll s = (Scroll) LIVE.get(i);
                 boolean on = lit && s.tv.isShown();
@@ -506,6 +521,10 @@ public final class Scroll {
                     s.park();
                 } else {
                     any = true;
+                    if (s.fresh) {                 // new text, and now on screen: it owes a lap
+                        s.fresh = false;
+                        unread = true;
+                    }
                 }
             }
             if (!any) {
@@ -523,6 +542,14 @@ public final class Scroll {
             if (vanished || (appeared && !was)) {
                 phase = 0;
                 settleUntil = 0;
+            } else if (unread) {
+                // A line already on screen has been given text nobody has read yet — the row the
+                // cursor has just moved onto, or the one a track change moved the cursor to on a
+                // RECYCLED view, which is the case the transition above cannot see: the instance
+                // on that view was never off screen, so nothing "appeared". It owes a lap from the
+                // rest, and so do the lines beside it. This does NOT release a hold: a screen
+                // being built rebinds rows too, and what it is being built over must stand still.
+                phase = 0;
             }
             // A screen is being built on this very thread: hold everything where it stands until
             // the screen it replaces has gone, or until it turns out not to be coming. Not until
@@ -558,7 +585,17 @@ public final class Scroll {
 
             // Nothing on screen is too long for its view: rest here until something new arrives,
             // which restarts the lap from join().
+            //
+            // THE PHASE RESTS AT THE END OF THE LEAD-IN AND IS NEVER LEFT PAST IT. Lines are
+            // measured and doubled at exactly {@code phase == LEAD}, and only the lap turning over
+            // brings the phase back round to it — so with nothing moving there is no lap, and a
+            // phase left standing beyond that point is a screen on which nothing can ever be
+            // measured, and therefore on which nothing can ever scroll, again. It is reached by an
+            // ordinary track change: the running title stops being the cursor while it is halfway
+            // through its round, the longest line becomes 0 at a phase well past the lead-in, and
+            // the clock rests there for good. That is "the scroll works once and then never".
             if (phase >= LEAD && longest == 0) {
+                phase = LEAD;
                 post(IDLE);
                 return;
             }
