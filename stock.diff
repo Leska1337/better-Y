@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..5aefbab6 100644
+index 01b1f730..b99c8359 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..5aefbab6 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000040
++  versionCode: 10000042
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -589,6 +589,23 @@ index 6917d780..1d6e454f 100644
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="top" android:id="@id/tv_item" android:padding="@dimen/main_item_padding" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/main_item_margin_left" android:maxLines="1" android:singleLine="true" android:layout_weight="1.0" />
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
+diff --git a/build/src/res/layout/item_photos_submenu.xml b/build/src/res/layout/item_photos_submenu.xml
+index 9b10f189..2347f02f 100644
+--- a/build/src/res/layout/item_photos_submenu.xml
++++ b/build/src/res/layout/item_photos_submenu.xml
+@@ -1,5 +1,11 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content" android:layout_height="70.0dip"
++<!-- ipp: fill_parent, not wrap_content. GridLayoutManager gives each entry a column of its own
++     (one per entry, PhotosDialog sizes the grid by the list it is handed), but a wrap_content root
++     is only as wide as its own label and then sits at the column's LEFT edge — so the strip looked
++     even only while the labels happened to fill their columns, and went visibly crooked as soon as
++     there were four short ones. At the column's width the icon centres in the column and the label
++     centres under the icon, whatever the count. -->
++<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="70.0dip"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <ImageView android:id="@id/icon" android:layout_width="wrap_content" android:layout_height="24.0dip" app:layout_constraintBottom_toTopOf="@id/content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_chainStyle="packed" />
+     <TextView android:textSize="12.0sp" android:textColor="@color/white" android:id="@id/content" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="@id/icon" app:layout_constraintRight_toRightOf="@id/icon" app:layout_constraintTop_toBottomOf="@id/icon" />
 diff --git a/build/src/res/layout/item_player.xml b/build/src/res/layout/item_player.xml
 index dbfa7302..ec41f852 100644
 --- a/build/src/res/layout/item_player.xml
@@ -760,7 +777,7 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..fe323540 100644
+index 50446006..ed5bebbb 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,472 @@
@@ -1471,8 +1488,8 @@ index 50446006..fe323540 100644
 +    <string name="page_language">Sprache</string>
 +    <string name="page_time">Datum &amp; Uhrzeit</string>
 +    <string name="password_toggle_content_description">Passwort anzeigen</string>
-+    <string name="photos_all_select">Alle auswählen</string>
-+    <string name="photos_as_wallpaper">Als Hintergr.</string>
++    <string name="photos_all_select">Alle ausw.</string>
++    <string name="photos_as_wallpaper">Festl. als…</string>
 +    <string name="photos_delete">Löschen</string>
 +    <string name="photos_deleting">Ordner löschen</string>
 +    <string name="photos_filename_duplicate">Dateiname darf nicht doppelt sein</string>
@@ -1654,7 +1671,7 @@ index 50446006..fe323540 100644
 +    <string name="ipp_already_added">Bereits in der Liste</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
-index a2f30ff6..24563267 100644
+index a2f30ff6..7672d71f 100644
 --- a/build/src/res/values-en/strings.xml
 +++ b/build/src/res/values-en/strings.xml
 @@ -4,7 +4,7 @@
@@ -1861,7 +1878,7 @@ index a2f30ff6..24563267 100644
 -    <string name="photos_all_select">All Select</string>
 -    <string name="photos_as_wallpaper">As Wallpaper</string>
 +    <string name="photos_all_select">Select all</string>
-+    <string name="photos_as_wallpaper">Set as wallpaper</string>
++    <string name="photos_as_wallpaper">Set as…</string>
      <string name="photos_delete">Delete</string>
      <string name="photos_deleting">Deleting folders</string>
 -    <string name="photos_filename_duplicate">Filename cannot be duplicate</string>
@@ -1972,7 +1989,7 @@ index a2f30ff6..24563267 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..3e13a5f1 100644
+index 6f5a555d..3d2c0786 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
 @@ -1,417 +1,472 @@
@@ -2683,13 +2700,13 @@ index 6f5a555d..3e13a5f1 100644
 +    <string name="page_language">Idioma</string>
 +    <string name="page_time">Fecha y hora</string>
 +    <string name="password_toggle_content_description">Mostrar contraseña</string>
-+    <string name="photos_all_select">Seleccionar todo</string>
-+    <string name="photos_as_wallpaper">Establecer como fondo</string>
++    <string name="photos_all_select">Selec. todo</string>
++    <string name="photos_as_wallpaper">Establecer…</string>
 +    <string name="photos_delete">Eliminar</string>
 +    <string name="photos_deleting">Eliminando carpetas</string>
 +    <string name="photos_filename_duplicate">Nombre duplicado</string>
 +    <string name="photos_filename_empty">Nombre no puede estar vacío</string>
-+    <string name="photos_multi_select">Selección múltiple</string>
++    <string name="photos_multi_select">Selec. múlt.</string>
 +    <string name="photos_open_folder">Abrir carpeta...</string>
 +    <string name="photos_rename">Renombrar</string>
 +    <string name="photos_rename_failed">Error al renombrar</string>
@@ -2866,7 +2883,7 @@ index 6f5a555d..3e13a5f1 100644
 +    <string name="ipp_already_added">Ya está en la lista</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..f2f6b690 100644
+index c242cee4..717d32d3 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,472 @@
@@ -3577,13 +3594,13 @@ index c242cee4..f2f6b690 100644
 +    <string name="page_language">Langue</string>
 +    <string name="page_time">Date &amp; Heure</string>
 +    <string name="password_toggle_content_description">Afficher le mot de passe</string>
-+    <string name="photos_all_select">Tout sélectionner</string>
-+    <string name="photos_as_wallpaper">En fond d’écran</string>
++    <string name="photos_all_select">Tout sélect.</string>
++    <string name="photos_as_wallpaper">Définir…</string>
 +    <string name="photos_delete">Supprimer</string>
 +    <string name="photos_deleting">Supprimer les dossiers</string>
 +    <string name="photos_filename_duplicate">Le nom du fichier ne peut pas être en double</string>
 +    <string name="photos_filename_empty">Le nom du fichier ne peut pas être vide</string>
-+    <string name="photos_multi_select">Multisélection</string>
++    <string name="photos_multi_select">Multisél.</string>
 +    <string name="photos_open_folder">Ouvrir le dossier…</string>
 +    <string name="photos_rename">Renom.</string>
 +    <string name="photos_rename_failed">Échec du renommage</string>
@@ -3760,7 +3777,7 @@ index c242cee4..f2f6b690 100644
 +    <string name="ipp_already_added">Déjà dans la liste</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..93e0f4cd 100644
+index d82ac6bb..65ba0b91 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
 @@ -1,417 +1,472 @@
@@ -4472,7 +4489,7 @@ index d82ac6bb..93e0f4cd 100644
 +    <string name="page_time">תאריך ושעה</string>
 +    <string name="password_toggle_content_description">הצגת סיסמה</string>
 +    <string name="photos_all_select">בחר הכל</string>
-+    <string name="photos_as_wallpaper">הגדר כרקע</string>
++    <string name="photos_as_wallpaper">הגדר כ…</string>
 +    <string name="photos_delete">מחק</string>
 +    <string name="photos_deleting">מוחק תיקיות</string>
 +    <string name="photos_filename_duplicate">שם קובץ לא יכול להיות כפול</string>
@@ -4654,7 +4671,7 @@ index d82ac6bb..93e0f4cd 100644
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..dd9cec3d 100644
+index f71d0cb1..74aee024 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
 @@ -1,334 +1,389 @@
@@ -5202,7 +5219,7 @@ index f71d0cb1..dd9cec3d 100644
 +    <string name="page_language">언어</string>
 +    <string name="page_time">날짜 및 시간</string>
 +    <string name="photos_all_select">모두 선택</string>
-+    <string name="photos_as_wallpaper">배경화면으로 설정</string>
++    <string name="photos_as_wallpaper">…로 설정</string>
 +    <string name="photos_delete">삭제</string>
 +    <string name="photos_deleting">폴더 삭제 중</string>
 +    <string name="photos_filename_duplicate">파일명 중복 불가</string>
@@ -5382,7 +5399,7 @@ index f71d0cb1..dd9cec3d 100644
 +    <string name="ipp_already_added">이미 재생 목록에 있음</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
-index d79cf0f6..315aaa9f 100644
+index d79cf0f6..89491c4d 100644
 --- a/build/src/res/values-ru-rRU/strings.xml
 +++ b/build/src/res/values-ru-rRU/strings.xml
 @@ -22,20 +22,20 @@
@@ -5512,9 +5529,20 @@ index d79cf0f6..315aaa9f 100644
      <string name="nov">Ноя</string>
      <string name="oct">Окт</string>
      <string name="off">выкл</string>
-@@ -217,7 +217,7 @@
+@@ -208,16 +208,16 @@
+     <string name="page_language">Язык</string>
+     <string name="page_time">Дата и время</string>
+     <string name="photos_all_select">Выбрать всё</string>
+-    <string name="photos_as_wallpaper">Установить обоями</string>
++    <string name="photos_as_wallpaper">Уст. как…</string>
+     <string name="photos_delete">Удалить</string>
+     <string name="photos_deleting">Удаление папок</string>
+     <string name="photos_filename_duplicate">Имя уже существует</string>
+     <string name="photos_filename_empty">Имя не может быть пустым</string>
+     <string name="photos_multi_select">Мн. выбор</string>
      <string name="photos_open_folder">Открыть папку...</string>
-     <string name="photos_rename">Переименовать</string>
+-    <string name="photos_rename">Переименовать</string>
++    <string name="photos_rename">Переименов.</string>
      <string name="photos_rename_failed">Ошибка переименования</string>
 -    <string name="photos_tips">Весь контент будет удалён!</string>
 +    <string name="photos_tips">Весь контент будет удалён</string>
@@ -5846,7 +5874,7 @@ index 4c84fd2b..9410edd8 100644
 +    <string name="ipp_already_added">Уже в плейлисте</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..597548c1 100644
+index 5665bdd9..4a25e7f7 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
 @@ -1,426 +1,481 @@
@@ -6571,7 +6599,7 @@ index 5665bdd9..597548c1 100644
 +    <string name="page_time">日期和时间</string>
 +    <string name="password_toggle_content_description">显示密码</string>
 +    <string name="photos_all_select">全选</string>
-+    <string name="photos_as_wallpaper">设为壁纸</string>
++    <string name="photos_as_wallpaper">设为…</string>
 +    <string name="photos_delete">删除</string>
 +    <string name="photos_deleting">删除文件夹中</string>
 +    <string name="photos_filename_duplicate">文件名不能重复</string>
@@ -19199,7 +19227,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..bae71acd 100644
+index 71fe29d0..adcf4494 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20016,7 +20044,7 @@ index 71fe29d0..bae71acd 100644
 +    <string name="path_password_eye_mask_visible">M2,4.27 L2,4.27 L4.54,1.73 L4.54,1.73 L4.54,1 L23,1 L23,23 L1,23 L1,4.27 Z</string>
 +    <string name="path_password_strike_through">M3.27,4.27 L19.74,20.74</string>
 +    <string name="photos_all_select">Select all</string>
-+    <string name="photos_as_wallpaper">Set as wallpaper</string>
++    <string name="photos_as_wallpaper">Set as…</string>
 +    <string name="photos_delete">Delete</string>
 +    <string name="photos_deleting">Deleting folders</string>
 +    <string name="photos_filename_duplicate">File names cannot be the same</string>
@@ -20148,7 +20176,7 @@ index 71fe29d0..bae71acd 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev40</string>
++    <string name="ipp_version">v1.0.0-dev42</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -59550,10 +59578,36 @@ index f2075450..d86674af 100644
      check-cast v1, Ljava/lang/CharSequence;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..c0a831b4 100644
+index 0688aa89..843608af 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-@@ -3007,6 +3007,19 @@
+@@ -1105,6 +1105,25 @@
+ 
+     move-result-object v4
+ 
++    # ipp: no "Set as..." on a folder. The row list and the cursor are fetched here because both
++    # ways to them are private to this class; the deciding is Menus.photos. v0 and v1 are scratch
++    # -- everything below writes them before it reads them.
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
++
++    move-result-object v0
++
++    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
++
++    move-result-object v0
++
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
++
++    move-result v1
++
++    invoke-static {v4, v0, v1}, Lcom/innioasis/ipp/Menus;->photos(Ljava/util/List;Ljava/util/List;I)Ljava/util/List;
++
++    move-result-object v4
++
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getPhotos()Landroid/widget/ImageView;
+ 
+     move-result-object v1
+@@ -3007,6 +3026,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  

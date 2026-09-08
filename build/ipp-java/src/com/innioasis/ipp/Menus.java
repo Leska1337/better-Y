@@ -270,6 +270,36 @@ public final class Menus {
      * around the Activity (the dialog carries a theme), so it is unwrapped; the Activity on top is
      * the fallback, and it is the right one — a dialog does not pause the screen under it.
      */
+    /**
+     * The Photos bar, which is a menu of another kind: {@code PhotosDialog}, a strip of five
+     * icons along the bottom rather than a {@code SubMenuDialog}, so {@link #onShow} never sees
+     * it. Called from {@code PhotosActivity.longTop} with the list the dialog is about to be
+     * built from and the row the cursor is on.
+     *
+     * A FOLDER CANNOT BE A WALLPAPER, so the last entry goes. Nothing has to be recentred by hand:
+     * the dialog lays the strip out with {@code GridLayoutManager(context, subs.size())}, one
+     * column per entry, so four entries share the width the same way five did.
+     *
+     * ONLY THE LAST ENTRY MAY BE DROPPED THIS WAY, and that is not a coincidence to be relied on
+     * quietly: both dispatchers here work by INDEX — the Activity's callback branches on 0..3 and
+     * {@code PhotosDialog} compares the cursor against a hardcoded 4 to open its desktop/global
+     * popup — so anything taken out of the middle would silently change what every entry below it
+     * does. Dropping the tail leaves 0..3 saying exactly what they said, and the position the
+     * popup answers to simply stops existing.
+     */
+    public static List photos(List subs, List data, int mark) {
+        try {
+            if (subs == null || subs.size() < 2) return subs;
+            if (data == null || mark < 0 || mark >= data.size()) return subs;
+            Object row = data.get(mark);
+            if (!(row instanceof com.innioasis.y1.activity.PhotosActivity.Item)) return subs;
+            if (!((com.innioasis.y1.activity.PhotosActivity.Item) row).isDirectory()) return subs;
+            return new ArrayList(subs.subList(0, subs.size() - 1));
+        } catch (Throwable t) {
+            return subs;                       // a menu with one entry too many is still a menu
+        }
+    }
+
     private static Activity hostOf(SubMenuDialog d) {
         try {
             Activity own = d.getOwnerActivity();

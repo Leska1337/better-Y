@@ -52,48 +52,48 @@
   .catchall { :L7 .. :L8 } :L9
   .registers 2
   :L0
-  .line 275
+  .line 305
     invoke-virtual { p0 }, Lcom/innioasis/music/util/SubMenuDialog;->getOwnerActivity()Landroid/app/Activity;
     move-result-object v0
-  .line 276
+  .line 306
     if-eqz v0, :L1
     return-object v0
   :L1
-  .line 277
+  .line 307
     invoke-virtual { p0 }, Lcom/innioasis/music/util/SubMenuDialog;->getContext()Landroid/content/Context;
     move-result-object p0
   :L2
-  .line 278
+  .line 308
     instance-of v0, p0, Landroid/content/ContextWrapper;
     if-eqz v0, :L5
-  .line 279
+  .line 309
     instance-of v0, p0, Landroid/app/Activity;
     if-eqz v0, :L3
     check-cast p0, Landroid/app/Activity;
     return-object p0
   :L3
-  .line 280
+  .line 310
     check-cast p0, Landroid/content/ContextWrapper;
     invoke-virtual { p0 }, Landroid/content/ContextWrapper;->getBaseContext()Landroid/content/Context;
     move-result-object p0
   :L4
     goto :L2
   :L5
-  .line 284
+  .line 314
     goto :L7
   :L6
-  .line 282
+  .line 312
     move-exception p0
   :L7
-  .line 286
+  .line 316
     invoke-static { }, Lcom/blankj/utilcode/util/ActivityUtils;->getTopActivity()Landroid/app/Activity;
     move-result-object p0
   :L8
     return-object p0
   :L9
-  .line 287
+  .line 317
     move-exception p0
-  .line 288
+  .line 318
     const/4 p0, 0
     return-object p0
 .end method
@@ -371,6 +371,65 @@
   :L18
   .line 154
     return-void
+.end method
+
+.method public static photos(Ljava/util/List;Ljava/util/List;I)Ljava/util/List;
+  .catchall { :L0 .. :L5 } :L7
+  .registers 5
+  .line 292
+    if-eqz p0, :L8
+  :L0
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result v0
+    const/4 v1, 2
+    if-ge v0, v1, :L1
+    goto :L8
+  :L1
+  .line 293
+    if-eqz p1, :L6
+    if-ltz p2, :L6
+    invoke-interface { p1 }, Ljava/util/List;->size()I
+    move-result v0
+    if-lt p2, v0, :L2
+    goto :L6
+  :L2
+  .line 294
+    invoke-interface { p1, p2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object p1
+  .line 295
+    instance-of p2, p1, Lcom/innioasis/y1/activity/PhotosActivity$Item;
+    if-nez p2, :L3
+    return-object p0
+  :L3
+  .line 296
+    check-cast p1, Lcom/innioasis/y1/activity/PhotosActivity$Item;
+    invoke-virtual { p1 }, Lcom/innioasis/y1/activity/PhotosActivity$Item;->isDirectory()Z
+    move-result p1
+    if-nez p1, :L4
+    return-object p0
+  :L4
+  .line 297
+    new-instance p1, Ljava/util/ArrayList;
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result p2
+    add-int/lit8 p2, p2, -1
+    const/4 v0, 0
+    invoke-interface { p0, v0, p2 }, Ljava/util/List;->subList(II)Ljava/util/List;
+    move-result-object p2
+    invoke-direct { p1, p2 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+  :L5
+    return-object p1
+  :L6
+  .line 293
+    return-object p0
+  :L7
+  .line 298
+    move-exception p1
+  .line 299
+    return-object p0
+  :L8
+  .line 292
+    return-object p0
 .end method
 
 .method private static same(Ljava/util/List;Ljava/util/List;)Z
