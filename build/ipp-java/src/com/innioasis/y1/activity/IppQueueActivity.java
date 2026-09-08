@@ -30,6 +30,7 @@ import com.innioasis.ipp.CoverCache;
 import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Queue;
 import com.innioasis.ipp.Scroll;
+import com.innioasis.ipp.Theme;
 import com.innioasis.music.adapter.SubmenuAdapter;
 import com.innioasis.music.util.Other;
 import com.innioasis.music.util.SubMenuDialog;
@@ -111,6 +112,13 @@ public final class IppQueueActivity extends BaseActivity {
      * its own, and it is a row rather than a heading over one.
      */
     private static final int PLAY_ALPHA = 0x2E000000;
+
+    /** ...and weaker again on a theme with transparent rows — see {@link IppActivity#BAND_ALPHA_BARE}. */
+    private static final int PLAY_ALPHA_BARE = 0x17000000;
+
+    private static int playAlpha() {
+        return Theme.rowsPainted() ? PLAY_ALPHA : PLAY_ALPHA_BARE;
+    }
 
     /** The playing row's two lines, sp: the song's name, and the artist under it. */
     private static final float PLAY_NAME_SP = 18.0f;
@@ -231,7 +239,7 @@ public final class IppQueueActivity extends BaseActivity {
         // Between the playing row and the list, and outside the scroller: it is the list's own
         // heading and has to stay put while the list moves under it.
         pinnedText = captionView("");
-        pinned = band(pinnedText, -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.BAND_ALPHA);
+        pinned = band(pinnedText, -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.bandAlpha());
         pinned.setVisibility(View.GONE);
         outer.addView(pinned, -1, -2);
 
@@ -254,6 +262,10 @@ public final class IppQueueActivity extends BaseActivity {
         scroller.getViewTreeObserver().addOnPreDrawListener(pin);
 
         sel = 0;
+        // A theme's row picture is decoded off the main thread, so a screen built before it lands
+        // is told the rows are not painted. Repaint when it arrives.
+        retheme = new Retheme(this);
+        Theme.watchRows(retheme);
         render();
 
         watch = new PlayWatch(this);
@@ -262,6 +274,7 @@ public final class IppQueueActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        Theme.unwatchRows(retheme);
         stopBlink();
         cancelTail();
         if (watch != null) {
@@ -491,7 +504,7 @@ public final class IppQueueActivity extends BaseActivity {
                 // The playing row takes the caption's WASH but not its rules: the caption above it
                 // already carries one along its bottom edge, and a second directly under it would
                 // read as an empty band between the two.
-                header.addView(band(row, h, 0, 0, PLAY_ALPHA),
+                header.addView(band(row, h, 0, 0, playAlpha()),
                         new LinearLayout.LayoutParams(-1, -2));
                 childIndex[i] = -1;                  // pinned, never scrolled to
             } else {
@@ -738,7 +751,7 @@ public final class IppQueueActivity extends BaseActivity {
      * own colour wins. Not selectable — the wheel walks songs, and these sit between them.
      */
     private View divider(String text) {
-        return band(captionView(text), -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.BAND_ALPHA);
+        return band(captionView(text), -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.bandAlpha());
     }
 
     /**
@@ -926,8 +939,7 @@ public final class IppQueueActivity extends BaseActivity {
      */
     private LinearLayout band(View content, int contentH, int ruleAlpha, int ruleH, int washAlpha) {
         TextView probe = new TextView(this);
-        ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
-        int wash = probe.getCurrentTextColor() & 0x00FFFFFF;
+        int wash = washRgb();
         ThemeManager.INSTANCE.itemSetTextColor(probe,
                 getResources().getColor(R.color.selected_text_color), false);
         int rule = probe.getCurrentTextColor() & 0x00FFFFFF;
@@ -963,6 +975,13 @@ public final class IppQueueActivity extends BaseActivity {
     private void dropHair() {
         if (lastHair != null) lastHair.setVisibility(View.GONE);
         lastHair = null;
+    }
+
+    /** The theme's SELECTED item colour — a band's wash — read the only way there is. */
+    private int washRgb() {
+        TextView probe = new TextView(this);
+        ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
+        return probe.getCurrentTextColor() & 0x00FFFFFF;
     }
 
     /** The theme's ordinary item colour, read the only way there is (see {@link #band}). */
@@ -1566,6 +1585,23 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /** Posted so the scroll runs after the rebuilt rows have been laid out (see scrollToSel). */
+    private Retheme retheme;
+
+    /**
+     * The theme's row picture has arrived, so a band's wash may want another alpha. {@link #render}
+     * repaints everything banded except the PINNED caption — that one is built once in
+     * {@link #initView} — so it is washed again here by hand. Named (d8 crashes on anonymous).
+     */
+    private static final class Retheme implements Runnable {
+        private final IppQueueActivity a;
+        Retheme(IppQueueActivity a) { this.a = a; }
+        public void run() {
+            if (a.isFinishing()) return;       // posted: the screen may have gone
+            if (a.pinned != null) a.pinned.setBackgroundColor(a.washRgb() | IppActivity.bandAlpha());
+            a.render();
+        }
+    }
+
     private static final class ScrollTask implements Runnable {
         private final IppQueueActivity a;
 

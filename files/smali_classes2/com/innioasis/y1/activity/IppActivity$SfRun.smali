@@ -15,24 +15,24 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;)V
   .registers 2
-  .line 838
+  .line 880
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 839
+  .line 881
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SfRun;->a:Lcom/innioasis/y1/activity/IppActivity;
-  .line 840
+  .line 882
     return-void
 .end method
 
 .method public run()V
   .catch Ljava/lang/InterruptedException; { :L2 .. :L3 } :L4
   .registers 4
-  .line 843
+  .line 885
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SfRun;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Panel;->report(Landroid/content/Context;)Ljava/io/File;
     move-result-object v0
-  .line 844
+  .line 886
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SfRun;->a:Lcom/innioasis/y1/activity/IppActivity;
     new-instance v2, Lcom/innioasis/y1/activity/IppActivity$SfToast;
     if-nez v0, :L0
@@ -44,23 +44,23 @@
   :L1
     invoke-direct { v2, v1, v0 }, Lcom/innioasis/y1/activity/IppActivity$SfToast;-><init>(Lcom/innioasis/y1/activity/IppActivity;Ljava/lang/String;)V
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppActivity;->runOnUiThread(Ljava/lang/Runnable;)V
-  .line 846
+  .line 888
     const-wide/16 v0, 2500
   :L2
     invoke-static { v0, v1 }, Ljava/lang/Thread;->sleep(J)V
   :L3
-  .line 849
+  .line 891
     goto :L5
   :L4
-  .line 847
+  .line 889
     move-exception v0
-  .line 848
+  .line 890
     invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Thread;->interrupt()V
   :L5
-  .line 850
+  .line 892
     invoke-static { }, Lcom/innioasis/ipp/Panel;->restart()V
-  .line 851
+  .line 893
     return-void
 .end method

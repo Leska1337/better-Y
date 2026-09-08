@@ -550,6 +550,9 @@ public final class Rows {
     public static void reflat(View row) {
         try {
             if (row == null) return;
+            // The one place in the app that hears "a theme bitmap has finished decoding" — Theme
+            // keeps a scratch row of its own among the views it can land on.
+            Theme.landed(row);
             // The pinned CD bar and the in-row disc strip carry the theme's row background too and
             // arrive here by the same asynchronous path, but neither is a row: the bar has no
             // track-number view to be recognised by, and flat() on the strip would find the strip

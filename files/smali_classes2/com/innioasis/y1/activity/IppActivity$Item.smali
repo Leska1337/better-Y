@@ -26,18 +26,18 @@
 
 .method constructor <init>(ILjava/lang/String;I[ILjava/lang/String;)V
   .registers 6
-  .line 129
+  .line 148
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 130
+  .line 149
     iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
-  .line 131
+  .line 150
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
-  .line 132
+  .line 151
     iput p3, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
-  .line 133
+  .line 152
     iput-object p4, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->choices:[I
-  .line 134
+  .line 153
     iput-object p5, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
-  .line 135
+  .line 154
     return-void
 .end method

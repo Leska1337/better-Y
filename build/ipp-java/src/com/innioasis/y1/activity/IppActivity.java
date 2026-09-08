@@ -37,6 +37,7 @@ import com.innioasis.ipp.Panel;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
+import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.TrackCache;
 import com.innioasis.ipp.YearCache;
 import com.innioasis.music.util.Other;
@@ -97,6 +98,18 @@ public final class IppActivity extends BaseActivity {
      */
     static final int RULE_ALPHA = 0x59000000;
     static final int BAND_ALPHA = 0x59000000;
+
+    /**
+     * ...and weaker where the theme leaves its rows transparent ({@link Theme#rowsPainted}): there
+     * the wash lies on the WALLPAPER, where the same number reads as a stain across the picture
+     * rather than as a band. The rules keep one value — a line is as legible over a photograph as
+     * over a colour.
+     */
+    static final int BAND_ALPHA_BARE = 0x2E000000;
+
+    static int bandAlpha() {
+        return Theme.rowsPainted() ? BAND_ALPHA : BAND_ALPHA_BARE;
+    }
 
     /** The hairlines a menu row is being tried with: a caption's rule, thinner and far weaker. */
     private static final int HAIR_H = 1;
@@ -457,7 +470,29 @@ public final class IppActivity extends BaseActivity {
         root.addView(scroller, -1, -1);
 
         sel = firstSelectable();
+        // A theme's row picture is decoded off the main thread, so a screen built before it lands
+        // is told the rows are not painted. Repaint when it arrives.
+        retheme = new Retheme(this);
+        Theme.watchRows(retheme);
         render();
+    }
+
+    private Retheme retheme;
+
+    @Override
+    protected void onDestroy() {
+        Theme.unwatchRows(retheme);
+        super.onDestroy();
+    }
+
+    /** Named (d8 here crashes on anonymous classes). */
+    private static final class Retheme implements Runnable {
+        private final IppActivity a;
+        Retheme(IppActivity a) { this.a = a; }
+        public void run() {
+            // render() is what paints the captions; posted, so the screen may have gone.
+            if (!a.isFinishing() && a.items != null) a.render();
+        }
     }
 
     private void render() {
@@ -495,7 +530,7 @@ public final class IppActivity extends BaseActivity {
                 // (setBackgroundColor on a view that had no background asks for a layout —
                 // harmless here, this runs when the screen is built and on a value change, never
                 // on the wheel's own path, which repaints two rows through paint().)
-                hb.setBackgroundColor(wash | BAND_ALPHA);
+                hb.setBackgroundColor(wash | bandAlpha());
                 continue;
             }
 
