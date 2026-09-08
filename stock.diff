@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f91d1d9f 100644
+index 01b1f730..c4b264c5 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..f91d1d9f 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000033
++  versionCode: 10000036
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19199,7 +19199,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..6c282dd5 100644
+index 71fe29d0..f40cdc4b 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20148,7 +20148,7 @@ index 71fe29d0..6c282dd5 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev33</string>
++    <string name="ipp_version">v1.0.0-dev36</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21610,7 +21610,7 @@ index 675ebb2a..668ae0df 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..46e9ab54 100644
+index 060ed6d1..dcb41cac 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -21700,7 +21700,19 @@ index 060ed6d1..46e9ab54 100644
      if-ne p1, v3, :cond_17
  
      .line 685
-@@ -3463,6 +3505,15 @@
+@@ -2806,6 +2848,11 @@
+     .line 116
+     invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
+ 
++    # ipp: the key tone follows the screen (Tone) -- registered once, from whichever screen is
++    # built first. Not from Y1Application, where it belongs by meaning: that class is verified
++    # before multidex installs classes2, so a call into the ipp package there cannot resolve.
++    invoke-static {p0}, Lcom/innioasis/ipp/Tone;->watch(Landroid/content/Context;)V
++
+     .line 117
+     invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
+ 
+@@ -3463,6 +3510,15 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -21716,7 +21728,7 @@ index 060ed6d1..46e9ab54 100644
      .line 345
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->updateBatteryPercentageBase()V
  
-@@ -3602,7 +3653,12 @@
+@@ -3602,7 +3658,12 @@
  
      const-string v2, "save state successful"
  
@@ -21730,7 +21742,7 @@ index 060ed6d1..46e9ab54 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4178,12 @@
+@@ -4122,6 +4183,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
