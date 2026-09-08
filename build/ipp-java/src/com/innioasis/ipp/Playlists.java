@@ -18,6 +18,8 @@ import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.database.Playlist;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
+import com.innioasis.y1.activity.video.VideoListActivity;
+import com.innioasis.y1.database.video.VideoInfo;
 import com.innioasis.y1.utils.SharedPreferencesUtils;
 
 import java.util.ArrayList;
@@ -417,6 +419,164 @@ public final class Playlists {
         public int compare(Object a, Object b) {
             int ra = rank(a), rb = rank(b);
             // a song the join table does not know about goes last whichever way round we are
+            if (ra < 0 || rb < 0) return (ra < 0 && rb < 0) ? 0 : (ra < 0 ? 1 : -1);
+            return desc ? (rb - ra) : (ra - rb);
+        }
+    }
+
+    // ---- a VIDEO playlist in the order it was filled --------------------------------------------
+    //
+    // The same entry for the Videos section, and the order lives somewhere else there: the join
+    // table (playlist_video) carries no date, and its order_index column holds 0 for every row —
+    // addVideoToPlayList lets that argument default and nothing ever assigns it. The table itself
+    // records the order: rows are appended as videos are added, the insert is INSERT OR IGNORE so
+    // re-adding one does not move it, and SQLite's rowid is therefore the order it was filled in.
+    //
+    // The mode rides on the video sort, which is SHARED by every video screen — so sorting the
+    // all-videos list ends the added order here too. Every stock pick goes through
+    // SharedPreferencesUtils.setVideoSort, so that is where the mode is cleared; our own pick
+    // writes that preference as well (carrier None, "leave the DAO order alone") and arms `vKeep`
+    // so it does not clear itself.
+    private static final String VADDED_KEY = "vpl_added";
+
+    private static int vAdded = -1;         // -1 = not read from the preferences yet
+    private static boolean vKeep;
+
+    private static int vMode() {
+        if (vAdded < 0) {
+            Context c = Y1Application.Companion.getAppContext();
+            vAdded = (c == null) ? 0 : Prefs.getInt(c, VADDED_KEY, 0);
+        }
+        return vAdded;
+    }
+
+    private static void setVMode(int v) {
+        if (vAdded == v) return;
+        vAdded = v;
+        Context c = Y1Application.Companion.getAppContext();
+        if (c != null) Prefs.setInt(c, VADDED_KEY, v);
+    }
+
+    /** Top of {@code SharedPreferencesUtils.setVideoSort}: a stock sort pick ends the added order. */
+    public static void noteVideoSort() {
+        if (vKeep) {
+            vKeep = false;
+            return;
+        }
+        setVMode(0);
+    }
+
+    /** The menu entry: pick a direction, then let the screen re-list itself. */
+    public static void videoAddedDialog(Activity a) {
+        try {
+            if (a == null) return;
+            List l = new ArrayList();
+            l.add(a.getString(R.string.ipp_sort_date_asc));
+            l.add(a.getString(R.string.ipp_sort_date_desc));
+            // The 4th argument is the dialog THEME, not a flag — see the music dialog above.
+            new SubMenuDialog(a, l, new VideoAddedPick(a), R.style.Dialog_Common).show();
+        } catch (Throwable t) {
+            // no dialog is better than a crash out of a menu
+        }
+    }
+
+    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
+    public static final class VideoAddedPick implements SubMenuDialog.Callback {
+        private final Activity a;
+
+        VideoAddedPick(Activity a) { this.a = a; }
+
+        public boolean select(int index, SubmenuAdapter.Item item) {
+            try {
+                String s = item == null ? null : item.getString();
+                setVMode(a.getString(R.string.ipp_sort_date_desc).equals(s) ? 2 : 1);
+                // The carrier: None leaves the DAO's own order alone, which is what byAddedVideo
+                // then re-orders. This write is not a pick, hence vKeep.
+                vKeep = true;
+                SharedPreferencesUtils.INSTANCE.setVideoSort(
+                        Y1Repository.SortVideoType.None.getType());
+                relistVideos(a);
+            } catch (Throwable t) {
+                // the preference is written or it is not; either way the menu closes
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Let the screen list the playlist again — the one thing here that cannot be a plain call.
+     *
+     * {@code VideoListActivity.getVideoBySort()} is private, and its Kotlin accessor
+     * ({@code access$getVideoBySort}) is SYNTHETIC, which javac refuses to resolve from source at
+     * all: a synthetic member cannot be named. Making the method public would be a two-phase build
+     * for one call that happens when a person picks a sort, so it is reflected instead.
+     */
+    private static void relistVideos(Activity a) {
+        try {
+            if (!(a instanceof VideoListActivity)) return;
+            java.lang.reflect.Method m = a.getClass().getDeclaredMethod("getVideoBySort");
+            m.setAccessible(true);
+            m.invoke(a);
+        } catch (Throwable t) {
+            // the order is stored either way; the screen shows it next time it lists the playlist
+        }
+    }
+
+    private static final String SQL_VADDED =
+            "select pv.video_id from playlist_video pv join video_playlist vp"
+            + " on vp.playlist_id = pv.playlist_id where vp.playlist_name = ? order by pv.rowid";
+
+    /**
+     * Injected at the single exit of {@code Y1Repository.getVideoToVideoPlayListNameBySort}, which
+     * is handed the playlist's NAME — the name is saved into a spare register at the top of that
+     * method, because every branch of it reuses the parameter as scratch. Returns the list
+     * untouched unless the added order is on, so the stock sorts cost one int compare.
+     */
+    public static List byAddedVideo(RoomDatabase db, String playlistName, List videos) {
+        if (vMode() == 0 || db == null || playlistName == null || videos == null
+                || videos.size() < 2) {
+            return videos;
+        }
+        try {
+            HashMap order = new HashMap();
+            Cursor c = db.query(SQL_VADDED, new Object[] { playlistName });
+            try {
+                int i = 0;
+                while (c.moveToNext()) {
+                    if (c.isNull(0)) continue;
+                    Long id = Long.valueOf(c.getLong(0));
+                    if (!order.containsKey(id)) order.put(id, Integer.valueOf(i++));
+                }
+            } finally {
+                c.close();
+            }
+            if (order.isEmpty()) return videos;
+            ArrayList out = new ArrayList(videos);
+            Collections.sort(out, new VideoAddedCmp(order, vAdded == 2));
+            return out;
+        } catch (Throwable t) {
+            return videos;   // an unsortable list is still a usable list
+        }
+    }
+
+    private static final class VideoAddedCmp implements Comparator {
+        private final HashMap order;
+        private final boolean desc;
+
+        VideoAddedCmp(HashMap order, boolean desc) {
+            this.order = order;
+            this.desc = desc;
+        }
+
+        private int rank(Object o) {
+            if (!(o instanceof VideoInfo)) return -1;
+            Object r = order.get(Long.valueOf(((VideoInfo) o).getVideo_id()));
+            return (r instanceof Integer) ? ((Integer) r).intValue() : -1;
+        }
+
+        public int compare(Object a, Object b) {
+            int ra = rank(a), rb = rank(b);
+            // a video the join table does not know about goes last whichever way round we are
             if (ra < 0 || rb < 0) return (ra < 0 && rb < 0) ? 0 : (ra < 0 ? 1 : -1);
             return desc ? (rb - ra) : (ra - rb);
         }

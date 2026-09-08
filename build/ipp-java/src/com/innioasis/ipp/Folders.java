@@ -3,13 +3,22 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.innioasis.music.FilesActivity;
 import com.innioasis.music.MusicPlayerActivity;
 import com.innioasis.music.adapter.MyBaseAdapter;
+import com.innioasis.music.adapter.SubmenuAdapter;
 import com.innioasis.music.objects.Constant;
+import com.innioasis.music.util.SubMenuDialog;
+import com.innioasis.y1.activity.video.VideoListActivity;
+import com.innioasis.y1.base.BaseBindingAdapter;
+import com.innioasis.y1.database.Y1Repository;
+import com.innioasis.y1.database.video.VideoInfo;
+import com.innioasis.y1.utils.SharedPreferencesUtils;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.base.BaseActivity;
@@ -462,4 +471,328 @@ public final class Folders {
      * opposite of what these two rows are.
      */
     private static final float BIG = 1.3f;
+
+    // ------------------------------------------------------------ the order the folder is listed in
+
+    /**
+     * How this section lists a folder: 0 A-Z, 1 Z-A, 2 oldest first, 3 newest first — the four
+     * {@code FilesActivity.refresh} has always been able to produce. It could not be CHOSEN here,
+     * though: the two flags it read are one global "sort" that Photos, the Settings screen and
+     * several {@code Y1Repository} queries share, so a pick made in Folders would have reordered
+     * screens the user was not looking at. This is Folders' own key, and nothing else reads it.
+     */
+    public static final String KEY_SORT = "folders_sort";
+
+    /**
+     * ...and Audiobooks keeps its own, because Folders is a SUB-SECTION of each section rather
+     * than a section of its own: Music → Folders and Audiobooks → Folders are the same screen with
+     * a different root, and one order shared between them means sorting a book by date puts the
+     * albums in date order too. Which of the two a listing belongs to is answered by the folder
+     * itself ({@code Constant.pathInAudiobook}), so no state has to be carried around. Videos →
+     * Folders is a screen of its own and follows the section's own {@code videoSort}.
+     */
+    public static final String KEY_SORT_BOOK = "folders_sort_ab";
+
+    private static final int SORT_A_Z = 0;
+    private static final int SORT_Z_A = 1;
+    private static final int SORT_OLD = 2;
+    private static final int SORT_NEW = 3;
+
+    private static String keyFor(String path) {
+        try {
+            if (path != null && Constant.INSTANCE.pathInAudiobook(path)) return KEY_SORT_BOOK;
+        } catch (Throwable t) {
+            // an unanswerable path is the music one, which is what the section usually is
+        }
+        return KEY_SORT;
+    }
+
+    private static int sortValue(String path) {
+        return Prefs.val(Y1Application.Companion.getAppContext(), keyFor(path));
+    }
+
+    private static String pathOf(File dir) {
+        return dir == null ? null : dir.getPath();
+    }
+
+    /** {@code FilesActivity.refresh}: by name, or by the file's date? */
+    public static boolean sortByName(File dir) {
+        int v = sortValue(pathOf(dir));
+        return v == SORT_A_Z || v == SORT_Z_A;
+    }
+
+    /** {@code FilesActivity.refresh}: which way round? A-Z and "oldest first" are both ascending. */
+    public static boolean sortAsc(File dir) {
+        int v = sortValue(pathOf(dir));
+        return v == SORT_A_Z || v == SORT_OLD;
+    }
+
+    /**
+     * The folder's OWN songs, in the same order — the second half of the sort, and the half stock
+     * never had.
+     *
+     * What {@code refresh} sorts is the array of SUB-FOLDERS; the songs under them come from the
+     * library ({@code getSongsByParentPath}) and were shown in whatever order the query returned.
+     * A folder of folders therefore re-sorted and a folder of tracks did not, which is why picking
+     * a sort in an audiobook — a book being exactly a folder of chapters — appeared to do nothing
+     * at all. Sorted in place, before the list is handed on: this list is also the PLAY order
+     * ({@code nowSongFileList}), so the two cannot be allowed to disagree.
+     */
+    public static void sortFiles(List files, File dir) {
+        try {
+            if (files == null || files.size() < 2) return;
+            Collections.sort(files, new FileSort(sortByName(dir), sortAsc(dir)));
+        } catch (Throwable t) {
+            // a list in the library's own order is still a list
+        }
+    }
+
+    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
+    private static final class FileSort implements Comparator {
+        private final boolean byName;
+        private final boolean asc;
+
+        FileSort(boolean byName, boolean asc) { this.byName = byName; this.asc = asc; }
+
+        public int compare(Object a, Object b) {
+            if (!(a instanceof File) || !(b instanceof File)) return 0;
+            File x = (File) a, y = (File) b;
+            int r;
+            if (byName) {
+                r = byName(x, y);
+            } else {
+                long lx = x.lastModified(), ly = y.lastModified();
+                r = lx < ly ? -1 : (lx > ly ? 1 : 0);
+                // FILES COPIED ONTO THE CARD IN ONE OPERATION ALL CARRY THE SAME MINUTE, and a
+                // whole folder of them is the normal case rather than the exception — a season of
+                // a series, an album's tracks, the videos someone has just dragged across. With
+                // nothing to tell them apart the sort is stable, i.e. it leaves the list exactly
+                // as it found it, and the entry reads as broken. The name is the tie-break, so
+                // "oldest first" always produces SOME order and the two directions always differ.
+                if (r == 0) r = byName(x, y);
+            }
+            return asc ? r : -r;
+        }
+
+        /** Plain String order, the comparison stock makes on the sub-folders. */
+        private int byName(File x, File y) {
+            String nx = x.getName(), ny = y.getName();
+            return (nx == null ? "" : nx).compareTo(ny == null ? "" : ny);
+        }
+    }
+
+    // ------------------------------------------- the same, for the folder list of the Videos section
+
+    /**
+     * The Videos section browses the card with a screen of its own ({@code VideoListActivity}),
+     * and its folder list had no order to ask for either — it was whatever {@code listFiles}
+     * returned. It follows the section's OWN sort, the stock {@code videoSort} the all-videos list
+     * already uses, rather than {@link #KEY_SORT}: one section, one order, and nothing a person
+     * picks in Videos reaches the Folders section or the other way round.
+     *
+     * Stock offers only A-Z and Z-A for it; the enum has always had the two creation-time values
+     * as well, and the menu below offers all four.
+     */
+    public static void sortVideoFiles(List files) {
+        try {
+            if (files == null || files.size() < 2) return;
+            int v = SharedPreferencesUtils.INSTANCE.getVideoSort();
+            boolean byName = v == Y1Repository.SortVideoType.A_Z.getType()
+                    || v == Y1Repository.SortVideoType.Z_A.getType();
+            boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
+                    || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
+            if (v == Y1Repository.SortVideoType.None.getType()) return;   // stock's own "unsorted"
+            Collections.sort(files, new FileSort(byName, asc));
+        } catch (Throwable t) {
+            // a folder listed in the file system's own order is still a folder
+        }
+    }
+
+    /** "Sort by File name" in the video folder menu: the four directions, then re-order the list. */
+    public static void videoSortMenu(Activity a) {
+        try {
+            if (a == null) return;
+            ArrayList l = new ArrayList();
+            l.add(a.getString(R.string.sort_a_z));
+            l.add(a.getString(R.string.sort_z_a));
+            l.add(a.getString(R.string.sort_time_asc));
+            l.add(a.getString(R.string.sort_time_desc));
+            new SubMenuDialog(a, l, new VideoSortPick(a), R.style.Dialog_Common).show();
+        } catch (Throwable t) {
+            // a sort that cannot be offered leaves the list in the order it is in
+        }
+    }
+
+    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
+    public static final class VideoSortPick implements SubMenuDialog.Callback {
+        private final Activity a;
+
+        VideoSortPick(Activity a) { this.a = a; }
+
+        public boolean select(int index, SubmenuAdapter.Item item) {
+            try {
+                String s = item == null ? null : item.getString();
+                Y1Repository.SortVideoType t = Y1Repository.SortVideoType.A_Z;
+                if (a.getString(R.string.sort_z_a).equals(s)) t = Y1Repository.SortVideoType.Z_A;
+                else if (a.getString(R.string.sort_time_asc).equals(s)) t = Y1Repository.SortVideoType.CreateTime_Asc;
+                else if (a.getString(R.string.sort_time_desc).equals(s)) t = Y1Repository.SortVideoType.CreateTime_Desc;
+                SharedPreferencesUtils.INSTANCE.setVideoSort(t.getType());
+                resortVideoList(a);
+            } catch (Throwable t) {
+                // the preference is written or it is not; either way the menu closes
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Re-order the folder list that is ON SCREEN, rather than listing the card again.
+     *
+     * The list is built inside {@code VideoListActivity.confirm} — there is no "load this folder"
+     * method to call a second time — and it is already exactly the rows the sort is about, so
+     * sorting it in place is both the cheapest and the most honest answer. Rows are compared by
+     * the file each one stands for, which is what the next listing will compare too.
+     */
+    private static void resortVideoList(Activity a) {
+        try {
+            View root = a.findViewById(R.id.recycler);
+            if (!(root instanceof RecyclerView)) return;
+            RecyclerView rv = (RecyclerView) root;
+            RecyclerView.Adapter ad = rv.getAdapter();
+            if (!(ad instanceof BaseBindingAdapter)) return;
+            List data = ((BaseBindingAdapter) ad).getData();
+            if (data == null || data.size() < 2) return;
+            int v = SharedPreferencesUtils.INSTANCE.getVideoSort();
+            if (v == Y1Repository.SortVideoType.None.getType()) return;
+            boolean byName = v == Y1Repository.SortVideoType.A_Z.getType()
+                    || v == Y1Repository.SortVideoType.Z_A.getType();
+            boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
+                    || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
+            Collections.sort(data, new RowSort(byName, asc));
+            ad.notifyDataSetChanged();
+        } catch (Throwable t) {
+            // the order is stored; the folder shows it the next time it is opened
+        }
+    }
+
+    /** The same comparison, applied to the rows of the video browser. */
+    private static final class RowSort implements Comparator {
+        private final FileSort files;
+
+        RowSort(boolean byName, boolean asc) { this.files = new FileSort(byName, asc); }
+
+        private File fileOf(Object o) {
+            if (!(o instanceof VideoListActivity.BrowseItem)) return null;
+            VideoListActivity.BrowseItem b = (VideoListActivity.BrowseItem) o;
+            File f = b.getTargetFile();
+            if (f != null) return f;
+            VideoInfo vi = b.getVideoInfo();
+            String p = vi == null ? null : vi.getFilePath();
+            return p == null ? null : new File(p);
+        }
+
+        public int compare(Object a, Object b) {
+            File x = fileOf(a), y = fileOf(b);
+            if (x == null || y == null) return 0;
+            return files.compare(x, y);
+        }
+    }
+
+    /**
+     * "Sort by File name" in the folder's long-press menu: the four directions, then re-list.
+     *
+     * The entry is matched by STRING in {@code FilesActivity.subMenuSelectCallback} and acted on
+     * before stock's dispatch, the way "Add to queue" is — that menu reads "anything past the
+     * fixed entries is a playlist", and an entry of ours reaching it would be taken for one.
+     */
+    public static void sortMenu(Activity a) {
+        try {
+            if (a == null) return;
+            ArrayList l = new ArrayList();
+            l.add(a.getString(R.string.sort_a_z));
+            l.add(a.getString(R.string.sort_z_a));
+            l.add(a.getString(R.string.sort_time_asc));
+            l.add(a.getString(R.string.sort_time_desc));
+            // The 4th argument is the dialog THEME, not a flag (see ipp-menus-playlists).
+            new SubMenuDialog(a, l, new SortPick(a), R.style.Dialog_Common).show();
+        } catch (Throwable t) {
+            // a sort that cannot be offered leaves the list in the order it is in
+        }
+    }
+
+    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
+    public static final class SortPick implements SubMenuDialog.Callback {
+        private final Activity a;
+
+        SortPick(Activity a) { this.a = a; }
+
+        public boolean select(int index, SubmenuAdapter.Item item) {
+            try {
+                String s = item == null ? null : item.getString();
+                int v = SORT_A_Z;
+                if (a.getString(R.string.sort_z_a).equals(s)) v = SORT_Z_A;
+                else if (a.getString(R.string.sort_time_asc).equals(s)) v = SORT_OLD;
+                else if (a.getString(R.string.sort_time_desc).equals(s)) v = SORT_NEW;
+                Prefs.setInt(a, keyFor(currentPath(a)), v);
+                clearTicks(a);
+                relist(a);
+            } catch (Throwable t) {
+                // the preference is written or it is not; either way the menu closes
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Take back the tick the long-press put on the row it was raised on.
+     *
+     * {@code FilesActivity.longConfirm} ticks that row to highlight it behind the menu, and the
+     * tick belongs to the SCREEN, not to the dialog — so an action that ends by rebuilding the
+     * list has to clear it, or the row keeps its highlight beside the cursor for the rest of the
+     * visit: two highlights on one screen, and moving the wheel only adds a second. Rebuilding
+     * the list does not clear it either, because the selection is a list of INDEXES and survives
+     * a new set of items. Same rule as {@code Queue.addFromAdapter}.
+     */
+    private static void clearTicks(Activity a) {
+        try {
+            View v = a.findViewById(R.id.lv);
+            if (!(v instanceof android.widget.ListView)) return;
+            Object ad = ((android.widget.ListView) v).getAdapter();
+            if (!(ad instanceof MyBaseAdapter)) return;
+            MyBaseAdapter m = (MyBaseAdapter) ad;
+            List sel = m.getSelectedIndexList();
+            if (sel == null || sel.isEmpty()) return;
+            sel.clear();
+            m.notifyDataSetChanged();
+        } catch (Throwable t) {
+            // a tick left behind is a cosmetic defect, not a reason to lose the sort
+        }
+    }
+
+    /**
+     * List the folder again, exactly as entering it does.
+     *
+     * NOT a re-sort of what the adapter holds: what the list IS — the marker row at its head, the
+     * flat "all songs" mode, the state bar — is decided inside {@code refresh} and its coroutine,
+     * so a second place that builds the list would drift from this one on the first change to
+     * either. The path is worked out the way {@code initView} works it out.
+     */
+    private static void relist(Activity a) {
+        if (!(a instanceof FilesActivity)) return;
+        String p = currentPath(a);
+        if (p == null) return;
+        ((FilesActivity) a).refresh(p);
+    }
+
+    /**
+     * The folder this screen is showing, worked out the way {@code FilesActivity.initView} works it
+     * out — the intent's path, or the section's default when there is none. It answers both "which
+     * folder to list again" and "which section's sort key this is".
+     */
+    private static String currentPath(Activity a) {
+        String p = null;
+        if (a != null && a.getIntent() != null) p = a.getIntent().getStringExtra("now_path");
+        if (p == null && a != null) p = Prefs.defaultFolderPath(a);
+        return p;
+    }
 }

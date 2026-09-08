@@ -509,6 +509,23 @@ public final class Wheel {
         return noFast != null && noFast.get() == a;
     }
 
+    /**
+     * The same, for a caller that KNOWS which row is losing the cursor.
+     *
+     * The plain {@link #follow} remembers the row it painted last and repaints that one — right
+     * for a list the wheel walks a row at a time, wrong the moment the screen puts the cursor
+     * somewhere on its own: the Videos browser calls this when it opens a folder, i.e. with a new
+     * list and a cursor that jumped, and the row it remembered belongs to the folder that has just
+     * been left. The row that was highlighted then never got repainted and its highlight simply
+     * stayed on screen beside the real one.
+     */
+    public static void follow(RecyclerView rv, int prev, int pos, RecyclerView.Adapter adapter) {
+        if (rv == null) return;
+        lastRv = new WeakReference(rv);
+        lastPos = prev;
+        follow(rv, pos, adapter);
+    }
+
     public static void follow(RecyclerView rv, int pos, RecyclerView.Adapter adapter) {
         try {
             if (rv == null) return;
