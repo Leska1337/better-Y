@@ -23,9 +23,6 @@ import java.util.Locale;
 /**
  * The order the AUDIOBOOKS section lists things in — All audiobooks, Artists, Albums.
  *
- * Not to be confused with {@link Book}, which is about the encoding of an e-book's text; this
- * class is about the audiobook section's lists and nothing else.
- *
  * Three lists had no order to ask for. Their queries could always produce one — the song list
  * through the four DAO variants behind {@code getSongsSync}, the two name lists through
  * {@code order by lower(pinyinArtist)} and its reverse — but there was no entry in any of the
@@ -44,9 +41,9 @@ import java.util.Locale;
  * which is the very function that filled the {@code pinyin*} columns the stock queries order by,
  * so A-Z here and A-Z there are the same list.
  */
-public final class Books {
+public final class Audiobooks {
 
-    private Books() {}
+    private Audiobooks() {}
 
     /**
      * All audiobooks and the chapter list of one book share a key: {@code AllAudiobooksActivity}

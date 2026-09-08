@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..824a51f7 100644
+index 01b1f730..c1761d8e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..824a51f7 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000053
++  versionCode: 10000054
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19227,7 +19227,7 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..386216c9 100644
+index 71fe29d0..a3d04fce 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,531 @@
@@ -20176,7 +20176,7 @@ index 71fe29d0..386216c9 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev53</string>
++    <string name="ipp_version">v1.0.0-dev54</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -54123,7 +54123,7 @@ index 2b24d8d3..3a4ea9a2 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
-index 7ba7ed05..95a7321a 100644
+index 7ba7ed05..0b2778c5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
 @@ -196,6 +196,16 @@
@@ -54138,7 +54138,7 @@ index 7ba7ed05..95a7321a 100644
 +
 +    check-cast p1, Ljava/util/List;
 +
-+    invoke-static {p1}, Lcom/innioasis/ipp/Books;->sortSongs(Ljava/util/List;)V
++    invoke-static {p1}, Lcom/innioasis/ipp/Audiobooks;->sortSongs(Ljava/util/List;)V
 +
      .line 60
      iget-object p1, p0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4;->this$0:Lcom/innioasis/y1/activity/AllAudiobooksActivity;
@@ -54737,7 +54737,7 @@ index 2ae02d9c..da3a63e0 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
-index c4ec82ef..48dd7a55 100644
+index c4ec82ef..da1a96e8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 @@ -66,6 +66,24 @@
@@ -54749,7 +54749,7 @@ index c4ec82ef..48dd7a55 100644
 +    # stock preparation: the next instruction writes over p2, i.e. over the Item being asked about.
 +    iget-object v0, p0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1;->this$0:Lcom/innioasis/y1/activity/AllAudiobooksActivity;
 +
-+    invoke-static {v0, p2, p1}, Lcom/innioasis/ipp/Books;->pick(Landroid/app/Activity;Lcom/innioasis/music/adapter/SubmenuAdapter$Item;I)I
++    invoke-static {v0, p2, p1}, Lcom/innioasis/ipp/Audiobooks;->pick(Landroid/app/Activity;Lcom/innioasis/music/adapter/SubmenuAdapter$Item;I)I
 +
 +    move-result p1
 +
@@ -54791,7 +54791,7 @@ index c4ec82ef..48dd7a55 100644
  
      .line 141
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
-index f8a19b28..4a40414c 100644
+index f8a19b28..9d3a3587 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 @@ -732,6 +732,21 @@
@@ -54801,7 +54801,7 @@ index f8a19b28..4a40414c 100644
 +    # ipp: "Sort by File name" -- the order this section is read in, which nothing could ask for.
 +    # FIRST, as on every other list screen; the callback claims it by string and shifts the
 +    # indexes below it back by one, that dispatch being by index.
-+    invoke-static {v6, p0}, Lcom/innioasis/ipp/Books;->menu(Ljava/util/List;Landroid/app/Activity;)V
++    invoke-static {v6, p0}, Lcom/innioasis/ipp/Audiobooks;->menu(Ljava/util/List;Landroid/app/Activity;)V
 +
 +    # ipp: "Add to queue". Appended to the list stock has just built rather than woven into
 +    # the String[] above, so no index of an existing entry moves.
@@ -59959,7 +59959,7 @@ index 0688aa89..843608af 100644
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
-index e34359a1..f5e8ef9b 100644
+index e34359a1..c96b4ab1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 @@ -196,6 +196,18 @@
@@ -59976,7 +59976,7 @@ index e34359a1..f5e8ef9b 100644
 +
 +    check-cast v0, Ljava/util/List;
 +
-+    invoke-static {p1, v0}, Lcom/innioasis/ipp/Books;->sortNames(Landroid/app/Activity;Ljava/util/List;)V
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/Audiobooks;->sortNames(Landroid/app/Activity;Ljava/util/List;)V
 +
      .line 55
      iget-object p1, p0, Lcom/innioasis/y1/activity/PlayerActivity$initView$1$3;->this$0:Lcom/innioasis/y1/activity/PlayerActivity;
@@ -60575,7 +60575,7 @@ index c952c2fd..940bd910 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali
-index a2a27d57..0a9d5351 100644
+index a2a27d57..b307be03 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali
 @@ -66,6 +66,24 @@
@@ -60587,7 +60587,7 @@ index a2a27d57..0a9d5351 100644
 +    # preparation: the next instruction writes over p2, i.e. over the Item being asked about.
 +    iget-object v0, p0, Lcom/innioasis/y1/activity/PlayerActivity$longConfirm$1;->this$0:Lcom/innioasis/y1/activity/PlayerActivity;
 +
-+    invoke-static {v0, p2, p1}, Lcom/innioasis/ipp/Books;->pick(Landroid/app/Activity;Lcom/innioasis/music/adapter/SubmenuAdapter$Item;I)I
++    invoke-static {v0, p2, p1}, Lcom/innioasis/ipp/Audiobooks;->pick(Landroid/app/Activity;Lcom/innioasis/music/adapter/SubmenuAdapter$Item;I)I
 +
 +    move-result p1
 +
@@ -60604,7 +60604,7 @@ index a2a27d57..0a9d5351 100644
  
      if-eqz p1, :cond_1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
-index 5afe8455..fd5fd51a 100644
+index 5afe8455..2abe448a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
 @@ -642,6 +642,11 @@
@@ -60614,7 +60614,7 @@ index 5afe8455..fd5fd51a 100644
 +    # ipp: "Sort by" (A-Z / Z-A) for the Artists and Albums lists of the Audiobooks section.
 +    # FIRST, as on the Music section's own Artists screen; the callback claims it by string and
 +    # shifts the indexes below it back by one, that dispatch being by index.
-+    invoke-static {v6, p0}, Lcom/innioasis/ipp/Books;->menu(Ljava/util/List;Landroid/app/Activity;)V
++    invoke-static {v6, p0}, Lcom/innioasis/ipp/Audiobooks;->menu(Ljava/util/List;Landroid/app/Activity;)V
 +
      .line 116
      new-instance v0, Lcom/innioasis/y1/activity/PlayerActivity$longConfirm$1;
