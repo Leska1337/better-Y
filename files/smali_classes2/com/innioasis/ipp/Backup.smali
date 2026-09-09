@@ -295,9 +295,9 @@
   .catchall { :L4 .. :L17 } :L18
   .catchall { :L20 .. :L21 } :L22
   .registers 13
-  .line 651
+  .line 659
     nop
-  .line 653
+  .line 661
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -309,10 +309,10 @@
     add-int/lit8 v3, v3, -4
     invoke-virtual { p2, v2, v3 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object v2
-  .line 654
+  .line 662
     invoke-static { }, Landroid/util/Xml;->newPullParser()Lorg/xmlpull/v1/XmlPullParser;
     move-result-object v3
-  .line 655
+  .line 663
     new-instance v4, Ljava/io/BufferedInputStream;
     new-instance v5, Ljava/io/FileInputStream;
     new-instance v6, Ljava/io/File;
@@ -320,21 +320,21 @@
     invoke-direct { v5, v6 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
     invoke-direct { v4, v5 }, Ljava/io/BufferedInputStream;-><init>(Ljava/io/InputStream;)V
   :L1
-  .line 656
+  .line 664
     const-string p1, "UTF-8"
     invoke-interface { v3, v4, p1 }, Lorg/xmlpull/v1/XmlPullParser;->setInput(Ljava/io/InputStream;Ljava/lang/String;)V
-  .line 657
+  .line 665
     invoke-virtual { p0, v2, v0 }, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object p0
-  .line 658
+  .line 666
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->clear()Landroid/content/SharedPreferences$Editor;
-  .line 659
+  .line 667
     nop
-  .line 660
+  .line 668
     nop
-  .line 661
+  .line 669
     invoke-interface { v3 }, Lorg/xmlpull/v1/XmlPullParser;->getEventType()I
     move-result p1
   :L2
@@ -343,7 +343,7 @@
   :L3
     const/4 v6, 1
     if-eq p1, v6, :L16
-  .line 662
+  .line 670
     const/4 v6, 3
     const-string v7, "set"
     if-ne p1, v6, :L6
@@ -353,42 +353,42 @@
     invoke-virtual { v7, v6 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v6
     if-eqz v6, :L6
-  .line 663
+  .line 671
     if-eqz v2, :L5
     if-eqz v5, :L5
     invoke-interface { p0, v2, v5 }, Landroid/content/SharedPreferences$Editor;->putStringSet(Ljava/lang/String;Ljava/util/Set;)Landroid/content/SharedPreferences$Editor;
   :L5
-  .line 664
+  .line 672
     nop
-  .line 665
+  .line 673
     nop
-  .line 666
+  .line 674
     move-object v2, v1
     move-object v5, v2
     goto/16 :L15
   :L6
-  .line 668
+  .line 676
     const/4 v6, 2
     if-eq p1, v6, :L7
     goto/16 :L15
   :L7
-  .line 669
+  .line 677
     invoke-interface { v3 }, Lorg/xmlpull/v1/XmlPullParser;->getName()Ljava/lang/String;
     move-result-object p1
-  .line 670
+  .line 678
     const-string v6, "name"
     invoke-interface { v3, v1, v6 }, Lorg/xmlpull/v1/XmlPullParser;->getAttributeValue(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v6
-  .line 671
+  .line 679
     const-string v8, "value"
     invoke-interface { v3, v1, v8 }, Lorg/xmlpull/v1/XmlPullParser;->getAttributeValue(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v8
-  .line 672
+  .line 680
     const-string v9, "string"
     invoke-virtual { v9, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v9
     if-eqz v9, :L9
-  .line 674
+  .line 682
     if-eqz v5, :L8
     if-nez v6, :L8
     invoke-interface { v3 }, Lorg/xmlpull/v1/XmlPullParser;->nextText()Ljava/lang/String;
@@ -396,97 +396,97 @@
     invoke-virtual { v5, p1 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
     goto :L15
   :L8
-  .line 675
+  .line 683
     if-eqz v6, :L15
     invoke-interface { v3 }, Lorg/xmlpull/v1/XmlPullParser;->nextText()Ljava/lang/String;
     move-result-object p1
     invoke-interface { p0, v6, p1 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
     goto :L15
   :L9
-  .line 676
+  .line 684
     invoke-virtual { v7, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v7
     if-eqz v7, :L10
-  .line 677
+  .line 685
     nop
-  .line 678
+  .line 686
     new-instance v5, Ljava/util/HashSet;
     invoke-direct { v5 }, Ljava/util/HashSet;-><init>()V
     move-object v2, v6
     goto :L15
   :L10
-  .line 679
+  .line 687
     if-eqz v6, :L15
     if-nez v8, :L11
-  .line 680
+  .line 688
     goto :L15
   :L11
-  .line 681
+  .line 689
     const-string v7, "boolean"
     invoke-virtual { v7, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v7
     if-eqz v7, :L12
-  .line 682
+  .line 690
     const-string p1, "true"
     invoke-virtual { p1, v8 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
     invoke-interface { p0, v6, p1 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
     goto :L15
   :L12
-  .line 683
+  .line 691
     const-string v7, "int"
     invoke-virtual { v7, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v7
     if-eqz v7, :L13
-  .line 684
+  .line 692
     invoke-static { v8 }, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
     move-result p1
     invoke-interface { p0, v6, p1 }, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
     goto :L15
   :L13
-  .line 685
+  .line 693
     const-string v7, "long"
     invoke-virtual { v7, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v7
     if-eqz v7, :L14
-  .line 686
+  .line 694
     invoke-static { v8 }, Ljava/lang/Long;->parseLong(Ljava/lang/String;)J
     move-result-wide v7
     invoke-interface { p0, v6, v7, v8 }, Landroid/content/SharedPreferences$Editor;->putLong(Ljava/lang/String;J)Landroid/content/SharedPreferences$Editor;
     goto :L15
   :L14
-  .line 687
+  .line 695
     const-string v7, "float"
     invoke-virtual { v7, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
     if-eqz p1, :L15
-  .line 688
+  .line 696
     invoke-static { v8 }, Ljava/lang/Float;->parseFloat(Ljava/lang/String;)F
     move-result p1
     invoke-interface { p0, v6, p1 }, Landroid/content/SharedPreferences$Editor;->putFloat(Ljava/lang/String;F)Landroid/content/SharedPreferences$Editor;
   :L15
-  .line 661
+  .line 669
     invoke-interface { v3 }, Lorg/xmlpull/v1/XmlPullParser;->next()I
     move-result p1
     goto/16 :L3
   :L16
-  .line 691
+  .line 699
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->commit()Z
     move-result p0
   :L17
-  .line 696
+  .line 704
     invoke-static { v4 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 691
+  .line 699
     return p0
   :L18
-  .line 692
+  .line 700
     move-exception p0
     move-object v1, v4
     goto :L20
   :L19
     move-exception p0
   :L20
-  .line 693
+  .line 701
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "restore prefs "
@@ -503,17 +503,17 @@
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L21
-  .line 694
+  .line 702
     nop
-  .line 696
+  .line 704
     invoke-static { v1 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 694
+  .line 702
     return v0
   :L22
-  .line 696
+  .line 704
     move-exception p0
     invoke-static { v1 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 697
+  .line 705
     goto :L24
   :L23
     throw p0
@@ -523,50 +523,50 @@
 
 .method static askLoad(Landroid/app/Activity;)V
   .registers 9
-  .line 388
+  .line 396
     invoke-static { }, Lcom/innioasis/ipp/Backup;->list()[Ljava/io/File;
     move-result-object v0
-  .line 389
+  .line 397
     array-length v1, v0
     if-nez v1, :L0
-  .line 390
+  .line 398
     const v0, 2131821121
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Backup;->toast(Landroid/content/Context;Ljava/lang/String;)V
-  .line 391
+  .line 399
     return-void
   :L0
-  .line 393
+  .line 401
     array-length v1, v0
     new-array v5, v1, [Ljava/lang/String;
-  .line 394
+  .line 402
     array-length v1, v0
     new-array v6, v1, [Ljava/lang/String;
-  .line 395
+  .line 403
     const/4 v1, 0
   :L1
     array-length v2, v0
     if-ge v1, v2, :L2
-  .line 396
+  .line 404
     aget-object v2, v0, v1
     invoke-virtual { v2 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->when(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     aput-object v2, v5, v1
-  .line 397
+  .line 405
     aget-object v2, v0, v1
     invoke-virtual { v2 }, Ljava/io/File;->length()J
     move-result-wide v2
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/CacheSize;->format(J)Ljava/lang/String;
     move-result-object v2
     aput-object v2, v6, v1
-  .line 395
+  .line 403
     add-int/lit8 v1, v1, 1
     goto :L1
   :L2
-  .line 399
+  .line 407
     new-instance v1, Lcom/innioasis/ipp/BackupDialog;
     const v2, 2131821120
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
@@ -576,9 +576,9 @@
     move-object v2, v1
     move-object v3, p0
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/ipp/BackupDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;Lcom/innioasis/ipp/BackupDialog$Go;)V
-  .line 400
+  .line 408
     invoke-virtual { v1 }, Lcom/innioasis/ipp/BackupDialog;->show()V
-  .line 401
+  .line 409
     return-void
 .end method
 
@@ -737,57 +737,36 @@
 .method private static close()V
   .catchall { :L0 .. :L1 } :L2
   .registers 2
-  .line 802
+  .line 810
     sget-object v0, Lcom/innioasis/ipp/Backup;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 803
+  .line 811
     const/4 v1, 0
     sput-object v1, Lcom/innioasis/ipp/Backup;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 805
+  .line 813
     if-eqz v0, :L3
   :L0
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->dismiss()V
   :L1
     goto :L3
   :L2
-  .line 806
+  .line 814
     move-exception v0
     goto :L4
   :L3
-  .line 808
+  .line 816
     nop
   :L4
-  .line 809
+  .line 817
     return-void
 .end method
 
 .method private static closeQuietly(Ljava/io/InputStream;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 1
-  .line 772
-    if-eqz p0, :L3
-  :L0
-    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
-  :L1
-    goto :L3
-  :L2
-  .line 773
-    move-exception p0
-    goto :L4
-  :L3
-  .line 775
-    nop
-  :L4
-  .line 776
-    return-void
-.end method
-
-.method private static closeQuietly(Ljava/io/OutputStream;)V
-  .catchall { :L0 .. :L1 } :L2
-  .registers 1
   .line 780
     if-eqz p0, :L3
   :L0
-    invoke-virtual { p0 }, Ljava/io/OutputStream;->close()V
+    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
   :L1
     goto :L3
   :L2
@@ -802,6 +781,78 @@
     return-void
 .end method
 
+.method private static closeQuietly(Ljava/io/OutputStream;)V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 1
+  .line 788
+    if-eqz p0, :L3
+  :L0
+    invoke-virtual { p0 }, Ljava/io/OutputStream;->close()V
+  :L1
+    goto :L3
+  :L2
+  .line 789
+    move-exception p0
+    goto :L4
+  :L3
+  .line 791
+    nop
+  :L4
+  .line 792
+    return-void
+.end method
+
+.method private static collect(Ljava/util/List;Ljava/io/File;)V
+  .catchall { :L0 .. :L3 } :L5
+  .registers 5
+  .line 381
+    if-nez p1, :L0
+    const/4 p1, 0
+    goto :L1
+  :L0
+    invoke-virtual { p1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
+    move-result-object p1
+  :L1
+  .line 382
+    const/4 v0, 0
+  :L2
+    if-eqz p1, :L4
+    array-length v1, p1
+    if-ge v0, v1, :L4
+  .line 383
+    aget-object v1, p1, v0
+    invoke-virtual { v1 }, Ljava/io/File;->getName()Ljava/lang/String;
+    move-result-object v1
+  .line 384
+    aget-object v2, p1, v0
+    invoke-virtual { v2 }, Ljava/io/File;->isFile()Z
+    move-result v2
+    if-eqz v2, :L3
+    const-string v2, "backup_"
+    invoke-virtual { v1, v2 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
+    move-result v2
+    if-eqz v2, :L3
+    const-string v2, ".zip"
+    invoke-virtual { v1, v2 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
+    move-result v1
+    if-eqz v1, :L3
+    aget-object v1, p1, v0
+    invoke-interface { p0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
+  :L3
+  .line 382
+    add-int/lit8 v0, v0, 1
+    goto :L2
+  :L4
+  .line 388
+    goto :L6
+  :L5
+  .line 386
+    move-exception p0
+  :L6
+  .line 389
+    return-void
+.end method
+
 .method private static copy(Ljava/io/InputStream;Ljava/io/OutputStream;)V
   .annotation system Ldalvik/annotation/Throws;
     value = {
@@ -809,11 +860,11 @@
     }
   .end annotation
   .registers 5
-  .line 764
+  .line 772
     const/16 v0, 8192
     new-array v0, v0, [B
   :L0
-  .line 766
+  .line 774
     invoke-virtual { p0, v0 }, Ljava/io/InputStream;->read([B)I
     move-result v1
     if-lez v1, :L1
@@ -821,15 +872,15 @@
     invoke-virtual { p1, v0, v2, v1 }, Ljava/io/OutputStream;->write([BII)V
     goto :L0
   :L1
-  .line 767
+  .line 775
     invoke-virtual { p1 }, Ljava/io/OutputStream;->flush()V
-  .line 768
+  .line 776
     return-void
 .end method
 
 .method private static dataDir(Landroid/content/Context;)Ljava/io/File;
   .registers 2
-  .line 746
+  .line 754
     const/4 v0, 0
     if-nez p0, :L0
     move-object p0, v0
@@ -838,7 +889,7 @@
     invoke-virtual { p0 }, Landroid/content/Context;->getFilesDir()Ljava/io/File;
     move-result-object p0
   :L1
-  .line 747
+  .line 755
     if-nez p0, :L2
     goto :L3
   :L2
@@ -906,61 +957,30 @@
 .end method
 
 .method static list()[Ljava/io/File;
-  .catchall { :L0 .. :L4 } :L5
-  .registers 5
+  .catchall { :L0 .. :L1 } :L2
+  .registers 2
   .line 367
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
+  .line 368
+    invoke-static { }, Lcom/innioasis/ipp/Panel;->backups()Ljava/io/File;
+    move-result-object v1
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Backup;->collect(Ljava/util/List;Ljava/io/File;)V
   :L0
-  .line 369
-    invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
-    move-result-object v1
-    invoke-virtual { v1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
-    move-result-object v1
-  .line 370
-    const/4 v2, 0
-  :L1
-    if-eqz v1, :L3
-    array-length v3, v1
-    if-ge v2, v3, :L3
   .line 371
-    aget-object v3, v1, v2
-    invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
-    move-result-object v3
-  .line 372
-    aget-object v4, v1, v2
-    invoke-virtual { v4 }, Ljava/io/File;->isFile()Z
-    move-result v4
-    if-eqz v4, :L2
-    const-string v4, "backup_"
-    invoke-virtual { v3, v4 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
-    move-result v4
-    if-eqz v4, :L2
-    const-string v4, ".zip"
-    invoke-virtual { v3, v4 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
-    move-result v3
-    if-eqz v3, :L2
-    aget-object v3, v1, v2
-    invoke-interface { v0, v3 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  :L2
-  .line 370
-    add-int/lit8 v2, v2, 1
-    goto :L1
-  :L3
-  .line 375
     new-instance v1, Lcom/innioasis/ipp/Diag$NameCmp;
     invoke-direct { v1 }, Lcom/innioasis/ipp/Diag$NameCmp;-><init>()V
     invoke-static { v0, v1 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 376
+  .line 372
     invoke-static { v0 }, Ljava/util/Collections;->reverse(Ljava/util/List;)V
-  :L4
-  .line 379
-    goto :L6
-  :L5
-  .line 377
+  :L1
+  .line 375
+    goto :L3
+  :L2
+  .line 373
     move-exception v1
-  :L6
-  .line 380
+  :L3
+  .line 376
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v1
     new-array v1, v1, [Ljava/io/File;
@@ -1086,10 +1106,10 @@
   .catchall { :L6 .. :L7 } :L8
   .catchall { :L7 .. :L11 } :L25
   .registers 12
-  .line 570
+  .line 578
     invoke-static { p0 }, Lcom/innioasis/ipp/Backup;->dataDir(Landroid/content/Context;)Ljava/io/File;
     move-result-object v0
-  .line 571
+  .line 579
     const/4 v1, 0
     if-eqz v0, :L28
     if-eqz p1, :L28
@@ -1098,18 +1118,18 @@
     if-nez v2, :L0
     goto/16 :L28
   :L0
-  .line 572
+  .line 580
     new-instance v2, Ljava/io/File;
     const-string v3, "ipp_restore"
     invoke-direct { v2, v0, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 573
+  .line 581
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->wipe(Ljava/io/File;)V
-  .line 574
+  .line 582
     new-instance v3, Ljava/util/ArrayList;
     invoke-direct { v3 }, Ljava/util/ArrayList;-><init>()V
-  .line 575
+  .line 583
     nop
-  .line 577
+  .line 585
     const/4 v4, 0
   :L1
     new-instance v5, Ljava/util/zip/ZipInputStream;
@@ -1119,14 +1139,14 @@
     invoke-direct { v6, v7 }, Ljava/io/BufferedInputStream;-><init>(Ljava/io/InputStream;)V
     invoke-direct { v5, v6 }, Ljava/util/zip/ZipInputStream;-><init>(Ljava/io/InputStream;)V
   :L2
-  .line 579
+  .line 587
     invoke-virtual { v5 }, Ljava/util/zip/ZipInputStream;->getNextEntry()Ljava/util/zip/ZipEntry;
     move-result-object v6
     if-eqz v6, :L11
-  .line 580
+  .line 588
     invoke-virtual { v6 }, Ljava/util/zip/ZipEntry;->getName()Ljava/lang/String;
     move-result-object v7
-  .line 581
+  .line 589
     invoke-virtual { v6 }, Ljava/util/zip/ZipEntry;->isDirectory()Z
     move-result v6
     if-nez v6, :L2
@@ -1135,38 +1155,38 @@
     if-nez v6, :L3
     goto :L2
   :L3
-  .line 582
+  .line 590
     new-instance v6, Ljava/io/File;
     invoke-direct { v6, v2, v7 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 583
+  .line 591
     invoke-virtual { v6 }, Ljava/io/File;->getParentFile()Ljava/io/File;
     move-result-object v8
-  .line 584
+  .line 592
     if-eqz v8, :L4
     invoke-virtual { v8 }, Ljava/io/File;->mkdirs()Z
   :L4
-  .line 585
+  .line 593
     nop
   :L5
-  .line 587
+  .line 595
     new-instance v8, Ljava/io/BufferedOutputStream;
     new-instance v9, Ljava/io/FileOutputStream;
     invoke-direct { v9, v6 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
     invoke-direct { v8, v9 }, Ljava/io/BufferedOutputStream;-><init>(Ljava/io/OutputStream;)V
   :L6
-  .line 588
+  .line 596
     invoke-static { v5, v8 }, Lcom/innioasis/ipp/Backup;->copy(Ljava/io/InputStream;Ljava/io/OutputStream;)V
   :L7
-  .line 590
+  .line 598
     invoke-static { v8 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/OutputStream;)V
-  .line 591
+  .line 599
     nop
-  .line 592
+  .line 600
     invoke-interface { v3, v7 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 593
+  .line 601
     goto :L2
   :L8
-  .line 590
+  .line 598
     move-exception p0
     move-object v4, v8
     goto :L10
@@ -1174,39 +1194,39 @@
     move-exception p0
   :L10
     invoke-static { v4 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/OutputStream;)V
-  .line 591
+  .line 599
     throw p0
   :L11
-  .line 599
+  .line 607
     nop
-  .line 600
+  .line 608
     invoke-static { v5 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 601
+  .line 609
     invoke-interface { v3 }, Ljava/util/List;->isEmpty()Z
     move-result v4
     if-eqz v4, :L12
-  .line 602
+  .line 610
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->wipe(Ljava/io/File;)V
-  .line 603
+  .line 611
     return v1
   :L12
-  .line 609
+  .line 617
     new-instance v4, Ljava/io/File;
     const-string v5, "databases"
     invoke-direct { v4, v0, v5 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-virtual { v4 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v4
-  .line 610
+  .line 618
     const/4 v5, 0
   :L13
     if-eqz v4, :L16
     array-length v6, v4
     if-ge v5, v6, :L16
-  .line 611
+  .line 619
     aget-object v6, v4, v5
     invoke-virtual { v6 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v6
-  .line 612
+  .line 620
     const-string v7, "-wal"
     invoke-virtual { v6, v7 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
     move-result v7
@@ -1219,13 +1239,13 @@
     aget-object v6, v4, v5
     invoke-virtual { v6 }, Ljava/io/File;->delete()Z
   :L15
-  .line 610
+  .line 618
     add-int/lit8 v5, v5, 1
     goto :L13
   :L16
-  .line 615
+  .line 623
     nop
-  .line 616
+  .line 624
     const/4 v4, 0
     const/4 v5, 0
   :L17
@@ -1233,70 +1253,70 @@
     move-result v6
     const-string v7, "system.txt"
     if-ge v4, v6, :L22
-  .line 617
+  .line 625
     invoke-interface { v3, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v6
     check-cast v6, Ljava/lang/String;
-  .line 618
+  .line 626
     invoke-virtual { v7, v6 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v7
     if-eqz v7, :L18
     goto :L21
   :L18
-  .line 619
+  .line 627
     const-string v7, "shared_prefs/"
     invoke-virtual { v6, v7 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v7
     if-eqz v7, :L19
-  .line 620
+  .line 628
     invoke-static { p0, v2, v6 }, Lcom/innioasis/ipp/Backup;->applyPrefs(Landroid/content/Context;Ljava/io/File;Ljava/lang/String;)Z
     move-result v6
     if-eqz v6, :L21
     add-int/lit8 v5, v5, 1
     goto :L21
   :L19
-  .line 623
+  .line 631
     new-instance v7, Ljava/io/File;
     invoke-direct { v7, v2, v6 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 624
+  .line 632
     new-instance v8, Ljava/io/File;
     invoke-direct { v8, v0, v6 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 625
+  .line 633
     invoke-virtual { v8 }, Ljava/io/File;->getParentFile()Ljava/io/File;
     move-result-object v6
-  .line 626
+  .line 634
     if-eqz v6, :L20
     invoke-virtual { v6 }, Ljava/io/File;->mkdirs()Z
   :L20
-  .line 627
+  .line 635
     invoke-virtual { v8 }, Ljava/io/File;->delete()Z
-  .line 628
+  .line 636
     invoke-virtual { v7, v8 }, Ljava/io/File;->renameTo(Ljava/io/File;)Z
     move-result v6
     if-eqz v6, :L21
     add-int/lit8 v5, v5, 1
   :L21
-  .line 616
+  .line 624
     add-int/lit8 v4, v4, 1
     goto :L17
   :L22
-  .line 631
+  .line 639
     new-instance v0, Ljava/io/File;
     invoke-direct { v0, v2, v7 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 632
+  .line 640
     invoke-virtual { v0 }, Ljava/io/File;->isFile()Z
     move-result v4
     if-eqz v4, :L23
-  .line 633
+  .line 641
     invoke-static { v0 }, Lcom/innioasis/ipp/Backup;->text(Ljava/io/File;)Ljava/lang/String;
     move-result-object v0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Sys;->apply(Landroid/content/Context;Ljava/lang/String;)V
-  .line 634
+  .line 642
     add-int/lit8 v5, v5, 1
   :L23
-  .line 637
+  .line 645
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->wipe(Ljava/io/File;)V
-  .line 638
+  .line 646
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v0, "restore: "
@@ -1321,20 +1341,20 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 639
+  .line 647
     if-lez v5, :L24
     const/4 v1, 1
   :L24
     return v1
   :L25
-  .line 594
+  .line 602
     move-exception p0
     move-object v4, v5
     goto :L27
   :L26
     move-exception p0
   :L27
-  .line 595
+  .line 603
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v0, "restore unpack failed: "
@@ -1345,14 +1365,14 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 596
+  .line 604
     invoke-static { v4 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 597
+  .line 605
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->wipe(Ljava/io/File;)V
-  .line 598
+  .line 606
     return v1
   :L28
-  .line 571
+  .line 579
     return v1
 .end method
 
@@ -1405,7 +1425,7 @@
   :L3
   .line 209
     new-instance v3, Ljava/io/File;
-    invoke-static { }, Lcom/innioasis/ipp/Panel;->dir()Ljava/io/File;
+    invoke-static { }, Lcom/innioasis/ipp/Panel;->backups()Ljava/io/File;
     move-result-object v5
     new-instance v6, Ljava/lang/StringBuilder;
     invoke-direct { v6 }, Ljava/lang/StringBuilder;-><init>()V
@@ -1538,8 +1558,10 @@
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   .line 235
-    const/4 p0, 5
-    invoke-static { v7, p0 }, Lcom/innioasis/ipp/Diag;->keepNewest(Ljava/lang/String;I)V
+    invoke-static { }, Lcom/innioasis/ipp/Panel;->backups()Ljava/io/File;
+    move-result-object p0
+    const/4 v0, 5
+    invoke-static { p0, v7, v0 }, Lcom/innioasis/ipp/Diag;->keepNewest(Ljava/io/File;Ljava/lang/String;I)V
   .line 236
     return-object v3
   :L15
@@ -1573,7 +1595,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 9
   :L0
-  .line 792
+  .line 800
     new-instance v6, Lcom/innioasis/y1/utils/LoadingDialog;
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v2
@@ -1584,15 +1606,15 @@
     move-object v0, v6
     move-object v1, p0
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
-  .line 794
+  .line 802
     invoke-virtual { v6 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V
   :L1
-  .line 795
+  .line 803
     return-object v6
   :L2
-  .line 796
+  .line 804
     move-exception p0
-  .line 797
+  .line 805
     const/4 p0, 0
     return-object p0
 .end method
@@ -1624,9 +1646,9 @@
   .catchall { :L1 .. :L2 } :L3
   .catchall { :L5 .. :L6 } :L7
   .registers 4
-  .line 702
+  .line 710
     nop
-  .line 704
+  .line 712
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/BufferedInputStream;
@@ -1634,62 +1656,62 @@
     invoke-direct { v2, p0 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
     invoke-direct { v1, v2 }, Ljava/io/BufferedInputStream;-><init>(Ljava/io/InputStream;)V
   :L1
-  .line 705
+  .line 713
     new-instance p0, Ljava/io/ByteArrayOutputStream;
     invoke-direct { p0 }, Ljava/io/ByteArrayOutputStream;-><init>()V
-  .line 706
+  .line 714
     invoke-static { v1, p0 }, Lcom/innioasis/ipp/Backup;->copy(Ljava/io/InputStream;Ljava/io/OutputStream;)V
-  .line 707
+  .line 715
     new-instance v0, Ljava/lang/String;
     invoke-virtual { p0 }, Ljava/io/ByteArrayOutputStream;->toByteArray()[B
     move-result-object p0
     const-string v2, "UTF-8"
     invoke-direct { v0, p0, v2 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
   :L2
-  .line 711
+  .line 719
     invoke-static { v1 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 707
+  .line 715
     return-object v0
   :L3
-  .line 708
+  .line 716
     move-exception p0
     move-object v0, v1
     goto :L5
   :L4
     move-exception p0
   :L5
-  .line 709
+  .line 717
     const-string p0, ""
   :L6
-  .line 711
+  .line 719
     invoke-static { v0 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 709
+  .line 717
     return-object p0
   :L7
-  .line 711
+  .line 719
     move-exception p0
     invoke-static { v0 }, Lcom/innioasis/ipp/Backup;->closeQuietly(Ljava/io/InputStream;)V
-  .line 712
+  .line 720
     throw p0
 .end method
 
 .method private static toast(Landroid/content/Context;Ljava/lang/String;)V
   .catchall { :L1 .. :L5 } :L6
   .registers 3
-  .line 821
+  .line 829
     if-eqz p0, :L8
     if-nez p1, :L0
     goto :L8
   :L0
-  .line 822
+  .line 830
     const/4 v0, 1
   :L1
     invoke-static { p0, p1, v0 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object p0
-  .line 823
+  .line 831
     invoke-virtual { p0 }, Landroid/widget/Toast;->getView()Landroid/view/View;
     move-result-object p1
-  .line 824
+  .line 832
     if-nez p1, :L2
     const/4 p1, 0
     goto :L3
@@ -1698,32 +1720,32 @@
     invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p1
   :L3
-  .line 825
+  .line 833
     instance-of v0, p1, Landroid/widget/TextView;
     if-eqz v0, :L4
     check-cast p1, Landroid/widget/TextView;
     const/16 v0, 17
     invoke-virtual { p1, v0 }, Landroid/widget/TextView;->setGravity(I)V
   :L4
-  .line 826
+  .line 834
     invoke-virtual { p0 }, Landroid/widget/Toast;->show()V
   :L5
-  .line 829
+  .line 837
     goto :L7
   :L6
-  .line 827
+  .line 835
     move-exception p0
   :L7
-  .line 830
+  .line 838
     return-void
   :L8
-  .line 821
+  .line 829
     return-void
 .end method
 
 .method private static wanted(Ljava/lang/String;)Z
   .registers 6
-  .line 722
+  .line 730
     const/4 v0, 0
     if-eqz p0, :L14
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
@@ -1731,7 +1753,7 @@
     if-nez v1, :L0
     goto/16 :L14
   :L0
-  .line 723
+  .line 731
     const-string v1, ".."
     invoke-virtual { p0, v1 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v1
@@ -1746,7 +1768,7 @@
     if-ltz v1, :L1
     goto/16 :L13
   :L1
-  .line 726
+  .line 734
     const-string v1, "system.txt"
     invoke-virtual { v1, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
@@ -1754,7 +1776,7 @@
     if-eqz v1, :L2
     return v3
   :L2
-  .line 727
+  .line 735
     const-string v1, "shared_prefs/"
     invoke-virtual { p0, v1 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v1
@@ -1763,7 +1785,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
     move-result v1
     if-eqz v1, :L4
-  .line 728
+  .line 736
     const/16 v1, 13
     invoke-virtual { p0, v2, v1 }, Ljava/lang/String;->indexOf(II)I
     move-result p0
@@ -1772,7 +1794,7 @@
   :L3
     return v0
   :L4
-  .line 730
+  .line 738
     const-string v1, "databases/"
     invoke-virtual { p0, v1 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v1
@@ -1781,7 +1803,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
     move-result v1
     if-nez v1, :L6
-  .line 731
+  .line 739
     const/16 v1, 10
     invoke-virtual { p0, v2, v1 }, Ljava/lang/String;->indexOf(II)I
     move-result p0
@@ -1790,13 +1812,13 @@
   :L5
     return v0
   :L6
-  .line 733
+  .line 741
     const/4 v1, 0
   :L7
     sget-object v2, Lcom/innioasis/ipp/Backup;->TREES:[Ljava/lang/String;
     array-length v4, v2
     if-ge v1, v4, :L9
-  .line 734
+  .line 742
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     aget-object v2, v2, v1
@@ -1812,41 +1834,41 @@
     if-eqz v2, :L8
     return v3
   :L8
-  .line 733
+  .line 741
     add-int/lit8 v1, v1, 1
     goto :L7
   :L9
-  .line 736
+  .line 744
     const/4 v1, 0
   :L10
     sget-object v2, Lcom/innioasis/ipp/Backup;->FILES:[Ljava/lang/String;
     array-length v4, v2
     if-ge v1, v4, :L12
-  .line 737
+  .line 745
     aget-object v2, v2, v1
     invoke-virtual { v2, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v2
     if-eqz v2, :L11
     return v3
   :L11
-  .line 736
+  .line 744
     add-int/lit8 v1, v1, 1
     goto :L10
   :L12
-  .line 739
+  .line 747
     return v0
   :L13
-  .line 724
+  .line 732
     return v0
   :L14
-  .line 722
+  .line 730
     return v0
 .end method
 
 .method private static when(Ljava/lang/String;)Ljava/lang/String;
   .catchall { :L0 .. :L1 } :L3
   .registers 7
-  .line 410
+  .line 418
     const-string v0, "-"
   :L0
     const-string v1, "backup_"
@@ -1860,7 +1882,7 @@
     sub-int/2addr v2, v3
     invoke-virtual { p0, v1, v2 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object v1
-  .line 411
+  .line 419
     invoke-virtual { v1 }, Ljava/lang/String;->length()I
     move-result v2
     const/16 v3, 15
@@ -1870,7 +1892,7 @@
     move-result v3
     const/16 v4, 95
     if-ne v3, v4, :L2
-  .line 412
+  .line 420
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     const/4 v4, 0
@@ -1895,7 +1917,7 @@
     const-string v2, " "
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 413
+  .line 421
     const/16 v2, 11
     const/16 v3, 9
     invoke-virtual { v1, v3, v2 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
@@ -1913,16 +1935,16 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
   :L1
-  .line 412
+  .line 420
     return-object p0
   :L2
-  .line 417
+  .line 425
     goto :L4
   :L3
-  .line 415
+  .line 423
     move-exception v0
   :L4
-  .line 418
+  .line 426
     return-object p0
 .end method
 
@@ -1930,16 +1952,16 @@
   .catchall { :L0 .. :L5 } :L6
   .registers 4
   :L0
-  .line 752
+  .line 760
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 753
+  .line 761
     const/4 v1, 0
   :L1
     if-eqz v0, :L4
     array-length v2, v0
     if-ge v1, v2, :L4
-  .line 754
+  .line 762
     aget-object v2, v0, v1
     invoke-virtual { v2 }, Ljava/io/File;->isDirectory()Z
     move-result v2
@@ -1948,23 +1970,23 @@
     invoke-static { v2 }, Lcom/innioasis/ipp/Backup;->wipe(Ljava/io/File;)V
     goto :L3
   :L2
-  .line 755
+  .line 763
     aget-object v2, v0, v1
     invoke-virtual { v2 }, Ljava/io/File;->delete()Z
   :L3
-  .line 753
+  .line 761
     add-int/lit8 v1, v1, 1
     goto :L1
   :L4
-  .line 757
+  .line 765
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L5
-  .line 760
+  .line 768
     goto :L7
   :L6
-  .line 758
+  .line 766
     move-exception p0
   :L7
-  .line 761
+  .line 769
     return-void
 .end method

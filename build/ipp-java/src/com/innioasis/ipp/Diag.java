@@ -31,8 +31,8 @@ import java.util.Map;
  * worth logging in the first place.
  *
  * The report
- * "Save diagnostic log" in [Tools] writes {@code better-Y/log_<date>_<time>.log} to the CARD,
- * next to {@code comma_artists.txt} and {@code Panel}'s SurfaceFlinger reports — the same reasoning
+ * "Save diagnostic log" in [Tools] writes {@code better-Y/logs/log_<date>_<time>.log} to the CARD,
+ * beside the crash logs and {@code Panel}'s SurfaceFlinger reports — the same reasoning
  * as there: the report has to be readable later, over USB, from a device that may never be next to
  * a PC. It holds four things, because a report answering only one of them tends to need a second
  * round of questions: what build this is and what it is running on, what the mod is set to, what
@@ -64,6 +64,13 @@ public final class Diag {
      * stock smali could reach as cheaply.
      */
     static final String MARK = "/storage/sdcard0/better-Y/debug_log";
+
+    /**
+     * The name a spilled ring is written under. "crash" rather than "state" because the person
+     * asked for the file is the person who has just had one, and it has to be obvious which file
+     * that is.
+     */
+    private static final String CRASH = "crash_";
 
     /** Presses on About that toggle the debug mode. */
     private static final int TAPS = 5;
@@ -248,8 +255,8 @@ public final class Diag {
                         .append('\n');
             }
             ringDump(s);
-            write(new File(Panel.dir(), "state_" + Panel.stamp() + ".log"), s.toString());
-            keepNewest("state_", 5);
+            write(new File(Panel.logs(), CRASH + Panel.stamp() + ".log"), s.toString());
+            keepNewest(Panel.logs(), CRASH, 5);
         } catch (Throwable t) {
             // whatever was about to happen matters more than this file
         }
@@ -275,9 +282,9 @@ public final class Diag {
     }
 
     /** Keep the newest {@code keep} files with this prefix; the card is not a log server. */
-    static void keepNewest(String prefix, int keep) {
+    static void keepNewest(File dir, String prefix, int keep) {
         try {
-            File[] fs = Panel.dir().listFiles();
+            File[] fs = dir.listFiles();
             if (fs == null || fs.length <= keep) return;
             List mine = new ArrayList();
             for (int i = 0; i < fs.length; i++) {
@@ -386,7 +393,7 @@ public final class Diag {
     public static File report(Context c) {
         FileOutputStream out = null;
         try {
-            File f = new File(Panel.dir(), "log_" + Panel.stamp() + ".log");
+            File f = new File(Panel.logs(), "log_" + Panel.stamp() + ".log");
             StringBuilder s = new StringBuilder(8192);
             head(c, s);
             settings(c, s);
@@ -581,11 +588,11 @@ public final class Diag {
      * simply never read by anybody — it writes a tombstone per Java crash, per native crash and
      * per ANR, with the stack, every thread, the memory map and the logcat it could reach. So the
      * report does not need a crash catcher of its own for the stack; what it adds is
-     * {@link Crash}'s file, which carries the ring as it stood when the process died.
+     * {@link #spill}'s file, which carries the ring as it stood when the process died.
      */
     private static void crashes(StringBuilder s) {
-        File f = newest(Panel.dir(), "state_");
-        s.append("\n--- last state the app saved before dying ---\n");
+        File f = newest(Panel.logs(), CRASH);
+        s.append("\n--- last crash log the app saved before dying ---\n");
         if (f == null) {
             s.append("(none since the card was last cleared)\n");
         } else {

@@ -26,19 +26,15 @@ Outre ce bouton, la mise en cache se fait aussi au fil de l'utilisation du lecte
 Relit et met à jour les métadonnées et les pochettes des morceaux déjà présents dans la bibliothèque, au cas où ils auraient changé.
 
 [backup] Sauvegarde des données
-Enregistre les réglages, les mentions j’aime, les listes de lecture, les signets et la progression de lecture dans le dossier /better-Y/ de la carte mémoire, et les restaure. Enregistrer crée une nouvelle sauvegarde, Charger propose celles déjà présentes sur la carte.
+Enregistre les réglages, les mentions j’aime, les listes de lecture, les signets et la progression de lecture dans le dossier /better-Y/backup/ de la carte mémoire, et les restaure.
 
-Une mise à jour via l’Updater réécrit usrdata et emporte tout cela ; la carte mémoire n’est pas touchée, donc une copie qui y est conservée survit. En installant l’APK par adb, ou en flashant uniquement la partition ANDROID, les données sont conservées de toute façon.
----
-Une sauvegarde contient les réglages du lecteur et de better-Y, la bibliothèque avec ses listes de lecture et ses signets, la progression de lecture et les pochettes d’album choisies à la main. Les thèmes, la musique et les caches de pochettes n’y sont pas.
-
-Les cinq sauvegardes les plus récentes sont conservées. Après Charger, l’application redémarre.
+Les cinq sauvegardes les plus récentes sont conservées. Après Charger, le lecteur redémarre.
 
 [log] Enregistrer le journal de diagnostic
-Enregistre un rapport de diagnostic dans le dossier /better-Y/ de la carte mémoire, à joindre à un rapport de bogue.
+Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte mémoire, à joindre à un rapport de bogue.
 
 [sf] Redémarrer SurfaceFlinger
-Diagnostic : redémarre le compositeur et écrit un rapport dans le dossier /better-Y/.
+Diagnostic : redémarre le compositeur et écrit un rapport dans le dossier /better-Y/logs/.
 
 Cette option n'apparaît qu'en mode débogage, activé par cinq appuis sur le bouton central dans Settings → About.
 

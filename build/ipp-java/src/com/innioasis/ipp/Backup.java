@@ -80,7 +80,7 @@ public final class Backup {
 
     private Backup() { }
 
-    /** {@code better-Y/backup_<yyyyMMdd_HHmmss>.zip}, the same shape as the diagnostic logs. */
+    /** {@code better-Y/backup/backup_<yyyyMMdd_HHmmss>.zip}, dated the way the logs are. */
     private static final String PREFIX = "backup_";
     private static final String SUFFIX = ".zip";
 
@@ -206,7 +206,7 @@ public final class Backup {
             if (fs[i].isFile() && fs[i].getName().indexOf('-') < 0) checkpoint(fs[i]);
         }
 
-        File out = new File(Panel.dir(), PREFIX + Panel.stamp() + SUFFIX);
+        File out = new File(Panel.backups(), PREFIX + Panel.stamp() + SUFFIX);
         ZipOutputStream z = null;
         int n = 0;
         try {
@@ -232,7 +232,7 @@ public final class Backup {
             return null;
         }
         Diag.note("backup saved: " + out.getName() + ", " + n + " file(s), " + out.length() + " B");
-        Diag.keepNewest(PREFIX, KEEP);
+        Diag.keepNewest(Panel.backups(), PREFIX, KEEP);
         return out;
     }
 
@@ -362,22 +362,30 @@ public final class Backup {
 
     // ---------------------------------------------------------------- load
 
-    /** The archives on the card, newest first. Never null. */
+    /** The archives in {@code better-Y/backup}, newest first. Never null. */
     static File[] list() {
         List mine = new ArrayList();
+        collect(mine, Panel.backups());
         try {
-            File[] fs = Panel.card().listFiles();
-            for (int i = 0; fs != null && i < fs.length; i++) {
-                String n = fs[i].getName();
-                if (fs[i].isFile() && n.startsWith(PREFIX) && n.endsWith(SUFFIX)) mine.add(fs[i]);
-            }
             // The names carry yyyyMMdd_HHmmss, so alphabetical order IS chronological order.
             Collections.sort(mine, new Diag.NameCmp());
             Collections.reverse(mine);
         } catch (Throwable t) {
-            // whatever was collected before it failed
+            // an unsorted list is still a usable one
         }
         return (File[]) mine.toArray(new File[mine.size()]);
+    }
+
+    private static void collect(List out, File dir) {
+        try {
+            File[] fs = dir == null ? null : dir.listFiles();
+            for (int i = 0; fs != null && i < fs.length; i++) {
+                String n = fs[i].getName();
+                if (fs[i].isFile() && n.startsWith(PREFIX) && n.endsWith(SUFFIX)) out.add(fs[i]);
+            }
+        } catch (Throwable t) {
+            // whatever was collected before it failed
+        }
     }
 
     /**

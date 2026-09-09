@@ -49,7 +49,7 @@ import java.util.Locale;
  *
  * The report is written to the CARD, not to logcat or the app's cache, because the whole point
  * is that the defect turns up when there is no PC within reach: it has to be readable later, over
- * USB, next to {@code comma_artists.txt}.
+ * USB, in {@code better-Y/logs} beside the diagnostic report and the crash logs.
  */
 public final class Panel {
 
@@ -79,6 +79,30 @@ public final class Panel {
     /** {@link #card()}, created if it is not there — for the code that is about to write. */
     static File dir() {
         File d = card();
+        if (!d.isDirectory()) d.mkdirs();
+        return d;
+    }
+
+    /**
+     * {@code better-Y/logs} — everything the app writes ABOUT ITSELF: the diagnostic report, the
+     * ring a dying session spilled, the compositor's dump.
+     *
+     * The folder's root is left to the things a person puts there or edits by hand
+     * ({@code comma_artists.txt}, {@code debug_log}), so what is a file the user WRITES and what
+     * is a file the app writes are not mixed in one listing.
+     */
+    static File logs() {
+        return sub("logs");
+    }
+
+    /** {@code better-Y/backup} — the data archives ({@link Backup}). */
+    static File backups() {
+        return sub("backup");
+    }
+
+    /** One folder inside ours, created along with ours if neither is there. */
+    private static File sub(String name) {
+        File d = new File(card(), name);
         if (!d.isDirectory()) d.mkdirs();
         return d;
     }
@@ -156,7 +180,7 @@ public final class Panel {
     public static File report(Context c) {
         FileOutputStream out = null;
         try {
-            File f = new File(dir(), "sf_" + stamp() + ".log");
+            File f = new File(logs(), "sf_" + stamp() + ".log");
             StringBuilder s = new StringBuilder(4096);
             s.append("better-Y ").append(version(c)).append('\n');
             s.append("when    ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)

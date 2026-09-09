@@ -26,19 +26,15 @@ Neben dieser Schaltfläche wird auch während der Nutzung des Players zwischenge
 Liest Metadaten und Cover der bereits in der Mediathek vorhandenen Titel neu ein und aktualisiert sie, falls sie sich geändert haben.
 
 [backup] Datensicherung
-Speichert Einstellungen, Likes, Wiedergabelisten, Lesezeichen und Lesefortschritt im Ordner /better-Y/ auf der Speicherkarte und liest sie zurück. Speichern schreibt ein neues Backup, Laden bietet die bereits auf der Karte vorhandenen an.
+Speichert Einstellungen, Likes, Wiedergabelisten, Lesezeichen und Lesefortschritt im Ordner /better-Y/backup/ auf der Speicherkarte und liest sie zurück.
 
-Ein Update über den Updater überschreibt usrdata und nimmt all das mit; die Speicherkarte bleibt unberührt, sodass eine Kopie dort erhalten bleibt. Beim Installieren der APK über adb oder beim Flashen nur der ANDROID-Partition bleiben die Daten ohnehin erhalten.
----
-Ein Backup enthält die Einstellungen des Players und von better-Y, die Bibliothek mit ihren Wiedergabelisten und Lesezeichen, den Lesefortschritt und die von Hand gewählten Album-Cover. Themes, Musik und Cover-Caches sind nicht enthalten.
-
-Die fünf neuesten Backups werden behalten. Nach dem Laden startet die App neu.
+Die fünf neuesten Backups werden behalten. Nach dem Laden startet der Player neu.
 
 [log] Diagnoseprotokoll speichern
-Speichert einen Diagnosebericht im Ordner /better-Y/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
+Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
 
 [sf] SurfaceFlinger-Neustart
-Diagnose: startet den Compositor neu und schreibt einen Bericht in den Ordner /better-Y/.
+Diagnose: startet den Compositor neu und schreibt einen Bericht in den Ordner /better-Y/logs/.
 
 Diesen Punkt gibt es nur im Debugmodus, der mit fünf Druckvorgängen auf die mittlere Taste unter Settings → About eingeschaltet wird.
 
