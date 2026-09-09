@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import com.innioasis.y1.utils.SharedPreferencesUtils;
 import com.innioasis.y1.utils.Static;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * List-row geometry.
@@ -455,6 +457,76 @@ public final class Rows {
             tv.setText(s);
         } catch (Throwable t) {
             if (tv != null) tv.setText(s);
+        }
+    }
+
+    /**
+     * How much room the number column gets, and the whole of the answer: the widest number this
+     * list will actually show, measured in the FONT the row is drawn with, plus a fixed gap to the
+     * title.
+     *
+     * The column was a flat 40dip, which is a bet on both halves at once — on the font (a theme
+     * with a wide one, Minecraft, fitted two digits and cut everything past them) and on the list
+     * (four digits fitted the stock font exactly, i.e. with no gap left, so the number touched the
+     * title). Measuring says what the number needs on the theme that is actually loaded, and
+     * {@link Disc#widestIndex} says how long that number can get in THIS list — which is not the
+     * list's size whenever the numbers come from tags or restart per disc.
+     *
+     * It stays an EXACTLY-width view, never {@code wrap_content}: the marquee turns horizontal
+     * scrolling on for the row's title and a view that can grow with it is how "the text grows
+     * when you scroll past it" comes back (see {@code makeItNormal}). Only the number it is sized
+     * for changes.
+     *
+     * The cost per bind is one comparison. The measurement is cached on the font and the text size,
+     * the widest number on the list's own signature, and {@code setLayoutParams} — the only part
+     * that asks for a re-layout — runs when the width really changes, i.e. once per freshly
+     * inflated row and once more when a list with different numbers replaces this one.
+     *
+     * Not narrower than the 40dip it always was: a list whose numbers are short is left looking
+     * exactly as it did.
+     */
+    private static final int INDEX_GAP_DIP = 8;
+    private static final int INDEX_MIN_DIP = 40;
+    private static final int INDEX_MAX_DIP = 120;
+
+    private static Object indexFont;     // the Typeface the two measurements below were taken with
+    private static float indexSize;
+    private static float indexDigit;     // the widest digit, 0..9 — they are not all equal in every font
+    private static float indexHash;      // "#", the width a one-character column must also fit
+
+    public static void indexWidth(TextView tv, List songs, Object adapter) {
+        if (tv == null) return;
+        try {
+            Object font = tv.getTypeface();
+            float size = tv.getTextSize();
+            if (font != indexFont || size != indexSize) {
+                android.text.TextPaint p = tv.getPaint();
+                float w = 0f;
+                for (char c = '0'; c <= '9'; c++) {
+                    float cw = p.measureText(String.valueOf(c));
+                    if (cw > w) w = cw;
+                }
+                indexDigit = w;
+                indexHash = p.measureText("#");
+                indexSize = size;
+                indexFont = font;
+            }
+            float need = indexDigit * Disc.widestIndex(songs, adapter);
+            if (indexHash > need) need = indexHash;
+
+            float d = tv.getResources().getDisplayMetrics().density;
+            int px = (int) (need + 0.5f) + (int) (INDEX_GAP_DIP * d + 0.5f);
+            int min = (int) (INDEX_MIN_DIP * d + 0.5f);
+            int max = (int) (INDEX_MAX_DIP * d + 0.5f);
+            if (px < min) px = min;
+            if (px > max) px = max;
+
+            ViewGroup.LayoutParams lp = tv.getLayoutParams();
+            if (lp == null || lp.width == px) return;
+            lp.width = px;
+            tv.setLayoutParams(lp);
+        } catch (Throwable t) {
+            // ignore
         }
     }
 

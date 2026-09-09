@@ -321,6 +321,60 @@ public final class Disc {
         return n <= 0 ? "#" : String.valueOf(n);
     }
 
+    // ------------------------------------------------ how wide the number column has to be
+
+    private static String wideSig;
+    private static int wideDigits = 1;
+
+    /**
+     * How many characters the LONGEST number this list will show takes — what the number column
+     * has to be wide enough for ({@link Rows#indexWidth}).
+     *
+     * It is asked of this class rather than worked out from the list's size, because the column
+     * does not always show the row's position: with track numbers from tags a 12-track album can
+     * hold a "101", and a multi-disc album's numbering restarts at 1 on every disc, so its widest
+     * number is the longest disc's length rather than the list's. A song with no tag shows "#",
+     * which is one character.
+     *
+     * Cached on the same signature {@link #ensure} recomputes on, so it costs one array pass per
+     * list built and nothing per row — and the tag warm-up clearing {@code sig} takes the answer
+     * with it, which is what makes the column widen once the numbers it is sized for arrive.
+     */
+    public static int widestIndex(List songs, Object adapter) {
+        if (songs == null) return 1;
+        int n = songs.size();
+        if (!discList(adapter)) return digits(n);
+        ensure(songs, flatOf(adapter));
+        if (sig != null && sig.equals(wideSig)) return wideDigits;
+        wideSig = sig;
+        wideDigits = widest(n);
+        return wideDigits;
+    }
+
+    /** The three ways {@link #number} can answer, in its own order. */
+    private static int widest(int n) {
+        int max = 1;
+        if (tagNums != null) {
+            for (int i = 0; i < tagNums.length; i++) {
+                int d = tagNums[i] <= 0 ? 1 : digits(tagNums[i]);   // 0 is "#"
+                if (d > max) max = d;
+            }
+            return max;
+        }
+        if (!enabled || groupStart == null || groupStart.length < n) return digits(n);
+        for (int i = 0; i < n; i++) {
+            int d = digits(i - groupStart[i] + 1);
+            if (d > max) max = d;
+        }
+        return max;
+    }
+
+    private static int digits(int v) {
+        int d = 1;
+        while (v >= 10) { v /= 10; d++; }
+        return d;
+    }
+
     // ------------------------------------------------------------------- discs and record sides
 
     /**

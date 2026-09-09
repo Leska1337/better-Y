@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..122dbd4e 100644
+index 01b1f730..4ec22696 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..122dbd4e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000066
++  versionCode: 10000067
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -655,10 +655,10 @@ index ce45631a..5e5d5bed 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b91724..aca03ece 100644
+index 60b91724..6d20544f 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
-@@ -1,8 +1,51 @@
+@@ -1,8 +1,56 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 -  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:test="http://schemas.android.com/apk/res-auto">
@@ -686,7 +686,7 @@ index 60b91724..aca03ece 100644
 +     device; density 160, so 1dp = 1px), not a redesign — the row is 49 and inside it:
 +        tv_song_name   x  40..461   y  0..29
 +        tv_artists     x  40..480   y 29..49
-+        tv_song_index  x   0..40    y  3..28
++        tv_song_index  x   0..40    y  3..28   (40 is its narrowest; see Rows.indexWidth)
 +        ipp_song_mark  x   0..24    y  3..27
 +        right_arrow    x 461..477   y  0..49
 +     The disc strip stays a direct child of the root and still ADDS to the row's height, which is the
@@ -704,6 +704,11 @@ index 60b91724..aca03ece 100644
 +             row's, so a tall theme bitmap (theme1/theme4 ship a 20x54 one) scales instead of
 +             stretching the row — the point of the old MATCH_CONSTRAINT + adjustViewBounds pair. -->
 +        <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="3.0dip" android:layout_alignParentRight="true" android:layout_alignParentTop="true" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" />
++        <!-- ipp: the 40dip here is the FLOOR, not the width. Rows.indexWidth measures the widest
++             number this list can show in the theme's own font and widens the column to fit it plus
++             a gap to the title; a list whose numbers are short keeps exactly this. The view stays
++             EXACTLY-width either way, never wrap_content, because the title beside it is marqueed
++             (see makeItNormal). -->
 +        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start" android:id="@id/tv_song_index" android:layout_width="40.0dip" android:layout_height="25.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" />
 +        <!-- ipp: the playing marker, in the track number's own column and vertically centred on the
 +             title (NOT on the row: a disc-start row is taller by the strip above, and the strip is
@@ -19309,7 +19314,7 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f95f6a20 100644
+index 71fe29d0..0a454f4a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,541 @@
@@ -20258,7 +20263,7 @@ index 71fe29d0..f95f6a20 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev66</string>
++    <string name="ipp_version">v1.0.0-dev67</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -52996,7 +53001,7 @@ index 1b2fd585..9674e109 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
-index c65cfdfe..47c4b6d0 100644
+index c65cfdfe..78525e81 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 @@ -1,4 +1,6 @@
@@ -53031,7 +53036,7 @@ index c65cfdfe..47c4b6d0 100644
  
      const/4 v0, 0x0
  
-@@ -196,28 +213,65 @@
+@@ -196,28 +213,74 @@
  
      check-cast p3, Lcom/innioasis/y1/database/Song;
  
@@ -53053,10 +53058,10 @@ index c65cfdfe..47c4b6d0 100644
 -    add-int/lit8 v2, p1, 0x1
 +    # ipp: per-disc track numbering (falls back to pos+1 for non-album lists)
 +    invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getMList()Ljava/util/List;
-+
-+    move-result-object v2
  
 -    invoke-static {v2}, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
++    move-result-object v2
++
 +    invoke-static {p3, v2, p1, p0}, Lcom/innioasis/ipp/Disc;->rowIndex(Lcom/innioasis/y1/database/Song;Ljava/util/List;ILjava/lang/Object;)Ljava/lang/String;
  
      move-result-object v2
@@ -53068,6 +53073,15 @@ index c65cfdfe..47c4b6d0 100644
 +    # early-out and rebuilds the view's text Layout every call, which is the most expensive thing
 +    # in a bind. Moving the highlight rebinds two rows whose text has not changed at all.
 +    invoke-static {v1, v2}, Lcom/innioasis/ipp/Rows;->text(Landroid/widget/TextView;Ljava/lang/CharSequence;)V
++
++    # ipp: the column is sized for the widest number THIS list can show, measured in the theme's
++    # own font. A flat 40dip fitted two digits on a wide-font theme and cut the rest, and fitted
++    # four on the stock one with nothing left over, i.e. touching the title (see Rows.indexWidth).
++    invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getMList()Ljava/util/List;
++
++    move-result-object v2
++
++    invoke-static {v1, v2, p0}, Lcom/innioasis/ipp/Rows;->indexWidth(Landroid/widget/TextView;Ljava/util/List;Ljava/lang/Object;)V
  
      .line 48
      iget-object v1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvSongName:Landroid/widget/TextView;
@@ -53080,12 +53094,12 @@ index c65cfdfe..47c4b6d0 100644
 +    # shows tag titles, which is the one screen state where the setting looks dead. The flag
 +    # is still set by stock and still answers for the second line; it does not name the row.
 +    # (what stood here: iget-boolean canShowSongName / if-nez v2, :cond_1)
-+
+ 
+-    if-eqz v2, :cond_1
 +    invoke-virtual {v1}, Landroid/widget/TextView;->getContext()Landroid/content/Context;
 +
 +    move-result-object v2
- 
--    if-eqz v2, :cond_1
++
 +    const-string v3, "meta_title"
 +
 +    # ipp: the default is NOT stated here. Prefs.on looks it up in the one table this reader and
@@ -53102,7 +53116,7 @@ index c65cfdfe..47c4b6d0 100644
      sget-object v2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
  
      invoke-virtual {p3}, Lcom/innioasis/y1/database/Song;->getSongName()Ljava/lang/String;
-@@ -233,7 +287,7 @@
+@@ -233,7 +296,7 @@
      goto :goto_1
  
      .line 53
@@ -53111,7 +53125,7 @@ index c65cfdfe..47c4b6d0 100644
      sget-object v2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
  
      sget-object v3, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
-@@ -254,7 +308,8 @@
+@@ -254,7 +317,8 @@
  
      .line 48
      :goto_1
@@ -53121,7 +53135,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 56
      iget-object v1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvArtists:Landroid/widget/TextView;
-@@ -274,6 +329,12 @@
+@@ -274,6 +338,12 @@
  
      move-result-object v3
  
@@ -53134,7 +53148,7 @@ index c65cfdfe..47c4b6d0 100644
      invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 58
-@@ -281,7 +342,7 @@
+@@ -281,7 +351,7 @@
  
      const-string v4, "     "
  
@@ -53143,7 +53157,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 59
      invoke-virtual {v2, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-@@ -306,10 +367,10 @@
+@@ -306,10 +376,10 @@
      invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 62
@@ -53156,7 +53170,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 63
      invoke-virtual {v2, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-@@ -328,7 +389,7 @@
+@@ -328,7 +398,7 @@
      invoke-virtual {v2, p3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 56
@@ -53165,7 +53179,7 @@ index c65cfdfe..47c4b6d0 100644
      invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
  
      move-result-object p3
-@@ -339,7 +400,8 @@
+@@ -339,7 +409,8 @@
  
      check-cast p3, Ljava/lang/CharSequence;
  
@@ -53175,7 +53189,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 69
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getNowPosition()I
-@@ -356,14 +418,17 @@
+@@ -356,14 +427,17 @@
  
      const/4 v5, 0x1
  
@@ -53195,7 +53209,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 72
      sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -419,7 +484,7 @@
+@@ -419,7 +493,7 @@
      goto/16 :goto_2
  
      .line 79
@@ -53204,7 +53218,7 @@ index c65cfdfe..47c4b6d0 100644
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getSelectedIndexList()Ljava/util/List;
  
      move-result-object p3
-@@ -434,20 +499,21 @@
+@@ -434,20 +508,21 @@
  
      const-string v6, "vb.rightArrow"
  
@@ -53229,7 +53243,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 82
      sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -489,12 +555,13 @@
+@@ -489,12 +564,13 @@
      goto :goto_2
  
      .line 89
@@ -53245,7 +53259,7 @@ index c65cfdfe..47c4b6d0 100644
  
      .line 90
      sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -560,13 +627,13 @@
+@@ -560,13 +636,13 @@
  
      invoke-static {v2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53261,7 +53275,7 @@ index c65cfdfe..47c4b6d0 100644
      const/4 v6, 0x0
  
      :goto_3
-@@ -579,13 +646,13 @@
+@@ -579,13 +655,13 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53277,7 +53291,7 @@ index c65cfdfe..47c4b6d0 100644
      const/4 v4, 0x0
  
      :goto_4
-@@ -600,11 +667,11 @@
+@@ -600,11 +676,11 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53291,7 +53305,7 @@ index c65cfdfe..47c4b6d0 100644
      invoke-virtual {v1, v2, p1, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
      .line 99
-@@ -616,6 +683,14 @@
+@@ -616,6 +692,14 @@
  
      check-cast p1, Landroid/view/View;
  
