@@ -642,7 +642,7 @@
     return-void
 .end method
 
-.method private static keepNewest(Ljava/lang/String;I)V
+.method static keepNewest(Ljava/lang/String;I)V
   .catchall { :L0 .. :L6 } :L9
   .registers 7
   :L0

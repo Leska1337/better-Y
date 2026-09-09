@@ -16,20 +16,20 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 895
+  .line 891
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 896
+  .line 892
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 897
+  .line 893
     return-void
 .end method
 
 .method public onPreDraw()Z
   .registers 2
-  .line 904
+  .line 900
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repin()V
-  .line 907
+  .line 903
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->stretch()Z
     move-result v0
@@ -39,9 +39,9 @@
 
 .method public onScrollChanged()V
   .registers 2
-  .line 900
+  .line 896
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Pin;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->repin()V
-  .line 901
+  .line 897
     return-void
 .end method

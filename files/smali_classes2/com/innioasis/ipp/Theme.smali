@@ -32,7 +32,7 @@
 
 .method private static eq(Ljava/lang/String;Ljava/lang/String;)Z
   .registers 2
-  .line 160
+  .line 149
     if-nez p0, :L1
     if-nez p1, :L0
     const/4 p0, 1
@@ -49,18 +49,18 @@
 
 .method static landed(Landroid/view/View;)V
   .registers 3
-  .line 125
+  .line 115
     if-eqz p0, :L2
     sget-object v0, Lcom/innioasis/ipp/Theme;->probe:Landroid/view/View;
     if-eq p0, v0, :L0
     goto :L2
   :L0
-  .line 126
+  .line 116
     const/4 p0, 0
     sput-object p0, Lcom/innioasis/ipp/Theme;->painted:Ljava/lang/Boolean;
-  .line 127
+  .line 117
     sget-object p0, Lcom/innioasis/ipp/Theme;->watch:Ljava/lang/Runnable;
-  .line 130
+  .line 120
     if-eqz p0, :L1
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
@@ -68,21 +68,21 @@
     invoke-direct { v0, v1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     invoke-virtual { v0, p0 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
   :L1
-  .line 131
+  .line 121
     return-void
   :L2
-  .line 125
+  .line 115
     return-void
 .end method
 
 .method private static opaque(Landroid/graphics/drawable/Drawable;)Z
   .registers 12
-  .line 137
+  .line 127
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 138
+  .line 128
     instance-of v1, p0, Landroid/graphics/drawable/ColorDrawable;
     const/16 v2, 128
     const/4 v3, 1
@@ -97,49 +97,49 @@
   :L1
     return v0
   :L2
-  .line 139
+  .line 129
     instance-of v1, p0, Landroid/graphics/drawable/BitmapDrawable;
     if-eqz v1, :L13
-  .line 140
+  .line 130
     check-cast p0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
     move-result-object p0
-  .line 141
+  .line 131
     if-eqz p0, :L12
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->isRecycled()Z
     move-result v1
     if-eqz v1, :L3
     goto :L12
   :L3
-  .line 142
+  .line 132
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->hasAlpha()Z
     move-result v1
     if-nez v1, :L4
     return v3
   :L4
-  .line 143
+  .line 133
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v1
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v4
-  .line 144
+  .line 134
     if-lez v1, :L11
     if-gtz v4, :L5
     goto :L11
   :L5
-  .line 147
+  .line 136
     nop
-  .line 148
+  .line 137
     const/4 v5, 0
     const/4 v6, 0
   :L6
     const/4 v7, 3
     if-ge v5, v7, :L9
-  .line 149
+  .line 138
     const/4 v8, 0
   :L7
     if-ge v8, v7, :L8
-  .line 150
+  .line 139
     add-int/lit8 v9, v1, -1
     mul-int v9, v9, v8
     div-int/lit8 v9, v9, 2
@@ -151,28 +151,28 @@
     invoke-static { v9 }, Landroid/graphics/Color;->alpha(I)I
     move-result v9
     add-int/2addr v6, v9
-  .line 149
+  .line 138
     add-int/lit8 v8, v8, 1
     goto :L7
   :L8
-  .line 148
+  .line 137
     add-int/lit8 v5, v5, 1
     goto :L6
   :L9
-  .line 153
+  .line 142
     div-int/lit8 v6, v6, 9
     if-lt v6, v2, :L10
     const/4 v0, 1
   :L10
     return v0
   :L11
-  .line 144
+  .line 134
     return v0
   :L12
-  .line 141
+  .line 131
     return v0
   :L13
-  .line 156
+  .line 145
     invoke-virtual { p0 }, Landroid/graphics/drawable/Drawable;->getOpacity()I
     move-result p0
     const/4 v1, -1
@@ -233,13 +233,13 @@
 .method public static rowsPainted()Z
   .catchall { :L0 .. :L4 } :L5
   .registers 5
-  .line 80
+  .line 72
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v1 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
     move-result-object v1
-  .line 83
+  .line 74
     sget-object v2, Lcom/innioasis/ipp/Theme;->painted:Ljava/lang/Boolean;
     if-eqz v2, :L1
     sget-object v2, Lcom/innioasis/ipp/Theme;->paintedFor:Ljava/lang/String;
@@ -251,64 +251,64 @@
     move-result v0
     return v0
   :L1
-  .line 84
+  .line 75
     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v2
-  .line 85
+  .line 76
     if-nez v2, :L2
     return v0
   :L2
-  .line 86
+  .line 77
     sget-object v3, Lcom/innioasis/ipp/Theme;->probe:Landroid/view/View;
     if-nez v3, :L3
     new-instance v3, Landroid/view/View;
     invoke-direct { v3, v2 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
     sput-object v3, Lcom/innioasis/ipp/Theme;->probe:Landroid/view/View;
   :L3
-  .line 87
+  .line 78
     sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     sget-object v3, Lcom/innioasis/ipp/Theme;->probe:Landroid/view/View;
     const v4, 2131231044
     invoke-virtual { v2, v3, v4, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 88
+  .line 79
     sget-object v2, Lcom/innioasis/ipp/Theme;->probe:Landroid/view/View;
     invoke-virtual { v2 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Theme;->opaque(Landroid/graphics/drawable/Drawable;)Z
     move-result v2
-  .line 89
+  .line 80
     invoke-static { v2 }, Ljava/lang/Boolean;->valueOf(Z)Ljava/lang/Boolean;
     move-result-object v3
     sput-object v3, Lcom/innioasis/ipp/Theme;->painted:Ljava/lang/Boolean;
-  .line 90
+  .line 81
     sput-object v1, Lcom/innioasis/ipp/Theme;->paintedFor:Ljava/lang/String;
   :L4
-  .line 91
+  .line 82
     return v2
   :L5
-  .line 92
+  .line 83
     move-exception v1
-  .line 93
+  .line 84
     return v0
 .end method
 
 .method public static unwatchRows(Ljava/lang/Runnable;)V
   .registers 2
-  .line 115
+  .line 106
     sget-object v0, Lcom/innioasis/ipp/Theme;->watch:Ljava/lang/Runnable;
     if-ne v0, p0, :L0
     const/4 p0, 0
     sput-object p0, Lcom/innioasis/ipp/Theme;->watch:Ljava/lang/Runnable;
   :L0
-  .line 116
+  .line 107
     return-void
 .end method
 
 .method public static watchRows(Ljava/lang/Runnable;)V
   .registers 1
-  .line 110
+  .line 101
     sput-object p0, Lcom/innioasis/ipp/Theme;->watch:Ljava/lang/Runnable;
-  .line 111
+  .line 102
     return-void
 .end method

@@ -275,7 +275,7 @@ public final class Diag {
     }
 
     /** Keep the newest {@code keep} files with this prefix; the card is not a log server. */
-    private static void keepNewest(String prefix, int keep) {
+    static void keepNewest(String prefix, int keep) {
         try {
             File[] fs = Panel.dir().listFiles();
             if (fs == null || fs.length <= keep) return;

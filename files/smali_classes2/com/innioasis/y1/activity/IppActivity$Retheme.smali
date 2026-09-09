@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;)V
   .registers 2
-  .line 497
+  .line 496
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Retheme;->a:Lcom/innioasis/y1/activity/IppActivity;
     return-void
@@ -23,7 +23,7 @@
 
 .method public run()V
   .registers 2
-  .line 501
+  .line 499
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Retheme;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->isFinishing()Z
     move-result v0
@@ -35,6 +35,6 @@
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Retheme;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->access$100(Lcom/innioasis/y1/activity/IppActivity;)V
   :L0
-  .line 502
+  .line 500
     return-void
 .end method

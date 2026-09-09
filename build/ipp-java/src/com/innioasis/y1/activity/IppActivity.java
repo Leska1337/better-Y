@@ -17,6 +17,7 @@ import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
 import com.innioasis.ipp.Art;
 import com.innioasis.ipp.Artists;
+import com.innioasis.ipp.Backup;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.CoverCache;
@@ -236,6 +237,10 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(ACTION, "reboot", 0, null, null));
         l.add(new Item(ACTION, "cache", 0, null, null));
         l.add(new Item(ACTION, "scan", 0, null, null));
+        // Settings, likes, playlists, bookmarks and reading progress to the card and back: the
+        // Updater rewrites usrdata, so a copy on the card is the only one that survives an
+        // update. Two actions behind one row -- Save and Load -- so it opens a dialog. See Backup.
+        l.add(new Item(ACTION, "backup", 0, null, null));
         // one file to attach to a bug report -- build, settings, library, logcat. See Diag.
         l.add(new Item(ACTION, "log", 0, null, null));
         // A diagnostic, not a feature: restarts SurfaceFlinger and writes a report to the card, so
@@ -814,6 +819,10 @@ public final class IppActivity extends BaseActivity {
                 confirmScan(label(it));
             } else if ("cache".equals(it.key)) {
                 confirmCache();
+            } else if ("backup".equals(it.key)) {
+                // No Yes/No here: the row's two halves are the dialog's two rows, and the one
+                // that needs confirming (Load) asks for it after the archive has been picked.
+                Backup.open(getActivity(), label(it));
             } else if ("sf".equals(it.key)) {
                 confirmSf(label(it));
             } else if ("log".equals(it.key)) {

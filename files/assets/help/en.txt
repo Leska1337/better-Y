@@ -27,6 +27,15 @@ Besides this button, caching also happens as you use the player.
 [scan] Update library
 Re-reads and updates metadata and cover art for songs already in the library, in case they have changed.
 
+[backup] Data backup
+Saves the settings, likes, playlists, bookmarks and reading progress to the /better-Y/ folder on the SD card, and reads them back. Save writes a new archive, Load offers the ones already on the card.
+
+An update through the Updater rewrites usrdata and takes all of that with it; the SD card is left alone, so a copy that lives there survives. Installing the APK over adb, or flashing the ANDROID partition alone, keeps the data anyway.
+---
+An archive holds the settings of the player and of better-Y, the library with its playlists and bookmarks, the reading progress and the album covers picked by hand. The themes, the music and the cover caches are not in it.
+
+The five newest archives are kept. After Load the app restarts.
+
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/ folder on the SD card for a bug report.
 

@@ -25,6 +25,15 @@ Además de este botón, la caché también se va llenando a medida que se usa el
 [scan] Actualizar biblioteca
 Vuelve a leer y actualiza los metadatos y las carátulas de las canciones que ya están en la biblioteca, por si han cambiado.
 
+[backup] Copia de datos
+Guarda los ajustes, los me gusta, las listas de reproducción, los marcadores y el progreso de lectura en la carpeta /better-Y/ de la tarjeta de memoria, y los restaura. Guardar crea una copia nueva, Cargar muestra las que ya están en la tarjeta.
+
+Una actualización con el Updater sobrescribe usrdata y se lleva todo eso; la tarjeta de memoria no se toca, así que una copia guardada allí sobrevive. Al instalar el APK por adb, o al flashear solo la partición ANDROID, los datos se conservan igualmente.
+---
+Una copia contiene los ajustes del reproductor y de better-Y, la biblioteca con sus listas de reproducción y marcadores, el progreso de lectura y las portadas de álbum elegidas a mano. Los temas, la música y las cachés de portadas no se incluyen.
+
+Se conservan las cinco copias más recientes. Después de Cargar, la aplicación se reinicia.
+
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/ de la tarjeta de memoria para adjuntarlo a un informe de error.
 

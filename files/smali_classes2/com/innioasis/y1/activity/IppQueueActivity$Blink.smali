@@ -15,19 +15,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 1673
+  .line 1665
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1674
+  .line 1666
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Blink;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 1675
+  .line 1667
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 1679
+  .line 1671
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppQueueActivity$Blink;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppQueueActivity;->blinkTick()V
-  .line 1680
+  .line 1672
     return-void
 .end method

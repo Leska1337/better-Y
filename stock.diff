@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..0fcf006c 100644
+index 01b1f730..9b46a8d0 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..0fcf006c 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000055
++  versionCode: 10000058
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -777,10 +777,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..ed5bebbb 100644
+index 50446006..3b8f04dc 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,472 @@
+@@ -1,417 +1,482 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1624,6 +1624,16 @@ index 50446006..ed5bebbb 100644
 +    <string name="ipp_log_confirm">Diagnoseprotokoll auf der Karte speichern?</string>
 +    <string name="ipp_log_done">Protokoll gespeichert: %1$s</string>
 +    <string name="ipp_log_fail">Protokoll konnte nicht gespeichert werden</string>
++    <string name="ipp_backup_save">Speichern</string>
++    <string name="ipp_backup_load">Laden</string>
++    <string name="ipp_backup_pick">Backup auswählen</string>
++    <string name="ipp_backup_none">Keine Backups auf der Karte</string>
++    <string name="ipp_backup_saving">Daten werden gespeichert…</string>
++    <string name="ipp_backup_done">Backup gespeichert: %1$s</string>
++    <string name="ipp_backup_fail">Backup konnte nicht gespeichert werden</string>
++    <string name="ipp_backup_confirm">Aktuelle Einstellungen, Wiedergabelisten und Fortschritt durch dieses Backup ersetzen? Die App wird neu gestartet.</string>
++    <string name="ipp_backup_restoring">Daten werden wiederhergestellt…</string>
++    <string name="ipp_backup_restore_fail">Backup konnte nicht wiederhergestellt werden</string>
 +    <string name="ipp_debug_on">Debug-Modus an. Zum Starten der ausführlichen Protokollierung neu starten.</string>
 +    <string name="ipp_debug_off">Debug-Modus aus. Zum Beenden der ausführlichen Protokollierung neu starten.</string>
 +    <string name="ipp_scan_confirm">Bibliothek neu scannen und Metadaten aktualisieren?</string>
@@ -1989,10 +1999,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..3d2c0786 100644
+index 6f5a555d..d810e3b6 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,472 @@
+@@ -1,417 +1,482 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -2836,6 +2846,16 @@ index 6f5a555d..3d2c0786 100644
 +    <string name="ipp_log_confirm">¿Guardar un registro de diagnóstico en la tarjeta?</string>
 +    <string name="ipp_log_done">Registro guardado: %1$s</string>
 +    <string name="ipp_log_fail">No se pudo guardar el registro</string>
++    <string name="ipp_backup_save">Guardar</string>
++    <string name="ipp_backup_load">Cargar</string>
++    <string name="ipp_backup_pick">Selecciona una copia</string>
++    <string name="ipp_backup_none">No hay copias en la tarjeta</string>
++    <string name="ipp_backup_saving">Guardando los datos…</string>
++    <string name="ipp_backup_done">Copia guardada: %1$s</string>
++    <string name="ipp_backup_fail">No se pudo guardar la copia</string>
++    <string name="ipp_backup_confirm">¿Reemplazar los ajustes, las listas de reproducción y el progreso actuales por esta copia? La aplicación se reiniciará.</string>
++    <string name="ipp_backup_restoring">Restaurando los datos…</string>
++    <string name="ipp_backup_restore_fail">No se pudo restaurar la copia</string>
 +    <string name="ipp_debug_on">Modo de depuración activado. Reinicia para iniciar el registro detallado.</string>
 +    <string name="ipp_debug_off">Modo de depuración desactivado. Reinicia para detener el registro detallado.</string>
 +    <string name="ipp_scan_confirm">¿Volver a escanear la biblioteca y actualizar los metadatos?</string>
@@ -2883,10 +2903,10 @@ index 6f5a555d..3d2c0786 100644
 +    <string name="ipp_already_added">Ya está en la lista</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..717d32d3 100644
+index c242cee4..90e119f8 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,472 @@
+@@ -1,417 +1,482 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3730,6 +3750,16 @@ index c242cee4..717d32d3 100644
 +    <string name="ipp_log_confirm">Enregistrer un journal de diagnostic sur la carte ?</string>
 +    <string name="ipp_log_done">Journal enregistré : %1$s</string>
 +    <string name="ipp_log_fail">Impossible d\'enregistrer le journal</string>
++    <string name="ipp_backup_save">Enregistrer</string>
++    <string name="ipp_backup_load">Charger</string>
++    <string name="ipp_backup_pick">Sélectionner une sauvegarde</string>
++    <string name="ipp_backup_none">Aucune sauvegarde sur la carte</string>
++    <string name="ipp_backup_saving">Enregistrement des données…</string>
++    <string name="ipp_backup_done">Sauvegarde enregistrée : %1$s</string>
++    <string name="ipp_backup_fail">Impossible d\'enregistrer la sauvegarde</string>
++    <string name="ipp_backup_confirm">Remplacer les réglages, les listes de lecture et la progression actuels par cette sauvegarde ? L\'application redémarrera.</string>
++    <string name="ipp_backup_restoring">Restauration des données…</string>
++    <string name="ipp_backup_restore_fail">Impossible de restaurer la sauvegarde</string>
 +    <string name="ipp_debug_on">Mode débogage activé. Redémarrez pour lancer la journalisation détaillée.</string>
 +    <string name="ipp_debug_off">Mode débogage désactivé. Redémarrez pour arrêter la journalisation détaillée.</string>
 +    <string name="ipp_scan_confirm">Réanalyser la bibliothèque et actualiser les métadonnées ?</string>
@@ -3777,10 +3807,10 @@ index c242cee4..717d32d3 100644
 +    <string name="ipp_already_added">Déjà dans la liste</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..65ba0b91 100644
+index d82ac6bb..80ac7034 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,472 @@
+@@ -1,417 +1,482 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4624,6 +4654,16 @@ index d82ac6bb..65ba0b91 100644
 +    <string name="ipp_log_confirm">לשמור יומן אבחון בכרטיס?</string>
 +    <string name="ipp_log_done">היומן נשמר: %1$s</string>
 +    <string name="ipp_log_fail">לא ניתן לשמור את היומן</string>
++    <string name="ipp_backup_save">שמור</string>
++    <string name="ipp_backup_load">טען</string>
++    <string name="ipp_backup_pick">בחר גיבוי</string>
++    <string name="ipp_backup_none">אין גיבויים בכרטיס</string>
++    <string name="ipp_backup_saving">שומר נתונים…</string>
++    <string name="ipp_backup_done">הגיבוי נשמר: %1$s</string>
++    <string name="ipp_backup_fail">לא ניתן לשמור את הגיבוי</string>
++    <string name="ipp_backup_confirm">להחליף את ההגדרות, הפלייליסטים וההתקדמות הנוכחיים בגיבוי הזה? האפליקציה תופעל מחדש.</string>
++    <string name="ipp_backup_restoring">משחזר נתונים…</string>
++    <string name="ipp_backup_restore_fail">לא ניתן לשחזר את הגיבוי</string>
 +    <string name="ipp_debug_on">מצב ניפוי באגים הופעל. הפעל מחדש כדי להתחיל רישום מפורט.</string>
 +    <string name="ipp_debug_off">מצב ניפוי באגים כובה. הפעל מחדש כדי להפסיק רישום מפורט.</string>
 +    <string name="ipp_scan_confirm">לסרוק מחדש את הספרייה ולעדכן מטא-נתונים?</string>
@@ -4671,10 +4711,10 @@ index d82ac6bb..65ba0b91 100644
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..74aee024 100644
+index f71d0cb1..a7ea088d 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,389 @@
+@@ -1,334 +1,399 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5352,6 +5392,16 @@ index f71d0cb1..74aee024 100644
 +    <string name="ipp_log_confirm">진단 로그를 카드에 저장할까요?</string>
 +    <string name="ipp_log_done">로그 저장됨: %1$s</string>
 +    <string name="ipp_log_fail">로그를 저장할 수 없습니다</string>
++    <string name="ipp_backup_save">저장</string>
++    <string name="ipp_backup_load">불러오기</string>
++    <string name="ipp_backup_pick">백업 선택</string>
++    <string name="ipp_backup_none">카드에 백업이 없습니다</string>
++    <string name="ipp_backup_saving">데이터 저장 중…</string>
++    <string name="ipp_backup_done">백업 저장됨: %1$s</string>
++    <string name="ipp_backup_fail">백업을 저장할 수 없습니다</string>
++    <string name="ipp_backup_confirm">현재 설정, 재생 목록, 진행 상황을 이 백업으로 바꿀까요? 앱이 재시작됩니다.</string>
++    <string name="ipp_backup_restoring">데이터 복원 중…</string>
++    <string name="ipp_backup_restore_fail">백업을 복원할 수 없습니다</string>
 +    <string name="ipp_debug_on">디버그 모드 켜짐. 자세한 로그를 시작하려면 재부팅하세요.</string>
 +    <string name="ipp_debug_off">디버그 모드 꺼짐. 자세한 로그를 중지하려면 재부팅하세요.</string>
 +    <string name="ipp_scan_confirm">라이브러리를 다시 검색하고 메타데이터를 갱신할까요?</string>
@@ -5642,10 +5692,10 @@ index d79cf0f6..89491c4d 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..9410edd8 100644
+index 4c84fd2b..97a9d48e 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,141 @@
+@@ -1,86 +1,151 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -5827,6 +5877,16 @@ index 4c84fd2b..9410edd8 100644
 +    <string name="ipp_log_confirm">Сохранить диагностический лог на карту?</string>
 +    <string name="ipp_log_done">Лог сохранён: %1$s</string>
 +    <string name="ipp_log_fail">Не удалось сохранить лог</string>
++    <string name="ipp_backup_save">Сохранить</string>
++    <string name="ipp_backup_load">Загрузить</string>
++    <string name="ipp_backup_pick">Выберите резервную копию</string>
++    <string name="ipp_backup_none">На карте нет резервных копий</string>
++    <string name="ipp_backup_saving">Сохранение данных…</string>
++    <string name="ipp_backup_done">Резервная копия сохранена: %1$s</string>
++    <string name="ipp_backup_fail">Не удалось сохранить резервную копию</string>
++    <string name="ipp_backup_confirm">Заменить текущие настройки, плейлисты и прогресс этой резервной копией? Приложение перезапустится.</string>
++    <string name="ipp_backup_restoring">Восстановление данных…</string>
++    <string name="ipp_backup_restore_fail">Не удалось восстановить резервную копию</string>
 +    <string name="ipp_debug_on">Режим отладки включён. Перезагрузите устройство, чтобы включить подробный лог.</string>
 +    <string name="ipp_debug_off">Режим отладки выключен. Перезагрузите устройство, чтобы выключить подробный лог.</string>
 +    <string name="ipp_scan_confirm">Пересканировать библиотеку и обновить метаданные?</string>
@@ -5874,10 +5934,10 @@ index 4c84fd2b..9410edd8 100644
 +    <string name="ipp_already_added">Уже в плейлисте</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..4a25e7f7 100644
+index 5665bdd9..2574aaae 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,481 @@
+@@ -1,426 +1,491 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -6739,6 +6799,16 @@ index 5665bdd9..4a25e7f7 100644
 +    <string name="ipp_log_confirm">将诊断日志保存到存储卡？</string>
 +    <string name="ipp_log_done">日志已保存：%1$s</string>
 +    <string name="ipp_log_fail">无法保存日志</string>
++    <string name="ipp_backup_save">保存</string>
++    <string name="ipp_backup_load">加载</string>
++    <string name="ipp_backup_pick">选择备份</string>
++    <string name="ipp_backup_none">存储卡中没有备份</string>
++    <string name="ipp_backup_saving">正在保存数据…</string>
++    <string name="ipp_backup_done">备份已保存：%1$s</string>
++    <string name="ipp_backup_fail">无法保存备份</string>
++    <string name="ipp_backup_confirm">用此备份替换当前的设置、播放列表和进度？应用将重新启动。</string>
++    <string name="ipp_backup_restoring">正在恢复数据…</string>
++    <string name="ipp_backup_restore_fail">无法恢复备份</string>
 +    <string name="ipp_debug_on">调试模式已开启。重启后开始详细日志。</string>
 +    <string name="ipp_debug_off">调试模式已关闭。重启后停止详细日志。</string>
 +    <string name="ipp_scan_confirm">重新扫描音乐库并更新元数据？</string>
@@ -8092,10 +8162,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..dfa78d1a 100644
+index 803c1e7a..a0434c44 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5611 @@
+@@ -1,5519 +1,5621 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18145,6 +18215,16 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="string" name="ipp_debug_on" id="0x7f11023b" />
 +    <public type="string" name="ipp_debug_off" id="0x7f11023c" />
 +    <public type="string" name="ipp_queue_next_manual_n" id="0x7f11023d" />
++    <public type="string" name="ipp_backup_save" id="0x7f11023e" />
++    <public type="string" name="ipp_backup_load" id="0x7f11023f" />
++    <public type="string" name="ipp_backup_pick" id="0x7f110240" />
++    <public type="string" name="ipp_backup_none" id="0x7f110241" />
++    <public type="string" name="ipp_backup_saving" id="0x7f110242" />
++    <public type="string" name="ipp_backup_done" id="0x7f110243" />
++    <public type="string" name="ipp_backup_fail" id="0x7f110244" />
++    <public type="string" name="ipp_backup_confirm" id="0x7f110245" />
++    <public type="string" name="ipp_backup_restoring" id="0x7f110246" />
++    <public type="string" name="ipp_backup_restore_fail" id="0x7f110247" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19227,10 +19307,10 @@ index 803c1e7a..dfa78d1a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..ec1f680c 100644
+index 71fe29d0..365e5ba8 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,531 @@
+@@ -1,473 +1,541 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20176,7 +20256,7 @@ index 71fe29d0..ec1f680c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev55</string>
++    <string name="ipp_version">v1.0.0-dev58</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20188,6 +20268,16 @@ index 71fe29d0..ec1f680c 100644
 +    <string name="ipp_log_confirm">Save a diagnostic log to the card?</string>
 +    <string name="ipp_log_done">Log saved: %1$s</string>
 +    <string name="ipp_log_fail">Could not save the log</string>
++    <string name="ipp_backup_save">Save</string>
++    <string name="ipp_backup_load">Load</string>
++    <string name="ipp_backup_pick">Select a backup</string>
++    <string name="ipp_backup_none">No backups on the card</string>
++    <string name="ipp_backup_saving">Saving data…</string>
++    <string name="ipp_backup_done">Backup saved: %1$s</string>
++    <string name="ipp_backup_fail">Could not save the backup</string>
++    <string name="ipp_backup_confirm">Replace the current settings, playlists and progress with this backup? The app will restart.</string>
++    <string name="ipp_backup_restoring">Restoring data…</string>
++    <string name="ipp_backup_restore_fail">Could not restore the backup</string>
 +    <string name="ipp_debug_on">Debug mode on. Reboot to start detailed logging.</string>
 +    <string name="ipp_debug_off">Debug mode off. Reboot to stop detailed logging.</string>
 +    <string name="ipp_scan_confirm">Rescan library and refresh metadata?</string>
