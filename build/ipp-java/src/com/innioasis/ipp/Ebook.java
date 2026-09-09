@@ -207,4 +207,18 @@ public final class Ebook {
         }
         ThemeManager.INSTANCE.itemSetBackground(box, sel ? R.drawable.bg_fm_menu_sel : 0, sel);
     }
+
+    /**
+     * The size and the date under a file's name in Local files.
+     *
+     * Stock paints the name through ThemeManager and leaves those two at {@code @color/white},
+     * which on a light theme is a name in the theme's colour with two invisible lines beneath it.
+     * They take whatever the name became, cursor row included — called from both halves of
+     * {@code SearchActivity.selItem}, after it has painted the name.
+     */
+    public static void searchSub(com.innioasis.y1.databinding.ItemBookSearchBinding b) {
+        if (b == null) return;
+        Rows.subLine(b.name, b.size);
+        Rows.subLine(b.name, b.time);
+    }
 }

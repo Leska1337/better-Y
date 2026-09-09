@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..75767134 100644
+index 01b1f730..f641dd79 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..75767134 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000060
++  versionCode: 10000064
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -8162,10 +8162,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..a0434c44 100644
+index 803c1e7a..59a8cffd 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5621 @@
+@@ -1,5519 +1,5623 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -17686,6 +17686,8 @@ index 803c1e7a..a0434c44 100644
 +    <public type="mipmap" name="ipp_timer_off" id="0x7f0e0051" />
 +    <public type="mipmap" name="ipp_show_all_albums" id="0x7f0e0052" />
 +    <public type="mipmap" name="ipp_bookmark" id="0x7f0e0053" />
++    <public type="mipmap" name="ipp_folder" id="0x7f0e0054" />
++    <public type="mipmap" name="ipp_folders_music" id="0x7f0e0055" />
 +    <public type="plurals" name="mtrl_badge_content_description" id="0x7f0f0000" />
 +    <public type="raw" name="eqtest" id="0x7f100000" />
 +    <public type="string" name="All" id="0x7f110000" />
@@ -19307,7 +19309,7 @@ index 803c1e7a..a0434c44 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..611255e1 100644
+index 71fe29d0..2b79f97c 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,541 @@
@@ -20256,7 +20258,7 @@ index 71fe29d0..611255e1 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev60</string>
++    <string name="ipp_version">v1.0.0-dev64</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55202,7 +55204,7 @@ index 92290be6..83006c02 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
-index 6a25d7cf..2ffc4d6c 100644
+index 6a25d7cf..0a574aae 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55216,8 +55218,18 @@ index 6a25d7cf..2ffc4d6c 100644
  
      move-result-object v1
  
+@@ -175,5 +177,9 @@
+     :goto_1
+     invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
++    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
-index 552a1de3..0f20aef0 100644
+index 552a1de3..931d9aa2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55231,11 +55243,76 @@ index 552a1de3..0f20aef0 100644
  
      move-result-object v1
  
+@@ -207,5 +209,9 @@
+     :goto_1
+     invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
++    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b96..28b0e252 100644
+index e9751b96..6c80baf5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-@@ -1655,60 +1655,11 @@
+@@ -624,6 +624,10 @@
+ 
+     invoke-virtual {v0, v1, v3, v5}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: the On/Off row is a row of this screen like any other, so its text takes the cursor
++    # with it -- the same flag the background above was given.
++    invoke-static {v1, v5}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     .line 281
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getMyItem()Lcom/innioasis/y1/base/BaseBindingAdapter;
+ 
+@@ -679,6 +683,9 @@
+ 
+     invoke-virtual {v0, v1, v2, v2}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: ...and gives it back when the cursor has moved into the paired list.
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     .line 287
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getOtherItem()Lcom/innioasis/y1/base/BaseBindingAdapter;
+ 
+@@ -736,6 +743,9 @@
+ 
+     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setBackground(Landroid/graphics/drawable/Drawable;)V
+ 
++    # ipp: the third way stock clears that row -- the cursor is down in the found devices.
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     const/4 v0, 0x2
+ 
+     .line 294
+@@ -1569,6 +1579,23 @@
+ 
+     invoke-virtual {v0, v2, v3, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: every text of this screen was @color/white in the layout. Walked from the root because
++    # the "Other devices" caption carries no id at all; the device rows are painted by their own
++    # adapters, the lists being empty at this point.
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getVb()Landroidx/viewbinding/ViewBinding;
++
++    move-result-object v0
++
++    invoke-interface {v0}, Landroidx/viewbinding/ViewBinding;->getRoot()Landroid/view/View;
++
++    move-result-object v0
++
++    invoke-static {v0}, Lcom/innioasis/ipp/Blue;->paint(Landroid/view/View;)V
++
++    # ipp: and the cursor row over it -- the screen opens with the cursor on the On/Off row, which
++    # is what the highlight above (v1 = 1) has just said.
++    invoke-static {v2, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++
+     return-void
+ .end method
+ 
+@@ -1655,60 +1682,11 @@
      check-cast v0, Landroid/bluetooth/BluetoothDevice;
  
      .line 246
@@ -61349,6 +61426,39 @@ index 66a74737..73002895 100644
  
      .line 329
      invoke-virtual {p1}, Landroid/view/KeyEvent;->getRepeatCount()I
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$adapter$2$1.smali
+index 155615fa..dab87779 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$adapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$adapter$2$1.smali
+@@ -406,9 +406,10 @@
+     .line 101
+     iget-object v6, v1, Lcom/innioasis/y1/databinding/ItemVideoBinding;->fileImg:Landroid/widget/ImageView;
+ 
+-    const v7, 0x7f0e0002
+-
+-    invoke-virtual {v6, v7}, Landroid/widget/ImageView;->setImageResource(I)V
++    # ipp: the mod's own folder drawing instead of @mipmap/folder (was: setImageResource of it).
++    # The colour cannot be taken here -- the row's name is painted branches further down -- so the
++    # view is tagged and Folders.videoIcon finishes it at the end of the bind.
++    invoke-static {v6}, Lcom/innioasis/ipp/Folders;->videoFolder(Landroid/widget/ImageView;)V
+ 
+     goto :goto_1
+ 
+@@ -685,5 +686,14 @@
+ 
+     invoke-virtual {v1, v2, v3}, Ltimber/log/Timber$Forest;->i(Ljava/lang/String;[Ljava/lang/Object;)V
+ 
++    # ipp: the duration under a video's name was @color/white while the name itself went through
++    # ThemeManager. Last, so it copies the colour the name actually ended up with, whichever of
++    # the branches above painted it. Range form: p1 sits above v15.
++    invoke-static/range {p1 .. p1}, Lcom/innioasis/ipp/Rows;->videoSub(Lcom/innioasis/y1/databinding/ItemVideoBinding;)V
++
++    # ipp: and the folder icon of a Folders row -- same place, same reason, and the same view also
++    # carries a video's thumbnail, which must get neither the tint nor the enlargement.
++    invoke-static/range {p1 .. p1}, Lcom/innioasis/ipp/Folders;->videoIcon(Lcom/innioasis/y1/databinding/ItemVideoBinding;)V
++
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali
 index f2ab2f39..26868a48 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$animator$2$1$1.smali
@@ -62598,7 +62708,7 @@ index 6e8fae34..ac85e290 100644
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca002..6dd2ed4d 100644
+index 510ca002..c9a0dd0c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -62711,7 +62821,19 @@ index 510ca002..6dd2ed4d 100644
  
      if-ne v0, v1, :cond_1
  
-@@ -1047,6 +1019,17 @@
+@@ -982,6 +954,11 @@
+     .line 79
+     invoke-virtual {p0, v0, v1}, Lcom/innioasis/y1/base/BasePlayerActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
+ 
++    # ipp: the player's own text -- the information lines, the time marks and the lyrics -- was
++    # @color/white in the layout, with no ThemeManager hook anywhere near it. Placed after
++    # setCustomBackground above, because THEME mode reads the colour off that very progress bar.
++    invoke-static {p0}, Lcom/innioasis/ipp/Tint;->player(Landroid/app/Activity;)V
++
+     return-void
+ .end method
+ 
+@@ -1047,6 +1024,17 @@
  .method public onKeyDown(ILandroid/view/KeyEvent;)Z
      .locals 7
  
@@ -62729,7 +62851,7 @@ index 510ca002..6dd2ed4d 100644
      .line 119
      sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
  
-@@ -1592,6 +1575,12 @@
+@@ -1592,6 +1580,12 @@
  
      if-eqz p1, :cond_4
  
@@ -62742,7 +62864,7 @@ index 510ca002..6dd2ed4d 100644
      .line 200
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->pressMenu()V
  
-@@ -1619,6 +1608,10 @@
+@@ -1619,6 +1613,10 @@
  
      if-eqz p1, :cond_8
  
@@ -62753,7 +62875,7 @@ index 510ca002..6dd2ed4d 100644
      .line 208
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
-@@ -1742,9 +1735,167 @@
+@@ -1742,9 +1740,167 @@
      return v1
  .end method
  
@@ -62921,7 +63043,7 @@ index 510ca002..6dd2ed4d 100644
      .line 597
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onPause()V
  
-@@ -2133,6 +2284,8 @@
+@@ -2133,6 +2289,8 @@
      :cond_0
      iput-object p1, p0, Lcom/innioasis/y1/base/BasePlayerActivity;->pathForCover:Ljava/lang/String;
  
@@ -66063,10 +66185,10 @@ index 27f20fbd..9c926e5f 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833eac..7743d577 100644
+index b6833eac..944ef0c0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-@@ -275,6 +275,12 @@
+@@ -275,6 +275,16 @@
  
      invoke-virtual {p2, v1, v0, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -66076,15 +66198,22 @@ index b6833eac..7743d577 100644
 +    # the rest leaves a few pixels over on every step.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
 +
++    # ipp: the size and the date were @color/white while the name went through ThemeManager --
++    # they take whatever the name became. After the name is painted, and in both branches.
++    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
++
      .line 185
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
  
-@@ -314,6 +320,9 @@
+@@ -314,6 +324,12 @@
  
      invoke-virtual {p2, v1, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
 +    # ipp: the unselected state too -- rows are recycled.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
++
++    # ipp: the unselected half of the same thing.
++    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
 +
      .line 191
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;

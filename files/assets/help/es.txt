@@ -46,6 +46,18 @@ Esta opción solo aparece en el modo de depuración, que se activa pulsando cinc
 * Color del tema
 Establece el color de los botones interactivos del reproductor.
 
+[text_tint] Color del texto
+* Claro
+* Oscuro
+* Color del tema
+Establece el color de las líneas de texto y de las marcas de tiempo del reproductor.
+
+[lyrics_tint] Color de la letra
+* Claro
+* Oscuro
+* Color del tema
+Establece el color de la letra de la canción en el reproductor.
+
 [cover_tilt] Inclinar la carátula
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

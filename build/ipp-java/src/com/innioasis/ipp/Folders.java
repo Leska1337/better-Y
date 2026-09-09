@@ -381,13 +381,18 @@ public final class Folders {
     }
 
     /**
-     * The marker row's own look, at the very END of {@code FileListAdapter.getView}: the label and
-     * the icon of the identically named row in the artist view (`ipp_show_all_songs`), tinted with
-     * the colour the row's name has just been given — the rule every menu icon in the mod follows,
-     * so it tracks the theme and the focus highlight.
+     * Every row's icon, at the very END of {@code FileListAdapter.getView} — which is where it has
+     * to be, because the colour each one takes is the colour the row's NAME ended up with, and
+     * that is settled by the ThemeManager calls above.
      *
-     * Nothing to undo for an ordinary row: stock's getView writes the name and the icon of every
-     * row it binds, so a recycled marker row is overwritten before this runs.
+     * A marker row also gets its label and the icon of the identically named row in the artist
+     * view ({@code ipp_show_all_songs}); an ordinary row gets the mod's folder or file drawing.
+     * All four are one set — 72x72 with the glyph inside a ~56 box — so they draw at one size in
+     * the row's fixed 22dip frame and need no scaling to agree with each other.
+     *
+     * Nothing to undo of the LABEL on an ordinary row: stock's getView writes the name of every
+     * row it binds, so a recycled marker row is overwritten before this runs. The icon is another
+     * matter — see the tint and the tag below.
      */
     public static void row(View row, int pos, Object adapter) {
         if (row == null || !(adapter instanceof MyBaseAdapter)) return;
@@ -404,22 +409,34 @@ public final class Folders {
         TextView tv = (nv instanceof TextView) ? (TextView) nv : null;
         ImageView img = (iv instanceof ImageView) ? (ImageView) iv : null;
 
-        // Rows are recycled, so the enlargement has to be taken back off an ordinary row -- and it
-        // is a SCALE, not a size: growing the 22dip box would push the label right, and the marker
-        // rows would then not line up with the folders under them.
-        if (img != null && (img.getScaleX() != (mine ? BIG : 1f))) {
-            img.setScaleX(mine ? BIG : 1f);
-            img.setScaleY(mine ? BIG : 1f);
-        }
         if (!mine) {
-            // Recycled rows again, and this one is not about size: the marker's icon is TINTED to
-            // the colour of its label (Icons.menu), and a tint left on the view paints the folder
-            // icon that lands in it next. With seven rows on screen that is every seventh folder,
-            // and it only shows on themes whose item text colour differs from the icon's own — the
-            // user saw it on "Frutiger Aero" and "Win98 Refix".
+            // An ordinary row: the mod's own folder / file drawings in place of the stock ones,
+            // painted in the colour the row's name has just been given. Same rule and the same
+            // reason as the marker rows above them -- the whole list is then one set of artwork,
+            // one size and one colour, and it follows the theme and the focus highlight.
+            //
+            // Stock's commonSetIcon has already run at the top of getView, so this OVERWRITES what
+            // it set. That is deliberate: it is also the call that gives a theme its own
+            // fileTypeFolder / fileTypeMusic picture, and such a theme keeps it exactly as drawn --
+            // the tint is SRC_IN, which flattens a multi-coloured drawing into one colour.
+            // Theme.hasFileIcon is what answers that, memoised per theme.
+            //
+            // The tag is cleared whatever happens, and so is the tint when it is not wanted: rows
+            // are recycled, and a filter left on the view paints whatever lands in it next. With
+            // seven rows on screen that reads as every seventh icon being the wrong colour, and it
+            // only shows on themes whose item text colour differs from the icon's own -- the user
+            // saw it on "Frutiger Aero" and "Win98 Refix".
             if (img != null) {
-                Icons.reset(img);
                 img.setTag(R.id.ipp_row_icon, null);
+                boolean dir = f != null && !f.isFile();
+                if (tv != null && f != null && !Theme.hasFileIcon(dir)) {
+                    img.setImageResource(dir ? R.mipmap.ipp_folder : R.mipmap.ipp_folders_music);
+                    Icons.menu(img, tv.getCurrentTextColor());
+                    scale(img, BIG);
+                } else {
+                    Icons.reset(img);
+                    scale(img, 1f);
+                }
             }
             return;
         }
@@ -433,6 +450,7 @@ public final class Folders {
             img.setVisibility(View.VISIBLE);
             img.setImageResource(shuf ? R.mipmap.music_shuffle : R.mipmap.ipp_show_all_songs);
             if (tv != null) Icons.menu(img, tv.getCurrentTextColor());
+            scale(img, BIG);
             // Which picture this view is supposed to be holding, for keepIcon() below.
             img.setTag(R.id.ipp_row_icon, Integer.valueOf(
                     shuf ? R.mipmap.music_shuffle : R.mipmap.ipp_show_all_songs));
@@ -463,14 +481,63 @@ public final class Folders {
     }
 
     /**
-     * How much bigger the marker rows' icons are drawn than the folder icon beside them.
+     * How much bigger the mod's own icons are drawn than the box they are given.
      *
-     * The ipp artwork is a shape inside a 72x72 canvas with transparent margin all round, while
-     * the stock folder mipmap fills its own — so at the same 22dip box the ipp glyph comes out
-     * visibly smaller and the row reads as less important than the folders under it, which is the
-     * opposite of what these two rows are.
+     * The set is a glyph inside a ~56 box of a 72x72 canvas, and the row's frame is a fixed 22dip
+     * with the default {@code fitCenter} — which scales the whole CANVAS, transparent margin and
+     * all, so the glyph itself lands at about 17dip and reads small beside the text. 1.3 is very
+     * nearly the 72/56 the margin takes away, and is applied as a SCALE rather than a bigger box:
+     * growing the box would push every label right and the rows would stop lining up.
+     *
+     * Not applied to a theme's own {@code fileTypeFolder} / {@code fileTypeMusic} picture, which
+     * is drawn to fill its canvas the way the stock one was.
      */
     private static final float BIG = 1.3f;
+
+    /** Rows are recycled, so the scale is always SET, never only raised. */
+    private static void scale(ImageView iv, float s) {
+        if (iv == null || iv.getScaleX() == s) return;
+        iv.setScaleX(s);
+        iv.setScaleY(s);
+    }
+
+    /**
+     * Videos → Folders is a screen of its own ({@code VideoListActivity}), and its folder rows put
+     * the icon in {@code file_img} with a plain {@code setImageResource} — the theme is not asked
+     * there at all, in stock or here. This replaces that call: the mod's folder drawing, and a tag
+     * saying the view is holding it.
+     *
+     * The colour cannot be taken here — the row's name is painted several branches further down —
+     * so the tag is what {@link #videoIcon} reads at the end of the bind.
+     */
+    public static void videoFolder(ImageView iv) {
+        if (iv == null) return;
+        iv.setImageResource(R.mipmap.ipp_folder);
+        iv.setTag(R.id.ipp_row_icon, Integer.valueOf(R.mipmap.ipp_folder));
+    }
+
+    /**
+     * ...and the end of that bind: the icon takes the colour its name ended up with, and its
+     * scale, exactly as in the Folders list.
+     *
+     * The same ImageView also carries a VIDEO's thumbnail, so the tag is read and cleared in one
+     * go: a recycled row that has become a video must lose both the tint and the enlargement, or
+     * the picture comes out one flat colour and 30% too big.
+     */
+    public static void videoIcon(com.innioasis.y1.databinding.ItemVideoBinding b) {
+        if (b == null) return;
+        ImageView iv = b.fileImg;
+        if (iv == null) return;
+        boolean mine = iv.getTag(R.id.ipp_row_icon) instanceof Integer;
+        iv.setTag(R.id.ipp_row_icon, null);
+        if (mine) {
+            Icons.menu(iv, b.fileName == null ? 0 : b.fileName.getCurrentTextColor());
+            scale(iv, BIG);
+        } else {
+            Icons.reset(iv);
+            scale(iv, 1f);
+        }
+    }
 
     // ------------------------------------------------------------ the order the folder is listed in
 

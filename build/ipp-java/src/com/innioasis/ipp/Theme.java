@@ -14,6 +14,10 @@ import android.view.View;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.theme.ThemeConfig;
+import com.innioasis.y1.theme.config.FileConfig;
+
+import java.io.File;
 
 import java.util.HashMap;
 
@@ -118,6 +122,60 @@ public final class Theme {
         // Posted: the applier is in the middle of setting backgrounds, and the watcher rebuilds a
         // screen. The probe has no window, so the Handler is explicit.
         if (r != null) new Handler(Looper.getMainLooper()).post(r);
+    }
+
+    // ------------------------------------------------- does the theme draw the file icons itself?
+
+    /**
+     * Has the theme brought its own picture for the folder / music icon of a Folders row
+     * ({@code fileTypeFolder} and {@code fileTypeMusic} in its {@code config.json})?
+     *
+     * Asked before those icons are tinted to the colour of the label beside them, the way every
+     * menu icon in the mod is: the tint is {@code SRC_IN}, which keeps the alpha and replaces
+     * every colour with one — right for the stock artwork, which is a white glyph on transparent,
+     * and destructive to a theme's own drawing, which may be of any number of colours. So a theme
+     * that ships one keeps it exactly as drawn.
+     *
+     * The config is read rather than probed, which is the opposite of {@link #rowsPainted} and for
+     * the opposite reason: there the answer is behind the name (a png can be transparent across
+     * its whole canvas), here the name IS the answer — {@code commonSetIcon} looks up nothing else
+     * before handing the picture over. The file is checked as well, because a name whose file is
+     * missing falls all the way back to the stock resource, which is exactly what wants tinting.
+     *
+     * Memoised against the theme's NAME, which is also what makes it cheap: a config.json is
+     * parsed once per theme rather than once per row.
+     */
+    public static boolean hasFileIcon(boolean folder) {
+        try {
+            String theme = ThemeManager.INSTANCE.getThemeName();
+            if (!eq(theme, fileIconsFor)) {
+                boolean f = false, m = false;
+                if (theme != null && theme.length() != 0) {
+                    File dir = new File(ThemeManager.themesPath, theme);
+                    ThemeConfig cfg = ThemeManager.INSTANCE.getConfig(dir.getAbsolutePath());
+                    FileConfig fc = (cfg == null) ? null : cfg.getFileConfig();
+                    if (fc != null) {
+                        f = shipped(dir, fc.getFolderIcon());
+                        m = shipped(dir, fc.getMusicIcon());
+                    }
+                }
+                folderIcon = f;
+                musicIcon = m;
+                fileIconsFor = theme;
+            }
+            return folder ? folderIcon : musicIcon;
+        } catch (Throwable t) {
+            return false;                      // unreadable config: the stock icons are what shows
+        }
+    }
+
+    private static boolean folderIcon;
+    private static boolean musicIcon;
+    // null until asked: it can never equal a theme name, the default theme being "".
+    private static String fileIconsFor;
+
+    private static boolean shipped(File dir, String name) {
+        return name != null && name.length() != 0 && new File(dir, name).exists();
     }
 
     /** A background that lets more than half the wallpaper through is not one. */

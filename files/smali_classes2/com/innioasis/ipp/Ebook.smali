@@ -302,6 +302,24 @@
     return-void
 .end method
 
+.method public static searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
+  .registers 3
+  .line 220
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 221
+    iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+    iget-object v1, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->size:Landroid/widget/TextView;
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
+  .line 222
+    iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+    iget-object p0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->time:Landroid/widget/TextView;
+    invoke-static { v0, p0 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
+  .line 223
+    return-void
+.end method
+
 .method public static setup(Landroid/app/Activity;)V
   .catchall { :L0 .. :L8 } :L9
   .registers 11

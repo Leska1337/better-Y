@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
@@ -212,10 +215,61 @@ public final class Blue {
             ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
             LinearLayout t = vb.layoutTitle;
             ThemeManager.INSTANCE.itemSetBackground(t, on ? R.drawable.item_selected_no_arrow : 0, on);
+            row(t, on);
         } catch (Throwable t) {
             // the row keeps the look it had
         }
     }
+
+    /**
+     * Every text on this screen in the theme's ordinary row colour.
+     *
+     * The whole screen was {@code @color/white} in the layouts — the On/Off row, the "My devices"
+     * and "Other devices" captions, the searching line, and both labels of a device row — which is
+     * a screen of invisible text on any light theme.
+     *
+     * The tree is walked rather than the views named one by one because one of them has no id at
+     * all — the "Other devices" caption — so a binding cannot reach it. Called for the whole
+     * screen once it is built, which is also the only moment it is right for every row: the lists
+     * are still empty then, and from that point on each row paints itself through {@link #row}.
+     */
+    public static void paint(View v) {
+        walk(v, false);
+    }
+
+    /**
+     * One row, painted for the cursor or off it — the two device lists and the On/Off row, which
+     * is a row of this screen like any other however little it looks like one.
+     *
+     * The flag is the SAME one the row's background was just given, and comes from the caller
+     * rather than being worked out here: the three lists number their rows differently (the On/Off
+     * row is mark 0, the paired devices follow it, the found ones follow those), and a second
+     * place doing that arithmetic is a second place to get it wrong.
+     */
+    public static void row(View v, boolean sel) {
+        walk(v, sel);
+    }
+
+    private static void walk(View v, boolean sel) {
+        try {
+            if (v == null) return;
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                int c = sel ? tv.getResources().getColor(R.color.selected_text_color) : PLAIN;
+                ThemeManager.INSTANCE.itemSetTextColor(tv, c, sel);
+                return;
+            }
+            if (v instanceof ViewGroup) {
+                ViewGroup g = (ViewGroup) v;
+                for (int i = 0; i < g.getChildCount(); i++) walk(g.getChildAt(i), sel);
+            }
+        } catch (Throwable t) {
+            // stock white is a look; a crash on the way into the screen is not
+        }
+    }
+
+    /** What the layouts said, and what a theme naming no colour of its own still gets. */
+    private static final int PLAIN = 0xFFFFFFFF;
 
     private static SharedPreferences prefs() {
         Context c = Y1Application.Companion.getAppContext();

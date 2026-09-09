@@ -174,60 +174,60 @@
 .method private static clearTicks(Landroid/app/Activity;)V
   .catchall { :L0 .. :L4 } :L6
   .registers 3
-  .line 758
+  .line 825
     const v0, 2131362180
   :L0
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 759
+  .line 826
     instance-of v0, p0, Landroid/widget/ListView;
     if-nez v0, :L1
     return-void
   :L1
-  .line 760
+  .line 827
     check-cast p0, Landroid/widget/ListView;
     invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
     move-result-object p0
-  .line 761
+  .line 828
     instance-of v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v0, :L2
     return-void
   :L2
-  .line 762
+  .line 829
     check-cast p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 763
+  .line 830
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object v0
-  .line 764
+  .line 831
     if-eqz v0, :L5
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
     if-eqz v1, :L3
     goto :L5
   :L3
-  .line 765
+  .line 832
     invoke-interface { v0 }, Ljava/util/List;->clear()V
-  .line 766
+  .line 833
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   :L4
-  .line 769
+  .line 836
     goto :L7
   :L5
-  .line 764
+  .line 831
     return-void
   :L6
-  .line 767
+  .line 834
     move-exception p0
   :L7
-  .line 770
+  .line 837
     return-void
 .end method
 
 .method private static currentPath(Landroid/app/Activity;)Ljava/lang/String;
   .registers 3
-  .line 793
+  .line 860
     nop
-  .line 794
+  .line 861
     if-eqz p0, :L0
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v0
@@ -239,7 +239,7 @@
     move-result-object v0
     goto :L1
   :L0
-  .line 795
+  .line 862
     const/4 v0, 0
   :L1
     if-nez v0, :L2
@@ -247,7 +247,7 @@
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->defaultFolderPath(Landroid/content/Context;)Ljava/lang/String;
     move-result-object v0
   :L2
-  .line 796
+  .line 863
     return-object v0
 .end method
 
@@ -439,41 +439,41 @@
 .method public static keepIcon(Landroid/widget/ImageView;)Z
   .catchall { :L1 .. :L3 } :L4
   .registers 4
-  .line 455
+  .line 473
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 456
+  .line 474
     const v1, 2131362556
   :L1
     invoke-virtual { p0, v1 }, Landroid/widget/ImageView;->getTag(I)Ljava/lang/Object;
     move-result-object v1
-  .line 457
+  .line 475
     instance-of v2, v1, Ljava/lang/Integer;
     if-nez v2, :L2
     return v0
   :L2
-  .line 458
+  .line 476
     check-cast v1, Ljava/lang/Integer;
     invoke-virtual { v1 }, Ljava/lang/Integer;->intValue()I
     move-result v1
     invoke-virtual { p0, v1 }, Landroid/widget/ImageView;->setImageResource(I)V
   :L3
-  .line 459
+  .line 477
     const/4 p0, 1
     return p0
   :L4
-  .line 460
+  .line 478
     move-exception p0
-  .line 461
+  .line 479
     return v0
 .end method
 
 .method private static keyFor(Ljava/lang/String;)Ljava/lang/String;
   .catchall { :L0 .. :L1 } :L2
   .registers 2
-  .line 503
+  .line 570
     if-eqz p0, :L3
   :L0
     sget-object v0, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
@@ -484,14 +484,14 @@
   :L1
     return-object p0
   :L2
-  .line 504
+  .line 571
     move-exception p0
     goto :L4
   :L3
-  .line 506
+  .line 573
     nop
   :L4
-  .line 507
+  .line 574
     const-string p0, "folders_sort"
     return-object p0
 .end method
@@ -631,7 +631,7 @@
 
 .method private static pathOf(Ljava/io/File;)Ljava/lang/String;
   .registers 1
-  .line 515
+  .line 582
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -644,54 +644,54 @@
 
 .method private static relist(Landroid/app/Activity;)V
   .registers 2
-  .line 781
+  .line 848
     instance-of v0, p0, Lcom/innioasis/music/FilesActivity;
     if-nez v0, :L0
     return-void
   :L0
-  .line 782
+  .line 849
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->currentPath(Landroid/app/Activity;)Ljava/lang/String;
     move-result-object v0
-  .line 783
+  .line 850
     if-nez v0, :L1
     return-void
   :L1
-  .line 784
+  .line 851
     check-cast p0, Lcom/innioasis/music/FilesActivity;
     invoke-virtual { p0, v0 }, Lcom/innioasis/music/FilesActivity;->refresh(Ljava/lang/String;)V
-  .line 785
+  .line 852
     return-void
 .end method
 
 .method private static resortVideoList(Landroid/app/Activity;)V
   .catchall { :L0 .. :L10 } :L12
   .registers 7
-  .line 658
+  .line 725
     const v0, 2131362310
   :L0
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 659
+  .line 726
     instance-of v0, p0, Landroidx/recyclerview/widget/RecyclerView;
     if-nez v0, :L1
     return-void
   :L1
-  .line 660
+  .line 727
     check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 661
+  .line 728
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object p0
-  .line 662
+  .line 729
     instance-of v0, p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     if-nez v0, :L2
     return-void
   :L2
-  .line 663
+  .line 730
     move-object v0, p0
     check-cast v0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object v0
-  .line 664
+  .line 731
     if-eqz v0, :L11
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v1
@@ -699,18 +699,18 @@
     if-ge v1, v2, :L3
     goto :L11
   :L3
-  .line 665
+  .line 732
     sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
     invoke-virtual { v1 }, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getVideoSort()I
     move-result v1
-  .line 666
+  .line 733
     sget-object v2, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->None:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v2
     if-ne v1, v2, :L4
     return-void
   :L4
-  .line 667
+  .line 734
     sget-object v2, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->A_Z:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v2
@@ -718,7 +718,7 @@
     const/4 v4, 1
     if-eq v1, v2, :L6
     sget-object v2, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->Z_A:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
-  .line 668
+  .line 735
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v2
     if-ne v1, v2, :L5
@@ -729,56 +729,56 @@
   :L6
     const/4 v2, 1
   :L7
-  .line 669
+  .line 736
     sget-object v5, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->A_Z:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v5 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v5
     if-eq v1, v5, :L8
     sget-object v5, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->CreateTime_Asc:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
-  .line 670
+  .line 737
     invoke-virtual { v5 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v5
     if-ne v1, v5, :L9
   :L8
     const/4 v3, 1
   :L9
-  .line 671
+  .line 738
     new-instance v1, Lcom/innioasis/ipp/Folders$RowSort;
     invoke-direct { v1, v2, v3 }, Lcom/innioasis/ipp/Folders$RowSort;-><init>(ZZ)V
     invoke-static { v0, v1 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 672
+  .line 739
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyDataSetChanged()V
   :L10
-  .line 675
+  .line 742
     goto :L13
   :L11
-  .line 664
+  .line 731
     return-void
   :L12
-  .line 673
+  .line 740
     move-exception p0
   :L13
-  .line 676
+  .line 743
     return-void
 .end method
 
 .method public static row(Landroid/view/View;ILjava/lang/Object;)V
-  .catchall { :L0 .. :L1 } :L26
-  .registers 10
-  .line 393
-    if-eqz p0, :L27
+  .catchall { :L0 .. :L1 } :L23
+  .registers 9
+  .line 398
+    if-eqz p0, :L24
     instance-of v0, p2, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v0, :L0
-    goto/16 :L27
+    goto/16 :L24
   :L0
-  .line 396
+  .line 401
     check-cast p2, Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { p2, p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getItem(I)Ljava/lang/Object;
     move-result-object p1
   :L1
-  .line 399
+  .line 404
     nop
-  .line 400
+  .line 405
     instance-of p2, p1, Ljava/io/File;
     const/4 v0, 0
     if-eqz p2, :L2
@@ -787,18 +787,18 @@
   :L2
     move-object p1, v0
   :L3
-  .line 401
+  .line 406
     invoke-static { p1 }, Lcom/innioasis/ipp/Folders;->isAnyMark(Ljava/io/File;)Z
     move-result p2
-  .line 402
+  .line 407
     const v1, 2131362042
     invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 403
+  .line 408
     const v2, 2131362159
     invoke-virtual { p0, v2 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v2
-  .line 404
+  .line 409
     instance-of v3, v1, Landroid/widget/TextView;
     if-eqz v3, :L4
     check-cast v1, Landroid/widget/TextView;
@@ -806,7 +806,7 @@
   :L4
     move-object v1, v0
   :L5
-  .line 405
+  .line 410
     instance-of v3, v2, Landroid/widget/ImageView;
     if-eqz v3, :L6
     check-cast v2, Landroid/widget/ImageView;
@@ -814,112 +814,138 @@
   :L6
     move-object v2, v0
   :L7
-  .line 410
-    if-eqz v2, :L14
-    invoke-virtual { v2 }, Landroid/widget/ImageView;->getScaleX()F
-    move-result v3
-    const v4, 1067869798
-    const/high16 v5, 0x3F800000
-    if-eqz p2, :L8
-    const v6, 1067869798
-    goto :L9
-  :L8
-    const/high16 v6, 0x3F800000
-  :L9
-    cmpl-float v3, v3, v6
-    if-eqz v3, :L14
-  .line 411
-    if-eqz p2, :L10
-    const v3, 1067869798
-    goto :L11
-  :L10
-    const/high16 v3, 0x3F800000
-  :L11
-    invoke-virtual { v2, v3 }, Landroid/widget/ImageView;->setScaleX(F)V
   .line 412
-    if-eqz p2, :L12
-    goto :L13
-  :L12
-    const/high16 v4, 0x3F800000
-  :L13
-    invoke-virtual { v2, v4 }, Landroid/widget/ImageView;->setScaleY(F)V
-  :L14
-  .line 414
-    const v3, 2131362556
-    if-nez p2, :L16
-  .line 420
-    if-eqz v2, :L15
-  .line 421
+    const v3, 1067869798
+    const/4 v4, 0
+    const v5, 2131362556
+    if-nez p2, :L13
+  .line 429
+    if-eqz v2, :L12
+  .line 430
+    invoke-virtual { v2, v5, v0 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
+  .line 431
+    if-eqz p1, :L8
+    invoke-virtual { p1 }, Ljava/io/File;->isFile()Z
+    move-result p0
+    if-nez p0, :L8
+    const/4 v4, 1
+  :L8
+  .line 432
+    if-eqz v1, :L11
+    if-eqz p1, :L11
+    invoke-static { v4 }, Lcom/innioasis/ipp/Theme;->hasFileIcon(Z)Z
+    move-result p0
+    if-nez p0, :L11
+  .line 433
+    if-eqz v4, :L9
+    const p0, 2131624020
+    goto :L10
+  :L9
+    const p0, 2131624021
+  :L10
+    invoke-virtual { v2, p0 }, Landroid/widget/ImageView;->setImageResource(I)V
+  .line 434
+    invoke-virtual { v1 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result p0
+    invoke-static { v2, p0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
+  .line 435
+    invoke-static { v2, v3 }, Lcom/innioasis/ipp/Folders;->scale(Landroid/widget/ImageView;F)V
+    goto :L12
+  :L11
+  .line 437
     invoke-static { v2 }, Lcom/innioasis/ipp/Icons;->reset(Landroid/widget/ImageView;)V
-  .line 422
-    invoke-virtual { v2, v3, v0 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
-  :L15
-  .line 424
+  .line 438
+    const/high16 p0, 0x3F800000
+    invoke-static { v2, p0 }, Lcom/innioasis/ipp/Folders;->scale(Landroid/widget/ImageView;F)V
+  :L12
+  .line 441
     return-void
-  :L16
-  .line 427
+  :L13
+  .line 444
     invoke-static { p1 }, Lcom/innioasis/ipp/Folders;->isShuffle(Ljava/io/File;)Z
     move-result p1
-  .line 428
-    if-eqz v1, :L19
-  .line 429
+  .line 445
+    if-eqz v1, :L16
+  .line 446
     invoke-virtual { p0 }, Landroid/view/View;->getContext()Landroid/content/Context;
     move-result-object p0
-  .line 430
-    if-eqz p1, :L17
+  .line 447
+    if-eqz p1, :L14
     const p2, 2131820900
-    goto :L18
-  :L17
+    goto :L15
+  :L14
     const p2, 2131821049
-  :L18
-  .line 429
+  :L15
+  .line 446
     invoke-virtual { p0, p2 }, Landroid/content/Context;->getString(I)Ljava/lang/String;
     move-result-object p0
     invoke-virtual { v1, p0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  :L19
-  .line 432
-    if-eqz v2, :L25
-  .line 433
-    const/4 p0, 0
-    invoke-virtual { v2, p0 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 434
+  :L16
+  .line 449
+    if-eqz v2, :L22
+  .line 450
+    invoke-virtual { v2, v4 }, Landroid/widget/ImageView;->setVisibility(I)V
+  .line 451
     const p0, 2131623978
     const p2, 2131623994
-    if-eqz p1, :L20
+    if-eqz p1, :L17
     const v0, 2131623978
-    goto :L21
-  :L20
+    goto :L18
+  :L17
     const v0, 2131623994
-  :L21
+  :L18
     invoke-virtual { v2, v0 }, Landroid/widget/ImageView;->setImageResource(I)V
-  .line 435
-    if-eqz v1, :L22
+  .line 452
+    if-eqz v1, :L19
     invoke-virtual { v1 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result v0
     invoke-static { v2, v0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
-  :L22
-  .line 437
+  :L19
+  .line 453
+    invoke-static { v2, v3 }, Lcom/innioasis/ipp/Folders;->scale(Landroid/widget/ImageView;F)V
+  .line 455
     nop
-  .line 438
-    if-eqz p1, :L23
-    goto :L24
-  :L23
+  .line 456
+    if-eqz p1, :L20
+    goto :L21
+  :L20
     const p0, 2131623994
-  :L24
-  .line 437
+  :L21
+  .line 455
     invoke-static { p0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object p0
-    invoke-virtual { v2, v3, p0 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
-  :L25
-  .line 440
+    invoke-virtual { v2, v5, p0 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
+  :L22
+  .line 458
     return-void
-  :L26
-  .line 397
+  :L23
+  .line 402
     move-exception p0
+  .line 403
+    return-void
+  :L24
   .line 398
     return-void
-  :L27
-  .line 393
+.end method
+
+.method private static scale(Landroid/widget/ImageView;F)V
+  .registers 3
+  .line 499
+    if-eqz p0, :L1
+    invoke-virtual { p0 }, Landroid/widget/ImageView;->getScaleX()F
+    move-result v0
+    cmpl-float v0, v0, p1
+    if-nez v0, :L0
+    goto :L1
+  :L0
+  .line 500
+    invoke-virtual { p0, p1 }, Landroid/widget/ImageView;->setScaleX(F)V
+  .line 501
+    invoke-virtual { p0, p1 }, Landroid/widget/ImageView;->setScaleY(F)V
+  .line 502
+    return-void
+  :L1
+  .line 499
     return-void
 .end method
 
@@ -1146,12 +1172,12 @@
 
 .method public static sortAsc(Ljava/io/File;)Z
   .registers 2
-  .line 526
+  .line 593
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->pathOf(Ljava/io/File;)Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->sortValue(Ljava/lang/String;)I
     move-result p0
-  .line 527
+  .line 594
     if-eqz p0, :L1
     const/4 v0, 2
     if-ne p0, v0, :L0
@@ -1167,12 +1193,12 @@
 
 .method public static sortByName(Ljava/io/File;)Z
   .registers 2
-  .line 520
+  .line 587
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->pathOf(Ljava/io/File;)Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->sortValue(Ljava/lang/String;)I
     move-result p0
-  .line 521
+  .line 588
     const/4 v0, 1
     if-eqz p0, :L1
     if-ne p0, v0, :L0
@@ -1186,7 +1212,7 @@
 .method public static sortFiles(Ljava/util/List;Ljava/io/File;)V
   .catchall { :L0 .. :L2 } :L3
   .registers 4
-  .line 543
+  .line 610
     if-eqz p0, :L5
   :L0
     invoke-interface { p0 }, Ljava/util/List;->size()I
@@ -1195,7 +1221,7 @@
     if-ge v0, v1, :L1
     goto :L5
   :L1
-  .line 544
+  .line 611
     new-instance v0, Lcom/innioasis/ipp/Folders$FileSort;
     invoke-static { p1 }, Lcom/innioasis/ipp/Folders;->sortByName(Ljava/io/File;)Z
     move-result v1
@@ -1204,50 +1230,50 @@
     invoke-direct { v0, v1, p1 }, Lcom/innioasis/ipp/Folders$FileSort;-><init>(ZZ)V
     invoke-static { p0, v0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
   :L2
-  .line 547
+  .line 614
     goto :L4
   :L3
-  .line 545
+  .line 612
     move-exception p0
   :L4
-  .line 548
+  .line 615
     return-void
   :L5
-  .line 543
+  .line 610
     return-void
 .end method
 
 .method public static sortMenu(Landroid/app/Activity;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 5
-  .line 710
+  .line 777
     if-nez p0, :L0
     return-void
   :L0
-  .line 711
+  .line 778
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 712
+  .line 779
     const v1, 2131820965
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 713
+  .line 780
     const v1, 2131820971
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 714
+  .line 781
     const v1, 2131820969
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 715
+  .line 782
     const v1, 2131820970
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 717
+  .line 784
     new-instance v1, Lcom/innioasis/music/util/SubMenuDialog;
     new-instance v2, Lcom/innioasis/ipp/Folders$SortPick;
     invoke-direct { v2, p0 }, Lcom/innioasis/ipp/Folders$SortPick;-><init>(Landroid/app/Activity;)V
@@ -1255,19 +1281,19 @@
     invoke-direct { v1, p0, v0, v2, v3 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
     invoke-virtual { v1 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
   :L1
-  .line 720
+  .line 787
     goto :L3
   :L2
-  .line 718
+  .line 785
     move-exception p0
   :L3
-  .line 721
+  .line 788
     return-void
 .end method
 
 .method private static sortValue(Ljava/lang/String;)I
   .registers 2
-  .line 511
+  .line 578
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
@@ -1281,7 +1307,7 @@
 .method public static sortVideoFiles(Ljava/util/List;)V
   .catchall { :L0 .. :L8 } :L9
   .registers 6
-  .line 598
+  .line 665
     if-eqz p0, :L11
   :L0
     invoke-interface { p0 }, Ljava/util/List;->size()I
@@ -1290,11 +1316,11 @@
     if-ge v0, v1, :L1
     goto :L11
   :L1
-  .line 599
+  .line 666
     sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getVideoSort()I
     move-result v0
-  .line 600
+  .line 667
     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->A_Z:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v1 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v1
@@ -1302,7 +1328,7 @@
     const/4 v3, 1
     if-eq v0, v1, :L3
     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->Z_A:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
-  .line 601
+  .line 668
     invoke-virtual { v1 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v1
     if-ne v0, v1, :L2
@@ -1313,41 +1339,41 @@
   :L3
     const/4 v1, 1
   :L4
-  .line 602
+  .line 669
     sget-object v4, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->A_Z:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v4 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v4
     if-eq v0, v4, :L5
     sget-object v4, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->CreateTime_Asc:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
-  .line 603
+  .line 670
     invoke-virtual { v4 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v4
     if-ne v0, v4, :L6
   :L5
     const/4 v2, 1
   :L6
-  .line 604
+  .line 671
     sget-object v3, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->None:Lcom/innioasis/y1/database/Y1Repository$SortVideoType;
     invoke-virtual { v3 }, Lcom/innioasis/y1/database/Y1Repository$SortVideoType;->getType()I
     move-result v3
     if-ne v0, v3, :L7
     return-void
   :L7
-  .line 605
+  .line 672
     new-instance v0, Lcom/innioasis/ipp/Folders$FileSort;
     invoke-direct { v0, v1, v2 }, Lcom/innioasis/ipp/Folders$FileSort;-><init>(ZZ)V
     invoke-static { p0, v0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
   :L8
-  .line 608
+  .line 675
     goto :L10
   :L9
-  .line 606
+  .line 673
     move-exception p0
   :L10
-  .line 609
+  .line 676
     return-void
   :L11
-  .line 598
+  .line 665
     return-void
 .end method
 
@@ -1424,37 +1450,103 @@
     return-void
 .end method
 
-.method public static videoSortMenu(Landroid/app/Activity;)V
-  .catchall { :L0 .. :L1 } :L2
-  .registers 5
-  .line 614
+.method public static videoFolder(Landroid/widget/ImageView;)V
+  .registers 3
+  .line 514
     if-nez p0, :L0
     return-void
   :L0
-  .line 615
+  .line 515
+    const v0, 2131624020
+    invoke-virtual { p0, v0 }, Landroid/widget/ImageView;->setImageResource(I)V
+  .line 516
+    const v1, 2131362556
+    invoke-static { v0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+    move-result-object v0
+    invoke-virtual { p0, v1, v0 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
+  .line 517
+    return-void
+.end method
+
+.method public static videoIcon(Lcom/innioasis/y1/databinding/ItemVideoBinding;)V
+  .registers 5
+  .line 528
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 529
+    iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemVideoBinding;->fileImg:Landroid/widget/ImageView;
+  .line 530
+    if-nez v0, :L1
+    return-void
+  :L1
+  .line 531
+    const v1, 2131362556
+    invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->getTag(I)Ljava/lang/Object;
+    move-result-object v2
+    instance-of v2, v2, Ljava/lang/Integer;
+  .line 532
+    const/4 v3, 0
+    invoke-virtual { v0, v1, v3 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
+  .line 533
+    if-eqz v2, :L4
+  .line 534
+    iget-object v1, p0, Lcom/innioasis/y1/databinding/ItemVideoBinding;->fileName:Landroid/widget/TextView;
+    if-nez v1, :L2
+    const/4 p0, 0
+    goto :L3
+  :L2
+    iget-object p0, p0, Lcom/innioasis/y1/databinding/ItemVideoBinding;->fileName:Landroid/widget/TextView;
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result p0
+  :L3
+    invoke-static { v0, p0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
+  .line 535
+    const p0, 1067869798
+    invoke-static { v0, p0 }, Lcom/innioasis/ipp/Folders;->scale(Landroid/widget/ImageView;F)V
+    goto :L5
+  :L4
+  .line 537
+    invoke-static { v0 }, Lcom/innioasis/ipp/Icons;->reset(Landroid/widget/ImageView;)V
+  .line 538
+    const/high16 p0, 0x3F800000
+    invoke-static { v0, p0 }, Lcom/innioasis/ipp/Folders;->scale(Landroid/widget/ImageView;F)V
+  :L5
+  .line 540
+    return-void
+.end method
+
+.method public static videoSortMenu(Landroid/app/Activity;)V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 5
+  .line 681
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 682
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 616
+  .line 683
     const v1, 2131820965
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 617
+  .line 684
     const v1, 2131820971
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 618
+  .line 685
     const v1, 2131820969
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 619
+  .line 686
     const v1, 2131820970
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 620
+  .line 687
     new-instance v1, Lcom/innioasis/music/util/SubMenuDialog;
     new-instance v2, Lcom/innioasis/ipp/Folders$VideoSortPick;
     invoke-direct { v2, p0 }, Lcom/innioasis/ipp/Folders$VideoSortPick;-><init>(Landroid/app/Activity;)V
@@ -1462,12 +1554,12 @@
     invoke-direct { v1, p0, v0, v2, v3 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
     invoke-virtual { v1 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
   :L1
-  .line 623
+  .line 690
     goto :L3
   :L2
-  .line 621
+  .line 688
     move-exception p0
   :L3
-  .line 624
+  .line 691
     return-void
 .end method

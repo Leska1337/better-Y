@@ -46,6 +46,18 @@ Cette option n'apparaît qu'en mode débogage, activé par cinq appuis sur le bo
 * Couleur du thème
 Définit la couleur des boutons interactifs du lecteur.
 
+[text_tint] Couleur du texte
+* Clair
+* Sombre
+* Couleur du thème
+Définit la couleur des lignes de texte et des repères de temps du lecteur.
+
+[lyrics_tint] Couleur des paroles
+* Clair
+* Sombre
+* Couleur du thème
+Définit la couleur des paroles dans le lecteur.
+
 [cover_tilt] Incliner la pochette
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

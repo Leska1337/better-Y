@@ -39,6 +39,7 @@ import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Theme;
+import com.innioasis.ipp.Tint;
 import com.innioasis.ipp.TrackCache;
 import com.innioasis.ipp.YearCache;
 import com.innioasis.music.util.Other;
@@ -258,6 +259,8 @@ public final class IppActivity extends BaseActivity {
         // [Now Playing] -- everything whose effect is seen on the player screen
         l.add(new Item(HEADER, "player", 0, null, null));
         l.add(new Item(CHOICE, "icon_tint", 3, null, null));
+        l.add(new Item(CHOICE, Tint.KEY_TEXT, 3, null, null));
+        l.add(new Item(CHOICE, Tint.KEY_LYRICS, 3, null, null));
         l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
         // Two rows, one question, asked per section: what the long top press does in the player.
         // They carry their own labels rather than the group telling them apart, because they no

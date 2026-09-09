@@ -459,6 +459,32 @@ public final class Rows {
     }
 
     /**
+     * A row's SECOND line takes the colour its first line came out — for the rows that have one
+     * and were painting it {@code @color/white} whatever the theme said.
+     *
+     * The colour is read back off the main label instead of being asked of ThemeManager again,
+     * because {@code itemSetTextColor} answers with the THEME's colour and ignores the one it was
+     * handed: asking it a second time with the same arguments would work, asking it with anything
+     * else would silently paint the two lines differently. Reading the view is also what carries
+     * the focus highlight across for free — the second line follows the first onto and off the
+     * cursor without knowing anything about either state.
+     */
+    public static void subLine(TextView main, TextView sub) {
+        if (main == null || sub == null) return;
+        try {
+            sub.setTextColor(main.getCurrentTextColor());
+        } catch (Throwable t) {
+            // a row in the stock colour is better than a row that takes the screen down
+        }
+    }
+
+    /** The duration under a video's name, in the Videos list and inside its playlists. */
+    public static void videoSub(com.innioasis.y1.databinding.ItemVideoBinding b) {
+        if (b == null) return;
+        subLine(b.videoName, b.videoTime);
+    }
+
+    /**
      * Keep the row's height determined by its text, and keep the selection highlight OFF the disc
      * strip at the top of the row. Call at the END of getView, once the background and icons for
      * this row's state have been applied.

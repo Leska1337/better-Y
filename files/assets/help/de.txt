@@ -46,6 +46,18 @@ Diesen Punkt gibt es nur im Debugmodus, der mit fünf Druckvorgängen auf die mi
 * Themenfarbe
 Legt die Farbe der interaktiven Schaltflächen im Player fest.
 
+[text_tint] Textfarbe
+* Hell
+* Dunkel
+* Themenfarbe
+Legt die Farbe der Textzeilen und der Zeitangaben im Player fest.
+
+[lyrics_tint] Songtextfarbe
+* Hell
+* Dunkel
+* Themenfarbe
+Legt die Farbe des Songtexts im Player fest.
+
 [cover_tilt] Cover neigen
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

@@ -46,6 +46,18 @@
 * 테마 색상
 플레이어의 인터랙티브 버튼 색상을 정합니다.
 
+[text_tint] 텍스트 색상
+* 밝게
+* 어둡게
+* 테마 색상
+플레이어의 텍스트 줄과 시간 표시 색상을 정합니다.
+
+[lyrics_tint] 가사 색상
+* 밝게
+* 어둡게
+* 테마 색상
+플레이어의 가사 색상을 정합니다.
+
 [cover_tilt] 앨범 아트 기울이기
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

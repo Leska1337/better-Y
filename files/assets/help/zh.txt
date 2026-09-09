@@ -46,6 +46,18 @@
 * 主题颜色
 设置播放器中交互按钮的颜色。
 
+[text_tint] 文字颜色
+* 浅色
+* 深色
+* 主题颜色
+设置播放器中文字行和时间标记的颜色。
+
+[lyrics_tint] 歌词颜色
+* 浅色
+* 深色
+* 主题颜色
+设置播放器中歌词的颜色。
+
 [cover_tilt] 倾斜封面
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

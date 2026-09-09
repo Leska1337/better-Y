@@ -48,6 +48,18 @@ This option is only there in debug mode, which is switched on by five centre pre
 * Theme color
 Sets the colour of the interactive buttons in the player.
 
+[text_tint] Text color
+* Light
+* Dark
+* Theme color
+Sets the colour of the text lines and the time marks in the player.
+
+[lyrics_tint] Lyrics color
+* Light
+* Dark
+* Theme color
+Sets the colour of the lyrics in the player.
+
 [cover_tilt] Tilt the cover
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}
