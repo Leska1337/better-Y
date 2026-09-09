@@ -35,7 +35,7 @@
 
 .field private final static PAD_DP:I = 14
 
-.field private final static PLATE_ALPHA:I = -872415232
+.field private final static PLATE_ALPHA:I = -654311424
 
 .field private final static PLATE_RGB:I = 31487
 
@@ -907,7 +907,7 @@
   :L1
     const v1, 16777215
     and-int/2addr v0, v1
-    const/high16 v1, 0xCC000000
+    const/high16 v1, 0xD9000000
     or-int/2addr v0, v1
     return v0
   :L2
@@ -918,7 +918,7 @@
     move-exception v0
   :L4
   .line 565
-    const v0, -872383745
+    const v0, -654279937
     return v0
 .end method
 

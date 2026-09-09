@@ -18,14 +18,14 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 81
+  .line 92
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Menus$1;)V
   .registers 2
-  .line 81
+  .line 92
     invoke-direct { p0 }, Lcom/innioasis/ipp/Menus$Snap;-><init>()V
     return-void
 .end method

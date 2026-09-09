@@ -103,7 +103,7 @@ public final class Alpha {
      * The plate is translucent, the way the iPod's letter overlay is: it sits on top of the list
      * the user is scrolling, and a solid block reads as a screen of its own.
      */
-    private static final int PLATE_ALPHA = 0xCC000000;
+    private static final int PLATE_ALPHA = 0xD9000000;
 
     /** Plate geometry, dp: padding around the key and the corner radius. */
     private static final int PAD_DP = 14;

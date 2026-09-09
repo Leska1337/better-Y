@@ -1,6 +1,7 @@
 package com.innioasis.ipp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.view.View;
@@ -17,7 +18,11 @@ import com.innioasis.music.adapter.SubmenuAdapter;
 import com.innioasis.music.adapter.rv.RVBaseAdapter;
 import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
+import com.innioasis.y1.base.BaseBindingAdapter;
 import com.innioasis.y1.database.Playlist;
+import com.innioasis.y1.activity.video.VideoListActivity;
+import com.innioasis.y1.activity.video.SubMenuVideoDialog;
+import com.innioasis.y1.activity.video.SubmenuVideoAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +35,14 @@ import java.util.WeakHashMap;
  * song's album or its artist, renaming a playlist: none of that is an action on a selection, and
  * offering it there either does nothing or quietly acts on one arbitrary row of the tick list.
  *
- * One hook for every screen. Every menu in this app is a {@link SubMenuDialog}, and every
- * one of them is shown through {@code onStart} — so the filter sits there instead of in the eight
- * places menus are built. That also covers the ipp menus that are rebuilt per press
- * ({@code Albums.songMenu}, {@code Find.menu}, {@code Genres.menu}, {@code Playlists.favMenu}) with
- * nothing added to them.
+ * One hook per menu CLASS, not per screen. Every menu of the app proper is a {@link SubMenuDialog}
+ * and the Videos section's are a {@code SubMenuVideoDialog}; both are shown through their own
+ * {@code onStart}, so two injections cover the eleven places menus are built — including the ipp
+ * menus rebuilt per press ({@code Albums.songMenu}, {@code Find.menu}, {@code Genres.menu},
+ * {@code Playlists.favMenu}), with nothing added to any of them. The two dialog classes share
+ * nothing but the layout their ListView lives in and {@code MyBaseAdapter} under it, which is
+ * exactly what {@link #filter} works with; their menu ITEMS are two unrelated classes with the
+ * same two getters, hence {@link #label} and {@link #isPlaylistEntry}.
  *
  * The signal is MORE THAN ONE ticked row, and it has to be that rather than "any tick at
  * all": a plain long press ticks the row under the cursor to highlight it, and the screens do not
@@ -64,6 +72,9 @@ public final class Menus {
      */
     private static final int[] MULTI = {
             R.string.all_select,
+            // "MultiSelect" stays: it is the switch OUT of the mode the selection is in, which is
+            // the one screen command that means something while rows are ticked.
+            R.string.music_multi_select,
             R.string.music_delete_file,
             R.string.audiobook_delete,
             R.string.album_menu_delete,
@@ -100,6 +111,26 @@ public final class Menus {
         // Released from SubMenuDialog.onStop. Before the guards below, so a menu this method has
         // nothing to filter still holds the clock. See Follow.hold.
         Follow.hold(true);
+        filter(d);
+    }
+
+    /**
+     * The Videos section builds its menus from a class of its own — {@code SubMenuVideoDialog},
+     * with items of its own ({@code SubmenuVideoAdapter.Item}) — so {@link #onShow} never sees
+     * them, and the section showed "Sort by File name" over a selection of several videos.
+     * Injected at the top of ITS {@code onStart}, right after the super call and before stock puts
+     * the cursor back on row 0, so the cursor lands on row 0 of the FILTERED list.
+     *
+     * No {@code Follow.hold} here, unlike the music one: nothing in the Videos section registers
+     * with {@link Follow} (its lists are RecyclerViews and none of them draws a playing marker),
+     * so there is no clock to stop — and this dialog's {@code onStop} would have to release it.
+     */
+    public static void onShowVideo(SubMenuVideoDialog d) {
+        filter(d);
+    }
+
+    /** The half both of them share: the dialog's own ListView, its adapter, and the rules. */
+    private static void filter(Dialog d) {
         try {
             if (d == null) return;
             View v = d.findViewById(R.id.submenu);
@@ -159,6 +190,19 @@ public final class Menus {
      * taken (that one is looked up by the shown index).
      */
     public static int index(SubMenuDialog d, int shown) {
+        return mapped(d, shown);
+    }
+
+    /**
+     * The same for the Videos section, injected in {@code SubMenuVideoDialog.shortUp} after the
+     * item has been taken by the shown index. Its menus need it as much as the music ones:
+     * {@code showVideoListDialog} and {@code showFolderDialog} both dispatch by INDEX.
+     */
+    public static int videoIndex(SubMenuVideoDialog d, int shown) {
+        return mapped(d, shown);
+    }
+
+    private static int mapped(Dialog d, int shown) {
         try {
             Snap s = (Snap) SNAPS.get(d);
             if (s == null || s.map == null || shown < 0 || shown >= s.map.length) return shown;
@@ -176,19 +220,46 @@ public final class Menus {
      *   - with several rows ticked, only what a selection can mean (see {@link #MULTI}).
      */
     private static boolean keeps(Activity host, Object o, boolean multi, UUID self) {
-        if (!(o instanceof SubmenuAdapter.Item)) return true;
-        SubmenuAdapter.Item it = (SubmenuAdapter.Item) o;
-        Playlist pl = it.getPlaylist();
-        if (pl != null) {
-            return self == null || !self.equals(pl.getPlaylistId());
+        if (isPlaylistEntry(o)) {
+            UUID id = playlistId(o);
+            return self == null || id == null || !self.equals(id);
         }
         if (!multi) return true;
-        String s = it.getString();
-        if (s == null) return true;
+        String s = label(o);
+        if (s == null) return true;            // not an entry we understand: leave it alone
         for (int i = 0; i < MULTI.length; i++) {
             if (s.equals(host.getString(MULTI[i]))) return true;
         }
         return false;
+    }
+
+    // The two menu item classes -- the app's own and the Videos section's -- have the same two
+    // getters and no common ancestor, so each question is asked of whichever this is.
+
+    private static String label(Object o) {
+        if (o instanceof SubmenuAdapter.Item) return ((SubmenuAdapter.Item) o).getString();
+        if (o instanceof SubmenuVideoAdapter.Item) return ((SubmenuVideoAdapter.Item) o).getString();
+        return null;
+    }
+
+    /** "Add to &lt;playlist&gt;", of either kind — always kept, whatever a selection holds. */
+    private static boolean isPlaylistEntry(Object o) {
+        if (o instanceof SubmenuAdapter.Item) return ((SubmenuAdapter.Item) o).getPlaylist() != null;
+        if (o instanceof SubmenuVideoAdapter.Item) {
+            return ((SubmenuVideoAdapter.Item) o).getPlaylist() != null;
+        }
+        return false;
+    }
+
+    /**
+     * ...and which playlist it is, for the "not inside itself" rule. Only the music kind answers:
+     * that rule is about {@code PlayListActivity}, and a video playlist is a different table with
+     * a different id.
+     */
+    private static UUID playlistId(Object o) {
+        if (!(o instanceof SubmenuAdapter.Item)) return null;
+        Playlist pl = ((SubmenuAdapter.Item) o).getPlaylist();
+        return (pl == null) ? null : pl.getPlaylistId();
     }
 
     /**
@@ -251,6 +322,14 @@ public final class Menus {
                         .getMultiSelectIndexes();
                 return (s == null) ? 0 : s.size();
             }
+            // The Videos list keeps its selection NOWHERE THE ADAPTER CAN BE ASKED FOR IT: its
+            // adapter is a plain BaseBindingAdapter, which has no multi-select of its own, and the
+            // tick is a boolean ON EACH ROW's own BrowseItem. Asking the adapter for a list of
+            // ticked indexes therefore answered 0 for the whole section, and the filter never
+            // engaged there however many videos were selected. The rows are counted instead.
+            if (ad instanceof BaseBindingAdapter) {
+                return browseTicks(((BaseBindingAdapter) ad).getData());
+            }
             return 0;
         }
         if (v instanceof ViewGroup) {
@@ -263,6 +342,24 @@ public final class Menus {
             return best;
         }
         return 0;
+    }
+
+    /**
+     * Ticked rows of a Videos list. Every other screen built on {@code BaseBindingAdapter} — the
+     * main menu, Settings, Language, Bluetooth — holds something else entirely, and answers 0 on
+     * the first test.
+     */
+    private static int browseTicks(List data) {
+        if (data == null) return 0;
+        int n = 0;
+        for (int i = 0; i < data.size(); i++) {
+            Object o = data.get(i);
+            if (o instanceof VideoListActivity.BrowseItem
+                    && ((VideoListActivity.BrowseItem) o).isMultiSelect()) {
+                n++;
+            }
+        }
+        return n;
     }
 
     /**
@@ -300,7 +397,7 @@ public final class Menus {
         }
     }
 
-    private static Activity hostOf(SubMenuDialog d) {
+    private static Activity hostOf(Dialog d) {
         try {
             Activity own = d.getOwnerActivity();
             if (own != null) return own;

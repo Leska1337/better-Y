@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f641dd79 100644
+index 01b1f730..122dbd4e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..f641dd79 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000064
++  versionCode: 10000066
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19309,7 +19309,7 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..2b79f97c 100644
+index 71fe29d0..f95f6a20 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,541 @@
@@ -20258,7 +20258,7 @@ index 71fe29d0..2b79f97c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev64</string>
++    <string name="ipp_version">v1.0.0-dev66</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -61334,6 +61334,34 @@ index dfaa4043..355f6f2e 100644
  
      :cond_2
      return-void
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
+index c16ca965..24b1539f 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
+@@ -663,6 +663,10 @@
+     .line 131
+     invoke-super {p0}, Lcom/innioasis/y1/base/BaseDialog;->onStart()V
+ 
++    # ipp: drop the entries a selection of several rows cannot mean. Before stock puts the cursor
++    # back on row 0 below, so it lands on row 0 of the FILTERED menu.
++    invoke-static {p0}, Lcom/innioasis/ipp/Menus;->onShowVideo(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;)V
++
+     .line 132
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;->getAdapter()Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter;
+ 
+@@ -922,6 +926,12 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
+ 
++    # ipp: the callback is handed the index this entry had in the UNFILTERED menu -- both menus of
++    # this section dispatch by index. After getItem above, which wants the shown one.
++    invoke-static {p0, p1}, Lcom/innioasis/ipp/Menus;->videoIndex(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;I)I
++
++    move-result p1
++
+     invoke-interface {v0, p1, v1}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;->select(ILcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;)Z
+ 
+     move-result p1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubmenuVideoAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubmenuVideoAdapter.smali
 index 7d7775a2..9445b2c5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubmenuVideoAdapter.smali
