@@ -221,4 +221,30 @@ public final class Ebook {
         Rows.subLine(b.name, b.size);
         Rows.subLine(b.name, b.time);
     }
+
+    /**
+     * The mod's own folder on the card is not a shelf, and Local files must not list it.
+     *
+     * That listing takes every {@code .txt} on the card, and {@code better-Y/} holds several the
+     * user is meant to edit rather than open here — {@code comma_artists.txt} above all — with a
+     * per-row menu that DELETES the file. Losing it silently drops every exception the artist
+     * splitting was taught.
+     *
+     * Asked from the one predicate the walk filters everything through
+     * ({@code SearchViewModel.searchBook}'s lambda), which runs for a folder as well as for a
+     * file: refusing the folder there is what keeps the walk from ever descending into it, so the
+     * logs and the backups do not have to be named one by one.
+     *
+     * Matched on the full path, not on the name, so a folder someone happens to call better-Y
+     * deeper on the card is still their own.
+     */
+    public static boolean hidden(java.io.File f) {
+        try {
+            if (f == null) return false;
+            java.io.File dir = Panel.card();
+            return dir != null && f.getAbsolutePath().equals(dir.getAbsolutePath());
+        } catch (Throwable t) {
+            return false;   // an unanswerable path is not ours to hide
+        }
+    }
 }

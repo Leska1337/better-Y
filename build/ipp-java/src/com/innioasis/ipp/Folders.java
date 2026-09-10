@@ -668,11 +668,66 @@ public final class Folders {
                     || v == Y1Repository.SortVideoType.Z_A.getType();
             boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
                     || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
-            if (v == Y1Repository.SortVideoType.None.getType()) return;   // stock's own "unsorted"
-            Collections.sort(files, new FileSort(byName, asc));
+            // stock's own "unsorted": the file system's order is kept inside each half, but the
+            // halves are still separated — see splitSort
+            boolean none = v == Y1Repository.SortVideoType.None.getType();
+            splitSort(files, none ? null : new FileSort(byName, asc), false);
         } catch (Throwable t) {
             // a folder listed in the file system's own order is still a folder
         }
+    }
+
+    /**
+     * Folders above files, each half in the picked order — what Music and Audiobooks look like,
+     * and what this section did not.
+     *
+     * There the two halves are separate by construction: {@code FilesActivity} lists the
+     * sub-folders and then appends the folder's own songs, so a sort applied to either cannot mix
+     * them. The Videos browser builds ONE list of {@code File}s in {@code isFolderOrVideo} —
+     * folders and videos interleaved in whatever order the sort put them — so the separation has
+     * to be made here.
+     *
+     * Split with one pass rather than by asking {@code isDirectory()} from inside the comparison:
+     * that is a stat per call and a sort makes n log n of them, against n for the pass.
+     *
+     * A null comparator is "keep the order you were given inside each half", which is what stock's
+     * own unsorted mode means once the halves are separated.
+     */
+    private static void splitSort(List items, Comparator cmp, boolean rows) {
+        ArrayList dirs = new ArrayList();
+        ArrayList rest = new ArrayList();
+        for (int i = 0; i < items.size(); i++) {
+            Object o = items.get(i);
+            File f = rows ? rowFile(o) : (o instanceof File ? (File) o : null);
+            if (f != null && f.isDirectory()) dirs.add(o); else rest.add(o);
+        }
+        if (cmp != null) {
+            Collections.sort(dirs, cmp);
+            Collections.sort(rest, cmp);
+        }
+        if (dirs.isEmpty() || rest.isEmpty()) {
+            // nothing to separate; only the sort was wanted, and it has been made in place above
+            if (cmp != null) Collections.sort(items, cmp);
+            return;
+        }
+        items.clear();
+        items.addAll(dirs);
+        items.addAll(rest);
+    }
+
+    /**
+     * The file a row of the video browser stands for. A row that is a folder carries only its
+     * {@code targetFile}; a video carries a {@code VideoInfo} as well, and its path is the
+     * honest answer for it (the two are built side by side in {@code VideoListActivity.confirm}).
+     */
+    private static File rowFile(Object o) {
+        if (!(o instanceof VideoListActivity.BrowseItem)) return null;
+        VideoListActivity.BrowseItem b = (VideoListActivity.BrowseItem) o;
+        File f = b.getTargetFile();
+        if (f != null) return f;
+        VideoInfo vi = b.getVideoInfo();
+        String p = vi == null ? null : vi.getFilePath();
+        return p == null ? null : new File(p);
     }
 
     /** "Sort by File name" in the video folder menu: the four directions, then re-order the list. */
@@ -735,7 +790,7 @@ public final class Folders {
                     || v == Y1Repository.SortVideoType.Z_A.getType();
             boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
                     || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
-            Collections.sort(data, new RowSort(byName, asc));
+            splitSort(data, new RowSort(byName, asc), true);
             ad.notifyDataSetChanged();
         } catch (Throwable t) {
             // the order is stored; the folder shows it the next time it is opened
@@ -748,18 +803,8 @@ public final class Folders {
 
         RowSort(boolean byName, boolean asc) { this.files = new FileSort(byName, asc); }
 
-        private File fileOf(Object o) {
-            if (!(o instanceof VideoListActivity.BrowseItem)) return null;
-            VideoListActivity.BrowseItem b = (VideoListActivity.BrowseItem) o;
-            File f = b.getTargetFile();
-            if (f != null) return f;
-            VideoInfo vi = b.getVideoInfo();
-            String p = vi == null ? null : vi.getFilePath();
-            return p == null ? null : new File(p);
-        }
-
         public int compare(Object a, Object b) {
-            File x = fileOf(a), y = fileOf(b);
+            File x = rowFile(a), y = rowFile(b);
             if (x == null || y == null) return 0;
             return files.compare(x, y);
         }

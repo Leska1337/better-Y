@@ -135,6 +135,37 @@
     return v1
 .end method
 
+.method public static hidden(Ljava/io/File;)Z
+  .catchall { :L0 .. :L1 } :L3
+  .registers 3
+  .line 243
+    const/4 v0, 0
+    if-nez p0, :L0
+    return v0
+  :L0
+  .line 244
+    invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
+    move-result-object v1
+  .line 245
+    if-eqz v1, :L2
+    invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
+    move-result-object p0
+    invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
+    move-result-object v1
+    invoke-virtual { p0, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p0
+  :L1
+    if-eqz p0, :L2
+    const/4 v0, 1
+  :L2
+    return v0
+  :L3
+  .line 246
+    move-exception p0
+  .line 247
+    return v0
+.end method
+
 .method private static label(Landroid/view/View;Ljava/lang/String;)V
   .registers 3
   .line 101
