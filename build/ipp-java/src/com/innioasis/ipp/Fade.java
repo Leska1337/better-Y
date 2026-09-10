@@ -7,40 +7,27 @@ import android.os.Looper;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 /**
- * The very first sound the device makes after a reboot comes out at full scale for a few
- * milliseconds — loud, and clipped enough to buzz — and then drops to the volume the player is
- * actually set to.
+ * The very first sound after a reboot comes out at full scale for a few milliseconds — loud, and
+ * clipped enough to buzz — before dropping to the volume the player is set to: the output path
+ * being opened for the first time since the boot, with a signal already going into it.
  *
- * It is not the app's doing: nothing in it writes a stream volume except the wheel in the player,
- * the slider in Settings, the radio and mute, and {@code MediaPlayer.setVolume} is not called
- * anywhere at all. What it looks like is the output path being opened for the first time since the
- * boot — the amplifier settling while a signal is already going into it.
+ * So the player's own volume (a digital gain before the mix, unrelated to the stream volume the
+ * wheel moves) starts at zero and reaches 1.0 over {@link #MS} — whatever the analogue side does in
+ * those milliseconds, it does it to silence.
  *
- * The one thing this side of it can do is not hand it a signal to pop on: the player's own volume
- * (a digital gain applied before the mix, nothing to do with the stream volume the wheel moves)
- * starts at zero and reaches 1.0 over {@link #MS}. Whatever the analogue side is doing in those
- * milliseconds, it is doing it to silence.
+ * ONCE PER PROCESS, deliberately: the defect is the first playback after a boot, and a ramp on
+ * every track would be a fade-in nobody asked for.
  *
- * ONCE PER PROCESS, and that is deliberate: the defect is the first playback after a boot, and a
- * ramp on every track would be a fade-in nobody asked for. The launcher is restarted by a reboot
- * and by very little else, so "the first track this process plays" is the same event.
- *
- * The player is passed IN rather than asked of the service, because the two are not
- * interchangeable here: {@code IjkMediaPlayer.setVolume} is a native call, and a native call on a
- * player that has not been prepared is a crash no {@code try} can catch. Every call site is
- * directly in front of that player's own {@code start()}.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes on generic Signature attrs.
+ * The player is passed IN rather than asked of the service: {@code IjkMediaPlayer.setVolume} is a
+ * native call, and a native call on a player that has not been prepared is a crash no {@code try}
+ * can catch — so every call site sits directly in front of that player's own {@code start()}.
  */
 public final class Fade {
 
     private Fade() {}
 
-    /** How long the ramp takes. Long enough to cover the pop, short enough not to read as a fade. */
-    private static final int MS = 300;
-
-    /** One step, i.e. how often the volume is written. */
-    private static final int STEP = 20;
+    private static final int MS = 300;    // ramp length: covers the pop, too short to read as a fade
+    private static final int STEP = 20;   // how often the volume is written
 
     private static boolean done;
     private static Ramp running;

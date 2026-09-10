@@ -328,17 +328,12 @@ public final class Disc {
 
     /**
      * How many characters the LONGEST number this list will show takes — what the number column
-     * has to be wide enough for ({@link Rows#indexWidth}).
+     * has to be wide enough for ({@link Rows#indexWidth}). Asked of this class rather than of the
+     * list's size, because the column does not always show the row's position: tags can hold a
+     * "101" in a 12-track album, and a multi-disc album restarts at 1 on every disc.
      *
-     * It is asked of this class rather than worked out from the list's size, because the column
-     * does not always show the row's position: with track numbers from tags a 12-track album can
-     * hold a "101", and a multi-disc album's numbering restarts at 1 on every disc, so its widest
-     * number is the longest disc's length rather than the list's. A song with no tag shows "#",
-     * which is one character.
-     *
-     * Cached on the same signature {@link #ensure} recomputes on, so it costs one array pass per
-     * list built and nothing per row — and the tag warm-up clearing {@code sig} takes the answer
-     * with it, which is what makes the column widen once the numbers it is sized for arrive.
+     * Cached on the signature {@link #ensure} recomputes on, so the tag warm-up clearing
+     * {@code sig} widens the column once the numbers it is sized for arrive.
      */
     public static int widestIndex(List songs, Object adapter) {
         if (songs == null) return 1;

@@ -27,6 +27,7 @@ import com.innioasis.y1.service.PlayerService;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -608,43 +609,82 @@ public final class Folders {
     public static void sortFiles(List files, File dir) {
         try {
             if (files == null || files.size() < 2) return;
-            Collections.sort(files, new FileSort(sortByName(dir), sortAsc(dir)));
+            order(files, true, sortByName(dir), sortAsc(dir), false, false);
         } catch (Throwable t) {
             // a list in the library's own order is still a list
         }
     }
 
+    /**
+     * The one place a folder listing is ordered, for all three sections.
+     *
+     * Every question the file system can answer is asked ONCE PER FILE, before the sort, which then
+     * compares the answers: a comparator asking the file itself is called O(n log n) times and each
+     * call is a stat — twenty thousand of them on a thousand videos sorted by date, against a
+     * thousand here. {@code isDirectory} is only asked where the halves have to be separated.
+     *
+     * {@code sorted == false} is stock's unsorted mode: the file system's order is kept (which
+     * works because {@code Arrays.sort} of objects is stable) and only the folders move up.
+     */
+    private static void order(List items, boolean sorted, boolean byName, boolean asc,
+                              boolean dirsFirst, boolean rows) {
+        int n = items.size();
+        Key[] keys = new Key[n];
+        for (int i = 0; i < n; i++) {
+            Object o = items.get(i);
+            File f = rows ? rowFile(o) : (o instanceof File ? (File) o : null);
+            String name = f == null ? null : f.getName();
+            keys[i] = new Key(o,
+                    dirsFirst && f != null && f.isDirectory(),
+                    name == null ? "" : name,
+                    (sorted && !byName && f != null) ? f.lastModified() : 0L);
+        }
+        Arrays.sort(keys, new KeySort(sorted, byName, asc, dirsFirst));
+        for (int i = 0; i < n; i++) items.set(i, keys[i].item);
+    }
+
+    /** What one row of the list answers about itself, read once. */
+    private static final class Key {
+        final Object item;
+        final boolean dir;
+        final String name;
+        final long time;
+
+        Key(Object item, boolean dir, String name, long time) {
+            this.item = item; this.dir = dir; this.name = name; this.time = time;
+        }
+    }
+
     /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
-    private static final class FileSort implements Comparator {
+    private static final class KeySort implements Comparator {
+        private final boolean sorted;
         private final boolean byName;
         private final boolean asc;
+        private final boolean dirsFirst;
 
-        FileSort(boolean byName, boolean asc) { this.byName = byName; this.asc = asc; }
+        KeySort(boolean sorted, boolean byName, boolean asc, boolean dirsFirst) {
+            this.sorted = sorted; this.byName = byName; this.asc = asc; this.dirsFirst = dirsFirst;
+        }
 
         public int compare(Object a, Object b) {
-            if (!(a instanceof File) || !(b instanceof File)) return 0;
-            File x = (File) a, y = (File) b;
+            Key x = (Key) a, y = (Key) b;
+            // folders stay on top in BOTH directions: Z-A reverses each half, not the halves
+            if (dirsFirst && x.dir != y.dir) return x.dir ? -1 : 1;
+            if (!sorted) return 0;
             int r;
             if (byName) {
-                r = byName(x, y);
+                r = x.name.compareTo(y.name);
             } else {
-                long lx = x.lastModified(), ly = y.lastModified();
-                r = lx < ly ? -1 : (lx > ly ? 1 : 0);
+                r = x.time < y.time ? -1 : (x.time > y.time ? 1 : 0);
                 // FILES COPIED ONTO THE CARD IN ONE OPERATION ALL CARRY THE SAME MINUTE, and a
                 // whole folder of them is the normal case rather than the exception — a season of
                 // a series, an album's tracks, the videos someone has just dragged across. With
                 // nothing to tell them apart the sort is stable, i.e. it leaves the list exactly
                 // as it found it, and the entry reads as broken. The name is the tie-break, so
                 // "oldest first" always produces SOME order and the two directions always differ.
-                if (r == 0) r = byName(x, y);
+                if (r == 0) r = x.name.compareTo(y.name);
             }
             return asc ? r : -r;
-        }
-
-        /** Plain String order, the comparison stock makes on the sub-folders. */
-        private int byName(File x, File y) {
-            String nx = x.getName(), ny = y.getName();
-            return (nx == null ? "" : nx).compareTo(ny == null ? "" : ny);
         }
     }
 
@@ -668,51 +708,12 @@ public final class Folders {
                     || v == Y1Repository.SortVideoType.Z_A.getType();
             boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
                     || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
-            // stock's own "unsorted": the file system's order is kept inside each half, but the
-            // halves are still separated — see splitSort
+            // folders above files: unlike the other two sections, this browser builds ONE list
             boolean none = v == Y1Repository.SortVideoType.None.getType();
-            splitSort(files, none ? null : new FileSort(byName, asc), false);
+            order(files, !none, byName, asc, true, false);
         } catch (Throwable t) {
             // a folder listed in the file system's own order is still a folder
         }
-    }
-
-    /**
-     * Folders above files, each half in the picked order — what Music and Audiobooks look like,
-     * and what this section did not.
-     *
-     * There the two halves are separate by construction: {@code FilesActivity} lists the
-     * sub-folders and then appends the folder's own songs, so a sort applied to either cannot mix
-     * them. The Videos browser builds ONE list of {@code File}s in {@code isFolderOrVideo} —
-     * folders and videos interleaved in whatever order the sort put them — so the separation has
-     * to be made here.
-     *
-     * Split with one pass rather than by asking {@code isDirectory()} from inside the comparison:
-     * that is a stat per call and a sort makes n log n of them, against n for the pass.
-     *
-     * A null comparator is "keep the order you were given inside each half", which is what stock's
-     * own unsorted mode means once the halves are separated.
-     */
-    private static void splitSort(List items, Comparator cmp, boolean rows) {
-        ArrayList dirs = new ArrayList();
-        ArrayList rest = new ArrayList();
-        for (int i = 0; i < items.size(); i++) {
-            Object o = items.get(i);
-            File f = rows ? rowFile(o) : (o instanceof File ? (File) o : null);
-            if (f != null && f.isDirectory()) dirs.add(o); else rest.add(o);
-        }
-        if (cmp != null) {
-            Collections.sort(dirs, cmp);
-            Collections.sort(rest, cmp);
-        }
-        if (dirs.isEmpty() || rest.isEmpty()) {
-            // nothing to separate; only the sort was wanted, and it has been made in place above
-            if (cmp != null) Collections.sort(items, cmp);
-            return;
-        }
-        items.clear();
-        items.addAll(dirs);
-        items.addAll(rest);
     }
 
     /**
@@ -785,28 +786,15 @@ public final class Folders {
             List data = ((BaseBindingAdapter) ad).getData();
             if (data == null || data.size() < 2) return;
             int v = SharedPreferencesUtils.INSTANCE.getVideoSort();
-            if (v == Y1Repository.SortVideoType.None.getType()) return;
+            boolean none = v == Y1Repository.SortVideoType.None.getType();
             boolean byName = v == Y1Repository.SortVideoType.A_Z.getType()
                     || v == Y1Repository.SortVideoType.Z_A.getType();
             boolean asc = v == Y1Repository.SortVideoType.A_Z.getType()
                     || v == Y1Repository.SortVideoType.CreateTime_Asc.getType();
-            splitSort(data, new RowSort(byName, asc), true);
+            order(data, !none, byName, asc, true, true);
             ad.notifyDataSetChanged();
         } catch (Throwable t) {
             // the order is stored; the folder shows it the next time it is opened
-        }
-    }
-
-    /** The same comparison, applied to the rows of the video browser. */
-    private static final class RowSort implements Comparator {
-        private final FileSort files;
-
-        RowSort(boolean byName, boolean asc) { this.files = new FileSort(byName, asc); }
-
-        public int compare(Object a, Object b) {
-            File x = rowFile(a), y = rowFile(b);
-            if (x == null || y == null) return 0;
-            return files.compare(x, y);
         }
     }
 

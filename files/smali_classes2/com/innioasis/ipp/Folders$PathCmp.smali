@@ -13,29 +13,29 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 299
+  .line 300
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Folders$1;)V
   .registers 2
-  .line 299
+  .line 300
     invoke-direct { p0 }, Lcom/innioasis/ipp/Folders$PathCmp;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 301
+  .line 302
     check-cast p1, Ljava/io/File;
     invoke-virtual { p1 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object p1
-  .line 302
+  .line 303
     check-cast p2, Ljava/io/File;
     invoke-virtual { p2 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object p2
-  .line 303
+  .line 304
     const-string v0, ""
     if-nez p1, :L0
     move-object p1, v0

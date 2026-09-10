@@ -28,7 +28,7 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..01e36f5b 100644
+index 01b1f730..d5d5fce5 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +43,7 @@ index 01b1f730..01e36f5b 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000068
++  versionCode: 10000069
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -655,10 +655,10 @@ index ce45631a..5e5d5bed 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b91724..6d20544f 100644
+index 60b91724..0bf3ae5e 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
-@@ -1,8 +1,56 @@
+@@ -1,8 +1,54 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 -  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:test="http://schemas.android.com/apk/res-auto">
@@ -704,11 +704,9 @@ index 60b91724..6d20544f 100644
 +             row's, so a tall theme bitmap (theme1/theme4 ship a 20x54 one) scales instead of
 +             stretching the row — the point of the old MATCH_CONSTRAINT + adjustViewBounds pair. -->
 +        <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="3.0dip" android:layout_alignParentRight="true" android:layout_alignParentTop="true" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" />
-+        <!-- ipp: the 40dip here is the FLOOR, not the width. Rows.indexWidth measures the widest
-+             number this list can show in the theme's own font and widens the column to fit it plus
-+             a gap to the title; a list whose numbers are short keeps exactly this. The view stays
-+             EXACTLY-width either way, never wrap_content, because the title beside it is marqueed
-+             (see makeItNormal). -->
++        <!-- ipp: the 40dip is the FLOOR, not the width — Rows.indexWidth widens the column to the
++             widest number this list can show. It stays EXACTLY-width, never wrap_content: the
++             title beside it is marqueed (see makeItNormal). -->
 +        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start" android:id="@id/tv_song_index" android:layout_width="40.0dip" android:layout_height="25.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" />
 +        <!-- ipp: the playing marker, in the track number's own column and vertically centred on the
 +             title (NOT on the row: a disc-start row is taller by the strip above, and the strip is
@@ -19314,7 +19312,7 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..a89c741f 100644
+index 71fe29d0..d99df0f4 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,541 @@
@@ -20263,7 +20261,7 @@ index 71fe29d0..a89c741f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev68</string>
++    <string name="ipp_version">v1.0.0-dev69</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -37456,7 +37454,7 @@ index 4fcfcfff..83011380 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..678a222f 100644
+index 54919080..0810240b 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -747,17 +747,13 @@
@@ -37583,18 +37581,17 @@ index 54919080..678a222f 100644
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
      invoke-virtual {v1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getMusicIsShuffle()Z
-@@ -4696,6 +4731,10 @@
+@@ -4696,6 +4731,9 @@
  
      move-result-object v0
  
-+    # ipp: the resume path is the other way the first playback of a session starts (the state
-+    # restored at boot comes back paused), so the ramp is armed here too -- see Fade.soften.
++    # ipp: the resume path is the other way a session's first playback starts -- see Fade.soften.
 +    invoke-static {v0}, Lcom/innioasis/ipp/Fade;->soften(Ltv/danmaku/ijk/media/player/IjkMediaPlayer;)V
 +
      invoke-virtual {v0}, Ltv/danmaku/ijk/media/player/IjkMediaPlayer;->start()V
  
      if-eqz p1, :cond_6
-@@ -4736,6 +4775,9 @@
+@@ -4736,6 +4774,9 @@
  
      move-result-object v0
  
@@ -37604,7 +37601,7 @@ index 54919080..678a222f 100644
      invoke-virtual {v0}, Ltv/danmaku/ijk/media/player/IjkMediaPlayer;->start()V
  
      goto :goto_0
-@@ -4746,6 +4788,9 @@
+@@ -4746,6 +4787,9 @@
  
      move-result-object v0
  
@@ -37614,7 +37611,7 @@ index 54919080..678a222f 100644
      invoke-virtual {v0}, Landroid/media/MediaPlayer;->start()V
  
      :goto_0
-@@ -5183,6 +5228,21 @@
+@@ -5183,6 +5227,21 @@
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
@@ -37636,7 +37633,7 @@ index 54919080..678a222f 100644
      .line 805
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
-@@ -5272,19 +5332,21 @@
+@@ -5272,19 +5331,21 @@
  
      .line 792
      :cond_a
@@ -37664,7 +37661,7 @@ index 54919080..678a222f 100644
      :cond_b
      iget v1, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
  
-@@ -5349,6 +5411,12 @@
+@@ -5349,6 +5410,12 @@
  .method public final restartPlay(Z)V
      .locals 4
  
@@ -37677,7 +37674,7 @@ index 54919080..678a222f 100644
      .line 591
      invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->stopRepeat()V
  
-@@ -5984,6 +6052,11 @@
+@@ -5984,6 +6051,11 @@
  .method public final saveState()V
      .locals 19
  
@@ -37689,7 +37686,7 @@ index 54919080..678a222f 100644
      move-object/from16 v12, p0
  
      .line 235
-@@ -6371,6 +6444,16 @@
+@@ -6371,6 +6443,16 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -37706,7 +37703,7 @@ index 54919080..678a222f 100644
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
  
-@@ -6581,6 +6664,25 @@
+@@ -6581,6 +6663,25 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53063,7 +53060,7 @@ index 1b2fd585..9674e109 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
-index c65cfdfe..78525e81 100644
+index c65cfdfe..c330e37e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/SongListAdapter.smali
 @@ -1,4 +1,6 @@
@@ -53098,7 +53095,7 @@ index c65cfdfe..78525e81 100644
  
      const/4 v0, 0x0
  
-@@ -196,28 +213,74 @@
+@@ -196,28 +213,73 @@
  
      check-cast p3, Lcom/innioasis/y1/database/Song;
  
@@ -53136,9 +53133,8 @@ index c65cfdfe..78525e81 100644
 +    # in a bind. Moving the highlight rebinds two rows whose text has not changed at all.
 +    invoke-static {v1, v2}, Lcom/innioasis/ipp/Rows;->text(Landroid/widget/TextView;Ljava/lang/CharSequence;)V
 +
-+    # ipp: the column is sized for the widest number THIS list can show, measured in the theme's
-+    # own font. A flat 40dip fitted two digits on a wide-font theme and cut the rest, and fitted
-+    # four on the stock one with nothing left over, i.e. touching the title (see Rows.indexWidth).
++    # ipp: the column is sized for the widest number THIS list can show, in the theme's own font
++    # (see Rows.indexWidth).
 +    invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getMList()Ljava/util/List;
 +
 +    move-result-object v2
@@ -53178,7 +53174,7 @@ index c65cfdfe..78525e81 100644
      sget-object v2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
  
      invoke-virtual {p3}, Lcom/innioasis/y1/database/Song;->getSongName()Ljava/lang/String;
-@@ -233,7 +296,7 @@
+@@ -233,7 +295,7 @@
      goto :goto_1
  
      .line 53
@@ -53187,7 +53183,7 @@ index c65cfdfe..78525e81 100644
      sget-object v2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
  
      sget-object v3, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
-@@ -254,7 +317,8 @@
+@@ -254,7 +316,8 @@
  
      .line 48
      :goto_1
@@ -53197,7 +53193,7 @@ index c65cfdfe..78525e81 100644
  
      .line 56
      iget-object v1, p2, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->tvArtists:Landroid/widget/TextView;
-@@ -274,6 +338,12 @@
+@@ -274,6 +337,12 @@
  
      move-result-object v3
  
@@ -53210,7 +53206,7 @@ index c65cfdfe..78525e81 100644
      invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 58
-@@ -281,7 +351,7 @@
+@@ -281,7 +350,7 @@
  
      const-string v4, "     "
  
@@ -53219,7 +53215,7 @@ index c65cfdfe..78525e81 100644
  
      .line 59
      invoke-virtual {v2, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-@@ -306,10 +376,10 @@
+@@ -306,10 +375,10 @@
      invoke-virtual {v2, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 62
@@ -53232,7 +53228,7 @@ index c65cfdfe..78525e81 100644
  
      .line 63
      invoke-virtual {v2, v4}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-@@ -328,7 +398,7 @@
+@@ -328,7 +397,7 @@
      invoke-virtual {v2, p3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
  
      .line 56
@@ -53241,7 +53237,7 @@ index c65cfdfe..78525e81 100644
      invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
  
      move-result-object p3
-@@ -339,7 +409,8 @@
+@@ -339,7 +408,8 @@
  
      check-cast p3, Ljava/lang/CharSequence;
  
@@ -53251,7 +53247,7 @@ index c65cfdfe..78525e81 100644
  
      .line 69
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getNowPosition()I
-@@ -356,14 +427,17 @@
+@@ -356,14 +426,17 @@
  
      const/4 v5, 0x1
  
@@ -53271,7 +53267,7 @@ index c65cfdfe..78525e81 100644
  
      .line 72
      sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -419,7 +493,7 @@
+@@ -419,7 +492,7 @@
      goto/16 :goto_2
  
      .line 79
@@ -53280,7 +53276,7 @@ index c65cfdfe..78525e81 100644
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/SongListAdapter;->getSelectedIndexList()Ljava/util/List;
  
      move-result-object p3
-@@ -434,20 +508,21 @@
+@@ -434,20 +507,21 @@
  
      const-string v6, "vb.rightArrow"
  
@@ -53305,7 +53301,7 @@ index c65cfdfe..78525e81 100644
  
      .line 82
      sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -489,12 +564,13 @@
+@@ -489,12 +563,13 @@
      goto :goto_2
  
      .line 89
@@ -53321,7 +53317,7 @@ index c65cfdfe..78525e81 100644
  
      .line 90
      sget-object p1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -560,13 +636,13 @@
+@@ -560,13 +635,13 @@
  
      invoke-static {v2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53337,7 +53333,7 @@ index c65cfdfe..78525e81 100644
      const/4 v6, 0x0
  
      :goto_3
-@@ -579,13 +655,13 @@
+@@ -579,13 +654,13 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53353,7 +53349,7 @@ index c65cfdfe..78525e81 100644
      const/4 v4, 0x0
  
      :goto_4
-@@ -600,11 +676,11 @@
+@@ -600,11 +675,11 @@
  
      invoke-static {v2, v4}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -53367,7 +53363,7 @@ index c65cfdfe..78525e81 100644
      invoke-virtual {v1, v2, p1, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
      .line 99
-@@ -616,6 +692,14 @@
+@@ -616,6 +691,14 @@
  
      check-cast p1, Landroid/view/View;
  
@@ -66323,16 +66319,15 @@ index b6833eac..944ef0c0 100644
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
-index 44054e1a..f41229e4 100644
+index 44054e1a..e68f9019 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
-@@ -71,6 +71,20 @@
+@@ -71,6 +71,19 @@
  .method public final invoke(Ljava/io/File;)Ljava/lang/Boolean;
      .locals 2
  
-+    # ipp: the mod's own folder on the card is not a shelf. This predicate is the one filter the
-+    # whole walk passes through, folders included, so refusing it here is also what keeps the walk
-+    # from descending into it (see Ebook.hidden).
++    # ipp: this predicate is the one filter the whole walk passes through, folders included, so
++    # refusing our own folder here is also what keeps the walk out of it (see Ebook.hidden).
 +    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->hidden(Ljava/io/File;)Z
 +
 +    move-result v0

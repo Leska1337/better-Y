@@ -461,29 +461,16 @@ public final class Rows {
     }
 
     /**
-     * How much room the number column gets, and the whole of the answer: the widest number this
-     * list will actually show, measured in the FONT the row is drawn with, plus a fixed gap to the
-     * title.
-     *
-     * The column was a flat 40dip, which is a bet on both halves at once — on the font (a theme
-     * with a wide one, Minecraft, fitted two digits and cut everything past them) and on the list
-     * (four digits fitted the stock font exactly, i.e. with no gap left, so the number touched the
-     * title). Measuring says what the number needs on the theme that is actually loaded, and
-     * {@link Disc#widestIndex} says how long that number can get in THIS list — which is not the
-     * list's size whenever the numbers come from tags or restart per disc.
+     * The number column, sized for the widest number THIS list can show ({@link Disc#widestIndex} —
+     * not the list's size, whenever the numbers come from tags or restart per disc), measured in the
+     * FONT the row is drawn with, plus a gap to the title. The 40dip in the layout is the floor.
      *
      * It stays an EXACTLY-width view, never {@code wrap_content}: the marquee turns horizontal
-     * scrolling on for the row's title and a view that can grow with it is how "the text grows
-     * when you scroll past it" comes back (see {@code makeItNormal}). Only the number it is sized
-     * for changes.
+     * scrolling on for the row's title, and a view that can grow with it is how "the text grows
+     * when you scroll past it" comes back (see {@code makeItNormal}).
      *
-     * The cost per bind is one comparison. The measurement is cached on the font and the text size,
-     * the widest number on the list's own signature, and {@code setLayoutParams} — the only part
-     * that asks for a re-layout — runs when the width really changes, i.e. once per freshly
-     * inflated row and once more when a list with different numbers replaces this one.
-     *
-     * Not narrower than the 40dip it always was: a list whose numbers are short is left looking
-     * exactly as it did.
+     * A bind costs one comparison — both answers are cached, and {@code setLayoutParams}, the only
+     * part that asks for a re-layout, runs when the width really changes. Skill `ipp-lists-rows`.
      */
     private static final int INDEX_GAP_DIP = 8;
     private static final int INDEX_MIN_DIP = 40;

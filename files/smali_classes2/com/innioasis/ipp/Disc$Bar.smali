@@ -14,26 +14,26 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 640
+  .line 635
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public onPreDraw()Z
   .registers 2
-  .line 642
+  .line 637
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Disc$Bar;->run()V
-  .line 643
+  .line 638
     const/4 v0, 1
     return v0
 .end method
 
 .method public run()V
   .registers 4
-  .line 647
+  .line 642
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Disc;->access$102(Z)Z
-  .line 651
+  .line 646
     invoke-static { }, Lcom/innioasis/ipp/Disc;->access$200()Ljava/lang/ref/WeakReference;
     move-result-object v0
     const/4 v1, 0
@@ -46,23 +46,23 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 652
+  .line 647
     invoke-static { v1 }, Lcom/innioasis/ipp/Disc;->access$202(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 653
+  .line 648
     instance-of v2, v0, Landroid/view/View;
     if-eqz v2, :L2
-  .line 654
+  .line 649
     check-cast v0, Landroid/view/View;
     invoke-virtual { v0 }, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
-  .line 655
+  .line 650
     if-eqz v0, :L2
     invoke-virtual { v0 }, Landroid/view/ViewTreeObserver;->isAlive()Z
     move-result v2
     if-eqz v2, :L2
     invoke-virtual { v0, p0 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
   :L2
-  .line 657
+  .line 652
     invoke-static { }, Lcom/innioasis/ipp/Disc;->access$300()Ljava/lang/ref/WeakReference;
     move-result-object v0
     if-nez v0, :L3
@@ -73,7 +73,7 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
   :L4
-  .line 658
+  .line 653
     instance-of v0, v1, Landroid/widget/ListView;
     if-eqz v0, :L5
     check-cast v1, Landroid/widget/ListView;
@@ -81,6 +81,6 @@
     move-result-object v0
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Disc;->access$500(Landroid/widget/ListView;Ljava/lang/String;)V
   :L5
-  .line 659
+  .line 654
     return-void
 .end method
