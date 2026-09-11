@@ -38,6 +38,10 @@
 
 .field private final static WIN_T:F = 28.0F
 
+.field private static pcColor:I
+
+.field private static pcTheme:Ljava/lang/String;
+
 .field private static probe:Landroid/widget/TextView;
 
 .field private final static stamps:Ljava/util/HashMap;
@@ -387,6 +391,79 @@
     return v1
 .end method
 
+.method public static progressColor()I
+  .catchall { :L0 .. :L5 } :L6
+  .registers 7
+  .line 349
+    const/4 v0, 0
+  :L0
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    invoke-virtual { v1 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
+    move-result-object v1
+  .line 350
+    if-nez v1, :L1
+    const-string v1, ""
+  :L1
+  .line 351
+    sget-object v2, Lcom/innioasis/ipp/Icons;->pcTheme:Ljava/lang/String;
+    invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v2
+    if-eqz v2, :L2
+    sget v0, Lcom/innioasis/ipp/Icons;->pcColor:I
+    return v0
+  :L2
+  .line 352
+    sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v2
+  .line 353
+    invoke-virtual { v2 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v3
+    const v4, 2131231130
+    invoke-virtual { v3, v4 }, Landroid/content/res/Resources;->getDrawable(I)Landroid/graphics/drawable/Drawable;
+    move-result-object v3
+    invoke-virtual { v3 }, Landroid/graphics/drawable/Drawable;->mutate()Landroid/graphics/drawable/Drawable;
+    move-result-object v3
+  .line 354
+    instance-of v4, v3, Landroid/graphics/drawable/LayerDrawable;
+    if-nez v4, :L3
+    return v0
+  :L3
+  .line 355
+    new-instance v4, Landroid/widget/ProgressBar;
+    const/4 v5, 0
+    const v6, 16842872
+    invoke-direct { v4, v2, v5, v6 }, Landroid/widget/ProgressBar;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
+  .line 356
+    invoke-virtual { v4, v3 }, Landroid/widget/ProgressBar;->setProgressDrawable(Landroid/graphics/drawable/Drawable;)V
+  .line 357
+    sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    invoke-virtual { v2, v4 }, Lcom/innioasis/y1/theme/ThemeManager;->setCustomBackground(Landroid/widget/ProgressBar;)V
+  .line 358
+    check-cast v3, Landroid/graphics/drawable/LayerDrawable;
+    const v2, 16908301
+    invoke-virtual { v3, v2 }, Landroid/graphics/drawable/LayerDrawable;->findDrawableByLayerId(I)Landroid/graphics/drawable/Drawable;
+    move-result-object v2
+  .line 359
+    if-nez v2, :L4
+    return v0
+  :L4
+  .line 360
+    invoke-static { v2 }, Lcom/innioasis/ipp/Icons;->sample(Landroid/graphics/drawable/Drawable;)I
+    move-result v2
+    sput v2, Lcom/innioasis/ipp/Icons;->pcColor:I
+  .line 361
+    sput-object v1, Lcom/innioasis/ipp/Icons;->pcTheme:Ljava/lang/String;
+  :L5
+  .line 362
+    return v2
+  :L6
+  .line 363
+    move-exception v1
+  .line 364
+    return v0
+.end method
+
 .method public static reset(Landroid/widget/ImageView;)V
   .registers 2
   .line 302
@@ -410,16 +487,16 @@
   .catchall { :L17 .. :L18 } :L19
   .catchall { :L26 .. :L27 } :L28
   .registers 17
-  .line 346
+  .line 375
     move-object/from16 v1, p0
     invoke-virtual/range { p0 .. p0 }, Landroid/graphics/drawable/Drawable;->copyBounds()Landroid/graphics/Rect;
     move-result-object v2
-  .line 347
+  .line 376
     invoke-virtual/range { p0 .. p0 }, Landroid/graphics/drawable/Drawable;->getLevel()I
     move-result v3
-  .line 348
+  .line 377
     nop
-  .line 350
+  .line 379
     const/4 v4, 0
     const/4 v5, 0
   :L0
@@ -429,20 +506,20 @@
     invoke-static { v6, v7, v0 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v5
   :L1
-  .line 351
+  .line 380
     invoke-virtual { v1, v4, v4, v6, v7 }, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
-  .line 352
+  .line 381
     const/16 v0, 10000
     invoke-virtual { v1, v0 }, Landroid/graphics/drawable/Drawable;->setLevel(I)Z
-  .line 353
+  .line 382
     new-instance v0, Landroid/graphics/Canvas;
     invoke-direct { v0, v5 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
     invoke-virtual { v1, v0 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
-  .line 354
+  .line 383
     nop
-  .line 355
+  .line 384
     nop
-  .line 356
+  .line 385
     const-wide/16 v8, 0
     move-wide v10, v8
     move-wide v12, v10
@@ -450,15 +527,15 @@
     const/4 v14, 0
   :L2
     if-ge v0, v7, :L8
-  .line 357
+  .line 386
     const/4 v15, 0
   :L3
     if-ge v15, v6, :L7
-  .line 358
+  .line 387
     invoke-virtual { v5, v15, v0 }, Landroid/graphics/Bitmap;->getPixel(II)I
     move-result v6
   :L4
-  .line 359
+  .line 388
     ushr-int/lit8 v7, v6, 24
     and-int/lit16 v7, v7, 255
     const/16 v4, 128
@@ -466,25 +543,25 @@
     move-object v7, v5
     goto :L6
   :L5
-  .line 360
+  .line 389
     shr-int/lit8 v4, v6, 16
     and-int/lit16 v4, v4, 255
     move-object v7, v5
     int-to-long v4, v4
     add-long/2addr v8, v4
-  .line 361
+  .line 390
     shr-int/lit8 v4, v6, 8
     and-int/lit16 v4, v4, 255
     int-to-long v4, v4
     add-long/2addr v10, v4
-  .line 362
+  .line 391
     and-int/lit16 v4, v6, 255
     int-to-long v4, v4
     add-long/2addr v12, v4
-  .line 363
+  .line 392
     add-int/lit8 v14, v14, 1
   :L6
-  .line 357
+  .line 386
     add-int/lit8 v15, v15, 1
     move-object v5, v7
     const/4 v4, 0
@@ -492,7 +569,7 @@
     const/16 v7, 8
     goto :L3
   :L7
-  .line 356
+  .line 385
     move-object v7, v5
     add-int/lit8 v0, v0, 1
     const/4 v4, 0
@@ -500,30 +577,30 @@
     const/16 v7, 8
     goto :L2
   :L8
-  .line 366
+  .line 395
     move-object v7, v5
     if-nez v14, :L14
   :L9
-  .line 372
+  .line 401
     invoke-virtual { v1, v3 }, Landroid/graphics/drawable/Drawable;->setLevel(I)Z
-  .line 373
+  .line 402
     invoke-virtual { v1, v2 }, Landroid/graphics/drawable/Drawable;->setBounds(Landroid/graphics/Rect;)V
   :L10
-  .line 376
+  .line 405
     goto :L12
   :L11
-  .line 374
+  .line 403
     move-exception v0
   :L12
-  .line 377
+  .line 406
     if-eqz v7, :L13
     invoke-virtual { v7 }, Landroid/graphics/Bitmap;->recycle()V
   :L13
-  .line 366
+  .line 395
     const/4 v1, 0
     return v1
   :L14
-  .line 367
+  .line 396
     int-to-long v4, v14
   :L15
     div-long/2addr v8, v4
@@ -541,25 +618,25 @@
     long-to-int v4, v12
     or-int/2addr v4, v0
   :L17
-  .line 372
+  .line 401
     invoke-virtual { v1, v3 }, Landroid/graphics/drawable/Drawable;->setLevel(I)Z
-  .line 373
+  .line 402
     invoke-virtual { v1, v2 }, Landroid/graphics/drawable/Drawable;->setBounds(Landroid/graphics/Rect;)V
   :L18
-  .line 376
+  .line 405
     goto :L20
   :L19
-  .line 374
+  .line 403
     move-exception v0
   :L20
-  .line 377
+  .line 406
     if-eqz v7, :L21
     invoke-virtual { v7 }, Landroid/graphics/Bitmap;->recycle()V
   :L21
-  .line 367
+  .line 396
     return v4
   :L22
-  .line 368
+  .line 397
     move-exception v0
     move-object v5, v7
     goto :L25
@@ -570,25 +647,25 @@
   :L24
     move-exception v0
   :L25
-  .line 369
+  .line 398
     nop
   :L26
-  .line 372
+  .line 401
     invoke-virtual { v1, v3 }, Landroid/graphics/drawable/Drawable;->setLevel(I)Z
-  .line 373
+  .line 402
     invoke-virtual { v1, v2 }, Landroid/graphics/drawable/Drawable;->setBounds(Landroid/graphics/Rect;)V
   :L27
-  .line 376
+  .line 405
     goto :L29
   :L28
-  .line 374
+  .line 403
     move-exception v0
   :L29
-  .line 377
+  .line 406
     if-eqz v5, :L30
     invoke-virtual { v5 }, Landroid/graphics/Bitmap;->recycle()V
   :L30
-  .line 369
+  .line 398
     const/4 v1, 0
     return v1
 .end method

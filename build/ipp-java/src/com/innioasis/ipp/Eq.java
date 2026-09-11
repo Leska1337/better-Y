@@ -1,14 +1,17 @@
 package com.innioasis.ipp;
 
+import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.activity.EqActivity;
 import com.innioasis.y1.databinding.ActivityEqBinding;
 import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.utils.EqSPUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -38,6 +41,31 @@ public final class Eq {
     /** In place of {@code showThisEq()} in the two wheel handlers. */
     public static void preview(EqActivity a) {
         host = new WeakReference(a);
+    }
+
+    /** Stock's hardcoded #ADFF2F, when the sample cannot be read. */
+    private static final int ACTIVE = 0xFFADFF2F;
+
+    /**
+     * The text of the preset in use, when the cursor is not on it: the colour of the player's
+     * timeline ({@code Icons.progressColor}), so a theme's {@code progressColor} reaches it.
+     */
+    public static void active(TextView tv) {
+        if (tv == null) return;
+        int c = Icons.progressColor();
+        tv.setTextColor(c != 0 ? c : ACTIVE);
+    }
+
+    /**
+     * The preset in use is underlined, cursor or not: a theme's timeline colour may equal its text
+     * colour, and then the underline is what still tells the row apart. Set on every bind, since
+     * the row is recycled.
+     */
+    public static void underline(TextView tv, int pos) {
+        if (tv == null) return;
+        int f = tv.getPaintFlags();
+        boolean on = pos == EqSPUtils.INSTANCE.getEqualizerInt();
+        tv.setPaintFlags(on ? f | Paint.UNDERLINE_TEXT_FLAG : f & ~Paint.UNDERLINE_TEXT_FLAG);
     }
 
     /** From {@code Wheel.paintPanel}. */

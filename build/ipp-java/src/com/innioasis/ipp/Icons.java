@@ -336,6 +336,35 @@ public final class Icons {
         }
     }
 
+    private static String pcTheme;
+    private static int pcColor;
+
+    /**
+     * The colour {@link #timelineColor} would give, for a screen with no timeline on it: the
+     * player's own progress drawable, put through the same {@code setCustomBackground} the player
+     * calls, then sampled. Memoised on the theme name — one decode per theme, not per row.
+     */
+    public static int progressColor() {
+        try {
+            String theme = ThemeManager.INSTANCE.getThemeName();
+            if (theme == null) theme = "";
+            if (theme.equals(pcTheme)) return pcColor;
+            Context c = Y1Application.Companion.getAppContext();
+            Drawable d = c.getResources().getDrawable(R.drawable.shape_progressbar_pro).mutate();
+            if (!(d instanceof LayerDrawable)) return NO_COLOR;
+            ProgressBar pb = new ProgressBar(c, null, android.R.attr.progressBarStyleHorizontal);
+            pb.setProgressDrawable(d);
+            ThemeManager.INSTANCE.setCustomBackground(pb);
+            Drawable prog = ((LayerDrawable) d).findDrawableByLayerId(android.R.id.progress);
+            if (prog == null) return NO_COLOR;
+            pcColor = sample(prog);
+            pcTheme = theme;
+            return pcColor;
+        } catch (Throwable t) {
+            return NO_COLOR;
+        }
+    }
+
     /**
      * Render the progress layer into a tiny bitmap and average its opaque pixels. The layer is a
      * ClipDrawable whose level is the current playback position, so it must be temporarily opened

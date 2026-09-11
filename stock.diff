@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..aa2049d2 100644
+index 01b1f730..1125bc18 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..aa2049d2 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000077
++  versionCode: 10000079
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19370,7 +19370,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..0fc96c9b 100644
+index 71fe29d0..d7f9ec3f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20319,7 +20319,7 @@ index 71fe29d0..0fc96c9b 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev77</string>
++    <string name="ipp_version">v1.0.0-dev79</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -56139,6 +56139,36 @@ index c90de289..534c67e1 100644
 -
      .line 28
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali
+index f7859218..f196ee68 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali
+@@ -106,6 +106,9 @@
+ 
+     invoke-virtual {v0, p2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+ 
++    # ipp: the preset in use is underlined, cursor or not.
++    invoke-static {v0, p3}, Lcom/innioasis/ipp/Eq;->underline(Landroid/widget/TextView;I)V
++
+     .line 126
+     iget-object p2, p0, Lcom/innioasis/y1/activity/EqActivity$listAdapter$2$1;->this$0:Lcom/innioasis/y1/activity/EqActivity;
+ 
+@@ -181,13 +184,8 @@
+     .line 132
+     iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemEqBinding;->text:Landroid/widget/TextView;
+ 
+-    const-string p2, "#ADFF2F"
+-
+-    invoke-static {p2}, Landroid/graphics/Color;->parseColor(Ljava/lang/String;)I
+-
+-    move-result p2
+-
+-    invoke-virtual {p1, p2}, Landroid/widget/TextView;->setTextColor(I)V
++    # ipp: the preset in use takes the player timeline's colour instead of a hardcoded #ADFF2F.
++    invoke-static {p1}, Lcom/innioasis/ipp/Eq;->active(Landroid/widget/TextView;)V
+ 
+     goto :goto_0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 index 0bfdbeec..8bf681b2 100644
