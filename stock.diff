@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..1125bc18 100644
+index 01b1f730..b48c6784 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..1125bc18 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000079
++  versionCode: 10000082
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -375,6 +375,20 @@ index cfa3f963..63827bf9 100644
 -    <androidx.recyclerview.widget.RecyclerView android:orientation="horizontal" android:id="@id/select_box" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="9.0dip" android:layout_marginRight="9.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/input_box" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <EditText android:textSize="24.0sp" android:textStyle="bold" android:textColor="@color/black" android:id="@id/input_box" android:background="@drawable/bg_input_method_edittext" android:paddingLeft="7.0dip" android:paddingRight="7.0dip" android:layout_width="0.0dip" android:layout_height="36.0dip" android:layout_marginLeft="11.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="11.0dip" android:maxLines="1" android:inputType="textNoSuggestions" android:textCursorDrawable="@drawable/text_cursor" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <androidx.recyclerview.widget.RecyclerView android:orientation="horizontal" android:id="@id/select_box" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="11.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="11.0dip" android:layout_marginBottom="10.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/input_box" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/dialog_loading.xml b/build/src/res/layout/dialog_loading.xml
+index 4ce64349..a3045553 100644
+--- a/build/src/res/layout/dialog_loading.xml
++++ b/build/src/res/layout/dialog_loading.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:background="@drawable/loading_dialog" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <TextView android:textSize="30.0sp" android:textColor="#ff102162" android:id="@id/content" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="20.0dip" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
++    <TextView android:textSize="30.0sp" android:textColor="#ff102162" android:gravity="center" android:id="@id/content" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="20.0dip" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
+     <ImageView android:id="@id/loading_img" android:layout_width="80.0dip" android:layout_height="80.0dip" android:layout_marginTop="20.0dip" android:layout_marginBottom="10.0dip" android:src="@drawable/loading" app:layout_constraintBottom_toTopOf="@id/content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <TextView android:textSize="10.0sp" android:textColor="#ff102162" android:id="@id/tip" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/content" />
++    <TextView android:textSize="10.0sp" android:textColor="#ff102162" android:gravity="center" android:id="@id/tip" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/content" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
 index 4b9d1219..cb731bb9 100644
@@ -19370,7 +19384,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d7f9ec3f 100644
+index 71fe29d0..53f4f988 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20319,7 +20333,7 @@ index 71fe29d0..d7f9ec3f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev79</string>
++    <string name="ipp_version">v1.0.0-dev82</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -65899,6 +65913,20 @@ index 6e949456..d79b6927 100644
      .line 83
      iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->callback:Lcom/innioasis/y1/utils/InputMethodDialog$Callback;
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
+index 1d20b75c..0c3792e9 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
+@@ -341,6 +341,9 @@
+     :goto_1
+     invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/LoadingDialog;->setContentView(Landroid/view/View;)V
+ 
++    # ipp: the box, its text and the spinner in the theme's dialog colours.
++    invoke-static {p1}, Lcom/innioasis/ipp/Loading;->paint(Landroid/view/View;)V
++
+     const/4 p1, 0x0
+ 
+     .line 40
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali b/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali
 index 1e05f275..668ad554 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/ProgressMaskView.smali
