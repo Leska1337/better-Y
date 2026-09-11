@@ -100,6 +100,38 @@ public final class Theme {
     private static String paintedFor;
     private static Runnable watch;
 
+    /**
+     * The same question for the long-press menu's UNFOCUSED row ({@code menuItemBackground}):
+     * asked by the Photos icon strip, which is a menu too and goes see-through where the theme's
+     * menu rows do. Its own probe and memo; a late bitmap is reported to {@link #watchMenuRows}.
+     */
+    public static boolean menuRowsPainted() {
+        try {
+            String theme = ThemeManager.INSTANCE.getThemeName();
+            if (menuPainted != null && eq(theme, menuPaintedFor)) return menuPainted.booleanValue();
+            Context c = Y1Application.Companion.getAppContext();
+            if (c == null) return false;
+            if (menuProbe == null) menuProbe = new View(c);
+            ThemeManager.INSTANCE.menuItemSetBackground(menuProbe, 0, false);
+            boolean v = opaque(menuProbe.getBackground());
+            menuPainted = Boolean.valueOf(v);
+            menuPaintedFor = theme;
+            return v;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    private static View menuProbe;
+    private static Boolean menuPainted;
+    private static String menuPaintedFor;
+    private static Runnable menuWatch;
+
+    /** One watcher at a time; a stale one is harmless, it holds its screen weakly. */
+    public static void watchMenuRows(Runnable r) {
+        menuWatch = r;
+    }
+
     /** One watcher at a time — the screen drawing bands, while it is on screen. */
     public static void watchRows(Runnable r) {
         watch = r;
@@ -116,9 +148,17 @@ public final class Theme {
      * cold start is what the first screen to ask is told.
      */
     static void landed(View v) {
-        if (v == null || v != probe) return;
-        painted = null;
-        Runnable r = watch;
+        if (v == null) return;
+        Runnable r;
+        if (v == probe) {
+            painted = null;
+            r = watch;
+        } else if (v == menuProbe) {
+            menuPainted = null;
+            r = menuWatch;
+        } else {
+            return;
+        }
         // Posted: the applier is in the middle of setting backgrounds, and the watcher rebuilds a
         // screen. The probe has no window, so the Handler is explicit.
         if (r != null) new Handler(Looper.getMainLooper()).post(r);
