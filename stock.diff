@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..76401c29 100644
+index 2c8d26c0..973e1d49 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -32,6 +32,7 @@
@@ -18,17 +18,18 @@ index 2c8d26c0..76401c29 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,8 @@
+@@ -64,6 +64,9 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppQueueActivity"/>
++        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppUsbActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.LanguageActivity"/>
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d5d5fce5 100644
+index 01b1f730..f1f77fae 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -43,7 +44,7 @@ index 01b1f730..d5d5fce5 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000069
++  versionCode: 10000076
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -780,10 +781,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..45dbaa84 100644
+index 50446006..580f8584 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,482 @@
+@@ -1,417 +1,489 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1682,6 +1683,13 @@ index 50446006..45dbaa84 100644
 +    <string name="ipp_open_artist">Künstler öffnen</string>
 +    <string name="ipp_queue_remove_it">Aus Warteschlange entfernen</string>
 +    <string name="ipp_already_added">Bereits in der Liste</string>
++    <string name="ipp_usb_title">USB-Massenspeicher</string>
++    <string name="ipp_usb_connected">USB-Verbindung</string>
++    <string name="ipp_usb_message">Der Player ist per USB mit einem Computer verbunden. Drücken Sie die mittlere Taste, um den USB-Speicher zu aktivieren und Dateien zwischen Computer und Player zu kopieren, oder die obere Taste, um zum Menü zurückzukehren.</string>
++    <string name="ipp_usb_on">USB-Speicher aktivieren</string>
++    <string name="ipp_usb_in_use">USB-Speicher in Verwendung</string>
++    <string name="ipp_usb_in_use_message">Werfen Sie den Player am Computer aus, bevor Sie den USB-Speicher deaktivieren.</string>
++    <string name="ipp_usb_off">USB-Speicher deaktivieren</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
 index a2f30ff6..7672d71f 100644
@@ -2002,10 +2010,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..2f33082b 100644
+index 6f5a555d..7f585e9d 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,482 @@
+@@ -1,417 +1,489 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -2904,12 +2912,19 @@ index 6f5a555d..2f33082b 100644
 +    <string name="ipp_open_artist">Abrir artista</string>
 +    <string name="ipp_queue_remove_it">Quitar de la cola</string>
 +    <string name="ipp_already_added">Ya está en la lista</string>
++    <string name="ipp_usb_title">Almacenamiento USB masivo</string>
++    <string name="ipp_usb_connected">Conexión por USB</string>
++    <string name="ipp_usb_message">El reproductor está conectado a un ordenador por USB. Pulsa el botón central para activar el almacenamiento USB y copiar archivos entre el ordenador y el reproductor, o el botón superior para volver al menú.</string>
++    <string name="ipp_usb_on">Activar almacenamiento USB</string>
++    <string name="ipp_usb_in_use">El almacenamiento USB está en uso</string>
++    <string name="ipp_usb_in_use_message">Antes de desactivar el almacenamiento USB, expulsa el reproductor en el ordenador.</string>
++    <string name="ipp_usb_off">Desactivar almacenamiento USB</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..7881c0a9 100644
+index c242cee4..d9daeb31 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,482 @@
+@@ -1,417 +1,489 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3808,12 +3823,19 @@ index c242cee4..7881c0a9 100644
 +    <string name="ipp_open_artist">Ouvrir l\'artiste</string>
 +    <string name="ipp_queue_remove_it">Retirer de la file d\'attente</string>
 +    <string name="ipp_already_added">Déjà dans la liste</string>
++    <string name="ipp_usb_title">Mémoire de stockage de masse USB</string>
++    <string name="ipp_usb_connected">Connecté par USB</string>
++    <string name="ipp_usb_message">Le lecteur est connecté à un ordinateur via USB. Appuyez sur le bouton central pour activer la mémoire de stockage USB et copier des fichiers entre l\'ordinateur et le lecteur, ou sur le bouton du haut pour revenir au menu.</string>
++    <string name="ipp_usb_on">Activer la mémoire de stockage USB</string>
++    <string name="ipp_usb_in_use">Mémoire de stockage USB activée</string>
++    <string name="ipp_usb_in_use_message">Avant de désactiver la mémoire de stockage USB, éjectez le lecteur sur l\'ordinateur.</string>
++    <string name="ipp_usb_off">Désactiver la mémoire de stockage USB</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..981b6566 100644
+index d82ac6bb..1d38feaf 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,482 @@
+@@ -1,417 +1,489 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4712,12 +4734,19 @@ index d82ac6bb..981b6566 100644
 +    <string name="ipp_open_artist">פתח אומן</string>
 +    <string name="ipp_queue_remove_it">הסרה מהתור</string>
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
++    <string name="ipp_usb_title">אמצעי מסוג USB לאחסון בנפח גדול</string>
++    <string name="ipp_usb_connected">USB מחובר</string>
++    <string name="ipp_usb_message">הנגן מחובר למחשב באמצעות USB. לחץ על הכפתור המרכזי כדי להפעיל את אחסון ה-USB ולהעתיק קבצים בין המחשב לנגן, או על הכפתור העליון כדי לחזור לתפריט.</string>
++    <string name="ipp_usb_on">הפעל אחסון USB</string>
++    <string name="ipp_usb_in_use">אחסון USB שנמצא בשימוש</string>
++    <string name="ipp_usb_in_use_message">לפני כיבוי אחסון ה-USB, הוצא את הנגן במחשב.</string>
++    <string name="ipp_usb_off">כבה אחסון USB</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..ce063ea4 100644
+index f71d0cb1..ba421ac1 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,399 @@
+@@ -1,334 +1,406 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5450,6 +5479,13 @@ index f71d0cb1..ce063ea4 100644
 +    <string name="ipp_open_artist">아티스트 열기</string>
 +    <string name="ipp_queue_remove_it">대기열에서 제거</string>
 +    <string name="ipp_already_added">이미 재생 목록에 있음</string>
++    <string name="ipp_usb_title">USB 대용량 저장소</string>
++    <string name="ipp_usb_connected">USB 연결됨</string>
++    <string name="ipp_usb_message">플레이어가 USB로 컴퓨터에 연결되었습니다. 가운데 버튼을 누르면 USB 저장소가 켜져 컴퓨터와 플레이어 간에 파일을 복사할 수 있고, 위쪽 버튼을 누르면 메뉴로 돌아갑니다.</string>
++    <string name="ipp_usb_on">USB 저장소 사용</string>
++    <string name="ipp_usb_in_use">USB 저장소 사용 중</string>
++    <string name="ipp_usb_in_use_message">USB 저장소를 끄기 전에 컴퓨터에서 플레이어를 꺼내세요.</string>
++    <string name="ipp_usb_off">USB 저장소 사용 안함</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
 index d79cf0f6..89491c4d 100644
@@ -5695,10 +5731,10 @@ index d79cf0f6..89491c4d 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..d800a19c 100644
+index 4c84fd2b..76cda18e 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,151 @@
+@@ -1,86 +1,158 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -5935,12 +5971,19 @@ index 4c84fd2b..d800a19c 100644
 +    <string name="ipp_open_artist">Открыть исполнителя</string>
 +    <string name="ipp_queue_remove_it">Убрать из очереди</string>
 +    <string name="ipp_already_added">Уже в плейлисте</string>
++    <string name="ipp_usb_title">Запоминающее устройство USB</string>
++    <string name="ipp_usb_connected">USB-подключение установлено</string>
++    <string name="ipp_usb_message">Плеер подключён к компьютеру по USB. Нажмите центральную кнопку, чтобы включить USB-накопитель и копировать файлы между компьютером и плеером, или верхнюю кнопку, чтобы вернуться в меню.</string>
++    <string name="ipp_usb_on">Включить USB-накопитель</string>
++    <string name="ipp_usb_in_use">USB-накопитель используется</string>
++    <string name="ipp_usb_in_use_message">Перед отключением USB-накопителя извлеките плеер на компьютере.</string>
++    <string name="ipp_usb_off">Отключить USB-накопитель</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..401f5432 100644
+index 5665bdd9..a6e5e6bf 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,491 @@
+@@ -1,426 +1,498 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -6857,6 +6900,13 @@ index 5665bdd9..401f5432 100644
 +    <string name="ipp_open_artist">打开艺术家</string>
 +    <string name="ipp_queue_remove_it">从队列移除</string>
 +    <string name="ipp_already_added">已在播放列表中</string>
++    <string name="ipp_usb_title">USB 大容量存储设备</string>
++    <string name="ipp_usb_connected">已连接 USB</string>
++    <string name="ipp_usb_message">播放器已通过 USB 连接至计算机。按中间按钮打开 USB 存储设备，即可在计算机和播放器之间复制文件；按顶部按钮返回菜单。</string>
++    <string name="ipp_usb_on">打开 USB 存储设备</string>
++    <string name="ipp_usb_in_use">USB 存储设备正在使用中</string>
++    <string name="ipp_usb_in_use_message">关闭 USB 存储设备前，请先在计算机上弹出播放器。</string>
++    <string name="ipp_usb_off">关闭 USB 存储设备</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
 index ce849b8e..31964bc2 100644
@@ -8165,10 +8215,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..59a8cffd 100644
+index 803c1e7a..138574ad 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5623 @@
+@@ -1,5519 +1,5631 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -17691,6 +17741,7 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="mipmap" name="ipp_bookmark" id="0x7f0e0053" />
 +    <public type="mipmap" name="ipp_folder" id="0x7f0e0054" />
 +    <public type="mipmap" name="ipp_folders_music" id="0x7f0e0055" />
++    <public type="mipmap" name="ipp_usb" id="0x7f0e0056" />
 +    <public type="plurals" name="mtrl_badge_content_description" id="0x7f0f0000" />
 +    <public type="raw" name="eqtest" id="0x7f100000" />
 +    <public type="string" name="All" id="0x7f110000" />
@@ -18230,6 +18281,13 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="string" name="ipp_backup_confirm" id="0x7f110245" />
 +    <public type="string" name="ipp_backup_restoring" id="0x7f110246" />
 +    <public type="string" name="ipp_backup_restore_fail" id="0x7f110247" />
++    <public type="string" name="ipp_usb_title" id="0x7f110248" />
++    <public type="string" name="ipp_usb_connected" id="0x7f110249" />
++    <public type="string" name="ipp_usb_message" id="0x7f11024a" />
++    <public type="string" name="ipp_usb_on" id="0x7f11024b" />
++    <public type="string" name="ipp_usb_in_use" id="0x7f11024c" />
++    <public type="string" name="ipp_usb_in_use_message" id="0x7f11024d" />
++    <public type="string" name="ipp_usb_off" id="0x7f11024e" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19312,10 +19370,10 @@ index 803c1e7a..59a8cffd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d99df0f4 100644
+index 71fe29d0..6dcf2d78 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,541 @@
+@@ -1,473 +1,548 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20261,7 +20319,7 @@ index 71fe29d0..d99df0f4 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev69</string>
++    <string name="ipp_version">v1.0.0-dev76</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20328,6 +20386,13 @@ index 71fe29d0..d99df0f4 100644
 +    <string name="ipp_open_artist">Open artist</string>
 +    <string name="ipp_queue_remove_it">Remove from queue</string>
 +    <string name="ipp_already_added">Already in the playlist</string>
++    <string name="ipp_usb_title">USB mass storage</string>
++    <string name="ipp_usb_connected">USB connected</string>
++    <string name="ipp_usb_message">The player is connected to a computer via USB. Press the centre button to turn on USB storage and copy files between the computer and the player, or the top button to return to the menu.</string>
++    <string name="ipp_usb_on">Turn on USB storage</string>
++    <string name="ipp_usb_in_use">USB storage in use</string>
++    <string name="ipp_usb_in_use_message">Before turning off USB storage, eject the player on the computer.</string>
++    <string name="ipp_usb_off">Turn off USB storage</string>
 +</resources>
 diff --git a/build/src/smali/com/innioasis/music/util/Other.smali b/build/src/smali/com/innioasis/music/util/Other.smali
 index e5eeb74a..73445d31 100644
@@ -21733,7 +21798,7 @@ index 675ebb2a..668ae0df 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..dcb41cac 100644
+index 060ed6d1..d44417ce 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -21823,7 +21888,7 @@ index 060ed6d1..dcb41cac 100644
      if-ne p1, v3, :cond_17
  
      .line 685
-@@ -2806,6 +2848,11 @@
+@@ -2806,6 +2848,15 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -21832,10 +21897,14 @@ index 060ed6d1..dcb41cac 100644
 +    # before multidex installs classes2, so a call into the ipp package there cannot resolve.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Tone;->watch(Landroid/content/Context;)V
 +
++    # ipp: the system's "USB connected" screen is refused and ours opened instead (Usb) --
++    # the same once-per-process hook, for the same reason.
++    invoke-static {p0}, Lcom/innioasis/ipp/Usb;->boot(Landroid/content/Context;)V
++
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3463,6 +3510,15 @@
+@@ -3463,6 +3514,15 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -21851,7 +21920,7 @@ index 060ed6d1..dcb41cac 100644
      .line 345
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->updateBatteryPercentageBase()V
  
-@@ -3602,7 +3658,12 @@
+@@ -3602,7 +3662,12 @@
  
      const-string v2, "save state successful"
  
@@ -21865,7 +21934,7 @@ index 060ed6d1..dcb41cac 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4183,12 @@
+@@ -4122,6 +4187,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
