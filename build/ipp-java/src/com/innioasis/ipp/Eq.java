@@ -14,8 +14,8 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * The Equalizer's preview — the big icon and the caption beside the list — painted once at the end
- * of a burst of wheel clicks instead of once per click.
+ * The Equalizer's preview — the big icon and the caption beside the list — painted after the wheel
+ * click instead of before it, and at most once per 70 ms while the wheel turns.
  *
  * Stock calls {@code EqActivity.showThisEq()} at the top of {@code clockwise()} /
  * {@code antiClockwise()}, i.e. before the list is even told the cursor moved, and it is by
@@ -26,11 +26,10 @@ import java.util.List;
  * never scrolls and only rebinds the two rows whose highlight changed. That is the whole of "the
  * equaliser scrolls thick and unresponsive": the highlight was waiting behind the picture.
  *
- * Same answer as the panel beside the Settings list ({@code Wheel.postRest} /
- * {@code Wheel.Rest}), and it rides on the same timer: {@link #preview} only notes which screen is
- * asking, {@code Wheel.follow} — called immediately after it — (re-)posts {@code Rest}, and
- * {@link #rest} paints when the clicks stop. A single click therefore shows the icon ~70 ms later,
- * which is the same deal the Settings preview already makes.
+ * Same answer as the panel beside the Settings list ({@code Wheel.postRest}), and it rides on the
+ * same messages: {@link #preview} only notes which screen is asking, {@code Wheel.follow} — called
+ * immediately after it — posts them, and {@link #paint} runs from there once the highlight has
+ * moved.
  */
 public final class Eq {
 
@@ -41,8 +40,8 @@ public final class Eq {
         host = new WeakReference(a);
     }
 
-    /** End of a burst of clicks, from {@code Wheel.Rest}. */
-    static void rest() {
+    /** From {@code Wheel.paintPanel}. */
+    static void paint() {
         Object o = host == null ? null : host.get();
         host = null;
         if (!(o instanceof EqActivity)) return;

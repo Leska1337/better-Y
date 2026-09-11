@@ -1,4 +1,4 @@
-.class final Lcom/innioasis/ipp/Wheel$Rest;
+.class final Lcom/innioasis/ipp/Wheel$Now;
 .super Ljava/lang/Object;
 .implements Ljava/lang/Runnable;
 .source "Wheel.java"
@@ -8,26 +8,29 @@
 .end annotation
 .annotation system Ldalvik/annotation/InnerClass;
   accessFlags = 24
-  name = "Rest"
+  name = "Now"
 .end annotation
 
 .method constructor <init>()V
   .registers 1
-  .line 475
+  .line 468
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public run()V
-  .registers 2
-  .line 477
-    const/4 v0, 0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$402(Z)Z
-  .line 478
-    const/4 v0, 0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$502(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 479
+  .registers 6
+  .line 470
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$200()J
+    move-result-wide v2
+    sub-long/2addr v0, v2
+    const-wide/16 v2, 70
+    cmp-long v4, v0, v2
+    if-ltz v4, :L0
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$300()V
-  .line 480
+  :L0
+  .line 471
     return-void
 .end method

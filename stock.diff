@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f1f77fae 100644
+index 01b1f730..aa2049d2 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..f1f77fae 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000076
++  versionCode: 10000077
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19370,7 +19370,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..6dcf2d78 100644
+index 71fe29d0..0fc96c9b 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20319,7 +20319,7 @@ index 71fe29d0..6dcf2d78 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev76</string>
++    <string name="ipp_version">v1.0.0-dev77</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20710,7 +20710,7 @@ index 74759f7b..3986c746 100644
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2a..668ae0df 100644
+index 675ebb2a..fa8a4e2c 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,26 @@
@@ -20756,7 +20756,7 @@ index 675ebb2a..668ae0df 100644
      .line 1428
      :try_start_0
      const-class v2, Landroid/content/pm/PackageManager;
-@@ -2176,9 +2203,35 @@
+@@ -2176,9 +2203,34 @@
      return-void
  .end method
  
@@ -20778,8 +20778,7 @@ index 675ebb2a..668ae0df 100644
 +    # ipp: this repaints the whole preview panel and is called from a row's BIND, so an
 +    # accelerated wheel burst rebuilt it once per row passed through -- different image, different
 +    # caption widths, every time, inside the list's own layout. Skip it while the wheel is moving;
-+    # Wheel re-binds the focused row once the burst settles, which is exactly what a single slow
-+    # click does.
++    # Wheel paints it from a posted message right after the click, at most once per 70 ms.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Wheel;->panelUpdate(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
 +
 +    move-result v0
@@ -20792,7 +20791,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110179
  
      .line 481
-@@ -2259,6 +2312,51 @@
+@@ -2259,6 +2311,51 @@
  
      invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
@@ -20844,7 +20843,7 @@ index 675ebb2a..668ae0df 100644
      const-string v1, "test"
  
      .line 500
-@@ -2266,13 +2364,13 @@
+@@ -2266,13 +2363,13 @@
  
      move-result v1
  
@@ -20860,7 +20859,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f1100db
  
      .line 501
-@@ -2284,13 +2382,13 @@
+@@ -2284,13 +2381,13 @@
  
      move-result v1
  
@@ -20876,7 +20875,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11019f
  
      .line 502
-@@ -2302,13 +2400,13 @@
+@@ -2302,13 +2399,13 @@
  
      move-result v1
  
@@ -20892,7 +20891,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11016c
  
      .line 503
-@@ -2320,13 +2418,13 @@
+@@ -2320,13 +2417,13 @@
  
      move-result v1
  
@@ -20908,7 +20907,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110192
  
      .line 504
-@@ -2338,13 +2436,13 @@
+@@ -2338,13 +2435,13 @@
  
      move-result v1
  
@@ -20924,7 +20923,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017c
  
      .line 505
-@@ -2356,13 +2454,13 @@
+@@ -2356,13 +2453,13 @@
  
      move-result v1
  
@@ -20940,7 +20939,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11018e
  
      .line 506
-@@ -2374,14 +2472,14 @@
+@@ -2374,14 +2471,14 @@
  
      move-result v1
  
@@ -20957,7 +20956,7 @@ index 675ebb2a..668ae0df 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
  
      move-result-object v0
-@@ -2390,13 +2488,13 @@
+@@ -2390,13 +2487,13 @@
  
      move-result v0
  
@@ -20973,7 +20972,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110186
  
      .line 508
-@@ -2408,13 +2506,13 @@
+@@ -2408,13 +2505,13 @@
  
      move-result v0
  
@@ -20989,7 +20988,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11018b
  
      .line 509
-@@ -2426,13 +2524,13 @@
+@@ -2426,13 +2523,13 @@
  
      move-result v0
  
@@ -21005,7 +21004,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11017f
  
      .line 510
-@@ -2444,13 +2542,13 @@
+@@ -2444,13 +2541,13 @@
  
      move-result v0
  
@@ -21021,7 +21020,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110180
  
      .line 511
-@@ -2462,13 +2560,13 @@
+@@ -2462,13 +2559,13 @@
  
      move-result v0
  
@@ -21037,7 +21036,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11017e
  
      .line 512
-@@ -2480,13 +2578,13 @@
+@@ -2480,13 +2577,13 @@
  
      move-result v0
  
@@ -21053,7 +21052,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110195
  
      .line 513
-@@ -2498,7 +2596,7 @@
+@@ -2498,7 +2595,7 @@
  
      move-result v0
  
@@ -21062,7 +21061,7 @@ index 675ebb2a..668ae0df 100644
  
      const/4 p1, 0x1
  
-@@ -2508,7 +2606,7 @@
+@@ -2508,7 +2605,7 @@
  
      goto/16 :goto_1
  
@@ -21071,7 +21070,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11018c
  
      .line 514
-@@ -2520,13 +2618,13 @@
+@@ -2520,13 +2617,13 @@
  
      move-result v0
  
@@ -21087,7 +21086,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11017b
  
      .line 515
-@@ -2538,13 +2636,13 @@
+@@ -2538,13 +2635,13 @@
  
      move-result v0
  
@@ -21103,7 +21102,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110196
  
      .line 516
-@@ -2556,13 +2654,13 @@
+@@ -2556,13 +2653,13 @@
  
      move-result v0
  
@@ -21119,7 +21118,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110190
  
      .line 517
-@@ -2574,13 +2672,13 @@
+@@ -2574,13 +2671,13 @@
  
      move-result v0
  
@@ -21135,7 +21134,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11018f
  
      .line 518
-@@ -2592,13 +2690,13 @@
+@@ -2592,13 +2689,13 @@
  
      move-result v0
  
@@ -21151,7 +21150,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110183
  
      .line 519
-@@ -2610,13 +2708,13 @@
+@@ -2610,13 +2707,13 @@
  
      move-result v0
  
@@ -21167,7 +21166,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11001e
  
      .line 520
-@@ -2628,13 +2726,13 @@
+@@ -2628,13 +2725,13 @@
  
      move-result v0
  
@@ -21183,7 +21182,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f11017d
  
      .line 521
-@@ -2646,13 +2744,13 @@
+@@ -2646,13 +2743,13 @@
  
      move-result v0
  
@@ -21199,7 +21198,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110182
  
      .line 522
-@@ -2664,13 +2762,13 @@
+@@ -2664,13 +2761,13 @@
  
      move-result v0
  
@@ -21215,7 +21214,7 @@ index 675ebb2a..668ae0df 100644
      const v0, 0x7f110187
  
      .line 523
-@@ -2682,11 +2780,11 @@
+@@ -2682,11 +2779,11 @@
  
      move-result p1
  
@@ -21229,7 +21228,7 @@ index 675ebb2a..668ae0df 100644
      :goto_1
      return-void
  .end method
-@@ -3199,6 +3297,8 @@
+@@ -3199,6 +3296,8 @@
      move-result-object v7
  
      .line 179
@@ -21238,7 +21237,7 @@ index 675ebb2a..668ae0df 100644
      invoke-direct {v5, v8, v6, v7}, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
  
      const/4 v7, 0x2
-@@ -3230,6 +3330,8 @@
+@@ -3230,6 +3329,8 @@
      move-result-object v7
  
      .line 182
@@ -21247,7 +21246,7 @@ index 675ebb2a..668ae0df 100644
      invoke-direct {v5, v8, v6, v7}, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
  
      const/4 v7, 0x3
-@@ -3716,6 +3818,22 @@
+@@ -3716,6 +3817,22 @@
      :cond_2
      check-cast v1, Ljava/util/List;
  
@@ -21270,7 +21269,7 @@ index 675ebb2a..668ae0df 100644
      .line 1520
      check-cast v1, Ljava/util/Collection;
  
-@@ -4979,6 +5097,30 @@
+@@ -4979,6 +5096,30 @@
  
      move-result-object v1
  
@@ -21301,7 +21300,7 @@ index 675ebb2a..668ae0df 100644
      check-cast v1, Ljava/lang/CharSequence;
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -7091,7 +7233,7 @@
+@@ -7091,7 +7232,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -21310,7 +21309,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 274
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7123,20 +7265,18 @@
+@@ -7123,20 +7264,18 @@
  
      move-result v1
  
@@ -21335,7 +21334,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 266
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7182,14 +7322,12 @@
+@@ -7182,14 +7321,12 @@
  
      move-result v1
  
@@ -21353,7 +21352,7 @@ index 675ebb2a..668ae0df 100644
  
      return-void
  .end method
-@@ -7220,6 +7358,33 @@
+@@ -7220,6 +7357,33 @@
  
      move-result-object v0
  
@@ -21387,7 +21386,7 @@ index 675ebb2a..668ae0df 100644
      const-string v1, "test"
  
      .line 287
-@@ -7227,14 +7392,14 @@
+@@ -7227,14 +7391,14 @@
  
      move-result v1
  
@@ -21404,7 +21403,7 @@ index 675ebb2a..668ae0df 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getResources()Landroid/content/res/Resources;
  
      move-result-object v1
-@@ -7249,7 +7414,7 @@
+@@ -7249,7 +7413,7 @@
  
      move-result v1
  
@@ -21413,7 +21412,7 @@ index 675ebb2a..668ae0df 100644
  
      const-class v0, Lcom/innioasis/y1/activity/BluetoothActivity;
  
-@@ -7257,7 +7422,7 @@
+@@ -7257,7 +7421,7 @@
  
      goto/16 :goto_0
  
@@ -21422,7 +21421,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110179
  
      .line 289
-@@ -7269,7 +7434,7 @@
+@@ -7269,7 +7433,7 @@
  
      move-result v1
  
@@ -21431,7 +21430,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 290
      new-instance v0, Landroid/content/Intent;
-@@ -7287,7 +7452,7 @@
+@@ -7287,7 +7451,7 @@
  
      goto/16 :goto_0
  
@@ -21440,7 +21439,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11019f
  
      .line 293
-@@ -7299,13 +7464,13 @@
+@@ -7299,13 +7463,13 @@
  
      move-result v1
  
@@ -21456,7 +21455,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11016c
  
      .line 294
-@@ -7317,13 +7482,13 @@
+@@ -7317,13 +7481,13 @@
  
      move-result v1
  
@@ -21472,7 +21471,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110190
  
      .line 295
-@@ -7335,14 +7500,14 @@
+@@ -7335,14 +7499,14 @@
  
      move-result v1
  
@@ -21489,7 +21488,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11018f
  
      .line 299
-@@ -7354,14 +7519,14 @@
+@@ -7354,14 +7518,14 @@
  
      move-result v1
  
@@ -21506,7 +21505,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110192
  
      .line 303
-@@ -7373,13 +7538,13 @@
+@@ -7373,13 +7537,13 @@
  
      move-result v1
  
@@ -21522,7 +21521,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017c
  
      .line 304
-@@ -7391,7 +7556,7 @@
+@@ -7391,7 +7555,7 @@
  
      move-result v1
  
@@ -21531,7 +21530,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 305
      new-instance v0, Landroid/content/Intent;
-@@ -7414,7 +7579,7 @@
+@@ -7414,7 +7578,7 @@
  
      goto/16 :goto_0
  
@@ -21540,7 +21539,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110180
  
      .line 310
-@@ -7426,7 +7591,7 @@
+@@ -7426,7 +7590,7 @@
  
      move-result v1
  
@@ -21549,7 +21548,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 311
      new-instance v0, Landroid/content/Intent;
-@@ -7449,7 +7614,7 @@
+@@ -7449,7 +7613,7 @@
  
      goto/16 :goto_0
  
@@ -21558,7 +21557,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110196
  
      .line 316
-@@ -7461,7 +7626,7 @@
+@@ -7461,7 +7625,7 @@
  
      move-result v1
  
@@ -21567,7 +21566,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 317
      new-instance v0, Landroid/content/Intent;
-@@ -7484,7 +7649,7 @@
+@@ -7484,7 +7648,7 @@
  
      goto/16 :goto_0
  
@@ -21576,7 +21575,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110182
  
      .line 322
-@@ -7496,13 +7661,13 @@
+@@ -7496,13 +7660,13 @@
  
      move-result v1
  
@@ -21592,7 +21591,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11018e
  
      .line 323
-@@ -7514,13 +7679,13 @@
+@@ -7514,13 +7678,13 @@
  
      move-result v1
  
@@ -21608,7 +21607,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017e
  
      .line 324
-@@ -7532,13 +7697,13 @@
+@@ -7532,13 +7696,13 @@
  
      move-result v1
  
@@ -21624,7 +21623,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110195
  
      .line 325
-@@ -7550,13 +7715,13 @@
+@@ -7550,13 +7714,13 @@
  
      move-result v1
  
@@ -21640,7 +21639,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110186
  
      .line 326
-@@ -7568,7 +7733,7 @@
+@@ -7568,7 +7732,7 @@
  
      move-result v1
  
@@ -21649,7 +21648,7 @@ index 675ebb2a..668ae0df 100644
  
      const-class v0, Lcom/innioasis/y1/activity/LanguageActivity;
  
-@@ -7576,7 +7741,7 @@
+@@ -7576,7 +7740,7 @@
  
      goto/16 :goto_0
  
@@ -21658,7 +21657,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11018b
  
      .line 327
-@@ -7588,13 +7753,13 @@
+@@ -7588,13 +7752,13 @@
  
      move-result v1
  
@@ -21674,7 +21673,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017f
  
      .line 328
-@@ -7606,7 +7771,7 @@
+@@ -7606,7 +7770,7 @@
  
      move-result v1
  
@@ -21683,7 +21682,7 @@ index 675ebb2a..668ae0df 100644
  
      .line 329
      new-instance v0, Landroid/content/Intent;
-@@ -7626,7 +7791,7 @@
+@@ -7626,7 +7790,7 @@
  
      goto :goto_0
  
@@ -21692,7 +21691,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11018c
  
      .line 332
-@@ -7638,13 +7803,13 @@
+@@ -7638,13 +7802,13 @@
  
      move-result v1
  
@@ -21708,7 +21707,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017b
  
      .line 333
-@@ -7656,13 +7821,13 @@
+@@ -7656,13 +7820,13 @@
  
      move-result v1
  
@@ -21724,7 +21723,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110183
  
      .line 334
-@@ -7674,13 +7839,13 @@
+@@ -7674,13 +7838,13 @@
  
      move-result v1
  
@@ -21740,7 +21739,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11001e
  
      .line 335
-@@ -7692,13 +7857,13 @@
+@@ -7692,13 +7856,13 @@
  
      move-result v1
  
@@ -21756,7 +21755,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f11017d
  
      .line 336
-@@ -7710,13 +7875,13 @@
+@@ -7710,13 +7874,13 @@
  
      move-result v1
  
@@ -21772,7 +21771,7 @@ index 675ebb2a..668ae0df 100644
      const v1, 0x7f110187
  
      .line 337
-@@ -7728,12 +7893,12 @@
+@@ -7728,12 +7892,12 @@
  
      move-result v0
  
@@ -21787,7 +21786,7 @@ index 675ebb2a..668ae0df 100644
      :goto_0
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getAdapter()Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;
  
-@@ -7882,6 +8047,9 @@
+@@ -7882,6 +8046,9 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -56142,7 +56141,7 @@ index c90de289..534c67e1 100644
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
-index 0bfdbeec..c540a48c 100644
+index 0bfdbeec..8bf681b2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 @@ -1,1964 +1,1970 @@
@@ -58436,8 +58435,8 @@ index 0bfdbeec..c540a48c 100644
 +
 +    .line 245
 +    :cond_0
-+    # ipp: the preview (big icon + caption) is painted once at the end of a burst of clicks, not
-+    # once per click -- it is the only expensive thing here and it ran BEFORE the highlight moved.
++    # ipp: the preview (big icon + caption) is painted by Wheel right after the click, at most once
++    # per 70 ms -- it is the only expensive thing here and it ran BEFORE the highlight moved.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Eq;->preview(Lcom/innioasis/y1/activity/EqActivity;)V
 +
 +    .line 246
@@ -58486,8 +58485,8 @@ index 0bfdbeec..c540a48c 100644
 +
 +    .line 235
 +    :cond_0
-+    # ipp: the preview (big icon + caption) is painted once at the end of a burst of clicks, not
-+    # once per click -- it is the only expensive thing here and it ran BEFORE the highlight moved.
++    # ipp: the preview (big icon + caption) is painted by Wheel right after the click, at most once
++    # per 70 ms -- it is the only expensive thing here and it ran BEFORE the highlight moved.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Eq;->preview(Lcom/innioasis/y1/activity/EqActivity;)V
 +
 +    .line 236

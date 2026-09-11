@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
@@ -328,19 +329,24 @@ public final class Wheel {
     private static int restPos = -1;
     private static boolean busy;
     private static final Rest REST = new Rest();
+    private static final Now NOW = new Now();
 
-    /** Rows a burst of clicks may cross before the panel beside them is worth painting. */
+    /** The panel beside the list is painted at most once per this many ms while the wheel turns. */
     private static final int PANEL_MS = 70;
+    private static long panelAt;
+    private static boolean painting;
 
     /**
-     * Mark the wheel as moving and arrange for the panel beside the list to be painted once, at
-     * the end of this burst of clicks — see {@link #panelUpdate} for why it must not be painted
-     * during them.
+     * Mark the wheel as moving and arrange for the panel beside the list to be painted — see
+     * {@link #panelUpdate} for why it must not be painted from the row's bind.
      *
-     * It is posted DELAYED and re-posted on every click, so a fast scroll paints it once at the end
-     * instead of once per row flown past. On the Settings screen that panel is a preview image, two
-     * captions and (on one row) the measured cache size — the single most expensive thing a click
-     * there can trigger. {@link #PANEL_MS} is short enough that a lone click still looks immediate.
+     * Two messages. {@link Now} is posted plainly, so it runs once the whole key event is done (the
+     * speed util may step several rows inside one) and paints the row the cursor landed on — a lone
+     * click shows its preview as promptly as the main menu does. It skips when the panel was painted
+     * less than {@link #PANEL_MS} ago, so a fast spin does not repaint it for every row flown past:
+     * on Settings that panel is a preview image, two captions and (on one row) the measured cache
+     * size, the most expensive thing a click there can trigger. {@link Rest}, re-posted DELAYED on
+     * every click, paints whatever the burst ended on.
      */
     private static void postRest(RecyclerView rv, int pos) {
         restRv = new WeakReference(rv);
@@ -348,6 +354,8 @@ public final class Wheel {
         busy = true;
         rv.removeCallbacks(REST);
         rv.postDelayed(REST, PANEL_MS);
+        rv.removeCallbacks(NOW);
+        rv.post(NOW);
     }
 
     private static WeakReference panelHost;
@@ -355,7 +363,8 @@ public final class Wheel {
 
     /**
      * Injected at the top of {@code SettingActivity.refreshRight}: true = do not paint the panel
-     * now; note what it should show and let {@link Rest} paint it from a plain posted message.
+     * now; note what it should show and let {@link Now} or {@link Rest} paint it from a plain posted
+     * message.
      *
      * That panel — preview image and two captions — is stock-painted from inside a row's
      * bind, i.e. in the middle of the list's layout. Its views change size, and the
@@ -372,7 +381,7 @@ public final class Wheel {
      * pass, so the clipped version was drawn for a frame and then corrected — the flicker.
      */
     public static boolean panelUpdate(SettingActivity host, String title) {
-        if (!busy) {                           // not a wheel move: paint it here and now
+        if (!busy || painting) {               // not a wheel move, or our own paint: paint it now
             painted = title;
             stateShift(host, title);
             return false;
@@ -432,27 +441,42 @@ public final class Wheel {
     }
 
     /**
-     * End of a burst of clicks: paint the panel once, here, where no layout is in progress.
-     * Runs as an ordinary posted message, so it is prompt — the panel follows the wheel instead of
-     * waiting for the list to come to a stop.
+     * Paints whatever a panel beside the list is waiting for — the Settings panel or the
+     * equaliser's preview — from a posted message, where no layout is in progress.
      */
+    private static void paintPanel() {
+        panelAt = SystemClock.uptimeMillis();
+        Eq.paint();
+        Object h = panelHost == null ? null : panelHost.get();
+        String t = panelTitle;
+        panelHost = null;
+        panelTitle = null;
+        if (h instanceof SettingActivity && t != null) {
+            painting = true;
+            try {
+                painted = t;
+                ((SettingActivity) h).ippRefreshRight(t);
+            } catch (Throwable e) {
+                // a stale panel is better than a crash on a wheel click
+            } finally {
+                painting = false;
+            }
+        }
+    }
+
+    /** Right after the key event: paint, unless the panel was painted within {@link #PANEL_MS}. */
+    static final class Now implements Runnable {
+        public void run() {
+            if (SystemClock.uptimeMillis() - panelAt >= PANEL_MS) paintPanel();
+        }
+    }
+
+    /** End of a burst of clicks: paint what the burst ended on, if {@link Now} has not already. */
     static final class Rest implements Runnable {
         public void run() {
             busy = false;
             restRv = null;
-            Eq.rest();                         // the equaliser's preview rides on the same timer
-            Object h = panelHost == null ? null : panelHost.get();
-            String t = panelTitle;
-            panelHost = null;
-            panelTitle = null;
-            if (h instanceof SettingActivity && t != null) {
-                try {
-                    painted = t;
-                    ((SettingActivity) h).ippRefreshRight(t);
-                } catch (Throwable e) {
-                    // a stale panel is better than a crash on a wheel click
-                }
-            }
+            paintPanel();
         }
     }
 
