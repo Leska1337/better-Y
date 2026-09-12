@@ -10,6 +10,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
@@ -245,5 +250,152 @@ public final class Theme {
 
     private static boolean eq(String a, String b) {
         return a == null ? b == null : a.equals(b);
+    }
+
+    // ------------------------------------------------------- the theme gallery (ThemeListActivity)
+
+    /** {@code item_theme.xml}'s own colours: the caption's white and the frame's blue. */
+    private static final int TILE_TEXT = 0xCCFFFFFF;
+    private static final int TILE_FRAME = 0xFF36C6FF;
+
+    /**
+     * The caption under a theme's cover, in the colour the theme gives its list rows — the same
+     * answer the tiles of the Photos screen take ({@link Photos#name}), and the layout's own white
+     * when the theme names no colour.
+     */
+    public static void tileName(TextView tv) {
+        if (tv == null) return;
+        try {
+            ThemeManager.INSTANCE.itemSetTextColor(tv, TILE_TEXT, false);
+        } catch (Throwable t) {
+            // the layout's white stays
+        }
+    }
+
+    /**
+     * The frame around the cover the cursor is on, in the colour of the player's timeline
+     * ({@link Icons#progressColor}), so a theme paints its own selection here. The stock blue is
+     * what a theme with nothing to say keeps.
+     */
+    public static int tileFrame() {
+        int c = Icons.progressColor();
+        return c == 0 ? TILE_FRAME : c;
+    }
+
+    /**
+     * How much wider the frame is than the cover it surrounds. **Even on purpose:** the cover is
+     * centred in the frame, so an odd difference is split 3 and 2 and the frame comes out thicker
+     * on the top and left than on the bottom and right — which reads as the cover jumping a pixel
+     * the moment the cursor lands on it. Stock's own 140 against 135 had exactly that.
+     */
+    private static final int TILE_INSET = 6;
+
+    /**
+     * The caption's height, as a multiple of its type size, and the reason the rows of this grid
+     * stand in the same place under every theme: a theme supplies the font, and a line of text is
+     * as tall as that font says — so a row measured off the text moved from theme to theme, and two
+     * rows no longer fitted the screen, which the wheel then answered by nudging the list a couple
+     * of pixels whenever the cursor landed on the half-cut row. The caption is fixed instead and
+     * the COVER takes what is left, which is what changes size between themes now. 1.35 is room for
+     * a face with tall ascenders and deep descenders at this size; a font past it is cropped
+     * symmetrically rather than allowed to move the grid.
+     */
+    private static final float CAPTION = 1.35f;
+
+    private static int fitFor = -1;
+    private static int fitSide;
+
+    /**
+     * Sizes the cover so that exactly two rows of "cover plus caption" fill the screen, whatever
+     * the caption's font turns out to be: the theme supplies it and its metrics are its own, so the
+     * height is measured off the caption's paint rather than written into the layout. The rest of
+     * the arithmetic is the screen minus the status bar (the height {@code BaseActivity} gives the
+     * content) halved, less the row's own margins — which is also why this is code and not a dimen:
+     * the 320x240 device has both a smaller screen and a smaller status bar.
+     */
+    public static void tileFit(View frame, View card, TextView caption) {
+        if (frame == null || card == null || caption == null) return;
+        try {
+            Context c = caption.getContext();
+            int avail = c.getResources().getDisplayMetrics().heightPixels
+                    - (int) c.getResources().getDimension(R.dimen.status_bar_height);
+            int cap = Math.round(caption.getTextSize() * CAPTION);
+            int gaps = 0;
+            View row = (View) caption.getParent();
+            if (row != null && row.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) row.getLayoutParams();
+                gaps = lp.topMargin + lp.bottomMargin;
+            }
+            int key = avail * 1000 + cap;
+            if (key != fitFor) {
+                fitFor = key;
+                fitSide = avail / 2 - cap - gaps;
+            }
+            if (fitSide <= 0) return;
+            // The caption is what the font would otherwise move: with includeFontPadding on (the
+            // default) a line is as tall as the font's top..bottom, not its ascent..descent, and
+            // every theme ships different ones.
+            caption.setIncludeFontPadding(false);
+            height(caption, cap);
+            side(frame, fitSide);
+            side(card, fitSide - TILE_INSET);
+        } catch (Throwable t) {
+            // the layout's own 140/135 stays
+        }
+    }
+
+    /**
+     * Two rows of 157 do not fill 315, and the pixel left over is what the wheel kept "settling":
+     * a step that puts a row against the bottom edge moves the list by that pixel less than a row,
+     * so from then on every row stands off the top edge and the step back up has it to make good.
+     * The remainder goes into the list's own top padding instead, which both {@code Wheel.scrollTo}
+     * and the layout manager measure their edges from — the visible area becomes an exact number of
+     * rows and a step is exactly a row.
+     *
+     * Called from {@code initView}, BEFORE the list is first laid out, and that is the whole point:
+     * padding applied later moves the edge without moving the rows, which left the grid a pixel out
+     * until the first click pulled it back — the "it settles once per visit" this was reported as.
+     * No font is needed for it, either: a row is {@code avail / 2} by construction, so what is left
+     * over is simply the odd pixel of an odd screen.
+     */
+    public static void tileGrid(RecyclerView rv) {
+        if (rv == null) return;
+        try {
+            int avail = rv.getResources().getDisplayMetrics().heightPixels
+                    - (int) rv.getResources().getDimension(R.dimen.status_bar_height);
+            rv.setPadding(rv.getPaddingLeft(), avail % 2, rv.getPaddingRight(), rv.getPaddingBottom());
+        } catch (Throwable t) {
+            // the list keeps the padding from its layout
+        }
+    }
+
+    /** A square of {@code px}, and nothing at all when the view already is one: a write is a layout. */
+    private static void side(View v, int px) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp == null || (lp.width == px && lp.height == px)) return;
+        lp.width = px;
+        lp.height = px;
+        v.setLayoutParams(lp);
+    }
+
+    private static void height(View v, int px) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp == null || lp.height == px) return;
+        lp.height = px;
+        v.setLayoutParams(lp);
+    }
+
+    /**
+     * Stock only tagged the cover with its theme's path and let Glide overwrite the picture when it
+     * arrived, so a recycled tile showed the PREVIOUS theme's cover for as long as the load took —
+     * the grid flickered with other people's art while it scrolled. A tile that has come back for a
+     * different theme is emptied here; one rebound for the same theme (the cursor moving over it)
+     * keeps its picture, which is what stops this from flickering in its own right.
+     */
+    public static void tileCover(ImageView iv, String path) {
+        if (iv == null) return;
+        Object was = iv.getTag();
+        if (was == null || !was.equals(path)) iv.setImageDrawable(null);
+        iv.setTag(path);
     }
 }

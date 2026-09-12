@@ -696,20 +696,46 @@ public final class Wheel {
         if (v != null) {
             // Partially visible, which is the ordinary case for a single step: move the window by
             // exactly how far the row is cut off, so nothing else on screen shifts needlessly.
-            int d = down ? (horiz ? v.getRight() : v.getBottom()) - bottom
-                         : (horiz ? v.getLeft() : v.getTop()) - top;
+            int d = down ? end(v, horiz) - bottom : start(v, horiz) - top;
             if (d != 0) {
                 if (horiz) rv.scrollBy(d, 0); else rv.scrollBy(0, d);
             }
             return;
         }
         View any = l.getChildAt(0);
-        int h = any == null ? 0 : (horiz ? any.getWidth() : any.getHeight());
+        int h = any == null ? 0 : end(any, horiz) - start(any, horiz);
         if (h > 0 && bottom > top) {
             l.scrollToPositionWithOffset(pos, down ? (bottom - top) - h : 0);
         } else {
             rv.scrollToPosition(pos);
         }
+    }
+
+    /**
+     * The edges of a row INCLUDING its margins, which is what the list steps by.
+     *
+     * `getTop()`/`getBottom()` are the view's own, and for every list this started with that was
+     * the same thing — a row there is flush with its neighbours. The grid of the theme gallery is
+     * not: its tile carries `layout_margin="2dip"`, so the step is 157 while the view is 153, and
+     * measuring without the margins put each row four pixels past where it belonged and left the
+     * next click something to "settle". `scrollToPositionWithOffset` counts the same way (its
+     * offset is a decorated start, margins included), so both readings here have to.
+     */
+    private static int start(View v, boolean horiz) {
+        ViewGroup.MarginLayoutParams lp = margins(v);
+        if (horiz) return v.getLeft() - (lp == null ? 0 : lp.leftMargin);
+        return v.getTop() - (lp == null ? 0 : lp.topMargin);
+    }
+
+    private static int end(View v, boolean horiz) {
+        ViewGroup.MarginLayoutParams lp = margins(v);
+        if (horiz) return v.getRight() + (lp == null ? 0 : lp.rightMargin);
+        return v.getBottom() + (lp == null ? 0 : lp.bottomMargin);
+    }
+
+    private static ViewGroup.MarginLayoutParams margins(View v) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        return lp instanceof ViewGroup.MarginLayoutParams ? (ViewGroup.MarginLayoutParams) lp : null;
     }
 
     // ---- where a level of a multi-level screen was left ----------------------------------------
