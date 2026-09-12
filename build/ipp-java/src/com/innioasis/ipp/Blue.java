@@ -1,11 +1,20 @@
 package com.innioasis.ipp;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.SweepGradient;
+import android.graphics.Typeface;
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,6 +26,8 @@ import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.activity.BluetoothActivity;
+import com.innioasis.y1.activity.IppActivity;
+import com.innioasis.y1.base.BaseBindingAdapter;
 import com.innioasis.y1.databinding.ActivityBlutoothBinding;
 import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.utils.BLUtils;
@@ -221,6 +232,244 @@ public final class Blue {
         }
     }
 
+    // ------------------------------------------------------------------ the shape of the screen
+
+    /** A caption's text size, sp, and the air above and below its words, px. */
+    private static final float CAPTION_SP = 13.0f;
+    private static final int CAPTION_PAD = 3;
+
+    /** Where a caption's words start, and how close to the edge of the screen the circle sits. */
+    private static final int CAP_START_DIP = 10;
+    private static final int CAP_END_DIP = 8;
+
+    /** A band's rules, and the hairline under a device row — the menu's own two thicknesses. */
+    private static final int RULE_H = 2;
+    private static final int HAIR_ALPHA = 0x1F000000;
+
+    /** The circle: how much bigger than the caption's letters, and its ring as a share of that. */
+    private static final float SPIN = 1.4f;
+    private static final float SPIN_RING = 0.16f;
+
+    /**
+     * The two captions in the banded shape of the better-Y menu's group titles, which the queue
+     * screen draws as well — a rule along the top edge, another along the bottom, the strip between
+     * them washed, down to the alphas {@link IppActivity} defines for all three.
+     *
+     * They are built here rather than in the layout because not one of their colours can be
+     * chosen: the rules, the wash and the words are all read back off the theme (see
+     * {@link #itemRgb}), and a caption written in XML would have to be found again to be painted.
+     * Called at the end of {@code initView}, after {@link #paint} has had the screen.
+     */
+    public static void style(BluetoothActivity a) {
+        try {
+            ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
+            TextView mine = vb.title;
+            LinearLayout col = (LinearLayout) mine.getParent();
+            band(col, mine, null);
+            // Once the first is banded it is no longer a child of the column, so what is left
+            // there is the other caption — which carries no id of its own to be asked for.
+            band(col, plain(col), spinner(a));
+            searching(a);
+        } catch (Throwable t) {
+            // the stock captions are still captions
+        }
+    }
+
+    /** The column's own TextView child, there being exactly one left by the time this is asked. */
+    private static TextView plain(LinearLayout col) {
+        for (int i = 0; i < col.getChildCount(); i++) {
+            View v = col.getChildAt(i);
+            if (v instanceof TextView) return (TextView) v;
+        }
+        return null;
+    }
+
+    /** One caption, taken out of the column and put back in a band, with {@code tail} beside it. */
+    private static void band(LinearLayout col, TextView cap, View tail) {
+        if (col == null || cap == null) return;
+        int at = col.indexOfChild(cap);
+        if (at < 0) return;
+        col.removeViewAt(at);
+
+        Context c = col.getContext();
+        float d = col.getResources().getDisplayMetrics().density;
+        cap.setTextSize(CAPTION_SP);
+        // Two-argument setTypeface, never Typeface.create: only this form fakes bold for a theme
+        // font with no bold cut, and MONOSPACE is what ThemeManager swaps for that font.
+        cap.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        cap.setIncludeFontPadding(false);
+        cap.setGravity(Gravity.CENTER_VERTICAL);
+        cap.setSingleLine(true);
+        cap.setEllipsize(TextUtils.TruncateAt.END);
+        cap.setPadding(0, 0, 0, 0);
+        ThemeManager.INSTANCE.itemSetTextColor(cap,
+                c.getResources().getColor(R.color.selected_text_color), false);
+
+        LinearLayout line = new LinearLayout(c);
+        line.setOrientation(LinearLayout.HORIZONTAL);
+        line.setGravity(Gravity.CENTER_VERTICAL);
+        line.setBaselineAligned(false);
+        line.setPadding((int) (CAP_START_DIP * d), CAPTION_PAD, (int) (CAP_END_DIP * d), CAPTION_PAD);
+        LinearLayout.LayoutParams words = new LinearLayout.LayoutParams(0, -2);
+        words.weight = 1.0f;
+        line.addView(cap, words);
+        if (tail != null) line.addView(tail);
+
+        int rgb = itemRgb(c);
+        LinearLayout box = new LinearLayout(c);
+        box.setOrientation(LinearLayout.VERTICAL);
+        box.addView(rule(c, rgb, IppActivity.RULE_ALPHA), new LinearLayout.LayoutParams(-1, RULE_H));
+        box.addView(line, new LinearLayout.LayoutParams(-1, -2));
+        box.addView(rule(c, rgb, IppActivity.RULE_ALPHA), new LinearLayout.LayoutParams(-1, RULE_H));
+        box.setBackgroundColor(washRgb(c) | IppActivity.bandAlpha());
+        // No margin, here or on a row: the theme paints the rows, so a gap between two of them is
+        // a line of wallpaper across the list. What separates the parts is the rules themselves.
+        col.addView(box, at, new LinearLayout.LayoutParams(-1, -2));
+    }
+
+    /**
+     * The circle that turns while the stack is looking for devices, at the right-hand end of the
+     * "Other devices" caption — which is where the answer to "is it still searching?" belongs, the
+     * heading of the list the devices are about to appear in.
+     *
+     * It is DRAWN rather than taken from {@code loading.png}, which is what the progress window
+     * and the USB screen show: at the size of a caption's letters that picture's ring comes out
+     * about a pixel and a half wide, and a ring cannot be thickened without changing the circle.
+     * The turn is still the same {@code R.anim.loading}, so the two look alike where it matters.
+     */
+    private static View spinner(Context c) {
+        int n = Math.round(CAPTION_SP * c.getResources().getDisplayMetrics().scaledDensity * SPIN);
+        View v = new Spin(c, itemRgb(c), Math.max(2.0f, n * SPIN_RING));
+        v.setId(R.id.ipp_bl_spin);
+        // INVISIBLE, not GONE: the circle is taller than the caption's letters, so a caption that
+        // loses it is a caption of a different height, and the list below would step up and down
+        // as the discovery starts and stops.
+        v.setVisibility(View.INVISIBLE);
+        v.setLayoutParams(new LinearLayout.LayoutParams(n, n));
+        return v;
+    }
+
+    /**
+     * A ring that fades from the theme's colour to nothing round the circle — {@code loading.png}
+     * drawn instead of scaled, so its width is a number rather than whatever the picture has left
+     * at this size. The gap in the arc is what makes the turn visible at all: a closed ring of one
+     * even colour looks still however fast it spins.
+     */
+    private static final class Spin extends View {
+        /** How much of the circle the arc covers; the rest is the gap that shows it turning. */
+        private static final float SWEEP = 300.0f;
+
+        private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private final RectF box = new RectF();
+        private final int rgb;
+        private final float ring;
+
+        Spin(Context c, int rgb, float ring) {
+            super(c);
+            this.rgb = rgb;
+            this.ring = ring;
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setStrokeWidth(ring);
+            paint.setStrokeCap(Paint.Cap.ROUND);
+        }
+
+        protected void onSizeChanged(int w, int h, int ow, int oh) {
+            float half = ring / 2.0f;
+            box.set(half, half, w - half, h - half);
+            // The fade has to END where the arc does, or the tail is still half opaque when it
+            // meets the gap and the two ends read as one line crossing itself. A sweep runs
+            // clockwise from three o'clock over the full turn whatever is drawn of it, so the
+            // stops are placed by hand: full at the head, gone by the arc's last degree.
+            paint.setShader(new SweepGradient(w / 2.0f, h / 2.0f,
+                    new int[] { 0xFF000000 | rgb, rgb }, new float[] { 0.0f, SWEEP / 360.0f }));
+        }
+
+        /**
+         * Drawn mirrored, because a sweep gradient only ever runs clockwise: flipping the canvas
+         * is what puts the tail on the other side of the head, and with the view turning clockwise
+         * ({@link #turn}) that is the head at the front.
+         */
+        protected void onDraw(Canvas canvas) {
+            int save = canvas.save();
+            canvas.scale(-1.0f, 1.0f, getWidth() / 2.0f, getHeight() / 2.0f);
+            canvas.drawArc(box, 0.0f, SWEEP, false, paint);
+            canvas.restoreToCount(save);
+        }
+    }
+
+    /**
+     * Start or stop the circle, from the end of stock's {@code showState}.
+     *
+     * What it follows is the "Searching..." line stock shows there and this screen draws at no
+     * height ({@code activity_blutooth.xml}): three branches set that line's visibility, between
+     * them covering every way the discovery can start or end, and reading it back is one place
+     * where working the state out again would be three.
+     */
+    public static void searching(BluetoothActivity a) {
+        try {
+            ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
+            View spin = vb.getRoot().findViewById(R.id.ipp_bl_spin);
+            if (spin == null) return;               // before style() has run, i.e. from initView
+            boolean on = vb.loading.getVisibility() == View.VISIBLE;
+            if (on == (spin.getVisibility() == View.VISIBLE)) return;
+            if (on) {
+                spin.setVisibility(View.VISIBLE);
+                spin.startAnimation(turn());
+            } else {
+                spin.clearAnimation();
+                spin.setVisibility(View.INVISIBLE);
+            }
+        } catch (Throwable t) {
+            // a circle that will not turn must not take the screen down
+        }
+    }
+
+    /**
+     * One turn of the circle, clockwise: the same 1.5 s at a steady speed as {@code R.anim.loading},
+     * which the progress window and the USB screen use — that one turns the other way, and an
+     * animation is three lines to write rather than a second resource to keep in step with it.
+     */
+    private static RotateAnimation turn() {
+        RotateAnimation r = new RotateAnimation(0.0f, 360.0f,
+                Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        r.setDuration(1500);
+        r.setInterpolator(new LinearInterpolator());
+        r.setRepeatCount(Animation.INFINITE);
+        return r;
+    }
+
+    /** The theme's SELECTED item colour — a band's wash — read the only way there is. */
+    private static int washRgb(Context c) {
+        TextView probe = new TextView(c);
+        ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
+        return probe.getCurrentTextColor() & 0x00FFFFFF;
+    }
+
+    /**
+     * The theme's ordinary item colour — the rules, the hairlines and the spinner.
+     *
+     * Read off a scratch TextView rather than chosen here: {@code itemSetTextColor} answers with
+     * the theme's own colour and ignores the one it is passed, so painting and looking is the only
+     * way to ask. ACCENT above is passed for the same reason {@link #walk} passes a colour at all
+     * — it is what a focused row shows when the theme names none.
+     */
+    private static int itemRgb(Context c) {
+        TextView probe = new TextView(c);
+        ThemeManager.INSTANCE.itemSetTextColor(probe,
+                c.getResources().getColor(R.color.selected_text_color), false);
+        return probe.getCurrentTextColor() & 0x00FFFFFF;
+    }
+
+    /** One band of a caption, or a row's hairline: the text's own colour thinned out. */
+    private static View rule(Context c, int rgb, int alpha) {
+        View v = new View(c);
+        v.setBackgroundColor(rgb | alpha);
+        return v;
+    }
+
+    /** What a focused row shows where the theme names no colour of its own. */
+    private static final int ACCENT = 0xFF3CFFDE;
+
     /**
      * Every text on this screen in the theme's ordinary row colour.
      *
@@ -248,6 +497,29 @@ public final class Blue {
      */
     public static void row(View v, boolean sel) {
         walk(v, sel);
+    }
+
+    /**
+     * A DEVICE row: the same text, plus the hairline along its bottom edge
+     * ({@code item_blutooth.xml}'s last child) in the theme's colour.
+     *
+     * The last row of a list gives its hairline up, the way the menu's and the queue's rows do
+     * where a caption follows them: the "Other devices" band under it draws that boundary with its
+     * own rule, and the two together would be a line of a thickness found nowhere else on the
+     * screen. The adapter is asked for the count rather than the Activity: {@code getMyItem} is
+     * private, and this is the adapter binding the row anyway.
+     */
+    public static void row(View v, boolean sel, BaseBindingAdapter ad, int pos) {
+        walk(v, sel);
+        try {
+            View hair = ((ViewGroup) v).getChildAt(1);
+            if (hair == null) return;
+            hair.setBackgroundColor(itemRgb(v.getContext()) | HAIR_ALPHA);
+            boolean last = ad != null && pos == ad.getDataListSize() - 1;
+            hair.setVisibility(last ? View.GONE : View.VISIBLE);
+        } catch (Throwable t) {
+            // a row without its line is still a row
+        }
     }
 
     private static void walk(View v, boolean sel) {

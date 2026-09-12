@@ -39,9 +39,9 @@
 
 .field private final static ACT_SF:I = 2
 
-.field final static BAND_ALPHA:I = 1493172224
+.field public final static BAND_ALPHA:I = 1493172224
 
-.field final static BAND_ALPHA_BARE:I = 771751936
+.field public final static BAND_ALPHA_BARE:I = 771751936
 
 .field private final static BLINK_MS:J = 400L
 
@@ -55,7 +55,7 @@
 
 .field private final static NUMBER:I = 4
 
-.field final static RULE_ALPHA:I = 1493172224
+.field public final static RULE_ALPHA:I = 1493172224
 
 .field private final static TOGGLE:I = 1
 
@@ -292,7 +292,7 @@
     return-void
 .end method
 
-.method static bandAlpha()I
+.method public static bandAlpha()I
   .registers 1
   .line 113
     invoke-static { }, Lcom/innioasis/ipp/Theme;->rowsPainted()Z

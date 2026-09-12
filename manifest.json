@@ -1,5 +1,5 @@
 ﻿{
-    "mod_version":  "v1.0.0-dev100",
+    "mod_version":  "v1.0.0-dev106",
     "base_commit":  "1ffe0bf7ef7cb4c3212f2c1283138e1d67344c2a",
     "apktool_version":  "2.11.1",
     "apktool_command":  "apktool d -f -o \u003ctree\u003e com.innioasis.y1_3.1.2.apk",
@@ -9,8 +9,8 @@
                       "size":  58997249
                   },
     "counts":  {
-                   "ours":  291,
-                   "patched":  211,
+                   "ours":  292,
+                   "patched":  212,
                    "patched_binary":  11,
                    "deleted":  308
                }

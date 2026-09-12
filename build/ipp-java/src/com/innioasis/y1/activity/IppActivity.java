@@ -94,12 +94,12 @@ public final class IppActivity extends BaseActivity {
 
     /**
      * A group caption's two rules and the strip between them, as alpha over the theme's colours:
-     * the rules carry the item colour, the strip the selected one. Package-visible because the
-     * queue screen draws the same caption ({@code IppQueueActivity.divider}) — one number, so the
-     * two cannot drift apart.
+     * the rules carry the item colour, the strip the selected one. Public because the queue screen
+     * ({@code IppQueueActivity.divider}) and the Bluetooth screen ({@code Blue.band}) draw the same
+     * caption — one number, so the three cannot drift apart.
      */
-    static final int RULE_ALPHA = 0x59000000;
-    static final int BAND_ALPHA = 0x59000000;
+    public static final int RULE_ALPHA = 0x59000000;
+    public static final int BAND_ALPHA = 0x59000000;
 
     /**
      * ...and weaker where the theme leaves its rows transparent ({@link Theme#rowsPainted}): there
@@ -107,9 +107,9 @@ public final class IppActivity extends BaseActivity {
      * rather than as a band. The rules keep one value — a line is as legible over a photograph as
      * over a colour.
      */
-    static final int BAND_ALPHA_BARE = 0x2E000000;
+    public static final int BAND_ALPHA_BARE = 0x2E000000;
 
-    static int bandAlpha() {
+    public static int bandAlpha() {
         return Theme.rowsPainted() ? BAND_ALPHA : BAND_ALPHA_BARE;
     }
 

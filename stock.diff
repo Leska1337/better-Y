@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..4292307a 100644
+index 01b1f730..c0547a60 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..4292307a 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000100
++  versionCode: 10000106
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -154,10 +154,10 @@ index a65785d4..88d40e93 100644
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
-index 3fff8427..9969b5b1 100644
+index 3fff8427..3822945e 100644
 --- a/build/src/res/layout/activity_blutooth.xml
 +++ b/build/src/res/layout/activity_blutooth.xml
-@@ -1,7 +1,10 @@
+@@ -1,16 +1,28 @@
  <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android">
@@ -169,6 +169,27 @@ index 3fff8427..9969b5b1 100644
          <TextView android:textSize="24.0sp" android:textColor="@color/white" android:id="@id/tv_title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bluetooth" android:layout_weight="1.0" />
          <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
      </LinearLayout>
+-    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/loading" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_loading" />
++    <!-- ipp: the "Searching..." line, kept at no height at all. Stock shows and hides it as the
++         discovery runs, and that is the only thing it is still for: Blue.searching reads its
++         visibility and spins the circle in the "Other devices" caption instead. It cannot simply
++         go: ActivityBlutoothBinding throws on a missing id. -->
++    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/loading" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="0.0dip" android:text="@string/bl_loading" />
+     <androidx.core.widget.NestedScrollView android:id="@id/layout_list" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:fillViewport="true">
+         <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+-            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bl_device_my" />
++            <!-- ipp: the two captions are the words only. Blue.style wraps each in the banded
++                 caption of the better-Y menu and the queue (a rule along the top edge, another
++                 along the bottom, the strip between them washed) and hangs the spinner on the
++                 second one. Size, colour and padding are set there, with the rules, because none
++                 of them can be chosen without asking the theme first. -->
++            <TextView android:id="@id/title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_device_my" />
+             <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_my_device" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+-            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bl_device_other" />
++            <TextView android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_device_other" />
+             <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_other_device" android:layout_width="fill_parent" android:layout_height="wrap_content" />
+         </LinearLayout>
+     </androidx.core.widget.NestedScrollView>
 diff --git a/build/src/res/layout/activity_book_main.xml b/build/src/res/layout/activity_book_main.xml
 index cf5ce73a..4c396309 100644
 --- a/build/src/res/layout/activity_book_main.xml
@@ -488,6 +509,28 @@ index 4b9d1219..cb731bb9 100644
 +        <TextView android:textSize="12.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/artist_name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:maxLines="1" android:singleLine="true" />
 +    </LinearLayout>
 +</RelativeLayout>
+diff --git a/build/src/res/layout/item_blutooth.xml b/build/src/res/layout/item_blutooth.xml
+index 7bfa38ba..bef76363 100644
+--- a/build/src/res/layout/item_blutooth.xml
++++ b/build/src/res/layout/item_blutooth.xml
+@@ -1,6 +1,14 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="50.0dip" android:paddingStart="30.0dip" android:paddingEnd="50.0dip"
++<!-- ipp: the row inside a box carrying a hairline along its bottom edge, the boundary line the
++     better-Y menu and the queue draw between two rows. The box keeps the row's own 50dip: with
++     wrap_content a theme's selected background, which can be a large bitmap, would stretch it to
++     the bitmap's own height. Blue.row colours the hairline and takes it away on the last row of a
++     list, where the caption below draws that boundary with its own rule. -->
++<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="50.0dip"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="20.0dip" />
+-    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" />
++    <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0" android:paddingStart="20.0dip" android:paddingEnd="15.0dip">
++        <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" />
++        <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" />
++    </LinearLayout>
++    <View android:layout_width="fill_parent" android:layout_height="1.0px" />
+ </LinearLayout>
 diff --git a/build/src/res/layout/item_book_library.xml b/build/src/res/layout/item_book_library.xml
 index 47fb6a5a..755be867 100644
 --- a/build/src/res/layout/item_book_library.xml
@@ -8240,10 +8283,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..138574ad 100644
+index 803c1e7a..dbfb47bd 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5631 @@
+@@ -1,5519 +1,5632 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -17410,6 +17453,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="id" name="ipp_bookmark" id="0x7f0a02fd" />
 +    <public type="id" name="ipp_book_index" id="0x7f0a02fe" />
 +    <public type="id" name="ipp_book_mark" id="0x7f0a02ff" />
++    <public type="id" name="ipp_bl_spin" id="0x7f0a0300" />
 +    <public type="integer" name="abc_config_activityDefaultDur" id="0x7f0b0000" />
 +    <public type="integer" name="abc_config_activityShortDur" id="0x7f0b0001" />
 +    <public type="integer" name="app_bar_elevation_anim_duration" id="0x7f0b0002" />
@@ -19395,7 +19439,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..fc722f94 100644
+index 71fe29d0..bb607a4a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20344,7 +20388,7 @@ index 71fe29d0..fc722f94 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev100</string>
++    <string name="ipp_version">v1.0.0-dev106</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55479,7 +55523,7 @@ index 92290be6..83006c02 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
-index 6a25d7cf..0a574aae 100644
+index 6a25d7cf..75e47876 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55493,18 +55537,19 @@ index 6a25d7cf..0a574aae 100644
  
      move-result-object v1
  
-@@ -175,5 +177,9 @@
+@@ -175,5 +177,10 @@
      :goto_1
      invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
 +    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
 +    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
-+    invoke-static {p1, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++    # p0/p3 go with them for the row's hairline: the last row of the list gives it up.
++    invoke-static {p1, v1, p0, p3}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;ZLcom/innioasis/y1/base/BaseBindingAdapter;I)V
 +
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
-index 552a1de3..931d9aa2 100644
+index 552a1de3..b3c47061 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55518,18 +55563,19 @@ index 552a1de3..931d9aa2 100644
  
      move-result-object v1
  
-@@ -207,5 +209,9 @@
+@@ -207,5 +209,10 @@
      :goto_1
      invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
 +    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
 +    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
-+    invoke-static {p1, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
++    # p0/p3 go with them for the row's hairline: the last row of the list gives it up.
++    invoke-static {p1, v1, p0, p3}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;ZLcom/innioasis/y1/base/BaseBindingAdapter;I)V
 +
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b96..6c80baf5 100644
+index e9751b96..2b1559d5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 @@ -624,6 +624,10 @@
@@ -55553,17 +55599,36 @@ index e9751b96..6c80baf5 100644
      .line 287
      invoke-direct {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getOtherItem()Lcom/innioasis/y1/base/BaseBindingAdapter;
  
-@@ -736,6 +743,9 @@
+@@ -734,7 +741,16 @@
  
-     invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setBackground(Landroid/graphics/drawable/Drawable;)V
+     const/4 v1, 0x0
  
+-    invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setBackground(Landroid/graphics/drawable/Drawable;)V
++    # ipp: the theme's unselected row, not a null background (was: layoutTitle.setBackground(null)).
++    # Throwing the drawable away leaves the title row with no background at all, so it showed the
++    # wallpaper through while the cursor was down in the found devices. The branch above, the same
++    # row in the same state with the cursor one list higher, asks ThemeManager for it.
++    sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
++
++    invoke-virtual {v2, v0, v1, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
++
 +    # ipp: the third way stock clears that row -- the cursor is down in the found devices.
 +    invoke-static {v0, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
-+
+ 
      const/4 v0, 0x2
  
-     .line 294
-@@ -1569,6 +1579,23 @@
+@@ -915,6 +931,10 @@
+ 
+     :cond_2
+     :goto_0
++    # ipp: the spinner in the "Other devices" caption follows the "Searching..." line every branch
++    # above has just shown or hidden -- at the end, where that line is already set.
++    invoke-static {p0}, Lcom/innioasis/ipp/Blue;->searching(Lcom/innioasis/y1/activity/BluetoothActivity;)V
++
+     return-void
+ .end method
+ 
+@@ -1569,6 +1589,27 @@
  
      invoke-virtual {v0, v2, v3, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -55584,10 +55649,14 @@ index e9751b96..6c80baf5 100644
 +    # is what the highlight above (v1 = 1) has just said.
 +    invoke-static {v2, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
 +
++    # ipp: the two captions into the banded shape the better-Y menu and the queue use, and the
++    # spinner onto the second of them. Last, so the walk above does not undo their colour.
++    invoke-static {p0}, Lcom/innioasis/ipp/Blue;->style(Lcom/innioasis/y1/activity/BluetoothActivity;)V
++
      return-void
  .end method
  
-@@ -1655,60 +1682,11 @@
+@@ -1655,60 +1696,11 @@
      check-cast v0, Landroid/bluetooth/BluetoothDevice;
  
      .line 246
