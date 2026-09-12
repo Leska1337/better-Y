@@ -233,6 +233,9 @@ public final class Fm {
     /** The outline round the big frequency, px. */
     private static final float TEXT_EDGE = 1f;
 
+    /** ...and how solid: an outline states the shape, it does not compete with the fill. */
+    private static final int TEXT_EDGE_ALPHA = 0x80000000;   // 50%
+
     /**
      * Size "MHz" so that its top sits halfway up the number beside it — the two share a baseline,
      * so both are one measurement: how far above it the glyphs reach. Measured rather than taken
@@ -291,7 +294,7 @@ public final class Fm {
         o.setPadding(src.getPaddingLeft(), src.getPaddingTop(),
                 src.getPaddingRight(), src.getPaddingBottom());
         o.setText(src.getText());
-        o.setTextColor(colour);
+        o.setTextColor((colour & 0x00FFFFFF) | TEXT_EDGE_ALPHA);
         o.getPaint().setStyle(Paint.Style.STROKE);
         o.getPaint().setStrokeWidth(TEXT_EDGE * 2f);
         o.getPaint().setStrokeJoin(Paint.Join.ROUND);
