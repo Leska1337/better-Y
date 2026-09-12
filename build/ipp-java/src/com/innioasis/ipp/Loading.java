@@ -269,8 +269,8 @@ public final class Loading {
     }
 
     /**
-     * The stand's constraints and margins on fresh params. Not the copy constructor: it shares the
-     * source's {@code ConstraintWidget}, and two views on one widget lay each other out.
+     * The stand's constraints and margins on fresh params. Not the copy constructor: it hands the
+     * copy the source's own {@code ConstraintWidget}, one layout widget for two views.
      */
     private static ConstraintLayout.LayoutParams copy(ConstraintLayout.LayoutParams src) {
         ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(src.width, src.height);
