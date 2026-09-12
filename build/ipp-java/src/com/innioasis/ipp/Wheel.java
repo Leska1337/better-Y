@@ -712,14 +712,11 @@ public final class Wheel {
     }
 
     /**
-     * The edges of a row INCLUDING its margins, which is what the list steps by.
-     *
-     * `getTop()`/`getBottom()` are the view's own, and for every list this started with that was
-     * the same thing — a row there is flush with its neighbours. The grid of the theme gallery is
-     * not: its tile carries `layout_margin="2dip"`, so the step is 157 while the view is 153, and
-     * measuring without the margins put each row four pixels past where it belonged and left the
-     * next click something to "settle". `scrollToPositionWithOffset` counts the same way (its
-     * offset is a decorated start, margins included), so both readings here have to.
+     * The edges of a row INCLUDING its margins, which is what the list steps by. The rows this
+     * started with are flush with their neighbours, so {@code getTop()} was the same thing; the
+     * tiles of the theme and wallpaper grids carry a margin, and measuring without it left every
+     * step a few pixels short for the next click to "settle". {@code scrollToPositionWithOffset}
+     * counts margins too, so both readings here have to.
      */
     private static int start(View v, boolean horiz) {
         ViewGroup.MarginLayoutParams lp = margins(v);

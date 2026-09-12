@@ -21822,7 +21822,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-index c4b75839..604fead8 100644
+index c4b75839..1e843e54 100644
 --- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 @@ -308,31 +308,40 @@
@@ -21876,7 +21876,7 @@ index c4b75839..604fead8 100644
  
      .line 92
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
-@@ -341,33 +350,44 @@
+@@ -341,33 +350,43 @@
  .end method
  
  .method public clockwise()V
@@ -21908,9 +21908,8 @@ index c4b75839..604fead8 100644
      .line 82
      :cond_0
 -    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;
-+    # ipp: stock repainted every row of the list on each click; Wheel.follow rebinds the two rows
-+    # whose highlight changed. The preview beside the list stays on its own call below -- it is
-+    # made from the key handler, not from a bind, so it is not the case Wheel.postRest exists for.
++    # ipp: notifyDataSetChanged per click -> Wheel.follow. The preview below keeps its own call: it
++    # is made from the key handler, not from a bind, so Wheel.postRest is not needed for it.
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
@@ -61267,7 +61266,7 @@ index a5a04dcd..1bdae584 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..9d31ae23 100644
+index 4a99a22f..e8b62e72 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 @@ -299,32 +299,19 @@
@@ -61307,7 +61306,7 @@ index 4a99a22f..9d31ae23 100644
  
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
  
-@@ -340,81 +327,52 @@
+@@ -340,81 +327,50 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -61341,9 +61340,7 @@ index 4a99a22f..9d31ae23 100644
 -
 -    move-result-object v0
 -
-+    # ipp: stock notified the two tiles and restarted a smooth scroll on every click, so the gallery
-+    # was always chasing a target the wheel had already left. Wheel.follow rebinds the two tiles in
-+    # place and moves the window at once -- the same change the Photos and Themes grids took.
++    # ipp: two notifies and a restarted smooth scroll per click -> one Wheel.follow, as in Photos.
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
      move-result v1
@@ -61404,7 +61401,7 @@ index 4a99a22f..9d31ae23 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -425,9 +383,13 @@
+@@ -425,9 +381,13 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -61421,7 +61418,7 @@ index 4a99a22f..9d31ae23 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
-index 981585c3..81a21ae5 100644
+index 981585c3..d98e9a6e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 @@ -106,6 +106,16 @@
@@ -61453,19 +61450,18 @@ index 981585c3..81a21ae5 100644
  
      move-result v2
  
-@@ -210,7 +219,9 @@
+@@ -210,7 +219,8 @@
  
      move-result-object v0
  
 -    invoke-virtual {p3, v0}, Landroid/widget/ImageView;->setTag(Ljava/lang/Object;)V
-+    # ipp: tags the cover as stock did, and empties it when the tile has come back for a DIFFERENT
-+    # theme -- otherwise the previous theme's picture sat there until Glide answered.
++    # ipp: setTag plus emptying a tile that came back for another theme (see tileCover).
 +    invoke-static {p3, v0}, Lcom/innioasis/ipp/Theme;->tileCover(Landroid/widget/ImageView;Ljava/lang/String;)V
  
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..9a1c909b 100644
+index 5e61f77d..eb58dd40 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 @@ -1779,7 +1779,7 @@
@@ -61524,7 +61520,7 @@ index 5e61f77d..9a1c909b 100644
  
      .line 694
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
-@@ -1893,21 +1887,9 @@
+@@ -1893,21 +1887,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 696
@@ -61543,13 +61539,11 @@ index 5e61f77d..9a1c909b 100644
 -    invoke-virtual {v0, v1, v2}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyItemRangeChanged(II)V
 -
 -    .line 697
-+    # ipp: stock notified the two covers and restarted a smooth scroll on every click, so the grid
-+    # was always chasing a target the wheel had already left. Wheel.follow rebinds the two covers
-+    # in place and moves the window at once -- the same change the Photos grid took.
++    # ipp: two notifies and a restarted smooth scroll per click -> one Wheel.follow, as in Photos.
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1918,9 +1900,15 @@
+@@ -1918,9 +1898,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61567,7 +61561,7 @@ index 5e61f77d..9a1c909b 100644
  
      :cond_0
      return-void
-@@ -2057,6 +2045,19 @@
+@@ -2057,6 +2043,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -61587,13 +61581,11 @@ index 5e61f77d..9a1c909b 100644
      .line 418
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2449,6 +2450,11 @@
+@@ -2449,6 +2448,9 @@
  
      invoke-virtual {v0, v2}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
-+    # ipp: the odd pixel of an odd screen goes into the list's top padding, so the visible area is
-+    # an exact number of rows -- here, before the first layout, or the rows stand a pixel out of it
-+    # until a click pulls them in.
++    # ipp: the odd pixel into the list's top padding -- here, before the first layout (see tileGrid).
 +    invoke-static {v0}, Lcom/innioasis/ipp/Theme;->tileGrid(Landroidx/recyclerview/widget/RecyclerView;)V
 +
      .line 241
@@ -65654,15 +65646,14 @@ index 09aab2a9..aa0afecf 100644
      move-result-object v1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali b/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
-index 2e1e1934..6e5d8acc 100644
+index 2e1e1934..c9b0c5bf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
-@@ -433,11 +433,35 @@
+@@ -433,11 +433,34 @@
  
      .line 312
      :goto_0
-+    # ipp: only the band under the cursor changed, so Wheel.follow rebinds that one row in place
-+    # instead of repainting all five. The window is not scrolled -- they all fit.
++    # ipp: only the band under the cursor changed -- rebind that row, not all five.
 +    iget-object p1, p0, Lcom/innioasis/y1/dialog/EqEditDialog;->binding:Lcom/innioasis/y1/databinding/DialogEqEditBinding;
 +
 +    if-eqz p1, :ipp_all_0
@@ -65693,7 +65684,7 @@ index 2e1e1934..6e5d8acc 100644
      :try_end_1
      .catch Ljava/lang/Exception; {:try_start_1 .. :try_end_1} :catch_0
  
-@@ -473,7 +497,7 @@
+@@ -473,7 +496,7 @@
  .end method
  
  .method private final nextOption(I)V
@@ -65702,7 +65693,7 @@ index 2e1e1934..6e5d8acc 100644
  
      .line 322
      invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
-@@ -484,6 +508,9 @@
+@@ -484,6 +507,9 @@
  
      move-result v1
  
@@ -65712,15 +65703,13 @@ index 2e1e1934..6e5d8acc 100644
      add-int/2addr v1, p1
  
      invoke-virtual {v0, v1}, Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;->setIndex(I)V
-@@ -593,6 +620,30 @@
+@@ -593,6 +619,28 @@
  
      .line 342
      :goto_0
-+    # ipp: stock repainted all five bands on every click; Wheel.follow rebinds the row losing the
-+    # cursor and the one taking it. When the cursor steps onto Reset -- an index one past the last
-+    # band, i.e. a row the list does not have -- follow cannot reach it and falls back to notifying
-+    # the adapter itself, which is exactly what has to happen for the last band to lose its
-+    # highlight.
++    # ipp: notifyDataSetChanged per click -> Wheel.follow. On Reset the index is one past the last
++    # band, a row the list has not got, so follow falls back to notifying -- which is what is needed
++    # there for the last band to lose its highlight.
 +    iget-object p1, p0, Lcom/innioasis/y1/dialog/EqEditDialog;->binding:Lcom/innioasis/y1/databinding/DialogEqEditBinding;
 +
 +    if-eqz p1, :ipp_all_1
