@@ -64,7 +64,19 @@ public final class Icons {
 
     /** The theme's LIST row text colour ({@code itemTextColor}), or 0 when it names none. */
     public static int themeColor() {
-        return probeColor(false);
+        return probeColor(false, false);
+    }
+
+    /**
+     * The theme's LIST row text colour UNDER THE CURSOR ({@code itemSelectedTextColor}), or 0.
+     *
+     * There is no stock colour to fall back to here, unlike {@link #themeColor}: every screen
+     * passes a highlight colour of its own to {@code itemSetTextColor}, so "no theme" means the
+     * question has no answer rather than a default one — a caller uses this only where it can do
+     * without it.
+     */
+    public static int themeSelColor() {
+        return probeColor(false, true);
     }
 
     /**
@@ -78,7 +90,7 @@ public final class Icons {
      * a letter, so both of its colours come from the same section of the theme.
      */
     public static int menuColor() {
-        return probeColor(true);
+        return probeColor(true, false);
     }
 
     /**
@@ -88,13 +100,13 @@ public final class Icons {
      * live (never memoised) so a theme switch is picked up without restarting the app; the parse
      * itself is memoised in Theme.parseColor.
      */
-    private static int probeColor(boolean menu) {
+    private static int probeColor(boolean menu, boolean focus) {
         Context c = Y1Application.Companion.getAppContext();
         if (c == null) return NO_COLOR;
         try {
             if (probe == null) probe = new TextView(c);
-            if (menu) ThemeManager.INSTANCE.menuItemSetTextColor(probe, PROBE, false);
-            else ThemeManager.INSTANCE.itemSetTextColor(probe, PROBE, false);
+            if (menu) ThemeManager.INSTANCE.menuItemSetTextColor(probe, PROBE, focus);
+            else ThemeManager.INSTANCE.itemSetTextColor(probe, PROBE, focus);
             int v = probe.getCurrentTextColor();
             return v == PROBE ? NO_COLOR : v;
         } catch (Throwable t) {
