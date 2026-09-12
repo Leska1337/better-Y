@@ -69,11 +69,8 @@ public final class Icons {
 
     /**
      * The theme's LIST row text colour UNDER THE CURSOR ({@code itemSelectedTextColor}), or 0.
-     *
-     * There is no stock colour to fall back to here, unlike {@link #themeColor}: every screen
-     * passes a highlight colour of its own to {@code itemSetTextColor}, so "no theme" means the
-     * question has no answer rather than a default one — a caller uses this only where it can do
-     * without it.
+     * Unlike {@link #themeColor} it has no stock value to fall back to — every screen passes a
+     * highlight of its own — so a caller must be able to do without an answer.
      */
     public static int themeSelColor() {
         return probeColor(false, true);

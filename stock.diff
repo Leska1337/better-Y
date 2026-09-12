@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..e40843ff 100644
+index 01b1f730..700b9999 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..e40843ff 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000129
++  versionCode: 10000130
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19438,7 +19438,7 @@ index 803c1e7a..dbfb47bd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..85878403 100644
+index 71fe29d0..2661ce1f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20387,7 +20387,7 @@ index 71fe29d0..85878403 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev129</string>
++    <string name="ipp_version">v1.0.0-dev130</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20463,7 +20463,7 @@ index 71fe29d0..85878403 100644
 +    <string name="ipp_usb_off">Turn off USB storage</string>
 +</resources>
 diff --git a/build/src/smali/com/innioasis/fm/FMMainActivity.smali b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
-index b51419e1..3517572a 100644
+index b51419e1..34d55ce8 100644
 --- a/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 +++ b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 @@ -461,7 +461,8 @@
@@ -20486,15 +20486,12 @@ index b51419e1..3517572a 100644
      if-eqz v0, :cond_0
  
      .line 586
-@@ -1082,6 +1086,23 @@
+@@ -1082,6 +1086,20 @@
  
      if-nez v0, :cond_0
  
-+    # ipp: move the ruler NOW. The coroutine below sleeps 50 ms and then smooth-scrolls, so every
-+    # wheel click restarted an animation and the ruler was always travelling towards a frequency
-+    # the wheel had already left. It still runs, and has to: on a screen just built the ruler has
-+    # no width yet and a scroll does nothing, which is what that delay is for. By then it is a
-+    # plain scrollTo to the place we are already at.
++    # ipp: move the ruler NOW. The coroutine below sleeps 50 ms first, so the wheel outran it and
++    # the ruler chased a frequency already left behind. It still runs and has to -- see Fm.ruler.
 +    invoke-virtual {p0}, Lcom/innioasis/fm/FMMainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
 +    move-result-object v0
@@ -20510,7 +20507,7 @@ index b51419e1..3517572a 100644
      .line 694
      move-object v0, p0
  
-@@ -1902,7 +1923,9 @@
+@@ -1902,7 +1920,9 @@
  
      move-result-object v0
  
@@ -20521,7 +20518,7 @@ index b51419e1..3517572a 100644
  
      .line 748
      invoke-virtual {p0, v1}, Lcom/innioasis/fm/FMMainActivity;->getString(I)Ljava/lang/String;
-@@ -1931,6 +1954,9 @@
+@@ -1931,6 +1951,9 @@
  
      iput-object v0, p0, Lcom/innioasis/fm/FMMainActivity;->progressDialog:Landroid/app/ProgressDialog;
  
@@ -20531,13 +20528,12 @@ index b51419e1..3517572a 100644
      if-eqz v0, :cond_0
  
      .line 753
-@@ -2617,6 +2643,17 @@
+@@ -2617,6 +2640,16 @@
  .method public initView()V
      .locals 3
  
-+    # ipp: everything on this screen that is not drawn by the ruler itself -- the big frequency,
-+    # the panel behind the ruler and the volume bar -- in the theme's colours instead of the ones
-+    # written into the layout. A theme switch recreates the Activity, so once here is enough.
++    # ipp: everything the ruler does not draw itself -- the big frequency, the panel behind the
++    # ruler, the volume bar -- in the theme's colours. Once: a theme switch recreates the Activity.
 +    invoke-virtual {p0}, Lcom/innioasis/fm/FMMainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
 +    move-result-object v0
@@ -38132,27 +38128,25 @@ index bf847f61..ec205257 100644
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->editor:Landroid/content/SharedPreferences$Editor;
  
 diff --git a/build/src/smali_classes2/com/innioasis/fm/FMMainActivity$scrollRuler$1$1.smali b/build/src/smali_classes2/com/innioasis/fm/FMMainActivity$scrollRuler$1$1.smali
-index 71a88df9..d0210e2f 100644
+index 71a88df9..b04411f2 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/FMMainActivity$scrollRuler$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/fm/FMMainActivity$scrollRuler$1$1.smali
-@@ -207,7 +207,11 @@
+@@ -207,7 +207,9 @@
  
      const/4 v1, 0x0
  
 -    invoke-virtual {v0, p1, v1}, Landroid/widget/HorizontalScrollView;->smoothScrollTo(II)V
-+    # ipp: instant, not animated. This runs 50 ms after the click and an animation of its own on
-+    # top of that; the wheel turns faster than either, so the ruler chased a frequency that had
-+    # already changed. Fm.ruler has normally moved it before this even runs -- this pass is the
-+    # one that catches a ruler which had no width yet.
++    # ipp: instant, not animated -- the wheel turns faster than the animation did. Fm.ruler has
++    # normally moved it already; this pass catches a ruler that had no width yet.
 +    invoke-virtual {v0, p1, v1}, Landroid/widget/HorizontalScrollView;->scrollTo(II)V
  
      .line 699
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
 diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
-index 8710fcb7..4fb6dcc6 100644
+index 8710fcb7..156cbbfb 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
-@@ -240,14 +240,8 @@
+@@ -240,14 +240,7 @@
  
      invoke-virtual {p3, v0, v4, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
  
@@ -38164,21 +38158,19 @@ index 8710fcb7..4fb6dcc6 100644
 -    invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 -
 -    invoke-virtual {p3, v0, v4, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-+    # ipp: the value's own painting is gone from here -- it is the row's colour, taken off the
-+    # name at :goto_0 below, rather than a white of its own.
++    # ipp: the value is painted at :goto_0 below, with the row, instead of a white of its own.
  
      .line 126
      sget-object p3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -260,8 +254,14 @@
+@@ -260,8 +253,13 @@
  
      invoke-virtual {p3, v0, v6, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
 -    .line 128
      :goto_0
-+    # ipp: the value at the right-hand end of the row (Speaker/Headset, Off/Recording) stayed the
-+    # unselected colour under the cursor, the row's own name having moved on to the selected one.
-+    # Here, where every painting branch has met and p1 is still the binding: at the end of the
-+    # method that register holds a TextView.
++    # ipp: the value at the right-hand end of the row takes the row's colour. Here, where every
++    # painting branch has met and p1 is still the binding -- by the end of the method that
++    # register holds a TextView.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->fmMenuValue(Lcom/innioasis/y1/databinding/ItemFmMenuBinding;)V
 +
 +    .line 128
@@ -38204,21 +38196,19 @@ index 38de58fe..28cf65f3 100644
      iget-object p2, p0, Lcom/innioasis/fm/MenuActivity$rangesAdapter$2$1;->this$0:Lcom/innioasis/fm/MenuActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
-index 8f1b4c3c..8b1cedaa 100644
+index 8f1b4c3c..736150ef 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
-@@ -695,6 +695,10 @@
+@@ -695,6 +695,8 @@
  
      .line 218
      :cond_1
-+    # ipp: the FM menu had the pattern the other RecyclerView screens did -- a scrollToPosition()
-+    # plus notifyDataSetChanged() on EVERY click, i.e. a full layout pass over every visible row
-+    # to move a highlight by one. Wheel.follow rebinds only the two rows whose highlight changed
-+    # and scrolls only when the row is off screen.
++    # ipp: Wheel.follow in place of stock's scrollToPosition() plus notifyDataSetChanged() on
++    # every click -- two rows rebound instead of a layout pass over every visible one.
      invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v1
-@@ -707,12 +711,7 @@
+@@ -707,12 +709,7 @@
  
      move-result v2
  
@@ -38232,16 +38222,14 @@ index 8f1b4c3c..8b1cedaa 100644
  
      return-void
  .end method
-@@ -777,22 +776,22 @@
+@@ -777,22 +774,20 @@
  
      .line 203
      :cond_1
 -    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
 -
 -    .line 204
-+    # ipp: see antiClockwise -- one Wheel.follow instead of notifyDataSetChanged() plus a
-+    # scrollToPosition() on every click. The adapter stays in v0, which stock overwrote with the
-+    # RecyclerView here.
++    # ipp: see antiClockwise. The adapter stays in v0, which stock overwrote with the list here.
      invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
 -    move-result-object v0
@@ -67797,17 +67785,16 @@ index 308f0784..27de52ce 100644
      .line 53
      :cond_3
 diff --git a/build/src/smali_classes2/com/mediatek/view/FmView$bPaint$2.smali b/build/src/smali_classes2/com/mediatek/view/FmView$bPaint$2.smali
-index 1148f367..3c1af2e4 100644
+index 1148f367..a88fe7c6 100644
 --- a/build/src/smali_classes2/com/mediatek/view/FmView$bPaint$2.smali
 +++ b/build/src/smali_classes2/com/mediatek/view/FmView$bPaint$2.smali
-@@ -96,10 +96,10 @@
+@@ -96,10 +96,9 @@
  
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setStrokeCap(Landroid/graphics/Paint$Cap;)V
  
 -    const-string v1, "#00F5FF"
 -
-+    # ipp: the half-MHz ticks -- the menu's plain text colour at full, the small ticks beside
-+    # them being the same colour at 80%.
++    # ipp: the half-MHz ticks -- the menu's plain text colour at full.
      .line 43
 -    invoke-static {v1}, Landroid/graphics/Color;->parseColor(Ljava/lang/String;)I
 +    invoke-static {}, Lcom/innioasis/ipp/Fm;->plain()I
@@ -67815,16 +67802,15 @@ index 1148f367..3c1af2e4 100644
      move-result v1
  
 diff --git a/build/src/smali_classes2/com/mediatek/view/FmView$paint$2.smali b/build/src/smali_classes2/com/mediatek/view/FmView$paint$2.smali
-index 51933d07..b184532d 100644
+index 51933d07..07ef0007 100644
 --- a/build/src/smali_classes2/com/mediatek/view/FmView$paint$2.smali
 +++ b/build/src/smali_classes2/com/mediatek/view/FmView$paint$2.smali
-@@ -101,7 +101,11 @@
+@@ -101,7 +101,10 @@
  
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setStrokeJoin(Landroid/graphics/Paint$Join;)V
  
 -    const/4 v1, -0x1
-+    # ipp: the small ticks of the ruler -- the menu's plain text colour at 80%, so they differ
-+    # from the half-MHz ticks in weight rather than in hue. White with no theme, as this was.
++    # ipp: the small ticks -- the half-MHz ticks' colour at 80%, weaker rather than another hue.
 +    invoke-static {}, Lcom/innioasis/ipp/Fm;->small()I
 +
 +    move-result v1
@@ -67832,17 +67818,16 @@ index 51933d07..b184532d 100644
      .line 33
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setColor(I)V
 diff --git a/build/src/smali_classes2/com/mediatek/view/FmView$selectPaint$2.smali b/build/src/smali_classes2/com/mediatek/view/FmView$selectPaint$2.smali
-index c1564a21..f34882e9 100644
+index c1564a21..2d3b6baf 100644
 --- a/build/src/smali_classes2/com/mediatek/view/FmView$selectPaint$2.smali
 +++ b/build/src/smali_classes2/com/mediatek/view/FmView$selectPaint$2.smali
-@@ -91,10 +91,10 @@
+@@ -91,10 +91,9 @@
      .line 62
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setStrokeWidth(F)V
  
 -    const-string v1, "#FFB600"
 -
-+    # ipp: the line on the frequency being played -- the timeline colour, the accent every
-+    # progress bar in the app uses. #FFB600 with no theme, which is what this was.
++    # ipp: the line on the frequency being played -- the timeline colour.
      .line 63
 -    invoke-static {v1}, Landroid/graphics/Color;->parseColor(Ljava/lang/String;)I
 +    invoke-static {}, Lcom/innioasis/ipp/Fm;->now()I
@@ -67866,39 +67851,36 @@ index 20098bc2..0ba99584 100644
      .line 54
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setColor(I)V
 diff --git a/build/src/smali_classes2/com/mediatek/view/FmView.smali b/build/src/smali_classes2/com/mediatek/view/FmView.smali
-index 26c152a3..f2405913 100644
+index 26c152a3..1b16f1da 100644
 --- a/build/src/smali_classes2/com/mediatek/view/FmView.smali
 +++ b/build/src/smali_classes2/com/mediatek/view/FmView.smali
-@@ -532,7 +532,14 @@
+@@ -532,7 +532,12 @@
      move-result v1
  
      .line 122
 -    invoke-direct {p0}, Lcom/mediatek/view/FmView;->getSearchResultsFrequencyMark()Landroid/graphics/Bitmap;
-+    # ipp: a station merely FOUND by the search -- the menu's plain text colour. The diamond is
-+    # DRAWN rather than the artwork recoloured: that png carries a black shadow beside the shape,
-+    # and a tint paints the shadow too. v3 held the artwork; v4 is the loop's own constant 20 and
-+    # is written again at the top of every pass, this one included -- the second loop below reads
-+    # it, and reads what that rewrite left.
++    # ipp: a station merely FOUND by the search. The diamond is drawn, not the artwork tinted --
++    # that png carries a black shadow a tint would paint too. v3 held the artwork; v4 is the
++    # loop's own constant, rewritten at the top of every pass, which the second loop then reads.
 +    const/4 v4, 0x0
 +
 +    invoke-static {v4}, Lcom/innioasis/ipp/Fm;->diamond(Z)Landroid/graphics/Bitmap;
  
      move-result-object v3
  
-@@ -597,7 +604,11 @@
+@@ -597,7 +602,10 @@
      move-result v1
  
      .line 127
 -    invoke-direct {p0}, Lcom/mediatek/view/FmView;->getCollectFrequencyMark()Landroid/graphics/Bitmap;
-+    # ipp: a station the user has KEPT -- the menu's selected text colour. See the found-station
-+    # marker above.
++    # ipp: a station the user has KEPT. See the found-station marker above.
 +    const/4 v8, 0x1
 +
 +    invoke-static {v8}, Lcom/innioasis/ipp/Fm;->diamond(Z)Landroid/graphics/Bitmap;
  
      move-result-object v7
  
-@@ -946,14 +957,10 @@
+@@ -946,14 +954,9 @@
  
      if-eqz p1, :cond_1
  
@@ -67908,8 +67890,7 @@ index 26c152a3..f2405913 100644
 -
 -    const/16 v2, 0x33
 -
-+    # ipp: the ruler's ground -- the menu's background colour, since this is a panel laid over
-+    # the screen the way a submenu is. rgb(42,43,51) with no theme, which is what this was.
++    # ipp: the ruler's ground -- the menu's background colour, this being a panel over the screen.
      .line 86
 -    invoke-virtual {p1, v0, v1, v2}, Landroid/graphics/Canvas;->drawRGB(III)V
 +    invoke-static {p1}, Lcom/innioasis/ipp/Fm;->ground(Landroid/graphics/Canvas;)V

@@ -504,17 +504,15 @@ public final class Alpha {
     }
 
     /**
-     * One fixed square for every key, iPod-style. The widest thing this ever shows is a
-     * four-digit year, so that is what the plate is measured for — a single letter then sits in
-     * the same square instead of the plate changing shape from one jump to the next.
+     * One fixed square for every key, iPod-style, measured for the widest thing it ever shows —
+     * a four-digit year.
      *
-     * Measured with the SYSTEM font, not with the view's own: the view carries the theme's font
-     * ({@code ThemeManager} swaps {@code Typeface.MONOSPACE} for it), and measuring the square
-     * with that lets a theme decide how much of the screen the plate covers — "Minecraft", whose
-     * glyphs are half again as wide, grew it to where it read as a screen of its own. The square
-     * is the same on every theme and the text is what gives way ({@link #fit}). {@code
-     * Typeface.DEFAULT} is what the view itself ends up with when no theme is selected, so the
-     * size is the one the plate has always had there, rather than a dp constant guessed at.
+     * With the SYSTEM font, never the view's own: the view carries the theme's font, and
+     * measuring the square with that lets a theme decide how much of the screen the plate covers
+     * (a wide one grew it to where it read as a screen of its own). The square is the same on
+     * every theme and the TEXT is what gives way, see {@link #fit}. {@code Typeface.DEFAULT} is
+     * also what the view ends up with when no theme is selected, so this is the size the plate
+     * has always had there.
      */
     private static int side(float d) {
         int pad = (int) (PAD_DP * d + 0.5f);
@@ -526,14 +524,11 @@ public final class Alpha {
     }
 
     /**
-     * Set the text size for this key: {@code baseSp}, or as much less as it takes for the key to
-     * fit the square in the font the view is actually drawn with. {@code measureText} is linear
-     * in the text size, so the ratio is the answer and no search is needed.
-     *
-     * Height is checked against the font's own metrics rather than the glyphs' bounds, because
-     * that is what {@code TextView} centres the line by and therefore what would be clipped by
-     * the fixed-height view. On the stock font neither test bites at either size: the plate looks
-     * exactly as it did.
+     * Set the text size for this key: {@code baseSp}, or as much less as it takes to fit the
+     * square in the font the view is drawn with. {@code measureText} is linear in the size, so
+     * the ratio is the answer and no search is needed. Height goes by the font's METRICS, not by
+     * the glyphs' bounds — that is what {@code TextView} centres the line by, and therefore what
+     * the fixed-height view would clip.
      */
     private static void fit(TextView tv, String text, int baseSp, float d) {
         int room = side(d) - 2 * (int) (PAD_DP * d + 0.5f);

@@ -15,11 +15,11 @@
 
 .method constructor <init>(Landroid/widget/TextView;)V
   .registers 2
-  .line 356
+  .line 306
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 357
+  .line 307
     iput-object p1, p0, Lcom/innioasis/ipp/Fm$Echo;->out:Landroid/widget/TextView;
-  .line 358
+  .line 308
     return-void
 .end method
 
@@ -27,28 +27,28 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 3
   :L0
-  .line 366
+  .line 316
     iget-object v0, p0, Lcom/innioasis/ipp/Fm$Echo;->out:Landroid/widget/TextView;
     invoke-virtual { v0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   :L1
-  .line 369
+  .line 319
     goto :L3
   :L2
-  .line 367
+  .line 317
     move-exception p1
   :L3
-  .line 370
+  .line 320
     return-void
 .end method
 
 .method public beforeTextChanged(Ljava/lang/CharSequence;III)V
   .registers 5
-  .line 360
+  .line 310
     return-void
 .end method
 
 .method public onTextChanged(Ljava/lang/CharSequence;III)V
   .registers 5
-  .line 362
+  .line 312
     return-void
 .end method

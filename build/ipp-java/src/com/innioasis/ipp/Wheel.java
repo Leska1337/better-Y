@@ -562,13 +562,12 @@ public final class Wheel {
     public static void follow(RecyclerView rv, int pos, RecyclerView.Adapter adapter) {
         try {
             if (rv == null) return;
-            // Once per RecyclerView AND per LayoutManager. NOT `if (getItemAnimator() != null)`,
-            // which is what this used to be: SettingActivity.initView already does
-            // `recycler.setItemAnimator(null)` itself, so on the one screen that needed it most the
-            // whole block never ran — see the cache note below for what that cost. The layout
-            // manager is part of the key because the prefetch flag belongs to IT, and a screen that
-            // pages several lists through one RecyclerView hands it a fresh one per level (the FM
-            // menu does): the flag would then be set on a manager that is no longer attached.
+            // Once per RecyclerView AND per LayoutManager. NOT `if (getItemAnimator() != null)`:
+            // SettingActivity.initView does `setItemAnimator(null)` itself, so keyed on that the
+            // block never ran on the one screen that needed it most — see the cache note below
+            // for what that cost. The layout manager is in the key because the prefetch flag
+            // belongs to IT, and a screen that pages several lists through one RecyclerView hands
+            // it a fresh one per level (the FM menu does).
             RecyclerView.LayoutManager lm = rv.getLayoutManager();
             if (tuned == null || tuned.get() != rv || tunedLm == null || tunedLm.get() != lm) {
                 tuned = new WeakReference(rv);
@@ -619,12 +618,11 @@ public final class Wheel {
 
             if (adapter != null) {
                 int n = adapter.getItemCount();
-                // The remembered row is this list's only while the ADAPTER is still the one it was
-                // worked out from. A screen that pages several lists through one RecyclerView puts
-                // a different adapter on it and hands back a cursor of its own (the FM menu
-                // restores the row the user came from): repainting the row a different list left
-                // behind misses the one that is actually highlighted, and its highlight stays on
-                // screen beside the real one. An unknown prev means a full repaint, which is right.
+                // The remembered row is this list's only while the ADAPTER is the one it was
+                // worked out from: a screen that pages several lists through one RecyclerView
+                // hands back a cursor of its own, and repainting the row the PREVIOUS list left
+                // behind misses the highlighted one, which then stays on screen beside the real
+                // one. An unknown prev means a full repaint, which is the right answer.
                 int prev = (lastRv != null && lastRv.get() == rv
                         && lastAdapter != null && lastAdapter.get() == adapter) ? lastPos : -1;
                 // Rebound in place rather than through notifyItemChanged: a notify is an adapter

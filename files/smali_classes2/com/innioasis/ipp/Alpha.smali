@@ -151,7 +151,7 @@
 .method private static barOffset(Landroid/app/Activity;F)I
   .catchall { :L0 .. :L3 } :L5
   .registers 4
-  .line 560
+  .line 555
     const/4 v0, 0
   :L0
     invoke-virtual { p0 }, Landroid/app/Activity;->getWindow()Landroid/view/Window;
@@ -161,17 +161,17 @@
     const v1, 2131362408
     invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 561
+  .line 556
     if-eqz p0, :L4
     invoke-virtual { p0 }, Landroid/view/View;->getVisibility()I
     move-result v1
     if-eqz v1, :L1
     goto :L4
   :L1
-  .line 562
+  .line 557
     invoke-virtual { p0 }, Landroid/view/View;->getHeight()I
     move-result p0
-  .line 563
+  .line 558
     if-gtz p0, :L2
     const/high16 p0, 0x42340000
     mul-float p1, p1, p0
@@ -179,26 +179,26 @@
     add-float/2addr p1, p0
     float-to-int p0, p1
   :L2
-  .line 564
+  .line 559
     div-int/lit8 p0, p0, 2
   :L3
     return p0
   :L4
-  .line 561
+  .line 556
     return v0
   :L5
-  .line 565
+  .line 560
     move-exception p0
-  .line 566
+  .line 561
     return v0
 .end method
 
 .method private static dress(Landroid/widget/TextView;F)I
   .registers 6
-  .line 633
+  .line 628
     invoke-static { p1 }, Lcom/innioasis/ipp/Alpha;->side(F)I
     move-result v0
-  .line 634
+  .line 629
     new-instance v1, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
     move-result-object v2
@@ -206,7 +206,7 @@
     move-result-object v3
     invoke-direct { v1, v2, v3 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
     invoke-virtual { p0, v1 }, Landroid/widget/TextView;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 635
+  .line 630
     invoke-static { p1 }, Lcom/innioasis/ipp/Alpha;->margin(F)I
     move-result p0
     mul-int/lit8 p0, p0, 2
@@ -216,11 +216,11 @@
 
 .method private static enabled()Z
   .registers 2
-  .line 689
+  .line 684
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 690
+  .line 685
     const-string v1, "alpha_scroll"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v0
@@ -229,7 +229,7 @@
 
 .method private static fit(Landroid/widget/TextView;Ljava/lang/String;IF)V
   .registers 8
-  .line 539
+  .line 534
     invoke-static { p3 }, Lcom/innioasis/ipp/Alpha;->side(F)I
     move-result v0
     const/high16 v1, 0x41600000
@@ -240,21 +240,21 @@
     const/4 v2, 2
     mul-int/lit8 v1, v1, 2
     sub-int/2addr v0, v1
-  .line 540
+  .line 535
     new-instance v1, Landroid/text/TextPaint;
     invoke-virtual { p0 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
     invoke-direct { v1, v3 }, Landroid/text/TextPaint;-><init>(Landroid/graphics/Paint;)V
-  .line 541
+  .line 536
     int-to-float p2, p2
     mul-float p3, p3, p2
     invoke-virtual { v1, p3 }, Landroid/text/TextPaint;->setTextSize(F)V
-  .line 542
+  .line 537
     nop
-  .line 543
+  .line 538
     invoke-virtual { v1, p1 }, Landroid/text/TextPaint;->measureText(Ljava/lang/String;)F
     move-result p1
-  .line 544
+  .line 539
     int-to-float p3, v0
     const/high16 v0, 0x3F800000
     cmpl-float v3, p1, p3
@@ -264,27 +264,27 @@
   :L0
     const/high16 p1, 0x3F800000
   :L1
-  .line 545
+  .line 540
     invoke-virtual { v1 }, Landroid/text/TextPaint;->getFontMetrics()Landroid/graphics/Paint$FontMetrics;
     move-result-object v1
-  .line 546
+  .line 541
     iget v3, v1, Landroid/graphics/Paint$FontMetrics;->descent:F
     iget v1, v1, Landroid/graphics/Paint$FontMetrics;->ascent:F
     sub-float/2addr v3, v1
-  .line 547
+  .line 542
     cmpl-float v1, v3, p3
     if-lez v1, :L2
     div-float/2addr p3, v3
     invoke-static { p1, p3 }, Ljava/lang/Math;->min(FF)F
     move-result p1
   :L2
-  .line 548
+  .line 543
     cmpg-float p3, p1, v0
     if-gez p3, :L3
     mul-float p2, p2, p1
   :L3
     invoke-virtual { p0, v2, p2 }, Landroid/widget/TextView;->setTextSize(IF)V
-  .line 549
+  .line 544
     return-void
 .end method
 
@@ -409,10 +409,10 @@
 
 .method private static ink()I
   .registers 1
-  .line 617
+  .line 612
     invoke-static { }, Lcom/innioasis/ipp/Icons;->menuColor()I
     move-result v0
-  .line 618
+  .line 613
     if-nez v0, :L0
     const/4 v0, -1
   :L0
@@ -698,7 +698,7 @@
 
 .method private static margin(F)I
   .registers 2
-  .line 623
+  .line 618
     const/high16 v0, 0x41400000
     mul-float p0, p0, v0
     const/high16 v0, 0x3F000000
@@ -957,11 +957,11 @@
   .catchall { :L0 .. :L1 } :L3
   .registers 2
   :L0
-  .line 598
+  .line 593
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuBGColor()Ljava/lang/Integer;
     move-result-object v0
-  .line 599
+  .line 594
     if-eqz v0, :L2
     invoke-virtual { v0 }, Ljava/lang/Integer;->intValue()I
     move-result v0
@@ -972,28 +972,28 @@
     or-int/2addr v0, v1
     return v0
   :L2
-  .line 602
+  .line 597
     goto :L4
   :L3
-  .line 600
+  .line 595
     move-exception v0
   :L4
-  .line 603
+  .line 598
     const v0, -654279937
     return v0
 .end method
 
 .method private static plateBitmap(IF)Landroid/graphics/Bitmap;
   .registers 11
-  .line 656
+  .line 651
     invoke-static { }, Lcom/innioasis/ipp/Alpha;->plate()I
     move-result v0
-  .line 657
+  .line 652
     mul-int/lit8 v1, p0, 31
     add-int/2addr v1, v0
-  .line 658
+  .line 653
     sget-object v2, Lcom/innioasis/ipp/Alpha;->plateBm:Landroid/graphics/Bitmap;
-  .line 659
+  .line 654
     if-eqz v2, :L0
     invoke-virtual { v2 }, Landroid/graphics/Bitmap;->isRecycled()Z
     move-result v3
@@ -1002,26 +1002,26 @@
     if-ne v1, v3, :L0
     return-object v2
   :L0
-  .line 661
+  .line 656
     invoke-static { p1 }, Lcom/innioasis/ipp/Alpha;->margin(F)I
     move-result v2
-  .line 662
+  .line 657
     mul-int/lit8 v3, v2, 2
     add-int/2addr v3, p0
-  .line 663
+  .line 658
     const/high16 v4, 0x41400000
     mul-float v4, v4, p1
-  .line 664
+  .line 659
     sget-object v5, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
     invoke-static { v3, v3, v5 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v3
-  .line 665
+  .line 660
     new-instance v5, Landroid/graphics/Canvas;
     invoke-direct { v5, v3 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
-  .line 667
+  .line 662
     new-instance v6, Landroid/graphics/Path;
     invoke-direct { v6 }, Landroid/graphics/Path;-><init>()V
-  .line 668
+  .line 663
     new-instance v7, Landroid/graphics/RectF;
     int-to-float v8, v2
     add-int/2addr v2, p0
@@ -1029,44 +1029,44 @@
     invoke-direct { v7, v8, v8, p0, p0 }, Landroid/graphics/RectF;-><init>(FFFF)V
     sget-object p0, Landroid/graphics/Path$Direction;->CW:Landroid/graphics/Path$Direction;
     invoke-virtual { v6, v7, v4, v4, p0 }, Landroid/graphics/Path;->addRoundRect(Landroid/graphics/RectF;FFLandroid/graphics/Path$Direction;)V
-  .line 670
+  .line 665
     new-instance p0, Landroid/graphics/Paint;
     const/4 v2, 1
     invoke-direct { p0, v2 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 671
+  .line 666
     const/high16 v4, 0x33000000
     invoke-virtual { p0, v4 }, Landroid/graphics/Paint;->setColor(I)V
-  .line 672
+  .line 667
     const/high16 v7, 0x41200000
     mul-float v7, v7, p1
     const/high16 v8, 0x40000000
     mul-float p1, p1, v8
     const/4 v8, 0
     invoke-virtual { p0, v7, v8, p1, v4 }, Landroid/graphics/Paint;->setShadowLayer(FFFI)V
-  .line 673
+  .line 668
     invoke-virtual { v5, v6, p0 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
-  .line 675
+  .line 670
     new-instance p0, Landroid/graphics/Paint;
     invoke-direct { p0, v2 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 676
+  .line 671
     new-instance p1, Landroid/graphics/PorterDuffXfermode;
     sget-object v4, Landroid/graphics/PorterDuff$Mode;->CLEAR:Landroid/graphics/PorterDuff$Mode;
     invoke-direct { p1, v4 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
     invoke-virtual { p0, p1 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
-  .line 677
+  .line 672
     invoke-virtual { v5, v6, p0 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
-  .line 679
+  .line 674
     new-instance p0, Landroid/graphics/Paint;
     invoke-direct { p0, v2 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 680
+  .line 675
     invoke-virtual { p0, v0 }, Landroid/graphics/Paint;->setColor(I)V
-  .line 681
+  .line 676
     invoke-virtual { v5, v6, p0 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
-  .line 683
+  .line 678
     sput-object v3, Lcom/innioasis/ipp/Alpha;->plateBm:Landroid/graphics/Bitmap;
-  .line 684
+  .line 679
     sput v1, Lcom/innioasis/ipp/Alpha;->plateKey:I
-  .line 685
+  .line 680
     return-object v3
 .end method
 
@@ -1144,28 +1144,28 @@
 
 .method private static side(F)I
   .registers 6
-  .line 520
+  .line 518
     const/high16 v0, 0x41600000
     mul-float v0, v0, p0
     const/high16 v1, 0x3F000000
     add-float/2addr v0, v1
     float-to-int v0, v0
-  .line 521
+  .line 519
     new-instance v2, Landroid/text/TextPaint;
     invoke-direct { v2 }, Landroid/text/TextPaint;-><init>()V
-  .line 522
+  .line 520
     const/4 v3, 1
     invoke-virtual { v2, v3 }, Landroid/text/TextPaint;->setAntiAlias(Z)V
-  .line 523
+  .line 521
     sget-object v4, Landroid/graphics/Typeface;->DEFAULT:Landroid/graphics/Typeface;
     invoke-static { v4, v3 }, Landroid/graphics/Typeface;->create(Landroid/graphics/Typeface;I)Landroid/graphics/Typeface;
     move-result-object v3
     invoke-virtual { v2, v3 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
-  .line 524
+  .line 522
     const/high16 v3, 0x42200000
     mul-float p0, p0, v3
     invoke-virtual { v2, p0 }, Landroid/text/TextPaint;->setTextSize(F)V
-  .line 525
+  .line 523
     const-string p0, "0000"
     invoke-virtual { v2, p0 }, Landroid/text/TextPaint;->measureText(Ljava/lang/String;)F
     move-result p0
@@ -1293,22 +1293,22 @@
 
 .method private static threshold()I
   .registers 3
-  .line 694
+  .line 689
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 695
+  .line 690
     const/4 v1, 5
     if-nez v0, :L0
     const/4 v0, 5
     goto :L1
   :L0
-  .line 696
+  .line 691
     const-string v2, "alpha_threshold"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result v0
   :L1
-  .line 697
+  .line 692
     if-ltz v0, :L3
     sget-object v2, Lcom/innioasis/ipp/Alpha;->THRESHOLDS:[I
     array-length v2, v2
@@ -1317,7 +1317,7 @@
   :L2
     move v1, v0
   :L3
-  .line 698
+  .line 693
     sget-object v0, Lcom/innioasis/ipp/Alpha;->THRESHOLDS:[I
     aget v0, v0, v1
     return v0

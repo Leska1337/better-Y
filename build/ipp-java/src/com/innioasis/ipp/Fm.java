@@ -30,38 +30,20 @@ import com.mediatek.fm.databinding.ActivityFmmainBinding;
 import com.mediatek.view.FmView;
 
 /**
- * The FM Radio screen: the frequency ruler, the big frequency over it and the volume bar.
+ * The FM Radio screen: the colours of the frequency ruler, of the big frequency over it and of the
+ * volume bar, and the ruler's scroll.
  *
- * Every colour on that screen was written into the code that draws it — the ruler's own dark
- * ground, white ticks, a cyan tick every half-MHz, an orange line on the current frequency, and a
- * seek bar in two colours of its own — so the screen looked the same whatever theme was on, which
- * on a light theme means a dark slab across the bottom of it.
- *
- * Where each colour comes from, and why the ruler asks the MENU rather than the list: the ruler is
- * a panel laid over the screen with a ground of its own, which is what a submenu is, so its ground
- * is the menu's ({@code menuBackgroundColor}) and everything drawn on it takes the menu's text
- * colours — the plain one for the labels and the ticks, the small ones at 80% so they differ from
- * the half-MHz ones in weight rather than hue. The STATIONS are not furniture: the line on the
- * frequency being played and the marker of a station the user has kept take the timeline colour,
- * the accent the player's progress bar and its icons use; a station merely found by the search is
- * the same diamond filled with the ground instead, so it reads as an outline of one; both carry a
- * thin outline in the ticks' colour. The volume bar is a progress bar and takes the accent for the
- * same reason. The big frequency above all this is not on the panel at all — it stands on the
- * wallpaper like the player's own text — so it takes the LIST text colour.
- *
- * Every colour falls back to the stock one when the theme names none, so the default theme is
- * pixel-for-pixel what it was.
+ * The ruler is a panel with a ground of its own, which is what a submenu is, so it is dressed from
+ * the MENU section of the theme; the stations on it and the volume bar take the timeline colour,
+ * and the big frequency, standing on the wallpaper, takes the LIST text colour. Each falls back to
+ * the stock colour, so a screen with no theme looks as it did — except the ground, whose fallback
+ * is {@code bg_submenu}'s colour rather than the ruler's own.
  */
 public final class Fm {
 
     private Fm() { }
 
-    /**
-     * {@code bg_submenu}'s own colour — the menu's background when no theme names one, as every
-     * other box the mod paints falls back to. The ruler's own {@code drawRGB(42, 43, 51)} is
-     * deliberately NOT the fallback: it is a colour of nobody's, and a screen with no theme should
-     * look like the rest of the app rather than like a slab of its own.
-     */
+    /** {@code bg_submenu}'s own colour, as every other box the mod paints falls back to. */
     private static final int BACK = 0xFF8C94B2;
     private static final int PLAIN = Color.WHITE;
     private static final int NOW = 0xFFFFB600;
@@ -86,11 +68,7 @@ public final class Fm {
         return c == 0 ? PLAIN : c;
     }
 
-    /**
-     * The small ticks: {@link #plain} at 80%. They are the same furniture as the half-MHz ticks
-     * and differ from them in weight, not in hue — a second colour there reads as a second kind
-     * of thing.
-     */
+    /** The small ticks: the half-MHz ticks' colour one step weaker, never a second colour. */
     public static int small() {
         return faint(plain());
     }
@@ -117,27 +95,15 @@ public final class Fm {
     }
 
     /**
-     * The marker of a station, DRAWN rather than tinted — a diamond in the colour asked for, on a
-     * bitmap the size and shape of the artwork it replaces.
+     * The marker of a station, DRAWN rather than the artwork recoloured: {@code icon_fm_mark} and
+     * {@code icon_fm_collect_mark} carry a black shadow beside the diamond, and a tint paints the
+     * shadow too. Its size comes from the artwork ({@link #geometry}), which is what keeps it
+     * where stock put it — the draw site computes x from the frequency and expects that size.
      *
-     * The artwork cannot simply be recoloured: `icon_fm_mark`/`icon_fm_collect_mark` carry a black
-     * SHADOW to the right of and below the diamond, which SRC_IN paints along with the shape
-     * (it replaces the RGB and keeps the alpha), so the marker came out with a coloured smear
-     * beside it. Invisible while the ruler was dark and the diamond was white; obvious the moment
-     * either takes a theme's colour. No filter can tell a shadow from an edge, so the shape is
-     * redrawn instead.
-     *
-     * Its size and position come from the ARTWORK, not from constants: the bounding box of the
-     * pixels that are actually solid (the shadow is never more than half opaque), grown by half a
-     * pixel so the antialiased edge sits where the drawn one did. That keeps the marker exactly
-     * where stock put it — the draw site computes its x from the frequency and expects a bitmap
-     * of this size.
+     * A found station is the same diamond filled with the GROUND: opaque, so it covers the line
+     * of the played frequency instead of letting it through the shape.
      */
     public static Bitmap diamond(boolean kept) {
-        // A kept station is filled with the accent; a found one is filled with the GROUND, so it
-        // reads as an outline — and, being opaque, still covers the line of the played frequency
-        // where the two meet. A translucent fill let that line through and the marker came out
-        // looking like a diamond with a bar drawn across it.
         int want = kept ? now() : back();
         int edge = plain();
         Bitmap b = kept ? keptBm : foundBm;
@@ -181,10 +147,9 @@ public final class Fm {
             paint.setStyle(Paint.Style.FILL);
             c.drawPath(path(cx, cy, a, h), paint);
 
-            // The outline sits INSIDE the shape, so the marker keeps the size the artwork had.
-            // A stroke straddles its path, so that path is the shape pulled in by half the width —
-            // and pulling a diamond in by d is not scaling it by d: its faces stand at
-            // a*h/hypot(a,h) from the centre, so that distance is what has to lose d.
+            // The outline sits INSIDE the shape, so the marker keeps the artwork's size. Pulling
+            // a diamond in by d is not scaling it by d: its faces stand at a*h/hypot(a,h) from
+            // the centre, and that is the distance which has to lose half the stroke's width.
             float k = 1f - (EDGE / 2f) * (float) Math.sqrt(a * a + h * h) / (a * h);
             if (k > 0f) {
                 paint.setColor(edge);
@@ -269,14 +234,10 @@ public final class Fm {
     private static final float TEXT_EDGE = 1f;
 
     /**
-     * Size "MHz" so that its top sits halfway up the number beside it. The two share a baseline
-     * (the layout constrains them that way), so this is a question about one measurement each:
-     * how far above the baseline the glyphs actually reach.
-     *
-     * MEASURED, not a fraction of the number's size — the label has to land on the half whatever
-     * font the theme supplies, and a font's cap height is its own business. The number's own text
-     * is what gets measured, because "87.5" and "102.5" reach the same height while an arbitrary
-     * sample might not (a font with old-style figures has digits of several heights).
+     * Size "MHz" so that its top sits halfway up the number beside it — the two share a baseline,
+     * so both are one measurement: how far above it the glyphs reach. Measured rather than taken
+     * as a fraction of the number's size, because a font's cap height is its own business, and
+     * measured on the NUMBER's own text, a font with old-style figures having several heights.
      */
     private static void unit(TextView number, TextView unit) {
         if (number == null || unit == null) return;
@@ -290,8 +251,7 @@ public final class Fm {
         float half = -r.top / 2f;                  // baseline to the middle of the digits
         if (half <= 0f) return;
 
-        // The unit's own reach, measured at a size of its own and scaled: bounds are linear in
-        // the text size, so one measurement answers for every size.
+        // Bounds are linear in the text size, so one measurement answers for every size.
         Paint p = new Paint(unit.getPaint());
         p.setTextSize(100f);
         Rect ur = new Rect();
@@ -301,23 +261,13 @@ public final class Fm {
     }
 
     /**
-     * Outline the label in the row-highlight colour, leaving its own fill alone.
+     * Outline the label in the row-highlight colour. A TextView paints its text once and in one
+     * style, so this is a second label behind the first carrying the text in STROKE only, kept in
+     * step by a watcher on the original.
      *
-     * A TextView paints its text ONCE, in one style, so an outline of a second colour cannot come
-     * from the label itself: a STROKE paint on it replaces the fill rather than joining it. The
-     * outline is therefore a second label under the first — same font, same size, same layout
-     * params, so it lands exactly behind it — carrying the text in STROKE only, and hung on the
-     * original's text so the number stays in step as the wheel changes the frequency.
-     *
-     * UNDER, at twice the width, is what makes the outline an OUTER one. A stroke straddles the
-     * glyph's contour, so half of it always falls inside the letter: drawn on top it eats into the
-     * fill and the digits come out thinner. Drawn underneath, the fill covers that inner half and
-     * only the outer half shows — which is why the width is doubled to leave {@link #TEXT_EDGE}
-     * outside.
-     *
-     * Nothing happens with no theme: the row-highlight colour is the theme's alone (every screen
-     * passes stock a highlight of its own), so there is nothing to outline with and the frequency
-     * stands as it always did.
+     * BEHIND, at twice the width, is what makes the outline an outer one: a stroke straddles the
+     * contour, and the fill covers the half that falls inside the glyph. With no theme there is no
+     * highlight colour to use and nothing is added at all.
      */
     private static void outline(TextView src, int colour) {
         if (src == null || colour == 0) return;
@@ -390,15 +340,10 @@ public final class Fm {
     }
 
     /**
-     * Put the ruler where the frequency is, at once. Called from the top of
-     * {@code FMMainActivity.scrollRuler}, which otherwise posts the move through a coroutine that
-     * sleeps 50 ms first and then SMOOTH-scrolls: every wheel click restarted an animation, so the
-     * ruler was always travelling towards a frequency the wheel had already left — the same
-     * "let go of the wheel and it goes on scrolling" the RecyclerView screens had.
-     *
-     * The coroutine is left alone and still runs: a screen that has only just been built has a
-     * ruler of zero width, where a scroll does nothing at all, and the delayed pass is what
-     * catches that. By then it is a plain {@code scrollTo} to the same place, i.e. nothing moves.
+     * Put the ruler where the frequency is, at once, from the top of
+     * {@code FMMainActivity.scrollRuler}. Its own coroutine still runs 50 ms later and must: on a
+     * screen just built the ruler has no width and a scroll does nothing, and that pass catches
+     * it. Do not take the delayed pass for a duplicate.
      */
     public static void ruler(HorizontalScrollView sv, FmView ruler, float frequency) {
         if (sv == null || ruler == null) return;
