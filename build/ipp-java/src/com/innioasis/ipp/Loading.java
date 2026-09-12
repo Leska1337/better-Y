@@ -1,14 +1,26 @@
 package com.innioasis.ipp;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.SystemClock;
 import android.view.Gravity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -19,6 +31,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
@@ -53,8 +67,11 @@ public final class Loading {
     /** Alpha 0: a real theme colour can never be this, so it answers "the theme names none". */
     private static final int PROBE = 0x00FEEDBE;
 
+    /** What a window holding the ring comes and goes with: the dialog's own fade, no scale. */
+    private static final int FADE_STYLE = R.style.ipp_Fade;
+
     /** From {@code LoadingDialog.onCreate}, right after {@code setContentView}. */
-    public static void paint(View root) {
+    public static void paint(Dialog d, View root) {
         if (root == null) return;
         try {
             ThemeManager tm = ThemeManager.INSTANCE;
@@ -67,9 +84,12 @@ public final class Loading {
             int text = themed == PROBE ? TEXT : themed;
             text(root, R.id.content, text);
             text(root, R.id.tip, text);
-            if (themed != PROBE) {
-                View img = root.findViewById(R.id.loading_img);
-                if (img instanceof ImageView) ((ImageView) img).setColorFilter(fade(themed));
+            View img = root.findViewById(R.id.loading_img);
+            if (spin(img, themed, 0)) {
+                Window w = d == null ? null : d.getWindow();
+                if (w != null) w.setWindowAnimations(FADE_STYLE);
+            } else if (themed != PROBE && img instanceof ImageView) {
+                ((ImageView) img).setColorFilter(fade(themed));
             }
         } catch (Throwable t) {
             // a stock-coloured progress window is still a progress window
@@ -90,7 +110,8 @@ public final class Loading {
     /**
      * The platform {@code ProgressDialog} the app raises in nine places — the app's own window,
      * not the system's, so it can be dressed: title centred over the circle, message dropped (it
-     * repeated the title), colours the theme's dialog pair and only when the theme names them.
+     * repeated the title), the circle {@link Spin the app's own ring}, colours the theme's dialog pair
+     * and only when the theme names them.
      *
      * The parts are found by WALKING the window: an AlertDialog's ids are
      * {@code com.android.internal.R.id.*} and not ours to name.
@@ -129,6 +150,8 @@ public final class Loading {
             } else {
                 dress(decor, fg, rule, boxed);
             }
+            // Before the window's first draw, which is when its enter animation is chosen.
+            if (holdsSpin(decor)) w.setWindowAnimations(FADE_STYLE);
         } catch (Throwable t) {
             // the platform's own window is still a progress window
         }
@@ -150,10 +173,8 @@ public final class Loading {
         if (v instanceof ProgressBar) {
             // The line was laid out to hold circle and message side by side, so with the
             // message gone the circle stays where it left it unless the row is told to centre.
-            centre(v);
-            if (themed) {
-                Drawable dr = ((ProgressBar) v).getIndeterminateDrawable();
-                if (dr != null) dr.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            if (!spin(v, color, (int) (PLATFORM_DIP * v.getResources().getDisplayMetrics().density))) {
+                centre(v);
             }
             return;
         }
@@ -171,6 +192,216 @@ public final class Loading {
             // params, not the view: this runs before the window has been measured.
             ViewGroup.LayoutParams lp = v.getLayoutParams();
             if (lp != null && lp.height > 0 && lp.height <= ruleMax) v.setBackgroundColor(color);
+        }
+    }
+
+    /**
+     * The platform's circle is 48dip ({@code Widget.ProgressBar}), and the ring takes its place at
+     * that size. That circle, {@code progress_medium_holo}, is a layer-list of TWO counter-rotating
+     * arcs, which is why it read as two circles laid over each other once a theme coloured both.
+     */
+    private static final int PLATFORM_DIP = 48;
+
+    /**
+     * Puts a {@link Spin} where {@code stand} is and hides the stand; false leaves it untouched.
+     * In {@code dialog_loading.xml} the stand is the ImageView, which stays INVISIBLE rather than
+     * going: {@code LoadingDialog.onStart} finds it by id and casts it to ImageView, and its place
+     * in the constraints is what the ring copies. In the platform window it is the ProgressBar,
+     * GONE, with the ring added beside it at the circle's own size.
+     */
+    private static boolean spin(View stand, int color, int sidePx) {
+        ViewParent vp = stand == null ? null : stand.getParent();
+        if (!(vp instanceof ViewGroup)) return false;
+        ViewGroup parent = (ViewGroup) vp;
+        try {
+            ViewGroup.LayoutParams lp = stand.getLayoutParams();
+            ViewGroup.LayoutParams own;
+            int hide;
+            if (lp instanceof ConstraintLayout.LayoutParams) {
+                own = copy((ConstraintLayout.LayoutParams) lp);
+                hide = View.INVISIBLE;
+            } else if (parent instanceof LinearLayout && sidePx > 0) {
+                LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(sidePx, sidePx);
+                ll.gravity = Gravity.CENTER;
+                ((LinearLayout) parent).setGravity(Gravity.CENTER);
+                own = ll;
+                hide = View.GONE;
+            } else {
+                return false;
+            }
+            Spin s = new Spin(stand.getContext(), color);
+            s.setId(View.generateViewId());
+            parent.addView(s, parent.indexOfChild(stand) + 1, own);
+            stand.setVisibility(hide);
+            // An INVISIBLE view is still drawn while it carries a view animation, and
+            // LoadingDialog.onStart gives it one: without its picture that draw is nothing.
+            if (stand instanceof ImageView) ((ImageView) stand).setImageDrawable(null);
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    private static boolean holdsSpin(View v) {
+        if (v instanceof Spin) return true;
+        if (!(v instanceof ViewGroup)) return false;
+        ViewGroup g = (ViewGroup) v;
+        for (int i = 0; i < g.getChildCount(); i++) {
+            if (holdsSpin(g.getChildAt(i))) return true;
+        }
+        return false;
+    }
+
+    /**
+     * The stand's constraints and margins on fresh params. Not the library's copy constructor: it
+     * hands the copy the source's own {@code ConstraintWidget}, and two views laid out through one
+     * widget end up wherever the last of them put it.
+     */
+    private static ConstraintLayout.LayoutParams copy(ConstraintLayout.LayoutParams src) {
+        ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(src.width, src.height);
+        p.leftToLeft = src.leftToLeft;
+        p.leftToRight = src.leftToRight;
+        p.rightToLeft = src.rightToLeft;
+        p.rightToRight = src.rightToRight;
+        p.topToTop = src.topToTop;
+        p.topToBottom = src.topToBottom;
+        p.bottomToTop = src.bottomToTop;
+        p.bottomToBottom = src.bottomToBottom;
+        p.startToStart = src.startToStart;
+        p.startToEnd = src.startToEnd;
+        p.endToStart = src.endToStart;
+        p.endToEnd = src.endToEnd;
+        p.horizontalBias = src.horizontalBias;
+        p.verticalBias = src.verticalBias;
+        p.leftMargin = src.leftMargin;
+        p.topMargin = src.topMargin;
+        p.rightMargin = src.rightMargin;
+        p.bottomMargin = src.bottomMargin;
+        p.setMarginStart(src.getMarginStart());
+        p.setMarginEnd(src.getMarginEnd());
+        return p;
+    }
+
+    /**
+     * The ring, drawn by a thread of its own into a surface of its own. Both progress windows go up
+     * exactly when the main thread is busiest — a screen opening, a gallery binding its tiles, the
+     * collector going through a card's worth of bitmaps — and anything the main thread animates
+     * stands still for as long as that lasts, which is most of the window's life. This surface is
+     * composed by SurfaceFlinger whatever the main thread is doing. The angle comes from the clock,
+     * not a per-frame step, so a stop-the-world GC is a skip, not a slow-down.
+     *
+     * On top of its window and translucent, so the box shows through the ring. The thread starts
+     * with the surface and is joined when the surface goes: drawing into a destroyed surface is the
+     * one way this can take the app down.
+     *
+     * The surface is a child window, and a window's SCALE animation is not applied to it the way it
+     * is to the window: the platform dialog grows from 90%, and for that moment the ring stands
+     * off-centre at full size. Alpha is applied correctly. So a window holding the ring fades in and
+     * out ({@link #FADE_STYLE}) instead of growing — no delay or stand-in to tune, whatever the load.
+     * Leaving, the surface goes with the window at once, so the box fades out without the ring.
+     */
+    public static final class Spin extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+
+        /** One clockwise turn, the same as {@code @anim/loading}. */
+        private static final long TURN_MS = 800;
+        private static final long FRAME_MS = 20;
+
+        private static Bitmap ring;
+
+        private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.ANTI_ALIAS_FLAG);
+        private final RectF box = new RectF();
+        private volatile boolean running;
+        private Thread thread;
+
+        public Spin(Context c, int color) {
+            super(c);
+            if (color != PROBE) paint.setColorFilter(fade(color));
+            setZOrderOnTop(true);
+            getHolder().setFormat(PixelFormat.TRANSLUCENT);
+            getHolder().addCallback(this);
+        }
+
+        public void surfaceCreated(SurfaceHolder h) {
+            halt();
+            running = true;
+            thread = new Thread(this, "ipp-spin");
+            thread.start();
+        }
+
+        public void surfaceChanged(SurfaceHolder h, int format, int w, int hh) {
+        }
+
+        public void surfaceDestroyed(SurfaceHolder h) {
+            halt();
+        }
+
+        protected void onDetachedFromWindow() {
+            halt();
+            super.onDetachedFromWindow();
+        }
+
+        private void halt() {
+            running = false;
+            Thread t = thread;
+            thread = null;
+            if (t == null) return;
+            t.interrupt();
+            try {
+                t.join(500);
+            } catch (InterruptedException e) {
+                // the loop reads the flag before every frame
+            }
+        }
+
+        public void run() {
+            Bitmap b = ring(getResources());
+            SurfaceHolder h = getHolder();
+            long start = SystemClock.uptimeMillis();
+            while (running) {
+                frame(h, b, 360f * ((SystemClock.uptimeMillis() - start) % TURN_MS) / TURN_MS);
+                try {
+                    Thread.sleep(FRAME_MS);
+                } catch (InterruptedException e) {
+                    return;
+                }
+            }
+        }
+
+        private void frame(SurfaceHolder h, Bitmap b, float degrees) {
+            Canvas c = null;
+            try {
+                c = h.lockCanvas();
+                if (c == null) return;
+                c.drawColor(0, PorterDuff.Mode.CLEAR);
+                if (b == null) return;
+                float w = c.getWidth();
+                float hh = c.getHeight();
+                float side = Math.min(w, hh);
+                box.set((w - side) / 2, (hh - side) / 2, (w + side) / 2, (hh + side) / 2);
+                c.save();
+                c.rotate(degrees, w / 2, hh / 2);
+                c.drawBitmap(b, null, box, paint);
+                c.restore();
+            } catch (Throwable t) {
+                running = false;
+            } finally {
+                if (c != null) {
+                    try {
+                        h.unlockCanvasAndPost(c);
+                    } catch (Throwable t) {
+                        running = false;
+                    }
+                }
+            }
+        }
+
+        private static synchronized Bitmap ring(Resources r) {
+            if (ring == null) {
+                BitmapFactory.Options o = new BitmapFactory.Options();
+                o.inScaled = false;
+                ring = BitmapFactory.decodeResource(r, R.drawable.loading, o);
+            }
+            return ring;
         }
     }
 

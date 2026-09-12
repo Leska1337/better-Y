@@ -310,6 +310,17 @@ public final class Theme {
         }
     }
 
+    /**
+     * The hint at the foot of the full-screen preview ("As Theme" and the glyph over it), in the
+     * colour of the captions beside it rather than the layout's own accent. The glyph is a flat
+     * shape, so it takes whatever colour the label ended up with, as menu icons do.
+     */
+    public static void fullHint(ImageView icon, TextView label) {
+        if (label == null) return;
+        tileName(label);
+        if (icon != null) Icons.menu(icon, label.getCurrentTextColor());
+    }
+
     /** The frame around the cover under the cursor: the timeline's colour, stock blue without one. */
     public static int tileFrame() {
         int c = Icons.progressColor();
