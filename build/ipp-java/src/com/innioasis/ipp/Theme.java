@@ -260,12 +260,9 @@ public final class Theme {
     private static final int ACCENT = 0xFF3CFFDE;
 
     /**
-     * The frame around the card under the cursor: the theme's own selected-row text colour, read
-     * back off a probe because {@code itemSetTextColor} answers with the theme's colour and
-     * ignores the one it is passed.
-     *
-     * Two screens draw that frame — the tiles of Photos and the wallpaper gallery — and both are
-     * a {@code CardView} whose background IS the frame, the picture sitting inside its padding.
+     * The frame around the card under the cursor — the tiles of Photos and of the wallpaper
+     * gallery, both a {@code CardView} whose background IS the frame. The colour is read back off
+     * a probe: {@code itemSetTextColor} answers with the theme's and ignores the one it is passed.
      */
     public static void focusCard(CardView card) {
         if (card == null) return;
@@ -279,12 +276,9 @@ public final class Theme {
     }
 
     /**
-     * A row of {@code item_setting.xml} — both its labels in the theme's colours, which is what
-     * the stock Settings screen does to the same layout and the wallpaper menu does not, leaving
-     * its three rows at the layout's white and invisible on a light theme.
-     *
-     * The flag is the one the row's background was just given, so the two cannot disagree; the
-     * colours are the Settings screen's own, accent on the cursor and white off it.
+     * A row of {@code item_setting.xml} — both labels in the theme's colours, accent on the
+     * cursor and white off it, which is what the stock Settings screen does to the same layout
+     * and the wallpaper menu did not. The flag is the one the row's background was just given.
      */
     public static void settingRow(ItemSettingBinding vb, boolean sel) {
         if (vb == null) return;

@@ -154,10 +154,10 @@ index a65785d4..88d40e93 100644
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
-index 3fff8427..3822945e 100644
+index 3fff8427..5228f386 100644
 --- a/build/src/res/layout/activity_blutooth.xml
 +++ b/build/src/res/layout/activity_blutooth.xml
-@@ -1,16 +1,28 @@
+@@ -1,16 +1,25 @@
  <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android">
@@ -170,19 +170,16 @@ index 3fff8427..3822945e 100644
          <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
      </LinearLayout>
 -    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/loading" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_loading" />
-+    <!-- ipp: the "Searching..." line, kept at no height at all. Stock shows and hides it as the
-+         discovery runs, and that is the only thing it is still for: Blue.searching reads its
-+         visibility and spins the circle in the "Other devices" caption instead. It cannot simply
-+         go: ActivityBlutoothBinding throws on a missing id. -->
++    <!-- ipp: the "Searching..." line at no height. Stock shows and hides it as the discovery
++         runs, and that is all it is still for: Blue.searching reads its visibility and spins the
++         circle in the "Other devices" caption. Removing it throws in ActivityBlutoothBinding. -->
 +    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/loading" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="0.0dip" android:text="@string/bl_loading" />
      <androidx.core.widget.NestedScrollView android:id="@id/layout_list" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:fillViewport="true">
          <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
 -            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bl_device_my" />
-+            <!-- ipp: the two captions are the words only. Blue.style wraps each in the banded
-+                 caption of the better-Y menu and the queue (a rule along the top edge, another
-+                 along the bottom, the strip between them washed) and hangs the spinner on the
-+                 second one. Size, colour and padding are set there, with the rules, because none
-+                 of them can be chosen without asking the theme first. -->
++            <!-- ipp: the captions are the words only. Blue.style wraps each in the banded caption
++                 of the better-Y menu and hangs the spinner on the second; size, colour and
++                 padding are set there, none of them being choosable without asking the theme. -->
 +            <TextView android:id="@id/title" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_device_my" />
              <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_my_device" android:layout_width="fill_parent" android:layout_height="wrap_content" />
 -            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bl_device_other" />
@@ -510,17 +507,15 @@ index 4b9d1219..cb731bb9 100644
 +    </LinearLayout>
 +</RelativeLayout>
 diff --git a/build/src/res/layout/item_blutooth.xml b/build/src/res/layout/item_blutooth.xml
-index 7bfa38ba..bef76363 100644
+index 7bfa38ba..5aaa58de 100644
 --- a/build/src/res/layout/item_blutooth.xml
 +++ b/build/src/res/layout/item_blutooth.xml
-@@ -1,6 +1,14 @@
+@@ -1,6 +1,12 @@
  <?xml version="1.0" encoding="utf-8"?>
 -<LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="50.0dip" android:paddingStart="30.0dip" android:paddingEnd="50.0dip"
-+<!-- ipp: the row inside a box carrying a hairline along its bottom edge, the boundary line the
-+     better-Y menu and the queue draw between two rows. The box keeps the row's own 50dip: with
-+     wrap_content a theme's selected background, which can be a large bitmap, would stretch it to
-+     the bitmap's own height. Blue.row colours the hairline and takes it away on the last row of a
-+     list, where the caption below draws that boundary with its own rule. -->
++<!-- ipp: the row inside a box carrying a hairline along its bottom edge; Blue.row colours it and
++     takes it away on a list's last row. The box keeps the row's own 50dip: with wrap_content a
++     theme's selected background, a large bitmap, would stretch it to the bitmap's height. -->
 +<LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="50.0dip"
    xmlns:android="http://schemas.android.com/apk/res/android">
 -    <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="20.0dip" />
@@ -20468,7 +20463,7 @@ index 71fe29d0..bc880be4 100644
 +    <string name="ipp_usb_off">Turn off USB storage</string>
 +</resources>
 diff --git a/build/src/smali/com/innioasis/fm/FMMainActivity.smali b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
-index b51419e1..70153296 100644
+index b51419e1..edbc2ae3 100644
 --- a/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 +++ b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 @@ -461,7 +461,8 @@
@@ -20496,8 +20491,8 @@ index b51419e1..70153296 100644
      move-result-object v0
  
 -    const v1, 0x7f110083
-+    # ipp: @string/fm_searching, "Searching..." (was: @string/dialog_fm_search_ing). The one
-+    # progress window that is not "Loading...": it is the message this window already carried.
++    # ipp: @string/fm_searching (was: @string/dialog_fm_search_ing) -- the one progress window
++    # that is not "Loading...".
 +    const v1, 0x7f1100b4
  
      .line 748
@@ -21915,7 +21910,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-index c4b75839..54451585 100644
+index c4b75839..7ff26c37 100644
 --- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 @@ -308,31 +308,40 @@
@@ -22034,12 +22029,11 @@ index c4b75839..54451585 100644
  
      .line 108
      invoke-virtual {p0, v2}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getString(I)Ljava/lang/String;
-@@ -470,6 +490,10 @@
+@@ -470,6 +490,9 @@
  
      move-result-object v0
  
-+    # ipp: the theme's dialog colours on it, and the "Loading..." under the title taken away --
-+    # the title is the window's one line and the circle says the rest.
++    # ipp: theme colours, no message, the title centred over the circle.
 +    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
 +
      .line 113
@@ -55593,7 +55587,7 @@ index 92290be6..83006c02 100644
  
      const/16 v3, 0x2f
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
-index 6a25d7cf..75e47876 100644
+index 6a25d7cf..fea64c36 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$myItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55607,19 +55601,18 @@ index 6a25d7cf..75e47876 100644
  
      move-result-object v1
  
-@@ -175,5 +177,10 @@
+@@ -175,5 +177,9 @@
      :goto_1
      invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
-+    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
-+    # p0/p3 go with them for the row's hairline: the last row of the list gives it up.
++    # ipp: both labels were @color/white in item_blutooth.xml and follow the cursor -- v1 is the
++    # flag the background above was given. p0/p3 are for the hairline: the last row gives it up.
 +    invoke-static {p1, v1, p0, p3}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;ZLcom/innioasis/y1/base/BaseBindingAdapter;I)V
 +
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
-index 552a1de3..b3c47061 100644
+index 552a1de3..2fabb6aa 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity$otherItem$2$1.smali
 @@ -98,7 +98,9 @@
@@ -55633,19 +55626,18 @@ index 552a1de3..b3c47061 100644
  
      move-result-object v1
  
-@@ -207,5 +209,10 @@
+@@ -207,5 +209,9 @@
      :goto_1
      invoke-virtual {p2, p1, v0, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp: both labels of the row were @color/white in item_blutooth.xml, and they follow the
-+    # cursor -- v1 is the very flag the background above was given, so the two cannot disagree.
-+    # p0/p3 go with them for the row's hairline: the last row of the list gives it up.
++    # ipp: both labels were @color/white in item_blutooth.xml and follow the cursor -- v1 is the
++    # flag the background above was given. p0/p3 are for the hairline: the last row gives it up.
 +    invoke-static {p1, v1, p0, p3}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;ZLcom/innioasis/y1/base/BaseBindingAdapter;I)V
 +
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b96..2b1559d5 100644
+index e9751b96..e5e704b4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 @@ -624,6 +624,10 @@
@@ -55669,15 +55661,13 @@ index e9751b96..2b1559d5 100644
      .line 287
      invoke-direct {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getOtherItem()Lcom/innioasis/y1/base/BaseBindingAdapter;
  
-@@ -734,7 +741,16 @@
+@@ -734,7 +741,14 @@
  
      const/4 v1, 0x0
  
 -    invoke-virtual {v0, v1}, Landroid/widget/LinearLayout;->setBackground(Landroid/graphics/drawable/Drawable;)V
-+    # ipp: the theme's unselected row, not a null background (was: layoutTitle.setBackground(null)).
-+    # Throwing the drawable away leaves the title row with no background at all, so it showed the
-+    # wallpaper through while the cursor was down in the found devices. The branch above, the same
-+    # row in the same state with the cursor one list higher, asks ThemeManager for it.
++    # ipp: the theme's unselected row, not a null background (was: layoutTitle.setBackground(null),
++    # which left the title row showing the wallpaper through). The branch above asks for the same.
 +    sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 +
 +    invoke-virtual {v2, v0, v1, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
@@ -55687,7 +55677,7 @@ index e9751b96..2b1559d5 100644
  
      const/4 v0, 0x2
  
-@@ -915,6 +931,10 @@
+@@ -915,6 +929,10 @@
  
      :cond_2
      :goto_0
@@ -55698,7 +55688,7 @@ index e9751b96..2b1559d5 100644
      return-void
  .end method
  
-@@ -1569,6 +1589,27 @@
+@@ -1569,6 +1587,27 @@
  
      invoke-virtual {v0, v2, v3, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -55719,14 +55709,14 @@ index e9751b96..2b1559d5 100644
 +    # is what the highlight above (v1 = 1) has just said.
 +    invoke-static {v2, v1}, Lcom/innioasis/ipp/Blue;->row(Landroid/view/View;Z)V
 +
-+    # ipp: the two captions into the banded shape the better-Y menu and the queue use, and the
-+    # spinner onto the second of them. Last, so the walk above does not undo their colour.
++    # ipp: the captions into their bands, the spinner onto the second. Last, or the walk above
++    # would undo their colour.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Blue;->style(Lcom/innioasis/y1/activity/BluetoothActivity;)V
 +
      return-void
  .end method
  
-@@ -1655,60 +1696,11 @@
+@@ -1655,60 +1694,11 @@
      check-cast v0, Landroid/bluetooth/BluetoothDevice;
  
      .line 246
@@ -61459,48 +61449,45 @@ index a5a04dcd..1bdae584 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
-index f2baa306..4d0d153f 100644
+index f2baa306..13f65c91 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
-@@ -261,6 +261,10 @@
+@@ -261,6 +261,9 @@
  
      invoke-virtual {p1, p2}, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
  
-+    # ipp: the same frame the tiles of Photos take -- the theme's own focused-row colour, with
-+    # the hardcode above left under it as the answer for a theme that names none.
++    # ipp: the frame the tiles of Photos take; the hardcode above stays as the themeless answer.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Theme;->focusCard(Landroidx/cardview/widget/CardView;)V
 +
      goto :goto_1
  
      .line 60
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..33c280d2 100644
+index 4a99a22f..05fdd551 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-@@ -144,7 +144,10 @@
+@@ -144,7 +144,9 @@
  
      move-result-object v0
  
 -    const v1, 0x7f110199
-+    # ipp: @string/loading, "Loading..." (was: @string/setting_wallpaper_getpicture). The window
-+    # shows this over a turning circle and nothing else; the message under it said "Searching..."
-+    # beside a title that already did.
++    # ipp: @string/loading (was: @string/setting_wallpaper_getpicture), as in every other
++    # progress window.
 +    const v1, 0x7f1100c9
  
      .line 82
      invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity;->getString(I)Ljava/lang/String;
-@@ -177,6 +180,10 @@
+@@ -177,6 +179,9 @@
  
      iput-object v0, p0, Lcom/innioasis/y1/activity/WallpaperActivity;->progressDialog:Landroid/app/ProgressDialog;
  
-+    # ipp: the theme's dialog colours on it, the message taken away and the title centred over
-+    # the circle. It is the app's own window, not the system's, so it can be dressed.
++    # ipp: theme colours, no message, the title centred over the circle.
 +    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
 +
      const/4 v1, 0x0
  
      if-nez v0, :cond_0
-@@ -299,32 +306,19 @@
+@@ -299,32 +304,19 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -61537,7 +61524,7 @@ index 4a99a22f..33c280d2 100644
  
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
  
-@@ -340,81 +334,50 @@
+@@ -340,81 +332,50 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -61632,7 +61619,7 @@ index 4a99a22f..33c280d2 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -425,9 +388,13 @@
+@@ -425,9 +386,13 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -61648,7 +61635,7 @@ index 4a99a22f..33c280d2 100644
  
      return-void
  .end method
-@@ -440,7 +407,9 @@
+@@ -440,7 +405,9 @@
  
      move-result-object v0
  
@@ -61659,34 +61646,32 @@ index 4a99a22f..33c280d2 100644
  
      .line 167
      invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity;->getString(I)Ljava/lang/String;
-@@ -473,6 +442,10 @@
+@@ -473,6 +440,9 @@
  
      iput-object v0, p0, Lcom/innioasis/y1/activity/WallpaperActivity;->progressDialog:Landroid/app/ProgressDialog;
  
-+    # ipp: the same treatment the window above it gets -- theme colours, the "Loading..." under
-+    # the title taken away, the title centred over the circle.
++    # ipp: theme colours, no message, the title centred over the circle.
 +    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
 +
      .line 174
      move-object v0, p0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
-index cdc50c54..1f4e0c34 100644
+index cdc50c54..29234a6c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
-@@ -220,6 +220,11 @@
+@@ -220,6 +220,10 @@
  
      invoke-virtual {p2, p3, v0, v2}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
-+    # ipp: both labels of the row were @color/white in item_setting.xml, and this screen is the
-+    # one user of that layout which never asked the theme about them -- v2 is the very flag the
-+    # background above was given.
++    # ipp: both labels were @color/white in item_setting.xml -- this screen is the one user of
++    # that layout that never asked the theme. v2 is the flag the background above was given.
 +    invoke-static {p1, v2}, Lcom/innioasis/ipp/Theme;->settingRow(Lcom/innioasis/y1/databinding/ItemSettingBinding;Z)V
 +
      .line 51
      iget-object p2, p0, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->this$0:Lcom/innioasis/y1/activity/WallpaperListActivity;
  
-@@ -248,6 +253,9 @@
+@@ -248,6 +252,9 @@
  
      invoke-virtual {p2, p3, v0, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -61740,16 +61725,15 @@ index 981585c3..d98e9a6e 100644
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..f124a114 100644
+index 5e61f77d..bd0dbda1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-@@ -1708,13 +1708,15 @@
+@@ -1708,13 +1708,14 @@
  
      move-result-object v2
  
 -    const v1, 0x7f110158
-+    # ipp: @string/loading (was: @string/photos_open_folder). Every progress window of the app
-+    # says the one word; the two this screen raises from its handler already said it.
++    # ipp: @string/loading (was: @string/photos_open_folder), as in every other progress window.
 +    const v1, 0x7f1100c9
  
      invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getString(I)Ljava/lang/String;
@@ -61761,7 +61745,7 @@ index 5e61f77d..f124a114 100644
  
      invoke-static {v3, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
-@@ -1779,7 +1781,7 @@
+@@ -1779,7 +1780,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -61770,7 +61754,7 @@ index 5e61f77d..f124a114 100644
  
      .line 704
      invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -1822,19 +1824,7 @@
+@@ -1822,19 +1823,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 709
@@ -61791,7 +61775,7 @@ index 5e61f77d..f124a114 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1845,16 +1835,22 @@
+@@ -1845,16 +1834,22 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61817,7 +61801,7 @@ index 5e61f77d..f124a114 100644
  
      .line 694
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
-@@ -1893,21 +1889,7 @@
+@@ -1893,21 +1888,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 696
@@ -61840,7 +61824,7 @@ index 5e61f77d..f124a114 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1918,9 +1900,15 @@
+@@ -1918,9 +1899,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61858,7 +61842,7 @@ index 5e61f77d..f124a114 100644
  
      :cond_0
      return-void
-@@ -2057,6 +2045,19 @@
+@@ -2057,6 +2044,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -61878,7 +61862,7 @@ index 5e61f77d..f124a114 100644
      .line 418
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2449,6 +2450,9 @@
+@@ -2449,6 +2449,9 @@
  
      invoke-virtual {v0, v2}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -67358,15 +67342,14 @@ index 0786d179..963cc118 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
-index 907229c3..d64ee3bc 100644
+index 907229c3..861e76ff 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
-@@ -313,6 +313,10 @@
+@@ -313,6 +313,9 @@
  
      invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
-+    # ipp: the strip in the menu's background colour. This dialog is a copy of PhotosDialog down
-+    # to the layouts it inflates, so it is dressed by the same code.
++    # ipp: the strip in the menu's background colour. A copy of PhotosDialog, dressed by its code.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Photos;->bar(Landroidx/recyclerview/widget/RecyclerView;)V
 +
      .line 68

@@ -78,69 +78,69 @@
 
 .method private static band(Landroid/widget/LinearLayout;Landroid/widget/TextView;Landroid/view/View;)V
   .registers 12
-  .line 289
+  .line 284
     if-eqz p0, :L3
     if-nez p1, :L0
     goto/16 :L3
   :L0
-  .line 290
+  .line 285
     invoke-virtual { p0, p1 }, Landroid/widget/LinearLayout;->indexOfChild(Landroid/view/View;)I
     move-result v0
-  .line 291
+  .line 286
     if-gez v0, :L1
     return-void
   :L1
-  .line 292
+  .line 287
     invoke-virtual { p0, v0 }, Landroid/widget/LinearLayout;->removeViewAt(I)V
-  .line 294
+  .line 289
     invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getContext()Landroid/content/Context;
     move-result-object v1
-  .line 295
+  .line 290
     invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getResources()Landroid/content/res/Resources;
     move-result-object v2
     invoke-virtual { v2 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v2
     iget v2, v2, Landroid/util/DisplayMetrics;->density:F
-  .line 296
+  .line 291
     const/high16 v3, 0x41500000
     invoke-virtual { p1, v3 }, Landroid/widget/TextView;->setTextSize(F)V
-  .line 299
+  .line 294
     sget-object v3, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
     const/4 v4, 1
     invoke-virtual { p1, v3, v4 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;I)V
-  .line 300
+  .line 295
     const/4 v3, 0
     invoke-virtual { p1, v3 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
-  .line 301
+  .line 296
     const/16 v5, 16
     invoke-virtual { p1, v5 }, Landroid/widget/TextView;->setGravity(I)V
-  .line 302
+  .line 297
     invoke-virtual { p1, v4 }, Landroid/widget/TextView;->setSingleLine(Z)V
-  .line 303
+  .line 298
     sget-object v6, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
     invoke-virtual { p1, v6 }, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
-  .line 304
+  .line 299
     invoke-virtual { p1, v3, v3, v3, v3 }, Landroid/widget/TextView;->setPadding(IIII)V
-  .line 305
+  .line 300
     sget-object v6, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-  .line 306
+  .line 301
     invoke-virtual { v1 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v7
     const v8, 2131100252
     invoke-virtual { v7, v8 }, Landroid/content/res/Resources;->getColor(I)I
     move-result v7
-  .line 305
+  .line 300
     invoke-virtual { v6, p1, v7, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 308
+  .line 303
     new-instance v6, Landroid/widget/LinearLayout;
     invoke-direct { v6, v1 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
-  .line 309
+  .line 304
     invoke-virtual { v6, v3 }, Landroid/widget/LinearLayout;->setOrientation(I)V
-  .line 310
+  .line 305
     invoke-virtual { v6, v5 }, Landroid/widget/LinearLayout;->setGravity(I)V
-  .line 311
+  .line 306
     invoke-virtual { v6, v3 }, Landroid/widget/LinearLayout;->setBaselineAligned(Z)V
-  .line 312
+  .line 307
     const/high16 v5, 0x41200000
     mul-float v5, v5, v2
     float-to-int v5, v5
@@ -149,28 +149,28 @@
     float-to-int v2, v2
     const/4 v7, 3
     invoke-virtual { v6, v5, v7, v2, v7 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
-  .line 313
+  .line 308
     new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
     const/4 v5, -2
     invoke-direct { v2, v3, v5 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-  .line 314
+  .line 309
     const/high16 v3, 0x3F800000
     iput v3, v2, Landroid/widget/LinearLayout$LayoutParams;->weight:F
-  .line 315
+  .line 310
     invoke-virtual { v6, p1, v2 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 316
+  .line 311
     if-eqz p2, :L2
     invoke-virtual { v6, p2 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;)V
   :L2
-  .line 318
+  .line 313
     invoke-static { v1 }, Lcom/innioasis/ipp/Blue;->itemRgb(Landroid/content/Context;)I
     move-result p1
-  .line 319
+  .line 314
     new-instance p2, Landroid/widget/LinearLayout;
     invoke-direct { p2, v1 }, Landroid/widget/LinearLayout;-><init>(Landroid/content/Context;)V
-  .line 320
+  .line 315
     invoke-virtual { p2, v4 }, Landroid/widget/LinearLayout;->setOrientation(I)V
-  .line 321
+  .line 316
     const/high16 v2, 0x59000000
     invoke-static { v1, p1, v2 }, Lcom/innioasis/ipp/Blue;->rule(Landroid/content/Context;II)Landroid/view/View;
     move-result-object v3
@@ -179,31 +179,31 @@
     const/4 v8, 2
     invoke-direct { v4, v7, v8 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
     invoke-virtual { p2, v3, v4 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 322
+  .line 317
     new-instance v3, Landroid/widget/LinearLayout$LayoutParams;
     invoke-direct { v3, v7, v5 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
     invoke-virtual { p2, v6, v3 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 323
+  .line 318
     invoke-static { v1, p1, v2 }, Lcom/innioasis/ipp/Blue;->rule(Landroid/content/Context;II)Landroid/view/View;
     move-result-object p1
     new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
     invoke-direct { v2, v7, v8 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
     invoke-virtual { p2, p1, v2 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 324
+  .line 319
     invoke-static { v1 }, Lcom/innioasis/ipp/Blue;->washRgb(Landroid/content/Context;)I
     move-result p1
     invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->bandAlpha()I
     move-result v1
     or-int/2addr p1, v1
     invoke-virtual { p2, p1 }, Landroid/widget/LinearLayout;->setBackgroundColor(I)V
-  .line 327
+  .line 322
     new-instance p1, Landroid/widget/LinearLayout$LayoutParams;
     invoke-direct { p1, v7, v5 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
     invoke-virtual { p0, p2, v0, p1 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;ILandroid/view/ViewGroup$LayoutParams;)V
-  .line 328
+  .line 323
     return-void
   :L3
-  .line 289
+  .line 284
     return-void
 .end method
 
@@ -230,21 +230,21 @@
 
 .method private static itemRgb(Landroid/content/Context;)I
   .registers 4
-  .line 457
+  .line 430
     new-instance v0, Landroid/widget/TextView;
     invoke-direct { v0, p0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
-  .line 458
+  .line 431
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-  .line 459
+  .line 432
     invoke-virtual { p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object p0
     const v2, 2131100252
     invoke-virtual { p0, v2 }, Landroid/content/res/Resources;->getColor(I)I
     move-result p0
-  .line 458
+  .line 431
     const/4 v2, 0
     invoke-virtual { v1, v0, p0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 460
+  .line 433
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result p0
     const v0, 16777215
@@ -344,46 +344,46 @@
 
 .method public static paint(Landroid/view/View;)V
   .registers 2
-  .line 486
+  .line 459
     const/4 v0, 0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Blue;->walk(Landroid/view/View;Z)V
-  .line 487
+  .line 460
     return-void
 .end method
 
 .method private static plain(Landroid/widget/LinearLayout;)Landroid/widget/TextView;
   .registers 4
-  .line 280
+  .line 275
     const/4 v0, 0
   :L0
     invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getChildCount()I
     move-result v1
     if-ge v0, v1, :L2
-  .line 281
+  .line 276
     invoke-virtual { p0, v0 }, Landroid/widget/LinearLayout;->getChildAt(I)Landroid/view/View;
     move-result-object v1
-  .line 282
+  .line 277
     instance-of v2, v1, Landroid/widget/TextView;
     if-eqz v2, :L1
     check-cast v1, Landroid/widget/TextView;
     return-object v1
   :L1
-  .line 280
+  .line 275
     add-int/lit8 v0, v0, 1
     goto :L0
   :L2
-  .line 284
+  .line 279
     const/4 p0, 0
     return-object p0
 .end method
 
 .method private static prefs()Landroid/content/SharedPreferences;
   .registers 3
-  .line 547
+  .line 518
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 548
+  .line 519
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
@@ -463,29 +463,29 @@
 
 .method public static row(Landroid/view/View;Z)V
   .registers 2
-  .line 499
+  .line 472
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Blue;->walk(Landroid/view/View;Z)V
-  .line 500
+  .line 473
     return-void
 .end method
 
 .method public static row(Landroid/view/View;ZLcom/innioasis/y1/base/BaseBindingAdapter;I)V
   .catchall { :L0 .. :L5 } :L6
   .registers 6
-  .line 513
+  .line 484
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Blue;->walk(Landroid/view/View;Z)V
   :L0
-  .line 515
+  .line 486
     move-object p1, p0
     check-cast p1, Landroid/view/ViewGroup;
     const/4 v0, 1
     invoke-virtual { p1, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object p1
-  .line 516
+  .line 487
     if-nez p1, :L1
     return-void
   :L1
-  .line 517
+  .line 488
     invoke-virtual { p0 }, Landroid/view/View;->getContext()Landroid/content/Context;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Blue;->itemRgb(Landroid/content/Context;)I
@@ -493,7 +493,7 @@
     const/high16 v1, 0x1F000000
     or-int/2addr p0, v1
     invoke-virtual { p1, p0 }, Landroid/view/View;->setBackgroundColor(I)V
-  .line 518
+  .line 489
     const/4 p0, 0
     if-eqz p2, :L2
     invoke-virtual { p2 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getDataListSize()I
@@ -504,31 +504,31 @@
   :L2
     const/4 v0, 0
   :L3
-  .line 519
+  .line 490
     if-eqz v0, :L4
     const/16 p0, 8
   :L4
     invoke-virtual { p1, p0 }, Landroid/view/View;->setVisibility(I)V
   :L5
-  .line 522
+  .line 493
     goto :L7
   :L6
-  .line 520
+  .line 491
     move-exception p0
   :L7
-  .line 523
+  .line 494
     return-void
 .end method
 
 .method private static rule(Landroid/content/Context;II)Landroid/view/View;
   .registers 4
-  .line 465
+  .line 438
     new-instance v0, Landroid/view/View;
     invoke-direct { v0, p0 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
-  .line 466
+  .line 439
     or-int p0, p1, p2
     invoke-virtual { v0, p0 }, Landroid/view/View;->setBackgroundColor(I)V
-  .line 467
+  .line 440
     return-object v0
 .end method
 
@@ -536,21 +536,21 @@
   .catchall { :L0 .. :L8 } :L9
   .registers 5
   :L0
-  .line 410
+  .line 390
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/BluetoothActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/databinding/ActivityBlutoothBinding;
-  .line 411
+  .line 391
     invoke-virtual { p0 }, Lcom/innioasis/y1/databinding/ActivityBlutoothBinding;->getRoot()Landroid/widget/LinearLayout;
     move-result-object v0
     const v1, 2131362560
     invoke-virtual { v0, v1 }, Landroid/widget/LinearLayout;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 412
+  .line 392
     if-nez v0, :L1
     return-void
   :L1
-  .line 413
+  .line 393
     iget-object p0, p0, Lcom/innioasis/y1/databinding/ActivityBlutoothBinding;->loading:Landroid/widget/TextView;
     invoke-virtual { p0 }, Landroid/widget/TextView;->getVisibility()I
     move-result p0
@@ -562,7 +562,7 @@
   :L2
     const/4 p0, 0
   :L3
-  .line 414
+  .line 394
     invoke-virtual { v0 }, Landroid/view/View;->getVisibility()I
     move-result v3
     if-nez v3, :L4
@@ -573,35 +573,35 @@
     if-ne p0, v1, :L6
     return-void
   :L6
-  .line 415
+  .line 395
     if-eqz p0, :L7
-  .line 416
+  .line 396
     invoke-virtual { v0, v2 }, Landroid/view/View;->setVisibility(I)V
-  .line 417
+  .line 397
     invoke-static { }, Lcom/innioasis/ipp/Blue;->turn()Landroid/view/animation/RotateAnimation;
     move-result-object p0
     invoke-virtual { v0, p0 }, Landroid/view/View;->startAnimation(Landroid/view/animation/Animation;)V
     goto :L8
   :L7
-  .line 419
+  .line 399
     invoke-virtual { v0 }, Landroid/view/View;->clearAnimation()V
-  .line 420
+  .line 400
     const/4 p0, 4
     invoke-virtual { v0, p0 }, Landroid/view/View;->setVisibility(I)V
   :L8
-  .line 424
+  .line 404
     goto :L10
   :L9
-  .line 422
+  .line 402
     move-exception p0
   :L10
-  .line 425
+  .line 405
     return-void
 .end method
 
 .method private static spinner(Landroid/content/Context;)Landroid/view/View;
   .registers 6
-  .line 341
+  .line 330
     invoke-virtual { p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
@@ -613,7 +613,7 @@
     mul-float v0, v0, v1
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
-  .line 342
+  .line 331
     new-instance v1, Lcom/innioasis/ipp/Blue$Spin;
     invoke-static { p0 }, Lcom/innioasis/ipp/Blue;->itemRgb(Landroid/content/Context;)I
     move-result v2
@@ -624,17 +624,17 @@
     invoke-static { v4, v3 }, Ljava/lang/Math;->max(FF)F
     move-result v3
     invoke-direct { v1, p0, v2, v3 }, Lcom/innioasis/ipp/Blue$Spin;-><init>(Landroid/content/Context;IF)V
-  .line 343
+  .line 332
     const p0, 2131362560
     invoke-virtual { v1, p0 }, Landroid/view/View;->setId(I)V
-  .line 347
+  .line 335
     const/4 p0, 4
     invoke-virtual { v1, p0 }, Landroid/view/View;->setVisibility(I)V
-  .line 348
+  .line 336
     new-instance p0, Landroid/widget/LinearLayout$LayoutParams;
     invoke-direct { p0, v0, v0 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
     invoke-virtual { v1, p0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 349
+  .line 337
     return-object v1
 .end method
 
@@ -642,35 +642,35 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 265
+  .line 260
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/BluetoothActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/databinding/ActivityBlutoothBinding;
-  .line 266
+  .line 261
     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityBlutoothBinding;->title:Landroid/widget/TextView;
-  .line 267
+  .line 262
     invoke-virtual { v0 }, Landroid/widget/TextView;->getParent()Landroid/view/ViewParent;
     move-result-object v1
     check-cast v1, Landroid/widget/LinearLayout;
-  .line 268
+  .line 263
     const/4 v2, 0
     invoke-static { v1, v0, v2 }, Lcom/innioasis/ipp/Blue;->band(Landroid/widget/LinearLayout;Landroid/widget/TextView;Landroid/view/View;)V
-  .line 271
+  .line 266
     invoke-static { v1 }, Lcom/innioasis/ipp/Blue;->plain(Landroid/widget/LinearLayout;)Landroid/widget/TextView;
     move-result-object v0
     invoke-static { p0 }, Lcom/innioasis/ipp/Blue;->spinner(Landroid/content/Context;)Landroid/view/View;
     move-result-object v2
     invoke-static { v1, v0, v2 }, Lcom/innioasis/ipp/Blue;->band(Landroid/widget/LinearLayout;Landroid/widget/TextView;Landroid/view/View;)V
-  .line 272
+  .line 267
     invoke-static { p0 }, Lcom/innioasis/ipp/Blue;->searching(Lcom/innioasis/y1/activity/BluetoothActivity;)V
   :L1
-  .line 275
+  .line 270
     goto :L3
   :L2
-  .line 273
+  .line 268
     move-exception p0
   :L3
-  .line 276
+  .line 271
     return-void
 .end method
 
@@ -708,7 +708,7 @@
 
 .method private static turn()Landroid/view/animation/RotateAnimation;
   .registers 8
-  .line 433
+  .line 409
     new-instance v7, Landroid/view/animation/RotateAnimation;
     const/4 v1, 0
     const/high16 v2, 0x43B40000
@@ -718,33 +718,33 @@
     const/high16 v6, 0x3F000000
     move-object v0, v7
     invoke-direct/range { v0 .. v6 }, Landroid/view/animation/RotateAnimation;-><init>(FFIFIF)V
-  .line 435
+  .line 411
     const-wide/16 v0, 1500
     invoke-virtual { v7, v0, v1 }, Landroid/view/animation/RotateAnimation;->setDuration(J)V
-  .line 436
+  .line 412
     new-instance v0, Landroid/view/animation/LinearInterpolator;
     invoke-direct { v0 }, Landroid/view/animation/LinearInterpolator;-><init>()V
     invoke-virtual { v7, v0 }, Landroid/view/animation/RotateAnimation;->setInterpolator(Landroid/view/animation/Interpolator;)V
-  .line 437
+  .line 413
     const/4 v0, -1
     invoke-virtual { v7, v0 }, Landroid/view/animation/RotateAnimation;->setRepeatCount(I)V
-  .line 438
+  .line 414
     return-object v7
 .end method
 
 .method private static walk(Landroid/view/View;Z)V
   .catchall { :L0 .. :L5 } :L7
   .registers 4
-  .line 527
+  .line 498
     if-nez p0, :L0
     return-void
   :L0
-  .line 528
+  .line 499
     instance-of v0, p0, Landroid/widget/TextView;
     if-eqz v0, :L3
-  .line 529
+  .line 500
     check-cast p0, Landroid/widget/TextView;
-  .line 530
+  .line 501
     if-eqz p1, :L1
     invoke-virtual { p0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
     move-result-object v0
@@ -755,18 +755,18 @@
   :L1
     const/4 v0, -1
   :L2
-  .line 531
+  .line 502
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v1, p0, v0, p1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 532
+  .line 503
     return-void
   :L3
-  .line 534
+  .line 505
     instance-of v0, p0, Landroid/view/ViewGroup;
     if-eqz v0, :L6
-  .line 535
+  .line 506
     check-cast p0, Landroid/view/ViewGroup;
-  .line 536
+  .line 507
     const/4 v0, 0
   :L4
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
@@ -779,27 +779,27 @@
     add-int/lit8 v0, v0, 1
     goto :L4
   :L6
-  .line 540
+  .line 511
     goto :L8
   :L7
-  .line 538
+  .line 509
     move-exception p0
   :L8
-  .line 541
+  .line 512
     return-void
 .end method
 
 .method private static washRgb(Landroid/content/Context;)I
   .registers 4
-  .line 443
+  .line 419
     new-instance v0, Landroid/widget/TextView;
     invoke-direct { v0, p0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
-  .line 444
+  .line 420
     sget-object p0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     const v1, -12779554
     const/4 v2, 1
     invoke-virtual { p0, v0, v1, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 445
+  .line 421
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result p0
     const v0, 16777215

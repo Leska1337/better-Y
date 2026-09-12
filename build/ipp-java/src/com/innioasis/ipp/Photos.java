@@ -323,9 +323,8 @@ public final class Photos {
      * written: a marginStart left unset would not matter, but one set elsewhere wins over leftMargin.
      */
     /**
-     * The words of one entry. Two screens raise this strip and each has a {@code SubItem} class of
-     * its own — the theme list's dialog is a copy of Photos' down to the layouts it inflates — and
-     * an item of the other kind measured as "not mine" would leave the widest at zero, which is
+     * The words of one entry. Two screens raise this strip and each has a {@code SubItem} of its
+     * own; an item of the other kind skipped as "not mine" leaves the widest at zero, which is
      * every entry drawn a dozen pixels wide.
      */
     private static String textOf(Object o) {

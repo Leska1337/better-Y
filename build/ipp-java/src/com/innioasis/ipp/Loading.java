@@ -88,17 +88,12 @@ public final class Loading {
     private static final int RULE_MAX_DIP = 4;
 
     /**
-     * The window the wallpaper gallery raises while it walks the card for pictures — a platform
-     * {@code ProgressDialog}, but the app's own and not the system's, so it can be dressed.
+     * The platform {@code ProgressDialog} the app raises in nine places — the app's own window,
+     * not the system's, so it can be dressed: title centred over the circle, message dropped (it
+     * repeated the title), colours the theme's dialog pair and only when the theme names them.
      *
-     * What it ends up showing is its title over a turning circle: the message under them is the
-     * word "Searching" beside a title that already said as much, and with it gone the title is the
-     * one line on the window and reads better centred. The colours are the theme's dialog pair,
-     * the same {@link #paint} gives the app's own progress window, and they are applied only when
-     * the theme names them — the platform's window is a look of its own, not a defect to fix.
-     *
-     * The views are found by walking the window rather than by id: the ids of an AlertDialog's
-     * parts are {@code com.android.internal.R.id.*} and not ours to name.
+     * The parts are found by WALKING the window: an AlertDialog's ids are
+     * {@code com.android.internal.R.id.*} and not ours to name.
      */
     public static void progress(ProgressDialog d) {
         if (d == null) return;
@@ -113,9 +108,8 @@ public final class Loading {
             boolean boxed = bg != PROBE;
             float density = decor.getResources().getDisplayMetrics().density;
             if (boxed) {
-                // The platform's background is a nine-patch and carries the window's padding; a
-                // plain colour has none, so it is read off the drawable being replaced and put
-                // back by hand, or the title ends up against the edge of the box.
+                // The window's padding lives in its nine-patch background: read it off the
+                // drawable being replaced and put it back, or the title touches the edge.
                 Rect pad = new Rect();
                 Drawable had = decor.getBackground();
                 if (had != null) had.getPadding(pad);
@@ -125,8 +119,8 @@ public final class Loading {
                 w.setBackgroundDrawable(box);
                 decor.setPadding(pad.left, pad.top, pad.right, pad.bottom);
             }
-            // From the decor's CHILDREN: the walk clears the background of every group it passes,
-            // and the decor's own is the box just given it.
+            // From the decor's CHILDREN: the walk clears every group's background, and the
+            // decor's own is the box just given it.
             int fg = tm.dialogTextColor(PROBE);
             int rule = (int) (RULE_MAX_DIP * density);
             if (decor instanceof ViewGroup) {
@@ -154,9 +148,8 @@ public final class Loading {
             return;
         }
         if (v instanceof ProgressBar) {
-            // With the message gone the circle is alone on its line, and that line was laid out
-            // to hold the two side by side: it stays where the message left it unless both the
-            // row and the circle's own place in it are told to centre.
+            // The line was laid out to hold circle and message side by side, so with the
+            // message gone the circle stays where it left it unless the row is told to centre.
             centre(v);
             if (themed) {
                 Drawable dr = ((ProgressBar) v).getIndeterminateDrawable();
@@ -165,19 +158,17 @@ public final class Loading {
             return;
         }
         if (v instanceof ViewGroup) {
-            // Each panel of an AlertDialog carries a nine-patch of its own — the white box that
-            // showed up INSIDE the one this window was just given. Only the window's background
-            // is wanted, so the panels give theirs up. Their padding is not lost with it: a view
-            // keeps the padding a background gave it when that background goes.
+            // Each panel of an AlertDialog carries a nine-patch of its own — a white box INSIDE
+            // the one the window was just given, so the panels give theirs up. Padding survives:
+            // a view keeps what a background gave it when that background goes.
             if (boxed) v.setBackgroundDrawable(null);
             ViewGroup g = (ViewGroup) v;
             for (int i = 0; i < g.getChildCount(); i++) dress(g.getChildAt(i), color, ruleMax, boxed);
             return;
         }
         if (themed) {
-            // The rule under the title, which the platform draws in its own accent. Its height is
-            // read from the layout params rather than from the view: this runs as the window is
-            // shown, before anything has been measured.
+            // The rule under the title, in the platform's own accent. Height from the layout
+            // params, not the view: this runs before the window has been measured.
             ViewGroup.LayoutParams lp = v.getLayoutParams();
             if (lp != null && lp.height > 0 && lp.height <= ruleMax) v.setBackgroundColor(color);
         }

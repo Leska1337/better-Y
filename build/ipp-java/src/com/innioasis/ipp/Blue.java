@@ -251,14 +251,9 @@ public final class Blue {
     private static final float SPIN_RING = 0.16f;
 
     /**
-     * The two captions in the banded shape of the better-Y menu's group titles, which the queue
-     * screen draws as well — a rule along the top edge, another along the bottom, the strip between
-     * them washed, down to the alphas {@link IppActivity} defines for all three.
-     *
-     * They are built here rather than in the layout because not one of their colours can be
-     * chosen: the rules, the wash and the words are all read back off the theme (see
-     * {@link #itemRgb}), and a caption written in XML would have to be found again to be painted.
-     * Called at the end of {@code initView}, after {@link #paint} has had the screen.
+     * The two captions in the banded shape of the better-Y menu's group titles — built here and
+     * not in the layout because not one of their colours can be chosen, all three are read back
+     * off the theme. Called at the END of {@code initView}: {@link #paint} would undo the words.
      */
     public static void style(BluetoothActivity a) {
         try {
@@ -266,8 +261,8 @@ public final class Blue {
             TextView mine = vb.title;
             LinearLayout col = (LinearLayout) mine.getParent();
             band(col, mine, null);
-            // Once the first is banded it is no longer a child of the column, so what is left
-            // there is the other caption — which carries no id of its own to be asked for.
+            // The first is inside its band by now, so the column's remaining TextView is the
+            // other caption — which carries no id of its own to be asked for.
             band(col, plain(col), spinner(a));
             searching(a);
         } catch (Throwable t) {
@@ -329,31 +324,23 @@ public final class Blue {
 
     /**
      * The circle that turns while the stack is looking for devices, at the right-hand end of the
-     * "Other devices" caption — which is where the answer to "is it still searching?" belongs, the
-     * heading of the list the devices are about to appear in.
-     *
-     * It is DRAWN rather than taken from {@code loading.png}, which is what the progress window
-     * and the USB screen show: at the size of a caption's letters that picture's ring comes out
-     * about a pixel and a half wide, and a ring cannot be thickened without changing the circle.
-     * The turn is still the same {@code R.anim.loading}, so the two look alike where it matters.
+     * "Other devices" caption. Drawn rather than scaled from {@code loading.png} (see {@link Spin}).
      */
     private static View spinner(Context c) {
         int n = Math.round(CAPTION_SP * c.getResources().getDisplayMetrics().scaledDensity * SPIN);
         View v = new Spin(c, itemRgb(c), Math.max(2.0f, n * SPIN_RING));
         v.setId(R.id.ipp_bl_spin);
-        // INVISIBLE, not GONE: the circle is taller than the caption's letters, so a caption that
-        // loses it is a caption of a different height, and the list below would step up and down
-        // as the discovery starts and stops.
+        // INVISIBLE, not GONE: the circle is taller than the caption's letters, and a caption of
+        // a different height steps the whole list up and down as the discovery starts and stops.
         v.setVisibility(View.INVISIBLE);
         v.setLayoutParams(new LinearLayout.LayoutParams(n, n));
         return v;
     }
 
     /**
-     * A ring that fades from the theme's colour to nothing round the circle — {@code loading.png}
-     * drawn instead of scaled, so its width is a number rather than whatever the picture has left
-     * at this size. The gap in the arc is what makes the turn visible at all: a closed ring of one
-     * even colour looks still however fast it spins.
+     * A ring fading from the theme's colour to nothing round the circle, with a gap: a closed ring
+     * of one even colour looks still however fast it spins. Drawn instead of {@code loading.png}
+     * because at this size that picture's ring is a pixel and a half and cannot be thickened.
      */
     private static final class Spin extends View {
         /** How much of the circle the arc covers; the rest is the gap that shows it turning. */
@@ -376,19 +363,14 @@ public final class Blue {
         protected void onSizeChanged(int w, int h, int ow, int oh) {
             float half = ring / 2.0f;
             box.set(half, half, w - half, h - half);
-            // The fade has to END where the arc does, or the tail is still half opaque when it
-            // meets the gap and the two ends read as one line crossing itself. A sweep runs
-            // clockwise from three o'clock over the full turn whatever is drawn of it, so the
-            // stops are placed by hand: full at the head, gone by the arc's last degree.
+            // The stops are placed by hand because a sweep is spread over the FULL turn whatever
+            // is drawn of it: with the default two the tail meets the gap half opaque, and the
+            // two ends read as one line crossing itself.
             paint.setShader(new SweepGradient(w / 2.0f, h / 2.0f,
                     new int[] { 0xFF000000 | rgb, rgb }, new float[] { 0.0f, SWEEP / 360.0f }));
         }
 
-        /**
-         * Drawn mirrored, because a sweep gradient only ever runs clockwise: flipping the canvas
-         * is what puts the tail on the other side of the head, and with the view turning clockwise
-         * ({@link #turn}) that is the head at the front.
-         */
+        /** Mirrored: a sweep only runs clockwise, so flipping is the only way to lead with the head. */
         protected void onDraw(Canvas canvas) {
             int save = canvas.save();
             canvas.scale(-1.0f, 1.0f, getWidth() / 2.0f, getHeight() / 2.0f);
@@ -398,12 +380,10 @@ public final class Blue {
     }
 
     /**
-     * Start or stop the circle, from the end of stock's {@code showState}.
-     *
-     * What it follows is the "Searching..." line stock shows there and this screen draws at no
-     * height ({@code activity_blutooth.xml}): three branches set that line's visibility, between
-     * them covering every way the discovery can start or end, and reading it back is one place
-     * where working the state out again would be three.
+     * Start or stop the circle, from the end of stock's {@code showState}. What it follows is the
+     * "Searching..." line, drawn at no height ({@code activity_blutooth.xml}): three branches
+     * there set its visibility, and reading it back is one place where deciding again would be
+     * three.
      */
     public static void searching(BluetoothActivity a) {
         try {
@@ -424,11 +404,7 @@ public final class Blue {
         }
     }
 
-    /**
-     * One turn of the circle, clockwise: the same 1.5 s at a steady speed as {@code R.anim.loading},
-     * which the progress window and the USB screen use — that one turns the other way, and an
-     * animation is three lines to write rather than a second resource to keep in step with it.
-     */
+    /** One turn, clockwise: {@code R.anim.loading}'s 1.5 s, which turns the other way and is shared. */
     private static RotateAnimation turn() {
         RotateAnimation r = new RotateAnimation(0.0f, 360.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -446,12 +422,9 @@ public final class Blue {
     }
 
     /**
-     * The theme's ordinary item colour — the rules, the hairlines and the spinner.
-     *
-     * Read off a scratch TextView rather than chosen here: {@code itemSetTextColor} answers with
-     * the theme's own colour and ignores the one it is passed, so painting and looking is the only
-     * way to ask. ACCENT above is passed for the same reason {@link #walk} passes a colour at all
-     * — it is what a focused row shows when the theme names none.
+     * The theme's ordinary item colour — the rules, the hairlines and the spinner. Read off a
+     * scratch TextView because {@code itemSetTextColor} answers with the theme's own colour and
+     * ignores the one it is passed, so painting and looking is the only way to ask.
      */
     private static int itemRgb(Context c) {
         TextView probe = new TextView(c);
@@ -503,11 +476,9 @@ public final class Blue {
      * A DEVICE row: the same text, plus the hairline along its bottom edge
      * ({@code item_blutooth.xml}'s last child) in the theme's colour.
      *
-     * The last row of a list gives its hairline up, the way the menu's and the queue's rows do
-     * where a caption follows them: the "Other devices" band under it draws that boundary with its
-     * own rule, and the two together would be a line of a thickness found nowhere else on the
-     * screen. The adapter is asked for the count rather than the Activity: {@code getMyItem} is
-     * private, and this is the adapter binding the row anyway.
+     * The LAST row of a list gives its hairline up: the band under it draws that boundary with a
+     * rule of its own, and the two together are a thickness found nowhere else on the screen.
+     * The count comes from the adapter because {@code getMyItem} is private.
      */
     public static void row(View v, boolean sel, BaseBindingAdapter ad, int pos) {
         walk(v, sel);

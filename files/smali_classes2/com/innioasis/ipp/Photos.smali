@@ -105,41 +105,41 @@
 
 .method private static fit(Ljava/lang/Object;Landroid/view/View;Landroid/widget/TextView;)V
   .registers 7
-  .line 338
+  .line 337
     instance-of v0, p0, Lcom/chad/library/adapter/base/BaseQuickAdapter;
     if-nez v0, :L0
     return-void
   :L0
-  .line 339
+  .line 338
     check-cast p0, Lcom/chad/library/adapter/base/BaseQuickAdapter;
     invoke-virtual { p0 }, Lcom/chad/library/adapter/base/BaseQuickAdapter;->getData()Ljava/util/List;
     move-result-object p0
-  .line 340
+  .line 339
     if-eqz p0, :L8
     invoke-interface { p0 }, Ljava/util/List;->isEmpty()Z
     move-result v0
     if-eqz v0, :L1
     goto :L8
   :L1
-  .line 341
+  .line 340
     nop
-  .line 342
+  .line 341
     const/4 v0, 0
     const/4 v1, 0
   :L2
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L5
-  .line 343
+  .line 342
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Photos;->textOf(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object v2
-  .line 344
+  .line 343
     if-nez v2, :L3
     goto :L4
   :L3
-  .line 345
+  .line 344
     invoke-virtual { p2 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
     invoke-virtual { v3, v2 }, Landroid/text/TextPaint;->measureText(Ljava/lang/String;)F
@@ -147,11 +147,11 @@
     invoke-static { v0, v2 }, Ljava/lang/Math;->max(FF)F
     move-result v0
   :L4
-  .line 342
+  .line 341
     add-int/lit8 v1, v1, 1
     goto :L2
   :L5
-  .line 347
+  .line 346
     invoke-virtual { p1 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object p2
     invoke-virtual { p2 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
@@ -160,7 +160,7 @@
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result p0
     div-int/2addr p2, p0
-  .line 348
+  .line 347
     float-to-double v0, v0
     invoke-static { v0, v1 }, Ljava/lang/Math;->ceil(D)D
     move-result-wide v0
@@ -168,38 +168,38 @@
     add-int/lit8 p0, p0, 12
     invoke-static { p2, p0 }, Ljava/lang/Math;->min(II)I
     move-result p0
-  .line 349
+  .line 348
     invoke-virtual { p1 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 350
+  .line 349
     instance-of v1, v0, Landroid/view/ViewGroup$MarginLayoutParams;
     if-nez v1, :L6
     return-void
   :L6
-  .line 351
+  .line 350
     check-cast v0, Landroid/view/ViewGroup$MarginLayoutParams;
-  .line 352
+  .line 351
     sub-int/2addr p2, p0
     div-int/lit8 p2, p2, 2
-  .line 353
+  .line 352
     iget v1, v0, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
     if-ne v1, p0, :L7
     iget v1, v0, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
     if-ne v1, p2, :L7
     return-void
   :L7
-  .line 354
+  .line 353
     iput p0, v0, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
-  .line 355
+  .line 354
     iput p2, v0, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
-  .line 356
+  .line 355
     invoke-virtual { v0, p2 }, Landroid/view/ViewGroup$MarginLayoutParams;->setMarginStart(I)V
-  .line 357
+  .line 356
     invoke-virtual { p1, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 358
+  .line 357
     return-void
   :L8
-  .line 340
+  .line 339
     return-void
 .end method
 
@@ -663,7 +663,7 @@
 
 .method private static textOf(Ljava/lang/Object;)Ljava/lang/String;
   .registers 2
-  .line 332
+  .line 331
     instance-of v0, p0, Lcom/innioasis/y1/utils/PhotosDialog$SubItem;
     if-eqz v0, :L0
     check-cast p0, Lcom/innioasis/y1/utils/PhotosDialog$SubItem;
@@ -671,7 +671,7 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 333
+  .line 332
     instance-of v0, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog$SubItem;
     if-eqz v0, :L1
     check-cast p0, Lcom/innioasis/y1/view/ThemeOptionsDialog$SubItem;
@@ -679,7 +679,7 @@
     move-result-object p0
     return-object p0
   :L1
-  .line 334
+  .line 333
     const/4 p0, 0
     return-object p0
 .end method
