@@ -24,6 +24,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.utils.PhotosDialog;
+import com.innioasis.y1.view.ThemeOptionsDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -175,8 +176,7 @@ public final class Photos {
     /** Share of the menu's colour the strip keeps when the menu's own rows are see-through. */
     private static final float SEE_THROUGH = 0.9f;
 
-    /** The rule along the strip's top edge: the list text's colour at this share, this thick. */
-    private static final float RULE_ALPHA = 0.85f;
+    /** The rule along the strip's top edge: the list text's own colour, this thick. */
     private static final int RULE_PX = 2;
 
     private static void paintBar(RecyclerView rv) {
@@ -185,8 +185,7 @@ public final class Photos {
         if (o instanceof Rule) {
             TextView probe = new TextView(rv.getContext());
             ThemeManager.INSTANCE.itemSetTextColor(probe, WHITE, false);
-            int t = probe.getCurrentTextColor();
-            ((Rule) o).paint.setColor(((int) (Color.alpha(t) * RULE_ALPHA) << 24) | (t & 0x00FFFFFF));
+            ((Rule) o).paint.setColor(probe.getCurrentTextColor());
             rv.invalidate();
         }
     }
@@ -323,15 +322,27 @@ public final class Photos {
      * The entry narrowed to the widest label and centred in its column. Both margin fields are
      * written: a marginStart left unset would not matter, but one set elsewhere wins over leftMargin.
      */
+    /**
+     * The words of one entry. Two screens raise this strip and each has a {@code SubItem} class of
+     * its own — the theme list's dialog is a copy of Photos' down to the layouts it inflates — and
+     * an item of the other kind measured as "not mine" would leave the widest at zero, which is
+     * every entry drawn a dozen pixels wide.
+     */
+    private static String textOf(Object o) {
+        if (o instanceof PhotosDialog.SubItem) return ((PhotosDialog.SubItem) o).getText();
+        if (o instanceof ThemeOptionsDialog.SubItem) return ((ThemeOptionsDialog.SubItem) o).getText();
+        return null;
+    }
+
     private static void fit(Object adapter, View cell, TextView label) {
         if (!(adapter instanceof BaseQuickAdapter)) return;
         List items = ((BaseQuickAdapter) adapter).getData();
         if (items == null || items.isEmpty()) return;
         float widest = 0;
         for (int i = 0; i < items.size(); i++) {
-            Object o = items.get(i);
-            if (!(o instanceof PhotosDialog.SubItem)) continue;
-            widest = Math.max(widest, label.getPaint().measureText(((PhotosDialog.SubItem) o).getText()));
+            String s = textOf(items.get(i));
+            if (s == null) continue;
+            widest = Math.max(widest, label.getPaint().measureText(s));
         }
         int col = cell.getResources().getDisplayMetrics().widthPixels / items.size();
         int w = Math.min(col, (int) Math.ceil(widest) + 2 * PAD);

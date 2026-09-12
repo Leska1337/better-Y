@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..86d7f942 100644
+index 01b1f730..481b3490 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..86d7f942 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000112
++  versionCode: 10000114
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -849,7 +849,7 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..580f8584 100644
+index 50446006..31494efd 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,489 @@
@@ -1655,7 +1655,7 @@ index 50446006..580f8584 100644
 +    <string name="sunday">Sonntag</string>
 +    <string name="sure_to_rename">Umbenennen bestätigen?</string>
 +    <string name="the_song_deleted">Das Lied wurde entfernt oder die Speicherkarte ist nicht bereit</string>
-+    <string name="theme_as_theme">Als Thema festlegen</string>
++    <string name="theme_as_theme">Festlegen</string>
 +    <string name="theme_as_theme_tips">%s als Thema festlegen?</string>
 +    <string name="theme_default_theme">HoloPebble</string>
 +    <string name="theme_default_theme_renamed_tips">Das Standardthema kann nicht umbenannt werden!</string>
@@ -2078,7 +2078,7 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..7f585e9d 100644
+index 6f5a555d..ce3dea88 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
 @@ -1,417 +1,489 @@
@@ -2884,7 +2884,7 @@ index 6f5a555d..7f585e9d 100644
 +    <string name="sunday">Domingo</string>
 +    <string name="sure_to_rename">¿Renombrar?</string>
 +    <string name="the_song_deleted">Canción eliminada o tarjeta no disponible</string>
-+    <string name="theme_as_theme">Establecer como tema</string>
++    <string name="theme_as_theme">Establecer</string>
 +    <string name="theme_as_theme_tips">¿Establecer %s como tema?</string>
 +    <string name="theme_default_theme">Tema predeterminado</string>
 +    <string name="theme_default_theme_renamed_tips">No se puede renombrar el tema predeterminado</string>
@@ -2989,7 +2989,7 @@ index 6f5a555d..7f585e9d 100644
 +    <string name="ipp_usb_off">Desactivar almacenamiento USB</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..d9daeb31 100644
+index c242cee4..410a91db 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,489 @@
@@ -3795,7 +3795,7 @@ index c242cee4..d9daeb31 100644
 +    <string name="sunday">Dimanche</string>
 +    <string name="sure_to_rename">Confirmer renommer?</string>
 +    <string name="the_song_deleted">"La chanson a été supprimée ou la carte mémoire n'est pas prête"</string>
-+    <string name="theme_as_theme">Définir comme thème</string>
++    <string name="theme_as_theme">Définir</string>
 +    <string name="theme_as_theme_tips">Définir %s comme thème ?</string>
 +    <string name="theme_default_theme">HoloPebble</string>
 +    <string name="theme_default_theme_renamed_tips">Le thème par défaut ne peut pas être renommé !</string>
@@ -3900,7 +3900,7 @@ index c242cee4..d9daeb31 100644
 +    <string name="ipp_usb_off">Désactiver la mémoire de stockage USB</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..1d38feaf 100644
+index d82ac6bb..c9e8f643 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
 @@ -1,417 +1,489 @@
@@ -4706,7 +4706,7 @@ index d82ac6bb..1d38feaf 100644
 +    <string name="sunday">יום ראשון</string>
 +    <string name="sure_to_rename">לשנות שם?</string>
 +    <string name="the_song_deleted">השיר נמחק או הכרטיס לא מוכן</string>
-+    <string name="theme_as_theme">הגדר כערכת נושא</string>
++    <string name="theme_as_theme">הגדר</string>
 +    <string name="theme_as_theme_tips">להגדיר %s כערכת נושא?</string>
 +    <string name="theme_default_theme">ברירת מחדל</string>
 +    <string name="theme_default_theme_renamed_tips">לא ניתן לשנות שם לערכת ברירת מחדל</string>
@@ -5556,7 +5556,7 @@ index f71d0cb1..ba421ac1 100644
 +    <string name="ipp_usb_off">USB 저장소 사용 안함</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
-index d79cf0f6..89491c4d 100644
+index d79cf0f6..f925eee4 100644
 --- a/build/src/res/values-ru-rRU/strings.xml
 +++ b/build/src/res/values-ru-rRU/strings.xml
 @@ -22,20 +22,20 @@
@@ -5670,7 +5670,7 @@ index d79cf0f6..89491c4d 100644
      <string name="main_fm">FM-радио</string>
      <string name="main_music">Музыка</string>
      <string name="main_now">Сейчас играет</string>
-@@ -186,12 +186,12 @@
+@@ -186,15 +186,15 @@
      <string name="name_a_to_z">А-Я</string>
      <string name="name_z_to_a">Я-А</string>
      <string name="new_playlist">Новый плейлист</string>
@@ -5685,7 +5685,11 @@ index d79cf0f6..89491c4d 100644
 +    <string name="none">Ничего</string>
      <string name="nov">Ноя</string>
      <string name="oct">Окт</string>
-     <string name="off">выкл</string>
+-    <string name="off">выкл</string>
++    <string name="off">Выкл</string>
+     <string name="on">вкл</string>
+     <string name="order">А-Я</string>
+     <string name="page_about">О системе</string>
 @@ -208,16 +208,16 @@
      <string name="page_language">Язык</string>
      <string name="page_time">Дата и время</string>
@@ -5773,7 +5777,7 @@ index d79cf0f6..89491c4d 100644
 -    <string name="theme_as_theme">Установить темой</string>
 -    <string name="theme_as_theme_tips">Установить %s темой?</string>
 +    <string name="the_song_deleted">Песня удалена или SD-карта недоступна</string>
-+    <string name="theme_as_theme">Установить тему</string>
++    <string name="theme_as_theme">Установить</string>
 +    <string name="theme_as_theme_tips">Установить тему %s?</string>
      <string name="theme_default_theme">Тема по умолчанию</string>
      <string name="theme_default_theme_renamed_tips">Тему по умолчанию нельзя переименовать</string>
@@ -19439,7 +19443,7 @@ index 803c1e7a..dbfb47bd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..7c8aac3c 100644
+index 71fe29d0..bc880be4 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20388,7 +20392,7 @@ index 71fe29d0..7c8aac3c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev112</string>
++    <string name="ipp_version">v1.0.0-dev114</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -67314,6 +67318,60 @@ index 5308bc70..c317d05f 100644
 +
      return-void
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog$subAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog$subAdapter$2$1.smali
+index 0786d179..963cc118 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog$subAdapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog$subAdapter$2$1.smali
+@@ -169,6 +169,11 @@
+ 
+     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setTextColor(I)V
+ 
++    # ipp: the entry under the cursor on the menu's highlight, in its focused colours.
++    const/4 v0, 0x1
++
++    invoke-static {p0, p3, p1, v0}, Lcom/innioasis/ipp/Photos;->menuItem(Ljava/lang/Object;Landroid/widget/ImageView;Landroid/widget/TextView;Z)V
++
+     goto :goto_0
+ 
+     .line 54
+@@ -190,14 +195,20 @@
+ 
+     move-result-object p2
+ 
+-    const p3, 0x7f06026b
++    # ipp: v0, not stock's p3 -- p3 still holds the icon, which Photos.menuItem below needs.
++    const v0, 0x7f06026b
+ 
+-    invoke-virtual {p2, p3}, Landroid/content/res/Resources;->getColor(I)I
++    invoke-virtual {p2, v0}, Landroid/content/res/Resources;->getColor(I)I
+ 
+     move-result p2
+ 
+     invoke-virtual {p1, p2}, Landroid/widget/TextView;->setTextColor(I)V
+ 
++    # ipp: any other entry in the menu's colours.
++    const/4 v0, 0x0
++
++    invoke-static {p0, p3, p1, v0}, Lcom/innioasis/ipp/Photos;->menuItem(Ljava/lang/Object;Landroid/widget/ImageView;Landroid/widget/TextView;Z)V
++
+     :goto_0
+     return-void
+ .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
+index 907229c3..d64ee3bc 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
+@@ -313,6 +313,10 @@
+ 
+     invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
++    # ipp: the strip in the menu's background colour. This dialog is a copy of PhotosDialog down
++    # to the layouts it inflates, so it is dressed by the same code.
++    invoke-static {p1}, Lcom/innioasis/ipp/Photos;->bar(Landroidx/recyclerview/widget/RecyclerView;)V
++
+     .line 68
+     invoke-direct {p0}, Lcom/innioasis/y1/view/ThemeOptionsDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 index a8dc40f3..328f30f2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
