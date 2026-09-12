@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c0547a60 100644
+index 01b1f730..86d7f942 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..c0547a60 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000106
++  versionCode: 10000112
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19439,7 +19439,7 @@ index 803c1e7a..dbfb47bd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..bb607a4a 100644
+index 71fe29d0..7c8aac3c 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20388,7 +20388,7 @@ index 71fe29d0..bb607a4a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev106</string>
++    <string name="ipp_version">v1.0.0-dev112</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20463,6 +20463,51 @@ index 71fe29d0..bb607a4a 100644
 +    <string name="ipp_usb_in_use_message">Before turning off USB storage, eject the player on the computer.</string>
 +    <string name="ipp_usb_off">Turn off USB storage</string>
 +</resources>
+diff --git a/build/src/smali/com/innioasis/fm/FMMainActivity.smali b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
+index b51419e1..70153296 100644
+--- a/build/src/smali/com/innioasis/fm/FMMainActivity.smali
++++ b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
+@@ -461,7 +461,8 @@
+ 
+     move-result-object v0
+ 
+-    const v1, 0x7f110086
++    # ipp: @string/loading (was: @string/dialog_open_fm), as in every other progress window.
++    const v1, 0x7f1100c9
+ 
+     invoke-virtual {p0, v1}, Lcom/innioasis/fm/FMMainActivity;->getString(I)Ljava/lang/String;
+ 
+@@ -488,6 +489,9 @@
+ 
+     iput-object v0, p0, Lcom/innioasis/fm/FMMainActivity;->progressDialog:Landroid/app/ProgressDialog;
+ 
++    # ipp: theme colours, no message, the title centred over the circle.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     if-eqz v0, :cond_0
+ 
+     .line 586
+@@ -1902,7 +1906,9 @@
+ 
+     move-result-object v0
+ 
+-    const v1, 0x7f110083
++    # ipp: @string/fm_searching, "Searching..." (was: @string/dialog_fm_search_ing). The one
++    # progress window that is not "Loading...": it is the message this window already carried.
++    const v1, 0x7f1100b4
+ 
+     .line 748
+     invoke-virtual {p0, v1}, Lcom/innioasis/fm/FMMainActivity;->getString(I)Ljava/lang/String;
+@@ -1931,6 +1937,9 @@
+ 
+     iput-object v0, p0, Lcom/innioasis/fm/FMMainActivity;->progressDialog:Landroid/app/ProgressDialog;
+ 
++    # ipp: theme colours, no message, the title centred over the circle.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     if-eqz v0, :cond_0
+ 
+     .line 753
 diff --git a/build/src/smali/com/innioasis/music/util/Other.smali b/build/src/smali/com/innioasis/music/util/Other.smali
 index e5eeb74a..73445d31 100644
 --- a/build/src/smali/com/innioasis/music/util/Other.smali
@@ -21866,7 +21911,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-index c4b75839..1e843e54 100644
+index c4b75839..54451585 100644
 --- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 @@ -308,31 +308,40 @@
@@ -21975,6 +22020,27 @@ index c4b75839..1e843e54 100644
  
      .line 83
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
+@@ -445,7 +464,8 @@
+ 
+     move-result-object v0
+ 
+-    const v2, 0x7f11019c
++    # ipp: @string/loading (was: @string/setting_wallpaper_set), as in every other progress window.
++    const v2, 0x7f1100c9
+ 
+     .line 108
+     invoke-virtual {p0, v2}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getString(I)Ljava/lang/String;
+@@ -470,6 +490,10 @@
+ 
+     move-result-object v0
+ 
++    # ipp: the theme's dialog colours on it, and the "Loading..." under the title taken away --
++    # the title is the window's one line and the circle says the rest.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     .line 113
+     sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+ 
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 index 060ed6d1..d44417ce 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
@@ -60314,7 +60380,7 @@ index 0bfdbeec..8bf681b2 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..7d44cf56 100644
+index a9542df1..086ef39b 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -60402,7 +60468,27 @@ index a9542df1..7d44cf56 100644
      .line 81
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getResources()Landroid/content/res/Resources;
  
-@@ -2566,6 +2585,18 @@
+@@ -2069,7 +2088,8 @@
+ 
+     move-result-object v1
+ 
+-    const v3, 0x7f11019c
++    # ipp: @string/loading (was: @string/setting_wallpaper_set), as in every other progress window.
++    const v3, 0x7f1100c9
+ 
+     invoke-virtual {v1, v3}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+ 
+@@ -2095,6 +2115,9 @@
+ 
+     move-result-object v0
+ 
++    # ipp: the same "Set wallpaper" window, raised here while the wallpaper is still being read.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     if-eqz v0, :cond_1
+ 
+     .line 95
+@@ -2566,6 +2589,18 @@
      .line 212
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onResume()V
  
@@ -60422,7 +60508,7 @@ index a9542df1..7d44cf56 100644
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
-index f2075450..3136dc2e 100644
+index f2075450..9b2da894 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 @@ -104,14 +104,30 @@
@@ -60462,7 +60548,7 @@ index f2075450..3136dc2e 100644
      invoke-virtual {p3, v0}, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
  
 +    # ipp: the focus frame in the colour a focused row's text takes.
-+    invoke-static {p3}, Lcom/innioasis/ipp/Photos;->focusCard(Landroidx/cardview/widget/CardView;)V
++    invoke-static {p3}, Lcom/innioasis/ipp/Theme;->focusCard(Landroidx/cardview/widget/CardView;)V
 +
      .line 69
      iget-object p3, p1, Lcom/innioasis/y1/databinding/ItemPhotosBinding;->imgSel:Landroid/widget/ImageView;
@@ -60477,8 +60563,22 @@ index f2075450..3136dc2e 100644
      goto :goto_1
  
      .line 86
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
+index 13444baf..ef8b3948 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
+@@ -121,6 +121,9 @@
+ 
+     move-result-object v0
+ 
++    # ipp: theme colours, no message, the title centred over the circle.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     if-eqz v0, :cond_0
+ 
+     .line 143
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..bb32fb92 100644
+index 0688aa89..67c38944 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -1105,6 +1105,25 @@
@@ -60507,7 +60607,27 @@ index 0688aa89..bb32fb92 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getPhotos()Landroid/widget/ImageView;
  
      move-result-object v1
-@@ -2556,7 +2575,7 @@
+@@ -2352,7 +2371,8 @@
+ 
+     move-result-object v1
+ 
+-    const v3, 0x7f110158
++    # ipp: @string/loading (was: @string/photos_open_folder), as in every other progress window.
++    const v3, 0x7f1100c9
+ 
+     invoke-virtual {p0, v3}, Lcom/innioasis/y1/activity/PhotosActivity;->getString(I)Ljava/lang/String;
+ 
+@@ -2371,6 +2391,9 @@
+ 
+     iput-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->progressDialog:Landroid/app/ProgressDialog;
+ 
++    # ipp: theme colours, no message, the title centred over the circle.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     if-eqz v0, :cond_1
+ 
+     .line 254
+@@ -2556,7 +2579,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -60516,7 +60636,7 @@ index 0688aa89..bb32fb92 100644
  
      .line 810
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -2655,19 +2674,9 @@
+@@ -2655,19 +2678,9 @@
  
      .line 821
      :cond_3
@@ -60539,7 +60659,7 @@ index 0688aa89..bb32fb92 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -2678,9 +2687,15 @@
+@@ -2678,9 +2691,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
  
@@ -60557,7 +60677,7 @@ index 0688aa89..bb32fb92 100644
  
      .line 823
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->upDataImager()V
-@@ -2690,7 +2705,7 @@
+@@ -2690,7 +2709,7 @@
  .end method
  
  .method public clockwise()V
@@ -60566,7 +60686,7 @@ index 0688aa89..bb32fb92 100644
  
      .line 799
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
-@@ -2723,21 +2738,7 @@
+@@ -2723,21 +2742,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/PhotosActivity;->setMark(I)V
  
      .line 801
@@ -60589,7 +60709,7 @@ index 0688aa89..bb32fb92 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -2748,9 +2749,15 @@
+@@ -2748,9 +2753,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
  
@@ -60607,7 +60727,7 @@ index 0688aa89..bb32fb92 100644
  
      .line 803
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->upDataImager()V
-@@ -3007,6 +3014,19 @@
+@@ -3007,6 +3018,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -61334,11 +61454,49 @@ index a5a04dcd..1bdae584 100644
  
      return-void
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
+index f2baa306..4d0d153f 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
+@@ -261,6 +261,10 @@
+ 
+     invoke-virtual {p1, p2}, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
+ 
++    # ipp: the same frame the tiles of Photos take -- the theme's own focused-row colour, with
++    # the hardcode above left under it as the answer for a theme that names none.
++    invoke-static {p1}, Lcom/innioasis/ipp/Theme;->focusCard(Landroidx/cardview/widget/CardView;)V
++
+     goto :goto_1
+ 
+     .line 60
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..e8b62e72 100644
+index 4a99a22f..33c280d2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-@@ -299,32 +299,19 @@
+@@ -144,7 +144,10 @@
+ 
+     move-result-object v0
+ 
+-    const v1, 0x7f110199
++    # ipp: @string/loading, "Loading..." (was: @string/setting_wallpaper_getpicture). The window
++    # shows this over a turning circle and nothing else; the message under it said "Searching..."
++    # beside a title that already did.
++    const v1, 0x7f1100c9
+ 
+     .line 82
+     invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity;->getString(I)Ljava/lang/String;
+@@ -177,6 +180,10 @@
+ 
+     iput-object v0, p0, Lcom/innioasis/y1/activity/WallpaperActivity;->progressDialog:Landroid/app/ProgressDialog;
+ 
++    # ipp: the theme's dialog colours on it, the message taken away and the title centred over
++    # the circle. It is the app's own window, not the system's, so it can be dressed.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     const/4 v1, 0x0
+ 
+     if-nez v0, :cond_0
+@@ -299,32 +306,19 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -61375,7 +61533,7 @@ index 4a99a22f..e8b62e72 100644
  
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
  
-@@ -340,81 +327,50 @@
+@@ -340,81 +334,50 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -61470,22 +61628,70 @@ index 4a99a22f..e8b62e72 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -425,9 +381,13 @@
+@@ -425,9 +388,13 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
 -    move-result v1
 +    move-result v2
-+
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
 +
 +    move-result-object v3
- 
--    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
      return-void
  .end method
+@@ -440,7 +407,9 @@
+ 
+     move-result-object v0
+ 
+-    const v1, 0x7f11019c
++    # ipp: @string/loading (was: @string/setting_wallpaper_set). Every progress window of the app
++    # says the one word over a circle now.
++    const v1, 0x7f1100c9
+ 
+     .line 167
+     invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity;->getString(I)Ljava/lang/String;
+@@ -473,6 +442,10 @@
+ 
+     iput-object v0, p0, Lcom/innioasis/y1/activity/WallpaperActivity;->progressDialog:Landroid/app/ProgressDialog;
+ 
++    # ipp: the same treatment the window above it gets -- theme colours, the "Loading..." under
++    # the title taken away, the title centred over the circle.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     .line 174
+     move-object v0, p0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
+index cdc50c54..1f4e0c34 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
+@@ -220,6 +220,11 @@
+ 
+     invoke-virtual {p2, p3, v0, v2}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: both labels of the row were @color/white in item_setting.xml, and this screen is the
++    # one user of that layout which never asked the theme about them -- v2 is the very flag the
++    # background above was given.
++    invoke-static {p1, v2}, Lcom/innioasis/ipp/Theme;->settingRow(Lcom/innioasis/y1/databinding/ItemSettingBinding;Z)V
++
+     .line 51
+     iget-object p2, p0, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->this$0:Lcom/innioasis/y1/activity/WallpaperListActivity;
+ 
+@@ -248,6 +253,9 @@
+ 
+     invoke-virtual {p2, p3, v0, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
++    # ipp: the same two labels off the cursor -- v0 is 0 here, the flag the background was given.
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/Theme;->settingRow(Lcom/innioasis/y1/databinding/ItemSettingBinding;Z)V
++
+     .line 55
+     iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemSettingBinding;->title:Landroid/widget/TextView;
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 index 981585c3..d98e9a6e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
@@ -61530,10 +61736,28 @@ index 981585c3..d98e9a6e 100644
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..eb58dd40 100644
+index 5e61f77d..f124a114 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-@@ -1779,7 +1779,7 @@
+@@ -1708,13 +1708,15 @@
+ 
+     move-result-object v2
+ 
+-    const v1, 0x7f110158
++    # ipp: @string/loading (was: @string/photos_open_folder). Every progress window of the app
++    # says the one word; the two this screen raises from its handler already said it.
++    const v1, 0x7f1100c9
+ 
+     invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getString(I)Ljava/lang/String;
+ 
+     move-result-object v3
+ 
+-    const-string v1, "getString(R.string.photos_open_folder)"
++    const-string v1, "getString(R.string.loading)"
+ 
+     invoke-static {v3, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+@@ -1779,7 +1781,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -61542,7 +61766,7 @@ index 5e61f77d..eb58dd40 100644
  
      .line 704
      invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -1822,19 +1822,7 @@
+@@ -1822,19 +1824,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 709
@@ -61563,7 +61787,7 @@ index 5e61f77d..eb58dd40 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1845,16 +1833,22 @@
+@@ -1845,16 +1835,22 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61589,7 +61813,7 @@ index 5e61f77d..eb58dd40 100644
  
      .line 694
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
-@@ -1893,21 +1887,7 @@
+@@ -1893,21 +1889,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 696
@@ -61612,7 +61836,7 @@ index 5e61f77d..eb58dd40 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1918,9 +1898,15 @@
+@@ -1918,9 +1900,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61630,7 +61854,7 @@ index 5e61f77d..eb58dd40 100644
  
      :cond_0
      return-void
-@@ -2057,6 +2043,19 @@
+@@ -2057,6 +2045,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -61650,7 +61874,7 @@ index 5e61f77d..eb58dd40 100644
      .line 418
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2449,6 +2448,9 @@
+@@ -2449,6 +2450,9 @@
  
      invoke-virtual {v0, v2}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -66674,10 +66898,30 @@ index 0e9f1efd..ff9e4d31 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-index a813f690..66ce112a 100644
+index a813f690..29a8d4f9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-@@ -652,6 +652,9 @@
+@@ -508,7 +508,8 @@
+ 
+     move-result-object v1
+ 
+-    const v2, 0x7f11019c
++    # ipp: @string/loading (was: @string/setting_wallpaper_set), as in every other progress window.
++    const v2, 0x7f1100c9
+ 
+     invoke-virtual {v1, v2}, Landroid/content/Context;->getString(I)Ljava/lang/String;
+ 
+@@ -538,6 +539,9 @@
+ 
+     move-result-object v9
+ 
++    # ipp: the third copy of the "Set wallpaper" window -- Photos raises it from "Set as...".
++    invoke-static {v9}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++
+     .line 197
+     iget-object v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->activity:Lcom/innioasis/y1/activity/PhotosActivity;
+ 
+@@ -652,6 +656,9 @@
  
      invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
@@ -66687,7 +66931,7 @@ index a813f690..66ce112a 100644
      .line 67
      invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
  
-@@ -763,7 +766,7 @@
+@@ -763,7 +770,7 @@
  .end method
  
  .method public onKeyUp(ILandroid/view/KeyEvent;)Z
@@ -66696,7 +66940,7 @@ index a813f690..66ce112a 100644
  
      const-string v0, "event"
  
-@@ -1005,6 +1008,9 @@
+@@ -1005,6 +1012,9 @@
  
      .line 124
      :cond_a
@@ -66706,7 +66950,7 @@ index a813f690..66ce112a 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      sub-int/2addr p1, v1
-@@ -1035,11 +1041,22 @@
+@@ -1035,11 +1045,22 @@
  
      .line 131
      :cond_d
@@ -66731,7 +66975,7 @@ index a813f690..66ce112a 100644
  
      goto :goto_5
  
-@@ -1095,6 +1112,9 @@
+@@ -1095,6 +1116,9 @@
  
      .line 139
      :cond_12
@@ -66741,7 +66985,7 @@ index a813f690..66ce112a 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      add-int/2addr p1, v1
-@@ -1155,11 +1175,20 @@
+@@ -1155,11 +1179,20 @@
  
      .line 151
      :cond_16

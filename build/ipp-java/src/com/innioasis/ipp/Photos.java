@@ -46,9 +46,6 @@ public final class Photos {
 
     private static final int WHITE = 0xFFFFFFFF;
 
-    /** Stock's focus colour here, and what a theme with nothing to say still gets. */
-    private static final int ACCENT = 0xFF3CFFDE;
-
     /** {@code bg_submenu}: the long-press menu's own colour when no theme names one. */
     private static final int MENU_BG = 0xFF8C94B2;
 
@@ -67,18 +64,6 @@ public final class Photos {
             ThemeManager.INSTANCE.itemSetTextColor(tv, WHITE, false);
         } catch (Throwable t) {
             // stock white
-        }
-    }
-
-    /** The frame of the tile under the cursor — read back off a probe, the theme may override. */
-    public static void focusCard(CardView card) {
-        if (card == null) return;
-        try {
-            TextView probe = new TextView(card.getContext());
-            ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
-            card.setCardBackgroundColor(probe.getCurrentTextColor());
-        } catch (Throwable t) {
-            // stock accent
         }
     }
 

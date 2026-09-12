@@ -14,9 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.R;
+import com.innioasis.y1.databinding.ItemSettingBinding;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.theme.ThemeConfig;
@@ -250,6 +252,49 @@ public final class Theme {
 
     private static boolean eq(String a, String b) {
         return a == null ? b == null : a.equals(b);
+    }
+
+    // --------------------------------------------------------------- what a tile's frame is worth
+
+    /** The focus colour the layouts carry, and what a theme with nothing to say still gets. */
+    private static final int ACCENT = 0xFF3CFFDE;
+
+    /**
+     * The frame around the card under the cursor: the theme's own selected-row text colour, read
+     * back off a probe because {@code itemSetTextColor} answers with the theme's colour and
+     * ignores the one it is passed.
+     *
+     * Two screens draw that frame — the tiles of Photos and the wallpaper gallery — and both are
+     * a {@code CardView} whose background IS the frame, the picture sitting inside its padding.
+     */
+    public static void focusCard(CardView card) {
+        if (card == null) return;
+        try {
+            TextView probe = new TextView(card.getContext());
+            ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
+            card.setCardBackgroundColor(probe.getCurrentTextColor());
+        } catch (Throwable t) {
+            // stock accent
+        }
+    }
+
+    /**
+     * A row of {@code item_setting.xml} — both its labels in the theme's colours, which is what
+     * the stock Settings screen does to the same layout and the wallpaper menu does not, leaving
+     * its three rows at the layout's white and invisible on a light theme.
+     *
+     * The flag is the one the row's background was just given, so the two cannot disagree; the
+     * colours are the Settings screen's own, accent on the cursor and white off it.
+     */
+    public static void settingRow(ItemSettingBinding vb, boolean sel) {
+        if (vb == null) return;
+        try {
+            int c = sel ? ACCENT : 0xFFFFFFFF;
+            ThemeManager.INSTANCE.itemSetTextColor(vb.title, c, sel);
+            ThemeManager.INSTANCE.itemSetTextColor(vb.text, c, sel);
+        } catch (Throwable t) {
+            // the layout's white stays
+        }
     }
 
     // ------------------------------------------------------- the theme gallery (ThemeListActivity)
