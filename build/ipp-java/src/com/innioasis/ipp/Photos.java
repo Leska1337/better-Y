@@ -173,7 +173,7 @@ public final class Photos {
                 try {
                     shapePopup((View) root);
                 } catch (Throwable t) {
-                    // the layout's white card; the strip is dressed all the same
+                    // the layout's white card
                 }
             }
             Repaint r = new Repaint(rv);
@@ -216,21 +216,11 @@ public final class Photos {
     private static final int HAIR_ALPHA = 0x1F000000;
 
     /**
-     * The shape of the "desktop / everywhere" popup over the strip, from {@link #bar} — once, while
-     * the dialog is being built. The card is INVISIBLE, not GONE, so it takes its room in the
-     * dialog from the start: anything here that changes its size, done when the popup opens, would
-     * resize the dialog's window then, and the whole screen jumped with it.
-     *
-     * The fill and frame are the card's CONTENT background, and the card itself is cleared: on API
-     * 17 a CardView is a rounded shadow drawable with padding around its child, which would stand
-     * as a white rim outside the frame. Nothing clips to the rounded corners on API 17, so the box
-     * is padded until a highlight's square corner falls inside the arc (0.3 of the radius, plus the
-     * frame), and the layout's margin round an entry's words becomes its padding.
-     *
-     * An entry is as wide as the wider of the two by a MINIMUM width, not by MATCH_PARENT: a
-     * vertical LinearLayout of unfixed width whose children are all MATCH_PARENT takes its width
-     * from them, and the divider — a plain View — measures to everything it is offered, which
-     * stretched the popup across the screen and off its left edge.
+     * The "desktop / everywhere" popup's geometry, once, while the dialog is built. The card is
+     * INVISIBLE and already holds its room: a size changed when it opens resizes the dialog's
+     * window, and the screen jumps. The card is cleared (on API 17 its shadow is a white rim), the
+     * box padded so a highlight's square corner stays inside the rounded frame. Entries are equal by
+     * MINIMUM width — all-MATCH_PARENT children stretch the popup across the screen.
      */
     private static void shapePopup(View root) {
         View c = root.findViewById(R.id.set_wallpaper);
@@ -294,10 +284,8 @@ public final class Photos {
     }
 
     /**
-     * The popup's colours, from {@code PhotosDialog.refreshWallpaper} (every show and every step):
-     * the long-press menu's text colours and row highlight on the entry at the cursor. Nothing here
-     * may change a size — see {@link #shapePopup}; the highlight is made size-less by
-     * {@link #highlight}.
+     * The popup's colours, from {@code PhotosDialog.refreshWallpaper} on every show and step: menu
+     * text colours and highlight. Nothing here may change a size (see {@link #shapePopup}).
      */
     public static void wallpaperPopup(CardView card, TextView desktop, TextView global, int pos) {
         if (desktop == null || global == null) return;

@@ -52,8 +52,8 @@ import com.innioasis.y1.theme.ThemeManager;
  * that darkness into alpha instead — the ring comes out in the theme's colour fading to nothing,
  * which is how the platform spinner on the USB screen looks.
  *
- * {@link #progress} dresses the OTHER progress window, the platform {@code ProgressDialog} the
- * wallpaper gallery raises while it reads the card.
+ * {@link #progress} dresses the OTHER progress window, the platform {@code ProgressDialog}; both
+ * turn the same {@link Spin}.
  */
 public final class Loading {
 
@@ -110,13 +110,10 @@ public final class Loading {
     private static final int RULE_MAX_DIP = 4;
 
     /**
-     * The platform {@code ProgressDialog} the app raises in nine places — the app's own window,
-     * not the system's, so it can be dressed: title centred over the circle, message dropped (it
-     * repeated the title), the circle {@link Spin the app's own ring}, colours the theme's dialog pair
-     * and only when the theme names them.
-     *
-     * The parts are found by WALKING the window: an AlertDialog's ids are
-     * {@code com.android.internal.R.id.*} and not ours to name.
+     * The platform {@code ProgressDialog} — the app's own window, so it can be dressed: title
+     * centred, message dropped (it repeated the title), the app's {@link Spin ring}, the theme's
+     * dialog colours when it names them. The parts are found by WALKING the window: an
+     * AlertDialog's ids are {@code com.android.internal.R.id.*}.
      */
     public static void progress(ProgressDialog d) {
         if (d == null) return;
@@ -160,11 +157,9 @@ public final class Loading {
     }
 
     /**
-     * A progress window that is raised but not seen — Photos opening a folder or a picture. The
-     * window stays for what it does besides showing: it holds the keys while the work runs (both
-     * swallow every key through a listener of their own), so a quick
-     * second press cannot start a second load over the first, whose list would then land on the
-     * wrong folder. Only its look goes: no box, no dim, no animation, nothing drawn.
+     * A progress window raised but not seen (Photos opening a folder or a picture). It must stay
+     * raised: it holds the keys while the load runs, and a second load started over the first
+     * lands the wrong folder's list. Only its look goes.
      */
     public static void hidden(ProgressDialog d) {
         if (d == null) return;
@@ -223,19 +218,13 @@ public final class Loading {
         }
     }
 
-    /**
-     * The platform's circle is 48dip ({@code Widget.ProgressBar}), and the ring takes its place at
-     * that size. That circle, {@code progress_medium_holo}, is a layer-list of TWO counter-rotating
-     * arcs, which is why it read as two circles laid over each other once a theme coloured both.
-     */
+    /** The platform circle's size ({@code Widget.ProgressBar}), which the ring takes over. */
     private static final int PLATFORM_DIP = 48;
 
     /**
      * Puts a {@link Spin} where {@code stand} is and hides the stand; false leaves it untouched.
-     * In {@code dialog_loading.xml} the stand is the ImageView, which stays INVISIBLE rather than
-     * going: {@code LoadingDialog.onStart} finds it by id and casts it to ImageView, and its place
-     * in the constraints is what the ring copies. In the platform window it is the ProgressBar,
-     * GONE, with the ring added beside it at the circle's own size.
+     * The ImageView of {@code dialog_loading.xml} stays (INVISIBLE, not replaced): {@code
+     * LoadingDialog.onStart} casts it by id. The platform ProgressBar goes GONE.
      */
     private static boolean spin(View stand, int color, int sidePx) {
         ViewParent vp = stand == null ? null : stand.getParent();
@@ -261,8 +250,7 @@ public final class Loading {
             s.setId(View.generateViewId());
             parent.addView(s, parent.indexOfChild(stand) + 1, own);
             stand.setVisibility(hide);
-            // An INVISIBLE view is still drawn while it carries a view animation, and
-            // LoadingDialog.onStart gives it one: without its picture that draw is nothing.
+            // INVISIBLE is still drawn under a view animation, and onStart starts one.
             if (stand instanceof ImageView) ((ImageView) stand).setImageDrawable(null);
             return true;
         } catch (Throwable t) {
@@ -281,9 +269,8 @@ public final class Loading {
     }
 
     /**
-     * The stand's constraints and margins on fresh params. Not the library's copy constructor: it
-     * hands the copy the source's own {@code ConstraintWidget}, and two views laid out through one
-     * widget end up wherever the last of them put it.
+     * The stand's constraints and margins on fresh params. Not the copy constructor: it shares the
+     * source's {@code ConstraintWidget}, and two views on one widget lay each other out.
      */
     private static ConstraintLayout.LayoutParams copy(ConstraintLayout.LayoutParams src) {
         ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(src.width, src.height);
@@ -311,22 +298,11 @@ public final class Loading {
     }
 
     /**
-     * The ring, drawn by a thread of its own into a surface of its own. Both progress windows go up
-     * exactly when the main thread is busiest — a screen opening, a gallery binding its tiles, the
-     * collector going through a card's worth of bitmaps — and anything the main thread animates
-     * stands still for as long as that lasts, which is most of the window's life. This surface is
-     * composed by SurfaceFlinger whatever the main thread is doing. The angle comes from the clock,
-     * not a per-frame step, so a stop-the-world GC is a skip, not a slow-down.
-     *
-     * On top of its window and translucent, so the box shows through the ring. The thread starts
-     * with the surface and is joined when the surface goes: drawing into a destroyed surface is the
-     * one way this can take the app down.
-     *
-     * The surface is a child window, and a window's SCALE animation is not applied to it the way it
-     * is to the window: the platform dialog grows from 90%, and for that moment the ring stands
-     * off-centre at full size. Alpha is applied correctly. So a window holding the ring fades in and
-     * out ({@link #FADE_STYLE}) instead of growing — no delay or stand-in to tune, whatever the load.
-     * Leaving, the surface goes with the window at once, so the box fades out without the ring.
+     * The ring, turned by its own thread in its own surface: progress windows go up exactly while
+     * the main thread is busy, and a ring it animated stood still. The angle is from the clock, so
+     * a GC pause is a skip. The thread is joined when the surface goes — drawing into a destroyed
+     * one crashes. The surface is a child window that a window's SCALE animation misplaces, so its
+     * window only fades ({@link #FADE_STYLE}); do not bring the scale back.
      */
     public static final class Spin extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
