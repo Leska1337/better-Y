@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3e9d212e 100644
+index 01b1f730..4292307a 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..3e9d212e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000098
++  versionCode: 10000100
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19395,7 +19395,7 @@ index 803c1e7a..138574ad 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..33fbe513 100644
+index 71fe29d0..fc722f94 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20344,7 +20344,7 @@ index 71fe29d0..33fbe513 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev98</string>
++    <string name="ipp_version">v1.0.0-dev100</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21821,6 +21821,117 @@ index 675ebb2a..fa8a4e2c 100644
      .line 139
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
+diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
+index c4b75839..604fead8 100644
+--- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
++++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
+@@ -308,31 +308,40 @@
+ 
+ # virtual methods
+ .method public antiClockwise()V
+-    .locals 1
++    .locals 4
+ 
+     .line 88
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
+ 
+-    move-result v0
++    move-result v1
+ 
+-    if-lez v0, :cond_0
++    if-lez v1, :cond_0
+ 
+     .line 89
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
+-
+-    move-result v0
+-
+-    add-int/lit8 v0, v0, -0x1
++    add-int/lit8 v0, v1, -0x1
+ 
+     invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->setMark(I)V
+ 
+     .line 91
+     :cond_0
+-    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;
++    # ipp: see clockwise -- one Wheel.follow instead of repainting the whole list.
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {v0}, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->notifyDataSetChanged()V
++    check-cast v0, Lcom/innioasis/y1/databinding/ActivityWallpaperListBinding;
++
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityWallpaperListBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
++
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
++
++    move-result v2
++
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;
++
++    move-result-object v3
++
++    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     .line 92
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
+@@ -341,33 +350,44 @@
+ .end method
+ 
+ .method public clockwise()V
+-    .locals 2
++    .locals 4
+ 
+     .line 79
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
+ 
+-    move-result v0
++    move-result v1
+ 
+-    const/4 v1, 0x2
++    const/4 v0, 0x2
+ 
+-    if-ge v0, v1, :cond_0
++    if-ge v1, v0, :cond_0
+ 
+     .line 80
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
+-
+-    move-result v0
+-
+-    add-int/lit8 v0, v0, 0x1
++    add-int/lit8 v0, v1, 0x1
+ 
+     invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->setMark(I)V
+ 
+     .line 82
+     :cond_0
+-    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;
++    # ipp: stock repainted every row of the list on each click; Wheel.follow rebinds the two rows
++    # whose highlight changed. The preview beside the list stays on its own call below -- it is
++    # made from the key handler, not from a bind, so it is not the case Wheel.postRest exists for.
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {v0}, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->notifyDataSetChanged()V
++    check-cast v0, Lcom/innioasis/y1/databinding/ActivityWallpaperListBinding;
++
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityWallpaperListBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
++
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
++
++    move-result v2
++
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;
++
++    move-result-object v3
++
++    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     .line 83
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 index 060ed6d1..d44417ce 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
@@ -61155,6 +61266,160 @@ index a5a04dcd..1bdae584 100644
  
      return-void
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
+index 4a99a22f..9d31ae23 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
+@@ -299,32 +299,19 @@
+ 
+ # virtual methods
+ .method public antiClockwise()V
+-    .locals 2
++    .locals 4
+ 
+     .line 149
+-    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+-
+-    move-result-object v0
+-
++    # ipp: see clockwise -- one Wheel.follow instead of two notifies and a smooth scroll.
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+ 
+     move-result v1
+ 
+-    invoke-virtual {v0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->notifyItemChanged(I)V
+-
+     .line 150
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v0
+-
+-    if-lez v0, :cond_0
++    if-lez v1, :cond_0
+ 
+     .line 151
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v0
+-
+-    add-int/lit8 v0, v0, -0x1
++    add-int/lit8 v0, v1, -0x1
+ 
+     invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
+ 
+@@ -340,81 +327,52 @@
+ 
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+ 
+-    move-result v1
+-
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++    move-result v2
+ 
+-    .line 154
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+ 
+-    move-result-object v0
+-
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v1
++    move-result-object v3
+ 
+-    invoke-virtual {v0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->notifyItemChanged(I)V
++    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     return-void
+ .end method
+ 
+ .method public clockwise()V
+-    .locals 2
++    .locals 4
+ 
+     .line 136
+-    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+-
+-    move-result-object v0
+-
++    # ipp: stock notified the two tiles and restarted a smooth scroll on every click, so the gallery
++    # was always chasing a target the wheel had already left. Wheel.follow rebinds the two tiles in
++    # place and moves the window at once -- the same change the Photos and Themes grids took.
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+ 
+     move-result v1
+ 
+-    invoke-virtual {v0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->notifyItemChanged(I)V
+-
+     .line 138
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v0
+-
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+ 
+-    move-result-object v1
++    move-result-object v0
+ 
+-    invoke-virtual {v1}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->getData()Ljava/util/List;
++    invoke-virtual {v0}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->getData()Ljava/util/List;
+ 
+-    move-result-object v1
++    move-result-object v0
+ 
+-    invoke-interface {v1}, Ljava/util/List;->size()I
++    invoke-interface {v0}, Ljava/util/List;->size()I
+ 
+-    move-result v1
++    move-result v0
+ 
+-    add-int/lit8 v1, v1, -0x1
++    add-int/lit8 v0, v0, -0x1
+ 
+-    if-ge v0, v1, :cond_0
++    if-ge v1, v0, :cond_0
+ 
+     .line 139
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v0
+-
+-    add-int/lit8 v0, v0, 0x1
++    add-int/lit8 v0, v1, 0x1
+ 
+     invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
+ 
+     .line 141
+     :cond_0
+-    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+-
+-    move-result-object v0
+-
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v1
+-
+-    invoke-virtual {v0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->notifyItemChanged(I)V
+-
+-    .line 143
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+     move-result-object v0
+@@ -425,9 +383,13 @@
+ 
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+ 
+-    move-result v1
++    move-result v2
++
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
++
++    move-result-object v3
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 index 981585c3..81a21ae5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
@@ -65388,6 +65653,96 @@ index 09aab2a9..aa0afecf 100644
  
      move-result-object v1
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali b/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
+index 2e1e1934..6e5d8acc 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/dialog/EqEditDialog.smali
+@@ -433,11 +433,35 @@
+ 
+     .line 312
+     :goto_0
++    # ipp: only the band under the cursor changed, so Wheel.follow rebinds that one row in place
++    # instead of repainting all five. The window is not scrolled -- they all fit.
++    iget-object p1, p0, Lcom/innioasis/y1/dialog/EqEditDialog;->binding:Lcom/innioasis/y1/databinding/DialogEqEditBinding;
++
++    if-eqz p1, :ipp_all_0
++
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogEqEditBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
++
++    invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
++
++    move-result-object v0
++
++    invoke-virtual {v0}, Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;->getIndex()I
++
++    move-result v1
++
++    invoke-static {p1, v1, v1, v0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
++
++    goto :ipp_done_0
++
++    :ipp_all_0
+     invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
+ 
+     move-result-object p1
+ 
+     invoke-virtual {p1}, Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;->notifyDataSetChanged()V
++
++    :ipp_done_0
++    nop
+     :try_end_1
+     .catch Ljava/lang/Exception; {:try_start_1 .. :try_end_1} :catch_0
+ 
+@@ -473,7 +497,7 @@
+ .end method
+ 
+ .method private final nextOption(I)V
+-    .locals 2
++    .locals 4
+ 
+     .line 322
+     invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
+@@ -484,6 +508,9 @@
+ 
+     move-result v1
+ 
++    # ipp: the row the cursor is leaving, for Wheel.follow at the end of the method.
++    move v2, v1
++
+     add-int/2addr v1, p1
+ 
+     invoke-virtual {v0, v1}, Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;->setIndex(I)V
+@@ -593,6 +620,30 @@
+ 
+     .line 342
+     :goto_0
++    # ipp: stock repainted all five bands on every click; Wheel.follow rebinds the row losing the
++    # cursor and the one taking it. When the cursor steps onto Reset -- an index one past the last
++    # band, i.e. a row the list does not have -- follow cannot reach it and falls back to notifying
++    # the adapter itself, which is exactly what has to happen for the last band to lose its
++    # highlight.
++    iget-object p1, p0, Lcom/innioasis/y1/dialog/EqEditDialog;->binding:Lcom/innioasis/y1/databinding/DialogEqEditBinding;
++
++    if-eqz p1, :ipp_all_1
++
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogEqEditBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
++
++    invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
++
++    move-result-object v0
++
++    invoke-virtual {v0}, Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;->getIndex()I
++
++    move-result v1
++
++    invoke-static {p1, v2, v1, v0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
++
++    return-void
++
++    :ipp_all_1
+     invoke-direct {p0}, Lcom/innioasis/y1/dialog/EqEditDialog;->getAdapter()Lcom/innioasis/y1/dialog/EqEditDialog$adapter$2$1;
+ 
+     move-result-object p1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
 index 4d3bea7c..d93b1eec 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
