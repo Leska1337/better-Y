@@ -115,7 +115,11 @@ public final class Alpha {
     /** Black at a fifth — a shadow, not a second plate. */
     private static final int SHADOW_COLOR = 0x33000000;
 
-    /** Key text size, sp: one letter, vs a four-digit year that needs four glyphs. */
+    /**
+     * Key text size, sp: one letter, vs a four-digit year that needs four glyphs. What a theme's
+     * font is wider than the square takes at these sizes is given back in text size, never in
+     * square — see {@link #fit}.
+     */
     private static final int LETTER_SP = 56;
     private static final int YEAR_SP = 40;
 
@@ -162,8 +166,8 @@ public final class Alpha {
      * {@link #FLASH_MS} and goes — nothing on the keyboard has to be scrolled to find it, so
      * leaving it up would only cover the screen.
      *
-     * It is the jump key's own square, at its own size — the two are the same object as far as
-     * the user is concerned, so nothing about it is re-measured for the shorter text. What differs
+     * It is the jump key's own square, at the year's text size whatever the length of the text —
+     * the two are the same object as far as the user is concerned. What differs
      * is the window it lives in (see below) and that the Activity is passed in rather than taken
      * from the host view's context: the host here is a view of the dialog's window, whose
      * context is a {@code ContextThemeWrapper}, not the Activity itself.
@@ -175,7 +179,7 @@ public final class Alpha {
 
             TextView tv = plateView(act, d);
             tv.setText(text);
-            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, YEAR_SP);
+            fit(tv, text, YEAR_SP, d);         // the year size whatever the length, see below
             int size = dress(tv, d);           // the jump key's own square, same size, fixed
 
             // A window of its own, and that is the whole point: the jump key is a child of the
@@ -246,8 +250,8 @@ public final class Alpha {
         tv.setTextColor(ink());
         tv.setGravity(Gravity.CENTER);
         tv.setIncludeFontPadding(false);
-        // Before the plate is dressed: the square is measured with the view's own paint, theme
-        // font included, so the typeface has to be on it by then.
+        // Before fit(), which measures the key in the view's own paint, theme font included, so
+        // the typeface has to be on it by then.
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         return tv;
     }
@@ -458,8 +462,10 @@ public final class Alpha {
         if (OTHER.equals(key)) key = OTHER_TEXT;
         tv.setText(key);
         // A year needs four glyphs where a letter needs one; the plate itself does not change
-        // size — it is fixed at the widest case, see {@link #side}.
-        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, key.length() > 2 ? YEAR_SP : LETTER_SP);
+        // size — it is fixed at the widest case, see side(), and a font too wide for it is what
+        // gives way.
+        fit(tv, key, key.length() > 2 ? YEAR_SP : LETTER_SP,
+                lv.getResources().getDisplayMetrics().density);
         tv.setVisibility(View.VISIBLE);
         lv.removeCallbacks(HIDE);
         lv.postDelayed(HIDE, IDLE_MS);
@@ -485,7 +491,7 @@ public final class Alpha {
         tv.setIncludeFontPadding(false);
         // Per call, and the two-argument form: it is what follows a theme's font.ttf (ThemeManager
         // swaps the static Typeface.MONOSPACE) and what fakes bold when that font has no bold cut.
-        // Before dress(), which measures the square with this very paint.
+        // Before fit(), which measures the key with this very paint.
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
 
         int size = dress(tv, d);
@@ -500,14 +506,46 @@ public final class Alpha {
     /**
      * One fixed square for every key, iPod-style. The widest thing this ever shows is a
      * four-digit year, so that is what the plate is measured for — a single letter then sits in
-     * the same square instead of the plate changing shape from one jump to the next. Measured
-     * with the view's own paint (theme font included), not guessed from a dp constant.
+     * the same square instead of the plate changing shape from one jump to the next.
+     *
+     * Measured with the SYSTEM font, not with the view's own: the view carries the theme's font
+     * ({@code ThemeManager} swaps {@code Typeface.MONOSPACE} for it), and measuring the square
+     * with that lets a theme decide how much of the screen the plate covers — "Minecraft", whose
+     * glyphs are half again as wide, grew it to where it read as a screen of its own. The square
+     * is the same on every theme and the text is what gives way ({@link #fit}). {@code
+     * Typeface.DEFAULT} is what the view itself ends up with when no theme is selected, so the
+     * size is the one the plate has always had there, rather than a dp constant guessed at.
      */
-    private static int side(TextView tv, float d) {
+    private static int side(float d) {
         int pad = (int) (PAD_DP * d + 0.5f);
-        android.text.TextPaint p = new android.text.TextPaint(tv.getPaint());
+        android.text.TextPaint p = new android.text.TextPaint();
+        p.setAntiAlias(true);
+        p.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
         p.setTextSize(YEAR_SP * d);
         return (int) (p.measureText("0000") + 0.5f) + pad * 2;
+    }
+
+    /**
+     * Set the text size for this key: {@code baseSp}, or as much less as it takes for the key to
+     * fit the square in the font the view is actually drawn with. {@code measureText} is linear
+     * in the text size, so the ratio is the answer and no search is needed.
+     *
+     * Height is checked against the font's own metrics rather than the glyphs' bounds, because
+     * that is what {@code TextView} centres the line by and therefore what would be clipped by
+     * the fixed-height view. On the stock font neither test bites at either size: the plate looks
+     * exactly as it did.
+     */
+    private static void fit(TextView tv, String text, int baseSp, float d) {
+        int room = side(d) - 2 * (int) (PAD_DP * d + 0.5f);
+        android.text.TextPaint p = new android.text.TextPaint(tv.getPaint());
+        p.setTextSize(baseSp * d);
+        float k = 1f;
+        float w = p.measureText(text);
+        if (w > room) k = room / w;
+        Paint.FontMetrics fm = p.getFontMetrics();
+        float h = fm.descent - fm.ascent;
+        if (h > room) k = Math.min(k, room / h);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, k < 1f ? baseSp * k : baseSp);
     }
 
     /**
@@ -592,7 +630,7 @@ public final class Alpha {
      * plate stays where it was on screen.
      */
     private static int dress(TextView tv, float d) {
-        int side = side(tv, d);
+        int side = side(d);
         tv.setBackgroundDrawable(new BitmapDrawable(tv.getResources(), plateBitmap(side, d)));
         return side + margin(d) * 2;
     }

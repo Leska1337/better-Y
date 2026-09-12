@@ -13,19 +13,19 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 537
+  .line 575
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 4
-  .line 539
+  .line 577
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Alpha;->access$102(I)I
-  .line 540
+  .line 578
     invoke-static { v0 }, Lcom/innioasis/ipp/Alpha;->access$202(Z)Z
-  .line 541
+  .line 579
     invoke-static { }, Lcom/innioasis/ipp/Alpha;->access$300()Ljava/lang/ref/WeakReference;
     move-result-object v0
     const/4 v1, 0
@@ -38,17 +38,17 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 542
+  .line 580
     instance-of v2, v0, Landroid/widget/TextView;
     if-nez v2, :L2
     return-void
   :L2
-  .line 543
+  .line 581
     check-cast v0, Landroid/widget/TextView;
-  .line 544
+  .line 582
     const/16 v2, 8
     invoke-virtual { v0, v2 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 545
+  .line 583
     invoke-virtual { v0 }, Landroid/widget/TextView;->getParent()Landroid/view/ViewParent;
     move-result-object v2
     instance-of v2, v2, Landroid/view/ViewGroup;
@@ -60,12 +60,12 @@
   :L3
     move-object v2, v1
   :L4
-  .line 546
+  .line 584
     if-eqz v2, :L5
     invoke-virtual { v2, v0 }, Landroid/view/ViewGroup;->removeView(Landroid/view/View;)V
   :L5
-  .line 547
+  .line 585
     invoke-static { v1 }, Lcom/innioasis/ipp/Alpha;->access$302(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 548
+  .line 586
     return-void
 .end method
