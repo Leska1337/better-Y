@@ -544,6 +544,20 @@ public final class Rows {
     }
 
     /**
+     * The value at the right-hand end of an FM menu row — Speaker/Headset for "Audio output",
+     * Off/Recording for "Record". The same rule as a second line: it is part of the row it stands
+     * in, so it takes the row's colour, the cursor's included.
+     *
+     * The BINDING is the argument rather than the two views, because at the end of that bind the
+     * register holding it has already been reused for a view; this is called where it is still
+     * the binding, which is the end of the painting rather than the end of the method.
+     */
+    public static void fmMenuValue(com.innioasis.y1.databinding.ItemFmMenuBinding b) {
+        if (b == null) return;
+        subLine(b.tvItem, b.text);
+    }
+
+    /**
      * Keep the row's height determined by its text, and keep the selection highlight OFF the disc
      * strip at the top of the row. Call at the END of getView, once the background and icons for
      * this row's state have been applied.

@@ -33,8 +33,16 @@ public final class Wheel {
 
     private static WeakReference lastRv;
     private static int lastPos = -1;
+    /**
+     * The adapter {@link #lastPos} was worked out from. A row number outlives the list it belongs
+     * to, and a screen that pages several lists through ONE RecyclerView by swapping the adapter
+     * therefore has to be told apart from one the wheel is walking a row at a time.
+     */
+    private static WeakReference lastAdapter;
     /** The RecyclerView whose animator/cache/prefetch have already been set up; see {@link #follow}. */
     private static WeakReference tuned;
+    /** The layout manager that setup was done on — the prefetch flag is the manager's, not the list's. */
+    private static WeakReference tunedLm;
 
     // ------------------------------------------------------------------ ListView screens
     //
@@ -546,6 +554,7 @@ public final class Wheel {
     public static void follow(RecyclerView rv, int prev, int pos, RecyclerView.Adapter adapter) {
         if (rv == null) return;
         lastRv = new WeakReference(rv);
+        lastAdapter = new WeakReference(adapter);       // this caller means THIS list's row
         lastPos = prev;
         follow(rv, pos, adapter);
     }
@@ -553,12 +562,17 @@ public final class Wheel {
     public static void follow(RecyclerView rv, int pos, RecyclerView.Adapter adapter) {
         try {
             if (rv == null) return;
-            // Once per RecyclerView. NOT `if (getItemAnimator() != null)`, which is what this used
-            // to be: SettingActivity.initView already does `recycler.setItemAnimator(null)` itself,
-            // so on the one screen that needed it most the whole block never ran — see the cache
-            // note below for what that cost.
-            if (tuned == null || tuned.get() != rv) {
+            // Once per RecyclerView AND per LayoutManager. NOT `if (getItemAnimator() != null)`,
+            // which is what this used to be: SettingActivity.initView already does
+            // `recycler.setItemAnimator(null)` itself, so on the one screen that needed it most the
+            // whole block never ran — see the cache note below for what that cost. The layout
+            // manager is part of the key because the prefetch flag belongs to IT, and a screen that
+            // pages several lists through one RecyclerView hands it a fresh one per level (the FM
+            // menu does): the flag would then be set on a manager that is no longer attached.
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            if (tuned == null || tuned.get() != rv || tunedLm == null || tunedLm.get() != lm) {
                 tuned = new WeakReference(rv);
+                tunedLm = new WeakReference(lm);
                 rv.setItemAnimator(null);
                 // RecyclerView keeps the two most recently detached rows in a cache keyed BY
                 // POSITION and brings them back **without rebinding** — that is the whole point of
@@ -595,7 +609,6 @@ public final class Wheel {
                 // re-runs updateViewCacheSize, so the cache stays at zero for good. Nothing is lost:
                 // prefetch exists to spend idle frame time inflating rows ahead of a fling, and this
                 // list is driven a row at a time by a wheel.
-                RecyclerView.LayoutManager lm = rv.getLayoutManager();
                 if (lm != null) lm.setItemPrefetchEnabled(false);
             }
 
@@ -606,7 +619,14 @@ public final class Wheel {
 
             if (adapter != null) {
                 int n = adapter.getItemCount();
-                int prev = (lastRv != null && lastRv.get() == rv) ? lastPos : -1;
+                // The remembered row is this list's only while the ADAPTER is still the one it was
+                // worked out from. A screen that pages several lists through one RecyclerView puts
+                // a different adapter on it and hands back a cursor of its own (the FM menu
+                // restores the row the user came from): repainting the row a different list left
+                // behind misses the one that is actually highlighted, and its highlight stays on
+                // screen beside the real one. An unknown prev means a full repaint, which is right.
+                int prev = (lastRv != null && lastRv.get() == rv
+                        && lastAdapter != null && lastAdapter.get() == adapter) ? lastPos : -1;
                 // Rebound in place rather than through notifyItemChanged: a notify is an adapter
                 // update, and RecyclerView answers it with a full layout pass over every visible
                 // row, while two binds are what actually changed.
@@ -621,6 +641,7 @@ public final class Wheel {
                 }
             }
             lastRv = new WeakReference(rv);
+            lastAdapter = new WeakReference(adapter);
             lastPos = pos;
 
             scrollTo(rv, pos);

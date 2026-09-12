@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..702b4b46 100644
+index 01b1f730..638aacb0 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..702b4b46 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000115
++  versionCode: 10000118
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19438,7 +19438,7 @@ index 803c1e7a..dbfb47bd 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..06d595bf 100644
+index 71fe29d0..329f5953 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20387,7 +20387,7 @@ index 71fe29d0..06d595bf 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev115</string>
++    <string name="ipp_version">v1.0.0-dev118</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -38089,6 +38089,43 @@ index bf847f61..ec205257 100644
      .line 335
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->editor:Landroid/content/SharedPreferences$Editor;
  
+diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
+index 8710fcb7..4fb6dcc6 100644
+--- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$adapter$2$1.smali
+@@ -240,14 +240,8 @@
+ 
+     invoke-virtual {p3, v0, v4, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+ 
+-    .line 125
+-    sget-object p3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+-
+-    iget-object v0, p1, Lcom/innioasis/y1/databinding/ItemFmMenuBinding;->text:Landroid/widget/TextView;
+-
+-    invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    invoke-virtual {p3, v0, v4, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
++    # ipp: the value's own painting is gone from here -- it is the row's colour, taken off the
++    # name at :goto_0 below, rather than a white of its own.
+ 
+     .line 126
+     sget-object p3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -260,8 +254,14 @@
+ 
+     invoke-virtual {p3, v0, v6, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+ 
+-    .line 128
+     :goto_0
++    # ipp: the value at the right-hand end of the row (Speaker/Headset, Off/Recording) stayed the
++    # unselected colour under the cursor, the row's own name having moved on to the selected one.
++    # Here, where every painting branch has met and p1 is still the binding: at the end of the
++    # method that register holds a TextView.
++    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->fmMenuValue(Lcom/innioasis/y1/databinding/ItemFmMenuBinding;)V
++
++    .line 128
+     iget-object p3, p0, Lcom/innioasis/fm/MenuActivity$adapter$2$1;->this$0:Lcom/innioasis/fm/MenuActivity;
+ 
+     invoke-virtual {p3}, Lcom/innioasis/fm/MenuActivity;->getResources()Landroid/content/res/Resources;
 diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali
 index 38de58fe..28cf65f3 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity$rangesAdapter$2$1.smali
@@ -38107,6 +38144,66 @@ index 38de58fe..28cf65f3 100644
  
      iget-object p2, p0, Lcom/innioasis/fm/MenuActivity$rangesAdapter$2$1;->this$0:Lcom/innioasis/fm/MenuActivity;
  
+diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
+index 8f1b4c3c..8b1cedaa 100644
+--- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
++++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
+@@ -695,6 +695,10 @@
+ 
+     .line 218
+     :cond_1
++    # ipp: the FM menu had the pattern the other RecyclerView screens did -- a scrollToPosition()
++    # plus notifyDataSetChanged() on EVERY click, i.e. a full layout pass over every visible row
++    # to move a highlight by one. Wheel.follow rebinds only the two rows whose highlight changed
++    # and scrolls only when the row is off screen.
+     invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+     move-result-object v1
+@@ -707,12 +711,7 @@
+ 
+     move-result v2
+ 
+-    invoke-virtual {v1, v2}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
+-
+-    .line 219
+-    check-cast v0, Lcom/innioasis/y1/base/BaseBindingAdapter;
+-
+-    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
++    invoke-static {v1, v2, v0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     return-void
+ .end method
+@@ -777,22 +776,22 @@
+ 
+     .line 203
+     :cond_1
+-    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
+-
+-    .line 204
++    # ipp: see antiClockwise -- one Wheel.follow instead of notifyDataSetChanged() plus a
++    # scrollToPosition() on every click. The adapter stays in v0, which stock overwrote with the
++    # RecyclerView here.
+     invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+-    move-result-object v0
++    move-result-object v1
+ 
+-    check-cast v0, Lcom/mediatek/fm/databinding/ActivityMenuBinding;
++    check-cast v1, Lcom/mediatek/fm/databinding/ActivityMenuBinding;
+ 
+-    iget-object v0, v0, Lcom/mediatek/fm/databinding/ActivityMenuBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
++    iget-object v1, v1, Lcom/mediatek/fm/databinding/ActivityMenuBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getMark()I
+ 
+-    move-result v1
++    move-result v2
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
++    invoke-static {v1, v2, v0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
 index 04adc813..42877f32 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
