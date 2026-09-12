@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c136c1b3 100644
+index 01b1f730..2a0f0e2b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..c136c1b3 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000142
++  versionCode: 10000147
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19452,7 +19452,7 @@ index 803c1e7a..a3ace43b 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..2ba832fd 100644
+index 71fe29d0..bc2d1f85 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,548 @@
@@ -20401,7 +20401,7 @@ index 71fe29d0..2ba832fd 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev142</string>
++    <string name="ipp_version">v1.0.0-dev147</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -60729,21 +60729,21 @@ index f2075450..9b2da894 100644
  
      .line 86
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
-index 13444baf..ef8b3948 100644
+index 13444baf..6f28ff47 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
 @@ -121,6 +121,9 @@
  
      move-result-object v0
  
-+    # ipp: theme colours, no message, the title centred over the circle.
-+    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++    # ipp: raised but not seen -- it holds the keys while the picture loads.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->hidden(Landroid/app/ProgressDialog;)V
 +
      if-eqz v0, :cond_0
  
      .line 143
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..67c38944 100644
+index 0688aa89..170ca6a4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -1105,6 +1105,25 @@
@@ -60786,8 +60786,8 @@ index 0688aa89..67c38944 100644
  
      iput-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->progressDialog:Landroid/app/ProgressDialog;
  
-+    # ipp: theme colours, no message, the title centred over the circle.
-+    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
++    # ipp: raised but not seen -- it holds the keys while the folder loads.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->hidden(Landroid/app/ProgressDialog;)V
 +
      if-eqz v0, :cond_1
  
@@ -67070,10 +67070,32 @@ index 0e9f1efd..ff9e4d31 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-index a813f690..29a8d4f9 100644
+index a813f690..caef0f87 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-@@ -508,7 +508,8 @@
+@@ -468,6 +468,21 @@
+     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setTextColor(I)V
+ 
+     :goto_0
++    # ipp: the popup in the long-press menu's colours, framed in the colour of the strip's top rule.
++    invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
++
++    move-result-object v0
++
++    iget-object v1, v0, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->setWallpaper:Landroidx/cardview/widget/CardView;
++
++    iget-object v2, v0, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->desktop:Landroid/widget/TextView;
++
++    iget-object v3, v0, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->global:Landroid/widget/TextView;
++
++    iget v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
++
++    invoke-static {v1, v2, v3, v0}, Lcom/innioasis/ipp/Photos;->wallpaperPopup(Landroidx/cardview/widget/CardView;Landroid/widget/TextView;Landroid/widget/TextView;I)V
++
+     return-void
+ .end method
+ 
+@@ -508,7 +523,8 @@
  
      move-result-object v1
  
@@ -67083,7 +67105,7 @@ index a813f690..29a8d4f9 100644
  
      invoke-virtual {v1, v2}, Landroid/content/Context;->getString(I)Ljava/lang/String;
  
-@@ -538,6 +539,9 @@
+@@ -538,6 +554,9 @@
  
      move-result-object v9
  
@@ -67093,7 +67115,7 @@ index a813f690..29a8d4f9 100644
      .line 197
      iget-object v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->activity:Lcom/innioasis/y1/activity/PhotosActivity;
  
-@@ -652,6 +656,9 @@
+@@ -652,6 +671,9 @@
  
      invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
@@ -67103,7 +67125,7 @@ index a813f690..29a8d4f9 100644
      .line 67
      invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
  
-@@ -763,7 +770,7 @@
+@@ -763,7 +785,7 @@
  .end method
  
  .method public onKeyUp(ILandroid/view/KeyEvent;)Z
@@ -67112,7 +67134,7 @@ index a813f690..29a8d4f9 100644
  
      const-string v0, "event"
  
-@@ -1005,6 +1012,9 @@
+@@ -1005,6 +1027,9 @@
  
      .line 124
      :cond_a
@@ -67122,7 +67144,7 @@ index a813f690..29a8d4f9 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      sub-int/2addr p1, v1
-@@ -1035,11 +1045,22 @@
+@@ -1035,11 +1060,22 @@
  
      .line 131
      :cond_d
@@ -67147,7 +67169,7 @@ index a813f690..29a8d4f9 100644
  
      goto :goto_5
  
-@@ -1095,6 +1116,9 @@
+@@ -1095,6 +1131,9 @@
  
      .line 139
      :cond_12
@@ -67157,7 +67179,7 @@ index a813f690..29a8d4f9 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      add-int/2addr p1, v1
-@@ -1155,11 +1179,20 @@
+@@ -1155,11 +1194,20 @@
  
      .line 151
      :cond_16

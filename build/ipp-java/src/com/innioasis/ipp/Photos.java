@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +13,8 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -165,6 +168,14 @@ public final class Photos {
             rv.setTag(rule);
             rv.addItemDecoration(rule);
             paintBar(rv);
+            Object root = rv.getParent();
+            if (root instanceof View) {
+                try {
+                    shapePopup((View) root);
+                } catch (Throwable t) {
+                    // the layout's white card; the strip is dressed all the same
+                }
+            }
             Repaint r = new Repaint(rv);
             Rows.watchFlat(r);
             Theme.watchMenuRows(r);
@@ -183,11 +194,134 @@ public final class Photos {
         rv.setBackgroundColor(barColor());
         Object o = rv.getTag();
         if (o instanceof Rule) {
-            TextView probe = new TextView(rv.getContext());
-            ThemeManager.INSTANCE.itemSetTextColor(probe, WHITE, false);
-            ((Rule) o).paint.setColor(probe.getCurrentTextColor());
+            ((Rule) o).paint.setColor(ruleColor(rv.getContext()));
             rv.invalidate();
         }
+    }
+
+    /** The strip's top rule: the list text's own colour, read back off a probe. */
+    private static int ruleColor(Context c) {
+        TextView probe = new TextView(c);
+        ThemeManager.INSTANCE.itemSetTextColor(probe, WHITE, false);
+        return probe.getCurrentTextColor();
+    }
+
+    /** The popup's corners, as {@code dialog_photos.xml} has them. */
+    private static final int POPUP_RADIUS_DIP = 10;
+
+    /** The room around an entry's words, as the layout's margin had it. */
+    private static final int POPUP_ENTRY_DIP = 10;
+
+    /** The line between the two entries: a better-Y menu row's hairline, 1px at this alpha. */
+    private static final int HAIR_ALPHA = 0x1F000000;
+
+    /**
+     * The shape of the "desktop / everywhere" popup over the strip, from {@link #bar} — once, while
+     * the dialog is being built. The card is INVISIBLE, not GONE, so it takes its room in the
+     * dialog from the start: anything here that changes its size, done when the popup opens, would
+     * resize the dialog's window then, and the whole screen jumped with it.
+     *
+     * The fill and frame are the card's CONTENT background, and the card itself is cleared: on API
+     * 17 a CardView is a rounded shadow drawable with padding around its child, which would stand
+     * as a white rim outside the frame. Nothing clips to the rounded corners on API 17, so the box
+     * is padded until a highlight's square corner falls inside the arc (0.3 of the radius, plus the
+     * frame), and the layout's margin round an entry's words becomes its padding.
+     *
+     * An entry is as wide as the wider of the two by a MINIMUM width, not by MATCH_PARENT: a
+     * vertical LinearLayout of unfixed width whose children are all MATCH_PARENT takes its width
+     * from them, and the divider — a plain View — measures to everything it is offered, which
+     * stretched the popup across the screen and off its left edge.
+     */
+    private static void shapePopup(View root) {
+        View c = root.findViewById(R.id.set_wallpaper);
+        View dv = root.findViewById(R.id.desktop);
+        View gv = root.findViewById(R.id.global);
+        if (!(c instanceof CardView) || !(dv instanceof TextView) || !(gv instanceof TextView)) return;
+        CardView card = (CardView) c;
+        TextView desktop = (TextView) dv;
+        TextView global = (TextView) gv;
+        float d = card.getResources().getDisplayMetrics().density;
+        int pad = (int) (POPUP_ENTRY_DIP * d);
+        shapeEntry(desktop, pad);
+        shapeEntry(global, pad);
+        int wide = Math.max(entryWidth(desktop), entryWidth(global));
+        desktop.setMinWidth(wide);
+        global.setMinWidth(wide);
+
+        Object p = desktop.getParent();
+        if (p instanceof ViewGroup) {
+            ViewGroup box = (ViewGroup) p;
+            int rule = ruleColor(card.getContext());
+            GradientDrawable fill = new GradientDrawable();
+            fill.setColor(barColor());
+            fill.setCornerRadius(POPUP_RADIUS_DIP * d);
+            fill.setStroke(RULE_PX, rule);
+            box.setBackgroundDrawable(fill);
+            int inset = (int) Math.ceil(POPUP_RADIUS_DIP * d * 0.3f) + RULE_PX;
+            box.setPadding(inset, inset, inset, inset);
+            int i = box.indexOfChild(desktop) + 1;
+            View line = i < box.getChildCount() ? box.getChildAt(i) : null;
+            if (line != null && !(line instanceof TextView)) {
+                line.setBackgroundColor((rule & 0x00FFFFFF) | HAIR_ALPHA);
+                ViewGroup.LayoutParams lp = line.getLayoutParams();
+                if (lp != null) {
+                    lp.height = 1;
+                    line.setLayoutParams(lp);
+                }
+                line.setLayerType(View.LAYER_TYPE_NONE, null);
+            }
+        }
+        card.setCardBackgroundColor(Color.TRANSPARENT);
+        card.setCardElevation(0);
+        card.setMaxCardElevation(0);
+        card.setUseCompatPadding(false);
+        card.setPreventCornerOverlap(false);
+        card.setRadius(POPUP_RADIUS_DIP * d);
+    }
+
+    private static void shapeEntry(TextView tv, int pad) {
+        ViewGroup.LayoutParams lp = tv.getLayoutParams();
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
+            m.setMargins(0, 0, 0, 0);
+            m.setMarginStart(0);
+            m.setMarginEnd(0);
+            tv.setLayoutParams(m);
+        }
+        tv.setPadding(pad, pad, pad, pad);
+        tv.setGravity(Gravity.CENTER);
+        tv.setTypeface(Typeface.MONOSPACE);
+    }
+
+    /**
+     * The popup's colours, from {@code PhotosDialog.refreshWallpaper} (every show and every step):
+     * the long-press menu's text colours and row highlight on the entry at the cursor. Nothing here
+     * may change a size — see {@link #shapePopup}; the highlight is made size-less by
+     * {@link #highlight}.
+     */
+    public static void wallpaperPopup(CardView card, TextView desktop, TextView global, int pos) {
+        if (desktop == null || global == null) return;
+        try {
+            popupEntry(desktop, pos == 0);
+            popupEntry(global, pos != 0);
+        } catch (Throwable t) {
+            // the layout's colours
+        }
+    }
+
+    /** One entry of the popup, as the long-press menu paints a row: text and highlight. */
+    private static void popupEntry(TextView tv, boolean focus) {
+        int fg = tv.getResources().getColor(
+                focus ? R.color.selected_text_color_submenu : R.color.white);
+        ThemeManager.INSTANCE.menuItemSetTextColor(tv, fg, focus);
+        highlight(tv, focus);
+    }
+
+    /** The width an entry's words and padding take, in the typeface already set on it. */
+    private static int entryWidth(TextView tv) {
+        CharSequence s = tv.getText();
+        float w = s == null ? 0 : tv.getPaint().measureText(s.toString());
+        return (int) Math.ceil(w) + tv.getPaddingLeft() + tv.getPaddingRight();
     }
 
     /**
@@ -299,23 +433,28 @@ public final class Photos {
             Object p = label.getParent();
             if (!(p instanceof View)) return;
             View cell = (View) p;
-            cell.setTag(Rows.FLAT);
-            cell.setBackgroundDrawable(null);
-            ThemeManager.INSTANCE.menuItemSetBackground(cell,
-                    focus ? R.drawable.item_selected_submenu : 0, focus);
-            if (focus && cell.getBackground() == null) {
-                cell.setBackgroundResource(R.drawable.item_selected_submenu);
-            }
-            Drawable bg = cell.getBackground();
-            if (bg instanceof BitmapDrawable) {
-                Bitmap b = ((BitmapDrawable) bg).getBitmap();
-                if (b != null) cell.setBackgroundDrawable(new Ends(b));
-            }
-            Rows.noSize(cell);
+            highlight(cell, focus);
             fit(adapter, cell, label);
         } catch (Throwable t) {
             // stock white / accent
         }
+    }
+
+    /** The long-press menu's row highlight on {@code cell}, or none; shared by strip and popup. */
+    private static void highlight(View cell, boolean focus) {
+        cell.setTag(Rows.FLAT);
+        cell.setBackgroundDrawable(null);
+        ThemeManager.INSTANCE.menuItemSetBackground(cell,
+                focus ? R.drawable.item_selected_submenu : 0, focus);
+        if (focus && cell.getBackground() == null) {
+            cell.setBackgroundResource(R.drawable.item_selected_submenu);
+        }
+        Drawable bg = cell.getBackground();
+        if (bg instanceof BitmapDrawable) {
+            Bitmap b = ((BitmapDrawable) bg).getBitmap();
+            if (b != null) cell.setBackgroundDrawable(new Ends(b));
+        }
+        Rows.noSize(cell);
     }
 
     /**

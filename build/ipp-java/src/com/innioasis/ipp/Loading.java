@@ -15,6 +15,7 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.SystemClock;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -154,6 +156,32 @@ public final class Loading {
             if (holdsSpin(decor)) w.setWindowAnimations(FADE_STYLE);
         } catch (Throwable t) {
             // the platform's own window is still a progress window
+        }
+    }
+
+    /**
+     * A progress window that is raised but not seen — Photos opening a folder or a picture. The
+     * window stays for what it does besides showing: it holds the keys while the work runs (both
+     * swallow every key through a listener of their own), so a quick
+     * second press cannot start a second load over the first, whose list would then land on the
+     * wrong folder. Only its look goes: no box, no dim, no animation, nothing drawn.
+     */
+    public static void hidden(ProgressDialog d) {
+        if (d == null) return;
+        try {
+            Window w = d.getWindow();
+            if (w == null) return;
+            // Before the window's first draw, which is when its enter animation is chosen.
+            w.setWindowAnimations(0);
+            w.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            View decor = w.getDecorView();
+            if (decor instanceof ViewGroup) {
+                ViewGroup g = (ViewGroup) decor;
+                for (int i = 0; i < g.getChildCount(); i++) g.getChildAt(i).setVisibility(View.INVISIBLE);
+            }
+        } catch (Throwable t) {
+            // a window that shows is still a window that holds the keys
         }
     }
 
