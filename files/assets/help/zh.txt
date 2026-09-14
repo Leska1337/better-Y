@@ -33,11 +33,6 @@
 [log] 保存诊断日志
 将诊断报告保存到存储卡的 /better-Y/logs/ 文件夹，便于随错误报告一起提交。
 
-[sf] 重启 SurfaceFlinger
-诊断：重启合成器并将报告写入 /better-Y/logs/ 文件夹。
-
-该项仅在调试模式下出现，在 Settings → About 中连按五次中键即可开启。
-
 [[player]] 正在播放
 
 [icon_tint] 图标颜色

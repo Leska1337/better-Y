@@ -286,11 +286,8 @@ public final class Force {
      * The pid of the process whose command line is exactly {@code name}, or 0. Read from
      * {@code /proc}, which needs no permission — and no {@code ps}, which is a process of its own
      * and might be exactly what a wedged system cannot start.
-     *
-     * Public because {@code Panel} restarts SurfaceFlinger the same way ({@code /system/bin/
-     * surfaceflinger}), and one implementation of "find this process" is enough for both.
      */
-    public static int pidOf(String name) {
+    private static int pidOf(String name) {
         try {
             File[] fs = new File("/proc").listFiles();
             for (int i = 0; fs != null && i < fs.length; i++) {

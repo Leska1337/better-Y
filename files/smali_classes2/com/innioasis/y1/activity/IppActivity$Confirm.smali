@@ -16,52 +16,44 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;I)V
   .registers 3
-  .line 1039
+  .line 966
     invoke-direct { p0 }, Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;-><init>()V
-  .line 1040
+  .line 967
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
-  .line 1041
+  .line 968
     iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->action:I
-  .line 1042
+  .line 969
     return-void
 .end method
 
 .method public cancel()V
   .registers 1
-  .line 1059
+  .line 984
     return-void
 .end method
 
 .method public confirm()V
   .registers 3
-  .line 1046
+  .line 973
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->action:I
     if-nez v0, :L0
-  .line 1047
+  .line 974
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->postReboot()V
-    goto :L3
+    goto :L2
   :L0
-  .line 1048
+  .line 975
     const/4 v1, 2
     if-ne v0, v1, :L1
-  .line 1049
-    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->startSfRestart()V
-    goto :L3
-  :L1
-  .line 1050
-    const/4 v1, 3
-    if-ne v0, v1, :L2
-  .line 1051
+  .line 976
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->save(Landroid/app/Activity;)V
-    goto :L3
-  :L2
-  .line 1053
+    goto :L2
+  :L1
+  .line 978
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->runFullRescan()V
-  :L3
-  .line 1055
+  :L2
+  .line 980
     return-void
 .end method

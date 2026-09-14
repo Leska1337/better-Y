@@ -33,11 +33,6 @@ Les cinq sauvegardes les plus récentes sont conservées. Après Charger, le lec
 [log] Enregistrer le journal de diagnostic
 Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte mémoire, à joindre à un rapport de bogue.
 
-[sf] Redémarrer SurfaceFlinger
-Diagnostic : redémarre le compositeur et écrit un rapport dans le dossier /better-Y/logs/.
-
-Cette option n'apparaît qu'en mode débogage, activé par cinq appuis sur le bouton central dans Settings → About.
-
 [[player]] En lecture
 
 [icon_tint] Couleur des icônes

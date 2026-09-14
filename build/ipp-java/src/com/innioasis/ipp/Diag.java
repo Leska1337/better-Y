@@ -32,9 +32,8 @@ import java.util.Map;
  *
  * The report
  * "Save diagnostic log" in [Tools] writes {@code better-Y/logs/log_<date>_<time>.log} to the CARD,
- * beside the crash logs and {@code Panel}'s SurfaceFlinger reports — the same reasoning
- * as there: the report has to be readable later, over USB, from a device that may never be next to
- * a PC. It holds four things, because a report answering only one of them tends to need a second
+ * beside the crash logs: the report has to be readable later, over USB, from a device that may
+ * never be next to a PC. It holds four things, because a report answering only one of them tends to need a second
  * round of questions: what build this is and what it is running on, what the mod is set to, what
  * the library looks like, and the tail of both logcat buffers.
  *
@@ -50,9 +49,7 @@ import java.util.Map;
  * does not have to hand. So it is toggled from the device instead: **five centre presses on Settings →
  * About**. Not a menu row, because it is not a feature — it costs speed everywhere, needs a reboot
  * to take effect, and a user who has not been asked for it has no business finding it. The same
- * five presses turn it off again, and while it is on the better-Y menu grows the SurfaceFlinger
- * diagnostic ({@link Panel}), which is the other thing that is only ever wanted by someone who was
- * asked for it.
+ * five presses turn it off again.
  */
 public final class Diag {
 
@@ -84,8 +81,8 @@ public final class Diag {
     private static int taps;
     private static long lastTap;
 
-    /** Is the verbose (stock) logging mode on? Asked by {@code IppActivity} when it builds its menu. */
-    public static boolean on() {
+    /** Is the verbose (stock) logging mode on? */
+    static boolean on() {
         try {
             return new File(MARK).isFile();
         } catch (Throwable t) {
@@ -237,8 +234,8 @@ public final class Diag {
     }
 
     /**
-     * Write the ring to the card because the process is about to end — a crash, a force reboot,
-     * a compositor restart. The report picks the newest of these up, so the history of a session
+     * Write the ring to the card because the process is about to end — a crash, a force reboot.
+     * The report picks the newest of these up, so the history of a session
      * that died survives into the next one; without it the ring, being memory, would be exactly
      * as absent as the process.
      */
@@ -401,7 +398,6 @@ public final class Diag {
             ringDump(s);
             crashes(s);
             anr(s);
-            display(s);
             s.append("\n--- logcat -b main -v time (tail 800) ---\n");
             s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v", "time",
                     "-t", "800"}, CAP));
@@ -652,42 +648,6 @@ public final class Diag {
         s.append("written ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
                 .format(new Date(f.lastModified()))).append('\n');
         s.append(tail(f, FILE_CAP));
-    }
-
-    /**
-     * The evidence for the one defect that cannot be reproduced on demand: the whole screen drawn
-     * shifted sideways, wrapping round from the right edge. It is in the ORDINARY report, not
-     * behind the debug mode, so a user who runs into it has nothing to switch on — they press the
-     * one button they already know about and the frame's geometry at that moment is in the file.
-     *
-     * The app cannot detect the shift itself: a {@code screencap} of the same moment comes out
-     * clean, so everything up to and including composition is right and the app has nothing to
-     * look at. What it can do is record how the panel is being driven, against the healthy frame
-     * measured on 2026-08-22 (skill `ipp-device-testing`): 480x1080 of virtual size (triple
-     * buffer), stride 1920 = 480 x 4 bytes, rotate 0.
-     *
-     * This section and the SurfaceFlinger row in [Tools] are a pair, and both come out together
-     * once the defect is either fixed or has stopped happening to anyone.
-     */
-    private static void display(StringBuilder s) {
-        s.append("\n--- display ---\n");
-        String[] fb = {"name", "virtual_size", "bits_per_pixel", "stride", "rotate", "state",
-                "blank", "mode"};
-        String stride = null, size = null, rotate = null;
-        for (int i = 0; i < fb.length; i++) {
-            String v = Panel.read("/sys/class/graphics/fb0/" + fb[i]);
-            if (v == null) continue;
-            v = v.trim();
-            s.append(fb[i]).append(" = ").append(v).append('\n');
-            if ("stride".equals(fb[i])) stride = v;
-            if ("virtual_size".equals(fb[i])) size = v;
-            if ("rotate".equals(fb[i])) rotate = v;
-        }
-        boolean ok = "1920".equals(stride) && "480,1080".equals(size) && "0".equals(rotate);
-        s.append("verdict = ").append(ok ? "matches the healthy frame"
-                : "DIFFERS from the healthy frame (480,1080 / stride 1920 / rotate 0)").append('\n');
-        s.append("\n--- dumpsys SurfaceFlinger ---\n");
-        s.append(Panel.exec(new String[]{"/system/bin/dumpsys", "SurfaceFlinger"}, FILE_CAP));
     }
 
     /** The newest file in a directory, optionally by prefix, or null. */

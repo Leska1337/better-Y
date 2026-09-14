@@ -1,65 +1,27 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
-import android.os.Build;
-import android.os.SystemClock;
 
 import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 /**
- * A diagnostic for the one defect on this device that our code cannot be shown to cause or not
- * cause: the whole screen drawn shifted sideways, wrapping round from the right edge to the left,
- * with the row highlights drawn wrong along with it. Seen three times, always after a flash, once
- * at the moment the screen woke on a USB connect; it clears itself, and blanking the screen and
- * turning it back on clears it at once. It is not reproducible on demand, which is exactly why the
- * test has to be a button on the device rather than a command from a PC.
+ * The mod's place on the card and its reach into the system: our folder and its subfolders, adb
+ * switched on at every start, and the commands the diagnostic report runs.
  *
- * What the test actually separates
- * Blanking the screen re-initialises the panel, so "it goes away when the screen is blanked" tells
- * us nothing on its own — everything from our own drawing down to the display controller is
- * re-done at once. What separates them is restarting the COMPOSITOR and nothing else:
- * SurfaceFlinger comes back with fresh state while the kernel's framebuffer and the panel are left
- * exactly as they were.
- *
- *   - Shift gone — it lived in software above the driver (SurfaceFlinger's composition,
- *       or something an app did to it). Then there is something to look for, and our own code is
- *       a candidate again.
- *   - Shift still there — nothing above the kernel display driver is responsible, and the
- *       app cannot be. That closes the question.
- *
- * {@code adb shell stop; start} would have been the obvious way to do this and is not available:
- * adb on this device runs as uid {@code shell}, which may not set the {@code ctl.*} properties, and
- * our boot images only add {@code adb} to {@code persist.sys.usb.config} — they do not make the
- * build debuggable. It is also the weaker test, because it restarts zygote and {@code system_server}
- * while usually leaving SurfaceFlinger alive, which is the one process this is about.
- *
- * Why the app can do what adb cannot
- * SurfaceFlinger runs as uid {@code system}, and so do we ({@code sharedUserId}), so {@code kill(2)}
- * on it is permitted — the same fact {@code Force} already leans on to kill {@code system_server}
- * when a reboot cannot be asked for politely.
- *
- * The report is written to the CARD, not to logcat or the app's cache, because the whole point
- * is that the defect turns up when there is no PC within reach: it has to be readable later, over
- * USB, in {@code better-Y/logs} beside the diagnostic report and the crash logs.
+ * Everything the app writes about itself goes to the CARD, not to logcat or the app's cache: the
+ * private directory cannot be read from a PC (adb runs as {@code shell}), and the card can be, over
+ * USB, from a device that may never be next to a PC.
  */
 public final class Panel {
 
     private Panel() { }
-
-    /** Seconds to wait for the framework to fall over on its own before pushing it. */
-    private static final long SETTLE_MS = 6000L;
-
-    /** How much of one command's output is kept. A SurfaceFlinger dump is a few tens of KB. */
-    private static final int CAP = 96 * 1024;
 
     /** The name of our folder on the card, in one place — everything else asks {@link #card()}. */
     private static final String DIR = "better-Y";
@@ -85,7 +47,7 @@ public final class Panel {
 
     /**
      * {@code better-Y/logs} — everything the app writes ABOUT ITSELF: the diagnostic report, the
-     * ring a dying session spilled, the compositor's dump.
+     * ring a dying session spilled.
      *
      * The folder's root is left to the things a person puts there or edits by hand
      * ({@code comma_artists.txt}, {@code debug_log}), so what is a file the user WRITES and what
@@ -172,110 +134,6 @@ public final class Panel {
         return "persist=" + prop(USB_KEY) + " sys=" + prop("sys.usb.config");
     }
 
-    /**
-     * Write the report and hand back the file, or null if nothing could be written. Runs on a
-     * worker: it execs {@code dumpsys}, which is a binder round trip into a process that is, by
-     * hypothesis, misbehaving.
-     */
-    public static File report(Context c) {
-        FileOutputStream out = null;
-        try {
-            File f = new File(logs(), "sf_" + stamp() + ".log");
-            StringBuilder s = new StringBuilder(4096);
-            s.append("better-Y ").append(version(c)).append('\n');
-            s.append("when    ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-                    .format(new Date())).append('\n');
-            s.append("uptime  ").append(SystemClock.elapsedRealtime()).append(" ms\n");
-            s.append("build   ").append(Build.DISPLAY).append(" / ").append(Build.FINGERPRINT)
-                    .append('\n');
-            s.append("sf pid  ").append(Force.pidOf("/system/bin/surfaceflinger")).append('\n');
-
-            s.append("\n--- /sys/class/graphics/fb0 ---\n");
-            // A fixed list rather than the whole directory: some sysfs attributes block or have
-            // side effects when read, and these are the ones that describe the geometry the panel
-            // is being driven with -- which is what a sideways shift would show up in.
-            String[] fb = {"name", "virtual_size", "bits_per_pixel", "stride", "mode", "modes",
-                    "state", "blank", "rotate"};
-            for (int i = 0; i < fb.length; i++) {
-                String v = read("/sys/class/graphics/fb0/" + fb[i]);
-                if (v != null) s.append(fb[i]).append(" = ").append(v.trim()).append('\n');
-            }
-
-            s.append("\n--- dumpsys SurfaceFlinger ---\n");
-            s.append(exec(new String[]{"/system/bin/dumpsys", "SurfaceFlinger"}, CAP));
-            s.append("\n--- logcat -d -v time (tail) ---\n");
-            s.append(exec(new String[]{"/system/bin/logcat", "-d", "-v", "time", "-t", "300"}, CAP));
-
-            out = new FileOutputStream(f);
-            out.write(s.toString().getBytes("UTF-8"));
-            out.flush();
-            out.getFD().sync();        // the compositor is about to be killed under us
-            return f;
-        } catch (Throwable t) {
-            return null;
-        } finally {
-            try {
-                if (out != null) out.close();
-            } catch (Throwable t) {
-                // ignore
-            }
-        }
-    }
-
-    /**
-     * Kill the compositor, then make sure the device comes back to something usable.
-     *
-     * Killing SurfaceFlinger alone is the clean test: init restarts it, and if
-     * {@code system_server} notices and goes down with it the whole framework comes back anyway.
-     * If it does NOT notice, the screen is left frozen on the last frame it composed — which would
-     * turn a diagnostic into a power-cycle — so after {@link #SETTLE_MS} the same ladder
-     * {@code Force} uses takes {@code system_server} down deliberately. Neither step re-initialises
-     * the panel, so the answer the test is after is not spoiled by the fallback.
-     *
-     * On a daemon thread with no Handler: our own process is very likely to be killed half way
-     * through, and none of this may be allowed to hold a frame up.
-     */
-    public static void restart() {
-        Diag.spill("SurfaceFlinger restart from [Tools]", null);
-        Thread t = new Thread(new Kill(), "ipp-sf-restart");
-        t.setDaemon(true);
-        t.start();
-    }
-
-    private static final class Kill implements Runnable {
-        public void run() {
-            int sf = Force.pidOf("/system/bin/surfaceflinger");
-            android.util.Log.e("ippPanel", "restarting surfaceflinger, pid=" + sf);
-            if (sf > 0) {
-                try {
-                    android.os.Process.killProcess(sf);
-                } catch (Throwable t) {
-                    android.util.Log.e("ippPanel", "kill surfaceflinger failed", t);
-                }
-            }
-            sleep(SETTLE_MS);
-            // Still here, so the framework rode it out and the screen is showing a frame nothing
-            // is going to replace. Take it down the way Force does.
-            int ss = Force.pidOf("system_server");
-            android.util.Log.e("ippPanel", "still here; system_server pid=" + ss);
-            if (ss > 0) {
-                try {
-                    android.os.Process.killProcess(ss);
-                } catch (Throwable t) {
-                    // not ours to kill after all
-                }
-            }
-        }
-    }
-
-    private static void sleep(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
-
     static String stamp() {
         return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
     }
@@ -288,32 +146,9 @@ public final class Panel {
         }
     }
 
-    /** A small file, or null. Used for sysfs, where every value is a line or two. */
-    static String read(String path) {
-        InputStream in = null;
-        try {
-            File f = new File(path);
-            if (!f.isFile()) return null;
-            in = new FileInputStream(f);
-            byte[] b = new byte[512];
-            int got = in.read(b);
-            return got <= 0 ? "" : new String(b, 0, got, "UTF-8");
-        } catch (Throwable t) {
-            return null;
-        } finally {
-            try {
-                if (in != null) in.close();
-            } catch (Throwable t) {
-                // ignore
-            }
-        }
-    }
-
     /**
-     * Run a command and return its output, capped. Both commands here can be refused rather than
-     * fail — {@code dumpsys SurfaceFlinger} answers "Permission Denial" unless the caller holds
-     * {@code android.permission.DUMP} (declared in the manifest for exactly this), and
-     * {@code logcat} answers nothing unless the uid is in the {@code log} group. A refusal is
+     * Run a command and return its output, capped. A command can be refused rather than fail —
+     * {@code logcat} answers nothing unless the uid is in the {@code log} group — and a refusal is
      * itself worth having in the file, so whatever comes back is what gets written.
      */
     static String exec(String[] cmd, int cap) {

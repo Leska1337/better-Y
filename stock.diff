@@ -1,16 +1,8 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..973e1d49 100644
+index 2c8d26c0..688a3ea3 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
-@@ -32,6 +32,7 @@
-     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
-     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
-     <uses-permission android:name="android.permission.INTERNET"/>
-+    <uses-permission android:name="android.permission.DUMP"/>
-     <queries>
-         <intent>
-             <action android:name="android.intent.action.MAIN"/>
-@@ -56,7 +57,6 @@
+@@ -56,7 +56,6 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.PhotosActivity">
              <meta-data android:name="android.app.lib_name" android:value=""/>
          </activity>
@@ -18,7 +10,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,9 @@
+@@ -64,6 +63,9 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
@@ -29,7 +21,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..a67c8d5a 100644
+index 01b1f730..453f9314 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +36,7 @@ index 01b1f730..a67c8d5a 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000164
++  versionCode: 10000165
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -855,10 +847,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..1ecb16a2 100644
+index 50446006..b52c0781 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,488 @@
+@@ -1,417 +1,487 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1698,7 +1690,6 @@ index 50446006..1ecb16a2 100644
 +    <string name="ipp_feat_likes_names">Likes neben Titelnamen anzeigen</string>
 +    <string name="ipp_favorites">❤ Favoriten</string>
 +    <string name="ipp_reboot_confirm">Gerät neu starten?</string>
-+    <string name="ipp_sf_confirm">SurfaceFlinger neu starten?</string>
 +    <string name="ipp_log_confirm">Diagnoseprotokoll auf der Karte speichern?</string>
 +    <string name="ipp_log_done">Protokoll gespeichert: %1$s</string>
 +    <string name="ipp_log_fail">Protokoll konnte nicht gespeichert werden</string>
@@ -2083,10 +2074,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..d657104c 100644
+index 6f5a555d..1ec611e3 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,488 @@
+@@ -1,417 +1,487 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -2926,7 +2917,6 @@ index 6f5a555d..d657104c 100644
 +    <string name="ipp_feat_likes_names">Mostrar Me gusta junto a los nombres</string>
 +    <string name="ipp_favorites">❤ Favoritos</string>
 +    <string name="ipp_reboot_confirm">¿Reiniciar el dispositivo?</string>
-+    <string name="ipp_sf_confirm">¿Reiniciar SurfaceFlinger?</string>
 +    <string name="ipp_log_confirm">¿Guardar un registro de diagnóstico en la tarjeta?</string>
 +    <string name="ipp_log_done">Registro guardado: %1$s</string>
 +    <string name="ipp_log_fail">No se pudo guardar el registro</string>
@@ -2993,10 +2983,10 @@ index 6f5a555d..d657104c 100644
 +    <string name="ipp_usb_off">Desactivar almacenamiento USB</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..800ab5d9 100644
+index c242cee4..59aebcf8 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,488 @@
+@@ -1,417 +1,487 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3836,7 +3826,6 @@ index c242cee4..800ab5d9 100644
 +    <string name="ipp_feat_likes_names">Afficher les favoris a cote des titres</string>
 +    <string name="ipp_favorites">❤ Favoris</string>
 +    <string name="ipp_reboot_confirm">Redémarrer l\'appareil ?</string>
-+    <string name="ipp_sf_confirm">Redémarrer SurfaceFlinger ?</string>
 +    <string name="ipp_log_confirm">Enregistrer un journal de diagnostic sur la carte ?</string>
 +    <string name="ipp_log_done">Journal enregistré : %1$s</string>
 +    <string name="ipp_log_fail">Impossible d\'enregistrer le journal</string>
@@ -3903,10 +3892,10 @@ index c242cee4..800ab5d9 100644
 +    <string name="ipp_usb_off">Désactiver la mémoire de stockage USB</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..bee22cdb 100644
+index d82ac6bb..d1152b52 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,488 @@
+@@ -1,417 +1,487 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4746,7 +4735,6 @@ index d82ac6bb..bee22cdb 100644
 +    <string name="ipp_feat_likes_names">הצגת לייקים ליד שמות השירים</string>
 +    <string name="ipp_favorites">❤ מועדפים</string>
 +    <string name="ipp_reboot_confirm">להפעיל מחדש את המכשיר?</string>
-+    <string name="ipp_sf_confirm">להפעיל מחדש את SurfaceFlinger?</string>
 +    <string name="ipp_log_confirm">לשמור יומן אבחון בכרטיס?</string>
 +    <string name="ipp_log_done">היומן נשמר: %1$s</string>
 +    <string name="ipp_log_fail">לא ניתן לשמור את היומן</string>
@@ -4813,10 +4801,10 @@ index d82ac6bb..bee22cdb 100644
 +    <string name="ipp_usb_off">כבה אחסון USB</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..365e46d8 100644
+index f71d0cb1..9ad5b925 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,405 @@
+@@ -1,334 +1,404 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5490,7 +5478,6 @@ index f71d0cb1..365e46d8 100644
 +    <string name="ipp_feat_likes_names">곡 이름 옆에 좋아요 표시</string>
 +    <string name="ipp_favorites">❤ 즐겨찾기</string>
 +    <string name="ipp_reboot_confirm">기기를 재부팅할까요?</string>
-+    <string name="ipp_sf_confirm">SurfaceFlinger를 재시작할까요?</string>
 +    <string name="ipp_log_confirm">진단 로그를 카드에 저장할까요?</string>
 +    <string name="ipp_log_done">로그 저장됨: %1$s</string>
 +    <string name="ipp_log_fail">로그를 저장할 수 없습니다</string>
@@ -5804,10 +5791,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..dac4dd62 100644
+index 4c84fd2b..c1cb4ce2 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,157 @@
+@@ -1,86 +1,156 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -5985,7 +5972,6 @@ index 4c84fd2b..dac4dd62 100644
 +    <string name="ipp_feat_likes_names">Отображать лайки рядом с названиями песен</string>
 +    <string name="ipp_favorites">❤ Любимые треки</string>
 +    <string name="ipp_reboot_confirm">Перезагрузить устройство?</string>
-+    <string name="ipp_sf_confirm">Перезапустить SurfaceFlinger?</string>
 +    <string name="ipp_log_confirm">Сохранить диагностический лог на карту?</string>
 +    <string name="ipp_log_done">Лог сохранён: %1$s</string>
 +    <string name="ipp_log_fail">Не удалось сохранить лог</string>
@@ -6052,10 +6038,10 @@ index 4c84fd2b..dac4dd62 100644
 +    <string name="ipp_usb_off">Отключить USB-накопитель</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..8c80abfa 100644
+index 5665bdd9..2cdaef1f 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,497 @@
+@@ -1,426 +1,496 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -6913,7 +6899,6 @@ index 5665bdd9..8c80abfa 100644
 +    <string name="ipp_feat_likes_names">在歌曲名称旁显示点赞</string>
 +    <string name="ipp_favorites">❤ 我的最爱</string>
 +    <string name="ipp_reboot_confirm">重启设备？</string>
-+    <string name="ipp_sf_confirm">重启 SurfaceFlinger？</string>
 +    <string name="ipp_log_confirm">将诊断日志保存到存储卡？</string>
 +    <string name="ipp_log_done">日志已保存：%1$s</string>
 +    <string name="ipp_log_fail">无法保存日志</string>
@@ -8286,10 +8271,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..cb8b87c6 100644
+index 803c1e7a..16919f82 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5634 @@
+@@ -1,5519 +1,5633 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18338,7 +18323,6 @@ index 803c1e7a..cb8b87c6 100644
 +    <public type="string" name="ipp_open_artist" id="0x7f110231" />
 +    <public type="string" name="ipp_queue_remove_it" id="0x7f110232" />
 +    <public type="string" name="ipp_already_added" id="0x7f110233" />
-+    <public type="string" name="ipp_sf_confirm" id="0x7f110235" />
 +    <public type="string" name="ipp_log_confirm" id="0x7f110238" />
 +    <public type="string" name="ipp_log_done" id="0x7f110239" />
 +    <public type="string" name="ipp_log_fail" id="0x7f11023a" />
@@ -19444,10 +19428,10 @@ index 803c1e7a..cb8b87c6 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..c79f8dd8 100644
+index 71fe29d0..04f90b29 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,547 @@
+@@ -1,473 +1,546 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20393,7 +20377,7 @@ index 71fe29d0..c79f8dd8 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev164</string>
++    <string name="ipp_version">v1.0.0-dev165</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20401,7 +20385,6 @@ index 71fe29d0..c79f8dd8 100644
 +    <string name="ipp_feat_likes_names">Show likes next to song names</string>
 +    <string name="ipp_favorites">❤ Favorites</string>
 +    <string name="ipp_reboot_confirm">Reboot device?</string>
-+    <string name="ipp_sf_confirm">Restart SurfaceFlinger?</string>
 +    <string name="ipp_log_confirm">Save a diagnostic log to the card?</string>
 +    <string name="ipp_log_done">Log saved: %1$s</string>
 +    <string name="ipp_log_fail">Could not save the log</string>

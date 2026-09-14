@@ -34,7 +34,6 @@ import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
-import com.innioasis.ipp.Panel;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
@@ -244,17 +243,6 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(ACTION, "backup", 0, null, null));
         // one file to attach to a bug report -- build, settings, library, logcat. See Diag.
         l.add(new Item(ACTION, "log", 0, null, null));
-        // A diagnostic, not a feature: restarts SurfaceFlinger and writes a report to the card, so
-        // the one defect we cannot reproduce -- the whole screen drawn shifted sideways -- can be
-        // told apart from a panel fault at the moment it happens, with no PC in reach. See Panel.
-        //
-        // It is only OFFERED in debug mode (five centre presses on Settings -> About), because it
-        // is only ever wanted by someone who has been asked for it: it kills the compositor, and
-        // on a healthy device that is a black screen and a wait for nothing. showIf is no use here
-        // -- it reads a preference, and the mode is a file on the card, read by stock's Timber tree
-        // as well -- so the row simply is not built. buildItems runs per screen open, so the row
-        // appears as soon as the mode is on.
-        if (Diag.on()) l.add(new Item(ACTION, "sf", 0, null, null));
 
         // [Now Playing] -- everything whose effect is seen on the player screen
         l.add(new Item(HEADER, "player", 0, null, null));
@@ -826,8 +814,6 @@ public final class IppActivity extends BaseActivity {
                 // No Yes/No here: the row's two halves are the dialog's two rows, and the one
                 // that needs confirming (Load) asks for it after the archive has been picked.
                 Backup.open(getActivity(), label(it));
-            } else if ("sf".equals(it.key)) {
-                confirmSf(label(it));
             } else if ("log".equals(it.key)) {
                 confirmLog(label(it));
             }
@@ -837,8 +823,7 @@ public final class IppActivity extends BaseActivity {
     // action ids for Confirm ("Cache library" has a picker of its own, not a Yes/No)
     private static final int ACT_REBOOT = 0;
     private static final int ACT_SCAN = 1;
-    private static final int ACT_SF = 2;
-    private static final int ACT_LOG = 3;
+    private static final int ACT_LOG = 2;
 
     private void confirmReboot(String title) {
         DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
@@ -856,64 +841,6 @@ public final class IppActivity extends BaseActivity {
         DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
         d.setDialogTitle(title, getString(R.string.ipp_log_confirm),
                 new Confirm(this, ACT_LOG), false, true);
-    }
-
-    private void confirmSf(String title) {
-        DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
-        d.setDialogTitle(title, getString(R.string.ipp_sf_confirm),
-                new Confirm(this, ACT_SF), false, true);
-    }
-
-    /**
-     * Write the report, tell the user where it went, and only then take the compositor down.
-     *
-     * The report is collected on a worker: it execs {@code dumpsys SurfaceFlinger}, a binder
-     * round trip into the very process this is about, and a screen that is already drawing wrong
-     * is not a screen to block the main thread on. The toast is shown from the main thread and
-     * given a moment to be read — after the kill there may be nothing left to show it on.
-     */
-    void startSfRestart() {
-        Thread t = new Thread(new SfRun(this), "ipp-sf-report");
-        t.setDaemon(true);
-        t.start();
-    }
-
-    /** @see IppActivity#startSfRestart() */
-    private static final class SfRun implements Runnable {
-        private final IppActivity a;
-
-        SfRun(IppActivity a) {
-            this.a = a;
-        }
-
-        public void run() {
-            java.io.File f = Panel.report(a.getContext());
-            a.runOnUiThread(new SfToast(a, f == null ? "?" : f.getAbsolutePath()));
-            try {
-                Thread.sleep(2500L);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-            Panel.restart();
-        }
-    }
-
-    private static final class SfToast implements Runnable {
-        private final IppActivity a;
-        private final String path;
-
-        SfToast(IppActivity a, String path) {
-            this.a = a;
-            this.path = path;
-        }
-
-        public void run() {
-            try {
-                Toast.makeText(a.getContext(), path, Toast.LENGTH_LONG).show();
-            } catch (Throwable t) {
-                // the report is written either way, which is the part that matters
-            }
-        }
     }
 
     /**
@@ -1045,8 +972,6 @@ public final class IppActivity extends BaseActivity {
         public void confirm() {
             if (action == ACT_REBOOT) {
                 a.postReboot();
-            } else if (action == ACT_SF) {
-                a.startSfRestart();
             } else if (action == ACT_LOG) {
                 Diag.save(a);
             } else {

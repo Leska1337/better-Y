@@ -33,11 +33,6 @@
 [log] 진단 로그 저장
 오류 보고에 첨부할 수 있도록 메모리 카드의 /better-Y/logs/ 폴더에 진단 보고서를 저장합니다.
 
-[sf] SurfaceFlinger 재시작
-진단: 컴포지터를 다시 시작하고 /better-Y/logs/ 폴더에 보고서를 기록합니다.
-
-이 항목은 디버그 모드에서만 나타나며, Settings → About에서 가운데 버튼을 다섯 번 눌러 켤 수 있습니다.
-
 [[player]] 현재 재생 중
 
 [icon_tint] 아이콘 색상

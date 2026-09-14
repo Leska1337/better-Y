@@ -35,11 +35,6 @@ The five newest archives are kept. After Load the player restarts.
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
 
-[sf] Restart SurfaceFlinger
-A diagnostic: restarts the compositor and writes a report to the /better-Y/logs/ folder.
-
-This option is only there in debug mode, which is switched on by five centre presses on Settings → About.
-
 [[player]] Now playing
 
 [icon_tint] Icon color

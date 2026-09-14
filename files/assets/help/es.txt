@@ -33,11 +33,6 @@ Se conservan las cinco copias más recientes. Después de Cargar, el reproductor
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de memoria para adjuntarlo a un informe de error.
 
-[sf] Reiniciar SurfaceFlinger
-Diagnóstico: reinicia el compositor y escribe un informe en la carpeta /better-Y/logs/.
-
-Esta opción solo aparece en el modo de depuración, que se activa pulsando cinco veces el botón central en Settings → About.
-
 [[player]] Reproduciendo ahora
 
 [icon_tint] Color de los iconos
