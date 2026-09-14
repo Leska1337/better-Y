@@ -16,38 +16,38 @@
 
 .method private constructor <init>([Landroid/graphics/drawable/Drawable;II)V
   .registers 4
-  .line 366
+  .line 386
     invoke-direct { p0, p1 }, Landroid/graphics/drawable/LayerDrawable;-><init>([Landroid/graphics/drawable/Drawable;)V
-  .line 367
+  .line 387
     iput p2, p0, Lcom/innioasis/ipp/Eq$Track;->bar:I
-  .line 368
+  .line 388
     iput p3, p0, Lcom/innioasis/ipp/Eq$Track;->track:I
-  .line 369
+  .line 389
     return-void
 .end method
 
 .method static make(IIF)Lcom/innioasis/ipp/Eq$Track;
   .registers 8
-  .line 372
+  .line 392
     new-instance v0, Landroid/graphics/drawable/GradientDrawable;
     invoke-direct { v0 }, Landroid/graphics/drawable/GradientDrawable;-><init>()V
-  .line 373
+  .line 393
     invoke-virtual { v0, p1 }, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
-  .line 374
+  .line 394
     invoke-virtual { v0, p2 }, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
-  .line 375
+  .line 395
     new-instance v1, Landroid/graphics/drawable/GradientDrawable;
     invoke-direct { v1 }, Landroid/graphics/drawable/GradientDrawable;-><init>()V
-  .line 376
+  .line 396
     invoke-virtual { v1, p0 }, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
-  .line 377
+  .line 397
     invoke-virtual { v1, p2 }, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
-  .line 378
+  .line 398
     new-instance p2, Landroid/graphics/drawable/ClipDrawable;
     const/4 v2, 3
     const/4 v3, 1
     invoke-direct { p2, v1, v2, v3 }, Landroid/graphics/drawable/ClipDrawable;-><init>(Landroid/graphics/drawable/Drawable;II)V
-  .line 379
+  .line 399
     new-instance v1, Lcom/innioasis/ipp/Eq$Track;
     const/4 v2, 2
     new-array v2, v2, [Landroid/graphics/drawable/Drawable;
@@ -55,12 +55,12 @@
     aput-object v0, v2, v4
     aput-object p2, v2, v3
     invoke-direct { v1, v2, p0, p1 }, Lcom/innioasis/ipp/Eq$Track;-><init>([Landroid/graphics/drawable/Drawable;II)V
-  .line 380
+  .line 400
     const/high16 p0, 0x01020000
     invoke-virtual { v1, v4, p0 }, Lcom/innioasis/ipp/Eq$Track;->setId(II)V
-  .line 381
+  .line 401
     const p0, 16908301
     invoke-virtual { v1, v3, p0 }, Lcom/innioasis/ipp/Eq$Track;->setId(II)V
-  .line 382
+  .line 402
     return-object v1
 .end method

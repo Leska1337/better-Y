@@ -166,6 +166,8 @@ public final class Eq {
     private static final int OUTLINE_PX = 2;
     /** The label the side columns are measured by: the device's band range is ±1500 mB. */
     private static final String WIDEST = "-15";
+    /** A theme's font may draw "+" wider than "-". */
+    private static final String WIDEST_PLUS = "+15";
     /** Below this the text is unreadable anyway; the box stays fixed and the text may clip. */
     private static final float MIN_SCALE = 0.5f;
 
@@ -173,7 +175,7 @@ public final class Eq {
      * End of {@code EqEditDialog.showDialog}: the window gets a fixed height, and the text shrinks
      * until the title, five bands and Reset fit in it. The height is the screen's less 16dp above
      * and below — the box never grows past it whatever the theme's font. The width starts at
-     * stock's 300 and grows, up to the screen less 8dp a side, when the digit columns need it;
+     * stock's 300 and grows, up to the screen less 8dp a side, when the value column needs it;
      * past that the text shrinks too.
      *
      * The bands then share the list's height ({@link #stretch}), so every row is the same size
@@ -207,9 +209,9 @@ public final class Eq {
                 int hz = line(p, SIZE * k, dm);
                 sh = Math.max(line(p, SIZE * k, dm), knob);
                 p.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, SIZE * k, dm));
-                sw = (int) Math.ceil(p.measureText(WIDEST)) + 2;
+                sw = (int) Math.ceil(Math.max(p.measureText(WIDEST), p.measureText(WIDEST_PLUS))) + 2;
                 int row = (height - padV - title - reset) / 5;
-                width = Math.max(baseWidth, 2 * sw + bar + padH);
+                width = Math.max(baseWidth, sw + bar + padH);
                 boolean fits = hz + sh <= row && line(p, SIZE_RESET * k, dm) <= reset
                         && width <= maxWidth;
                 if (fits || k <= MIN_SCALE) break;
@@ -255,7 +257,8 @@ public final class Eq {
     /**
      * The whole look of one band row, in place of the tail of the adapter's {@code init}: the text
      * in the menu's colour, the bar and the knob in the progress colour, the knob of the band under
-     * the cursor outlined ({@link #outline}), and the digits in columns of a fixed size.
+     * the cursor outlined ({@link #outline}), and the band's current level right of the bar in a
+     * column of a fixed size. The left label is hidden; stock still writes the range into it.
      */
     public static void editRow(ItemEqEditBinding b, int index, int pos) {
         if (b == null) return;
@@ -265,8 +268,10 @@ public final class Eq {
             b.hz.setTextColor(text);
             b.hz.setTextSize(TypedValue.COMPLEX_UNIT_SP, SIZE * fitScale);
             if (b.hz.getMaxLines() != 1) b.hz.setSingleLine(true);
-            side(b.leftText, text);
+            b.leftText.setVisibility(View.GONE);
             side(b.rightText, text);
+            int v = value(b);
+            b.rightText.setText(v > 0 ? "+" + v : String.valueOf(v));
 
             View root = b.getRoot();
             ViewGroup.LayoutParams lp = root.getLayoutParams();
@@ -297,6 +302,21 @@ public final class Eq {
         } catch (Throwable t) {
             // a stale row is better than a crash on a wheel click
         }
+    }
+
+    /**
+     * The band's level in dB (Equalizer levels are millibels), 0 at the middle of the bar. Stock's bind has just written the range's
+     * low end into the left label ("-15") and set the bar to {@code (|min| + level) / 100}, so the
+     * level is the bar's position counted from that low end.
+     */
+    private static int value(ItemEqEditBinding b) {
+        int min = 0;
+        try {
+            min = Integer.parseInt(b.leftText.getText().toString().trim());
+        } catch (Throwable t) {
+            min = -(b.seekbar.getMax() / 2);
+        }
+        return b.seekbar.getProgress() + min;
     }
 
     private static void side(TextView tv, int color) {
