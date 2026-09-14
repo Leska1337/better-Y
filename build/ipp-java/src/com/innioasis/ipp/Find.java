@@ -3,6 +3,9 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.GradientDrawable;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,6 +16,7 @@ import com.innioasis.music.util.Other;
 import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.database.Song;
+import com.innioasis.y1.databinding.ActivitySearchBinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,6 +47,38 @@ import java.util.Locale;
 public final class Find {
 
     private Find() {}
+
+    /**
+     * From {@code initView} of both search screens (one layout): the magnifier's plate in the
+     * menu's background, the magnifier — one flat shape — tinted its text colour.
+     */
+    public static void head(ActivitySearchBinding b) {
+        if (b == null) return;
+        try {
+            menuPlate(b.iconBg);
+            b.icon.setColorFilter(Icons.menuText(false), PorterDuff.Mode.SRC_IN);
+        } catch (Throwable t) {
+            // stock colours stay
+        }
+    }
+
+    /** From both search screens' view holder constructors: the plate behind a result thumbnail. */
+    public static void plate(View row) {
+        if (row == null) return;
+        try {
+            menuPlate(row.findViewById(R.id.icon_bg));
+        } catch (Throwable t) {
+            // stock navy stays
+        }
+    }
+
+    private static void menuPlate(View v) {
+        if (v == null) return;
+        GradientDrawable g = new GradientDrawable();
+        g.setColor(Icons.menuBackground());
+        g.setCornerRadius(8 * v.getResources().getDisplayMetrics().density);
+        v.setBackgroundDrawable(g);
+    }
 
     /** The list thumbnail size, the one {@link CoverCache} stores. */
     private static final int THUMB = 50;

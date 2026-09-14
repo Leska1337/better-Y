@@ -133,10 +133,11 @@ public final class IppUsbActivity extends Activity {
         RelativeLayout box = new RelativeLayout(this);
         root.addView(box, new FrameLayout.LayoutParams(-1, -1));
 
+        // No caption at the top, but its line keeps its height: the icon and the texts below are
+        // placed from it.
         TextView title = text(20, text);
         title.setId(1);
-        title.setText(R.string.ipp_usb_title);
-        title.setPadding(dp(6), 0, 0, 0);
+        title.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(-1, -2);
         lp.addRule(RelativeLayout.ALIGN_PARENT_TOP);
         box.addView(title, lp);

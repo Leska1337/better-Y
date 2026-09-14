@@ -23,6 +23,7 @@ import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.theme.ThemeConfig;
 import com.innioasis.y1.theme.config.FileConfig;
+import com.innioasis.y1.theme.config.MenuConfig;
 
 import java.io.File;
 
@@ -220,6 +221,44 @@ public final class Theme {
     private static boolean musicIcon;
     // null until asked: it can never equal a theme name, the default theme being "".
     private static String fileIconsFor;
+
+    /** {@code item_selected_submenu}: the menu highlight with no theme, or none named. */
+    private static final int MENU_SEL_STOCK = 0xFF00F5FF;
+
+    /**
+     * The menu highlight's colour ({@code menuItemSelectedBackground}): the theme's colour, stock's
+     * turquoise when there is none, 0 when it is a picture. Read from the config, not probed —
+     * {@code ThemeManager.setBackground} never applies a colour written there, so a probe would
+     * answer the stock drawable. Memoised against the theme's name.
+     */
+    public static int menuSelectedColor() {
+        try {
+            String theme = ThemeManager.INSTANCE.getThemeName();
+            if (!eq(theme, menuSelFor)) {
+                int v = MENU_SEL_STOCK;
+                if (theme != null && theme.length() != 0) {
+                    File dir = new File(ThemeManager.themesPath, theme);
+                    ThemeConfig cfg = ThemeManager.INSTANCE.getConfig(dir.getAbsolutePath());
+                    MenuConfig mc = (cfg == null) ? null : cfg.getMenuConfig();
+                    String s = (mc == null) ? null : mc.getMenuItemSelectedBackground();
+                    if (shipped(dir, s)) {
+                        v = 0;
+                    } else if (s != null) {
+                        Integer c = parseColor(s);
+                        if (c != null) v = c.intValue();
+                    }
+                }
+                menuSel = v;
+                menuSelFor = theme;
+            }
+            return menuSel;
+        } catch (Throwable t) {
+            return MENU_SEL_STOCK;
+        }
+    }
+
+    private static int menuSel;
+    private static String menuSelFor;
 
     private static boolean shipped(File dir, String name) {
         return name != null && name.length() != 0 && new File(dir, name).exists();

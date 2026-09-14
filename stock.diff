@@ -29,7 +29,7 @@ index 2c8d26c0..973e1d49 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..48a3414b 100644
+index 01b1f730..a67c8d5a 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..48a3414b 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000156
++  versionCode: 10000164
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -855,10 +855,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..31494efd 100644
+index 50446006..1ecb16a2 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,489 @@
+@@ -1,417 +1,488 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1757,7 +1757,6 @@ index 50446006..31494efd 100644
 +    <string name="ipp_open_artist">Künstler öffnen</string>
 +    <string name="ipp_queue_remove_it">Aus Warteschlange entfernen</string>
 +    <string name="ipp_already_added">Bereits in der Liste</string>
-+    <string name="ipp_usb_title">USB-Massenspeicher</string>
 +    <string name="ipp_usb_connected">USB-Verbindung</string>
 +    <string name="ipp_usb_message">Der Player ist per USB mit einem Computer verbunden. Drücken Sie die mittlere Taste, um den USB-Speicher zu aktivieren und Dateien zwischen Computer und Player zu kopieren, oder die obere Taste, um zum Menü zurückzukehren.</string>
 +    <string name="ipp_usb_on">USB-Speicher aktivieren</string>
@@ -2084,10 +2083,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..ce3dea88 100644
+index 6f5a555d..d657104c 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,489 @@
+@@ -1,417 +1,488 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -2986,7 +2985,6 @@ index 6f5a555d..ce3dea88 100644
 +    <string name="ipp_open_artist">Abrir artista</string>
 +    <string name="ipp_queue_remove_it">Quitar de la cola</string>
 +    <string name="ipp_already_added">Ya está en la lista</string>
-+    <string name="ipp_usb_title">Almacenamiento USB masivo</string>
 +    <string name="ipp_usb_connected">Conexión por USB</string>
 +    <string name="ipp_usb_message">El reproductor está conectado a un ordenador por USB. Pulsa el botón central para activar el almacenamiento USB y copiar archivos entre el ordenador y el reproductor, o el botón superior para volver al menú.</string>
 +    <string name="ipp_usb_on">Activar almacenamiento USB</string>
@@ -2995,10 +2993,10 @@ index 6f5a555d..ce3dea88 100644
 +    <string name="ipp_usb_off">Desactivar almacenamiento USB</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..410a91db 100644
+index c242cee4..800ab5d9 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,489 @@
+@@ -1,417 +1,488 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3897,7 +3895,6 @@ index c242cee4..410a91db 100644
 +    <string name="ipp_open_artist">Ouvrir l\'artiste</string>
 +    <string name="ipp_queue_remove_it">Retirer de la file d\'attente</string>
 +    <string name="ipp_already_added">Déjà dans la liste</string>
-+    <string name="ipp_usb_title">Mémoire de stockage de masse USB</string>
 +    <string name="ipp_usb_connected">Connecté par USB</string>
 +    <string name="ipp_usb_message">Le lecteur est connecté à un ordinateur via USB. Appuyez sur le bouton central pour activer la mémoire de stockage USB et copier des fichiers entre l\'ordinateur et le lecteur, ou sur le bouton du haut pour revenir au menu.</string>
 +    <string name="ipp_usb_on">Activer la mémoire de stockage USB</string>
@@ -3906,10 +3903,10 @@ index c242cee4..410a91db 100644
 +    <string name="ipp_usb_off">Désactiver la mémoire de stockage USB</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..c9e8f643 100644
+index d82ac6bb..bee22cdb 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,489 @@
+@@ -1,417 +1,488 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4808,7 +4805,6 @@ index d82ac6bb..c9e8f643 100644
 +    <string name="ipp_open_artist">פתח אומן</string>
 +    <string name="ipp_queue_remove_it">הסרה מהתור</string>
 +    <string name="ipp_already_added">כבר בפלייליסט</string>
-+    <string name="ipp_usb_title">אמצעי מסוג USB לאחסון בנפח גדול</string>
 +    <string name="ipp_usb_connected">USB מחובר</string>
 +    <string name="ipp_usb_message">הנגן מחובר למחשב באמצעות USB. לחץ על הכפתור המרכזי כדי להפעיל את אחסון ה-USB ולהעתיק קבצים בין המחשב לנגן, או על הכפתור העליון כדי לחזור לתפריט.</string>
 +    <string name="ipp_usb_on">הפעל אחסון USB</string>
@@ -4817,10 +4813,10 @@ index d82ac6bb..c9e8f643 100644
 +    <string name="ipp_usb_off">כבה אחסון USB</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..ba421ac1 100644
+index f71d0cb1..365e46d8 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,406 @@
+@@ -1,334 +1,405 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5553,7 +5549,6 @@ index f71d0cb1..ba421ac1 100644
 +    <string name="ipp_open_artist">아티스트 열기</string>
 +    <string name="ipp_queue_remove_it">대기열에서 제거</string>
 +    <string name="ipp_already_added">이미 재생 목록에 있음</string>
-+    <string name="ipp_usb_title">USB 대용량 저장소</string>
 +    <string name="ipp_usb_connected">USB 연결됨</string>
 +    <string name="ipp_usb_message">플레이어가 USB로 컴퓨터에 연결되었습니다. 가운데 버튼을 누르면 USB 저장소가 켜져 컴퓨터와 플레이어 간에 파일을 복사할 수 있고, 위쪽 버튼을 누르면 메뉴로 돌아갑니다.</string>
 +    <string name="ipp_usb_on">USB 저장소 사용</string>
@@ -5809,10 +5804,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..76cda18e 100644
+index 4c84fd2b..dac4dd62 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,158 @@
+@@ -1,86 +1,157 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6049,7 +6044,6 @@ index 4c84fd2b..76cda18e 100644
 +    <string name="ipp_open_artist">Открыть исполнителя</string>
 +    <string name="ipp_queue_remove_it">Убрать из очереди</string>
 +    <string name="ipp_already_added">Уже в плейлисте</string>
-+    <string name="ipp_usb_title">Запоминающее устройство USB</string>
 +    <string name="ipp_usb_connected">USB-подключение установлено</string>
 +    <string name="ipp_usb_message">Плеер подключён к компьютеру по USB. Нажмите центральную кнопку, чтобы включить USB-накопитель и копировать файлы между компьютером и плеером, или верхнюю кнопку, чтобы вернуться в меню.</string>
 +    <string name="ipp_usb_on">Включить USB-накопитель</string>
@@ -6058,10 +6052,10 @@ index 4c84fd2b..76cda18e 100644
 +    <string name="ipp_usb_off">Отключить USB-накопитель</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..a6e5e6bf 100644
+index 5665bdd9..8c80abfa 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,498 @@
+@@ -1,426 +1,497 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -6978,7 +6972,6 @@ index 5665bdd9..a6e5e6bf 100644
 +    <string name="ipp_open_artist">打开艺术家</string>
 +    <string name="ipp_queue_remove_it">从队列移除</string>
 +    <string name="ipp_already_added">已在播放列表中</string>
-+    <string name="ipp_usb_title">USB 大容量存储设备</string>
 +    <string name="ipp_usb_connected">已连接 USB</string>
 +    <string name="ipp_usb_message">播放器已通过 USB 连接至计算机。按中间按钮打开 USB 存储设备，即可在计算机和播放器之间复制文件；按顶部按钮返回菜单。</string>
 +    <string name="ipp_usb_on">打开 USB 存储设备</string>
@@ -8293,10 +8286,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..a3ace43b 100644
+index 803c1e7a..cb8b87c6 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5635 @@
+@@ -1,5519 +1,5634 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18362,7 +18355,6 @@ index 803c1e7a..a3ace43b 100644
 +    <public type="string" name="ipp_backup_confirm" id="0x7f110245" />
 +    <public type="string" name="ipp_backup_restoring" id="0x7f110246" />
 +    <public type="string" name="ipp_backup_restore_fail" id="0x7f110247" />
-+    <public type="string" name="ipp_usb_title" id="0x7f110248" />
 +    <public type="string" name="ipp_usb_connected" id="0x7f110249" />
 +    <public type="string" name="ipp_usb_message" id="0x7f11024a" />
 +    <public type="string" name="ipp_usb_on" id="0x7f11024b" />
@@ -19452,10 +19444,10 @@ index 803c1e7a..a3ace43b 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..3e5bd0c9 100644
+index 71fe29d0..c79f8dd8 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,548 @@
+@@ -1,473 +1,547 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20401,7 +20393,7 @@ index 71fe29d0..3e5bd0c9 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev156</string>
++    <string name="ipp_version">v1.0.0-dev164</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20468,7 +20460,6 @@ index 71fe29d0..3e5bd0c9 100644
 +    <string name="ipp_open_artist">Open artist</string>
 +    <string name="ipp_queue_remove_it">Remove from queue</string>
 +    <string name="ipp_already_added">Already in the playlist</string>
-+    <string name="ipp_usb_title">USB mass storage</string>
 +    <string name="ipp_usb_connected">USB connected</string>
 +    <string name="ipp_usb_message">The player is connected to a computer via USB. Press the centre button to turn on USB storage and copy files between the computer and the player, or the top button to return to the menu.</string>
 +    <string name="ipp_usb_on">Turn on USB storage</string>
@@ -50838,10 +50829,20 @@ index 66c966fd..fb46458b 100644
  
      .line 271
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-index 64e6832c..93f74e23 100644
+index 64e6832c..42837012 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
-@@ -167,7 +167,8 @@
+@@ -95,6 +95,9 @@
+ 
+     iput-object p1, p0, Lcom/innioasis/music/SearchActivity$MyViewHolder;->binding$delegate:Lkotlin/Lazy;
+ 
++    # ipp: the thumbnail's plate in the long-press menu's background.
++    invoke-static {p2}, Lcom/innioasis/ipp/Find;->plate(Landroid/view/View;)V
++
+     return-void
+ .end method
+ 
+@@ -167,7 +170,8 @@
  
      invoke-static {p2, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -50851,7 +50852,7 @@ index 64e6832c..93f74e23 100644
  
      .line 372
      sget-object p2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -284,7 +285,8 @@
+@@ -284,7 +288,8 @@
  
      invoke-static {p2, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -50861,7 +50862,7 @@ index 64e6832c..93f74e23 100644
  
      .line 382
      sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -409,138 +411,60 @@
+@@ -409,138 +414,60 @@
  
      .line 392
      :cond_1
@@ -50903,13 +50904,13 @@ index 64e6832c..93f74e23 100644
 -    const/4 v1, 0x0
 -
 -    const/4 v2, 0x0
--
--    const/4 v3, 0x0
 +    iget-object v0, p2, Lcom/innioasis/y1/databinding/ItemSearchResultBinding;->icon:Landroid/widget/ImageView;
  
--    const/4 v4, 0x0
+-    const/4 v3, 0x0
 +    iget-object v1, p2, Lcom/innioasis/y1/databinding/ItemSearchResultBinding;->title:Landroid/widget/TextView;
  
+-    const/4 v4, 0x0
+-
 -    .line 410
 -    new-instance v5, Lcom/innioasis/music/SearchActivity$MyViewHolder$bind$3$1;
 -
@@ -50940,7 +50941,8 @@ index 64e6832c..93f74e23 100644
 -    invoke-direct {p0}, Lcom/innioasis/music/SearchActivity$MyViewHolder;->getBinding()Lcom/innioasis/y1/databinding/ItemSearchResultBinding;
 -
 -    move-result-object v0
--
++    invoke-static {p3}, Lcom/innioasis/music/SearchActivity;->access$getDefaultBitmap(Lcom/innioasis/music/SearchActivity;)Landroid/graphics/Bitmap;
+ 
 -    iget-object v0, v0, Lcom/innioasis/y1/databinding/ItemSearchResultBinding;->title:Landroid/widget/TextView;
 -
 -    sget-object v1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
@@ -50967,8 +50969,7 @@ index 64e6832c..93f74e23 100644
 -    invoke-direct {p0}, Lcom/innioasis/music/SearchActivity$MyViewHolder;->getBinding()Lcom/innioasis/y1/databinding/ItemSearchResultBinding;
 -
 -    move-result-object v0
-+    invoke-static {p3}, Lcom/innioasis/music/SearchActivity;->access$getDefaultBitmap(Lcom/innioasis/music/SearchActivity;)Landroid/graphics/Bitmap;
- 
+-
 -    iget-object v0, v0, Lcom/innioasis/y1/databinding/ItemSearchResultBinding;->info:Landroid/widget/TextView;
 -
 -    sget-object v1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
@@ -51691,7 +51692,7 @@ index 74b3d42d..fe2825db 100644
  
      iget-object v3, p0, Lcom/innioasis/music/SearchActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/SearchActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
-index 104ab128..5e695fcc 100644
+index 104ab128..c05dff71 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity.smali
 @@ -341,13 +341,15 @@
@@ -51715,7 +51716,17 @@ index 104ab128..5e695fcc 100644
  
      goto :goto_0
  
-@@ -1452,6 +1454,19 @@
+@@ -1281,6 +1283,9 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivitySearchBinding;
+ 
++    # ipp: the magnifier and its plate in the long-press menu's colours.
++    invoke-static {v0}, Lcom/innioasis/ipp/Find;->head(Lcom/innioasis/y1/databinding/ActivitySearchBinding;)V
++
+     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivitySearchBinding;->searchList:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/music/SearchActivity;->getAdapter()Lcom/innioasis/music/SearchActivity$MyAdapter;
+@@ -1452,6 +1457,19 @@
  
      move-result-object v0
  
@@ -62057,10 +62068,20 @@ index 5e61f77d..e751f9a7 100644
      iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->nowPath:Ljava/lang/String;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali
-index d1c852f8..05cbe714 100644
+index d1c852f8..9dc068ea 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali
-@@ -158,7 +158,8 @@
+@@ -95,6 +95,9 @@
+ 
+     iput-object p1, p0, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder;->binding$delegate:Lkotlin/Lazy;
+ 
++    # ipp: the thumbnail's plate in the long-press menu's background.
++    invoke-static {p2}, Lcom/innioasis/ipp/Find;->plate(Landroid/view/View;)V
++
+     return-void
+ .end method
+ 
+@@ -158,7 +161,8 @@
  
      invoke-static {p2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -62070,7 +62091,7 @@ index d1c852f8..05cbe714 100644
  
      .line 313
      sget-object p2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-@@ -275,7 +276,8 @@
+@@ -275,7 +279,8 @@
  
      invoke-static {p2, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -62512,10 +62533,20 @@ index f7ed916f..be5c4456 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity.smali
-index dfaa4043..355f6f2e 100644
+index dfaa4043..89dec7f5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity.smali
-@@ -1396,14 +1396,13 @@
+@@ -1108,6 +1108,9 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivitySearchBinding;
+ 
++    # ipp: the magnifier and its plate in the long-press menu's colours.
++    invoke-static {v0}, Lcom/innioasis/ipp/Find;->head(Lcom/innioasis/y1/databinding/ActivitySearchBinding;)V
++
+     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivitySearchBinding;->searchList:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity;->getAdapter()Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;
+@@ -1396,14 +1399,13 @@
  
      move-result p2
  
@@ -66605,6 +66636,62 @@ index 2c02dafb..8f624e88 100644
 +
 +    throw v0
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$MyViewHolder.smali
+index cc4c2e23..63beff20 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$MyViewHolder.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$MyViewHolder.smali
+@@ -127,48 +127,14 @@
+ 
+     invoke-virtual {p3, p1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+ 
+-    if-eqz p2, :cond_0
+-
+-    .line 91
++    # ipp: the letter in the menu's text colour, bold on the menu's selected colour under the
++    # cursor, instead of white on stock's blue plate.
+     iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog$MyViewHolder;->binding:Lcom/innioasis/y1/databinding/ItemInputMethodBinding;
+ 
+     iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemInputMethodBinding;->content:Landroid/widget/TextView;
+ 
+-    sget-object p2, Landroid/graphics/Typeface;->DEFAULT_BOLD:Landroid/graphics/Typeface;
+-
+-    invoke-virtual {p1, p2}, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+-
+-    .line 92
+-    iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog$MyViewHolder;->binding:Lcom/innioasis/y1/databinding/ItemInputMethodBinding;
+-
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemInputMethodBinding;->content:Landroid/widget/TextView;
+-
+-    const p2, 0x7f08006a
+-
+-    invoke-virtual {p1, p2}, Landroid/widget/TextView;->setBackgroundResource(I)V
+-
+-    goto :goto_0
+-
+-    .line 94
+-    :cond_0
+-    iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog$MyViewHolder;->binding:Lcom/innioasis/y1/databinding/ItemInputMethodBinding;
+-
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemInputMethodBinding;->content:Landroid/widget/TextView;
+-
+-    sget-object p2, Landroid/graphics/Typeface;->DEFAULT:Landroid/graphics/Typeface;
+-
+-    invoke-virtual {p1, p2}, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+-
+-    .line 95
+-    iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog$MyViewHolder;->binding:Lcom/innioasis/y1/databinding/ItemInputMethodBinding;
+-
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemInputMethodBinding;->content:Landroid/widget/TextView;
+-
+-    const p2, 0x7f080144
+-
+-    invoke-virtual {p1, p2}, Landroid/widget/TextView;->setBackgroundResource(I)V
++    invoke-static {p1, p2}, Lcom/innioasis/ipp/Keys;->cell(Landroid/widget/TextView;Z)V
+ 
+-    :goto_0
+     return-void
+ .end method
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
 index 01f8662e..7ba78384 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog$charsTable$2.smali
@@ -66872,7 +66959,7 @@ index 01f8662e..7ba78384 100644
      return-object v0
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
-index 6e949456..d79b6927 100644
+index 6e949456..fe35747a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/InputMethodDialog.smali
 @@ -490,49 +490,58 @@
@@ -67000,10 +67087,7 @@ index 6e949456..d79b6927 100644
 -    const/4 v1, 0x6
 -
 -    if-le v0, v1, :cond_0
-+    # ipp: the ONE place both paths go through -- a typed character and a box seeded for a
-+    # rename. Empty box => the next letter is a capital; anything in it => lower case (Keys.value).
-+    invoke-static {p1}, Lcom/innioasis/ipp/Keys;->value(Ljava/lang/String;)V
- 
+-
 -    .line 33
 -    new-instance v0, Ljava/lang/StringBuilder;
 -
@@ -67020,7 +67104,10 @@ index 6e949456..d79b6927 100644
 -    add-int/lit8 v1, v1, -0x4
 -
 -    invoke-virtual {p1}, Ljava/lang/String;->length()I
--
++    # ipp: the ONE place both paths go through -- a typed character and a box seeded for a
++    # rename. Empty box => the next letter is a capital; anything in it => lower case (Keys.value).
++    invoke-static {p1}, Lcom/innioasis/ipp/Keys;->value(Ljava/lang/String;)V
+ 
 -    move-result v2
 -
 -    invoke-virtual {p1, v1, v2}, Ljava/lang/String;->substring(II)Ljava/lang/String;
@@ -67145,7 +67232,7 @@ index 6e949456..d79b6927 100644
  
      .line 72
      invoke-super {p0, p1}, Landroid/app/Dialog;->onCreate(Landroid/os/Bundle;)V
-@@ -1067,6 +1064,31 @@
+@@ -1067,6 +1064,34 @@
      .line 81
      invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/InputMethodDialog;->setCancelable(Z)V
  
@@ -67173,6 +67260,9 @@ index 6e949456..d79b6927 100644
 +    check-cast v3, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
 +
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Keys;->attach(Landroid/app/Activity;Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/EditText;Lcom/innioasis/music/adapter/rv/RVBaseAdapter;)V
++
++    # ipp: the window widened by the panel's shadow.
++    invoke-static {p0}, Lcom/innioasis/ipp/Keys;->frame(Landroid/app/Dialog;)V
 +
      .line 83
      iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->callback:Lcom/innioasis/y1/utils/InputMethodDialog$Callback;

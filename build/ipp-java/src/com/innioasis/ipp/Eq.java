@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.activity.EqActivity;
 import com.innioasis.y1.databinding.ActivityEqBinding;
 import com.innioasis.y1.databinding.DialogEqEditBinding;
@@ -81,42 +80,17 @@ public final class Eq {
 
     // ---- the preset editor (EqEditDialog) in the long-press menu's colours --------------------
 
-    /** {@code bg_submenu}: the menu's background when no theme names one. */
-    private static final int MENU_BG = 0xFF8C94B2;
-    private static final int MENU_TEXT = 0xFFFFFFFF;
-    /** {@code selected_text_color_submenu}. */
-    private static final int MENU_SEL = 0xFF3B3D78;
     /** Stock's #3CFFDE, when the progress colour cannot be read. */
     private static final int BAR = 0xFF3CFFDE;
 
     private static final float SIZE = 16f;
 
     private static int menuBg() {
-        try {
-            Integer c = ThemeManager.INSTANCE.menuBGColor();
-            if (c != null) return c.intValue();
-        } catch (Throwable t) {
-            // malformed theme colour
-        }
-        return MENU_BG;
+        return Icons.menuBackground();
     }
 
     private static int menuText(boolean focus) {
-        try {
-            TextView probe = probe();
-            int fallback = focus ? MENU_SEL : MENU_TEXT;
-            ThemeManager.INSTANCE.menuItemSetTextColor(probe, fallback, focus);
-            return probe.getCurrentTextColor();
-        } catch (Throwable t) {
-            return focus ? MENU_SEL : MENU_TEXT;
-        }
-    }
-
-    private static TextView probe;
-
-    private static TextView probe() {
-        if (probe == null) probe = new TextView(Y1Application.Companion.getAppContext());
-        return probe;
+        return Icons.menuText(focus);
     }
 
     private static int bar() {
@@ -164,22 +138,17 @@ public final class Eq {
     private static final float SIZE_RESET = 14f;
     private static final int KNOB_DP = 14;
     private static final int OUTLINE_PX = 2;
-    /** The label the side columns are measured by: the device's band range is ±1500 mB. */
+    /** The value column is sized by both: the band range is ±1500 mB, and "+" may be the wider. */
     private static final String WIDEST = "-15";
-    /** A theme's font may draw "+" wider than "-". */
     private static final String WIDEST_PLUS = "+15";
     /** Below this the text is unreadable anyway; the box stays fixed and the text may clip. */
     private static final float MIN_SCALE = 0.5f;
 
     /**
-     * End of {@code EqEditDialog.showDialog}: the window gets a fixed height, and the text shrinks
-     * until the title, five bands and Reset fit in it. The height is the screen's less 16dp above
-     * and below — the box never grows past it whatever the theme's font. The width starts at
-     * stock's 300 and grows, up to the screen less 8dp a side, when the value column needs it;
-     * past that the text shrinks too.
-     *
-     * The bands then share the list's height ({@link #stretch}), so every row is the same size
-     * whichever one the cursor is on.
+     * End of {@code EqEditDialog.showDialog}: a fixed box — the screen's height less 16dp above and
+     * below, stock's 300 wide growing to the screen less 8dp a side for the value column — and the
+     * text shrunk until everything fits it, whatever the theme's font. The bands share the list's
+     * height ({@link #stretch}), so no row changes size with the cursor.
      */
     public static void editFit(android.app.Dialog d, DialogEqEditBinding b) {
         if (d == null || b == null) return;
@@ -255,10 +224,10 @@ public final class Eq {
     }
 
     /**
-     * The whole look of one band row, in place of the tail of the adapter's {@code init}: the text
-     * in the menu's colour, the bar and the knob in the progress colour, the knob of the band under
-     * the cursor outlined ({@link #outline}), and the band's current level right of the bar in a
-     * column of a fixed size. The left label is hidden; stock still writes the range into it.
+     * One band row, in place of the tail of the adapter's {@code init}: menu-coloured text, bar and
+     * knob in the progress colour, the cursor's knob outlined ({@link #outline}), and the band's
+     * level in a fixed column right of the bar. The left label stays hidden — {@link #value} reads
+     * the range out of it.
      */
     public static void editRow(ItemEqEditBinding b, int index, int pos) {
         if (b == null) return;
@@ -305,9 +274,8 @@ public final class Eq {
     }
 
     /**
-     * The band's level in dB (Equalizer levels are millibels), 0 at the middle of the bar. Stock's bind has just written the range's
-     * low end into the left label ("-15") and set the bar to {@code (|min| + level) / 100}, so the
-     * level is the bar's position counted from that low end.
+     * The band's level in dB (the Equalizer works in millibels). Stock's bind has just written the
+     * range's low end into the left label and set the bar to {@code (|min| + level) / 100}.
      */
     private static int value(ItemEqEditBinding b) {
         int min = 0;
@@ -334,11 +302,9 @@ public final class Eq {
     }
 
     /**
-     * The knob's outline has to stand out against the box AND against the bar it sits on, and a
-     * theme's menu colours can equal either (a selected text colour the same as the bar, a text
-     * colour the same as the box). So the menu's selected and plain text colours are tried in that
-     * order, then white and black, and the first that contrasts with both is taken; if none does,
-     * the one whose weaker contrast is the strongest.
+     * The knob's outline must stand out against both the box and the bar, and a theme's menu
+     * colours can equal either. The first of selected text, plain text, white, black that
+     * contrasts with both wins; failing that, the one whose weaker contrast is strongest.
      */
     private static int outline(int bar) {
         int bg = menuBg() | 0xFF000000;
@@ -348,9 +314,7 @@ public final class Eq {
         for (int i = 0; i < tries.length; i++) {
             int c = tries[i] | 0xFF000000;
             double s = Math.min(contrast(c, bg), contrast(c, bar));
-            // Compared as a float: a double literal whose low 48 bits are zero (1.0, 2.0, 100.0)
-            // becomes const-wide/high16, which the smali pipeline does not rewrite and apktool
-            // refuses; the float form is const/high16, which it does.
+            // A float on purpose: a round double literal is const-wide/high16, which apktool refuses.
             if ((float) s >= 2f) return c;
             if (s > bestScore) {
                 bestScore = s;

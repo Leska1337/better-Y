@@ -1,15 +1,23 @@
 package com.innioasis.ipp;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -112,9 +120,150 @@ public final class Keys {
             lang = Prefs.getInt(ctx(), KEY_LANG, LAT);
             if (lang == CYR && !secondOn()) lang = LAT;   // the setting was turned off since
             mode = SHIFT;                       // the box is empty until something seeds it
+            paint(list, box);
             apply();
         } catch (Throwable t) {
             // a keyboard that cannot be set up is still stock-usable
+        }
+    }
+
+    /** The width of the shadow round the panel and the input box, in dp. */
+    private static final int SHADOW_DP = 3;
+    /** The darkness each ring of the shadow adds; the ring against the face has all of them. */
+    private static final int SHADOW_STEP = 0x18000000;
+
+    /**
+     * A rounded face inset by {@code sh}, with a shadow of {@code sh} rings round it — all inside
+     * the bounds, so the view carrying it must be {@code sh} bigger on every side than the face.
+     */
+    private static Shadowed shadowed(int color, int radius, int sh) {
+        Drawable[] layers = new Drawable[sh + 1];
+        for (int i = 0; i < sh; i++) {
+            GradientDrawable ring = new GradientDrawable();
+            ring.setColor(SHADOW_STEP);
+            ring.setCornerRadius(radius + sh - i);
+            layers[i] = ring;
+        }
+        GradientDrawable face = new GradientDrawable();
+        face.setColor(color);
+        face.setCornerRadius(radius);
+        layers[sh] = face;
+        Shadowed d = new Shadowed(layers);
+        for (int i = 0; i <= sh; i++) d.setLayerInset(i, i, i, i, i);
+        return d;
+    }
+
+    /**
+     * The panel in the menu's background, the input box white, both with a shadow. Each view grows
+     * by the shadow and gives it back out of its margins, so the faces stay put; the panel's growth
+     * is the window's ({@link #frame}).
+     */
+    private static void paint(RecyclerView list, EditText box) {
+        float dp = box.getResources().getDisplayMetrics().density;
+        int sh = Math.round(SHADOW_DP * dp);
+        View panel = (View) box.getParent();
+        panel.setBackgroundDrawable(shadowed(Icons.menuBackground(), Math.round(8 * dp), sh));
+        panel.setPadding(sh, sh, sh, sh);
+        fitHeight(box, dp);
+
+        if (box.getBackground() instanceof Shadowed) return;    // this dialog's box already has it
+        int l = box.getPaddingLeft();
+        int t = box.getPaddingTop();
+        int r = box.getPaddingRight();
+        int b = box.getPaddingBottom();
+        box.setBackgroundDrawable(shadowed(0xFFFFFFFF, Math.round(5 * dp), sh));
+        box.setPadding(l + sh, t + sh, r + sh, b + sh);
+
+        ViewGroup.LayoutParams lp = box.getLayoutParams();
+        if (lp instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
+            if (m.height > 0) m.height += 2 * sh;
+            m.leftMargin -= sh;
+            m.rightMargin -= sh;
+            m.topMargin -= sh;
+            box.setLayoutParams(m);
+        }
+        ViewGroup.LayoutParams llp = list.getLayoutParams();
+        if (llp instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) llp;
+            m.topMargin = Math.max(0, m.topMargin - sh);
+            list.setLayoutParams(m);
+        }
+    }
+
+    /** The input box's white face, as {@code dialog_input_method.xml} sizes it. */
+    private static final int BOX_DP = 36;
+    /** The layout's text size, and the smallest the theme's font is taken down to. */
+    private static final float BOX_SP = 24f;
+    private static final float BOX_SP_MIN = 12f;
+
+    /**
+     * The typed text shrunk from 24sp until a line of the theme's font fits the face. Measured
+     * top to bottom, font padding included — that is the line the EditText lays out, and a taller
+     * one cuts the letters off at the top.
+     */
+    private static void fitHeight(EditText box, float dp) {
+        android.util.DisplayMetrics dm = box.getResources().getDisplayMetrics();
+        int room = Math.round(BOX_DP * dp) - 2;
+        android.text.TextPaint p = new android.text.TextPaint(box.getPaint());
+        float sp = BOX_SP;
+        while (sp > BOX_SP_MIN) {
+            p.setTextSize(android.util.TypedValue.applyDimension(
+                    android.util.TypedValue.COMPLEX_UNIT_SP, sp, dm));
+            Paint.FontMetricsInt fm = p.getFontMetricsInt();
+            if (fm.bottom - fm.top <= room) break;
+            sp -= 1f;
+        }
+        box.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sp);
+    }
+
+    /** A background made here, recognisable so a second attach does not grow the box again. */
+    static final class Shadowed extends LayerDrawable {
+        Shadowed(Drawable[] layers) {
+            super(layers);
+        }
+    }
+
+    /**
+     * After {@link #attach}: the window widened and lowered by the panel's shadow, so the face
+     * keeps stock's 400 width and its distance from the bottom.
+     */
+    public static void frame(Dialog d) {
+        if (d == null) return;
+        try {
+            Window w = d.getWindow();
+            if (w == null) return;
+            int sh = Math.round(SHADOW_DP * d.getContext().getResources().getDisplayMetrics().density);
+            WindowManager.LayoutParams a = w.getAttributes();
+            if (a.width > 0) a.width += 2 * sh;
+            a.y = Math.max(0, a.y - sh);
+            w.setAttributes(a);
+        } catch (Throwable t) {
+            // the panel's face is just the shadow narrower
+        }
+    }
+
+    /**
+     * One letter, in place of the tail of {@code InputMethodDialog.MyViewHolder.bind}: menu text
+     * colour; under the cursor bold, in the panel's colour, on the menu highlight's colour
+     * ({@link Theme#menuSelectedColor}) or, for a picture highlight, on the menu text colour.
+     */
+    public static void cell(TextView tv, boolean selected) {
+        if (tv == null) return;
+        try {
+            tv.setTextColor(selected ? Icons.menuBackground() | 0xFF000000 : Icons.menuText(false));
+            tv.setTypeface(selected ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT);
+            if (selected) {
+                GradientDrawable g = new GradientDrawable();
+                int plate = Theme.menuSelectedColor();
+                g.setColor(plate != 0 ? plate : Icons.menuText(false));
+                g.setCornerRadius(5 * tv.getResources().getDisplayMetrics().density);
+                tv.setBackgroundDrawable(g);
+            } else {
+                tv.setBackgroundDrawable(null);
+            }
+        } catch (Throwable t) {
+            // a stale cell is better than a crash on a wheel click
         }
     }
 

@@ -90,6 +90,28 @@ public final class Icons {
         return probeColor(true, false);
     }
 
+    /** {@code bg_submenu}, {@code white} and {@code selected_text_color_submenu}. */
+    private static final int MENU_BG = 0xFF8C94B2;
+    private static final int MENU_TEXT = 0xFFFFFFFF;
+    private static final int MENU_SEL = 0xFF3B3D78;
+
+    /** The long-press menu's background ({@code menuBackgroundColor}), stock's when none is named. */
+    public static int menuBackground() {
+        try {
+            Integer c = ThemeManager.INSTANCE.menuBGColor();
+            if (c != null) return c.intValue();
+        } catch (Throwable t) {
+            // malformed theme colour
+        }
+        return MENU_BG;
+    }
+
+    /** The long-press menu's text colour, plain or under the cursor, stock's when none is named. */
+    public static int menuText(boolean focus) {
+        int c = probeColor(true, focus);
+        return c != NO_COLOR ? c : (focus ? MENU_SEL : MENU_TEXT);
+    }
+
     /**
      * Read through the only public door there is: ThemeManager keeps its parsed config private,
      * but its text-colour setters substitute the theme's own colour for the one passed in whenever
