@@ -330,7 +330,67 @@ public final class Theme {
         }
     }
 
+    // ------------------------------------------------------------- the Brightness screen
+
+    /** How much of the bar's colour the empty track under it keeps — stock's {@code #65ffffff}. */
+    private static final int TRACK_ALPHA = 0x65;
+
+    /**
+     * The brightness bar in the timeline's colour, the empty track under it in the same colour at
+     * stock's alpha. The track is a bare sibling View laid over the bar's box, found beside it.
+     * With no colour to be had the layout's cyan and white stay.
+     */
+    public static void brightnessBar(android.widget.ProgressBar pb) {
+        try {
+            if (pb == null) return;
+            int c = Icons.progressColor();
+            if (c == 0) return;                                  // no colour to be had
+            float r = 10f * pb.getResources().getDisplayMetrics().density;
+            android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+            bg.setCornerRadius(r);
+            bg.setColor(0);
+            android.graphics.drawable.GradientDrawable fill = new android.graphics.drawable.GradientDrawable();
+            fill.setCornerRadius(r);
+            fill.setColor(c | 0xFF000000);
+            android.graphics.drawable.ClipDrawable clip = new android.graphics.drawable.ClipDrawable(
+                    fill, android.view.Gravity.LEFT, android.graphics.drawable.ClipDrawable.HORIZONTAL);
+            android.graphics.drawable.LayerDrawable ld = new android.graphics.drawable.LayerDrawable(
+                    new Drawable[]{bg, clip});
+            ld.setId(0, android.R.id.background);
+            ld.setId(1, android.R.id.progress);
+            pb.setProgressDrawable(ld);
+            if (pb.getParent() instanceof ViewGroup) {
+                ViewGroup p = (ViewGroup) pb.getParent();
+                for (int i = 0; i < p.getChildCount(); i++) {
+                    View v = p.getChildAt(i);
+                    if (v.getClass() == View.class) {
+                        v.setBackgroundColor((c & 0x00FFFFFF) | (TRACK_ALPHA << 24));
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            // the layout's colours stay
+        }
+    }
+
     // ------------------------------------------------------- the theme gallery (ThemeListActivity)
+
+    /**
+     * The full-screen preview has no backdrop of its own, so the wallpaper shows round the picture;
+     * the grid under it is hidden while it is open and shown again when it closes. INVISIBLE, not
+     * GONE: the grid keeps its layout and its scroll position.
+     */
+    public static void fullShown(View full) {
+        try {
+            if (full == null || !(full.getParent() instanceof View)) return;
+            View grid = ((View) full.getParent()).findViewById(R.id.recycler);
+            if (grid != null) {
+                grid.setVisibility(full.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+            }
+        } catch (Throwable t) {
+            // the grid stays as it was
+        }
+    }
 
     /** {@code item_theme.xml}'s own colours: the caption's white and the frame's blue. */
     private static final int TILE_TEXT = 0xCCFFFFFF;

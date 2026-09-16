@@ -29,7 +29,7 @@ index 2c8d26c0..aff80cc9 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..6a703c03 100644
+index 01b1f730..ab9e70f9 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..6a703c03 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000172
++  versionCode: 10000174
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -389,6 +389,19 @@ index d1f9fb86..e3ab7765 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <ListView android:id="@id/lv" android:focusable="false" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_theme_list.xml b/build/src/res/layout/activity_theme_list.xml
+index 03493954..e1f6c7b7 100644
+--- a/build/src/res/layout/activity_theme_list.xml
++++ b/build/src/res/layout/activity_theme_list.xml
+@@ -2,7 +2,7 @@
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/clFull" android:background="@color/black" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent">
++    <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/clFull" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent">
+         <ImageView android:id="@id/imgFull" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginBottom="10.0dip" android:scaleType="fitCenter" app:layout_constraintBottom_toTopOf="@id/imgIcon" app:layout_constraintTop_toTopOf="parent" />
+         <ImageView android:id="@id/imgIcon" android:layout_width="32.0dip" android:layout_height="32.0dip" android:src="@drawable/icon_as_theme_selected" app:layout_constraintBottom_toTopOf="@id/tv" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
+         <TextView android:textSize="15.0sp" android:textColor="#cc00fff5" android:id="@id/tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="5.0dip" android:text="@string/theme_as_theme" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
 diff --git a/build/src/res/layout/dialog_input_method.xml b/build/src/res/layout/dialog_input_method.xml
 index cfa3f963..63827bf9 100644
 --- a/build/src/res/layout/dialog_input_method.xml
@@ -19436,7 +19449,7 @@ index 803c1e7a..16919f82 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..eb034355 100644
+index 71fe29d0..0fe46107 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,546 @@
@@ -20385,7 +20398,7 @@ index 71fe29d0..eb034355 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev172</string>
++    <string name="ipp_version">v1.0.0-dev174</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -56453,6 +56466,20 @@ index 7352ca07..af695f2d 100644
 +    :cond_1
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali
+index 08850ebc..4971de11 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali
+@@ -446,6 +446,9 @@
+ 
+     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityBrightnessBinding;->brightnessPb:Landroid/widget/ProgressBar;
+ 
++    # ipp: the bar and its track in the timeline's colour instead of the layout's cyan and white
++    invoke-static {v0}, Lcom/innioasis/ipp/Theme;->brightnessBar(Landroid/widget/ProgressBar;)V
++
+     iget v1, p0, Lcom/innioasis/y1/activity/BrightnessActivity;->maxBrightness:I
+ 
+     invoke-virtual {v0, v1}, Landroid/widget/ProgressBar;->setMax(I)V
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 index a97af096..aae3cb92 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
@@ -61870,10 +61897,20 @@ index 981585c3..d98e9a6e 100644
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..e751f9a7 100644
+index 5e61f77d..dab808e8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-@@ -1708,13 +1708,14 @@
+@@ -1249,6 +1249,9 @@
+     :goto_1
+     invoke-virtual {v0, p1}, Landroidx/constraintlayout/widget/ConstraintLayout;->setVisibility(I)V
+ 
++    # ipp: the preview has no black backdrop; the grid under it hides while it is open
++    invoke-static {v0}, Lcom/innioasis/ipp/Theme;->fullShown(Landroid/view/View;)V
++
+     return-void
+ .end method
+ 
+@@ -1708,13 +1711,14 @@
  
      move-result-object v2
  
@@ -61890,7 +61927,7 @@ index 5e61f77d..e751f9a7 100644
  
      invoke-static {v3, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
-@@ -1779,7 +1780,7 @@
+@@ -1779,7 +1783,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -61899,7 +61936,7 @@ index 5e61f77d..e751f9a7 100644
  
      .line 704
      invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -1822,19 +1823,7 @@
+@@ -1822,19 +1826,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 709
@@ -61920,7 +61957,7 @@ index 5e61f77d..e751f9a7 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1845,16 +1834,22 @@
+@@ -1845,16 +1837,22 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61946,7 +61983,7 @@ index 5e61f77d..e751f9a7 100644
  
      .line 694
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
-@@ -1893,21 +1888,7 @@
+@@ -1893,21 +1891,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 696
@@ -61969,7 +62006,7 @@ index 5e61f77d..e751f9a7 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1918,9 +1899,15 @@
+@@ -1918,9 +1902,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
@@ -61987,7 +62024,7 @@ index 5e61f77d..e751f9a7 100644
  
      :cond_0
      return-void
-@@ -2057,6 +2044,19 @@
+@@ -2057,6 +2047,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -62007,7 +62044,7 @@ index 5e61f77d..e751f9a7 100644
      .line 418
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2449,6 +2449,22 @@
+@@ -2449,6 +2452,22 @@
  
      invoke-virtual {v0, v2}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
