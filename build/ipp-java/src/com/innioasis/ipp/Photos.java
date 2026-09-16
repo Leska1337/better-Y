@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -30,7 +31,9 @@ import com.innioasis.y1.utils.PhotosDialog;
 import com.innioasis.y1.view.ThemeOptionsDialog;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * The Photos screen and its icon strip in the theme's colours instead of the ones stock wrote in.
@@ -481,5 +484,67 @@ public final class Photos {
         m.leftMargin = start;
         m.setMarginStart(start);
         cell.setLayoutParams(m);
+    }
+
+    /** Per grid, one {first visible tile, its offset} for every folder level entered. */
+    private static final WeakHashMap windows = new WeakHashMap();
+
+    /**
+     * Opening a folder from the grid: remembers where the grid's window stood, beside stock's own
+     * stack of cursor positions ({@code stackIndex}), which is pushed right after this.
+     */
+    public static void enter(RecyclerView rv) {
+        try {
+            if (rv == null) return;
+            ArrayList stack = (ArrayList) windows.get(rv);
+            if (stack == null) {
+                stack = new ArrayList();
+                windows.put(rv, stack);
+            }
+            int[] w = null;
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            if (lm instanceof LinearLayoutManager) {
+                LinearLayoutManager l = (LinearLayoutManager) lm;
+                int first = l.findFirstVisibleItemPosition();
+                View v = first < 0 ? null : l.findViewByPosition(first);
+                if (v != null) {
+                    // scrollToPositionWithOffset measures from the padding to the tile's margin
+                    ViewGroup.LayoutParams lp = v.getLayoutParams();
+                    int margin = lp instanceof ViewGroup.MarginLayoutParams
+                            ? ((ViewGroup.MarginLayoutParams) lp).topMargin : 0;
+                    w = new int[]{first, l.getDecoratedTop(v) - margin - rv.getPaddingTop()};
+                }
+            }
+            stack.add(w);
+        } catch (Throwable t) {
+            // the folder still opens; coming back just lands the cursor's tile at an edge
+        }
+    }
+
+    /**
+     * Back out of a folder: puts the grid's window where it stood when the folder was opened, at
+     * once. Stock smooth-scrolled to the cursor from the top of the freshly refilled list, so a
+     * folder low in the grid was reached by a visible scroll down from the first row.
+     */
+    public static void back(RecyclerView rv, int mark) {
+        try {
+            if (rv == null) return;
+            ArrayList stack = (ArrayList) windows.get(rv);
+            int[] w = stack == null || stack.isEmpty() ? null
+                    : (int[]) stack.remove(stack.size() - 1);
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            if (w != null && lm instanceof LinearLayoutManager && w[0] <= mark
+                    && w[0] < rv.getAdapter().getItemCount()) {
+                ((LinearLayoutManager) lm).scrollToPositionWithOffset(w[0], w[1]);
+            } else {
+                rv.scrollToPosition(mark);
+            }
+        } catch (Throwable t) {
+            try {
+                rv.scrollToPosition(mark);
+            } catch (Throwable ignored) {
+                // nothing left to try
+            }
+        }
     }
 }
