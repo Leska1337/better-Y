@@ -78,6 +78,15 @@ public final class Diag {
     /** How much of one command's output is kept. */
     private static final int CAP = 256 * 1024;
 
+    /**
+     * In the debug mode the main buffer is dumped whole: every wheel click writes a dozen system
+     * lines into it, so a fixed tail misses whatever happened a few seconds before the user reached
+     * the button. The ordinary report keeps its 800-line tail.
+     * {@link Panel#exec} keeps the HEAD of the output and logcat prints oldest first, so this must
+     * stay above the ~256 KB ring as text, or the newest lines are the ones cut.
+     */
+    private static final int MAIN_CAP = 1024 * 1024;
+
     private static int taps;
     private static long lastTap;
 
@@ -398,9 +407,15 @@ public final class Diag {
             ringDump(s);
             crashes(s);
             anr(s);
-            s.append("\n--- logcat -b main -v time (tail 800) ---\n");
-            s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v", "time",
-                    "-t", "800"}, CAP));
+            if (on()) {
+                s.append("\n--- logcat -b main -v time (whole buffer) ---\n");
+                s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v",
+                        "time"}, MAIN_CAP));
+            } else {
+                s.append("\n--- logcat -b main -v time (tail 800) ---\n");
+                s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v",
+                        "time", "-t", "800"}, CAP));
+            }
             s.append("\n--- logcat -b system -v time (tail 300) ---\n");
             s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "system", "-v",
                     "time", "-t", "300"}, CAP));

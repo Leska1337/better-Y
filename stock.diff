@@ -1,8 +1,16 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..688a3ea3 100644
+index 2c8d26c0..aff80cc9 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
-@@ -56,7 +56,6 @@
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:compileSdkVersion="32" android:compileSdkVersionCodename="12" android:sharedUserId="android.uid.system" package="com.innioasis.y1" platformBuildVersionCode="32" platformBuildVersionName="12">
+     <uses-permission android:name="android.permission.REBOOT"/>
++    <uses-permission android:name="android.permission.READ_LOGS"/>
+     <uses-permission android:name="android.permission.VIBRATE"/>
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+@@ -56,7 +57,6 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.PhotosActivity">
              <meta-data android:name="android.app.lib_name" android:value=""/>
          </activity>
@@ -10,7 +18,7 @@ index 2c8d26c0..688a3ea3 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +63,9 @@
+@@ -64,6 +64,9 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
@@ -21,7 +29,7 @@ index 2c8d26c0..688a3ea3 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..68e10b2d 100644
+index 01b1f730..a5fa4597 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -36,7 +44,7 @@ index 01b1f730..68e10b2d 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000168
++  versionCode: 10000171
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19428,7 +19436,7 @@ index 803c1e7a..16919f82 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..9992ade3 100644
+index 71fe29d0..077cf55d 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,546 @@
@@ -20377,7 +20385,7 @@ index 71fe29d0..9992ade3 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev168</string>
++    <string name="ipp_version">v1.0.0-dev171</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
