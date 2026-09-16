@@ -41,118 +41,45 @@
 
 .method private static centre(Landroid/view/View;)V
   .registers 4
-  .line 413
+  .line 384
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 414
+  .line 385
     instance-of v1, v0, Landroid/widget/LinearLayout$LayoutParams;
     const/16 v2, 17
     if-eqz v1, :L0
-  .line 415
+  .line 386
     check-cast v0, Landroid/widget/LinearLayout$LayoutParams;
     iput v2, v0, Landroid/widget/LinearLayout$LayoutParams;->gravity:I
     goto :L1
   :L0
-  .line 416
+  .line 387
     instance-of v1, v0, Landroid/widget/FrameLayout$LayoutParams;
     if-eqz v1, :L1
-  .line 417
+  .line 388
     check-cast v0, Landroid/widget/FrameLayout$LayoutParams;
     iput v2, v0, Landroid/widget/FrameLayout$LayoutParams;->gravity:I
   :L1
-  .line 419
+  .line 390
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 420
+  .line 391
     instance-of v0, p0, Landroid/widget/LinearLayout;
     if-eqz v0, :L2
-  .line 421
+  .line 392
     check-cast p0, Landroid/widget/LinearLayout;
     invoke-virtual { p0, v2 }, Landroid/widget/LinearLayout;->setGravity(I)V
     goto :L3
   :L2
-  .line 422
+  .line 393
     instance-of v0, p0, Landroid/widget/RelativeLayout;
     if-eqz v0, :L3
-  .line 423
+  .line 394
     check-cast p0, Landroid/widget/RelativeLayout;
     invoke-virtual { p0, v2 }, Landroid/widget/RelativeLayout;->setGravity(I)V
   :L3
-  .line 425
+  .line 396
     return-void
-.end method
-
-.method private static copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
-  .registers 4
-  .line 276
-    new-instance v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->width:I
-    iget v2, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->height:I
-    invoke-direct { v0, v1, v2 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;-><init>(II)V
-  .line 277
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToLeft:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToLeft:I
-  .line 278
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToRight:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToRight:I
-  .line 279
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToLeft:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToLeft:I
-  .line 280
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToRight:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToRight:I
-  .line 281
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToTop:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToTop:I
-  .line 282
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToBottom:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToBottom:I
-  .line 283
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToTop:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToTop:I
-  .line 284
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToBottom:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToBottom:I
-  .line 285
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToStart:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToStart:I
-  .line 286
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToEnd:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToEnd:I
-  .line 287
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToStart:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToStart:I
-  .line 288
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToEnd:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToEnd:I
-  .line 289
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalBias:F
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalBias:F
-  .line 290
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalBias:F
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalBias:F
-  .line 291
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftMargin:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftMargin:I
-  .line 292
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topMargin:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topMargin:I
-  .line 293
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightMargin:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightMargin:I
-  .line 294
-    iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomMargin:I
-    iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomMargin:I
-  .line 295
-    invoke-virtual { p0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->getMarginStart()I
-    move-result v1
-    invoke-virtual { v0, v1 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->setMarginStart(I)V
-  .line 296
-    invoke-virtual { p0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->getMarginEnd()I
-    move-result p0
-    invoke-virtual { v0, p0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->setMarginEnd(I)V
-  .line 297
-    return-object v0
 .end method
 
 .method private static dress(Landroid/view/View;IIZ)V
@@ -262,9 +189,9 @@
 
 .method private static fade(I)Landroid/graphics/ColorMatrixColorFilter;
   .registers 7
-  .line 429
+  .line 400
     nop
-  .line 430
+  .line 401
     new-instance v0, Landroid/graphics/ColorMatrixColorFilter;
     new-instance v1, Landroid/graphics/ColorMatrix;
     const/16 v2, 20
@@ -278,7 +205,7 @@
     aput v4, v2, v3
     const/4 v3, 3
     aput v4, v2, v3
-  .line 431
+  .line 402
     invoke-static { p0 }, Landroid/graphics/Color;->red(I)I
     move-result v3
     int-to-float v3, v3
@@ -292,7 +219,7 @@
     aput v4, v2, v3
     const/16 v3, 8
     aput v4, v2, v3
-  .line 432
+  .line 403
     invoke-static { p0 }, Landroid/graphics/Color;->green(I)I
     move-result v3
     int-to-float v3, v3
@@ -306,7 +233,7 @@
     aput v4, v2, v3
     const/16 v3, 13
     aput v4, v2, v3
-  .line 433
+  .line 404
     invoke-static { p0 }, Landroid/graphics/Color;->blue(I)I
     move-result p0
     int-to-float p0, p0
@@ -328,7 +255,7 @@
     aput v4, v2, p0
     invoke-direct { v1, v2 }, Landroid/graphics/ColorMatrix;-><init>([F)V
     invoke-direct { v0, v1 }, Landroid/graphics/ColorMatrixColorFilter;-><init>(Landroid/graphics/ColorMatrix;)V
-  .line 430
+  .line 401
     return-object v0
 .end method
 
@@ -671,7 +598,7 @@
     if-eqz v4, :L4
   .line 238
     check-cast v2, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
-    invoke-static { v2 }, Lcom/innioasis/ipp/Loading;->copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
+    invoke-static { v2 }, Lcom/innioasis/ipp/Pad;->copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     move-result-object p2
   .line 239
     const/4 v2, 4
@@ -737,15 +664,15 @@
 
 .method private static text(Landroid/view/View;II)V
   .registers 3
-  .line 439
+  .line 410
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 440
+  .line 411
     instance-of p1, p0, Landroid/widget/TextView;
     if-eqz p1, :L0
     check-cast p0, Landroid/widget/TextView;
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setTextColor(I)V
   :L0
-  .line 441
+  .line 412
     return-void
 .end method

@@ -281,9 +281,9 @@ public final class Fm {
         TextView o = new TextView(src.getContext());
         ViewGroup.LayoutParams lp = src.getLayoutParams();
         if (lp instanceof ConstraintLayout.LayoutParams) {
-            // The copy constructor, not the same object: a params object belongs to one view, and
-            // ConstraintLayout resolves state into it.
-            o.setLayoutParams(new ConstraintLayout.LayoutParams((ConstraintLayout.LayoutParams) lp));
+            // Fresh params, not the same object and not the copy constructor: both would leave the
+            // clone sharing the original's layout widget, laid out in its frame and never measured.
+            o.setLayoutParams(Pad.copy((ConstraintLayout.LayoutParams) lp));
         } else if (lp != null) {
             o.setLayoutParams(new ViewGroup.LayoutParams(lp));
         }

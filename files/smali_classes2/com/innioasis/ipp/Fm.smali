@@ -428,10 +428,10 @@
     instance-of v3, v2, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     if-eqz v3, :L2
   .line 286
-    new-instance v3, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     check-cast v2, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
-    invoke-direct { v3, v2 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)V
-    invoke-virtual { v1, v3 }, Landroid/widget/TextView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
+    invoke-static { v2 }, Lcom/innioasis/ipp/Pad;->copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
+    move-result-object v2
+    invoke-virtual { v1, v2 }, Landroid/widget/TextView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
     goto :L3
   :L2
   .line 287

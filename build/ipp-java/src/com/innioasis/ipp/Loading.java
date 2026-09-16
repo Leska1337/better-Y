@@ -235,7 +235,7 @@ public final class Loading {
             ViewGroup.LayoutParams own;
             int hide;
             if (lp instanceof ConstraintLayout.LayoutParams) {
-                own = copy((ConstraintLayout.LayoutParams) lp);
+                own = Pad.copy((ConstraintLayout.LayoutParams) lp);
                 hide = View.INVISIBLE;
             } else if (parent instanceof LinearLayout && sidePx > 0) {
                 LinearLayout.LayoutParams ll = new LinearLayout.LayoutParams(sidePx, sidePx);
@@ -266,35 +266,6 @@ public final class Loading {
             if (holdsSpin(g.getChildAt(i))) return true;
         }
         return false;
-    }
-
-    /**
-     * The stand's constraints and margins on fresh params. Not the copy constructor: it hands the
-     * copy the source's own {@code ConstraintWidget}, one layout widget for two views.
-     */
-    private static ConstraintLayout.LayoutParams copy(ConstraintLayout.LayoutParams src) {
-        ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(src.width, src.height);
-        p.leftToLeft = src.leftToLeft;
-        p.leftToRight = src.leftToRight;
-        p.rightToLeft = src.rightToLeft;
-        p.rightToRight = src.rightToRight;
-        p.topToTop = src.topToTop;
-        p.topToBottom = src.topToBottom;
-        p.bottomToTop = src.bottomToTop;
-        p.bottomToBottom = src.bottomToBottom;
-        p.startToStart = src.startToStart;
-        p.startToEnd = src.startToEnd;
-        p.endToStart = src.endToStart;
-        p.endToEnd = src.endToEnd;
-        p.horizontalBias = src.horizontalBias;
-        p.verticalBias = src.verticalBias;
-        p.leftMargin = src.leftMargin;
-        p.topMargin = src.topMargin;
-        p.rightMargin = src.rightMargin;
-        p.bottomMargin = src.bottomMargin;
-        p.setMarginStart(src.getMarginStart());
-        p.setMarginEnd(src.getMarginEnd());
-        return p;
     }
 
     /**
