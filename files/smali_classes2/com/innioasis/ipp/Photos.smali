@@ -65,16 +65,16 @@
   .catchall { :L0 .. :L5 } :L6
   .catchall { :L7 .. :L8 } :L9
   .registers 8
-  .line 531
+  .line 527
     if-nez p0, :L0
     return-void
   :L0
-  .line 532
+  .line 528
     sget-object v0, Lcom/innioasis/ipp/Photos;->windows:Ljava/util/WeakHashMap;
     invoke-virtual { v0, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Ljava/util/ArrayList;
-  .line 533
+  .line 529
     const/4 v1, 1
     if-eqz v0, :L2
     invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
@@ -82,7 +82,7 @@
     if-eqz v2, :L1
     goto :L2
   :L1
-  .line 534
+  .line 530
     invoke-virtual { v0 }, Ljava/util/ArrayList;->size()I
     move-result v2
     sub-int/2addr v2, v1
@@ -91,51 +91,51 @@
     check-cast v0, [I
     goto :L3
   :L2
-  .line 533
+  .line 529
     const/4 v0, 0
   :L3
-  .line 535
+  .line 531
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v2
-  .line 536
+  .line 532
     if-eqz v0, :L4
     instance-of v3, v2, Landroidx/recyclerview/widget/LinearLayoutManager;
     if-eqz v3, :L4
     const/4 v3, 0
     aget v4, v0, v3
     if-gt v4, p1, :L4
-  .line 537
+  .line 533
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v5
     invoke-virtual { v5 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
     move-result v5
     if-ge v4, v5, :L4
-  .line 538
+  .line 534
     check-cast v2, Landroidx/recyclerview/widget/LinearLayoutManager;
     aget v3, v0, v3
     aget v0, v0, v1
     invoke-virtual { v2, v3, v0 }, Landroidx/recyclerview/widget/LinearLayoutManager;->scrollToPositionWithOffset(II)V
     goto :L5
   :L4
-  .line 540
+  .line 536
     invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
   :L5
-  .line 548
+  .line 544
     goto :L10
   :L6
-  .line 542
+  .line 538
     move-exception v0
   :L7
-  .line 544
+  .line 540
     invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
   :L8
-  .line 547
+  .line 543
     goto :L10
   :L9
-  .line 545
+  .line 541
     move-exception p0
   :L10
-  .line 549
+  .line 545
     return-void
 .end method
 
@@ -221,38 +221,38 @@
 .method public static enter(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L7 } :L8
   .registers 8
-  .line 498
+  .line 495
     if-nez p0, :L0
     return-void
   :L0
-  .line 499
+  .line 496
     sget-object v0, Lcom/innioasis/ipp/Photos;->windows:Ljava/util/WeakHashMap;
     invoke-virtual { v0, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Ljava/util/ArrayList;
-  .line 500
+  .line 497
     if-nez v1, :L1
-  .line 501
+  .line 498
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 502
+  .line 499
     invoke-virtual { v0, p0, v1 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L1
-  .line 504
+  .line 501
     nop
-  .line 505
+  .line 502
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v0
-  .line 506
+  .line 503
     instance-of v2, v0, Landroidx/recyclerview/widget/LinearLayoutManager;
     const/4 v3, 0
     if-eqz v2, :L6
-  .line 507
+  .line 504
     check-cast v0, Landroidx/recyclerview/widget/LinearLayoutManager;
-  .line 508
+  .line 505
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findFirstVisibleItemPosition()I
     move-result v2
-  .line 509
+  .line 506
     if-gez v2, :L2
     move-object v4, v3
     goto :L3
@@ -260,23 +260,23 @@
     invoke-virtual { v0, v2 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object v4
   :L3
-  .line 510
+  .line 507
     if-eqz v4, :L6
-  .line 512
+  .line 509
     invoke-virtual { v4 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v3
-  .line 513
+  .line 510
     instance-of v5, v3, Landroid/view/ViewGroup$MarginLayoutParams;
     const/4 v6, 0
     if-eqz v5, :L4
-  .line 514
+  .line 511
     check-cast v3, Landroid/view/ViewGroup$MarginLayoutParams;
     iget v3, v3, Landroid/view/ViewGroup$MarginLayoutParams;->topMargin:I
     goto :L5
   :L4
     const/4 v3, 0
   :L5
-  .line 515
+  .line 512
     const/4 v5, 2
     new-array v5, v5, [I
     aput v2, v5, v6
@@ -290,16 +290,16 @@
     aput v0, v5, p0
     move-object v3, v5
   :L6
-  .line 518
+  .line 515
     invoke-virtual { v1, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L7
-  .line 521
+  .line 518
     goto :L9
   :L8
-  .line 519
+  .line 516
     move-exception p0
   :L9
-  .line 522
+  .line 519
     return-void
 .end method
 

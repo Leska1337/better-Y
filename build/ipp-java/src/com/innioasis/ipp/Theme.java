@@ -336,9 +336,8 @@ public final class Theme {
     private static final int TRACK_ALPHA = 0x65;
 
     /**
-     * The brightness bar in the timeline's colour, the empty track under it in the same colour at
-     * stock's alpha. The track is a bare sibling View laid over the bar's box, found beside it.
-     * With no colour to be had the layout's cyan and white stay.
+     * The brightness bar in the timeline's colour, its track (a bare sibling View) in the same
+     * colour at stock's alpha. With no colour the layout's own stay.
      */
     public static void brightnessBar(android.widget.ProgressBar pb) {
         try {
@@ -376,9 +375,8 @@ public final class Theme {
     // ------------------------------------------------------- the theme gallery (ThemeListActivity)
 
     /**
-     * The full-screen preview has no backdrop of its own, so the wallpaper shows round the picture;
-     * the grid under it is hidden while it is open and shown again when it closes. INVISIBLE, not
-     * GONE: the grid keeps its layout and its scroll position.
+     * The full-screen preview has no backdrop, so the grid under it hides while it is open.
+     * INVISIBLE, not GONE: the grid keeps its layout and scroll position.
      */
     public static void fullShown(View full) {
         try {

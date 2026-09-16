@@ -344,10 +344,9 @@ public final class Fm {
 
     /**
      * Put the ruler where the frequency is, at once, from the top of
-     * {@code FMMainActivity.scrollRuler}. True when it did: stock's coroutine then is not started,
-     * since it would only repeat the move 50 ms later and cost the wheel a second frame per step.
-     * False on a screen just built, where the ruler has no width yet and a scroll does nothing —
-     * that is what the delayed pass is for, and it still runs then.
+     * {@code FMMainActivity.scrollRuler}. True when it did, and stock's delayed coroutine is then
+     * skipped: it would cost a second frame per step. False while the ruler has no width yet —
+     * the delayed pass is what catches that.
      */
     public static boolean ruler(HorizontalScrollView sv, FmView ruler, float frequency) {
         if (sv == null || ruler == null) return false;
@@ -364,12 +363,9 @@ public final class Fm {
     private static final int TICK = 20;
 
     /**
-     * The last tick {@code FmView.drawLines} draws, of {@code last} it would. The ruler is some
-     * 4000 px wide and redrawn on every step of the wheel, and stock drew all ~200 ticks and ~40
-     * labels (with a String built per tick) for the ~24 the window shows. A screen's width is
-     * kept on each side, so anything that moves the scroll without redrawing still lands on drawn
-     * ticks; every move here redraws anyway ({@code setFrequency} invalidates). A mirrored layout
-     * and a ruler with no window around it draw everything, as stock did.
+     * The last tick {@code FmView.drawLines} draws: only the window and a screen's width each side,
+     * not the whole ~4000 px ruler on every wheel step. The margin covers a scroll that does not
+     * redraw. A mirrored layout draws everything.
      */
     public static int lastTick(android.view.View ruler, int last) {
         int[] w = window(ruler);

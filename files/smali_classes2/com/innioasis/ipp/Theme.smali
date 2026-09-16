@@ -56,7 +56,7 @@
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Theme;->CACHE:Ljava/util/HashMap;
-  .line 443
+  .line 441
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/Theme;->fitFor:I
     return-void
@@ -72,18 +72,18 @@
 .method public static brightnessBar(Landroid/widget/ProgressBar;)V
   .catchall { :L0 .. :L3 } :L5
   .registers 8
-  .line 345
+  .line 344
     if-nez p0, :L0
     return-void
   :L0
-  .line 346
+  .line 345
     invoke-static { }, Lcom/innioasis/ipp/Icons;->progressColor()I
     move-result v0
-  .line 347
+  .line 346
     if-nez v0, :L1
     return-void
   :L1
-  .line 348
+  .line 347
     invoke-virtual { p0 }, Landroid/widget/ProgressBar;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     invoke-virtual { v1 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
@@ -91,84 +91,84 @@
     iget v1, v1, Landroid/util/DisplayMetrics;->density:F
     const/high16 v2, 0x41200000
     mul-float v1, v1, v2
-  .line 349
+  .line 348
     new-instance v2, Landroid/graphics/drawable/GradientDrawable;
     invoke-direct { v2 }, Landroid/graphics/drawable/GradientDrawable;-><init>()V
-  .line 350
+  .line 349
     invoke-virtual { v2, v1 }, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
-  .line 351
+  .line 350
     const/4 v3, 0
     invoke-virtual { v2, v3 }, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
-  .line 352
+  .line 351
     new-instance v4, Landroid/graphics/drawable/GradientDrawable;
     invoke-direct { v4 }, Landroid/graphics/drawable/GradientDrawable;-><init>()V
-  .line 353
+  .line 352
     invoke-virtual { v4, v1 }, Landroid/graphics/drawable/GradientDrawable;->setCornerRadius(F)V
-  .line 354
+  .line 353
     const/high16 v1, 0xFF000000
     or-int/2addr v1, v0
     invoke-virtual { v4, v1 }, Landroid/graphics/drawable/GradientDrawable;->setColor(I)V
-  .line 355
+  .line 354
     new-instance v1, Landroid/graphics/drawable/ClipDrawable;
     const/4 v5, 3
     const/4 v6, 1
     invoke-direct { v1, v4, v5, v6 }, Landroid/graphics/drawable/ClipDrawable;-><init>(Landroid/graphics/drawable/Drawable;II)V
-  .line 357
+  .line 356
     new-instance v4, Landroid/graphics/drawable/LayerDrawable;
     const/4 v5, 2
     new-array v5, v5, [Landroid/graphics/drawable/Drawable;
     aput-object v2, v5, v3
     aput-object v1, v5, v6
     invoke-direct { v4, v5 }, Landroid/graphics/drawable/LayerDrawable;-><init>([Landroid/graphics/drawable/Drawable;)V
-  .line 359
+  .line 358
     const/high16 v1, 0x01020000
     invoke-virtual { v4, v3, v1 }, Landroid/graphics/drawable/LayerDrawable;->setId(II)V
-  .line 360
+  .line 359
     const v1, 16908301
     invoke-virtual { v4, v6, v1 }, Landroid/graphics/drawable/LayerDrawable;->setId(II)V
-  .line 361
+  .line 360
     invoke-virtual { p0, v4 }, Landroid/widget/ProgressBar;->setProgressDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 362
+  .line 361
     invoke-virtual { p0 }, Landroid/widget/ProgressBar;->getParent()Landroid/view/ViewParent;
     move-result-object v1
     instance-of v1, v1, Landroid/view/ViewGroup;
     if-eqz v1, :L4
-  .line 363
+  .line 362
     invoke-virtual { p0 }, Landroid/widget/ProgressBar;->getParent()Landroid/view/ViewParent;
     move-result-object p0
     check-cast p0, Landroid/view/ViewGroup;
-  .line 364
+  .line 363
     nop
   :L2
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v1
     if-ge v3, v1, :L4
-  .line 365
+  .line 364
     invoke-virtual { p0, v3 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v1
-  .line 366
+  .line 365
     invoke-virtual { v1 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v2
     const-class v4, Landroid/view/View;
     if-ne v2, v4, :L3
-  .line 367
+  .line 366
     const v2, 16777215
     and-int/2addr v2, v0
     const/high16 v4, 0x65000000
     or-int/2addr v2, v4
     invoke-virtual { v1, v2 }, Landroid/view/View;->setBackgroundColor(I)V
   :L3
-  .line 364
+  .line 363
     add-int/lit8 v3, v3, 1
     goto :L2
   :L4
-  .line 373
+  .line 372
     goto :L6
   :L5
-  .line 371
+  .line 370
     move-exception p0
   :L6
-  .line 374
+  .line 373
     return-void
 .end method
 
@@ -223,26 +223,26 @@
 
 .method public static fullHint(Landroid/widget/ImageView;Landroid/widget/TextView;)V
   .registers 2
-  .line 418
+  .line 416
     if-nez p1, :L0
     return-void
   :L0
-  .line 419
+  .line 417
     invoke-static { p1 }, Lcom/innioasis/ipp/Theme;->tileName(Landroid/widget/TextView;)V
-  .line 420
+  .line 418
     if-eqz p0, :L1
     invoke-virtual { p1 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result p1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
   :L1
-  .line 421
+  .line 419
     return-void
 .end method
 
 .method public static fullShown(Landroid/view/View;)V
   .catchall { :L0 .. :L4 } :L5
   .registers 3
-  .line 385
+  .line 383
     if-eqz p0, :L7
   :L0
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
@@ -251,16 +251,16 @@
     if-nez v0, :L1
     goto :L7
   :L1
-  .line 386
+  .line 384
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v0
     check-cast v0, Landroid/view/View;
     const v1, 2131362310
     invoke-virtual { v0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 387
+  .line 385
     if-eqz v0, :L4
-  .line 388
+  .line 386
     invoke-virtual { p0 }, Landroid/view/View;->getVisibility()I
     move-result p0
     if-nez p0, :L2
@@ -271,16 +271,16 @@
   :L3
     invoke-virtual { v0, p0 }, Landroid/view/View;->setVisibility(I)V
   :L4
-  .line 392
+  .line 390
     goto :L6
   :L5
-  .line 390
+  .line 388
     move-exception p0
   :L6
-  .line 393
+  .line 391
     return-void
   :L7
-  .line 385
+  .line 383
     return-void
 .end method
 
@@ -364,23 +364,23 @@
 
 .method private static height(Landroid/view/View;I)V
   .registers 4
-  .line 508
+  .line 506
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 509
+  .line 507
     if-eqz v0, :L1
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-ne v1, p1, :L0
     goto :L1
   :L0
-  .line 510
+  .line 508
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
-  .line 511
+  .line 509
     invoke-virtual { p0, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 512
+  .line 510
     return-void
   :L1
-  .line 509
+  .line 507
     return-void
 .end method
 
@@ -842,10 +842,10 @@
 
 .method private static side(Landroid/view/View;I)V
   .registers 4
-  .line 500
+  .line 498
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 501
+  .line 499
     if-eqz v0, :L1
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
     if-ne v1, p1, :L0
@@ -853,29 +853,29 @@
     if-ne v1, p1, :L0
     goto :L1
   :L0
-  .line 502
+  .line 500
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
-  .line 503
+  .line 501
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
-  .line 504
+  .line 502
     invoke-virtual { p0, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 505
+  .line 503
     return-void
   :L1
-  .line 501
+  .line 499
     return-void
 .end method
 
 .method public static tileCover(Landroid/widget/ImageView;Ljava/lang/String;)V
   .registers 3
-  .line 520
+  .line 518
     if-nez p0, :L0
     return-void
   :L0
-  .line 521
+  .line 519
     invoke-virtual { p0 }, Landroid/widget/ImageView;->getTag()Ljava/lang/Object;
     move-result-object v0
-  .line 522
+  .line 520
     if-eqz v0, :L1
     invoke-virtual { v0, p1 }, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -884,31 +884,31 @@
     const/4 v0, 0
     invoke-virtual { p0, v0 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
   :L2
-  .line 523
+  .line 521
     invoke-virtual { p0, p1 }, Landroid/widget/ImageView;->setTag(Ljava/lang/Object;)V
-  .line 524
+  .line 522
     return-void
 .end method
 
 .method public static tileFit(Landroid/view/View;Landroid/view/View;Landroid/widget/TextView;)V
   .catchall { :L0 .. :L5 } :L6
   .registers 9
-  .line 452
+  .line 450
     if-eqz p0, :L8
     if-eqz p1, :L8
     if-nez p2, :L0
     goto :L8
   :L0
-  .line 454
+  .line 452
     invoke-virtual { p2 }, Landroid/widget/TextView;->getContext()Landroid/content/Context;
     move-result-object v0
-  .line 455
+  .line 453
     invoke-virtual { v0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     invoke-virtual { v1 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v1
     iget v1, v1, Landroid/util/DisplayMetrics;->heightPixels:I
-  .line 456
+  .line 454
     invoke-virtual { v0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     const v2, 2131165782
@@ -916,88 +916,88 @@
     move-result v0
     float-to-int v0, v0
     sub-int/2addr v1, v0
-  .line 457
+  .line 455
     invoke-virtual { p2 }, Landroid/widget/TextView;->getTextSize()F
     move-result v0
     const v2, 1068289229
     mul-float v0, v0, v2
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
-  .line 458
+  .line 456
     nop
-  .line 459
+  .line 457
     invoke-virtual { p2 }, Landroid/widget/TextView;->getParent()Landroid/view/ViewParent;
     move-result-object v2
     check-cast v2, Landroid/view/View;
-  .line 460
+  .line 458
     const/4 v3, 0
     if-eqz v2, :L1
     invoke-virtual { v2 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v4
     instance-of v4, v4, Landroid/view/ViewGroup$MarginLayoutParams;
     if-eqz v4, :L1
-  .line 461
+  .line 459
     invoke-virtual { v2 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v2
     check-cast v2, Landroid/view/ViewGroup$MarginLayoutParams;
-  .line 462
+  .line 460
     iget v4, v2, Landroid/view/ViewGroup$MarginLayoutParams;->topMargin:I
     iget v2, v2, Landroid/view/ViewGroup$MarginLayoutParams;->bottomMargin:I
     add-int/2addr v4, v2
     goto :L2
   :L1
-  .line 464
+  .line 462
     const/4 v4, 0
   :L2
     mul-int/lit16 v2, v1, 1000
     add-int/2addr v2, v0
-  .line 465
+  .line 463
     sget v5, Lcom/innioasis/ipp/Theme;->fitFor:I
     if-eq v2, v5, :L3
-  .line 466
+  .line 464
     sput v2, Lcom/innioasis/ipp/Theme;->fitFor:I
-  .line 467
+  .line 465
     div-int/lit8 v1, v1, 2
     sub-int/2addr v1, v0
     sub-int/2addr v1, v4
     sput v1, Lcom/innioasis/ipp/Theme;->fitSide:I
   :L3
-  .line 469
+  .line 467
     sget v1, Lcom/innioasis/ipp/Theme;->fitSide:I
     if-gtz v1, :L4
     return-void
   :L4
-  .line 472
+  .line 470
     invoke-virtual { p2, v3 }, Landroid/widget/TextView;->setIncludeFontPadding(Z)V
-  .line 473
+  .line 471
     invoke-static { p2, v0 }, Lcom/innioasis/ipp/Theme;->height(Landroid/view/View;I)V
-  .line 474
+  .line 472
     sget p2, Lcom/innioasis/ipp/Theme;->fitSide:I
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/Theme;->side(Landroid/view/View;I)V
-  .line 475
+  .line 473
     sget p0, Lcom/innioasis/ipp/Theme;->fitSide:I
     add-int/lit8 p0, p0, -6
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/Theme;->side(Landroid/view/View;I)V
   :L5
-  .line 478
+  .line 476
     goto :L7
   :L6
-  .line 476
+  .line 474
     move-exception p0
   :L7
-  .line 479
+  .line 477
     return-void
   :L8
-  .line 452
+  .line 450
     return-void
 .end method
 
 .method public static tileFrame()I
   .registers 1
-  .line 425
+  .line 423
     invoke-static { }, Lcom/innioasis/ipp/Icons;->progressColor()I
     move-result v0
-  .line 426
+  .line 424
     if-nez v0, :L0
     const v0, -13187329
   :L0
@@ -1007,17 +1007,17 @@
 .method public static tileGrid(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 5
-  .line 488
+  .line 486
     if-nez p0, :L0
     return-void
   :L0
-  .line 490
+  .line 488
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v0
     iget v0, v0, Landroid/util/DisplayMetrics;->heightPixels:I
-  .line 491
+  .line 489
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     const v2, 2131165782
@@ -1025,7 +1025,7 @@
     move-result v1
     float-to-int v1, v1
     sub-int/2addr v0, v1
-  .line 492
+  .line 490
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingLeft()I
     move-result v1
     rem-int/lit8 v0, v0, 2
@@ -1035,36 +1035,36 @@
     move-result v3
     invoke-virtual { p0, v1, v0, v2, v3 }, Landroidx/recyclerview/widget/RecyclerView;->setPadding(IIII)V
   :L1
-  .line 495
+  .line 493
     goto :L3
   :L2
-  .line 493
+  .line 491
     move-exception p0
   :L3
-  .line 496
+  .line 494
     return-void
 .end method
 
 .method public static tileName(Landroid/widget/TextView;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 4
-  .line 404
+  .line 402
     if-nez p0, :L0
     return-void
   :L0
-  .line 406
+  .line 404
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     const v1, -855638017
     const/4 v2, 0
     invoke-virtual { v0, p0, v1, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
   :L1
-  .line 409
+  .line 407
     goto :L3
   :L2
-  .line 407
+  .line 405
     move-exception p0
   :L3
-  .line 410
+  .line 408
     return-void
 .end method
 

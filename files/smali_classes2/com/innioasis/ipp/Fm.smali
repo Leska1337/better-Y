@@ -266,10 +266,10 @@
 
 .method public static firstTick(Landroid/view/View;I)I
   .registers 3
-  .line 381
+  .line 377
     invoke-static { p0 }, Lcom/innioasis/ipp/Fm;->window(Landroid/view/View;)[I
     move-result-object p0
-  .line 382
+  .line 378
     const/4 v0, 0
     if-nez p0, :L0
     goto :L1
@@ -413,10 +413,10 @@
 
 .method public static lastTick(Landroid/view/View;I)I
   .registers 3
-  .line 375
+  .line 371
     invoke-static { p0 }, Lcom/innioasis/ipp/Fm;->window(Landroid/view/View;)[I
     move-result-object p0
-  .line 376
+  .line 372
     if-nez p0, :L0
     goto :L1
   :L0
@@ -595,33 +595,33 @@
 .method public static ruler(Landroid/widget/HorizontalScrollView;Lcom/mediatek/view/FmView;F)Z
   .catchall { :L0 .. :L2 } :L3
   .registers 5
-  .line 353
+  .line 352
     const/4 v0, 0
     if-eqz p0, :L4
     if-nez p1, :L0
     goto :L4
   :L0
-  .line 355
+  .line 354
     invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
     move-result v1
     if-gtz v1, :L1
     return v0
   :L1
-  .line 356
+  .line 355
     invoke-virtual { p1, p2 }, Lcom/mediatek/view/FmView;->setFrequency(F)I
     move-result p1
     invoke-virtual { p0, p1, v0 }, Landroid/widget/HorizontalScrollView;->scrollTo(II)V
   :L2
-  .line 357
+  .line 356
     const/4 p0, 1
     return p0
   :L3
-  .line 358
+  .line 357
     move-exception p0
-  .line 359
+  .line 358
     return v0
   :L4
-  .line 353
+  .line 352
     return v0
 .end method
 
@@ -841,7 +841,7 @@
 .method private static window(Landroid/view/View;)[I
   .catchall { :L0 .. :L4 } :L5
   .registers 4
-  .line 388
+  .line 384
     const/4 v0, 0
     if-eqz p0, :L6
   :L0
@@ -851,27 +851,27 @@
     if-ne v1, v2, :L1
     goto :L6
   :L1
-  .line 391
+  .line 387
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 392
+  .line 388
     instance-of v1, p0, Landroid/widget/HorizontalScrollView;
     if-nez v1, :L2
     return-object v0
   :L2
-  .line 393
+  .line 389
     check-cast p0, Landroid/widget/HorizontalScrollView;
-  .line 394
+  .line 390
     invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
     move-result v1
-  .line 395
+  .line 391
     if-gtz v1, :L3
     return-object v0
   :L3
-  .line 396
+  .line 392
     invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getScrollX()I
     move-result p0
-  .line 397
+  .line 393
     sub-int v2, p0, v1
     mul-int/lit8 v1, v1, 2
     add-int/2addr p0, v1
@@ -880,11 +880,11 @@
   :L4
     return-object p0
   :L5
-  .line 398
+  .line 394
     move-exception p0
-  .line 399
+  .line 395
     return-object v0
   :L6
-  .line 389
+  .line 385
     return-object v0
 .end method

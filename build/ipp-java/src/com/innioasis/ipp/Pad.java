@@ -94,14 +94,9 @@ public final class Pad {
     }
 
     /**
-     * A second view's place in a ConstraintLayout, taken from the first: every constraint, margin,
-     * bias, chain, ratio and match-constraint setting, on fresh params.
-     *
-     * Not the copy constructor. It hands the copy the source's own {@code ConstraintWidget}, so the
-     * solver sees one widget for two views: the second {@code add} resets it, the copy is never
-     * measured, and it is laid out in the source's frame whatever its own params say. What the
-     * constructor derives while resolving ({@code resolved*}, the dimension flags) is recomputed
-     * by {@code validate}.
+     * A second view's place in a ConstraintLayout, copied from the first on fresh params. Not the
+     * copy constructor: it shares the source's {@code ConstraintWidget}, so the copy is never
+     * measured and ignores its own geometry. Derived state is recomputed by {@code validate}.
      */
     public static ConstraintLayout.LayoutParams copy(ConstraintLayout.LayoutParams src) {
         ConstraintLayout.LayoutParams p = new ConstraintLayout.LayoutParams(src.width, src.height);

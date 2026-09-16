@@ -17,7 +17,7 @@
 
 .method constructor <init>(Landroid/app/Activity;Ljava/io/File;)V
   .registers 3
-  .line 383
+  .line 380
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Diag$Note;->a:Landroid/app/Activity;
     iput-object p2, p0, Lcom/innioasis/ipp/Diag$Note;->f:Ljava/io/File;
@@ -28,16 +28,16 @@
   .catchall { :L0 .. :L2 } :L3
   .registers 5
   :L0
-  .line 387
+  .line 384
     iget-object v0, p0, Lcom/innioasis/ipp/Diag$Note;->f:Ljava/io/File;
     if-nez v0, :L1
-  .line 388
+  .line 385
     iget-object v0, p0, Lcom/innioasis/ipp/Diag$Note;->a:Landroid/app/Activity;
     const v1, 2131821114
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Diag;->access$100(Landroid/content/Context;I)V
     goto :L2
   :L1
-  .line 390
+  .line 387
     iget-object v1, p0, Lcom/innioasis/ipp/Diag$Note;->a:Landroid/app/Activity;
     const/4 v2, 1
     new-array v2, v2, [Ljava/lang/Object;
@@ -50,12 +50,12 @@
     move-result-object v0
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Diag;->access$200(Landroid/content/Context;Ljava/lang/String;)V
   :L2
-  .line 394
+  .line 391
     goto :L4
   :L3
-  .line 392
+  .line 389
     move-exception v0
   :L4
-  .line 395
+  .line 392
     return-void
 .end method

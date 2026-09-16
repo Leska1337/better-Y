@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 234
+  .line 231
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -21,7 +21,7 @@
 .method public uncaughtException(Ljava/lang/Thread;Ljava/lang/Throwable;)V
   .catchall { :L2 .. :L3 } :L4
   .registers 5
-  .line 236
+  .line 233
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "uncaught exception on thread "
@@ -40,7 +40,7 @@
     move-result-object v0
     invoke-static { v0, p2 }, Lcom/innioasis/ipp/Diag;->spill(Ljava/lang/String;Ljava/lang/Throwable;)V
   :L2
-  .line 238
+  .line 235
     invoke-static { }, Lcom/innioasis/ipp/Diag;->access$000()Ljava/lang/Thread$UncaughtExceptionHandler;
     move-result-object v0
     if-eqz v0, :L3
@@ -48,12 +48,12 @@
     move-result-object v0
     invoke-interface { v0, p1, p2 }, Ljava/lang/Thread$UncaughtExceptionHandler;->uncaughtException(Ljava/lang/Thread;Ljava/lang/Throwable;)V
   :L3
-  .line 241
+  .line 238
     goto :L5
   :L4
-  .line 239
+  .line 236
     move-exception p1
   :L5
-  .line 242
+  .line 239
     return-void
 .end method

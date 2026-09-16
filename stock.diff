@@ -29,7 +29,7 @@ index 2c8d26c0..aff80cc9 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..a14ebb89 100644
+index 01b1f730..8afb669a 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +44,7 @@ index 01b1f730..a14ebb89 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10000176
++  versionCode: 10000177
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19449,7 +19449,7 @@ index 803c1e7a..16919f82 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..24443cae 100644
+index 71fe29d0..d1496150 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,546 @@
@@ -20398,7 +20398,7 @@ index 71fe29d0..24443cae 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.0.0-dev176</string>
++    <string name="ipp_version">v1.0.0-dev177</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20485,7 +20485,7 @@ index fb6efacc..5850e990 100644
 +    </style>
  </resources>
 diff --git a/build/src/smali/com/innioasis/fm/FMMainActivity.smali b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
-index b51419e1..8c09f783 100644
+index b51419e1..3c4ce097 100644
 --- a/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 +++ b/build/src/smali/com/innioasis/fm/FMMainActivity.smali
 @@ -461,7 +461,8 @@
@@ -20508,13 +20508,12 @@ index b51419e1..8c09f783 100644
      if-eqz v0, :cond_0
  
      .line 586
-@@ -1082,6 +1086,25 @@
+@@ -1082,6 +1086,24 @@
  
      if-nez v0, :cond_0
  
 +    # ipp: move the ruler NOW. The coroutine below sleeps 50 ms first, so the wheel outran it and
-+    # the ruler chased a frequency already left behind. It runs only when the ruler could not be
-+    # moved yet -- see Fm.ruler.
++    # the ruler chased a frequency already left behind; it runs only if Fm.ruler could not move it.
 +    invoke-virtual {p0}, Lcom/innioasis/fm/FMMainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
 +    move-result-object v0
@@ -20534,7 +20533,7 @@ index b51419e1..8c09f783 100644
      .line 694
      move-object v0, p0
  
-@@ -1902,7 +1925,9 @@
+@@ -1902,7 +1924,9 @@
  
      move-result-object v0
  
@@ -20545,7 +20544,7 @@ index b51419e1..8c09f783 100644
  
      .line 748
      invoke-virtual {p0, v1}, Lcom/innioasis/fm/FMMainActivity;->getString(I)Ljava/lang/String;
-@@ -1931,6 +1956,9 @@
+@@ -1931,6 +1955,9 @@
  
      iput-object v0, p0, Lcom/innioasis/fm/FMMainActivity;->progressDialog:Landroid/app/ProgressDialog;
  
@@ -20555,7 +20554,7 @@ index b51419e1..8c09f783 100644
      if-eqz v0, :cond_0
  
      .line 753
-@@ -2617,6 +2645,16 @@
+@@ -2617,6 +2644,16 @@
  .method public initView()V
      .locals 3
  
@@ -20573,16 +20572,15 @@ index b51419e1..8c09f783 100644
      invoke-virtual {p0}, Lcom/innioasis/fm/FMMainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
 diff --git a/build/src/smali/com/innioasis/fm/util/FMSharedPreferences.smali b/build/src/smali/com/innioasis/fm/util/FMSharedPreferences.smali
-index e27fbd47..733a71c9 100644
+index e27fbd47..74bffde9 100644
 --- a/build/src/smali/com/innioasis/fm/util/FMSharedPreferences.smali
 +++ b/build/src/smali/com/innioasis/fm/util/FMSharedPreferences.smali
-@@ -1308,7 +1308,9 @@
+@@ -1308,7 +1308,8 @@
      move-object v1, p1
  
      :goto_0
 -    invoke-interface {v1}, Landroid/content/SharedPreferences$Editor;->commit()Z
-+    # ipp: apply, not commit -- the wheel writes the frequency on every step, and commit rewrote
-+    # the file on the main thread each time. Readers see the new value at once either way.
++    # ipp: apply, not commit: the wheel writes this on every step, and commit hit the disk each time.
 +    invoke-interface {v1}, Landroid/content/SharedPreferences$Editor;->apply()V
  
      return-void
@@ -60731,22 +60729,21 @@ index 13444baf..6f28ff47 100644
  
      .line 143
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$shortTop$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$shortTop$2$1.smali
-index 1a9012fb..bb85eebb 100644
+index 1a9012fb..c73c85fc 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$shortTop$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$shortTop$2$1.smali
-@@ -297,7 +297,9 @@
+@@ -297,7 +297,8 @@
  
      move-result v0
  
 -    invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
-+    # ipp: stock smooth-scrolled here from the top of the refilled list, so coming back to a folder
-+    # low in the grid showed a scroll down from the first row. Photos.back restores the window.
++    # ipp: the grid back where it stood, at once, instead of a smooth scroll from the top
 +    invoke-static {p1, v0}, Lcom/innioasis/ipp/Photos;->back(Landroidx/recyclerview/widget/RecyclerView;I)V
  
      .line 687
      iget-object p1, p0, Lcom/innioasis/y1/activity/PhotosActivity$shortTop$2$1;->this$0:Lcom/innioasis/y1/activity/PhotosActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..d0288123 100644
+index 0688aa89..f436bd15 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -1105,6 +1105,25 @@
@@ -60899,7 +60896,7 @@ index 0688aa89..d0288123 100644
  
      if-eqz v0, :cond_4
  
-+    # ipp: where the grid's window stands, for Photos.back to put it back when this folder is left
++    # ipp: the grid's window, for Photos.back
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getVb()Landroidx/viewbinding/ViewBinding;
 +
 +    move-result-object v0
@@ -68184,7 +68181,7 @@ index 20098bc2..0ba99584 100644
      .line 54
      invoke-virtual {v0, v1}, Landroid/graphics/Paint;->setColor(I)V
 diff --git a/build/src/smali_classes2/com/mediatek/view/FmView.smali b/build/src/smali_classes2/com/mediatek/view/FmView.smali
-index 26c152a3..bf66862d 100644
+index 26c152a3..b86731d6 100644
 --- a/build/src/smali_classes2/com/mediatek/view/FmView.smali
 +++ b/build/src/smali_classes2/com/mediatek/view/FmView.smali
 @@ -532,7 +532,12 @@
@@ -68218,7 +68215,7 @@ index 26c152a3..bf66862d 100644
      if-ltz v0, :cond_2
  
 -    const/4 v1, 0x0
-+    # ipp: only the ticks around what the ruler's window shows, not all ~200 of them per frame
++    # ipp: only the ticks around the ruler's window
 +    invoke-static {p0, v0}, Lcom/innioasis/ipp/Fm;->lastTick(Landroid/view/View;I)I
 +
 +    move-result v0

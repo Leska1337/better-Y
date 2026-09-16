@@ -489,10 +489,7 @@ public final class Photos {
     /** Per grid, one {first visible tile, its offset} for every folder level entered. */
     private static final WeakHashMap windows = new WeakHashMap();
 
-    /**
-     * Opening a folder from the grid: remembers where the grid's window stood, beside stock's own
-     * stack of cursor positions ({@code stackIndex}), which is pushed right after this.
-     */
+    /** Opening a folder: remembers the grid's window, in step with stock's {@code stackIndex}. */
     public static void enter(RecyclerView rv) {
         try {
             if (rv == null) return;
@@ -522,9 +519,8 @@ public final class Photos {
     }
 
     /**
-     * Back out of a folder: puts the grid's window where it stood when the folder was opened, at
-     * once. Stock smooth-scrolled to the cursor from the top of the freshly refilled list, so a
-     * folder low in the grid was reached by a visible scroll down from the first row.
+     * Back out of a folder: the grid's window goes back where it stood, at once — stock's smooth
+     * scroll started from the top of the refilled list.
      */
     public static void back(RecyclerView rv, int mark) {
         try {
