@@ -344,17 +344,59 @@ public final class Fm {
 
     /**
      * Put the ruler where the frequency is, at once, from the top of
-     * {@code FMMainActivity.scrollRuler}. Its own coroutine still runs 50 ms later and must: on a
-     * screen just built the ruler has no width and a scroll does nothing, and that pass catches
-     * it. Do not take the delayed pass for a duplicate.
+     * {@code FMMainActivity.scrollRuler}. True when it did: stock's coroutine then is not started,
+     * since it would only repeat the move 50 ms later and cost the wheel a second frame per step.
+     * False on a screen just built, where the ruler has no width yet and a scroll does nothing —
+     * that is what the delayed pass is for, and it still runs then.
      */
-    public static void ruler(HorizontalScrollView sv, FmView ruler, float frequency) {
-        if (sv == null || ruler == null) return;
+    public static boolean ruler(HorizontalScrollView sv, FmView ruler, float frequency) {
+        if (sv == null || ruler == null) return false;
         try {
-            if (sv.getWidth() <= 0) return;
+            if (sv.getWidth() <= 0) return false;
             sv.scrollTo(ruler.setFrequency(frequency), 0);
+            return true;
         } catch (Throwable t) {
-            // ignore
+            return false;
+        }
+    }
+
+    /** Stock's tick spacing on the ruler, px, and its first tick's x. */
+    private static final int TICK = 20;
+
+    /**
+     * The last tick {@code FmView.drawLines} draws, of {@code last} it would. The ruler is some
+     * 4000 px wide and redrawn on every step of the wheel, and stock drew all ~200 ticks and ~40
+     * labels (with a String built per tick) for the ~24 the window shows. A screen's width is
+     * kept on each side, so anything that moves the scroll without redrawing still lands on drawn
+     * ticks; every move here redraws anyway ({@code setFrequency} invalidates). A mirrored layout
+     * and a ruler with no window around it draw everything, as stock did.
+     */
+    public static int lastTick(android.view.View ruler, int last) {
+        int[] w = window(ruler);
+        return w == null ? last : Math.max(0, Math.min(last, (w[1] - TICK) / TICK + 1));
+    }
+
+    /** The first tick drawn; never past {@code last}, or the loop would not stop on it. */
+    public static int firstTick(android.view.View ruler, int last) {
+        int[] w = window(ruler);
+        return w == null ? 0 : Math.max(0, Math.min(last, (w[0] - TICK) / TICK - 1));
+    }
+
+    /** The span of the ruler worth drawing, in its own x: the window plus a window each side. */
+    private static int[] window(android.view.View ruler) {
+        try {
+            if (ruler == null || ruler.getLayoutDirection() == android.view.View.LAYOUT_DIRECTION_RTL) {
+                return null;
+            }
+            ViewParent p = ruler.getParent();
+            if (!(p instanceof HorizontalScrollView)) return null;
+            HorizontalScrollView sv = (HorizontalScrollView) p;
+            int pw = sv.getWidth();
+            if (pw <= 0) return null;
+            int x = sv.getScrollX();
+            return new int[]{x - pw, x + 2 * pw};
+        } catch (Throwable t) {
+            return null;
         }
     }
 }

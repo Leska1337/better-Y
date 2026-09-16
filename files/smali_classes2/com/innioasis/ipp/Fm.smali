@@ -22,6 +22,8 @@
 
 .field private final static TEXT_EDGE_ALPHA:I = 0x80000000
 
+.field private final static TICK:I = 20
+
 .field private static box:[I
 
 .field private static foundBm:Landroid/graphics/Bitmap;
@@ -262,6 +264,28 @@
     return p0
 .end method
 
+.method public static firstTick(Landroid/view/View;I)I
+  .registers 3
+  .line 381
+    invoke-static { p0 }, Lcom/innioasis/ipp/Fm;->window(Landroid/view/View;)[I
+    move-result-object p0
+  .line 382
+    const/4 v0, 0
+    if-nez p0, :L0
+    goto :L1
+  :L0
+    aget p0, p0, v0
+    add-int/lit8 p0, p0, -20
+    div-int/lit8 p0, p0, 20
+    add-int/lit8 p0, p0, -1
+    invoke-static { p1, p0 }, Ljava/lang/Math;->min(II)I
+    move-result p0
+    invoke-static { v0, p0 }, Ljava/lang/Math;->max(II)I
+    move-result v0
+  :L1
+    return v0
+.end method
+
 .method private static geometry()[I
   .registers 13
   .line 178
@@ -385,6 +409,29 @@
   :L3
   .line 95
     return-void
+.end method
+
+.method public static lastTick(Landroid/view/View;I)I
+  .registers 3
+  .line 375
+    invoke-static { p0 }, Lcom/innioasis/ipp/Fm;->window(Landroid/view/View;)[I
+    move-result-object p0
+  .line 376
+    if-nez p0, :L0
+    goto :L1
+  :L0
+    const/4 v0, 1
+    aget p0, p0, v0
+    add-int/lit8 p0, p0, -20
+    div-int/lit8 p0, p0, 20
+    add-int/2addr p0, v0
+    invoke-static { p1, p0 }, Ljava/lang/Math;->min(II)I
+    move-result p0
+    const/4 p1, 0
+    invoke-static { p1, p0 }, Ljava/lang/Math;->max(II)I
+    move-result p1
+  :L1
+    return p1
 .end method
 
 .method public static now()I
@@ -545,37 +592,37 @@
     return v0
 .end method
 
-.method public static ruler(Landroid/widget/HorizontalScrollView;Lcom/mediatek/view/FmView;F)V
+.method public static ruler(Landroid/widget/HorizontalScrollView;Lcom/mediatek/view/FmView;F)Z
   .catchall { :L0 .. :L2 } :L3
-  .registers 4
-  .line 352
-    if-eqz p0, :L5
+  .registers 5
+  .line 353
+    const/4 v0, 0
+    if-eqz p0, :L4
     if-nez p1, :L0
-    goto :L5
+    goto :L4
   :L0
-  .line 354
-    invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
-    move-result v0
-    if-gtz v0, :L1
-    return-void
-  :L1
   .line 355
+    invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
+    move-result v1
+    if-gtz v1, :L1
+    return v0
+  :L1
+  .line 356
     invoke-virtual { p1, p2 }, Lcom/mediatek/view/FmView;->setFrequency(F)I
     move-result p1
-    const/4 p2, 0
-    invoke-virtual { p0, p1, p2 }, Landroid/widget/HorizontalScrollView;->scrollTo(II)V
+    invoke-virtual { p0, p1, v0 }, Landroid/widget/HorizontalScrollView;->scrollTo(II)V
   :L2
-  .line 358
-    goto :L4
+  .line 357
+    const/4 p0, 1
+    return p0
   :L3
-  .line 356
+  .line 358
     move-exception p0
-  :L4
   .line 359
-    return-void
-  :L5
-  .line 352
-    return-void
+    return v0
+  :L4
+  .line 353
+    return v0
 .end method
 
 .method public static screen(Lcom/mediatek/fm/databinding/ActivityFmmainBinding;)V
@@ -789,4 +836,55 @@
     invoke-virtual { p0, v0 }, Landroid/widget/SeekBar;->setProgressDrawable(Landroid/graphics/drawable/Drawable;)V
   .line 343
     return-void
+.end method
+
+.method private static window(Landroid/view/View;)[I
+  .catchall { :L0 .. :L4 } :L5
+  .registers 4
+  .line 388
+    const/4 v0, 0
+    if-eqz p0, :L6
+  :L0
+    invoke-virtual { p0 }, Landroid/view/View;->getLayoutDirection()I
+    move-result v1
+    const/4 v2, 1
+    if-ne v1, v2, :L1
+    goto :L6
+  :L1
+  .line 391
+    invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
+    move-result-object p0
+  .line 392
+    instance-of v1, p0, Landroid/widget/HorizontalScrollView;
+    if-nez v1, :L2
+    return-object v0
+  :L2
+  .line 393
+    check-cast p0, Landroid/widget/HorizontalScrollView;
+  .line 394
+    invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
+    move-result v1
+  .line 395
+    if-gtz v1, :L3
+    return-object v0
+  :L3
+  .line 396
+    invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getScrollX()I
+    move-result p0
+  .line 397
+    sub-int v2, p0, v1
+    mul-int/lit8 v1, v1, 2
+    add-int/2addr p0, v1
+    filled-new-array { v2, p0 }, [I
+    move-result-object p0
+  :L4
+    return-object p0
+  :L5
+  .line 398
+    move-exception p0
+  .line 399
+    return-object v0
+  :L6
+  .line 389
+    return-object v0
 .end method
