@@ -681,9 +681,9 @@ Also, selecting a currently playing song from the list no longer starts it from 
 - **Options A, B and C (without step 4) write the whole firmware, `usrdata` included**: settings, playlists, likes, reading progress, bookmarks. Your files on the SD card are untouched.
 - If you have stock 3.0.7 or 3.1.2 firmware installed (anything lower wasn't tested) and want to keep your `usrdata` - use Option C with step 4.
 
-### Option A — [Updater CE](https://innioasis.app/) by Ryan Specter (`rom.zip`)
+### Option A — [Updater CE](https://innioasis.app/) by Ryan Specter
 
-Download `rom.zip` from the Releases page, open the updater, press "Browse Files", choose the archive or drag and drop it and follow instructions on screen.
+Install [Updater CE](https://innioasis.app/), then select Better-Y from the Software drop down menu and select "Install/Restore" to be guided through the install process.
 
 ### Option B — [Official Innioasis Updater](https://www.reddit.com/r/innioasis/comments/1v9vsvj/comment/p0nfp8g/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button/) (`rom.zip`)
 
