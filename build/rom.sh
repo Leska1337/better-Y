@@ -86,7 +86,7 @@ if [ "$MINIMAL" -eq 0 ]; then
             "recovery.img" "secro.img" "logo.bin" "cache.img" "userdata.img")
 fi
 
-echo "[1/6] staging the stock images"
+echo "[1/5] staging the stock images"
 # python3's zipfile stands in for unzip, which a bare distro may not have
 stage() {   # stage <zip> <name>...
     ( cd "$WORK" && python3 - "$@" <<'PY'
@@ -101,7 +101,7 @@ stage "$BASE_ZIP" "${STOCK[@]}" system.img
 cp "$APK" "$WORK/new.apk"
 ( cd "$WORK" && ls -l ) | tail -n "$(( ${#STOCK[@]} + 2 ))"
 
-echo "[2/6] preparing the raw ext4 image"
+echo "[2/5] preparing the raw ext4 image"
 # the community system.img is already raw; the factory one is sparse. Take either.
 if head -c4 "$WORK/system.img" | od -An -tx1 | grep -q '3a ff 26 ed'; then
     simg2img "$WORK/system.img" "$WORK/system.raw.img"
@@ -110,8 +110,8 @@ else
     mv "$WORK/system.img" "$WORK/system.raw.img"
 fi
 # A raw ext4 image is shorter than its partition - it is the sparse image expanded and trimmed.
-# debugfs and our sparse packer both address blocks by the superblock's own count, so pad it back
-# out to blocks * block_size before touching it.
+# debugfs addresses blocks by the superblock's own count, so pad it back out to blocks * block_size
+# before touching it - which also makes the packed image the full partition.
 python3 - "$WORK/system.raw.img" <<'PY'
 import os, struct, sys
 p = sys.argv[1]
@@ -130,7 +130,7 @@ if have < size:
 PY
 printf '      %s bytes\n' "$(wc -c < "$WORK/system.raw.img" | tr -d ' ')"
 
-echo "[3/6] swapping the launcher in (debugfs, no mount)"
+echo "[3/5] swapping the launcher in (debugfs, no mount)"
 # debugfs edits ext4 in place as an ordinary user - no mount, no sudo. It writes into the image's
 # current directory, so the `cd app` comes first, and the file arrives owned by the calling user
 # with an extra_isize the factory files do not have; the three sif lines put that back.
@@ -144,32 +144,28 @@ sif com.innioasis.y1_3.1.2.apk gid 0
 EOF
 )
 
-echo "[4/6] verifying the image"
+echo "[4/5] verifying the image"
 # read the launcher back out of the image and compare it with what went in
 ( cd "$WORK" && debugfs -R 'dump app/com.innioasis.y1_3.1.2.apk check.apk' system.raw.img >/dev/null 2>&1 )
 cmp "$WORK/check.apk" "$WORK/new.apk" || die "the launcher in the image differs from the APK"
 echo "      launcher in image: identical"
 e2fsck -fn "$WORK/system.raw.img" 2>&1 | tail -2 | sed 's/^/      /'
+rm -f "$WORK/check.apk" "$WORK/new.apk"
 
-echo "[5/6] raw -> sparse (RAW + DONT_CARE only)"
-# NOT img2simg: its FILL chunks are what MT6572's DA cannot write (S_DA_SDMMC_WRITE_FAILED at 1%)
-python3 "$BUILD_DIR/rom-tools/mksparse.py" "$WORK/system.raw.img" "$WORK/system_ipp.img"
-simg2img "$WORK/system_ipp.img" "$WORK/rt.img"
-cmp "$WORK/system.raw.img" "$WORK/rt.img" || die "the sparse image does not expand back to the raw one"
-rm -f "$WORK/rt.img" "$WORK/system.raw.img" "$WORK/check.apk" "$WORK/new.apk"
-echo "      sparse round-trip: identical"
-
-echo "[6/6] packing rom.zip"
+echo "[5/5] packing rom.zip"
+# system.img goes in RAW, never sparse: on macOS the Updater flashes through mtkclient, which wants
+# a raw image, and SP Flash Tool takes raw as well. Zeros deflate to almost nothing, so the archive
+# barely grows; the unpacked image is the full partition.
 ( cd "$WORK" && python3 - "${STOCK[@]}" <<'PY'
 import os, sys, zipfile
-z = zipfile.ZipFile("rom.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=6)
-z.write("system_ipp.img", "system.img")     # our image under the name the Updater looks for
+z = zipfile.ZipFile("rom.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9)
+z.write("system.raw.img", "system.img")     # our image under the name the Updater looks for
 for n in sys.argv[1:]:
     if n != "system.img" and os.path.isfile(n):
         z.write(n)                          # untouched factory images
 z.close()
 for n in z.namelist():
-    print("      %-28s %10d" % (n, os.path.getsize("system_ipp.img" if n == "system.img" else n)))
+    print("      %-28s %10d" % (n, os.path.getsize("system.raw.img" if n == "system.img" else n)))
 PY
 )
 mv "$WORK/rom.zip" "$OUT/rom.zip"

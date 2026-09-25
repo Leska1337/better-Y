@@ -89,7 +89,6 @@ New-Item -ItemType Directory -Force $Out | Out-Null
 $baseW = ConvertTo-WslPath $baseZip
 $apkW = ConvertTo-WslPath $Apk
 $outW = ConvertTo-WslPath $Out
-$toolsW = ConvertTo-WslPath (Join-Path $root "build\rom-tools")
 
 Write-Host "launcher: $(Split-Path -Leaf $Apk) ($('{0:n0}' -f (Get-Item $Apk).Length) B)" -ForegroundColor Yellow
 
@@ -101,7 +100,7 @@ function New-WslScript([string] $name, [string] $body) {
     return (ConvertTo-WslPath $p)
 }
 
-Write-Host "[1/6] staging the stock images inside WSL" -ForegroundColor Cyan
+Write-Host "[1/5] staging the stock images inside WSL" -ForegroundColor Cyan
 # python3's zipfile stands in for unzip, which the distro does not have
 $stagePy = New-WslScript "ipp-stage.py" @'
 import sys, zipfile
@@ -110,8 +109,8 @@ for n in sys.argv[2:]:
     open(n, "wb").write(z.read(n))
 '@
 # A raw ext4 image (the community base) is shorter than its partition - it is the sparse image
-# expanded and trimmed. debugfs and our sparse packer both address blocks by the superblock's own
-# count, so pad it back out to blocks * block_size before touching it.
+# expanded and trimmed. debugfs addresses blocks by the superblock's own count, so pad it back out
+# to blocks * block_size before touching it - which also makes the packed image the full partition.
 $padPy = New-WslScript "ipp-pad.py" @'
 import os, struct, sys
 p = sys.argv[1]
@@ -145,11 +144,11 @@ $stockArgs = ($stock | ForEach-Object { "'$_'" }) -join " "
 Invoke-Wsl "rm -rf $remote && mkdir -p $remote && cd $remote && python3 $stagePy '$baseW' $stockArgs system.img && cp '$apkW' new.apk && ls -l" | Select-Object -Last ($stock.Count + 2)
 
 
-Write-Host "[2/6] preparing the raw ext4 image" -ForegroundColor Cyan
+Write-Host "[2/5] preparing the raw ext4 image" -ForegroundColor Cyan
 # the community system.img is already raw; the factory one is sparse. Take either.
 Invoke-Wsl "cd $remote && if head -c4 system.img | od -An -tx1 | grep -q '3a ff 26 ed'; then simg2img system.img system.raw.img; else mv system.img system.raw.img; fi && python3 $padPy system.raw.img; stat -c '      %s bytes' system.raw.img" | ForEach-Object { Write-Host $_ }
 
-Write-Host "[3/6] swapping the launcher in (debugfs, no mount)" -ForegroundColor Cyan
+Write-Host "[3/5] swapping the launcher in (debugfs, no mount)" -ForegroundColor Cyan
 $cmds = @(
     "cd app"
     "rm com.innioasis.y1_3.1.2.apk"
@@ -163,26 +162,25 @@ $cmdFile = Join-Path $env:TEMP "swap.debugfs"
 $cmdW = ConvertTo-WslPath $cmdFile
 Invoke-Wsl "cd $remote && debugfs -w -f $cmdW system.raw.img" | Out-Null
 
-Write-Host "[4/6] verifying the image" -ForegroundColor Cyan
+Write-Host "[4/5] verifying the image" -ForegroundColor Cyan
 # read the launcher back out of the image and compare it with what went in
 Invoke-Wsl "cd $remote && debugfs -R 'dump app/com.innioasis.y1_3.1.2.apk check.apk' system.raw.img >/dev/null && cmp check.apk new.apk && echo '      launcher in image: identical'"
 Invoke-Wsl "cd $remote && e2fsck -fn system.raw.img | tail -2" | ForEach-Object { Write-Host "      $_" }
 
-Write-Host "[5/6] raw -> sparse (RAW + DONT_CARE only)" -ForegroundColor Cyan
-# NOT img2simg: its FILL chunks are what MT6572's DA cannot write (S_DA_SDMMC_WRITE_FAILED at 1%)
-Invoke-Wsl "cd $remote && python3 '$toolsW/mksparse.py' system.raw.img system_ipp.img && simg2img system_ipp.img rt.img && cmp system.raw.img rt.img && rm rt.img && echo '      sparse round-trip: identical'"
-
-Write-Host "[6/6] packing rom.zip and copying out" -ForegroundColor Cyan
+Write-Host "[5/5] packing rom.zip and copying out" -ForegroundColor Cyan
+# system.img goes in RAW, never sparse: on macOS the Updater flashes through mtkclient, which wants
+# a raw image, and SP Flash Tool takes raw as well. Zeros deflate to almost nothing, so the archive
+# barely grows; the unpacked image is the full partition.
 $packPy = New-WslScript "ipp-pack.py" @'
 import os, sys, zipfile
-z = zipfile.ZipFile("rom.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=6)
-z.write("system_ipp.img", "system.img")     # our image under the name the Updater looks for
+z = zipfile.ZipFile("rom.zip", "w", zipfile.ZIP_DEFLATED, compresslevel=9)
+z.write("system.raw.img", "system.img")     # our image under the name the Updater looks for
 for n in sys.argv[1:]:
     if n != "system.img" and os.path.isfile(n):
         z.write(n)                          # untouched factory images
 z.close()
 for n in z.namelist():
-    print("      %-28s %10d" % (n, os.path.getsize("system_ipp.img" if n == "system.img" else n)))
+    print("      %-28s %10d" % (n, os.path.getsize("system.raw.img" if n == "system.img" else n)))
 '@
 Invoke-Wsl "cd $remote && python3 $packPy $stockArgs && cp rom.zip '$outW/rom.zip' && rm -rf $remote" | ForEach-Object { Write-Host $_ }
 
