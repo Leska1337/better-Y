@@ -228,9 +228,54 @@ screen at the same time, without compromises and without editing metadata.
 </div>
 </details>
 
+<details>
+<summary>⚙️ <b>Option to change text and lyrics color</b> — Light / Dark / Theme color</summary>
+<div>
+<p></p>
+
+<table border="0" style="border-collapse: collapse; border: none; margin: 0; width: auto;">
+  <!-- ВЕРХНИЙ РЯД: ДВЕ КАРТИНКИ -->
+  <tr style="border: none; background: transparent; vertical-align: top;">
+    <!-- Первая колонка (без отступа слева) -->
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/color_change_1.png" alt="Icons and text color changed to `Light`" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+        Icons and text color changed to `Light`
+      </div>
+    </td>
+    <!-- Вторая колонка -->
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 0 0 15px; width: 1px;">
+      <img src="./screenshots/color_change_2.png" alt="Icons and text color changed to `Theme color`" width="373" style="display: block; max-width: none; margin: 0;">
+      <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+        Icons and text color changed to `Theme color`
+      </div>
+    </td>
+  </tr>
+
+  <!-- ОТСТУП МЕЖДУ РЯДАМИ -->
+  <tr style="border: none; background: transparent; height: 20px;">
+    <td colspan="2" valign="top" style="border: none; padding: 0;"></td>
+  </tr>
+
+  <!-- НИЖНИЙ РЯД: ТРЕТЬЯ КАРТИНКА ПО ЦЕНТРУ ПЕРВЫХ ДВУХ -->
+  <tr style="border: none; background: transparent; vertical-align: top;">
+    <td colspan="2" align="center" valign="top" style="border: none; padding: 0; text-align: center;">
+      <div style="display: inline-block; text-align: center;">
+        <img src="./screenshots/color_change_3.png" alt="Lyrics color changed to `Theme color`" width="373" style="display: block; max-width: none; margin: 0 auto;">
+        <div align="center" style="padding-top: 8px; font-size: 14px; line-height: 1.4; text-align: center;">
+          Lyrics color changed to `Theme color`
+        </div>
+      </div>
+    </td>
+  </tr>
+</table>
+
+</div>
+</details>
+
 <p>&#9679;&ensp;⚙️ <b>Top button hold to open Lyrics / Queue / Bookmark / AB Loop</b></p>
 
-<p>&#9679;&ensp;<b>Long song titles scroll</b></p>
+<p>&#9679;&ensp;⚙️ <b>Long artists/albums/titles scroll</b></p>
 
 <p>&#9679;&ensp;<b>Lyrics fix</b> — long lines no longer extend beyond the edges of the screen</p>
 
@@ -583,6 +628,21 @@ This does not apply to the Folders section, where deleting works as usual.
 </div>
 </details>
 
+<details>
+<summary><b>⚙️ Data backup</b> — settings, likes, playlists, bookmarks and reading progress</summary>
+<div>
+<p></p>
+
+Updating the firmware with an updater wipes the app data, but not the SD card. "Data backup" saves your data to `/better-Y/backup/` on the SD card and loads it back.
+
+Along with the better-Y settings, the archive keeps the theme, the stock settings, the library with
+playlists, bookmarks and audiobook progress. Bluetooth devices can't be saved.
+
+The five newest archives are kept. After loading one the player restarts.
+
+</div>
+</details>
+
 <p>&#9679;&ensp;⚙️ <b>Disable auto screen lock while reading lyrics and books</b></p>
 
 <details>
@@ -612,6 +672,22 @@ This does not apply to the Folders section, where deleting works as usual.
 </details>
 
 <details>
+<summary><b>Extended themes support</b> — themes work as usual, plus screens that were previously hardcoded now use the theme designs and everything new adapts to them</b></summary>
+<div>
+<p></p>
+
+<table border="0" style="border-collapse: collapse; border: none;">
+  <tr style="border: none; background: transparent; vertical-align: top;">
+    <!-- Первая колонка -->
+    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
+      <img src="./screenshots/themes_support.png" alt="Queue screen with custom themes" width="800" style="display: block; max-width: none; margin: 0 auto;">
+    </td>
+</table>
+
+</div>
+</details>
+
+<details>
 <summary><b>A proper cache system</b> — no more text and images blinking, system works faster</summary>
 <div>
 <p></p>
@@ -637,6 +713,7 @@ This does not apply to the Folders section, where deleting works as usual.
 </div>
 </details>
 
+
 <details>
 <summary><b>Existing song navigation logic changes</b></summary>
 <div>
@@ -649,13 +726,13 @@ Also, selecting a currently playing song from the list no longer starts it from 
 
 <p>&#9679;&ensp;<b>Based on 3.1.2 firmware</b> — AirPods fix included</p>
 
-<p>&#9679;&ensp;<b>Themes support</b> — themes work as usual, and everything new adapts to them</p>
-
 <p>&#9679;&ensp;<b>Scroll and overall optimizations</b> — every menu is faster and more responsive, the library scans quicker</p>
 
 <p>&#9679;&ensp;<b>Double press of the play button opens "Now Playing"</b> — from everywhere</p>
 
 <p>&#9679;&ensp;<b>"Update library"</b> — re-reads metadata and cover art for songs already in the library if you have changed it</p>
+
+<p>&#9679;&ensp;<b>Key tone is silent while the screen is off</b> — the player no longer clicks in a pocket when Key lock is off</p>
 
 <p>&#9679;&ensp;<b>Force reboot</b> — press and hold the top + bottom buttons</p>
 
@@ -678,12 +755,13 @@ Also, selecting a currently playing song from the list no longer starts it from 
 
 ## Install
 
-- **Options A, B and C (without step 4) write the whole firmware, `usrdata` included**: settings, playlists, likes, reading progress, bookmarks. Your files on the SD card are untouched.
+- **Options A, B and C (without step 4) write the whole firmware, `usrdata` included**: settings, playlists, likes, reading progress, bookmarks will be lost. Your files on the SD card are untouched.
 - If you have stock 3.0.7 or 3.1.2 firmware installed (anything lower wasn't tested) and want to keep your `usrdata` - use Option C with step 4.
+- If you already have better-Y installed and want to update it to the new version - go to the [Update section](#update) 
 
-### Option A — [Updater CE](https://innioasis.app/) by Ryan Specter (`rom.zip`)
+### Option A — [Updater CE](https://innioasis.app/) by Ryan Specter
 
-Download `rom.zip` from the Releases page, open the updater, press "Browse Files", choose the archive or drag and drop it and follow instructions on screen.
+Install Updater CE, then select better-Y from the Software drop down menu and select "Install/Restore" to be guided through the install process.
 
 ### Option B — [Official Innioasis Updater](https://www.reddit.com/r/innioasis/comments/1v9vsvj/comment/p0nfp8g/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button/) (`rom.zip`)
 
@@ -692,7 +770,7 @@ Download `rom.zip` from the Releases page, open the updater, press "Choose Packa
 ### Option C — SP Flash Tool (`rom.zip`)
 
 1. Download `rom.zip` from the Releases page, extract it
-2. Open the SP Flash Tool, press "choose" and locate Download-Agent (`/SP_Flash_Tool/MTK_AllInOne_DA.bin`) and Scatter-loading File (`MT6572_Android_scatter.txt`)
+2. Open the SP Flash Tool, press "choose" and locate Scatter-loading File (`MT6572_Android_scatter.txt`)
 3. Make sure that "Download Only" is set
 4. (Optional, if you already have stock 3.0.7 or 3.1.2 installed) Uncheck everything except for ANDROID (`system.img`)
 5. Disconnect the player from the PC (if it's connected), then turn it off
@@ -701,6 +779,42 @@ Download `rom.zip` from the Releases page, open the updater, press "Choose Packa
 
 > [!TIP]
 > "Cache library" option in the better-Y menu is recommended after the first launch
+
+## Update
+
+- To move to a newer better-Y version with all of your settings, playlists, likes, reading progress and bookmarks, use one of the two options below.
+
+### Option 1 — Updater CE / Official Innioasis Updater / SP Flash Tool
+
+- Available starting with version 1.1.0.
+1. Before installing a new version, use the `Data backup` button in the better-Y menu to save your data
+2. Install a new version using any option you prefer from the [Install section](#install)
+3. After a successful installation, use this same button to restore your settings from the saved backup
+
+### Option 2 — adb install (`better-Y_3.1.2_<version>.apk`)
+
+1. Download [platform-tools](https://developer.android.com/tools/releases/platform-tools) and extract the files to a folder
+2. Place `better-Y_3.1.2_<version>.apk` in that same folder
+3. Connect the player to your PC and open a terminal in that folder
+4. Run the following command:
+
+```
+adb install -r better-Y_3.1.2_<version>.apk && adb reboot
+```
+
+If you're using PowerShell, use this one instead:
+```
+./adb install -r better-Y_3.1.2_<version>.apk; ./adb reboot
+```
+
+### Option 3 — SP Flash Tool, `system.img` only
+
+Go to [Install](#install) and follow all of the Option C steps (including 4).
+
+>[!CAUTION]
+> If you have ever updated with Option 2, switching to Option 3 **deletes your user data** - your settings, playlists, likes, reading progress and bookmarks are lost. Your files on the SD card are untouched.
+>
+> Going the other way is OK: after updating with Option 3 you may keep updating with Option 2.
 
 ## Reporting a bug
 
@@ -725,13 +839,12 @@ Download `rom.zip` from the Releases page, open the updater, press "Choose Packa
 ```
 apktool d -f -o tree com.innioasis.y1_3.1.2.apk   # decompile the stock launcher
 ./build/patch.sh --apply tree                     # apply this repository onto it
-./build/ipp-java.sh                               # compile the Java sources into smali
 ./build/build.sh                                  # build, sign, verify
 ```
 
-On Windows the same four steps are `patch.ps1 -Apply tree`, `ipp-java.ps1`, `build.ps1` — the two
-sets of scripts do the same work in the same order. Each looks for its tools in an environment
-variable first, then under `build/tools` and `build/sdk`, then on `PATH`; the comment at the top of
+On Windows the same three steps are `patch.ps1 -Apply tree` and `build.ps1` — the two sets of
+scripts do the same work in the same order. Each looks for its tools in an environment variable
+first, then under `build/tools` and `build/sdk`, then on `PATH`; the comment at the top of
 `build/lib.sh` names them. The finished APK lands in `build/out/`.
 
 ### Step 3 — build `rom.zip`
@@ -748,6 +861,24 @@ again and compared byte for byte with the raw one. It takes about a minute.
 
 ### Step 4 — install it
 
+### Changing the mod's own code
+
+The mod's own classes are written in Java, under `build/ipp-java/src`; the `.smali` in
+`files/smali_classes2/` is what they compile to, and it ships with the set so that the build above
+needs nothing beyond apktool and the signer. Edit the Java and there is one more step in front of
+the build:
+
+```
+./build/ipp-java.sh                               # compile the Java sources into smali
+./build/build.sh                                  # build, sign, verify
+```
+
+Run it **after** a first successful build, never before it: `ipp-java` compiles against stubs it
+makes with dex2jar out of the newest APK in `build/out`, and a fresh clone has none — it stops with
+`No APK in build/out to generate stubs from`. It also wants `d8`, `baksmali`, `dex2jar` and an
+API 17 `android.jar` on top of the JDK; the comment at the top of `build/lib.sh` names the
+environment variables that point at them.
+
 ## What's in this repository
 
 The mod is a set of edits to a stock launcher. So what you get is the difference and the exact recipe to reproduce it:
@@ -759,7 +890,7 @@ The mod is a set of edits to a stock launcher. So what you get is the difference
 | `delete.txt` | stock files the mod removes |
 | `manifest.json` | the pinned inputs: apktool version, the factory APK's name, size and MD5 |
 | `build/` | the build scripts, in PowerShell and bash alike, and the Java sources they compile |
-| `build/rom-tools/` | the python that packs `system.img` and builds the boot images |
+| `build/rom-tools/` | the python that builds the boot images |
 | `screenshots/` | the pictures on this page |
 | `LICENSE` | MIT, and what it does and does not cover |
 
