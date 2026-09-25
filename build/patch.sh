@@ -166,7 +166,8 @@ JSON
         scripts=$((scripts + 1))
     done < <( { find "$ROOT/build" -maxdepth 1 -type f \( -name '*.ps1' -o -name '*.sh' \)
                 find "$ROOT/build/ipp-java/src" -type f -name '*.java'
-                find "$ROOT/build/rom-tools" -type f -name '*.py'; } )
+                # mksparse.py stays local: the release ships system.img raw and no step packs sparse
+                find "$ROOT/build/rom-tools" -type f -name '*.py' ! -name mksparse.py; } )
 
     printf 'exported to %s\n' "$SET_DIR"
     printf '  ours + replaced binaries : %d files (%d KB)\n' "$copied" \

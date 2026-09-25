@@ -177,7 +177,9 @@ function Invoke-Export {
     $scriptFiles += Get-ChildItem (Join-Path $root "build") -File |
                     Where-Object { $_.Extension -in ".ps1", ".sh" }
     $scriptFiles += Get-ChildItem (Join-Path $root "build\ipp-java\src") -Recurse -File -Filter *.java
-    $scriptFiles += Get-ChildItem (Join-Path $root "build\rom-tools") -File -Filter *.py
+    # mksparse.py stays local: the release ships system.img raw and no step of ours packs sparse
+    $scriptFiles += Get-ChildItem (Join-Path $root "build\rom-tools") -File -Filter *.py |
+                    Where-Object { $_.Name -ne "mksparse.py" }
     foreach ($f in $scriptFiles) {
         $dst = Join-Path $Set $f.FullName.Substring($root.Length + 1)
         $dstDir = Split-Path $dst -Parent
