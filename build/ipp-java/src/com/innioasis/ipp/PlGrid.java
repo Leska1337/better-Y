@@ -71,9 +71,9 @@ public final class PlGrid {
     private static final int SIDE = 200;
     private static final int QUALITY = 85;              // libjpeg scale, as the thumbnails
 
-    /** The placeholder's plate off the cursor, as the Photos folder has it; full under it. */
-    private static final float PLATE_IDLE = 0.8f;
     private static final int MENU_BG = 0xFF8C94B2;      // bg_submenu, the menu without a theme
+    /** The edge round a tile's picture, cover or placeholder alike: 20% (the user's number). */
+    private static final int EDGE_ALPHA = 0x33000000;
 
     private static final String SQL_FIRST =
             "select songId from songCatPlaylist where playlistId = ? order by date limit 1";
@@ -146,14 +146,20 @@ public final class PlGrid {
             } else {
                 tick.setVisibility(View.GONE);
             }
-            paint(row, card, img, p, sel);
+            paint(row, card, img, p, sel, text.getCurrentTextColor());
         } catch (Throwable t) {
             // a tile half painted is still a tile
         }
         return true;
     }
 
-    private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel) {
+    /**
+     * {@code ring} is the caption's colour as the theme left it: the card shows a 2px edge of its
+     * own background round the picture, and off the cursor that edge is drawn in the text colour
+     * rather than the layout's black, at 20% round a cover and a placeholder alike.
+     */
+    private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel,
+                              int ring) {
         if (img.getTag(R.id.ipp_pl_cover) == null) {
             // item_theme.xml caps the picture at 100x75 for a theme's 4:3 preview; a cover is
             // square and fills the card
@@ -162,19 +168,19 @@ public final class PlGrid {
             img.setMaxWidth(Integer.MAX_VALUE);
             img.setMaxHeight(Integer.MAX_VALUE);
         }
+        card.setCardBackgroundColor(((sel ? Color.BLACK : ring) & 0x00FFFFFF) | EDGE_ALPHA);
         Bitmap b = p == null ? null : cover(p.getPlaylistId());
         if (b != null) {
-            card.setCardBackgroundColor(Color.BLACK);
+            img.setBackgroundColor(0);
             img.clearColorFilter();
             img.setPadding(0, 0, 0, 0);
             img.setScaleType(ImageView.ScaleType.CENTER_CROP);
             img.setImageBitmap(b);
             return;
         }
+        // the placeholder's plate is the picture's own background, inside the card's edge
         boolean fav = p != null && Playlists.isFav(p);
-        int bg = menuBg();
-        if (!sel) bg = ((int) (Color.alpha(bg) * PLATE_IDLE) << 24) | (bg & 0x00FFFFFF);
-        card.setCardBackgroundColor(bg);
+        img.setBackgroundColor(menuBg() | 0xFF000000);
         ViewGroup.LayoutParams lp = card.getLayoutParams();
         int pad = lp == null ? 0 : lp.width / 4;
         img.setPadding(pad, pad, pad, pad);

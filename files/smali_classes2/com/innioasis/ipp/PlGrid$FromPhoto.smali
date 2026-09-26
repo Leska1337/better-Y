@@ -19,38 +19,38 @@
 
 .method constructor <init>(Landroid/app/Activity;Ljava/util/UUID;Ljava/lang/String;)V
   .registers 4
-  .line 608
+  .line 614
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 609
+  .line 615
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->a:Landroid/app/Activity;
-  .line 610
+  .line 616
     iput-object p2, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->id:Ljava/util/UUID;
-  .line 611
+  .line 617
     iput-object p3, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->path:Ljava/lang/String;
-  .line 612
+  .line 618
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L3 } :L4
   .registers 7
-  .line 615
+  .line 621
     nop
-  .line 617
+  .line 623
     const/4 v0, 0
   :L0
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 618
+  .line 624
     const/4 v2, 1
     iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 619
+  .line 625
     iget-object v3, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->path:Ljava/lang/String;
     invoke-static { v3, v1 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  .line 620
+  .line 626
     nop
   :L1
-  .line 622
+  .line 628
     iget v3, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     iget v4, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     invoke-static { v3, v4 }, Ljava/lang/Math;->min(II)I
@@ -62,30 +62,30 @@
     move v2, v4
     goto :L1
   :L2
-  .line 623
+  .line 629
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 624
+  .line 630
     iput v2, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 625
+  .line 631
     iget-object v2, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->path:Ljava/lang/String;
     invoke-static { v2, v1 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 626
+  .line 632
     iget-object v2, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->id:Ljava/util/UUID;
     invoke-static { v2, v1 }, Lcom/innioasis/ipp/PlGrid;->write(Ljava/util/UUID;Landroid/graphics/Bitmap;)Z
     move-result v0
-  .line 627
+  .line 633
     if-eqz v1, :L3
     invoke-virtual { v1 }, Landroid/graphics/Bitmap;->recycle()V
   :L3
-  .line 630
+  .line 636
     goto :L5
   :L4
-  .line 628
+  .line 634
     move-exception v1
   :L5
-  .line 631
+  .line 637
     if-eqz v0, :L6
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$FromPhoto;->a:Landroid/app/Activity;
     new-instance v1, Lcom/innioasis/ipp/PlGrid$Say;
@@ -93,6 +93,6 @@
     invoke-direct { v1, v0, v2 }, Lcom/innioasis/ipp/PlGrid$Say;-><init>(Landroid/content/Context;I)V
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->runOnUiThread(Ljava/lang/Runnable;)V
   :L6
-  .line 632
+  .line 638
     return-void
 .end method
