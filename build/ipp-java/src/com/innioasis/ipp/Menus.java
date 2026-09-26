@@ -84,6 +84,7 @@ public final class Menus {
             R.string.delete_playlist,
             R.string.video_remove,
             R.string.ipp_queue_add,
+            R.string.ipp_m3u_export,
     };
 
     /** Per dialog, because they are lazy singletons reused on every press. */

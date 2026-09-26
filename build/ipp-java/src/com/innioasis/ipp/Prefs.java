@@ -53,7 +53,6 @@ public final class Prefs {
         def("alpha_threshold", Alpha.THRESHOLD_DEFAULT);
         def("follow_playing", 1);
         def(Follow.KEY_IDLE, Follow.IDLE_DEFAULT);
-        def(PlGrid.KEY, 0);                  // List, as stock draws it
         def(Pad.KEY, 1);
         // [Metadata]
         def("meta_title", 1);

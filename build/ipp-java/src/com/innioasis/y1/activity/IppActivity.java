@@ -36,7 +36,6 @@ import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
-import com.innioasis.ipp.PlGrid;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.Tint;
@@ -242,6 +241,9 @@ public final class IppActivity extends BaseActivity {
         // Updater rewrites usrdata, so a copy on the card is the only one that survives an
         // update. Two actions behind one row -- Save and Load -- so it opens a dialog. See Backup.
         l.add(new Item(ACTION, "backup", 0, null, null));
+        // /Playlists/*.m3u(8) into the library, on a screen of its own. Export is per playlist, in
+        // the Playlists screen's menu. See M3u.
+        l.add(new Item(ACTION, "m3u_import", 0, null, null));
         // one file to attach to a bug report -- build, settings, library, logcat. See Diag.
         l.add(new Item(ACTION, "log", 0, null, null));
 
@@ -267,8 +269,6 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
-        // List or Grid on the Playlists screen. See PlGrid.
-        l.add(new Item(CHOICE, PlGrid.KEY, 2, null, null));
 
         // [Metadata] -- what is read out of a tag and what is done with it
         l.add(new Item(HEADER, "metadata", 0, null, null));
@@ -817,6 +817,8 @@ public final class IppActivity extends BaseActivity {
                 // No Yes/No here: the row's two halves are the dialog's two rows, and the one
                 // that needs confirming (Load) asks for it after the archive has been picked.
                 Backup.open(getActivity(), label(it));
+            } else if ("m3u_import".equals(it.key)) {
+                startActivity(new android.content.Intent(this, IppImportActivity.class));
             } else if ("log".equals(it.key)) {
                 confirmLog(label(it));
             }

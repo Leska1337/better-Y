@@ -180,6 +180,7 @@ public final class Playlists {
     public static void favMenu(SubMenuDialog dlg, Object adapter, Context c) {
         try {
             if (dlg == null || c == null) return;
+            PlGrid.noteMenu(c);
             boolean fav = adapter instanceof RVBaseAdapter
                     && locked(((RVBaseAdapter) adapter).getSelectItem());
             List l = new ArrayList();
@@ -196,7 +197,9 @@ public final class Playlists {
             l.add(c.getString(R.string.new_playlist));
             if (!fav) l.add(c.getString(R.string.delete_playlist));
             l.add(c.getString(R.string.rename));
+            M3u.menu(l, c);
             PlGrid.menu(l, adapter, c);
+            PlGrid.viewEntry(l, c);
             dlg.setList(l);
         } catch (Throwable t) {
             // leave whatever menu the dialog already has

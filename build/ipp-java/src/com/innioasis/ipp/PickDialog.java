@@ -322,7 +322,7 @@ public final class PickDialog extends BaseDialog {
      */
     private static Bitmap mark;
 
-    private static Bitmap tick() {
+    public static Bitmap tick() {
         if (mark != null) return mark;
         Bitmap b = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);

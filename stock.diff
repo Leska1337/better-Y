@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..aff80cc9 100644
+index 2c8d26c0..952b0814 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -1,6 +1,7 @@
@@ -18,18 +18,19 @@ index 2c8d26c0..aff80cc9 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,9 @@
+@@ -64,6 +64,10 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppQueueActivity"/>
++        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppImportActivity"/>
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppUsbActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.LanguageActivity"/>
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..73ee8185 100644
+index 01b1f730..d2ba5635 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -44,7 +45,7 @@ index 01b1f730..73ee8185 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100007
++  versionCode: 10100020
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -884,10 +885,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..bec4a65d 100644
+index 50446006..6eb3b3b1 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,493 @@
+@@ -1,417 +1,513 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1797,6 +1798,26 @@ index 50446006..bec4a65d 100644
 +    <string name="ipp_usb_in_use">USB-Speicher in Verwendung</string>
 +    <string name="ipp_usb_in_use_message">Werfen Sie den Player am Computer aus, bevor Sie den USB-Speicher deaktivieren.</string>
 +    <string name="ipp_usb_off">USB-Speicher deaktivieren</string>
++    <string name="ipp_m3u_export">Als m3u export.</string>
++    <string name="ipp_m3u_exists">„%1$s“ existiert bereits</string>
++    <string name="ipp_m3u_replace">Ersetzen</string>
++    <string name="ipp_m3u_merge">Fehlende hinzufügen</string>
++    <string name="ipp_m3u_new">Neu erstellen</string>
++    <string name="ipp_m3u_overwrite">Überschreiben</string>
++    <string name="ipp_m3u_same">Auch für die übrigen</string>
++    <string name="ipp_m3u_none">Keine .m3u- oder .m3u8-Dateien im Ordner Playlists</string>
++    <string name="ipp_m3u_progress">Wiedergabeliste %1$d von %2$d</string>
++    <string name="ipp_m3u_songs">Titel: %1$d von %2$d</string>
++    <string name="ipp_m3u_done">Übertragen: %1$d, fehlgeschlagen: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (Duplikat)</string>
++    <string name="ipp_m3u_exported_one">%1$s, Titel: %2$d</string>
++    <string name="ipp_m3u_exported_many">Exportierte Wiedergabelisten: %1$d, Titel: %2$d</string>
++    <string name="ipp_m3u_write_failed">Wiedergabeliste konnte nicht geschrieben werden</string>
++    <string name="ipp_m3u_import_go">Importieren</string>
++    <string name="ipp_m3u_none_picked">Keine Wiedergabeliste ausgewählt</string>
++    <string name="ipp_pl_view">Ansicht</string>
++    <string name="ipp_pl_list">Liste</string>
++    <string name="ipp_pl_grid">Raster</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
 index a2f30ff6..7672d71f 100644
@@ -2117,10 +2138,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..7a08dabc 100644
+index 6f5a555d..94223f57 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,493 @@
+@@ -1,417 +1,513 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3030,12 +3051,32 @@ index 6f5a555d..7a08dabc 100644
 +    <string name="ipp_usb_in_use">El almacenamiento USB está en uso</string>
 +    <string name="ipp_usb_in_use_message">Antes de desactivar el almacenamiento USB, expulsa el reproductor en el ordenador.</string>
 +    <string name="ipp_usb_off">Desactivar almacenamiento USB</string>
++    <string name="ipp_m3u_export">Exportar a m3u</string>
++    <string name="ipp_m3u_exists">«%1$s» ya existe</string>
++    <string name="ipp_m3u_replace">Reemplazar</string>
++    <string name="ipp_m3u_merge">Añadir las que faltan</string>
++    <string name="ipp_m3u_new">Crear con otro nombre</string>
++    <string name="ipp_m3u_overwrite">Sobrescribir</string>
++    <string name="ipp_m3u_same">Igual para el resto</string>
++    <string name="ipp_m3u_none">No hay archivos .m3u ni .m3u8 en la carpeta Playlists</string>
++    <string name="ipp_m3u_progress">Lista %1$d de %2$d</string>
++    <string name="ipp_m3u_songs">Canciones: %1$d de %2$d</string>
++    <string name="ipp_m3u_done">Transferidas: %1$d, fallidas: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (repetida)</string>
++    <string name="ipp_m3u_exported_one">%1$s, canciones: %2$d</string>
++    <string name="ipp_m3u_exported_many">Listas exportadas: %1$d, canciones: %2$d</string>
++    <string name="ipp_m3u_write_failed">No se pudo escribir el archivo de la lista</string>
++    <string name="ipp_m3u_import_go">Importar</string>
++    <string name="ipp_m3u_none_picked">No hay ninguna lista seleccionada</string>
++    <string name="ipp_pl_view">Vista</string>
++    <string name="ipp_pl_list">Lista</string>
++    <string name="ipp_pl_grid">Cuadrícula</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..4eb9a6b9 100644
+index c242cee4..90231fa2 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,493 @@
+@@ -1,417 +1,513 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3945,12 +3986,32 @@ index c242cee4..4eb9a6b9 100644
 +    <string name="ipp_usb_in_use">Mémoire de stockage USB activée</string>
 +    <string name="ipp_usb_in_use_message">Avant de désactiver la mémoire de stockage USB, éjectez le lecteur sur l\'ordinateur.</string>
 +    <string name="ipp_usb_off">Désactiver la mémoire de stockage USB</string>
++    <string name="ipp_m3u_export">Export. m3u</string>
++    <string name="ipp_m3u_exists">« %1$s » existe déjà</string>
++    <string name="ipp_m3u_replace">Remplacer</string>
++    <string name="ipp_m3u_merge">Ajouter les manquants</string>
++    <string name="ipp_m3u_new">Créer sous un autre nom</string>
++    <string name="ipp_m3u_overwrite">Écraser</string>
++    <string name="ipp_m3u_same">Idem pour les suivants</string>
++    <string name="ipp_m3u_none">Aucun fichier .m3u ou .m3u8 dans le dossier Playlists</string>
++    <string name="ipp_m3u_progress">Liste %1$d sur %2$d</string>
++    <string name="ipp_m3u_songs">Morceaux : %1$d sur %2$d</string>
++    <string name="ipp_m3u_done">Transférés : %1$d, échecs : %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (doublon)</string>
++    <string name="ipp_m3u_exported_one">%1$s, morceaux : %2$d</string>
++    <string name="ipp_m3u_exported_many">Listes exportées : %1$d, morceaux : %2$d</string>
++    <string name="ipp_m3u_write_failed">Impossible d\'écrire le fichier de la liste</string>
++    <string name="ipp_m3u_import_go">Importer</string>
++    <string name="ipp_m3u_none_picked">Aucune liste sélectionnée</string>
++    <string name="ipp_pl_view">Affichage</string>
++    <string name="ipp_pl_list">Liste</string>
++    <string name="ipp_pl_grid">Grille</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..a087f526 100644
+index d82ac6bb..7f57ad66 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,493 @@
+@@ -1,417 +1,513 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4860,12 +4921,32 @@ index d82ac6bb..a087f526 100644
 +    <string name="ipp_usb_in_use">אחסון USB שנמצא בשימוש</string>
 +    <string name="ipp_usb_in_use_message">לפני כיבוי אחסון ה-USB, הוצא את הנגן במחשב.</string>
 +    <string name="ipp_usb_off">כבה אחסון USB</string>
++    <string name="ipp_m3u_export">ייצא ל-m3u</string>
++    <string name="ipp_m3u_exists">%1$s כבר קיים</string>
++    <string name="ipp_m3u_replace">החלף</string>
++    <string name="ipp_m3u_merge">הוסף שירים חסרים</string>
++    <string name="ipp_m3u_new">צור בשם אחר</string>
++    <string name="ipp_m3u_overwrite">דרוס</string>
++    <string name="ipp_m3u_same">אותו דבר לשאר</string>
++    <string name="ipp_m3u_none">אין קובצי m3u או m3u8 בתיקייה Playlists</string>
++    <string name="ipp_m3u_progress">פלייליסט %1$d מתוך %2$d</string>
++    <string name="ipp_m3u_songs">שירים: %1$d מתוך %2$d</string>
++    <string name="ipp_m3u_done">הועברו: %1$d, נכשלו: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (כפול)</string>
++    <string name="ipp_m3u_exported_one">%1$s, שירים: %2$d</string>
++    <string name="ipp_m3u_exported_many">פלייליסטים שיוצאו: %1$d, שירים: %2$d</string>
++    <string name="ipp_m3u_write_failed">לא ניתן לכתוב את קובץ הפלייליסט</string>
++    <string name="ipp_m3u_import_go">ייבא</string>
++    <string name="ipp_m3u_none_picked">לא נבחר אף פלייליסט</string>
++    <string name="ipp_pl_view">תצוגה</string>
++    <string name="ipp_pl_list">רשימה</string>
++    <string name="ipp_pl_grid">רשת</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..2e7c5a10 100644
+index f71d0cb1..8ab6f789 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,410 @@
+@@ -1,334 +1,430 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5609,6 +5690,26 @@ index f71d0cb1..2e7c5a10 100644
 +    <string name="ipp_usb_in_use">USB 저장소 사용 중</string>
 +    <string name="ipp_usb_in_use_message">USB 저장소를 끄기 전에 컴퓨터에서 플레이어를 꺼내세요.</string>
 +    <string name="ipp_usb_off">USB 저장소 사용 안함</string>
++    <string name="ipp_m3u_export">m3u로 내보내기</string>
++    <string name="ipp_m3u_exists">“%1$s” 이미 있음</string>
++    <string name="ipp_m3u_replace">바꾸기</string>
++    <string name="ipp_m3u_merge">없는 곡 추가</string>
++    <string name="ipp_m3u_new">다른 이름으로 만들기</string>
++    <string name="ipp_m3u_overwrite">덮어쓰기</string>
++    <string name="ipp_m3u_same">나머지도 동일하게</string>
++    <string name="ipp_m3u_none">Playlists 폴더에 .m3u 또는 .m3u8 파일이 없습니다</string>
++    <string name="ipp_m3u_progress">재생 목록 %1$d/%2$d</string>
++    <string name="ipp_m3u_songs">곡: %1$d/%2$d</string>
++    <string name="ipp_m3u_done">전송됨: %1$d, 실패: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (중복)</string>
++    <string name="ipp_m3u_exported_one">%1$s, 곡: %2$d</string>
++    <string name="ipp_m3u_exported_many">내보낸 재생 목록: %1$d, 곡: %2$d</string>
++    <string name="ipp_m3u_write_failed">재생 목록 파일을 쓸 수 없습니다</string>
++    <string name="ipp_m3u_import_go">가져오기</string>
++    <string name="ipp_m3u_none_picked">선택한 재생 목록이 없습니다</string>
++    <string name="ipp_pl_view">보기</string>
++    <string name="ipp_pl_list">목록</string>
++    <string name="ipp_pl_grid">격자</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
 index d79cf0f6..f925eee4 100644
@@ -5858,10 +5959,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..37e0a95c 100644
+index 4c84fd2b..780c8d07 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,162 @@
+@@ -1,86 +1,182 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6109,12 +6210,32 @@ index 4c84fd2b..37e0a95c 100644
 +    <string name="ipp_usb_in_use">USB-накопитель используется</string>
 +    <string name="ipp_usb_in_use_message">Перед отключением USB-накопителя извлеките плеер на компьютере.</string>
 +    <string name="ipp_usb_off">Отключить USB-накопитель</string>
++    <string name="ipp_m3u_export">Экспорт в m3u</string>
++    <string name="ipp_m3u_exists">«%1$s» уже есть</string>
++    <string name="ipp_m3u_replace">Заменить</string>
++    <string name="ipp_m3u_merge">Добавить недостающие</string>
++    <string name="ipp_m3u_new">Создать новый</string>
++    <string name="ipp_m3u_overwrite">Перезаписать</string>
++    <string name="ipp_m3u_same">Так же для остальных</string>
++    <string name="ipp_m3u_none">В папке Playlists нет файлов .m3u и .m3u8</string>
++    <string name="ipp_m3u_progress">Плейлист %1$d из %2$d</string>
++    <string name="ipp_m3u_songs">Песни: %1$d из %2$d</string>
++    <string name="ipp_m3u_done">Перенесено: %1$d, не удалось: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (повтор)</string>
++    <string name="ipp_m3u_exported_one">%1$s, песен: %2$d</string>
++    <string name="ipp_m3u_exported_many">Экспортировано плейлистов: %1$d, песен: %2$d</string>
++    <string name="ipp_m3u_write_failed">Не удалось записать файл плейлиста</string>
++    <string name="ipp_m3u_import_go">Импортировать</string>
++    <string name="ipp_m3u_none_picked">Не выбрано ни одного плейлиста</string>
++    <string name="ipp_pl_view">Вид</string>
++    <string name="ipp_pl_list">Список</string>
++    <string name="ipp_pl_grid">Сетка</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..e40cc04b 100644
+index 5665bdd9..d33f32b7 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,502 @@
+@@ -1,426 +1,522 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7042,6 +7163,26 @@ index 5665bdd9..e40cc04b 100644
 +    <string name="ipp_usb_in_use">USB 存储设备正在使用中</string>
 +    <string name="ipp_usb_in_use_message">关闭 USB 存储设备前，请先在计算机上弹出播放器。</string>
 +    <string name="ipp_usb_off">关闭 USB 存储设备</string>
++    <string name="ipp_m3u_export">导出为 m3u</string>
++    <string name="ipp_m3u_exists">“%1$s”已存在</string>
++    <string name="ipp_m3u_replace">替换</string>
++    <string name="ipp_m3u_merge">添加缺少的歌曲</string>
++    <string name="ipp_m3u_new">以新名称创建</string>
++    <string name="ipp_m3u_overwrite">覆盖</string>
++    <string name="ipp_m3u_same">其余相同处理</string>
++    <string name="ipp_m3u_none">Playlists 文件夹中没有 .m3u 或 .m3u8 文件</string>
++    <string name="ipp_m3u_progress">播放列表 %1$d/%2$d</string>
++    <string name="ipp_m3u_songs">歌曲：%1$d/%2$d</string>
++    <string name="ipp_m3u_done">已转移：%1$d，失败：%2$d</string>
++    <string name="ipp_m3u_dup">%1$s（重复）</string>
++    <string name="ipp_m3u_exported_one">%1$s，歌曲：%2$d</string>
++    <string name="ipp_m3u_exported_many">已导出播放列表：%1$d，歌曲：%2$d</string>
++    <string name="ipp_m3u_write_failed">无法写入播放列表文件</string>
++    <string name="ipp_m3u_import_go">导入</string>
++    <string name="ipp_m3u_none_picked">未选择任何播放列表</string>
++    <string name="ipp_pl_view">视图</string>
++    <string name="ipp_pl_list">列表</string>
++    <string name="ipp_pl_grid">网格</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
 index ce849b8e..31964bc2 100644
@@ -8350,10 +8491,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..6fa73df9 100644
+index 803c1e7a..9152fbc2 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5641 @@
+@@ -1,5519 +1,5661 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18432,6 +18573,26 @@ index 803c1e7a..6fa73df9 100644
 +    <public type="string" name="ipp_pl_cover_set" id="0x7f110252" />
 +    <public type="string" name="ipp_pl_cover_reset" id="0x7f110253" />
 +    <public type="string" name="ipp_pl_cover_none" id="0x7f110254" />
++    <public type="string" name="ipp_m3u_export" id="0x7f110255" />
++    <public type="string" name="ipp_m3u_exists" id="0x7f110256" />
++    <public type="string" name="ipp_m3u_replace" id="0x7f110257" />
++    <public type="string" name="ipp_m3u_merge" id="0x7f110258" />
++    <public type="string" name="ipp_m3u_new" id="0x7f110259" />
++    <public type="string" name="ipp_m3u_overwrite" id="0x7f11025a" />
++    <public type="string" name="ipp_m3u_same" id="0x7f11025b" />
++    <public type="string" name="ipp_m3u_none" id="0x7f11025c" />
++    <public type="string" name="ipp_m3u_progress" id="0x7f11025d" />
++    <public type="string" name="ipp_m3u_songs" id="0x7f11025e" />
++    <public type="string" name="ipp_m3u_done" id="0x7f11025f" />
++    <public type="string" name="ipp_m3u_dup" id="0x7f110260" />
++    <public type="string" name="ipp_m3u_exported_one" id="0x7f110261" />
++    <public type="string" name="ipp_m3u_exported_many" id="0x7f110262" />
++    <public type="string" name="ipp_m3u_write_failed" id="0x7f110263" />
++    <public type="string" name="ipp_m3u_import_go" id="0x7f110264" />
++    <public type="string" name="ipp_m3u_none_picked" id="0x7f110265" />
++    <public type="string" name="ipp_pl_view" id="0x7f110266" />
++    <public type="string" name="ipp_pl_list" id="0x7f110267" />
++    <public type="string" name="ipp_pl_grid" id="0x7f110268" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19515,10 +19676,10 @@ index 803c1e7a..6fa73df9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..4b631cd3 100644
+index 71fe29d0..43327d8e 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,552 @@
+@@ -1,473 +1,572 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20464,7 +20625,7 @@ index 71fe29d0..4b631cd3 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev7</string>
++    <string name="ipp_version">v1.1.0-dev20</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20542,6 +20703,26 @@ index 71fe29d0..4b631cd3 100644
 +    <string name="ipp_usb_in_use">USB storage in use</string>
 +    <string name="ipp_usb_in_use_message">Before turning off USB storage, eject the player on the computer.</string>
 +    <string name="ipp_usb_off">Turn off USB storage</string>
++    <string name="ipp_m3u_export">Export to m3u</string>
++    <string name="ipp_m3u_exists">“%1$s” already exists</string>
++    <string name="ipp_m3u_replace">Replace</string>
++    <string name="ipp_m3u_merge">Add missing songs</string>
++    <string name="ipp_m3u_new">Create new</string>
++    <string name="ipp_m3u_overwrite">Overwrite</string>
++    <string name="ipp_m3u_same">Same for the rest</string>
++    <string name="ipp_m3u_none">No .m3u or .m3u8 files in the Playlists folder</string>
++    <string name="ipp_m3u_progress">Playlist %1$d of %2$d</string>
++    <string name="ipp_m3u_songs">Songs: %1$d of %2$d</string>
++    <string name="ipp_m3u_done">Transferred: %1$d, failed: %2$d</string>
++    <string name="ipp_m3u_dup">%1$s (duplicate)</string>
++    <string name="ipp_m3u_exported_one">%1$s, songs: %2$d</string>
++    <string name="ipp_m3u_exported_many">Playlists exported: %1$d, songs: %2$d</string>
++    <string name="ipp_m3u_write_failed">Could not write the playlist file</string>
++    <string name="ipp_m3u_import_go">Import</string>
++    <string name="ipp_m3u_none_picked">No playlists selected</string>
++    <string name="ipp_pl_view">View</string>
++    <string name="ipp_pl_list">List</string>
++    <string name="ipp_pl_grid">Grid</string>
 +</resources>
 diff --git a/build/src/res/values/styles.xml b/build/src/res/values/styles.xml
 index fb6efacc..5850e990 100644
@@ -50777,7 +50958,7 @@ index e8778ff8..86d92054 100644
      iget-object v0, p0, Lcom/innioasis/music/PlaylistsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlaylistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
-index 66c966fd..ee8f33fb 100644
+index 66c966fd..4ccf2825 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 @@ -477,6 +477,17 @@
@@ -50860,7 +51041,22 @@ index 66c966fd..ee8f33fb 100644
      .line 290
      invoke-static {v0}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
-@@ -1142,6 +1145,13 @@
+@@ -1067,6 +1070,14 @@
+     .line 320
+     iput-boolean v0, p0, Lcom/innioasis/music/PlaylistsActivity;->isMultiSelect:Z
+ 
++    # ipp: every grid tile takes its empty circle now, not as the cursor reaches it (PlGrid);
++    # v0 is overwritten right below
++    invoke-direct {p0}, Lcom/innioasis/music/PlaylistsActivity;->getAdapter()Lcom/innioasis/music/PlaylistsActivity$MyAdapter;
++
++    move-result-object v0
++
++    invoke-virtual {v0}, Lcom/innioasis/music/PlaylistsActivity$MyAdapter;->notifyDataSetChanged()V
++
+     .line 321
+     move-object v0, p0
+ 
+@@ -1142,6 +1153,13 @@
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toPrevious$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
@@ -50874,7 +51070,7 @@ index 66c966fd..ee8f33fb 100644
      return-void
  .end method
  
-@@ -1225,6 +1235,13 @@
+@@ -1225,6 +1243,13 @@
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toNext$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
@@ -50888,7 +51084,21 @@ index 66c966fd..ee8f33fb 100644
      return-void
  .end method
  
-@@ -1450,6 +1467,10 @@
+@@ -1259,6 +1284,13 @@
+ 
+     invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->addOrRemoveMultiSelectIndex$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;IZILjava/lang/Object;)V
+ 
++    # ipp: in the grid the cursor stays on the tile just ticked (PlGrid)
++    invoke-static {}, Lcom/innioasis/ipp/PlGrid;->on()Z
++
++    move-result v0
++
++    if-nez v0, :goto_0
++
+     .line 211
+     invoke-direct {p0}, Lcom/innioasis/music/PlaylistsActivity;->getAdapter()Lcom/innioasis/music/PlaylistsActivity$MyAdapter;
+ 
+@@ -1450,6 +1482,10 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
@@ -50899,7 +51109,7 @@ index 66c966fd..ee8f33fb 100644
      const/4 v0, 0x0
  
      const/4 v1, 0x0
-@@ -1567,6 +1588,17 @@
+@@ -1567,6 +1603,17 @@
  
      move-result-object v0
  
@@ -50917,7 +51127,7 @@ index 66c966fd..ee8f33fb 100644
      invoke-virtual {v0}, Lcom/innioasis/music/util/SubMenuDialog;->show()V
  
      .line 243
-@@ -1621,6 +1653,46 @@
+@@ -1621,6 +1668,46 @@
  
      move-result-object p1
  

@@ -32,6 +32,15 @@ Saves the settings, likes, playlists, bookmarks and reading progress to the /bet
 
 The five newest archives are kept. After Load the player restarts.
 
+[m3u_import] Import M3U playlists
+Lists the .m3u and .m3u8 files in the /Playlists/ folder at the root of the SD card; each one you tick becomes a playlist, songs in the order of the file. A song is found by its path, or by its file name when the path leads nowhere.
+
+If a playlist of that name already exists, you can replace it, add the missing songs or create a new one. A file exported from {app:favorites} goes back into {app:favorites}.
+
+At the end the screen lists, by file name, every song that was not found in the library.
+
+To export, hold the top button on a playlist in the playlists screen and pick "Export to m3u". Paths in the file start from the /Music/ folder: on a computer, put the file into the folder that holds the same music.
+
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
 
@@ -140,15 +149,6 @@ Fixes margins of the main menu and settings.
 Worth turning off with themes whose backgrounds are drawn for stock margins — bundled Melody Munchkin, for example.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
-
-[playlists_view] Playlists view
-* List
-* Grid
-How the Playlists screen shows your playlists.
-
-In a grid every playlist is a cover, three to a row. A playlist takes the cover of the first song added to it; until then it shows a placeholder.
-
-Your own cover can be set from Photos or from the menu of a song inside the playlist, and reset from the playlist's menu.
 
 [[metadata]] Metadata
 

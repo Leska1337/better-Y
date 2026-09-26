@@ -17,32 +17,32 @@
 
 .method constructor <init>(Ljava/util/HashMap;Z)V
   .registers 3
-  .line 413
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 414
-    iput-object p1, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->order:Ljava/util/HashMap;
-  .line 415
-    iput-boolean p2, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->desc:Z
   .line 416
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 417
+    iput-object p1, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->order:Ljava/util/HashMap;
+  .line 418
+    iput-boolean p2, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->desc:Z
+  .line 419
     return-void
 .end method
 
 .method private rank(Ljava/lang/Object;)I
   .registers 4
-  .line 419
+  .line 422
     instance-of v0, p1, Lcom/innioasis/y1/database/Song;
     const/4 v1, -1
     if-nez v0, :L0
     return v1
   :L0
-  .line 420
+  .line 423
     iget-object v0, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->order:Ljava/util/HashMap;
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getSongId()Ljava/lang/String;
     move-result-object p1
     invoke-virtual { v0, p1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p1
-  .line 421
+  .line 424
     instance-of v0, p1, Ljava/lang/Integer;
     if-eqz v0, :L1
     check-cast p1, Ljava/lang/Integer;
@@ -54,17 +54,17 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 425
+  .line 428
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Playlists$AddedCmp;->rank(Ljava/lang/Object;)I
     move-result p1
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Playlists$AddedCmp;->rank(Ljava/lang/Object;)I
     move-result p2
-  .line 427
+  .line 430
     if-ltz p1, :L3
     if-gez p2, :L0
     goto :L3
   :L0
-  .line 428
+  .line 431
     iget-boolean v0, p0, Lcom/innioasis/ipp/Playlists$AddedCmp;->desc:Z
     if-eqz v0, :L1
     sub-int/2addr p2, p1
@@ -74,7 +74,7 @@
   :L2
     return p2
   :L3
-  .line 427
+  .line 430
     if-gez p1, :L4
     if-gez p2, :L4
     const/4 p1, 0

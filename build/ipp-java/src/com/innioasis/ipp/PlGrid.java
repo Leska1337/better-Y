@@ -44,7 +44,8 @@ import java.util.UUID;
 
 /**
  * The Playlists screen as a grid of covers — the theme gallery's tile, three to a row — while
- * "Playlists view" says Grid. Stock's adapter and wheel stay: the grid is a layout manager, a
+ * the screen's own "View" menu entry says Grid. Stock's adapter and wheel stay: the grid is a
+ * layout manager, a
  * different row layout and a different bind, each decided here.
  *
  * A cover is a JPEG on the card, {@code better-Y/playlists/<id>.jpg}, so it outlives a reflash and
@@ -80,8 +81,72 @@ public final class PlGrid {
     private static final String SQL_COUNT =
             "select count(*) from songCatPlaylist where playlistId = ?";
 
+    /** List (0, as stock draws it) or Grid — picked with "View" in the screen's own menu. */
     public static boolean on() {
-        return Prefs.val(Y1Application.Companion.getAppContext(), KEY) == GRID;
+        Context c = Y1Application.Companion.getAppContext();
+        return c != null && Prefs.getInt(c, KEY, 0) == GRID;
+    }
+
+    /** "View" leads the Playlists screen's menu. */
+    public static void viewEntry(List l, Context c) {
+        l.add(0, c.getString(R.string.ipp_pl_view));
+    }
+
+    /** List / Grid, over the menu; the pick closes both. */
+    private static void viewDialog(Activity a) {
+        List l = new ArrayList();
+        l.add(a.getString(R.string.ipp_pl_list));
+        l.add(a.getString(R.string.ipp_pl_grid));
+        // the 4th argument is the dialog THEME, not a flag (see Playlists.addedSortDialog)
+        new SubMenuDialog(a, l, new ViewPick(a), R.style.Dialog_Common).show();
+    }
+
+    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
+    static final class ViewPick implements SubMenuDialog.Callback {
+        private final Activity a;
+
+        ViewPick(Activity a) { this.a = a; }
+
+        public boolean select(int index, SubmenuAdapter.Item item) {
+            String s = item == null ? null : item.getString();
+            setView(a, a.getString(R.string.ipp_pl_grid).equals(s));
+            return true;
+        }
+    }
+
+    /**
+     * The screen changes in place: new layout manager, the pool emptied (a tile must never be
+     * handed to a list or the other way round — {@link #layout} is asked only for NEW holders),
+     * the adapter set again so every row is built afresh, and the cursor kept in view. The grid's
+     * top padding is set before the adapter comes back, i.e. before the first layout, which is the
+     * condition {@code Theme.tileGrid} has.
+     */
+    private static void setView(Activity a, boolean grid) {
+        try {
+            if (grid == on()) return;
+            Prefs.setInt(a, KEY, grid ? GRID : 0);
+            View v = a.findViewById(R.id.playlist);
+            if (!(v instanceof RecyclerView)) return;
+            RecyclerView rv = (RecyclerView) v;
+            RVBaseAdapter ad = adapter(a);
+            if (ad == null) return;
+            rv.setAdapter(null);
+            rv.getRecycledViewPool().clear();
+            if (grid) {
+                rv.setLayoutManager(new GridLayoutManager(a, 3));
+                Theme.tileGrid(rv);
+                new Thread(new Sweep()).start();
+            } else {
+                rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(a));
+                rv.setPadding(rv.getPaddingLeft(), 0, rv.getPaddingRight(), rv.getPaddingBottom());
+            }
+            lastMulti = false;
+            rv.setAdapter(ad);
+            int pos = ad.getSelectPosition();
+            if (pos >= 0 && pos < ad.getItemCount()) rv.scrollToPosition(pos);
+        } catch (Throwable t) {
+            // the setting is stored; the screen shows it next time it is opened
+        }
     }
 
     // ------------------------------------------------------------------------ the screen
@@ -139,7 +204,28 @@ public final class PlGrid {
 
             // the theme gallery's own marks: an empty circle on every tile while the mode is on,
             // filled on the ticked ones; Favorites takes no part in a selection (Playlists.tickBlocked)
-            if (multiMode(row.getContext()) && p != null && !Playlists.locked(p)) {
+            Context c = row.getContext();
+            RVBaseAdapter ad = adapter(c);
+            // The long-press menu switches the mode OFF the moment it opens (longConfirm) and
+            // leaves the ticks in place for its actions; the selection is still what the menu
+            // acts on, so the marks stay until the ticks themselves go — by an action, or by the
+            // top button closing the menu (stock clears them there).
+            List ticks = ad == null ? null : ad.getMultiSelectIndexes();
+            if (ticks == null || ticks.isEmpty()) menuMulti = false;
+            boolean multi = multiMode(c) || menuMulti;
+            if (multi != lastMulti) {
+                // every tile, once, after this bind: a mode change reaches only the tiles stock
+                // rebinds (switching it ON is covered in startMultiSelect itself — the flag is set
+                // after the tile under the cursor has already been bound)
+                lastMulti = multi;
+                if (ad != null) UI.post(new Rebind(ad));
+            }
+            // stock hands the tile under the cursor "not ticked" whatever it is — its list row
+            // shows the tick by blinking instead — so the tick is read from the selection itself
+            if (sel && !ticked && ad != null && ad.getMultiSelectIndexes() != null) {
+                ticked = ad.getMultiSelectIndexes().contains(Integer.valueOf(ad.getSelectPosition()));
+            }
+            if (multi && p != null && !Playlists.locked(p)) {
                 tick.setVisibility(View.VISIBLE);
                 tick.setImageResource(ticked
                         ? R.drawable.icon_theme_mulselect_selected : R.drawable.icon_theme_mulselect);
@@ -248,6 +334,44 @@ public final class PlGrid {
     private static int menuBg() {
         Integer c = ThemeManager.INSTANCE.menuBGColor();
         return c == null ? MENU_BG : c.intValue();
+    }
+
+    private static boolean lastMulti;
+    private static boolean menuMulti;    // the menu was opened from the multi-selection
+
+    /** From {@code Playlists.favMenu}, i.e. just before the menu shows and the mode is dropped. */
+    static void noteMenu(Context c) {
+        menuMulti = c != null && multiMode(c);
+    }
+    private static final android.os.Handler UI = new android.os.Handler(android.os.Looper.getMainLooper());
+
+    /** Posted, never run from inside a bind: RecyclerView refuses a change in mid-layout. */
+    static final class Rebind implements Runnable {
+        private final RVBaseAdapter a;
+
+        Rebind(RVBaseAdapter a) { this.a = a; }
+
+        public void run() {
+            a.notifyDataSetChanged();
+        }
+    }
+
+    private static Field adapterField;
+
+    /** The screen's own adapter: behind a private Kotlin lazy, its accessor a synthetic. */
+    private static RVBaseAdapter adapter(Context c) {
+        try {
+            if (adapterField == null) {
+                Field f = c.getClass().getDeclaredField("adapter$delegate");
+                f.setAccessible(true);
+                adapterField = f;
+            }
+            Object o = adapterField.get(c);
+            if (o instanceof kotlin.Lazy) o = ((kotlin.Lazy) o).getValue();
+            return o instanceof RVBaseAdapter ? (RVBaseAdapter) o : null;
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     private static Field multiField;
@@ -422,7 +546,7 @@ public final class PlGrid {
     private static Field dbField;
 
     /** The repository's own database: private, and the one place the join table can be read. */
-    private static RoomDatabase db() throws Exception {
+    static RoomDatabase db() throws Exception {
         if (dbField == null) {
             Field f = Y1Repository.class.getDeclaredField("database");
             f.setAccessible(true);
@@ -487,8 +611,20 @@ public final class PlGrid {
         }
     }
 
-    /** Its dispatch, in front of stock's {@code select}. */
+    /**
+     * Its dispatch, in front of stock's {@code select} — the screen's one ipp dispatch, so the
+     * m3u export ({@link M3u#menuPick}) is answered from here too.
+     */
     public static boolean menuPick(Activity a, Object adapter, String s) {
+        if (M3u.menuPick(a, adapter, s)) return true;
+        if (a != null && s != null && s.equals(a.getString(R.string.ipp_pl_view))) {
+            try {
+                viewDialog(a);
+            } catch (Throwable t) {
+                // no dialog is better than a crash out of a menu
+            }
+            return true;
+        }
         try {
             if (a == null || s == null || !s.equals(a.getString(R.string.ipp_reset_pl_cover))) {
                 return false;

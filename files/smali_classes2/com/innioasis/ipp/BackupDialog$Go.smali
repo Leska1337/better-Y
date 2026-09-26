@@ -12,10 +12,18 @@
 
 .method public constructor <init>()V
   .registers 1
-  .line 39
+  .line 40
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public abstract go(I)V
+.end method
+
+.method public go(IZ)V
+  .registers 3
+  .line 45
+    invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/BackupDialog$Go;->go(I)V
+  .line 46
+    return-void
 .end method

@@ -30,6 +30,15 @@ Speichert Einstellungen, Likes, Wiedergabelisten, Lesezeichen und Lesefortschrit
 
 Die fünf neuesten Backups werden behalten. Nach dem Laden startet der Player neu.
 
+[m3u_import] M3U-Wiedergabelisten importieren
+Zeigt die .m3u- und .m3u8-Dateien im Ordner /Playlists/ im Stammverzeichnis der Speicherkarte; jede markierte wird zu einer Wiedergabeliste, die Titel in der Reihenfolge der Datei. Ein Titel wird über seinen Pfad gefunden, oder über den Dateinamen, wenn der Pfad ins Leere führt.
+
+Gibt es bereits eine Wiedergabeliste mit diesem Namen, können Sie sie ersetzen, die fehlenden Titel hinzufügen oder eine neue erstellen. Eine aus {app:favorites} exportierte Datei kehrt in {app:favorites} zurück.
+
+Am Ende zeigt der Bildschirm die Dateinamen aller Titel, die in der Bibliothek nicht gefunden wurden.
+
+Zum Exportieren halten Sie im Bildschirm der Wiedergabelisten die obere Taste auf einer Liste gedrückt und wählen „Als m3u export.“. Die Pfade in der Datei beginnen beim Ordner /Music/: Legen Sie die Datei am Computer in den Ordner, der dieselbe Musik enthält.
+
 [log] Diagnoseprotokoll speichern
 Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
 
@@ -138,15 +147,6 @@ Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
 Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, besser ausschalten — etwa beim mitgelieferten Melody Munchkin.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
-
-[playlists_view] Ansicht der Wiedergabelisten
-* Liste
-* Raster
-Wie der Bildschirm „Wiedergabelisten“ Ihre Listen zeigt.
-
-Im Raster ist jede Liste ein Cover, drei pro Reihe. Eine Liste erhält das Cover des ersten Titels, der ihr hinzugefügt wird; bis dahin zeigt sie einen Platzhalter.
-
-Ein eigenes Cover lässt sich unter „Fotos“ oder im Menü eines Titels innerhalb der Liste festlegen und im Menü der Liste zurücksetzen.
 
 [[metadata]] Metadaten
 

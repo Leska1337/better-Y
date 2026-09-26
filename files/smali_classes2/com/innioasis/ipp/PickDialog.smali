@@ -537,7 +537,7 @@
     return-object p1
 .end method
 
-.method private static tick()Landroid/graphics/Bitmap;
+.method public static tick()Landroid/graphics/Bitmap;
   .registers 9
   .line 326
     sget-object v0, Lcom/innioasis/ipp/PickDialog;->mark:Landroid/graphics/Bitmap;

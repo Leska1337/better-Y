@@ -18,7 +18,8 @@ import com.innioasis.y1.theme.ThemeManager;
 
 /**
  * A dialog that is a list to pick ONE row out of - the "Data backup" row uses it twice: once to
- * ask Save or Load, once to pick which archive to read back.
+ * ask Save or Load, once to pick which archive to read back; the m3u import and export ask with it
+ * what to do about a name that is taken ({@link M3u}).
  *
  * It is {@link PickDialog} without the ticks and without the button: a centre press takes the row
  * the cursor is on, and there is nothing else to confirm. The top button closes it, as it closes
@@ -38,6 +39,11 @@ public final class BackupDialog extends BaseDialog {
     /** What to do with the row the user took. Named class: d8 crashes on anonymous ones. */
     public static abstract class Go {
         public abstract void go(int row);
+
+        /** With the switch row's state, for a dialog that has one; the rest never see it. */
+        public void go(int row, boolean all) {
+            go(row);
+        }
     }
 
     private final Activity activity;
@@ -45,6 +51,13 @@ public final class BackupDialog extends BaseDialog {
     private final String[] rows;
     private final String[] extras;
     private final Go go;
+
+    /**
+     * An On/Off row under the choices ("Same for the rest"): the centre press flips it and leaves
+     * the dialog open, and its state goes to {@link Go#go(int, boolean)} with the row taken.
+     */
+    private final String toggle;
+    private boolean toggled;
 
     private View[] views;
     private TextView[] labels;
@@ -60,11 +73,18 @@ public final class BackupDialog extends BaseDialog {
      * @param extras the right-hand column, or null when the rows carry nothing but a label
      */
     public BackupDialog(Activity a, String title, String[] rows, String[] extras, Go go) {
+        this(a, title, rows, extras, null, go);
+    }
+
+    /** @param toggle the switch row's label, or null for none */
+    public BackupDialog(Activity a, String title, String[] rows, String[] extras, String toggle,
+            Go go) {
         super(a, R.style.Dialog_Common);
         this.activity = a;
         this.title = title;
         this.rows = rows;
         this.extras = extras;
+        this.toggle = toggle;
         this.go = go;
     }
 
@@ -72,7 +92,7 @@ public final class BackupDialog extends BaseDialog {
     protected void onCreate(android.os.Bundle b) {
         super.onCreate(b);
 
-        int n = rows.length;
+        int n = rows.length + (toggle != null ? 1 : 0);
         views = new View[n];
         labels = new TextView[n];
         values = new TextView[n];
@@ -160,7 +180,7 @@ public final class BackupDialog extends BaseDialog {
         l.setTextSize(14.0f);
         l.setTypeface(font());
         l.setMaxLines(2);
-        l.setText(rows[i]);
+        l.setText(i < rows.length ? rows[i] : toggle);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2);
         lp.weight = 1.0f;
         r.addView(l, lp);
@@ -171,7 +191,11 @@ public final class BackupDialog extends BaseDialog {
         v.setGravity(Gravity.END);
         v.setPadding(4, 0, 2, 0);
         v.setSingleLine(true);
-        v.setText(extras == null || i >= extras.length || extras[i] == null ? "" : extras[i]);
+        if (i >= rows.length) {
+            v.setText(activity.getString(toggled ? R.string.ipp_on : R.string.ipp_off));
+        } else {
+            v.setText(extras == null || i >= extras.length || extras[i] == null ? "" : extras[i]);
+        }
         r.addView(v, -2, -2);
 
         views[i] = r;
@@ -249,8 +273,13 @@ public final class BackupDialog extends BaseDialog {
     /** The dialog goes first: what the row starts may put a dialog of its own on the screen. */
     private void take() {
         int row = sel;
+        if (row >= rows.length) {                 // the switch row: flip it, stay open
+            toggled = !toggled;
+            values[row].setText(activity.getString(toggled ? R.string.ipp_on : R.string.ipp_off));
+            return;
+        }
         dismiss();
-        if (go != null) go.go(row);
+        if (go != null) go.go(row, toggled);
     }
 
     private void close() {

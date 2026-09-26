@@ -30,6 +30,15 @@ Enregistre les réglages, les mentions j’aime, les listes de lecture, les sign
 
 Les cinq sauvegardes les plus récentes sont conservées. Après Charger, le lecteur redémarre.
 
+[m3u_import] Importer des listes M3U
+Affiche les fichiers .m3u et .m3u8 du dossier /Playlists/ à la racine de la carte mémoire ; chaque fichier coché devient une liste de lecture, les morceaux dans l’ordre du fichier. Un morceau est cherché par son chemin, ou par son nom de fichier quand le chemin ne mène nulle part.
+
+Si une liste de ce nom existe déjà, vous pouvez la remplacer, ajouter les morceaux manquants ou en créer une nouvelle. Un fichier exporté depuis {app:favorites} retourne dans {app:favorites}.
+
+À la fin, l’écran affiche le nom de fichier de chaque morceau introuvable dans la bibliothèque.
+
+Pour exporter, maintenez le bouton du haut sur une liste dans l’écran des listes et choisissez « Export. m3u ». Les chemins du fichier partent du dossier /Music/ : sur l’ordinateur, placez le fichier dans le dossier qui contient la même musique.
+
 [log] Enregistrer le journal de diagnostic
 Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte mémoire, à joindre à un rapport de bogue.
 
@@ -138,15 +147,6 @@ Corrige les marges du menu principal et des réglages.
 À désactiver avec les thèmes dont les fonds sont dessinés pour les marges d'origine — le thème fourni Melody Munchkin, par exemple.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
-
-[playlists_view] Affichage des listes
-* Liste
-* Grille
-Comment l'écran « Listes de lecture » affiche vos listes.
-
-En grille, chaque liste est une pochette, trois par rangée. Une liste prend la pochette du premier morceau qui y est ajouté ; d'ici là, elle affiche un emplacement vide.
-
-Vous pouvez choisir votre propre pochette depuis « Photos » ou depuis le menu d'un morceau dans la liste, et la réinitialiser depuis le menu de la liste.
 
 [[metadata]] Métadonnées
 

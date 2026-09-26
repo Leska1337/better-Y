@@ -30,6 +30,15 @@ Guarda los ajustes, los me gusta, las listas de reproducción, los marcadores y 
 
 Se conservan las cinco copias más recientes. Después de Cargar, el reproductor se reinicia.
 
+[m3u_import] Importar listas M3U
+Muestra los archivos .m3u y .m3u8 de la carpeta /Playlists/ en la raíz de la tarjeta de memoria; cada uno que marques se convierte en una lista de reproducción, con las canciones en el orden del archivo. Una canción se busca por su ruta o, si la ruta no lleva a ninguna parte, por el nombre del archivo.
+
+Si ya existe una lista con ese nombre, puedes reemplazarla, añadir las canciones que faltan o crear una nueva. Un archivo exportado desde {app:favorites} vuelve a {app:favorites}.
+
+Al final, la pantalla muestra el nombre de archivo de cada canción que no se encontró en la biblioteca.
+
+Para exportar, mantén pulsado el botón superior sobre una lista en la pantalla de listas y elige «Exportar a m3u». Las rutas del archivo parten de la carpeta /Music/: en el ordenador, pon el archivo en la carpeta que contiene la misma música.
+
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de memoria para adjuntarlo a un informe de error.
 
@@ -138,15 +147,6 @@ Corrige los márgenes del menú principal y de los ajustes.
 Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes originales, como el incluido Melody Munchkin.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
-
-[playlists_view] Vista de listas
-* Lista
-* Cuadrícula
-Cómo muestra sus listas la pantalla «Listas de reproducción».
-
-En la cuadrícula cada lista es una portada, tres por fila. Una lista toma la portada de la primera canción que se le añade; hasta entonces muestra un marcador.
-
-Puede poner su propia portada desde «Fotos» o desde el menú de una canción dentro de la lista, y restablecerla desde el menú de la lista.
 
 [[metadata]] Metadatos
 
