@@ -233,11 +233,23 @@ public final class Photos {
         CardView card = (CardView) c;
         TextView desktop = (TextView) dv;
         TextView global = (TextView) gv;
+        // the third entry, "Set playlist cover", is there only while Playlists is a grid (PlGrid)
+        View pv = root.findViewById(R.id.ipp_pl_cover);
+        TextView cover = pv instanceof TextView ? (TextView) pv : null;
+        View coverLine = root.findViewById(R.id.ipp_pl_cover_line);
+        boolean withCover = cover != null && PlGrid.on();
+        if (cover != null) cover.setVisibility(withCover ? View.VISIBLE : View.GONE);
+        if (coverLine != null) coverLine.setVisibility(withCover ? View.VISIBLE : View.GONE);
         float d = card.getResources().getDisplayMetrics().density;
         int pad = (int) (POPUP_ENTRY_DIP * d);
         shapeEntry(desktop, pad);
         shapeEntry(global, pad);
         int wide = Math.max(entryWidth(desktop), entryWidth(global));
+        if (withCover) {
+            shapeEntry(cover, pad);
+            wide = Math.max(wide, entryWidth(cover));
+            cover.setMinWidth(wide);
+        }
         desktop.setMinWidth(wide);
         global.setMinWidth(wide);
 
@@ -254,15 +266,8 @@ public final class Photos {
             box.setPadding(inset, inset, inset, inset);
             int i = box.indexOfChild(desktop) + 1;
             View line = i < box.getChildCount() ? box.getChildAt(i) : null;
-            if (line != null && !(line instanceof TextView)) {
-                line.setBackgroundColor((rule & 0x00FFFFFF) | HAIR_ALPHA);
-                ViewGroup.LayoutParams lp = line.getLayoutParams();
-                if (lp != null) {
-                    lp.height = 1;
-                    line.setLayoutParams(lp);
-                }
-                line.setLayerType(View.LAYER_TYPE_NONE, null);
-            }
+            if (line != null && !(line instanceof TextView)) hairline(line, rule);
+            if (coverLine != null) hairline(coverLine, rule);
         }
         card.setCardBackgroundColor(Color.TRANSPARENT);
         card.setCardElevation(0);
@@ -270,6 +275,32 @@ public final class Photos {
         card.setUseCompatPadding(false);
         card.setPreventCornerOverlap(false);
         card.setRadius(POPUP_RADIUS_DIP * d);
+    }
+
+    /** The line between two entries: 1px of the rule's colour at a menu row's hairline alpha. */
+    private static void hairline(View line, int rule) {
+        line.setBackgroundColor((rule & 0x00FFFFFF) | HAIR_ALPHA);
+        ViewGroup.LayoutParams lp = line.getLayoutParams();
+        if (lp != null) {
+            lp.height = 1;
+            line.setLayoutParams(lp);
+        }
+        line.setLayerType(View.LAYER_TYPE_NONE, null);
+    }
+
+    /**
+     * The wheel going down the popup: stock knew two entries and flipped between them; the third
+     * counts only while it is shown.
+     */
+    public static int popupNext(CardView card, int pos) {
+        int last = 1;
+        try {
+            View v = card == null ? null : card.findViewById(R.id.ipp_pl_cover);
+            if (v != null && v.getVisibility() == View.VISIBLE) last = 2;
+        } catch (Throwable t) {
+            // two entries
+        }
+        return Math.min(pos + 1, last);
     }
 
     private static void shapeEntry(TextView tv, int pad) {
@@ -294,7 +325,11 @@ public final class Photos {
         if (desktop == null || global == null) return;
         try {
             popupEntry(desktop, pos == 0);
-            popupEntry(global, pos != 0);
+            popupEntry(global, pos == 1);
+            View cover = card == null ? null : card.findViewById(R.id.ipp_pl_cover);
+            if (cover instanceof TextView && cover.getVisibility() == View.VISIBLE) {
+                popupEntry((TextView) cover, pos == 2);
+            }
         } catch (Throwable t) {
             // the layout's colours
         }

@@ -139,6 +139,15 @@ Corrige les marges du menu principal et des réglages.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[playlists_view] Affichage des listes
+* Liste
+* Grille
+Comment l'écran « Listes de lecture » affiche vos listes.
+
+En grille, chaque liste est une pochette, trois par rangée. Une liste prend la pochette du premier morceau qui y est ajouté ; d'ici là, elle affiche un emplacement vide.
+
+Vous pouvez choisir votre propre pochette depuis « Photos » ou depuis le menu d'un morceau dans la liste, et la réinitialiser depuis le menu de la liste.
+
 [[metadata]] Métadonnées
 
 [meta_title] Titres des morceaux depuis les métadonnées

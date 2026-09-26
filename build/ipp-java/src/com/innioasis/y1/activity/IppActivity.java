@@ -36,6 +36,7 @@ import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
+import com.innioasis.ipp.PlGrid;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.Tint;
@@ -266,6 +267,8 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
+        // List or Grid on the Playlists screen. See PlGrid.
+        l.add(new Item(CHOICE, PlGrid.KEY, 2, null, null));
 
         // [Metadata] -- what is read out of a tag and what is done with it
         l.add(new Item(HEADER, "metadata", 0, null, null));

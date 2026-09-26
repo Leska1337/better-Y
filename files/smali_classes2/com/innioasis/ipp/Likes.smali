@@ -34,7 +34,7 @@
 
 .method private static isFav(Ljava/util/UUID;)Z
   .registers 2
-  .line 84
+  .line 86
     if-eqz p0, :L0
     const-string v0, "1e5f0a00-0000-4000-8000-000000000001"
     invoke-virtual { p0 }, Ljava/util/UUID;->toString()Ljava/lang/String;
@@ -69,6 +69,8 @@
   .catchall { :L0 .. :L3 } :L5
   .registers 4
   .line 55
+    invoke-static { p1 }, Lcom/innioasis/ipp/PlGrid;->noteAdd(Ljava/util/UUID;)V
+  .line 57
     if-eqz p0, :L7
   :L0
     invoke-static { p1 }, Lcom/innioasis/ipp/Likes;->isFav(Ljava/util/UUID;)Z
@@ -76,16 +78,16 @@
     if-nez p1, :L1
     goto :L7
   :L1
-  .line 56
+  .line 58
     const/4 p1, 0
   :L2
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v0
     if-ge p1, v0, :L4
-  .line 57
+  .line 59
     invoke-interface { p0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
-  .line 58
+  .line 60
     instance-of v1, v0, Lcom/innioasis/y1/database/Song;
     if-eqz v1, :L3
     check-cast v0, Lcom/innioasis/y1/database/Song;
@@ -94,27 +96,27 @@
     const/4 v1, 1
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Likes;->set(Ljava/lang/String;Z)V
   :L3
-  .line 56
+  .line 58
     add-int/lit8 p1, p1, 1
     goto :L2
   :L4
-  .line 62
+  .line 64
     goto :L6
   :L5
-  .line 60
+  .line 62
     move-exception p0
   :L6
-  .line 63
+  .line 65
     return-void
   :L7
-  .line 55
+  .line 57
     return-void
 .end method
 
 .method public static noteRemove(Ljava/lang/String;Ljava/util/UUID;)V
   .catchall { :L0 .. :L3 } :L4
   .registers 2
-  .line 72
+  .line 74
     if-eqz p0, :L6
   :L0
     invoke-static { p1 }, Lcom/innioasis/ipp/Likes;->isFav(Ljava/util/UUID;)Z
@@ -122,34 +124,34 @@
     if-nez p1, :L1
     goto :L6
   :L1
-  .line 73
+  .line 75
     sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { p1 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object p1
-  .line 74
+  .line 76
     if-nez p1, :L2
     return-void
   :L2
-  .line 75
+  .line 77
     invoke-virtual { p1, p0 }, Lcom/innioasis/y1/database/Y1Repository;->getSongBySongIdSync(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
     move-result-object p0
-  .line 76
+  .line 78
     if-eqz p0, :L3
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
     const/4 p1, 0
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Likes;->set(Ljava/lang/String;Z)V
   :L3
-  .line 79
+  .line 81
     goto :L5
   :L4
-  .line 77
+  .line 79
     move-exception p0
   :L5
-  .line 80
+  .line 82
     return-void
   :L6
-  .line 72
+  .line 74
     return-void
 .end method
 

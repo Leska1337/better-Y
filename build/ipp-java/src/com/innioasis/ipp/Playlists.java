@@ -129,6 +129,7 @@ public final class Playlists {
     // in the old language.
 
     private static final String LANG_KEY = "fav_lang";
+    private static final String HEART = "❤ ";
 
     public static void syncName(Context c) {
         try {
@@ -141,8 +142,8 @@ public final class Playlists {
             Fav.ensure(c);
 
             int lang = SharedPreferencesUtils.INSTANCE.getLanguage();
-            if (Prefs.getInt(c, LANG_KEY, -1) == lang) return;
-            Prefs.setInt(c, LANG_KEY, lang);
+            boolean relabel = Prefs.getInt(c, LANG_KEY, -1) != lang;
+            if (relabel) Prefs.setInt(c, LANG_KEY, lang);
 
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             if (repo == null) return;
@@ -150,6 +151,9 @@ public final class Playlists {
             if (p == null) return;                       // created on the first heart, in this locale
             String name = c.getString(R.string.ipp_favorites);
             if (name.equals(p.getName())) return;
+            // A name stored with the heart in front of it is the generated one of an older build,
+            // not a rename: the heart is an icon beside the row now (PlGrid.listRow).
+            if (!relabel && !(HEART + name).equals(p.getName())) return;
             p.setName(name);
             p.setLowerName(name.toLowerCase());
             repo.updatePlaylist(p);
@@ -192,6 +196,7 @@ public final class Playlists {
             l.add(c.getString(R.string.new_playlist));
             if (!fav) l.add(c.getString(R.string.delete_playlist));
             l.add(c.getString(R.string.rename));
+            PlGrid.menu(l, adapter, c);
             dlg.setList(l);
         } catch (Throwable t) {
             // leave whatever menu the dialog already has

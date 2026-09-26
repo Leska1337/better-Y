@@ -131,6 +131,14 @@ public final class Rows {
     public static void blink(View row, int res, boolean on) {
         try {
             if (row == null) return;
+            // a grid tile (Playlists as a grid, PlGrid) has no row background: its cursor is the
+            // frame round the cover, and that is what blinks
+            View frame = row.findViewById(R.id.img_sel);
+            if (frame instanceof androidx.cardview.widget.CardView) {
+                ((androidx.cardview.widget.CardView) frame).setCardBackgroundColor(
+                        on ? Theme.tileFrame() : 0);
+                return;
+            }
             ThemeManager.INSTANCE.itemSetBackground(row, res, on);
             View a = arrowOf(row);
             if (a == null) return;

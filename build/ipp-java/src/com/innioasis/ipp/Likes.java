@@ -51,6 +51,8 @@ public final class Likes {
 
     /** Songs just added to a playlist: light the heart if that playlist is Favorites. */
     public static void noteAdd(List songs, UUID playlist) {
+        // the same funnel decides a playlist's cover (PlGrid) -- one call site in classes.dex for both
+        PlGrid.noteAdd(playlist);
         try {
             if (songs == null || !isFav(playlist)) return;
             for (int i = 0; i < songs.size(); i++) {

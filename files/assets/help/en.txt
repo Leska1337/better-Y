@@ -141,6 +141,15 @@ Worth turning off with themes whose backgrounds are drawn for stock margins — 
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[playlists_view] Playlists view
+* List
+* Grid
+How the Playlists screen shows your playlists.
+
+In a grid every playlist is a cover, three to a row. A playlist takes the cover of the first song added to it; until then it shows a placeholder.
+
+Your own cover can be set from Photos or from the menu of a song inside the playlist, and reset from the playlist's menu.
+
 [[metadata]] Metadata
 
 [meta_title] Song titles from metadata

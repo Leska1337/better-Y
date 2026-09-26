@@ -213,10 +213,11 @@ public final class Menus {
     }
 
     /**
-     * Whether this entry belongs in the menu as the screen stands. Two rules:
+     * Whether this entry belongs in the menu as the screen stands. Three rules:
      *   - "Add to this playlist" is not offered while standing INSIDE that playlist —
      *       every song there is in it by definition, so the entry can only ever answer "already in
      *       the playlist";
+     *   - "Set as playlist cover" is offered there only while the Playlists screen is a grid;
      *   - with several rows ticked, only what a selection can mean (see {@link #MULTI}).
      */
     private static boolean keeps(Activity host, Object o, boolean multi, UUID self) {
@@ -224,8 +225,14 @@ public final class Menus {
             UUID id = playlistId(o);
             return self == null || id == null || !self.equals(id);
         }
-        if (!multi) return true;
         String s = label(o);
+        // a playlist's cover shows only in the grid (PlGrid); the menu inside a playlist is built
+        // once, so the entry is always there and taken out here while the list view is on
+        if (self != null && s != null && !PlGrid.on()
+                && s.equals(host.getString(R.string.ipp_set_pl_cover))) {
+            return false;
+        }
+        if (!multi) return true;
         if (s == null) return true;            // not an entry we understand: leave it alone
         for (int i = 0; i < MULTI.length; i++) {
             if (s.equals(host.getString(MULTI[i]))) return true;

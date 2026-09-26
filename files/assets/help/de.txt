@@ -139,6 +139,15 @@ Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, bess
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[playlists_view] Ansicht der Wiedergabelisten
+* Liste
+* Raster
+Wie der Bildschirm „Wiedergabelisten“ Ihre Listen zeigt.
+
+Im Raster ist jede Liste ein Cover, drei pro Reihe. Eine Liste erhält das Cover des ersten Titels, der ihr hinzugefügt wird; bis dahin zeigt sie einen Platzhalter.
+
+Ein eigenes Cover lässt sich unter „Fotos“ oder im Menü eines Titels innerhalb der Liste festlegen und im Menü der Liste zurücksetzen.
+
 [[metadata]] Metadaten
 
 [meta_title] Songtitel aus Metadaten

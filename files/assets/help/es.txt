@@ -139,6 +139,15 @@ Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[playlists_view] Vista de listas
+* Lista
+* Cuadrícula
+Cómo muestra sus listas la pantalla «Listas de reproducción».
+
+En la cuadrícula cada lista es una portada, tres por fila. Una lista toma la portada de la primera canción que se le añade; hasta entonces muestra un marcador.
+
+Puede poner su propia portada desde «Fotos» o desde el menú de una canción dentro de la lista, y restablecerla desde el menú de la lista.
+
 [[metadata]] Metadatos
 
 [meta_title] Títulos de canciones de los metadatos
