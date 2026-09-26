@@ -9,9 +9,9 @@ A mod of the stock launcher for the **innioasis Y1**, based on 3.1.2 firmware
 </div>
 
 ## What it adds
-
-There's a "better-Y" tab inside the Options menu — adjust the settings marked with ⚙️ to suit your needs. <br>
-Within this tab press and hold the top button on the desired option to display its description and how it works.
+>[!NOTE]
+>There's a "better-Y" tab inside the Options menu — adjust the settings marked with ⚙️ to suit your needs. <br>
+>Within this tab press and hold the top button on the desired option to display its description and how it works.
 
 ### Metadata
 
@@ -732,7 +732,7 @@ Also, selecting a currently playing song from the list no longer starts it from 
 
 <p>&#9679;&ensp;<b>"Update library"</b> — re-reads metadata and cover art for songs already in the library if you have changed it</p>
 
-<p>&#9679;&ensp;<b>Key tone is silent while the screen is off</b> — the player no longer clicks in a pocket when Key lock is off</p>
+<p>&#9679;&ensp;<b>Scroll wheel is silent while the screen is off</b> — the player no longer clicks in a pocket when Key lock is off</p>
 
 <p>&#9679;&ensp;<b>Force reboot</b> — press and hold the top + bottom buttons</p>
 
@@ -750,14 +750,13 @@ Also, selecting a currently playing song from the list no longer starts it from 
 
 ## Before you install
 
-- **Innioasis Y1, Type A only.**
-- **If you have used any other custom firmware, a clean install is recommended.**
+- **Innioasis Y1, Type A only** <br>
+- **If you have used any other custom firmware, a clean install is recommended**
 
 ## Install
 
 - **Options A, B and C (without step 4) write the whole firmware, `usrdata` included**: settings, playlists, likes, reading progress, bookmarks will be lost. Your files on the SD card are untouched.
 - If you have stock 3.0.7 or 3.1.2 firmware installed (anything lower wasn't tested) and want to keep your `usrdata` - use Option C with step 4.
-- If you already have better-Y installed and want to update it to the new version - go to the [Update section](#update) 
 
 ### Option A — [Updater CE](https://innioasis.app/) by Ryan Specter
 
@@ -766,6 +765,9 @@ Install Updater CE, then select better-Y from the Software drop down menu and se
 ### Option B — [Official Innioasis Updater](https://www.reddit.com/r/innioasis/comments/1v9vsvj/comment/p0nfp8g/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button/) (`rom.zip`)
 
 Download `rom.zip` from the Releases page, open the updater, press "Choose Package", choose the archive, press "Start Flash" and follow instructions on screen.
+
+> [!NOTE]
+> If you've ever flashed a ROM using the Official Innioasis Updater, make sure there isn't a `.rom_extracted` folder next to the `rom.zip` file. Otherwise, the old files from that folder will be flashed instead of the new ones from `rom.zip`.
 
 ### Option C — SP Flash Tool (`rom.zip`)
 
@@ -777,12 +779,10 @@ Download `rom.zip` from the Releases page, open the updater, press "Choose Packa
 6. Press Download
 7. Connect the player to the PC and wait for the installation to complete
 
-> [!TIP]
-> "Cache library" option in the better-Y menu is recommended after the first launch
-
 ## Update
 
-- To move to a newer better-Y version with all of your settings, playlists, likes, reading progress and bookmarks, use one of the two options below.
+>[!NOTE]
+>To move to a newer better-Y version with all of your settings, playlists, likes, reading progress and bookmarks, use one of the two options below.
 
 ### Option 1 — Updater CE / Official Innioasis Updater / SP Flash Tool
 
@@ -807,11 +807,11 @@ If you're using PowerShell, use this one instead:
 ./adb install -r better-Y_3.1.2_<version>.apk; ./adb reboot
 ```
 
-### Option 3 — SP Flash Tool, `system.img` only
+### Option 3 — SP Flash Tool (`system.img` only)
 
 Go to [Install](#install) and follow all of the Option C steps (including 4).
 
->[!CAUTION]
+>[!WARNING]
 > If you have ever updated with Option 2, switching to Option 3 **deletes your user data** - your settings, playlists, likes, reading progress and bookmarks are lost. Your files on the SD card are untouched.
 >
 > Going the other way is OK: after updating with Option 3 you may keep updating with Option 2.
