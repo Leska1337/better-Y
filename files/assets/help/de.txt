@@ -14,9 +14,6 @@
 
 [[tools]] Werkzeuge
 
-[reboot] Neustart
-Startet das Gerät neu.
-
 [cache] Bibliothek zwischenspeichern
 Legt die Mediathek im Cache ab.
 

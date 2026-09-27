@@ -17,23 +17,23 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;Ljava/lang/String;)V
   .registers 3
-  .line 1557
+  .line 1611
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1558
+  .line 1612
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Tick;->a:Lcom/innioasis/y1/activity/IppActivity;
-  .line 1559
+  .line 1613
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Tick;->text:Ljava/lang/String;
-  .line 1560
+  .line 1614
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 1564
+  .line 1618
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Tick;->a:Lcom/innioasis/y1/activity/IppActivity;
-    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->access$900(Lcom/innioasis/y1/activity/IppActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
+    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->access$700(Lcom/innioasis/y1/activity/IppActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
     move-result-object v0
-  .line 1565
+  .line 1619
     if-eqz v0, :L0
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->isShowing()Z
     move-result v1
@@ -41,6 +41,6 @@
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$Tick;->text:Ljava/lang/String;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/utils/LoadingDialog;->show(Ljava/lang/String;)V
   :L0
-  .line 1566
+  .line 1620
     return-void
 .end method

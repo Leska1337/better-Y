@@ -9,11 +9,17 @@ import android.view.KeyEvent;
 
 import com.innioasis.fm.configs.KeyMap;
 import com.innioasis.music.util.Other;
+import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
+import com.innioasis.y1.activity.SettingActivity;
+import com.innioasis.y1.databinding.ActivitySettingBinding;
 import com.innioasis.y1.service.PlayerService;
+import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.utils.DialogUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.List;
 
 /**
  * Force reboot: hold the TOP and BOTTOM buttons together for three seconds. Plus a watchdog
@@ -163,8 +169,7 @@ public final class Force {
     // `dismiss()` only AFTER the callback returns — but `Other.shutdown()` never returns: it
     // reflects into IPowerManager and blocks in the system while the shutdown screen comes up. So
     // the confirm dialog stayed on screen underneath it. Exactly the same shape as the Reboot row
-    // of the better-Y screen (`IppActivity.postReboot`), and the same answer: hand the frame
-    // back first, shut down 400 ms later. The delay is not a race to win — nothing after this
+    // below, and the same answer: hand the frame back first, shut down 400 ms later. The delay is not a race to win — nothing after this
     // point matters, the device is going down either way.
 
     private static final int SHUTDOWN_DELAY_MS = 400;
@@ -177,6 +182,68 @@ public final class Force {
     private static final class Down implements Runnable {
         public void run() {
             Other.INSTANCE.shutdown();
+        }
+    }
+
+    // ---- the Reboot row of the stock Settings screen ------------------------------------------
+    //
+    // It stands right under Shutdown and wears Shutdown's picture: the two are the same question
+    // about the device. Stock finds a row by its TITLE in all three places (the list, confirm,
+    // the panel), so these three hooks do the same with ipp_reboot.
+
+    /** From the end of {@code SettingActivity.setRecyclerData}: slot the row in under Shutdown. */
+    public static void settingsRow(SettingActivity a, List list) {
+        String off = a.getString(R.string.setting_shutdown);
+        int at = list.size();
+        for (int i = 0; i < list.size(); i++) {
+            if (off.equals(((SettingActivity.SettingItem) list.get(i)).getTitle())) {
+                at = i + 1;
+                break;
+            }
+        }
+        list.add(at, new SettingActivity.SettingItem(a.getString(R.string.ipp_reboot), true, ""));
+    }
+
+    /** From the top of {@code SettingActivity.confirm}; true when the row was ours. */
+    public static boolean settingsConfirm(SettingActivity a, String title) {
+        String name = a.getString(R.string.ipp_reboot);
+        if (!name.equals(title)) return false;
+        DialogUtil d = new DialogUtil(a.getActivity(), false, R.style.Dialog_Common);
+        d.setDialogTitle(name, a.getString(R.string.ipp_reboot_confirm), new Again(), false, true);
+        return true;
+    }
+
+    /** From {@code SettingActivity.refreshRight}, after the title is set; true when it was ours. */
+    public static boolean settingsPanel(SettingActivity a, String title) {
+        if (!a.getString(R.string.ipp_reboot).equals(title)) return false;
+        ActivitySettingBinding vb = (ActivitySettingBinding) a.getVb();
+        ThemeManager.INSTANCE.commonSetIcon(vb.rightImage, R.drawable.icon_setting_shutdown);
+        vb.infoStateTv.setText("");
+        return true;
+    }
+
+    /**
+     * {@code PowerManager.reboot()} does not return, and {@code DialogUtil} dismisses only after
+     * the callback has — so, as with Shutdown above, the dialog is let go first and the reboot
+     * follows 400 ms later, or it stays on screen behind the system's shutdown window.
+     */
+    private static final class Again extends DialogUtil.DialogCallback {
+        @Override
+        public void confirm() {
+            H.postDelayed(new Restart(), SHUTDOWN_DELAY_MS);
+        }
+
+        @Override
+        public void cancel() {
+        }
+    }
+
+    private static final class Restart implements Runnable {
+        public void run() {
+            // Stock writes its saved state only when the device is SHUT DOWN — see saveState.
+            saveState();
+            Context c = Y1Application.Companion.getAppContext();
+            if (c != null) Other.INSTANCE.reboot(c);
         }
     }
 

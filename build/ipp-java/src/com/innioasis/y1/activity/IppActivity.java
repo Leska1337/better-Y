@@ -65,15 +65,15 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * better-Y settings screen (reuses ActivityAboutBinding). Click-wheel driven:
- * UP/DOWN move focus over the visible selectable rows, centre/ENTER activates, top button
- * (MENU short-press) closes.
+ * better-Y settings screen (reuses ActivityAboutBinding). Click-wheel driven, two levels: the
+ * groups first, one row each; the centre button opens a group and shows its rows alone, the top
+ * button goes back to the groups and from there closes the screen.
  *
  * The menu is a DECLARATIVE model ({@link #buildItems()}): each entry is one {@link Item}
  * (group header, toggle, choice or action). render / navigation / confirm all iterate that
  * list generically, so adding a row or a whole group is a single line in buildItems() -- no
- * fixed indices anywhere. Headers are skipped by navigation; a row with {@code showIf} set is
- * hidden unless that pref is on (e.g. likes_names only when likes is on).
+ * fixed indices anywhere. A header becomes a row of the first level; a row with {@code showIf}
+ * set is hidden unless that pref is on (e.g. likes_names only when likes is on).
  *
  * Authored in Java (build/ipp-java) and compiled to smali; do not hand-edit the generated
  * IppActivity*.smali. Raw collection types are used deliberately (the bundled d8 crashes on
@@ -151,13 +151,26 @@ public final class IppActivity extends BaseActivity {
     }
 
     private List items;                 // List<Item>
-    private View[] rowViews;            // the header box or the row itself — what carries the look
-    private View[] rowBoxes;            // the container's own child: the row inside its hairlines
+    private View[] rowViews;            // the row itself — what carries the look (null for headers)
+    private View[] rowBoxes;            // the container's own child: the row inside its hairline
     private TextView[] labels;          // per item (null for headers)
     private TextView[] values;          // per item (null for headers)
     private TextView[] marks;           // the sub-item arrow, where a row has one
+    private int[] groupOf;              // per item: index into items of the header it stands under
     private int sel;                    // index into items of the focused selectable+visible row
     private ScrollView scroller;
+    private LinearLayout rowList;       // the rows of every group; only the open group's are shown
+
+    // The screen opens on its GROUPS, one row each, drawn as the rows inside Music are; the centre
+    // button opens one and shows its rows alone, the top button comes back to the group it left.
+    // group == -1 is the list of groups.
+    private int group = -1;
+    private int[] cats;                 // index into items of each header, in order
+    private View[] catRows;
+    private TextView[] catLabels;
+    private android.widget.ImageView[] catArrows;
+    private int catSel;                 // index into cats
+    private LinearLayout catList;
 
     // NUMBER edit mode: centre press opens the row for editing, the wheel then picks the value
     // instead of moving the cursor. The blinking value is what says "the wheel is in here now".
@@ -235,7 +248,6 @@ public final class IppActivity extends BaseActivity {
 
         // [Tools] -- device actions, pinned at the very top
         l.add(new Item(HEADER, "tools", 0, null, null));
-        l.add(new Item(ACTION, "reboot", 0, null, null));
         l.add(new Item(ACTION, "cache", 0, null, null));
         l.add(new Item(ACTION, "scan", 0, null, null));
         // Settings, likes, playlists, bookmarks and reading progress to the card and back: the
@@ -314,9 +326,10 @@ public final class IppActivity extends BaseActivity {
         return Prefs.on(this, it.key);
     }
 
+    /** A row of the open group, shown and not a caption. */
     private boolean selectable(int i) {
         Item it = (Item) items.get(i);
-        return it.type != HEADER && visible(it);
+        return it.type != HEADER && groupOf[i] == group && visible(it);
     }
 
     private int firstSelectable() {
@@ -347,58 +360,50 @@ public final class IppActivity extends BaseActivity {
         // No side padding: a row's background is the theme's, and 8px of it either side let the
         // wallpaper through as a stripe down both edges of the screen. The text keeps its distance
         // from the edge through the row's OWN padding, which is inside that background.
-        LinearLayout container = new LinearLayout(this);
-        container.setOrientation(LinearLayout.VERTICAL);
+        rowList = new LinearLayout(this);
+        rowList.setOrientation(LinearLayout.VERTICAL);
 
         items = buildItems();
         lastItems = items;
         int n = items.size();
         rowViews = new View[n];
         rowBoxes = new View[n];
-        lastHair = null;
         labels = new TextView[n];
         values = new TextView[n];
         marks = new TextView[n];
+        groupOf = new int[n];
 
+        int heads = 0;
+        for (int i = 0; i < n; i++) {
+            if (((Item) items.get(i)).type == HEADER) heads++;
+        }
+        cats = new int[heads];
+        catRows = new View[heads];
+        catLabels = new TextView[heads];
+        catArrows = new android.widget.ImageView[heads];
+        catList = new LinearLayout(this);
+        catList.setOrientation(LinearLayout.VERTICAL);
+
+        int cur = -1;
+        int c = 0;
         for (int i = 0; i < n; i++) {
             Item it = (Item) items.get(i);
             if (it.type == HEADER) {
-                // A group caption has to be told apart from a row WITHOUT relying on colour: with
-                // some themes every line on this screen is painted the same, focused or not, so a
-                // smaller, bolder font is not enough to read as a heading. It is BANDED instead —
-                // a rule along its top edge and another along its bottom — because a line is a
-                // shape rather than a shade, and nothing else on this screen has one.
-                // The row above gives its hairline up: this caption's own rule draws that boundary,
-                // and the two together are a line of a different thickness from every other.
-                if (lastHair != null) lastHair.setVisibility(View.GONE);
-                lastHair = null;
-
-                LinearLayout hb = new LinearLayout(this);
-                hb.setOrientation(LinearLayout.VERTICAL);
-
-                hb.addView(rule(), new LinearLayout.LayoutParams(-1, 2));
-
-                TextView h = new TextView(this);
-                h.setTextSize(13.0f);
-                // Two-argument setTypeface, never Typeface.create: only this form fakes bold for a
-                // theme font that carries no bold cut (see the Shuffle row in ipp-stock-ui-theming).
-                h.setTypeface(font(), Typeface.BOLD);
-                h.setIncludeFontPadding(false);
-                h.setGravity(Gravity.CENTER_VERTICAL);
-                h.setPadding(6, 8, 6, 8);
-                h.setText(label(it));
-                hb.addView(h, new LinearLayout.LayoutParams(-1, -2));
-
-                hb.addView(rule(), new LinearLayout.LayoutParams(-1, 2));
-
-                rowViews[i] = hb;
-                rowBoxes[i] = hb;       // a caption IS the container's child, it has no box
-                labels[i] = h;          // headers keep their caption here so render() can paint it
-                // No margin, here or on a row: the theme paints the rows, so every gap between two
-                // of them is a line of wallpaper across the list. What separates a group from the
-                // one above is the caption's own rules.
-                container.addView(hb, new LinearLayout.LayoutParams(-1, -2));
+                // A group is a row of the first level, and the same row the Music menu draws
+                // (item_main): the theme paints it exactly as it paints Music, arrow included.
+                cur = i;
+                groupOf[i] = i;
+                View v = getLayoutInflater().inflate(R.layout.item_main, catList, false);
+                TextView tv = (TextView) v.findViewById(R.id.tv_item);
+                tv.setText(label(it));
+                cats[c] = i;
+                catRows[c] = v;
+                catLabels[c] = tv;
+                catArrows[c] = (android.widget.ImageView) v.findViewById(R.id.iv_arrow);
+                catList.addView(v);
+                c++;
             } else {
+                groupOf[i] = cur;
                 // Full-width row carries the highlight, but its height is fixed to the text:
                 // a theme's selected background can be a large bitmap and would otherwise
                 // stretch the row to the bitmap's own height. Text is centred vertically.
@@ -429,9 +434,12 @@ public final class IppActivity extends BaseActivity {
                     marks[i] = mark;
                 }
 
+                // The text of the Music menu's rows (item_main): 22sp, bold. The two-argument
+                // setTypeface, as XML's textStyle does it — the only form that fakes bold for a
+                // theme font that carries no bold cut.
                 TextView label = new TextView(this);
-                label.setTextSize(17.0f);
-                label.setTypeface(font());
+                label.setTextSize(TEXT_SP);
+                label.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
                 label.setIncludeFontPadding(false);
                 label.setGravity(Gravity.CENTER_VERTICAL);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1);
@@ -439,8 +447,8 @@ public final class IppActivity extends BaseActivity {
                 row.addView(label, lp);
 
                 TextView value = new TextView(this);
-                value.setTextSize(17.0f);
-                value.setTypeface(font());
+                value.setTextSize(TEXT_SP);
+                value.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
                 value.setIncludeFontPadding(false);
                 value.setGravity(Gravity.CENTER_VERTICAL);
                 value.setPadding(6, 0, 6, 0);
@@ -450,94 +458,152 @@ public final class IppActivity extends BaseActivity {
                 labels[i] = label;
                 values[i] = value;
 
-                // Inside a box carrying a hairline along its BOTTOM edge — the group caption's rule,
-                // thinner and far weaker, since these run between every two rows. One line per
-                // boundary and the row below owns none: a line on each edge doubles up between two
-                // rows, and adds to a caption's own rule where a group begins.
+                // Inside a box carrying a hairline along its BOTTOM edge. One line per boundary and
+                // the row below owns none: a line on each edge doubles up between two rows.
                 LinearLayout box = new LinearLayout(this);
                 box.setOrientation(LinearLayout.VERTICAL);
-                box.addView(row, new LinearLayout.LayoutParams(-1,
-                        (int) (label.getTextSize() * 3.0f)));   // 2x the text-fitted height
-                View h = hair();
-                box.addView(h, new LinearLayout.LayoutParams(-1, HAIR_H));
-                lastHair = h;
+                // Two lines of text; fitRows() then stretches it to fill the screen evenly.
+                minRow = 2 * label.getLineHeight() + 4;
+                box.addView(row, new LinearLayout.LayoutParams(-1, minRow));
+                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
                 rowBoxes[i] = box;
-                container.addView(box, new LinearLayout.LayoutParams(-1, -2));
+                rowList.addView(box, new LinearLayout.LayoutParams(-1, -2));
             }
         }
 
         scroller = new ScrollView(this);
-        scroller.addView(container, -1, -2);
         root.addView(scroller, -1, -1);
+        show(-1);
+    }
 
-        sel = firstSelectable();
-        // A theme's row picture is decoded off the main thread, so a screen built before it lands
-        // is told the rows are not painted. Repaint when it arrives.
-        retheme = new Retheme(this);
-        Theme.watchRows(retheme);
+    /**
+     * Put the list of groups ({@code g == -1}) or the rows of one group on screen. A group's name
+     * goes up in the status bar, so its rows need no caption of their own. Coming back to the
+     * groups leaves the cursor on the one just left.
+     */
+    private void show(int g) {
+        group = g;
+        scroller.removeAllViews();
+        if (g < 0) {
+            setStateBarLeftText(getString(R.string.ipp_settings_title));
+            scroller.addView(catList, -1, -2);
+        } else {
+            setStateBarLeftText(label((Item) items.get(g)));
+            scroller.addView(rowList, -1, -2);
+            sel = firstSelectable();
+            fitRows();
+        }
+        scroller.scrollTo(0, 0);
         render();
     }
 
-    private Retheme retheme;
+    /** The text size of a row inside a group — the Music menu's, item_main — and how far it may shrink. */
+    private static final float TEXT_SP = 22.0f;
+    private static final float TEXT_MIN_SP = 14.0f;
 
-    @Override
-    protected void onDestroy() {
-        Theme.unwatchRows(retheme);
-        super.onDestroy();
+    /** Rows on one screen inside a group. The visible height is shared out between them. */
+    private static final int ROWS = 5;
+
+    private int minRow;                 // px: two lines of a row's text, until fitRows() runs
+    private boolean rowsFitted;
+
+    /**
+     * Five rows fill the visible height exactly (5 x 63 = 315 here), and the text is then sized to
+     * them: the Music menu's 22sp, or smaller until every label of the device's language fits in
+     * two lines beside the widest value its row can show. One size for every row, so the rows
+     * read alike; measured, because the eight languages differ in length by a third. Done once,
+     * when the first group opens — by then the scroller has been laid out by the list of groups.
+     */
+    private void fitRows() {
+        int visible = scroller.getHeight();
+        int width = scroller.getWidth();
+        if (rowsFitted || visible <= 0 || width <= 0) return;
+        rowsFitted = true;
+        int h = visible / ROWS - HAIR_H;
+
+        float scaled = getResources().getDisplayMetrics().scaledDensity;
+        float sp = TEXT_SP;
+        for (; sp > TEXT_MIN_SP; sp -= 1.0f) {
+            if (fits(sp * scaled, width, h)) break;
+        }
+        for (int i = 0; i < rowViews.length; i++) {
+            if (rowViews[i] == null) continue;
+            labels[i].setTextSize(sp);
+            values[i].setTextSize(sp);
+            rowViews[i].getLayoutParams().height = h;
+            rowViews[i].requestLayout();
+        }
     }
 
-    /** Named (d8 here crashes on anonymous classes). */
-    private static final class Retheme implements Runnable {
-        private final IppActivity a;
-        Retheme(IppActivity a) { this.a = a; }
-        public void run() {
-            // render() is what paints the captions; posted, so the screen may have gone.
-            if (!a.isFinishing() && a.items != null) a.render();
+    /** Whether every row's label fits in two lines of {@code h} at text size {@code px}. */
+    private boolean fits(float px, int width, int h) {
+        for (int i = 0; i < rowViews.length; i++) {
+            if (rowViews[i] == null) continue;
+            Item it = (Item) items.get(i);
+            android.text.TextPaint p = new android.text.TextPaint(labels[i].getPaint());
+            p.setTextSize(px);
+            float widest = 0;
+            String[] vals = valuesOf(it);
+            for (int v = 0; v < vals.length; v++) widest = Math.max(widest, p.measureText(vals[v]));
+            int room = width - rowViews[i].getPaddingLeft() - rowViews[i].getPaddingRight()
+                    - values[i].getPaddingLeft() - values[i].getPaddingRight() - (int) Math.ceil(widest);
+            if (marks[i] != null) {
+                room -= (int) Math.ceil(marks[i].getPaint().measureText("↴")) + 3;
+            }
+            if (room <= 0) return false;
+            android.text.StaticLayout l = new android.text.StaticLayout(label(it), p, room,
+                    android.text.Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            if (l.getLineCount() > 2 || l.getHeight() > h) return false;
+        }
+        return true;
+    }
+
+    /** Every value a row can show, for measuring the widest. */
+    private String[] valuesOf(Item it) {
+        if (it.type == TOGGLE) {
+            return new String[]{getString(R.string.ipp_on), getString(R.string.ipp_off)};
+        }
+        if (it.type == NUMBER) {
+            String[] s = new String[it.choices.length];
+            for (int i = 0; i < s.length; i++) s[i] = String.valueOf(it.choices[i]);
+            return s;
+        }
+        if (it.type == CHOICE && it.values != null) return it.values;
+        if (it.type == CHOICE) {
+            String[] s = new String[it.count];
+            for (int i = 0; i < s.length; i++) s[i] = String.valueOf(i);
+            return s;
+        }
+        return new String[0];
+    }
+
+    /** The groups, open in turn from the centre button. Empty ones are not opened. */
+    private void openGroup() {
+        if (cats.length == 0) return;
+        int g = cats[catSel];
+        for (int i = 0; i < items.size(); i++) {
+            Item it = (Item) items.get(i);
+            if (groupOf[i] == g && it.type != HEADER && visible(it)) {
+                show(g);
+                return;
+            }
         }
     }
 
     private void render() {
+        if (group < 0) {
+            for (int c = 0; c < cats.length; c++) paintCat(c);
+            scrollToSel();
+            return;
+        }
         clampSel();
         for (int i = 0; i < items.size(); i++) {
             Item it = (Item) items.get(i);
-            if (it.type == HEADER) {
-                TextView h = labels[i];
-                ThemeManager.INSTANCE.itemSetTextColor(h, ACCENT, true);
-                int wash = h.getCurrentTextColor() & 0x00FFFFFF;
-                // Ask the theme for its ORDINARY item colour ("false"), the same one the CD strip
-                // takes: a theme is free to highlight with a colour that barely shows against its
-                // own background, and a caption painted in it is hard to read wherever it does.
-                // What sets the caption apart is the rules and the band below -- shape rather than
-                // shade, which no theme can wash out.
-                ThemeManager.INSTANCE.itemSetTextColor(h,
-                        getResources().getColor(R.color.selected_text_color), false);
-                // The rules are the caption own colour, thinned out, and read AFTER the theme has
-                // had its say -- so they follow whatever colour the caption actually ended up
-                // with, dark on a light theme and light on a dark one, with nothing to configure.
-                int rule = h.getCurrentTextColor() & 0x00FFFFFF;
-                LinearLayout hb = (LinearLayout) rowViews[i];
-                for (int c = 0; c < hb.getChildCount(); c++) {
-                    View kid = hb.getChildAt(c);
-                    if (!(kid instanceof TextView)) kid.setBackgroundColor(rule | RULE_ALPHA);
-                }
-                // The strip between the rules is washed with the theme's SELECTED colour instead,
-                // far weaker: enough to read as a band at a glance, not enough to look like the
-                // cursor is standing on it. Two colours rather than one because that is what a
-                // theme balances against its own background -- and it is read the same way, by
-                // painting the caption with it and looking, since itemSetTextColor answers with
-                // the theme's colour and ignores the one it is passed. Asked FIRST so the caption
-                // is left in the colour it keeps; ACCENT is passed for the same reason paint()
-                // passes it, that being what a focused row shows when the theme names none.
-                // (setBackgroundColor on a view that had no background asks for a layout —
-                // harmless here, this runs when the screen is built and on a value change, never
-                // on the wheel's own path, which repaints two rows through paint().)
-                hb.setBackgroundColor(wash | bandAlpha());
-                continue;
-            }
+            if (it.type == HEADER) continue;
 
-            // The BOX, not the row: hiding the row alone would leave its two hairlines behind as a
+            // The BOX, not the row: hiding the row alone would leave its hairline behind as a
             // stripe where a sub-item is not currently shown.
-            boolean vis = visible(it);
+            boolean vis = groupOf[i] == group && visible(it);
             rowBoxes[i].setVisibility(vis ? View.VISIBLE : View.GONE);
             if (!vis) continue;
 
@@ -547,6 +613,26 @@ public final class IppActivity extends BaseActivity {
             paint(i);
         }
         scrollToSel();
+    }
+
+    /** A group's row, painted the way MainAdapter paints a row of the Music menu. */
+    private void paintCat(int c) {
+        if (catRows == null || c < 0 || c >= catRows.length) return;
+        boolean on = c == catSel;
+        View v = catRows[c];
+        TextView tv = catLabels[c];
+        android.widget.ImageView arrow = catArrows[c];
+        if (on) {
+            ThemeManager.INSTANCE.itemSetBackground(v, R.drawable.item_selected_no_arrow, true);
+            ThemeManager.INSTANCE.itemSetRightArrow(arrow, R.mipmap.right_arrow);
+            arrow.setVisibility(View.VISIBLE);
+            ThemeManager.INSTANCE.itemSetTextColor(tv,
+                    getResources().getColor(R.color.selected_text_color), true);
+        } else {
+            ThemeManager.INSTANCE.itemSetBackground(v, R.drawable.item_no_selected, false);
+            ThemeManager.INSTANCE.itemSetTextColor(tv, getResources().getColor(R.color.white), false);
+            arrow.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
@@ -566,20 +652,10 @@ public final class IppActivity extends BaseActivity {
         scrollToSel();
     }
 
-    /** Apply the focused/unfocused look to one row. */
     /**
-     * One band of a group caption. A bare View: its colour cannot be chosen here, because it is
-     * taken from the caption AFTER the theme has painted it (see {@link #render()}).
-     */
-    private View rule() {
-        return new View(this);
-    }
-
-    /**
-     * A row's hairline. Unlike a caption's rule its colour cannot wait for {@link #render()} —
-     * a row has no caption of its own to copy it from — so it is read here, off a scratch TextView
-     * painted with the theme's ordinary item colour ({@code itemSetTextColor} answers with the
-     * theme's own and ignores what it is passed, so painting and looking is the only way to ask).
+     * A row's hairline, in the theme's ordinary item colour far weakened. The colour is read off a
+     * scratch TextView painted with it ({@code itemSetTextColor} answers with the theme's own and
+     * ignores what it is passed, so painting and looking is the only way to ask).
      */
     private View hair() {
         if (hairColor == 0) {
@@ -594,7 +670,6 @@ public final class IppActivity extends BaseActivity {
     }
 
     private int hairColor;
-    private View lastHair;              // the hairline of the last row added, if it still has one
 
     private void paint(int i) {
         if (rowViews == null || i < 0 || i >= rowViews.length) return;
@@ -646,10 +721,20 @@ public final class IppActivity extends BaseActivity {
     }
 
     private void scrollToSel(boolean mayPost) {
-        if (scroller == null || rowBoxes == null || sel < 0 || sel >= rowBoxes.length) return;
-        // The box: it is the container's own child, so its top and bottom are the coordinates the
+        if (scroller == null) return;
+        // The box: it is the list's own child, so its top and bottom are the coordinates the
         // scroller works in. The row inside it is offset by a hairline.
-        View v = rowBoxes[sel];
+        View v;
+        boolean first;
+        if (group < 0) {
+            if (catRows == null || catSel < 0 || catSel >= catRows.length) return;
+            v = catRows[catSel];
+            first = catSel == 0;
+        } else {
+            if (rowBoxes == null || sel < 0 || sel >= rowBoxes.length) return;
+            v = rowBoxes[sel];
+            first = sel == firstSelectable();
+        }
         if (v == null) return;
         // Not laid out yet — a list just built answers 0 for every edge. Try again next frame; the
         // posted path never re-posts, so this cannot loop.
@@ -657,9 +742,7 @@ public final class IppActivity extends BaseActivity {
             if (mayPost) postScroll();
             return;
         }
-        // When focus is on the top-most selectable row, snap to the very top so the group
-        // header sitting above it stays visible (otherwise scrolling up stops at the row's top).
-        if (sel == firstSelectable()) {
+        if (first) {
             glide(0);
             return;
         }
@@ -701,9 +784,21 @@ public final class IppActivity extends BaseActivity {
         return from;
     }
 
+    /** The cursor over the groups; stops at both ends, as the rows do. */
+    private void moveCat(int dir) {
+        int old = catSel;
+        int c = catSel + dir;
+        if (c < 0 || c >= cats.length) return;
+        catSel = c;
+        paintCat(old);
+        paintCat(catSel);
+        scrollToSel();
+    }
+
     @Override
     public void clockwise() {
         if (editing) { spin(1); return; }
+        if (group < 0) { moveCat(1); return; }
         int old = sel;
         sel = step(sel, 1);
         move(old);
@@ -712,6 +807,7 @@ public final class IppActivity extends BaseActivity {
     @Override
     public void antiClockwise() {
         if (editing) { spin(-1); return; }
+        if (group < 0) { moveCat(-1); return; }
         int old = sel;
         sel = step(sel, -1);
         move(old);
@@ -784,6 +880,7 @@ public final class IppActivity extends BaseActivity {
     @Override
     public void confirm() {
         if (editing) { endEdit(true); return; }
+        if (group < 0) { openGroup(); return; }
         clampSel();
         Item it = (Item) items.get(sel);
         if (it.type == TOGGLE) {
@@ -809,9 +906,7 @@ public final class IppActivity extends BaseActivity {
             Prefs.setInt(this, it.key, v);
             render();
         } else if (it.type == ACTION) {
-            if ("reboot".equals(it.key)) {
-                confirmReboot(label(it));
-            } else if ("scan".equals(it.key)) {
+            if ("scan".equals(it.key)) {
                 confirmScan(label(it));
             } else if ("cache".equals(it.key)) {
                 confirmCache();
@@ -828,15 +923,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     // action ids for Confirm ("Cache library" has a picker of its own, not a Yes/No)
-    private static final int ACT_REBOOT = 0;
     private static final int ACT_SCAN = 1;
     private static final int ACT_LOG = 2;
-
-    private void confirmReboot(String title) {
-        DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
-        d.setDialogTitle(title, getString(R.string.ipp_reboot_confirm),
-                new Confirm(this, ACT_REBOOT), false, true);
-    }
 
     private void confirmScan(String title) {
         DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
@@ -930,40 +1018,8 @@ public final class IppActivity extends BaseActivity {
         runOnUiThread(new CacheDone(this, albums));
     }
 
-    /**
-     * {@code PowerManager.reboot()} does not return — it blocks in the system until the device goes
-     * down, and the system's own shutdown screen comes up over us while it does. The dialog's
-     * {@code dismiss()} runs AFTER the callback (DialogUtil.shortUp: confirm() then dismiss()), so
-     * calling reboot straight from confirm() meant the dismiss never happened and the confirm
-     * dialog stayed on screen, visible behind the shutdown screen. Let the dialog close and the
-     * frame without it be drawn first; the delay is invisible next to a reboot.
-     */
-    void postReboot() {
-        try {
-            getVb().getRoot().postDelayed(new RebootRun(this), 400L);
-        } catch (Throwable t) {
-            Other.INSTANCE.reboot(getContext());
-        }
-    }
-
     // Named nested classes (NOT anonymous): the bundled d8 (R8 8.2.2-dev) crashes dexing
     // anonymous inner classes here, but named nested classes dex fine.
-
-    /** @see IppActivity#postReboot() */
-    private static final class RebootRun implements Runnable {
-        private final IppActivity a;
-
-        RebootRun(IppActivity a) {
-            this.a = a;
-        }
-
-        public void run() {
-            // Stock writes its saved state only when the device is SHUT DOWN, so a reboot came
-            // back to the last shutdown's track and list — see Force.saveState.
-            Force.saveState();
-            Other.INSTANCE.reboot(a.getContext());
-        }
-    }
 
     /** Wheel-navigable Yes/No callback for the Tools actions. */
     private static final class Confirm extends DialogUtil.DialogCallback {
@@ -977,9 +1033,7 @@ public final class IppActivity extends BaseActivity {
 
         @Override
         public void confirm() {
-            if (action == ACT_REBOOT) {
-                a.postReboot();
-            } else if (action == ACT_LOG) {
+            if (action == ACT_LOG) {
                 Diag.save(a);
             } else {
                 a.runFullRescan();
@@ -1605,6 +1659,8 @@ public final class IppActivity extends BaseActivity {
             // While a value is open the top button cancels the edit rather than the screen —
             // one button, the innermost thing it can close.
             if (editing) { endEdit(false); return; }
+            // ...and inside a group that is the group: back to the list of groups, cursor on it.
+            if (group >= 0) { show(-1); return; }
             finish();
         }
     }
@@ -1620,6 +1676,7 @@ public final class IppActivity extends BaseActivity {
     @Override
     public void longConfirm() {
         if (editing) return;               // the wheel is inside a value; one thing at a time
+        if (group < 0) return;             // a group has no description of its own
         if (items == null || sel < 0 || sel >= items.size()) return;
         Item it = (Item) items.get(sel);
         if (it.type == HEADER || it.key == null) return;

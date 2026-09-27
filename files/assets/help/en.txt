@@ -16,9 +16,6 @@
 
 [[tools]] Tools
 
-[reboot] Reboot
-Restarts the device.
-
 [cache] Cache library
 Caches the library.
 

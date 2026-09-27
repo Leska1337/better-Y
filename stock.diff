@@ -30,7 +30,7 @@ index 2c8d26c0..952b0814 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3db22a21 100644
+index 01b1f730..6af58c3f 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -45,7 +45,7 @@ index 01b1f730..3db22a21 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100023
++  versionCode: 10100027
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -745,6 +745,17 @@ index ce45631a..5e5d5bed 100644
 +    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/info" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:maxLines="1" app:layout_constraintLeft_toLeftOf="@id/title" app:layout_constraintRight_toRightOf="@id/title" app:layout_constraintTop_toBottomOf="@id/title" />
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/item_setting.xml b/build/src/res/layout/item_setting.xml
+index 132396d1..e57e4fd9 100644
+--- a/build/src/res/layout/item_setting.xml
++++ b/build/src/res/layout/item_setting.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="40.0dip"
++<LinearLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="45.0dip"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="5.0dip" android:layout_marginEnd="5.0dip" />
+     <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="5.0dip" />
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
 index 60b91724..0bf3ae5e 100644
 --- a/build/src/res/layout/item_songlist.xml
@@ -885,10 +896,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..23251f35 100644
+index 50446006..6c0b7923 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,514 @@
+@@ -1,417 +1,515 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1728,6 +1739,7 @@ index 50446006..23251f35 100644
 +    <string name="ipp_feat_likes_names">Likes neben Titelnamen anzeigen</string>
 +    <string name="ipp_favorites">Favoriten</string>
 +    <string name="ipp_reboot_confirm">Gerät neu starten?</string>
++    <string name="ipp_reboot">Neu starten</string>
 +    <string name="ipp_log_confirm">Diagnoseprotokoll auf der Karte speichern?</string>
 +    <string name="ipp_log_done">Protokoll gespeichert: %1$s</string>
 +    <string name="ipp_log_fail">Protokoll konnte nicht gespeichert werden</string>
@@ -2139,10 +2151,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..744cb874 100644
+index 6f5a555d..e65e2c72 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,514 @@
+@@ -1,417 +1,515 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -2982,6 +2994,7 @@ index 6f5a555d..744cb874 100644
 +    <string name="ipp_feat_likes_names">Mostrar Me gusta junto a los nombres</string>
 +    <string name="ipp_favorites">Favoritos</string>
 +    <string name="ipp_reboot_confirm">¿Reiniciar el dispositivo?</string>
++    <string name="ipp_reboot">Reiniciar</string>
 +    <string name="ipp_log_confirm">¿Guardar un registro de diagnóstico en la tarjeta?</string>
 +    <string name="ipp_log_done">Registro guardado: %1$s</string>
 +    <string name="ipp_log_fail">No se pudo guardar el registro</string>
@@ -3075,10 +3088,10 @@ index 6f5a555d..744cb874 100644
 +    <string name="ipp_album_artists">Artistas del álbum</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..8a45adcb 100644
+index c242cee4..34d13ccd 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,514 @@
+@@ -1,417 +1,515 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -3918,6 +3931,7 @@ index c242cee4..8a45adcb 100644
 +    <string name="ipp_feat_likes_names">Afficher les favoris a cote des titres</string>
 +    <string name="ipp_favorites">Favoris</string>
 +    <string name="ipp_reboot_confirm">Redémarrer l\'appareil ?</string>
++    <string name="ipp_reboot">Redémarrer</string>
 +    <string name="ipp_log_confirm">Enregistrer un journal de diagnostic sur la carte ?</string>
 +    <string name="ipp_log_done">Journal enregistré : %1$s</string>
 +    <string name="ipp_log_fail">Impossible d\'enregistrer le journal</string>
@@ -4011,10 +4025,10 @@ index c242cee4..8a45adcb 100644
 +    <string name="ipp_album_artists">Artistes d\'album</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..ddf7ab0d 100644
+index d82ac6bb..d47290c0 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,514 @@
+@@ -1,417 +1,515 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4854,6 +4868,7 @@ index d82ac6bb..ddf7ab0d 100644
 +    <string name="ipp_feat_likes_names">הצגת לייקים ליד שמות השירים</string>
 +    <string name="ipp_favorites">מועדפים</string>
 +    <string name="ipp_reboot_confirm">להפעיל מחדש את המכשיר?</string>
++    <string name="ipp_reboot">הפעלה מחדש</string>
 +    <string name="ipp_log_confirm">לשמור יומן אבחון בכרטיס?</string>
 +    <string name="ipp_log_done">היומן נשמר: %1$s</string>
 +    <string name="ipp_log_fail">לא ניתן לשמור את היומן</string>
@@ -4947,10 +4962,10 @@ index d82ac6bb..ddf7ab0d 100644
 +    <string name="ipp_album_artists">אומני אלבום</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..1f5ca026 100644
+index f71d0cb1..c805b1fa 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,431 @@
+@@ -1,334 +1,432 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5624,6 +5639,7 @@ index f71d0cb1..1f5ca026 100644
 +    <string name="ipp_feat_likes_names">곡 이름 옆에 좋아요 표시</string>
 +    <string name="ipp_favorites">즐겨찾기</string>
 +    <string name="ipp_reboot_confirm">기기를 재부팅할까요?</string>
++    <string name="ipp_reboot">재부팅</string>
 +    <string name="ipp_log_confirm">진단 로그를 카드에 저장할까요?</string>
 +    <string name="ipp_log_done">로그 저장됨: %1$s</string>
 +    <string name="ipp_log_fail">로그를 저장할 수 없습니다</string>
@@ -5964,10 +5980,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..b2055b3f 100644
+index 4c84fd2b..cc9da3c0 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,183 @@
+@@ -1,86 +1,184 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6145,6 +6161,7 @@ index 4c84fd2b..b2055b3f 100644
 +    <string name="ipp_feat_likes_names">Отображать лайки рядом с названиями песен</string>
 +    <string name="ipp_favorites">Любимые треки</string>
 +    <string name="ipp_reboot_confirm">Перезагрузить устройство?</string>
++    <string name="ipp_reboot">Перезагрузить</string>
 +    <string name="ipp_log_confirm">Сохранить диагностический лог на карту?</string>
 +    <string name="ipp_log_done">Лог сохранён: %1$s</string>
 +    <string name="ipp_log_fail">Не удалось сохранить лог</string>
@@ -6238,10 +6255,10 @@ index 4c84fd2b..b2055b3f 100644
 +    <string name="ipp_album_artists">Исполнители альбомов</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..cd3d4a78 100644
+index 5665bdd9..78b1e444 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,523 @@
+@@ -1,426 +1,524 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7099,6 +7116,7 @@ index 5665bdd9..cd3d4a78 100644
 +    <string name="ipp_feat_likes_names">在歌曲名称旁显示点赞</string>
 +    <string name="ipp_favorites">我的最爱</string>
 +    <string name="ipp_reboot_confirm">重启设备？</string>
++    <string name="ipp_reboot">重启</string>
 +    <string name="ipp_log_confirm">将诊断日志保存到存储卡？</string>
 +    <string name="ipp_log_done">日志已保存：%1$s</string>
 +    <string name="ipp_log_fail">无法保存日志</string>
@@ -8498,10 +8516,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..62c1a18f 100644
+index 803c1e7a..7d348d25 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5662 @@
+@@ -1,5519 +1,5663 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18601,6 +18619,7 @@ index 803c1e7a..62c1a18f 100644
 +    <public type="string" name="ipp_pl_list" id="0x7f110267" />
 +    <public type="string" name="ipp_pl_grid" id="0x7f110268" />
 +    <public type="string" name="ipp_album_artists" id="0x7f110269" />
++    <public type="string" name="ipp_reboot" id="0x7f11026a" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19684,10 +19703,10 @@ index 803c1e7a..62c1a18f 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..66484245 100644
+index 71fe29d0..7df5caf8 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,573 @@
+@@ -1,473 +1,574 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20633,7 +20652,7 @@ index 71fe29d0..66484245 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev23</string>
++    <string name="ipp_version">v1.1.0-dev27</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20641,6 +20660,7 @@ index 71fe29d0..66484245 100644
 +    <string name="ipp_feat_likes_names">Show likes next to song names</string>
 +    <string name="ipp_favorites">Favorites</string>
 +    <string name="ipp_reboot_confirm">Reboot device?</string>
++    <string name="ipp_reboot">Reboot</string>
 +    <string name="ipp_log_confirm">Save a diagnostic log to the card?</string>
 +    <string name="ipp_log_done">Log saved: %1$s</string>
 +    <string name="ipp_log_fail">Could not save the log</string>
@@ -21163,7 +21183,7 @@ index 74759f7b..3986c746 100644
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2a..fa8a4e2c 100644
+index 675ebb2a..c2a741b9 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,26 @@
@@ -21244,10 +21264,20 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110179
  
      .line 481
-@@ -2259,6 +2311,51 @@
+@@ -2259,6 +2311,61 @@
  
      invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
++    # ipp: the Reboot row under Shutdown -- Force paints its panel (Shutdown's picture)
++    invoke-static {p0, p1}, Lcom/innioasis/ipp/Force;->settingsPanel(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
++
++    move-result v1
++
++    if-eqz v1, :cond_ipp_reboot
++
++    return-void
++
++    :cond_ipp_reboot
 +    const v1, 0x7f1101d7
 +
 +    invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -21296,7 +21326,7 @@ index 675ebb2a..fa8a4e2c 100644
      const-string v1, "test"
  
      .line 500
-@@ -2266,13 +2363,13 @@
+@@ -2266,13 +2373,13 @@
  
      move-result v1
  
@@ -21312,7 +21342,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f1100db
  
      .line 501
-@@ -2284,13 +2381,13 @@
+@@ -2284,13 +2391,13 @@
  
      move-result v1
  
@@ -21328,7 +21358,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11019f
  
      .line 502
-@@ -2302,13 +2399,13 @@
+@@ -2302,13 +2409,13 @@
  
      move-result v1
  
@@ -21344,7 +21374,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11016c
  
      .line 503
-@@ -2320,13 +2417,13 @@
+@@ -2320,13 +2427,13 @@
  
      move-result v1
  
@@ -21360,7 +21390,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110192
  
      .line 504
-@@ -2338,13 +2435,13 @@
+@@ -2338,13 +2445,13 @@
  
      move-result v1
  
@@ -21376,7 +21406,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017c
  
      .line 505
-@@ -2356,13 +2453,13 @@
+@@ -2356,13 +2463,13 @@
  
      move-result v1
  
@@ -21392,7 +21422,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11018e
  
      .line 506
-@@ -2374,14 +2471,14 @@
+@@ -2374,14 +2481,14 @@
  
      move-result v1
  
@@ -21409,7 +21439,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
  
      move-result-object v0
-@@ -2390,13 +2487,13 @@
+@@ -2390,13 +2497,13 @@
  
      move-result v0
  
@@ -21425,7 +21455,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110186
  
      .line 508
-@@ -2408,13 +2505,13 @@
+@@ -2408,13 +2515,13 @@
  
      move-result v0
  
@@ -21441,7 +21471,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11018b
  
      .line 509
-@@ -2426,13 +2523,13 @@
+@@ -2426,13 +2533,13 @@
  
      move-result v0
  
@@ -21457,7 +21487,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11017f
  
      .line 510
-@@ -2444,13 +2541,13 @@
+@@ -2444,13 +2551,13 @@
  
      move-result v0
  
@@ -21473,7 +21503,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110180
  
      .line 511
-@@ -2462,13 +2559,13 @@
+@@ -2462,13 +2569,13 @@
  
      move-result v0
  
@@ -21489,7 +21519,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11017e
  
      .line 512
-@@ -2480,13 +2577,13 @@
+@@ -2480,13 +2587,13 @@
  
      move-result v0
  
@@ -21505,7 +21535,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110195
  
      .line 513
-@@ -2498,7 +2595,7 @@
+@@ -2498,7 +2605,7 @@
  
      move-result v0
  
@@ -21514,7 +21544,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      const/4 p1, 0x1
  
-@@ -2508,7 +2605,7 @@
+@@ -2508,7 +2615,7 @@
  
      goto/16 :goto_1
  
@@ -21523,7 +21553,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11018c
  
      .line 514
-@@ -2520,13 +2617,13 @@
+@@ -2520,13 +2627,13 @@
  
      move-result v0
  
@@ -21539,7 +21569,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11017b
  
      .line 515
-@@ -2538,13 +2635,13 @@
+@@ -2538,13 +2645,13 @@
  
      move-result v0
  
@@ -21555,7 +21585,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110196
  
      .line 516
-@@ -2556,13 +2653,13 @@
+@@ -2556,13 +2663,13 @@
  
      move-result v0
  
@@ -21571,7 +21601,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110190
  
      .line 517
-@@ -2574,13 +2671,13 @@
+@@ -2574,13 +2681,13 @@
  
      move-result v0
  
@@ -21587,7 +21617,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11018f
  
      .line 518
-@@ -2592,13 +2689,13 @@
+@@ -2592,13 +2699,13 @@
  
      move-result v0
  
@@ -21603,7 +21633,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110183
  
      .line 519
-@@ -2610,13 +2707,13 @@
+@@ -2610,13 +2717,13 @@
  
      move-result v0
  
@@ -21619,7 +21649,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11001e
  
      .line 520
-@@ -2628,13 +2725,13 @@
+@@ -2628,13 +2735,13 @@
  
      move-result v0
  
@@ -21635,7 +21665,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f11017d
  
      .line 521
-@@ -2646,13 +2743,13 @@
+@@ -2646,13 +2753,13 @@
  
      move-result v0
  
@@ -21651,7 +21681,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110182
  
      .line 522
-@@ -2664,13 +2761,13 @@
+@@ -2664,13 +2771,13 @@
  
      move-result v0
  
@@ -21667,7 +21697,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v0, 0x7f110187
  
      .line 523
-@@ -2682,11 +2779,11 @@
+@@ -2682,11 +2789,11 @@
  
      move-result p1
  
@@ -21681,7 +21711,7 @@ index 675ebb2a..fa8a4e2c 100644
      :goto_1
      return-void
  .end method
-@@ -3199,6 +3296,8 @@
+@@ -3199,6 +3306,8 @@
      move-result-object v7
  
      .line 179
@@ -21690,7 +21720,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-direct {v5, v8, v6, v7}, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
  
      const/4 v7, 0x2
-@@ -3230,6 +3329,8 @@
+@@ -3230,6 +3339,8 @@
      move-result-object v7
  
      .line 182
@@ -21699,7 +21729,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-direct {v5, v8, v6, v7}, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
  
      const/4 v7, 0x3
-@@ -3716,6 +3817,22 @@
+@@ -3716,6 +3827,25 @@
      :cond_2
      check-cast v1, Ljava/util/List;
  
@@ -21719,10 +21749,13 @@ index 675ebb2a..fa8a4e2c 100644
 +
 +    invoke-interface {v1, v4, v0}, Ljava/util/List;->add(ILjava/lang/Object;)V
 +
++    # ipp: Reboot, right under Shutdown
++    invoke-static {p0, v1}, Lcom/innioasis/ipp/Force;->settingsRow(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
++
      .line 1520
      check-cast v1, Ljava/util/Collection;
  
-@@ -4979,6 +5096,30 @@
+@@ -4979,6 +5109,30 @@
  
      move-result-object v1
  
@@ -21753,7 +21786,7 @@ index 675ebb2a..fa8a4e2c 100644
      check-cast v1, Ljava/lang/CharSequence;
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -7091,7 +7232,7 @@
+@@ -7091,7 +7245,7 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -21762,7 +21795,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 274
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7123,20 +7264,18 @@
+@@ -7123,20 +7277,18 @@
  
      move-result v1
  
@@ -21787,7 +21820,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 266
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7182,14 +7321,12 @@
+@@ -7182,14 +7334,12 @@
  
      move-result v1
  
@@ -21805,10 +21838,20 @@ index 675ebb2a..fa8a4e2c 100644
  
      return-void
  .end method
-@@ -7220,6 +7357,33 @@
+@@ -7220,6 +7370,43 @@
  
      move-result-object v0
  
++    # ipp: the Reboot row under Shutdown asks its own Yes/No
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Force;->settingsConfirm(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
++
++    move-result v1
++
++    if-eqz v1, :cond_ipp_reboot
++
++    return-void
++
++    :cond_ipp_reboot
 +    const v1, 0x7f1101d7
 +
 +    invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -21839,7 +21882,7 @@ index 675ebb2a..fa8a4e2c 100644
      const-string v1, "test"
  
      .line 287
-@@ -7227,14 +7391,14 @@
+@@ -7227,14 +7414,14 @@
  
      move-result v1
  
@@ -21856,7 +21899,7 @@ index 675ebb2a..fa8a4e2c 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getResources()Landroid/content/res/Resources;
  
      move-result-object v1
-@@ -7249,7 +7413,7 @@
+@@ -7249,7 +7436,7 @@
  
      move-result v1
  
@@ -21865,7 +21908,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      const-class v0, Lcom/innioasis/y1/activity/BluetoothActivity;
  
-@@ -7257,7 +7421,7 @@
+@@ -7257,7 +7444,7 @@
  
      goto/16 :goto_0
  
@@ -21874,7 +21917,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110179
  
      .line 289
-@@ -7269,7 +7433,7 @@
+@@ -7269,7 +7456,7 @@
  
      move-result v1
  
@@ -21883,7 +21926,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 290
      new-instance v0, Landroid/content/Intent;
-@@ -7287,7 +7451,7 @@
+@@ -7287,7 +7474,7 @@
  
      goto/16 :goto_0
  
@@ -21892,7 +21935,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11019f
  
      .line 293
-@@ -7299,13 +7463,13 @@
+@@ -7299,13 +7486,13 @@
  
      move-result v1
  
@@ -21908,7 +21951,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11016c
  
      .line 294
-@@ -7317,13 +7481,13 @@
+@@ -7317,13 +7504,13 @@
  
      move-result v1
  
@@ -21924,7 +21967,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110190
  
      .line 295
-@@ -7335,14 +7499,14 @@
+@@ -7335,14 +7522,14 @@
  
      move-result v1
  
@@ -21941,7 +21984,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11018f
  
      .line 299
-@@ -7354,14 +7518,14 @@
+@@ -7354,14 +7541,14 @@
  
      move-result v1
  
@@ -21958,7 +22001,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110192
  
      .line 303
-@@ -7373,13 +7537,13 @@
+@@ -7373,13 +7560,13 @@
  
      move-result v1
  
@@ -21974,7 +22017,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017c
  
      .line 304
-@@ -7391,7 +7555,7 @@
+@@ -7391,7 +7578,7 @@
  
      move-result v1
  
@@ -21983,7 +22026,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 305
      new-instance v0, Landroid/content/Intent;
-@@ -7414,7 +7578,7 @@
+@@ -7414,7 +7601,7 @@
  
      goto/16 :goto_0
  
@@ -21992,7 +22035,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110180
  
      .line 310
-@@ -7426,7 +7590,7 @@
+@@ -7426,7 +7613,7 @@
  
      move-result v1
  
@@ -22001,7 +22044,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 311
      new-instance v0, Landroid/content/Intent;
-@@ -7449,7 +7613,7 @@
+@@ -7449,7 +7636,7 @@
  
      goto/16 :goto_0
  
@@ -22010,7 +22053,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110196
  
      .line 316
-@@ -7461,7 +7625,7 @@
+@@ -7461,7 +7648,7 @@
  
      move-result v1
  
@@ -22019,7 +22062,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 317
      new-instance v0, Landroid/content/Intent;
-@@ -7484,7 +7648,7 @@
+@@ -7484,7 +7671,7 @@
  
      goto/16 :goto_0
  
@@ -22028,7 +22071,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110182
  
      .line 322
-@@ -7496,13 +7660,13 @@
+@@ -7496,13 +7683,13 @@
  
      move-result v1
  
@@ -22044,7 +22087,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11018e
  
      .line 323
-@@ -7514,13 +7678,13 @@
+@@ -7514,13 +7701,13 @@
  
      move-result v1
  
@@ -22060,7 +22103,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017e
  
      .line 324
-@@ -7532,13 +7696,13 @@
+@@ -7532,13 +7719,13 @@
  
      move-result v1
  
@@ -22076,7 +22119,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110195
  
      .line 325
-@@ -7550,13 +7714,13 @@
+@@ -7550,13 +7737,13 @@
  
      move-result v1
  
@@ -22092,7 +22135,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110186
  
      .line 326
-@@ -7568,7 +7732,7 @@
+@@ -7568,7 +7755,7 @@
  
      move-result v1
  
@@ -22101,7 +22144,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      const-class v0, Lcom/innioasis/y1/activity/LanguageActivity;
  
-@@ -7576,7 +7740,7 @@
+@@ -7576,7 +7763,7 @@
  
      goto/16 :goto_0
  
@@ -22110,7 +22153,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11018b
  
      .line 327
-@@ -7588,13 +7752,13 @@
+@@ -7588,13 +7775,13 @@
  
      move-result v1
  
@@ -22126,7 +22169,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017f
  
      .line 328
-@@ -7606,7 +7770,7 @@
+@@ -7606,7 +7793,7 @@
  
      move-result v1
  
@@ -22135,7 +22178,7 @@ index 675ebb2a..fa8a4e2c 100644
  
      .line 329
      new-instance v0, Landroid/content/Intent;
-@@ -7626,7 +7790,7 @@
+@@ -7626,7 +7813,7 @@
  
      goto :goto_0
  
@@ -22144,7 +22187,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11018c
  
      .line 332
-@@ -7638,13 +7802,13 @@
+@@ -7638,13 +7825,13 @@
  
      move-result v1
  
@@ -22160,7 +22203,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017b
  
      .line 333
-@@ -7656,13 +7820,13 @@
+@@ -7656,13 +7843,13 @@
  
      move-result v1
  
@@ -22176,7 +22219,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110183
  
      .line 334
-@@ -7674,13 +7838,13 @@
+@@ -7674,13 +7861,13 @@
  
      move-result v1
  
@@ -22192,7 +22235,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11001e
  
      .line 335
-@@ -7692,13 +7856,13 @@
+@@ -7692,13 +7879,13 @@
  
      move-result v1
  
@@ -22208,7 +22251,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f11017d
  
      .line 336
-@@ -7710,13 +7874,13 @@
+@@ -7710,13 +7897,13 @@
  
      move-result v1
  
@@ -22224,7 +22267,7 @@ index 675ebb2a..fa8a4e2c 100644
      const v1, 0x7f110187
  
      .line 337
-@@ -7728,12 +7892,12 @@
+@@ -7728,12 +7915,12 @@
  
      move-result v0
  
@@ -22239,7 +22282,7 @@ index 675ebb2a..fa8a4e2c 100644
      :goto_0
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getAdapter()Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;
  
-@@ -7882,6 +8046,9 @@
+@@ -7882,6 +8069,9 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  

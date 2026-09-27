@@ -14,9 +14,6 @@
 
 [[tools]] Herramientas
 
-[reboot] Reiniciar
-Reinicia el dispositivo.
-
 [cache] Almacenar biblioteca en caché
 Guarda la biblioteca en la caché.
 

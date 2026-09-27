@@ -14,9 +14,6 @@
 
 [[tools]] Outils
 
-[reboot] Redémarrer
-Redémarre l'appareil.
-
 [cache] Mettre la bibliothèque en cache
 Met la bibliothèque en cache.
 
