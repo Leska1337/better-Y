@@ -31,6 +31,29 @@ import java.lang.ref.WeakReference;
  */
 public final class Wheel {
 
+    /**
+     * Whether the wheel accelerates on this screen ({@code BaseActivity.getEnableSpeedClockwise},
+     * which stock answered "yes" everywhere but the main menu). Only where a list can run to
+     * hundreds of rows: every list of Music, Videos and Audiobooks. On a menu of a dozen rows the
+     * acceleration only flies past the row being aimed at, so everything else steps one row a
+     * click, as the main menu always has.
+     */
+    public static boolean fast(com.innioasis.y1.base.BaseActivity a) {
+        return a instanceof com.innioasis.music.SongListActivity
+                || a instanceof com.innioasis.music.AlbumsActivity
+                || a instanceof com.innioasis.music.ArtistsActivity
+                || a instanceof com.innioasis.music.GenresActivity
+                || a instanceof com.innioasis.music.FilesActivity
+                || a instanceof com.innioasis.music.PlaylistsActivity
+                || a instanceof com.innioasis.music.PlayListActivity
+                || a instanceof com.innioasis.music.SearchActivity
+                || a instanceof com.innioasis.y1.activity.video.VideoListActivity
+                || a instanceof com.innioasis.y1.activity.video.SearchVideoActivity
+                || a instanceof com.innioasis.y1.activity.AllAudiobooksActivity
+                || a instanceof com.innioasis.y1.activity.PlayerActivity
+                || a instanceof com.innioasis.y1.activity.BookMarkActivity;
+    }
+
     private static WeakReference lastRv;
     private static int lastPos = -1;
     /**
@@ -142,9 +165,18 @@ public final class Wheel {
             int last = lv.getLastVisiblePosition();
             int old = a.getPosition();
 
+            // Loop scrolling: up from the Shuffle row goes round to the last track...
+            if (Loop.fromShuffle(lv, a, type)) {
+                drop();
+                return;
+            }
             if (type == 1) a.toNext(); else a.toPrevious();
             int now = a.getPosition();
-            if (now == old) return;                        // clamped at an end: nothing changed
+            if (now == old) {                              // clamped at an end
+                // ...and a step past either end comes back at the other one.
+                if (Loop.list(lv, a, type, old)) drop();
+                return;
+            }
 
             // Going down it scrolls at `now >= last`, one step "early", because
             // getLastVisiblePosition() counts the partially visible bottom row — with `now > last`

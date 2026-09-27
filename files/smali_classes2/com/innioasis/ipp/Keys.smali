@@ -77,7 +77,7 @@
 
 .method private static adapter()Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
   .registers 3
-  .line 547
+  .line 549
     sget-object v0, Lcom/innioasis/ipp/Keys;->adRef:Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     if-nez v0, :L0
@@ -87,7 +87,7 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 548
+  .line 550
     instance-of v2, v0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     if-eqz v2, :L2
     move-object v1, v0
@@ -172,10 +172,10 @@
 
 .method private static apply()V
   .registers 1
-  .line 461
+  .line 463
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Keys;->apply(Z)V
-  .line 462
+  .line 464
     return-void
 .end method
 
@@ -183,17 +183,17 @@
   .catchall { :L0 .. :L7 } :L8
   .registers 5
   :L0
-  .line 466
+  .line 468
     invoke-static { }, Lcom/innioasis/ipp/Keys;->adapter()Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     move-result-object v0
-  .line 467
+  .line 469
     if-nez v0, :L1
     return-void
   :L1
-  .line 468
+  .line 470
     invoke-static { }, Lcom/innioasis/ipp/Keys;->table()Ljava/util/List;
     move-result-object v1
-  .line 469
+  .line 471
     const/4 v2, 0
     if-eqz p0, :L2
     const/4 p0, 0
@@ -202,9 +202,9 @@
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
     move-result p0
   :L3
-  .line 470
+  .line 472
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->setItemList(Ljava/util/List;)V
-  .line 471
+  .line 473
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v3
     if-lt p0, v3, :L4
@@ -212,115 +212,115 @@
     move-result p0
     add-int/lit8 p0, p0, -1
   :L4
-  .line 472
+  .line 474
     if-gez p0, :L5
     const/4 p0, 0
   :L5
-  .line 473
+  .line 475
     invoke-virtual { v0, p0, v2 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->setSelectPosition(IZ)V
-  .line 474
+  .line 476
     invoke-static { }, Lcom/innioasis/ipp/Keys;->list()Landroidx/recyclerview/widget/RecyclerView;
     move-result-object v1
-  .line 475
+  .line 477
     if-eqz v1, :L6
     invoke-static { v1, p0, v0 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
   :L6
-  .line 476
+  .line 478
     invoke-static { }, Lcom/innioasis/ipp/Keys;->markCaps()V
   :L7
-  .line 479
+  .line 481
     goto :L9
   :L8
-  .line 477
+  .line 479
     move-exception p0
   :L9
-  .line 480
+  .line 482
     return-void
 .end method
 
 .method private static arrow(Landroid/view/View;)Landroid/graphics/drawable/Drawable;
   .registers 9
-  .line 496
+  .line 498
     sget-object v0, Lcom/innioasis/ipp/Keys;->arrow:Landroid/graphics/drawable/Drawable;
     if-eqz v0, :L0
     return-object v0
   :L0
-  .line 497
+  .line 499
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v0
     iget v0, v0, Landroid/util/DisplayMetrics;->density:F
-  .line 498
+  .line 500
     const/high16 v1, 0x41800000
     mul-float v0, v0, v1
     const/high16 v1, 0x3F000000
     add-float/2addr v0, v1
     float-to-int v0, v0
-  .line 499
+  .line 501
     const/16 v2, 8
     if-ge v0, v2, :L1
     const/16 v0, 8
   :L1
-  .line 500
+  .line 502
     sget-object v2, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
     invoke-static { v0, v0, v2 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v2
-  .line 501
+  .line 503
     new-instance v3, Landroid/graphics/Canvas;
     invoke-direct { v3, v2 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
-  .line 502
+  .line 504
     new-instance v4, Landroid/graphics/Paint;
     const/4 v5, 1
     invoke-direct { v4, v5 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 503
+  .line 505
     const/high16 v5, 0xFF000000
     invoke-virtual { v4, v5 }, Landroid/graphics/Paint;->setColor(I)V
-  .line 504
-    int-to-float v0, v0
-  .line 505
-    nop
   .line 506
+    int-to-float v0, v0
+  .line 507
+    nop
+  .line 508
     new-instance v5, Landroid/graphics/Path;
     invoke-direct { v5 }, Landroid/graphics/Path;-><init>()V
-  .line 507
+  .line 509
     mul-float v1, v1, v0
     const v6, 1031127695
     mul-float v6, v6, v0
     invoke-virtual { v5, v1, v6 }, Landroid/graphics/Path;->moveTo(FF)V
-  .line 508
+  .line 510
     const v6, 1064682127
     mul-float v6, v6, v0
     invoke-virtual { v5, v6, v1 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 509
+  .line 511
     const v6, 1060320051
     mul-float v6, v6, v0
     invoke-virtual { v5, v6, v1 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 510
+  .line 512
     const v7, 1064346583
     mul-float v7, v7, v0
     invoke-virtual { v5, v6, v7 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 511
+  .line 513
     const v6, 1050253722
     mul-float v6, v6, v0
     invoke-virtual { v5, v6, v7 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 512
+  .line 514
     invoke-virtual { v5, v6, v1 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 513
+  .line 515
     const v6, 1025758986
     mul-float v0, v0, v6
     invoke-virtual { v5, v0, v1 }, Landroid/graphics/Path;->lineTo(FF)V
-  .line 514
-    invoke-virtual { v5 }, Landroid/graphics/Path;->close()V
-  .line 515
-    invoke-virtual { v3, v5, v4 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
   .line 516
+    invoke-virtual { v5 }, Landroid/graphics/Path;->close()V
+  .line 517
+    invoke-virtual { v3, v5, v4 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
+  .line 518
     new-instance v0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object p0
     invoke-direct { v0, p0, v2 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
     sput-object v0, Lcom/innioasis/ipp/Keys;->arrow:Landroid/graphics/drawable/Drawable;
-  .line 517
+  .line 519
     return-object v0
 .end method
 
@@ -514,7 +514,7 @@
 
 .method private static ctx()Landroid/content/Context;
   .registers 1
-  .line 557
+  .line 559
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
@@ -524,7 +524,7 @@
 .method public static defaultSecond()I
   .catchall { :L0 .. :L1 } :L3
   .registers 3
-  .line 538
+  .line 540
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
@@ -537,9 +537,9 @@
   :L2
     return v0
   :L3
-  .line 539
+  .line 541
     move-exception v1
-  .line 540
+  .line 542
     return v0
 .end method
 
@@ -813,7 +813,7 @@
 
 .method private static list()Landroidx/recyclerview/widget/RecyclerView;
   .registers 3
-  .line 552
+  .line 554
     sget-object v0, Lcom/innioasis/ipp/Keys;->listRef:Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     if-nez v0, :L0
@@ -823,7 +823,7 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 553
+  .line 555
     instance-of v2, v0, Landroidx/recyclerview/widget/RecyclerView;
     if-eqz v2, :L2
     move-object v1, v0
@@ -834,7 +834,7 @@
 
 .method private static markCaps()V
   .registers 4
-  .line 489
+  .line 491
     sget-object v0, Lcom/innioasis/ipp/Keys;->boxRef:Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     if-nez v0, :L0
@@ -844,14 +844,14 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 490
+  .line 492
     instance-of v2, v0, Landroid/widget/EditText;
     if-nez v2, :L2
     return-void
   :L2
-  .line 491
+  .line 493
     check-cast v0, Landroid/widget/EditText;
-  .line 492
+  .line 494
     sget v2, Lcom/innioasis/ipp/Keys;->mode:I
     const/4 v3, 2
     if-ne v2, v3, :L3
@@ -862,7 +862,7 @@
     move-object v2, v1
   :L4
     invoke-virtual { v0, v1, v1, v2, v1 }, Landroid/widget/EditText;->setCompoundDrawablesWithIntrinsicBounds(Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
-  .line 493
+  .line 495
     return-void
 .end method
 
@@ -1005,7 +1005,7 @@
 .method public static secondOn()Z
   .catchall { :L0 .. :L1 } :L3
   .registers 3
-  .line 525
+  .line 527
     const/4 v0, 0
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Keys;->ctx()Landroid/content/Context;
@@ -1020,9 +1020,9 @@
   :L2
     return v0
   :L3
-  .line 526
+  .line 528
     move-exception v1
-  .line 527
+  .line 529
     return v0
 .end method
 
@@ -1123,34 +1123,34 @@
     if-gtz v2, :L2
     return-void
   :L2
-  .line 443
+  .line 445
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
     move-result v3
     add-int/2addr v3, p0
-  .line 444
-    const/4 p0, 0
-    if-gez v3, :L3
-    const/4 v3, 0
-  :L3
-  .line 445
-    if-lt v3, v2, :L4
-    add-int/lit8 v3, v2, -1
-  :L4
   .line 446
-    invoke-virtual { v0, v3, p0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->setSelectPosition(IZ)V
+    if-gez v3, :L3
+    add-int/lit8 v3, v2, -1
+  :L3
   .line 447
+    const/4 p0, 0
+    if-lt v3, v2, :L4
+    const/4 v3, 0
+  :L4
+  .line 448
+    invoke-virtual { v0, v3, p0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->setSelectPosition(IZ)V
+  .line 449
     invoke-static { v1, v3, v0 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
   :L5
-  .line 450
+  .line 452
     goto :L8
   :L6
   .line 440
     return-void
   :L7
-  .line 448
+  .line 450
     move-exception p0
   :L8
-  .line 451
+  .line 453
     return-void
 .end method
 

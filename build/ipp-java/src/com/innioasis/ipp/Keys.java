@@ -440,9 +440,11 @@ public final class Keys {
             if (ad == null || rv == null) return;
             int n = ad.getItemCount();
             if (n <= 0) return;
+            // The strip always goes round, whatever loop scrolling says: it is a ring of letters,
+            // and the far end of the alphabet is one click away from the near one.
             int pos = ad.getSelectPosition() + d;
-            if (pos < 0) pos = 0;
-            if (pos >= n) pos = n - 1;
+            if (pos < 0) pos = n - 1;
+            if (pos >= n) pos = 0;
             ad.setSelectPosition(pos, false);
             Wheel.follow(rv, pos, ad);
         } catch (Throwable t) {

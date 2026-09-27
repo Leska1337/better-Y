@@ -367,8 +367,8 @@ public final class PickDialog extends BaseDialog {
 
     private void move(int dir) {
         int old = sel;
-        int next = sel + dir;
-        if (next < 0 || next >= rows.length) return;      // no wrapping: the list is short
+        int next = Loop.step(sel, dir, rows.length);
+        if (next == sel) return;
         sel = next;
         paint(old);
         paint(sel);

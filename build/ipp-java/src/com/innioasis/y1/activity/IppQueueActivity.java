@@ -23,6 +23,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.innioasis.ipp.Albums;
+import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Artists;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
@@ -1288,8 +1289,15 @@ public final class IppQueueActivity extends BaseActivity {
     @Override
     public void clockwise() {
         buildTail();                    // a press cannot outrun the tail, but it may not race it
-        if (rows == null || sel >= rows.size() - 1) return;
-        int old = sel++;
+        if (rows == null) return;
+        int old = sel;
+        if (sel >= rows.size() - 1) {
+            if (!Loop.wrap()) return;
+            sel = multi ? 1 : 0;        // loop scrolling: round to the top
+            if (sel >= rows.size() || sel == old) { sel = old; return; }
+        } else {
+            sel++;
+        }
         move(old);
     }
 
@@ -1298,8 +1306,14 @@ public final class IppQueueActivity extends BaseActivity {
     @Override
     public void antiClockwise() {
         buildTail();
-        if (sel <= (multi ? 1 : 0)) return;
-        int old = sel--;
+        if (rows == null) return;
+        int old = sel;
+        if (sel <= (multi ? 1 : 0)) {
+            if (rows.size() - 1 <= sel || !Loop.wrap()) return;
+            sel = rows.size() - 1;      // loop scrolling: round to the bottom
+        } else {
+            sel--;
+        }
         move(old);
     }
 

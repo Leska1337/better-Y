@@ -231,13 +231,14 @@
   .line 369
     iget v0, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
   .line 370
-    add-int/2addr p1, v0
-  .line 371
-    if-ltz p1, :L1
     iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
     array-length v1, v1
-    if-lt p1, v1, :L0
-    goto :L1
+    invoke-static { v0, p1, v1 }, Lcom/innioasis/ipp/Loop;->step(III)I
+    move-result p1
+  .line 371
+    iget v1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
+    if-ne p1, v1, :L0
+    return-void
   :L0
   .line 372
     iput p1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
@@ -247,9 +248,6 @@
     iget p1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/PickDialog;->paint(I)V
   .line 375
-    return-void
-  :L1
-  .line 371
     return-void
 .end method
 

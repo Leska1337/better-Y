@@ -15,24 +15,24 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppQueueActivity;)V
   .registers 2
-  .line 1650
+  .line 1664
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1651
+  .line 1665
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$QArtists;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
-  .line 1652
+  .line 1666
     return-void
 .end method
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .registers 3
-  .line 1656
+  .line 1670
     if-eqz p2, :L0
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$QArtists;->a:Lcom/innioasis/y1/activity/IppQueueActivity;
     invoke-virtual { p2 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p2
     invoke-virtual { p1, p2 }, Lcom/innioasis/y1/activity/IppQueueActivity;->pickArtist(Ljava/lang/String;)V
   :L0
-  .line 1657
+  .line 1671
     const/4 p1, 1
     return p1
 .end method

@@ -122,6 +122,20 @@ public final class Ebook {
     }
 
     /**
+     * Where the cursor goes when a step up has taken it below {@code min}: back to {@code min}, or
+     * with loop scrolling round to the last row of this mode. The reader screens have no wheel
+     * acceleration, so this asks {@link Loop#on}, not {@link Loop#wrap}.
+     */
+    public static int belowFirst(Activity a, int min, int listSize, int fixedSum) {
+        return Loop.on() ? maxMark(a, listSize, fixedSum) : min;
+    }
+
+    /** Where a step down past the last row goes with loop scrolling — the first row; -1 without. */
+    public static int pastLast(Activity a, int fixedSum) {
+        return Loop.on() ? minMark(a, fixedSum) : -1;
+    }
+
+    /**
      * The floor the long-press menu (remove / delete a book) needs: stock refuses it below
      * {@code fixedSum}, i.e. on a fixed row. In the menu there is no book under the cursor at all,
      * so nothing may open it.

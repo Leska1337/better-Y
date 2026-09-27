@@ -263,8 +263,8 @@ public final class BackupDialog extends BaseDialog {
 
     private void move(int dir) {
         int old = sel;
-        int next = sel + dir;
-        if (next < 0 || next >= views.length) return;      // no wrapping: the list is short
+        int next = Loop.step(sel, dir, views.length);
+        if (next == sel) return;
         sel = next;
         paint(old);
         paint(sel);

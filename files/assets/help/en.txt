@@ -140,6 +140,10 @@ When you open the list containing the currently playing song, the selection imme
 [follow_idle if follow_playing] Return delay (seconds)
 Determines how many seconds after the last scroll of the wheel the selection returns to the song currently playing.
 
+[loop_scroll] Loop scrolling
+Past the last row of a list the wheel comes back to the first one, and up from the first it goes round to the last — as in the main menu. Works in every list, menu and gallery.
+In a song list the Shuffle row is part of the circle.
+
 [fixed_menu_pad] Fixed menu margins
 Fixes margins of the main menu and settings.
 

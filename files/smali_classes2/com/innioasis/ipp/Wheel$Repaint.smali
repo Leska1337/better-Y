@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 492
+  .line 524
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -22,54 +22,54 @@
   .catchall { :L0 .. :L6 } :L7
   .registers 7
   :L0
-  .line 495
+  .line 527
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$600()Z
     move-result v0
     if-nez v0, :L1
     return-void
   :L1
-  .line 496
+  .line 528
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$700()Ljava/lang/ref/WeakReference;
     move-result-object v0
-  .line 497
+  .line 529
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$800()I
     move-result v1
-  .line 498
+  .line 530
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$900()V
-  .line 499
+  .line 531
     if-nez v0, :L2
     return-void
   :L2
-  .line 500
+  .line 532
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
-  .line 501
+  .line 533
     instance-of v2, v0, Landroid/widget/ListView;
     if-nez v2, :L3
     return-void
   :L3
-  .line 502
+  .line 534
     check-cast v0, Landroid/widget/ListView;
-  .line 503
+  .line 535
     invoke-virtual { v0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
     move-result-object v2
-  .line 504
+  .line 536
     instance-of v3, v2, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v3, :L4
     return-void
   :L4
-  .line 505
+  .line 537
     check-cast v2, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 506
+  .line 538
     invoke-virtual { v0 }, Landroid/widget/ListView;->getFirstVisiblePosition()I
     move-result v3
-  .line 507
+  .line 539
     invoke-virtual { v0 }, Landroid/widget/ListView;->getLastVisiblePosition()I
     move-result v4
-  .line 508
+  .line 540
     invoke-virtual { v2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v5
-  .line 509
+  .line 541
     invoke-static { v0, v2, v1, v3, v4 }, Lcom/innioasis/ipp/Wheel;->access$1000(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;III)Z
     move-result v1
     if-eqz v1, :L5
@@ -77,15 +77,15 @@
     move-result v0
     if-nez v0, :L6
   :L5
-  .line 510
+  .line 542
     invoke-virtual { v2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   :L6
-  .line 514
+  .line 546
     goto :L8
   :L7
-  .line 512
+  .line 544
     move-exception v0
   :L8
-  .line 515
+  .line 547
     return-void
 .end method

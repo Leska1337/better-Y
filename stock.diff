@@ -30,7 +30,7 @@ index 2c8d26c0..952b0814 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..6af58c3f 100644
+index 01b1f730..cf5a8086 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -45,7 +45,7 @@ index 01b1f730..6af58c3f 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100027
++  versionCode: 10100030
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19703,7 +19703,7 @@ index 803c1e7a..7d348d25 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..7df5caf8 100644
+index 71fe29d0..ceadc75d 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,574 @@
@@ -20652,7 +20652,7 @@ index 71fe29d0..7df5caf8 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev27</string>
++    <string name="ipp_version">v1.1.0-dev30</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21083,19 +21083,24 @@ index 516036f6..3edfb649 100644
      new-instance v0, Ljava/lang/StringBuilder;
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
-index 74759f7b..3986c746 100644
+index 74759f7b..5d2f5a08 100644
 --- a/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/LanguageActivity.smali
-@@ -322,7 +322,7 @@
+@@ -322,7 +322,12 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 2
 +    .locals 3
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 93
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getMark()I
-@@ -361,7 +361,10 @@
+@@ -361,7 +366,10 @@
      const/4 v0, 0x0
  
      :cond_1
@@ -21107,7 +21112,7 @@ index 74759f7b..3986c746 100644
  
      .line 99
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -376,7 +379,7 @@
+@@ -376,7 +384,7 @@
  
      move-result v1
  
@@ -21116,7 +21121,19 @@ index 74759f7b..3986c746 100644
  
      .line 100
      invoke-direct {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->selItem()V
-@@ -436,7 +439,8 @@
+@@ -387,6 +395,11 @@
+ .method public clockwise()V
+     .locals 3
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 81
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getMark()I
+ 
+@@ -436,7 +449,8 @@
      const/4 v0, 0x0
  
      :cond_1
@@ -21126,7 +21143,7 @@ index 74759f7b..3986c746 100644
  
      .line 87
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -451,7 +455,7 @@
+@@ -451,7 +465,7 @@
  
      move-result v1
  
@@ -21135,7 +21152,7 @@ index 74759f7b..3986c746 100644
  
      .line 88
      invoke-direct {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->selItem()V
-@@ -471,42 +475,11 @@
+@@ -471,42 +485,11 @@
  
      invoke-virtual {v0, v1}, Lcom/innioasis/music/util/Other;->setLanguage(I)V
  
@@ -21183,7 +21200,7 @@ index 74759f7b..3986c746 100644
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2a..c2a741b9 100644
+index 675ebb2a..8435dc82 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,26 @@
@@ -21786,16 +21803,21 @@ index 675ebb2a..c2a741b9 100644
      check-cast v1, Ljava/lang/CharSequence;
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -7091,7 +7245,7 @@
+@@ -7091,7 +7245,12 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 2
 +    .locals 3
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 274
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7123,20 +7277,18 @@
+@@ -7123,20 +7282,23 @@
  
      move-result v1
  
@@ -21817,10 +21839,15 @@ index 675ebb2a..c2a741b9 100644
  .method public clockwise()V
 -    .locals 2
 +    .locals 3
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 266
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7182,14 +7334,12 @@
+@@ -7182,14 +7344,12 @@
  
      move-result v1
  
@@ -21838,7 +21865,7 @@ index 675ebb2a..c2a741b9 100644
  
      return-void
  .end method
-@@ -7220,6 +7370,43 @@
+@@ -7220,6 +7380,43 @@
  
      move-result-object v0
  
@@ -21882,7 +21909,7 @@ index 675ebb2a..c2a741b9 100644
      const-string v1, "test"
  
      .line 287
-@@ -7227,14 +7414,14 @@
+@@ -7227,14 +7424,14 @@
  
      move-result v1
  
@@ -21899,7 +21926,7 @@ index 675ebb2a..c2a741b9 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getResources()Landroid/content/res/Resources;
  
      move-result-object v1
-@@ -7249,7 +7436,7 @@
+@@ -7249,7 +7446,7 @@
  
      move-result v1
  
@@ -21908,7 +21935,7 @@ index 675ebb2a..c2a741b9 100644
  
      const-class v0, Lcom/innioasis/y1/activity/BluetoothActivity;
  
-@@ -7257,7 +7444,7 @@
+@@ -7257,7 +7454,7 @@
  
      goto/16 :goto_0
  
@@ -21917,7 +21944,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110179
  
      .line 289
-@@ -7269,7 +7456,7 @@
+@@ -7269,7 +7466,7 @@
  
      move-result v1
  
@@ -21926,7 +21953,7 @@ index 675ebb2a..c2a741b9 100644
  
      .line 290
      new-instance v0, Landroid/content/Intent;
-@@ -7287,7 +7474,7 @@
+@@ -7287,7 +7484,7 @@
  
      goto/16 :goto_0
  
@@ -21935,7 +21962,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11019f
  
      .line 293
-@@ -7299,13 +7486,13 @@
+@@ -7299,13 +7496,13 @@
  
      move-result v1
  
@@ -21951,7 +21978,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11016c
  
      .line 294
-@@ -7317,13 +7504,13 @@
+@@ -7317,13 +7514,13 @@
  
      move-result v1
  
@@ -21967,7 +21994,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110190
  
      .line 295
-@@ -7335,14 +7522,14 @@
+@@ -7335,14 +7532,14 @@
  
      move-result v1
  
@@ -21984,7 +22011,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11018f
  
      .line 299
-@@ -7354,14 +7541,14 @@
+@@ -7354,14 +7551,14 @@
  
      move-result v1
  
@@ -22001,7 +22028,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110192
  
      .line 303
-@@ -7373,13 +7560,13 @@
+@@ -7373,13 +7570,13 @@
  
      move-result v1
  
@@ -22017,7 +22044,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11017c
  
      .line 304
-@@ -7391,7 +7578,7 @@
+@@ -7391,7 +7588,7 @@
  
      move-result v1
  
@@ -22026,7 +22053,7 @@ index 675ebb2a..c2a741b9 100644
  
      .line 305
      new-instance v0, Landroid/content/Intent;
-@@ -7414,7 +7601,7 @@
+@@ -7414,7 +7611,7 @@
  
      goto/16 :goto_0
  
@@ -22035,7 +22062,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110180
  
      .line 310
-@@ -7426,7 +7613,7 @@
+@@ -7426,7 +7623,7 @@
  
      move-result v1
  
@@ -22044,7 +22071,7 @@ index 675ebb2a..c2a741b9 100644
  
      .line 311
      new-instance v0, Landroid/content/Intent;
-@@ -7449,7 +7636,7 @@
+@@ -7449,7 +7646,7 @@
  
      goto/16 :goto_0
  
@@ -22053,7 +22080,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110196
  
      .line 316
-@@ -7461,7 +7648,7 @@
+@@ -7461,7 +7658,7 @@
  
      move-result v1
  
@@ -22062,7 +22089,7 @@ index 675ebb2a..c2a741b9 100644
  
      .line 317
      new-instance v0, Landroid/content/Intent;
-@@ -7484,7 +7671,7 @@
+@@ -7484,7 +7681,7 @@
  
      goto/16 :goto_0
  
@@ -22071,7 +22098,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110182
  
      .line 322
-@@ -7496,13 +7683,13 @@
+@@ -7496,13 +7693,13 @@
  
      move-result v1
  
@@ -22087,7 +22114,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11018e
  
      .line 323
-@@ -7514,13 +7701,13 @@
+@@ -7514,13 +7711,13 @@
  
      move-result v1
  
@@ -22103,7 +22130,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11017e
  
      .line 324
-@@ -7532,13 +7719,13 @@
+@@ -7532,13 +7729,13 @@
  
      move-result v1
  
@@ -22119,7 +22146,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110195
  
      .line 325
-@@ -7550,13 +7737,13 @@
+@@ -7550,13 +7747,13 @@
  
      move-result v1
  
@@ -22135,7 +22162,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110186
  
      .line 326
-@@ -7568,7 +7755,7 @@
+@@ -7568,7 +7765,7 @@
  
      move-result v1
  
@@ -22144,7 +22171,7 @@ index 675ebb2a..c2a741b9 100644
  
      const-class v0, Lcom/innioasis/y1/activity/LanguageActivity;
  
-@@ -7576,7 +7763,7 @@
+@@ -7576,7 +7773,7 @@
  
      goto/16 :goto_0
  
@@ -22153,7 +22180,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11018b
  
      .line 327
-@@ -7588,13 +7775,13 @@
+@@ -7588,13 +7785,13 @@
  
      move-result v1
  
@@ -22169,7 +22196,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11017f
  
      .line 328
-@@ -7606,7 +7793,7 @@
+@@ -7606,7 +7803,7 @@
  
      move-result v1
  
@@ -22178,7 +22205,7 @@ index 675ebb2a..c2a741b9 100644
  
      .line 329
      new-instance v0, Landroid/content/Intent;
-@@ -7626,7 +7813,7 @@
+@@ -7626,7 +7823,7 @@
  
      goto :goto_0
  
@@ -22187,7 +22214,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11018c
  
      .line 332
-@@ -7638,13 +7825,13 @@
+@@ -7638,13 +7835,13 @@
  
      move-result v1
  
@@ -22203,7 +22230,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11017b
  
      .line 333
-@@ -7656,13 +7843,13 @@
+@@ -7656,13 +7853,13 @@
  
      move-result v1
  
@@ -22219,7 +22246,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110183
  
      .line 334
-@@ -7674,13 +7861,13 @@
+@@ -7674,13 +7871,13 @@
  
      move-result v1
  
@@ -22235,7 +22262,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11001e
  
      .line 335
-@@ -7692,13 +7879,13 @@
+@@ -7692,13 +7889,13 @@
  
      move-result v1
  
@@ -22251,7 +22278,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f11017d
  
      .line 336
-@@ -7710,13 +7897,13 @@
+@@ -7710,13 +7907,13 @@
  
      move-result v1
  
@@ -22267,7 +22294,7 @@ index 675ebb2a..c2a741b9 100644
      const v1, 0x7f110187
  
      .line 337
-@@ -7728,12 +7915,12 @@
+@@ -7728,12 +7925,12 @@
  
      move-result v0
  
@@ -22282,7 +22309,7 @@ index 675ebb2a..c2a741b9 100644
      :goto_0
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getAdapter()Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;
  
-@@ -7882,6 +8069,9 @@
+@@ -7882,6 +8079,9 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -22293,15 +22320,20 @@ index 675ebb2a..c2a741b9 100644
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-index c4b75839..7ff26c37 100644
+index c4b75839..d7701505 100644
 --- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-@@ -308,31 +308,40 @@
+@@ -308,31 +308,45 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 1
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 88
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
@@ -22347,12 +22379,17 @@ index c4b75839..7ff26c37 100644
  
      .line 92
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
-@@ -341,33 +350,43 @@
+@@ -341,33 +355,48 @@
  .end method
  
  .method public clockwise()V
 -    .locals 2
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 79
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
@@ -22402,7 +22439,7 @@ index c4b75839..7ff26c37 100644
  
      .line 83
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
-@@ -445,7 +464,8 @@
+@@ -445,7 +474,8 @@
  
      move-result-object v0
  
@@ -22412,7 +22449,7 @@ index c4b75839..7ff26c37 100644
  
      .line 108
      invoke-virtual {p0, v2}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getString(I)Ljava/lang/String;
-@@ -470,6 +490,9 @@
+@@ -470,6 +500,9 @@
  
      move-result-object v0
  
@@ -22423,7 +22460,7 @@ index c4b75839..7ff26c37 100644
      sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..d44417ce 100644
+index 060ed6d1..461e7570 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -22513,7 +22550,20 @@ index 060ed6d1..d44417ce 100644
      if-ne p1, v3, :cond_17
  
      .line 685
-@@ -2806,6 +2848,15 @@
+@@ -2617,8 +2659,10 @@
+ .method public getEnableSpeedClockwise()Z
+     .locals 1
+ 
+-    .line 856
+-    iget-boolean v0, p0, Lcom/innioasis/y1/base/BaseActivity;->enableSpeedClockwise:Z
++    # ipp: the wheel accelerates only on the screens that can hold a long list -- see Wheel.fast
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->fast(Lcom/innioasis/y1/base/BaseActivity;)Z
++
++    move-result v0
+ 
+     return v0
+ .end method
+@@ -2806,6 +2850,15 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -22529,7 +22579,7 @@ index 060ed6d1..d44417ce 100644
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3463,6 +3514,15 @@
+@@ -3463,6 +3516,15 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -22545,7 +22595,7 @@ index 060ed6d1..d44417ce 100644
      .line 345
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->updateBatteryPercentageBase()V
  
-@@ -3602,7 +3662,12 @@
+@@ -3602,7 +3664,12 @@
  
      const-string v2, "save state successful"
  
@@ -22559,7 +22609,7 @@ index 060ed6d1..d44417ce 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4187,12 @@
+@@ -4122,6 +4189,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -38480,10 +38530,22 @@ index 38de58fe..28cf65f3 100644
      iget-object p2, p0, Lcom/innioasis/fm/MenuActivity$rangesAdapter$2$1;->this$0:Lcom/innioasis/fm/MenuActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
-index 8f1b4c3c..736150ef 100644
+index 8f1b4c3c..9c0661a1 100644
 --- a/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/fm/MenuActivity.smali
-@@ -695,6 +695,8 @@
+@@ -648,6 +648,11 @@
+ .method public antiClockwise()V
+     .locals 3
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 209
+     invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+@@ -695,6 +700,8 @@
  
      .line 218
      :cond_1
@@ -38492,7 +38554,7 @@ index 8f1b4c3c..736150ef 100644
      invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v1
-@@ -707,12 +709,7 @@
+@@ -707,12 +714,7 @@
  
      move-result v2
  
@@ -38506,7 +38568,19 @@ index 8f1b4c3c..736150ef 100644
  
      return-void
  .end method
-@@ -777,22 +774,20 @@
+@@ -720,6 +722,11 @@
+ .method public clockwise()V
+     .locals 3
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 194
+     invoke-virtual {p0}, Lcom/innioasis/fm/MenuActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+@@ -777,22 +784,20 @@
  
      .line 203
      :cond_1
@@ -54749,7 +54823,7 @@ index 306c059f..05023aa4 100644
  
      invoke-static {p2, p3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
-index fe02089c..aeb05287 100644
+index fe02089c..b0cd7ead 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 @@ -411,6 +411,18 @@
@@ -54782,12 +54856,58 @@ index fe02089c..aeb05287 100644
      if-eqz p1, :cond_1
  
      .line 131
-@@ -996,38 +1012,18 @@
-     iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+@@ -987,47 +1003,41 @@
  
-     :cond_0
+     if-lt v1, v2, :cond_0
+ 
+-    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getItemCount()I
++    # ipp: loop scrolling -- past the last row comes the first
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
+ 
+     move-result v1
+ 
+-    add-int/lit8 v1, v1, -0x1
+-
+-    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-
+-    :cond_0
 -    if-eqz p2, :cond_1
 -
+-    .line 60
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
+-
+-    .line 61
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
++    if-eqz v1, :cond_ipp_clamp
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
++    const/4 v1, 0x0
+ 
+-    goto :goto_0
++    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+-    .line 62
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
++    goto :cond_0
+ 
+-    .line 63
+-    :goto_0
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
++    :cond_ipp_clamp
++    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getItemCount()I
+ 
+-    invoke-direct {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->positionIsValid(I)Z
++    move-result v1
+ 
+-    move-result p2
++    add-int/lit8 v1, v1, -0x1
+ 
+-    if-eqz p2, :cond_2
++    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
+-    .line 64
++    :cond_0
 +    # ipp: one Wheel.follow instead of the stock tail -- notifyDataSetChanged() (a full layout
 +    # pass over every visible row) plus a fresh smoothScrollToPosition() on EVERY click, which
 +    # restarts an animation the wheel has already run past: the list chases a target the cursor
@@ -54795,78 +54915,76 @@ index fe02089c..aeb05287 100644
 +    # highlight changed, drops the item animator and scrolls instantly, row-aligned. Where the
 +    # rows cannot be reached -- a list that is not laid out yet, which is how initView calls this
 +    # -- it falls back to notifyDataSetChanged() itself.
-     .line 60
--    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
--
--    .line 61
--    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
--
--    invoke-virtual {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
--
--    goto :goto_0
--
--    .line 62
--    :cond_1
--    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
--
--    .line 63
--    :goto_0
++    .line 60
      iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
  
--    invoke-direct {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->positionIsValid(I)Z
--
--    move-result p2
--
--    if-eqz p2, :cond_2
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    invoke-static {p1, p2, p0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
--    .line 64
--    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
--
--    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
--
 -    :cond_2
      return-void
  .end method
  
-@@ -1054,37 +1050,12 @@
-     iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+@@ -1048,43 +1058,38 @@
  
-     :cond_0
+     if-gez v1, :cond_0
+ 
+-    const/4 v1, 0x0
+-
+-    .line 70
+-    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
++    # ipp: loop scrolling -- before the first row comes the last
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
+ 
+-    :cond_0
 -    if-eqz p2, :cond_1
--
-+    # ipp: see toNext -- one Wheel.follow instead of notifyDataSetChanged() plus a fresh
-+    # smoothScrollToPosition() on every click.
-     .line 72
++    move-result v1
+ 
+-    .line 72
 -    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
--
++    if-eqz v1, :cond_ipp_clamp
+ 
 -    .line 73
-     iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+-    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
++    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getItemCount()I
  
 -    invoke-virtual {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
-+    invoke-static {p1, p2, p0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
++    move-result v1
  
 -    goto :goto_0
--
++    add-int/lit8 v1, v1, -0x1
+ 
 -    .line 74
 -    :cond_1
 -    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
--
++    if-ltz v1, :cond_ipp_clamp
+ 
 -    .line 75
 -    :goto_0
 -    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
--
++    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
 -    invoke-direct {p0, p2}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->positionIsValid(I)Z
--
++    goto :cond_0
+ 
 -    move-result p2
--
++    :cond_ipp_clamp
++    const/4 v1, 0x0
+ 
 -    if-eqz p2, :cond_2
--
++    .line 70
++    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
 -    .line 76
--    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
--
++    :cond_0
++    # ipp: see toNext -- one Wheel.follow instead of notifyDataSetChanged() plus a fresh
++    # smoothScrollToPosition() on every click.
++    .line 72
+     iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
+ 
 -    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
--
++    invoke-static {p1, p2, p0}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+ 
 -    :cond_2
      return-void
  .end method
@@ -56278,7 +56396,7 @@ index 552a1de3..2fabb6aa 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
-index e9751b96..e5e704b4 100644
+index e9751b96..da6175f9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BluetoothActivity.smali
 @@ -624,6 +624,10 @@
@@ -56329,7 +56447,31 @@ index e9751b96..e5e704b4 100644
      return-void
  .end method
  
-@@ -1569,6 +1587,27 @@
+@@ -1006,6 +1024,11 @@
+ .method public antiClockwise()V
+     .locals 2
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 201
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getMark()I
+ 
+@@ -1043,6 +1066,11 @@
+ .method public clockwise()V
+     .locals 4
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 195
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/BluetoothActivity;->getMark()I
+ 
+@@ -1569,6 +1597,27 @@
  
      invoke-virtual {v0, v2, v3, v1}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -56357,7 +56499,7 @@ index e9751b96..e5e704b4 100644
      return-void
  .end method
  
-@@ -1655,60 +1694,11 @@
+@@ -1655,60 +1704,11 @@
      check-cast v0, Landroid/bluetooth/BluetoothDevice;
  
      .line 246
@@ -57090,10 +57232,10 @@ index f7859218..f196ee68 100644
      goto :goto_0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
-index 0bfdbeec..8bf681b2 100644
+index 0bfdbeec..2e0ccdd5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity.smali
-@@ -1,1964 +1,1970 @@
+@@ -1,1964 +1,1980 @@
 -.class public final Lcom/innioasis/y1/activity/EqActivity;
 -.super Lcom/innioasis/y1/base/BaseActivity;
 -.source "EqActivity.kt"
@@ -59366,6 +59508,11 @@ index 0bfdbeec..8bf681b2 100644
 +.method public antiClockwise()V
 +    .locals 3
 +
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
 +    .line 242
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/EqActivity;->getMark()I
 +
@@ -59413,6 +59560,11 @@ index 0bfdbeec..8bf681b2 100644
 +
 +.method public clockwise()V
 +    .locals 3
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
 +
 +    .line 232
 +    invoke-virtual {p0}, Lcom/innioasis/y1/activity/EqActivity;->getMark()I
@@ -61241,7 +61393,7 @@ index 1a9012fb..c73c85fc 100644
      .line 687
      iget-object p1, p0, Lcom/innioasis/y1/activity/PhotosActivity$shortTop$2$1;->this$0:Lcom/innioasis/y1/activity/PhotosActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..f436bd15 100644
+index 0688aa89..6a294e3a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -1105,6 +1105,25 @@
@@ -61290,16 +61442,21 @@ index 0688aa89..f436bd15 100644
      if-eqz v0, :cond_1
  
      .line 254
-@@ -2556,7 +2579,7 @@
+@@ -2556,7 +2579,12 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 3
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 810
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -2655,19 +2678,9 @@
+@@ -2655,19 +2683,9 @@
  
      .line 821
      :cond_3
@@ -61322,7 +61479,7 @@ index 0688aa89..f436bd15 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -2678,9 +2691,15 @@
+@@ -2678,9 +2696,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
  
@@ -61340,16 +61497,21 @@ index 0688aa89..f436bd15 100644
  
      .line 823
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->upDataImager()V
-@@ -2690,7 +2709,7 @@
+@@ -2690,7 +2714,12 @@
  .end method
  
  .method public clockwise()V
 -    .locals 3
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 799
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
-@@ -2723,21 +2742,7 @@
+@@ -2723,21 +2752,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/PhotosActivity;->setMark(I)V
  
      .line 801
@@ -61372,7 +61534,7 @@ index 0688aa89..f436bd15 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -2748,9 +2753,15 @@
+@@ -2748,9 +2763,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getMark()I
  
@@ -61390,7 +61552,7 @@ index 0688aa89..f436bd15 100644
  
      .line 803
      invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->upDataImager()V
-@@ -2877,6 +2888,17 @@
+@@ -2877,6 +2898,17 @@
  
      if-eqz v0, :cond_4
  
@@ -61408,7 +61570,7 @@ index 0688aa89..f436bd15 100644
      .line 856
      new-instance v0, Ljava/util/ArrayList;
  
-@@ -3007,6 +3029,19 @@
+@@ -3007,6 +3039,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -62150,7 +62312,7 @@ index f2baa306..13f65c91 100644
  
      .line 60
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..05fdd551 100644
+index 4a99a22f..0969406f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 @@ -144,7 +144,9 @@
@@ -62174,18 +62336,22 @@ index 4a99a22f..05fdd551 100644
      const/4 v1, 0x0
  
      if-nez v0, :cond_0
-@@ -299,32 +304,19 @@
+@@ -299,32 +304,24 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 2
 +    .locals 4
  
-     .line 149
+-    .line 149
 -    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
--
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
+ 
 -    move-result-object v0
--
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
+ 
++    .line 149
 +    # ipp: see clockwise -- one Wheel.follow instead of two notifies and a smooth scroll.
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -62211,7 +62377,7 @@ index 4a99a22f..05fdd551 100644
  
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/WallpaperActivity;->setMark(I)V
  
-@@ -340,81 +332,50 @@
+@@ -340,81 +337,55 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -62240,11 +62406,15 @@ index 4a99a22f..05fdd551 100644
 -    .locals 2
 +    .locals 4
  
-     .line 136
+-    .line 136
 -    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
--
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
+ 
 -    move-result-object v0
--
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
+ 
++    .line 136
 +    # ipp: two notifies and a restarted smooth scroll per click -> one Wheel.follow, as in Photos.
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -62306,7 +62476,7 @@ index 4a99a22f..05fdd551 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -425,9 +386,13 @@
+@@ -425,9 +396,13 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
@@ -62322,7 +62492,7 @@ index 4a99a22f..05fdd551 100644
  
      return-void
  .end method
-@@ -440,7 +405,9 @@
+@@ -440,7 +415,9 @@
  
      move-result-object v0
  
@@ -62333,7 +62503,7 @@ index 4a99a22f..05fdd551 100644
  
      .line 167
      invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/WallpaperActivity;->getString(I)Ljava/lang/String;
-@@ -473,6 +440,9 @@
+@@ -473,6 +450,9 @@
  
      iput-object v0, p0, Lcom/innioasis/y1/activity/WallpaperActivity;->progressDialog:Landroid/app/ProgressDialog;
  
@@ -62412,7 +62582,7 @@ index 981585c3..d98e9a6e 100644
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..dab808e8 100644
+index 5e61f77d..3231663a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 @@ -1249,6 +1249,9 @@
@@ -62442,16 +62612,21 @@ index 5e61f77d..dab808e8 100644
  
      invoke-static {v3, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
-@@ -1779,7 +1783,7 @@
+@@ -1779,7 +1783,12 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 3
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 704
      invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-@@ -1822,19 +1826,7 @@
+@@ -1822,19 +1831,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 709
@@ -62472,18 +62647,18 @@ index 5e61f77d..dab808e8 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1845,16 +1837,22 @@
+@@ -1845,16 +1842,27 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
 -    move-result v1
 +    move-result v2
- 
--    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++
 +    add-int/lit8 v1, v2, 0x1
 +
 +    invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-+
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    move-result-object v3
 +
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
@@ -62495,10 +62670,15 @@ index 5e61f77d..dab808e8 100644
  .method public clockwise()V
 -    .locals 3
 +    .locals 4
++
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
  
      .line 694
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
-@@ -1893,21 +1891,7 @@
+@@ -1893,21 +1901,7 @@
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->setMark(I)V
  
      .line 696
@@ -62521,25 +62701,25 @@ index 5e61f77d..dab808e8 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
      move-result-object v0
-@@ -1918,9 +1902,15 @@
+@@ -1918,9 +1912,15 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getMark()I
  
 -    move-result v1
 +    move-result v2
- 
--    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++
 +    add-int/lit8 v1, v2, -0x1
 +
 +    invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
-+
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    move-result-object v3
 +
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
      :cond_0
      return-void
-@@ -2057,6 +2047,19 @@
+@@ -2057,6 +2057,19 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 5
  
@@ -62559,7 +62739,7 @@ index 5e61f77d..dab808e8 100644
      .line 418
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2449,6 +2452,22 @@
+@@ -2449,6 +2462,22 @@
  
      invoke-virtual {v0, v2}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -63744,7 +63924,7 @@ index 7b295570..3ce4c5ef 100644
  
      const/4 v0, 0x2
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
-index 44fce9d8..20b424e0 100644
+index 44fce9d8..5b082b1e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 @@ -1402,6 +1402,10 @@
@@ -63917,7 +64097,31 @@ index 44fce9d8..20b424e0 100644
  
      return-void
  .end method
-@@ -3057,7 +3015,9 @@
+@@ -2514,6 +2472,11 @@
+ .method public antiClockwise()V
+     .locals 3
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, -0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 240
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/VideoListActivity;->getMark()I
+ 
+@@ -2547,6 +2510,11 @@
+ .method public clockwise()V
+     .locals 3
+ 
++    # ipp: loop scrolling -- at an end, put the cursor one past it; the step below wraps it
++    const/4 v0, 0x1
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Loop;->mark(Lcom/innioasis/y1/base/BaseActivity;I)V
++
+     .line 233
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/VideoListActivity;->getMark()I
+ 
+@@ -3057,7 +3025,9 @@
  
      invoke-static {v6, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -63928,7 +64132,7 @@ index 44fce9d8..20b424e0 100644
  
      move-result-object v10
  
-@@ -3505,10 +3465,17 @@
+@@ -3505,10 +3475,17 @@
      :cond_16
      const-string v1, "/storage/sdcard0"
  
@@ -63947,7 +64151,7 @@ index 44fce9d8..20b424e0 100644
  
      .line 342
      invoke-virtual {v4}, Ljava/io/File;->listFiles()[Ljava/io/File;
-@@ -3610,7 +3577,8 @@
+@@ -3610,7 +3587,8 @@
  
      invoke-static {v10, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -63958,25 +64162,40 @@ index 44fce9d8..20b424e0 100644
      move-result-object v10
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
-index 33d41dd3..b2a3db3a 100644
+index 33d41dd3..79173834 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
-@@ -994,38 +994,12 @@
-     iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+@@ -985,47 +985,35 @@
  
-     :cond_0
--    if-eqz p2, :cond_1
+     if-lt v1, v2, :cond_0
+ 
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getItemCount()I
++    # ipp: loop scrolling -- past the last row comes the first
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
+ 
+     move-result v1
+ 
+-    add-int/lit8 v1, v1, -0x1
 -
+-    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+-
+-    :cond_0
+-    if-eqz p2, :cond_1
++    if-eqz v1, :cond_ipp_clamp
+ 
 -    .line 55
 -    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
 -
 -    .line 56
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
--
++    const/4 v1, 0x0
+ 
 -    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
--
++    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+ 
 -    goto :goto_0
--
++    goto :cond_0
+ 
 -    .line 57
 -    :cond_1
 -    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyDataSetChanged()V
@@ -63984,14 +64203,20 @@ index 33d41dd3..b2a3db3a 100644
 -    .line 58
 -    :goto_0
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
--
++    :cond_ipp_clamp
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getItemCount()I
+ 
 -    invoke-direct {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->positionIsValid(I)Z
--
++    move-result v1
+ 
 -    move-result p2
--
++    add-int/lit8 v1, v1, -0x1
+ 
 -    if-eqz p2, :cond_2
--
++    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+ 
 -    .line 59
++    :cond_0
 +    # ipp: one Wheel.follow instead of the stock tail -- a notify per click (a layout pass over
 +    # every visible row) plus an animation the wheel outruns. As on the music side of this class.
      iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
@@ -64003,37 +64228,58 @@ index 33d41dd3..b2a3db3a 100644
      return-void
  .end method
  
-@@ -1052,37 +1026,10 @@
-     iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+@@ -1046,43 +1034,36 @@
  
-     :cond_0
--    if-eqz p2, :cond_1
+     if-gez v1, :cond_0
+ 
+-    const/4 v1, 0x0
 -
+-    .line 65
+-    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
++    # ipp: loop scrolling -- before the first row comes the last
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
+ 
+-    :cond_0
+-    if-eqz p2, :cond_1
++    move-result v1
+ 
 -    .line 67
 -    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
--
++    if-eqz v1, :cond_ipp_clamp
+ 
 -    .line 68
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
--
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getItemCount()I
+ 
 -    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
--
++    move-result v1
+ 
 -    goto :goto_0
--
++    add-int/lit8 v1, v1, -0x1
+ 
 -    .line 69
 -    :cond_1
 -    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyDataSetChanged()V
--
++    if-ltz v1, :cond_ipp_clamp
+ 
 -    .line 70
 -    :goto_0
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
--
++    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+ 
 -    invoke-direct {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->positionIsValid(I)Z
--
++    goto :cond_0
+ 
 -    move-result p2
--
++    :cond_ipp_clamp
++    const/4 v1, 0x0
+ 
 -    if-eqz p2, :cond_2
--
++    .line 65
++    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+ 
 -    .line 71
++    :cond_0
 +    # ipp: the same replacement as in toNext above.
      iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
  
@@ -67836,7 +68082,7 @@ index 0e9f1efd..ff9e4d31 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-index a813f690..f224d9da 100644
+index a813f690..4c7f07b9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 @@ -468,6 +468,21 @@
@@ -67961,7 +68207,38 @@ index a813f690..f224d9da 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      sub-int/2addr p1, v1
-@@ -1035,11 +1090,22 @@
+@@ -1013,6 +1068,30 @@
+ 
+     if-gez p1, :cond_b
+ 
++    # ipp: loop scrolling -- before the first entry comes the last
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp
++
++    iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->subs:Ljava/util/List;
++
++    invoke-interface {p1}, Ljava/util/List;->size()I
++
++    move-result p1
++
++    iget-boolean p2, p0, Lcom/innioasis/y1/utils/PhotosDialog;->isD:Z
++
++    invoke-static {p1, p2}, Lcom/innioasis/ipp/Loop;->lastOfStrip(IZ)I
++
++    move-result p1
++
++    iput p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
++
++    goto :cond_b
++
++    :cond_ipp_clamp
+     .line 125
+     iput v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
+ 
+@@ -1035,11 +1114,22 @@
  
      .line 131
      :cond_d
@@ -67986,7 +68263,7 @@ index a813f690..f224d9da 100644
  
      goto :goto_5
  
-@@ -1081,20 +1147,31 @@
+@@ -1081,20 +1171,31 @@
      if-eqz p1, :cond_12
  
      .line 136
@@ -67997,12 +68274,12 @@ index a813f690..f224d9da 100644
 +    invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
 +
 +    move-result-object p2
- 
--    iput v1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
++
 +    iget-object p2, p2, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->setWallpaper:Landroidx/cardview/widget/CardView;
 +
 +    invoke-static {p2, p1}, Lcom/innioasis/ipp/Photos;->popupNext(Landroidx/cardview/widget/CardView;I)I
-+
+ 
+-    iput v1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
 +    move-result p1
 +
 +    iput p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
@@ -68021,7 +68298,28 @@ index a813f690..f224d9da 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      add-int/2addr p1, v1
-@@ -1155,11 +1232,20 @@
+@@ -1110,6 +1211,20 @@
+ 
+     if-lt p1, p2, :cond_13
+ 
++    # ipp: loop scrolling -- past the last entry comes the first
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp2
++
++    const/4 p1, 0x0
++
++    iput p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
++
++    goto :cond_13
++
++    :cond_ipp_clamp2
+     iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->subs:Ljava/util/List;
+ 
+     invoke-interface {p1}, Ljava/util/List;->size()I
+@@ -1155,11 +1270,20 @@
  
      .line 151
      :cond_16
@@ -68094,10 +68392,33 @@ index 1e05f275..668ad554 100644
      int-to-float v3, v3
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-index 97739f51..211140bc 100644
+index 97739f51..5f13fa79 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-@@ -136,11 +136,11 @@
+@@ -78,6 +78,22 @@
+ 
+     move-result-wide v0
+ 
++    # ipp: the click this burst follows went round the end of a list (loop scrolling) -- no
++    # extra steps after it, and the acceleration starts over from one row per click.
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->takeWrap()Z
++
++    move-result v2
++
++    if-eqz v2, :cond_ipp_nowrap
++
++    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
++
++    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->lastClockwiseTime:J
++
++    return-void
++
++    :cond_ipp_nowrap
++
+     .line 24
+     sget-object v2, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -136,11 +152,11 @@
  
      if-lez v2, :cond_1
  
@@ -68114,6 +68435,26 @@ index 97739f51..211140bc 100644
      .line 28
      iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
  
+@@ -210,6 +226,19 @@
+     .line 34
+     invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
+ 
++    # ipp: a step of this burst went round the end of a list -- stop here and start over
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->takeWrap()Z
++
++    move-result v3
++
++    if-eqz v3, :cond_ipp_go
++
++    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
++
++    goto :cond_2
++
++    :cond_ipp_go
++
+     add-int/lit8 v5, v5, 0x1
+ 
+     goto :goto_1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali b/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
 index a8d4851e..a19a56b8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
@@ -68350,7 +68691,7 @@ index 8ef242b7..2e47ed1c 100644
  
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
-index 5308bc70..c317d05f 100644
+index 5308bc70..e81e18f0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
 @@ -235,6 +235,9 @@
@@ -68373,7 +68714,24 @@ index 5308bc70..c317d05f 100644
      return-void
  .end method
  
-@@ -476,5 +482,8 @@
+@@ -433,6 +439,16 @@
+ .method public final onClockwise()V
+     .locals 2
+ 
++    # ipp: loop scrolling has just put the cursor on this row from the last track -- keep it
++    invoke-static {p0}, Lcom/innioasis/ipp/Loop;->keep(Lcom/innioasis/y1/view/ShufflePlaylistItemView;)Z
++
++    move-result v0
++
++    if-eqz v0, :cond_ipp_loop
++
++    return-void
++
++    :cond_ipp_loop
+     const/4 v0, 0x0
+ 
+     .line 35
+@@ -476,5 +492,8 @@
      .line 80
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->setVisibility(I)V
  
@@ -68422,7 +68780,7 @@ index 0786d179..963cc118 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
-index 907229c3..861e76ff 100644
+index 907229c3..386bede2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ThemeOptionsDialog.smali
 @@ -313,6 +313,9 @@
@@ -68435,6 +68793,56 @@ index 907229c3..861e76ff 100644
      .line 68
      invoke-direct {p0}, Lcom/innioasis/y1/view/ThemeOptionsDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
  
+@@ -554,6 +557,28 @@
+ 
+     if-gez p1, :cond_6
+ 
++    # ipp: loop scrolling -- before the first entry comes the last
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp
++
++    iget-object p1, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog;->subs:Ljava/util/List;
++
++    invoke-interface {p1}, Ljava/util/List;->size()I
++
++    move-result p1
++
++    add-int/lit8 p1, p1, -0x1
++
++    if-ltz p1, :cond_ipp_clamp
++
++    iput p1, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog;->nowPosition:I
++
++    goto :cond_6
++
++    :cond_ipp_clamp
+     .line 94
+     iput v0, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog;->nowPosition:I
+ 
+@@ -630,6 +655,20 @@
+ 
+     if-lt p1, p2, :cond_c
+ 
++    # ipp: loop scrolling -- past the last entry comes the first
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp2
++
++    const/4 p1, 0x0
++
++    iput p1, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog;->nowPosition:I
++
++    goto :cond_c
++
++    :cond_ipp_clamp2
+     iget-object p1, p0, Lcom/innioasis/y1/view/ThemeOptionsDialog;->subs:Ljava/util/List;
+ 
+     invoke-interface {p1}, Ljava/util/List;->size()I
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
 index a8dc40f3..328f30f2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/base/BaseActivity.smali
@@ -68499,7 +68907,7 @@ index 858b0ba9..73d098be 100644
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
-index 27f20fbd..9c926e5f 100644
+index 27f20fbd..b9de7b12 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 @@ -507,6 +507,12 @@
@@ -68515,7 +68923,7 @@ index 27f20fbd..9c926e5f 100644
      .line 291
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -971,10 +977,18 @@
+@@ -971,10 +977,33 @@
  
      move-result p1
  
@@ -68529,6 +68937,21 @@ index 27f20fbd..9c926e5f 100644
 +    move-result v0
 +
 +    if-ge p1, v0, :cond_1
++
++    # ipp: loop scrolling -- above the first row of this mode comes its last one
++    invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1;
++
++    move-result-object v3
++
++    invoke-virtual {v3}, Lcom/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1;->getDataListSize()I
++
++    move-result v3
++
++    iget v4, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
++
++    invoke-static {p0, v0, v3, v4}, Lcom/innioasis/ipp/Ebook;->belowFirst(Landroid/app/Activity;III)I
++
++    move-result v0
  
      .line 188
 -    invoke-virtual {p0, v1}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->setMark(I)V
@@ -68536,7 +68959,7 @@ index 27f20fbd..9c926e5f 100644
  
      .line 191
      :cond_1
-@@ -1005,11 +1019,13 @@
+@@ -1005,14 +1034,33 @@
  
      move-result v0
  
@@ -68553,7 +68976,27 @@ index 27f20fbd..9c926e5f 100644
  
      if-lt p1, v0, :cond_3
  
-@@ -1022,11 +1038,12 @@
++    # ipp: loop scrolling -- past the last row of this mode comes its first one. Only PAST it:
++    # landing on the last row itself goes the stock way below.
++    if-eq p1, v0, :cond_ipp_last
++
++    iget v3, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
++
++    invoke-static {p0, v3}, Lcom/innioasis/ipp/Ebook;->pastLast(Landroid/app/Activity;I)I
++
++    move-result v3
++
++    if-ltz v3, :cond_ipp_last
++
++    invoke-virtual {p0, v3}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->setMark(I)V
++
++    goto :cond_3
++
++    :cond_ipp_last
+     .line 179
+     invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1;
+ 
+@@ -1022,11 +1070,12 @@
  
      move-result p1
  
@@ -68569,7 +69012,7 @@ index 27f20fbd..9c926e5f 100644
  
      invoke-virtual {p0, p1}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->setMark(I)V
  
-@@ -1095,6 +1112,12 @@
+@@ -1095,6 +1144,12 @@
  
      iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
  
@@ -68582,7 +69025,7 @@ index 27f20fbd..9c926e5f 100644
      if-ge p1, v0, :cond_5
  
      return v1
-@@ -1111,6 +1134,18 @@
+@@ -1111,6 +1166,18 @@
  
      move-result p1
  
@@ -68601,7 +69044,7 @@ index 27f20fbd..9c926e5f 100644
      if-eqz p1, :cond_8
  
      if-eq p1, v2, :cond_7
-@@ -1389,6 +1424,10 @@
+@@ -1389,6 +1456,10 @@
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
@@ -68613,7 +69056,7 @@ index 27f20fbd..9c926e5f 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833eac..944ef0c0 100644
+index b6833eac..63d803d2 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 @@ -275,6 +275,16 @@
@@ -68645,6 +69088,56 @@ index b6833eac..944ef0c0 100644
 +
      .line 191
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+ 
+@@ -635,6 +651,30 @@
+ 
+     if-gez p1, :cond_1
+ 
++    # ipp: loop scrolling -- above the first file comes the last
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->on()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp
++
++    invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/search/SearchActivity$adapter$2$1;
++
++    move-result-object p1
++
++    invoke-virtual {p1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity$adapter$2$1;->getItemCount()I
++
++    move-result p1
++
++    add-int/lit8 p1, p1, -0x1
++
++    if-ltz p1, :cond_ipp_clamp
++
++    invoke-virtual {p0, p1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->setMark(I)V
++
++    goto :cond_1
++
++    :cond_ipp_clamp
+     .line 130
+     invoke-virtual {p0, v1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->setMark(I)V
+ 
+@@ -688,6 +728,18 @@
+ 
+     if-lt p1, v0, :cond_3
+ 
++    # ipp: loop scrolling -- past the last file comes the first
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->on()Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_clamp2
++
++    invoke-virtual {p0, v1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->setMark(I)V
++
++    goto :cond_3
++
++    :cond_ipp_clamp2
+     .line 120
+     invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/search/SearchActivity$adapter$2$1;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
 index 44054e1a..e68f9019 100644

@@ -55,6 +55,7 @@ public final class Prefs {
         def(Follow.KEY_IDLE, Follow.IDLE_DEFAULT);
         def(Pad.KEY, 1);
         def(AlbumArtists.KEY, 0);
+        def(Loop.KEY, 0);
         // [Metadata]
         def("meta_title", 1);
         def("book_meta_title", 0);           // a chapter's tag is routinely worse than its file name

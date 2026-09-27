@@ -138,6 +138,10 @@ Al abrir la lista en la que está la canción en reproducción, la selección va
 [follow_idle if follow_playing] Retardo de regreso (segundos)
 Determina cuántos segundos después del último giro de la rueda la selección vuelve a la canción que se está reproduciendo.
 
+[loop_scroll] Desplazamiento circular
+Tras la última fila de una lista, la rueda vuelve a la primera, y hacia arriba desde la primera pasa a la última, como en el menú principal. Funciona en todas las listas, menús y galerías.
+En una lista de canciones, la fila Shuffle también forma parte del ciclo.
+
 [fixed_menu_pad] Márgenes de menú corregidos
 Corrige los márgenes del menú principal y de los ajustes.
 

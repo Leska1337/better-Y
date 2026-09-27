@@ -138,6 +138,10 @@ La sélection passe en mode manuel dès que la molette est utilisée. Une fois l
 [follow_idle if follow_playing] Délai de retour (secondes)
 Détermine au bout de combien de secondes, après la dernière rotation de la molette, la sélection revient sur le morceau en cours de lecture.
 
+[loop_scroll] Défilement en boucle
+Après la dernière ligne d'une liste, la molette revient à la première, et en remontant depuis la première elle passe à la dernière, comme dans le menu principal. S'applique à toutes les listes, menus et galeries.
+Dans une liste de morceaux, la ligne Shuffle fait aussi partie de la boucle.
+
 [fixed_menu_pad] Marges de menu corrigées
 Corrige les marges du menu principal et des réglages.
 

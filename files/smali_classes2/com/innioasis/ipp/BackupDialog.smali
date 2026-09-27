@@ -132,13 +132,14 @@
   .line 265
     iget v0, p0, Lcom/innioasis/ipp/BackupDialog;->sel:I
   .line 266
-    add-int/2addr p1, v0
-  .line 267
-    if-ltz p1, :L1
     iget-object v1, p0, Lcom/innioasis/ipp/BackupDialog;->views:[Landroid/view/View;
     array-length v1, v1
-    if-lt p1, v1, :L0
-    goto :L1
+    invoke-static { v0, p1, v1 }, Lcom/innioasis/ipp/Loop;->step(III)I
+    move-result p1
+  .line 267
+    iget v1, p0, Lcom/innioasis/ipp/BackupDialog;->sel:I
+    if-ne p1, v1, :L0
+    return-void
   :L0
   .line 268
     iput p1, p0, Lcom/innioasis/ipp/BackupDialog;->sel:I
@@ -148,9 +149,6 @@
     iget p1, p0, Lcom/innioasis/ipp/BackupDialog;->sel:I
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/BackupDialog;->paint(I)V
   .line 271
-    return-void
-  :L1
-  .line 267
     return-void
 .end method
 

@@ -138,6 +138,10 @@ Beim Öffnen der Liste, in der der gerade laufende Titel steht, springt die Ausw
 [follow_idle if follow_playing] Verzögerung der Rückkehr (Sekunden)
 Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum gerade laufenden Titel zurückkehrt.
 
+[loop_scroll] Endlos-Scrollen
+Nach der letzten Zeile einer Liste kehrt das Rad zur ersten zurück, und von der ersten aufwärts geht es zur letzten – wie im Hauptmenü. Gilt für alle Listen, Menüs und Galerien.
+In einer Titelliste gehört die Zeile Shuffle mit zum Kreis.
+
 [fixed_menu_pad] Korrigierte Menüränder
 Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
 

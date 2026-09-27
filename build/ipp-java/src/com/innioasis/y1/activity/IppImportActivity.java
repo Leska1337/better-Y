@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Help;
+import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Icons;
 import com.innioasis.ipp.M3u;
 import com.innioasis.ipp.PickDialog;
@@ -241,8 +242,8 @@ public final class IppImportActivity extends BaseActivity {
     }
 
     private void moveSel(int dir) {
-        int next = sel + dir;
-        if (next < 0 || next >= rows.length) return;
+        int next = Loop.step(sel, dir, rows.length);
+        if (next == sel) return;
         int old = sel;
         sel = next;
         paintRow(old);

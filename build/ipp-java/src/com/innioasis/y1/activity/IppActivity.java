@@ -33,6 +33,7 @@ import com.innioasis.ipp.Help;
 import com.innioasis.ipp.HelpDialog;
 import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
+import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Pick;
@@ -281,6 +282,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(NUMBER, "alpha_threshold", Alpha.THRESHOLDS.length, Alpha.THRESHOLDS, null));
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
+        l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
 
@@ -781,14 +783,21 @@ public final class IppActivity extends BaseActivity {
             if (selectable(i)) return i;
             i += dir;
         }
+        if (!Loop.wrap()) return from;
+        // Loop scrolling: past the end, the first row of the group from the other end.
+        i = dir > 0 ? 0 : items.size() - 1;
+        while (i != from) {
+            if (selectable(i)) return i;
+            i += dir;
+        }
         return from;
     }
 
-    /** The cursor over the groups; stops at both ends, as the rows do. */
+    /** The cursor over the groups; at the ends it stops, or goes round with loop scrolling. */
     private void moveCat(int dir) {
         int old = catSel;
-        int c = catSel + dir;
-        if (c < 0 || c >= cats.length) return;
+        int c = Loop.step(catSel, dir, cats.length);
+        if (c == old) return;
         catSel = c;
         paintCat(old);
         paintCat(catSel);
