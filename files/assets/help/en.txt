@@ -150,6 +150,13 @@ Worth turning off with themes whose backgrounds are drawn for stock margins — 
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[album_artists] Show Album Artists
+Adds "Album Artists" to the Music menu, right below "{app:artists}".
+
+Albums are grouped by their Album Artist tag. An album without one goes under the first artist of its songs; with no artist at all, under <unknown>. An album always opens whole.
+---
+The first time the section is opened the tag of every album is read, which can take a while on a large library. After that it opens straight away; "{row:cache}" reads the tags in advance.
+
 [[metadata]] Metadata
 
 [meta_title] Song titles from metadata

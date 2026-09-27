@@ -148,6 +148,13 @@ Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, bess
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[album_artists] Albumkünstler anzeigen
+Fügt „Albumkünstler“ zum Musik-Menü hinzu, direkt unter „{app:artists}“.
+
+Alben werden nach ihrem Album-Artist-Tag gruppiert. Ein Album ohne diesen landet beim ersten Künstler seiner Lieder, ganz ohne Künstler unter <unknown>. Ein Album öffnet sich immer vollständig.
+---
+Beim ersten Öffnen wird der Tag jedes Albums gelesen, was bei einer großen Bibliothek dauern kann. Danach öffnet sich der Bereich sofort; „{row:cache}“ liest die Tags im Voraus.
+
 [[metadata]] Metadaten
 
 [meta_title] Songtitel aus Metadaten

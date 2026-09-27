@@ -148,6 +148,13 @@ Corrige les marges du menu principal et des réglages.
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[album_artists] Afficher les artistes d'album
+Ajoute « Artistes d'album » au menu Musique, juste sous « {app:artists} ».
+
+Les albums sont regroupés par leur tag Album Artist. Un album sans ce tag va au premier artiste de ses morceaux et, sans aucun artiste, dans <unknown>. Un album s'ouvre toujours en entier.
+---
+À la première ouverture, le tag de chaque album est lu, ce qui peut prendre du temps sur une grande bibliothèque. Ensuite la section s'ouvre aussitôt ; « {row:cache} » lit les tags à l'avance.
+
 [[metadata]] Métadonnées
 
 [meta_title] Titres des morceaux depuis les métadonnées

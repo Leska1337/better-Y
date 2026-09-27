@@ -9,6 +9,7 @@ import com.innioasis.music.GenresActivity;
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.music.adapter.SubmenuAdapter;
 import com.innioasis.music.data.Genre;
+import com.innioasis.music.util.Other;
 import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
@@ -23,6 +24,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -204,6 +206,9 @@ public final class Artists {
             if (f == null || f.exists()) return;
             seed(f);
             exceptions = null;
+            synchronized (PARTS) {
+                PARTS.clear();
+            }
         } catch (Throwable t) {
             // an unwritable card is not worth a crash on the way into the main menu
         }
@@ -226,8 +231,25 @@ public final class Artists {
      * comma_artists.txt exceptions — to decide which artists the player may hide.
      */
     public static List parts(String raw) {
+        if (raw == null) return new ArrayList();
+        // Memoised per tag: opening an artist splits every tag of the library, and a library has
+        // far fewer distinct tags than songs. Callers only read the list. Dropped with the
+        // exceptions it was split by.
+        synchronized (PARTS) {
+            List had = (List) PARTS.get(raw);
+            if (had != null) return had;
+        }
+        List out = Collections.unmodifiableList(split(raw));
+        synchronized (PARTS) {
+            PARTS.put(raw, out);
+        }
+        return out;
+    }
+
+    private static final HashMap PARTS = new HashMap();
+
+    private static ArrayList split(String raw) {
         ArrayList out = new ArrayList();
-        if (raw == null) return out;
         if (raw.indexOf(SEMI) >= 0) {
             String[] chunks = raw.split(SEMI);
             for (int i = 0; i < chunks.length; i++) {
@@ -263,6 +285,8 @@ public final class Artists {
      * artist are looked up by ({@code getSongsByArtist}), and the list still holds it unchanged.
      */
     public static String rowName(String name, Object adapter) {
+        // a row of Music -> Album Artists: the marker goes, the name stays exactly as written
+        if (AlbumArtists.is(name)) return Other.INSTANCE.unNamed(AlbumArtists.name(name));
         if (name == null || name.indexOf(SEMI) < 0 || !(adapter instanceof MyBaseAdapter)) return name;
         Context c = ((MyBaseAdapter) adapter).getContext();
         if (c instanceof ArtistsActivity || c instanceof GenresActivity) return display(name);
@@ -445,10 +469,16 @@ public final class Artists {
      * @param genre non-null inside the Genres section, where an artist means "in this genre".
      */
     public static List forMenu(String artist, Genre genre) {
+        if (AlbumArtists.is(artist)) return AlbumArtists.songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
         try {
             List split = (genre != null) ? songsInGenre(artist, genre)
                                          : songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
             if (split != null && !split.isEmpty()) return split;
+            // an ordinary artist: the cached table answers without a query (see byTag)
+            if (genre == null) {
+                List cached = byTag(artist, null);
+                if (cached != null && !cached.isEmpty()) return cached;
+            }
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             if (repo != null) {
                 List l = repo.getSongsByArtistSync(artist, 0, genre);
@@ -494,10 +524,11 @@ public final class Artists {
      * artists keep the stock SQL ordering untouched.
      */
     public static List songs(String artist, Y1Repository.SongSortType sortType) {
+        if (AlbumArtists.is(artist)) return AlbumArtists.songs(artist, sortType);
         if (!splitEnabled()) return null;
-        Y1Repository repo = Y1Application.Companion.getY1Repository();
-        if (repo == null) return null;
-        List all = repo.getSongsSync(0);
+        // the cached table, not a fresh getSongsSync: a full read here cost ~0.4 s on every
+        // artist opened, and the cache is dropped by every write to the Song table anyway
+        List all = Albums.allSongs();
         if (all == null) return null;
         String target = norm(artist);
         ArrayList matched = new ArrayList();
@@ -520,7 +551,7 @@ public final class Artists {
     }
 
     /** Java re-implementation of the stock ORDER BY used by getSongsByArtist per sort type. */
-    private static final class SongCmp implements Comparator {
+    static final class SongCmp implements Comparator {
         private final Y1Repository.SongSortType type;
         SongCmp(Y1Repository.SongSortType type) { this.type = type; }
         public int compare(Object oa, Object ob) {

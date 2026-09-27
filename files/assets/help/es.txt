@@ -148,6 +148,13 @@ Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[album_artists] Mostrar artistas del álbum
+Añade «Artistas del álbum» al menú de Música, justo debajo de «{app:artists}».
+
+Los álbumes se agrupan por su etiqueta Album Artist. Un álbum sin ella va con el primer artista de sus canciones y, sin ningún artista, a <unknown>. Un álbum siempre se abre completo.
+---
+La primera vez que se abre la sección se lee la etiqueta de cada álbum, lo que puede tardar con una biblioteca grande. Después se abre al instante; «{row:cache}» lee las etiquetas por adelantado.
+
 [[metadata]] Metadatos
 
 [meta_title] Títulos de canciones de los metadatos

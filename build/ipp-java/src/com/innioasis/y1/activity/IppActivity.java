@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.innioasis.ipp.AlbumArtist;
+import com.innioasis.ipp.AlbumArtists;
 import com.innioasis.ipp.AlbumInfo;
 import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
@@ -269,6 +270,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
+        l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
 
         // [Metadata] -- what is read out of a tag and what is done with it
         l.add(new Item(HEADER, "metadata", 0, null, null));

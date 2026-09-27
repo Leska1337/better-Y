@@ -91,7 +91,8 @@ public final class Albums {
 
     public static String realName(String s) {
         if (s == null) return null;
-        if (isAllSongs(s) || isGenreAll(s)) return s.substring(1);   // the flat list's title bar
+        // the flat list's title bar; an album artist's row carries a marker of its own under ours
+        if (isAllSongs(s) || isGenreAll(s)) return AlbumArtists.name(s.substring(1));
         int i = s.indexOf(SEP);
         return i < 0 ? s : s.substring(0, i);
     }
@@ -1004,6 +1005,8 @@ public final class Albums {
     private static ArrayList onlyScoped(ArrayList matched) {
         String a = scope;
         if (a == null || matched.isEmpty() || !scopeEnabled()) return matched;
+        // opened from Album Artists: the album is the unit there, guest tracks and all
+        if (AlbumArtists.is(a)) return matched;
         ArrayList out = new ArrayList();
         for (int i = 0; i < matched.size(); i++) {
             Song s = (Song) matched.get(i);

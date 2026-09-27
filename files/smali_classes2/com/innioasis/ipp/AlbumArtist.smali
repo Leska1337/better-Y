@@ -6,6 +6,8 @@
 
 .field private static dirty:Z
 
+.field private static gen:I
+
 .field private static loaded:Z
 
 .field private final static map:Ljava/util/HashMap;
@@ -26,53 +28,67 @@
     return-void
 .end method
 
-.method public static clear()V
-  .catchall { :L0 .. :L1 } :L2
-  .registers 2
-  .line 170
-    sget-object v0, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
-    invoke-virtual { v0 }, Ljava/util/HashMap;->clear()V
-  .line 171
-    const/4 v0, 0
-    sput-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
-  .line 172
-    sput-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
+.method public static declared-synchronized clear()V
+  .catchall { :L0 .. :L1 } :L5
+  .catchall { :L1 .. :L2 } :L3
+  .registers 3
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
   :L0
-  .line 174
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
-    move-result-object v0
-  .line 175
-    if-eqz v0, :L1
-    invoke-virtual { v0 }, Ljava/io/File;->exists()Z
-    move-result v1
-    if-eqz v1, :L1
-    invoke-virtual { v0 }, Ljava/io/File;->delete()Z
+  .line 190
+    sget-object v1, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v1 }, Ljava/util/HashMap;->clear()V
+  .line 191
+    const/4 v1, 0
+    sput-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
+  .line 192
+    sput-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
+  .line 193
+    sget v1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
+    add-int/lit8 v1, v1, 1
+    sput v1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
   :L1
-  .line 178
-    goto :L3
+  .line 195
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
+    move-result-object v1
+  .line 196
+    if-eqz v1, :L2
+    invoke-virtual { v1 }, Ljava/io/File;->exists()Z
+    move-result v2
+    if-eqz v2, :L2
+    invoke-virtual { v1 }, Ljava/io/File;->delete()Z
   :L2
-  .line 176
-    move-exception v0
+  .line 199
+    goto :L4
   :L3
-  .line 179
+  .line 197
+    move-exception v1
+  :L4
+  .line 200
+    monitor-exit v0
     return-void
+  :L5
+  .line 189
+    move-exception v1
+    monitor-exit v0
+    throw v1
 .end method
 
 .method private static file()Ljava/io/File;
   .registers 3
-  .line 49
+  .line 60
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 50
+  .line 61
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 51
+  .line 62
     invoke-virtual { v0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v0
-  .line 52
+  .line 63
     if-nez v0, :L1
     goto :L2
   :L1
@@ -85,157 +101,216 @@
 
 .method public static flush()V
   .registers 0
-  .line 156
+  .line 173
     invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->save()V
-  .line 157
+  .line 174
     return-void
 .end method
 
 .method public static forget(Ljava/lang/String;)V
-  .registers 2
-  .line 164
+  .catchall { :L1 .. :L4 } :L3
+  .registers 3
+  .line 181
     if-nez p0, :L0
     return-void
   :L0
-  .line 165
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
-  .line 166
-    sget-object v0, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+  .line 182
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-    invoke-virtual { v0, p0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 183
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
+  :L1
+  .line 184
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
+  .line 185
+    sget-object v1, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v1, p0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-    if-eqz p0, :L1
+    if-eqz p0, :L2
     const/4 p0, 1
     sput-boolean p0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
+    sget v1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
+    add-int/2addr v1, p0
+    sput v1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
     invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->save()V
-  :L1
-  .line 167
+  :L2
+  .line 186
+    monitor-exit v0
+  .line 187
     return-void
+  :L3
+  .line 186
+    move-exception p0
+    monitor-exit v0
+  :L4
+    throw p0
+.end method
+
+.method public static declared-synchronized gen()I
+  .catchall { :L0 .. :L1 } :L2
+  .registers 2
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
+  :L0
+  .line 56
+    sget v1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
+  :L1
+    monitor-exit v0
+    return v1
+  :L2
+  .line 56
+    move-exception v1
+    monitor-exit v0
+    throw v1
 .end method
 
 .method public static get(Ljava/lang/String;)Ljava/lang/String;
-  .registers 2
-  .line 102
+  .catchall { :L1 .. :L3 } :L2
+  .registers 3
+  .line 113
     if-nez p0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 103
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
-  .line 104
-    sget-object v0, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+  .line 115
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-    invoke-virtual { v0, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 116
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
+  :L1
+  .line 117
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
+  .line 118
+    sget-object v1, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v1, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Ljava/lang/String;
+    monitor-exit v0
     return-object p0
+  :L2
+  .line 119
+    move-exception p0
+    monitor-exit v0
+  :L3
+    throw p0
 .end method
 
 .method public static line(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-  .registers 3
-  .line 192
+  .registers 2
+  .line 209
     invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 193
-    if-eqz p0, :L0
-    invoke-virtual { p0 }, Ljava/lang/String;->length()I
-    move-result v0
-    if-lez v0, :L0
-    return-object p0
-  :L0
-  .line 194
-    invoke-static { p1 }, Lcom/innioasis/ipp/Feat;->first(Ljava/lang/String;)Ljava/lang/String;
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtists;->of(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     return-object p0
 .end method
 
-.method private static load()V
-  .catchall { :L1 .. :L5 } :L8
-  .registers 7
-  .line 56
-    sget-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
-    if-eqz v0, :L0
-    return-void
+.method private static declared-synchronized load()V
+  .catchall { :L0 .. :L1 } :L13
+  .catchall { :L3 .. :L4 } :L13
+  .catchall { :L4 .. :L8 } :L11
+  .registers 8
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
   :L0
-  .line 57
-    const/4 v0, 1
-    sput-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
-  :L1
-  .line 59
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
-    move-result-object v0
-  .line 60
-    if-eqz v0, :L7
-    invoke-virtual { v0 }, Ljava/io/File;->exists()Z
-    move-result v1
-    if-nez v1, :L2
-    goto :L7
-  :L2
-  .line 61
-    new-instance v1, Ljava/io/FileInputStream;
-    invoke-direct { v1, v0 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
-  .line 62
-    invoke-virtual { v1 }, Ljava/io/FileInputStream;->available()I
-    move-result v0
-    new-array v0, v0, [B
-  .line 63
-    invoke-virtual { v1, v0 }, Ljava/io/FileInputStream;->read([B)I
-  .line 64
-    invoke-virtual { v1 }, Ljava/io/FileInputStream;->close()V
-  .line 65
-    new-instance v1, Ljava/lang/String;
-    const-string v2, "UTF-8"
-    invoke-direct { v1, v0, v2 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
-    const-string v0, "\n"
-    invoke-virtual { v1, v0 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
-    move-result-object v0
-  .line 66
-    const/4 v1, 0
-    const/4 v2, 0
-  :L3
-    array-length v3, v0
-    if-ge v2, v3, :L6
   .line 67
-    aget-object v3, v0, v2
+    sget-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
+  :L1
+    if-eqz v1, :L2
+    monitor-exit v0
+    return-void
+  :L2
   .line 68
-    const/16 v4, 9
-    invoke-virtual { v3, v4 }, Ljava/lang/String;->indexOf(I)I
-    move-result v4
-  .line 69
-    if-gtz v4, :L4
-    goto :L5
+    const/4 v1, 1
+  :L3
+    sput-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->loaded:Z
   :L4
   .line 70
-    sget-object v5, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
-    invoke-virtual { v3, v1, v4 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
-    move-result-object v6
-    add-int/lit8 v4, v4, 1
-    invoke-virtual { v3, v4 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
-    move-result-object v3
-    invoke-virtual { v5, v6, v3 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
+    move-result-object v1
+  .line 71
+    if-eqz v1, :L10
+    invoke-virtual { v1 }, Ljava/io/File;->exists()Z
+    move-result v2
+    if-nez v2, :L5
+    goto :L10
   :L5
-  .line 66
-    add-int/lit8 v2, v2, 1
-    goto :L3
-  :L6
-  .line 74
-    goto :L9
-  :L7
-  .line 60
-    return-void
-  :L8
   .line 72
-    move-exception v0
-  :L9
+    new-instance v2, Ljava/io/FileInputStream;
+    invoke-direct { v2, v1 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
+  .line 73
+    invoke-virtual { v2 }, Ljava/io/FileInputStream;->available()I
+    move-result v1
+    new-array v1, v1, [B
+  .line 74
+    invoke-virtual { v2, v1 }, Ljava/io/FileInputStream;->read([B)I
   .line 75
+    invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
+  .line 76
+    new-instance v2, Ljava/lang/String;
+    const-string v3, "UTF-8"
+    invoke-direct { v2, v1, v3 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
+    const-string v1, "\n"
+    invoke-virtual { v2, v1 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
+    move-result-object v1
+  .line 77
+    const/4 v2, 0
+    const/4 v3, 0
+  :L6
+    array-length v4, v1
+    if-ge v3, v4, :L9
+  .line 78
+    aget-object v4, v1, v3
+  .line 79
+    const/16 v5, 9
+    invoke-virtual { v4, v5 }, Ljava/lang/String;->indexOf(I)I
+    move-result v5
+  .line 80
+    if-gtz v5, :L7
+    goto :L8
+  :L7
+  .line 81
+    sget-object v6, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v4, v2, v5 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
+    move-result-object v7
+    add-int/lit8 v5, v5, 1
+    invoke-virtual { v4, v5 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual { v6, v7, v4 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  :L8
+  .line 77
+    add-int/lit8 v3, v3, 1
+    goto :L6
+  :L9
+  .line 85
+    goto :L12
+  :L10
+  .line 71
+    monitor-exit v0
     return-void
+  :L11
+  .line 83
+    move-exception v1
+  :L12
+  .line 86
+    monitor-exit v0
+    return-void
+  :L13
+  .line 66
+    move-exception v1
+    monitor-exit v0
+    goto :L15
+  :L14
+    throw v1
+  :L15
+    goto :L14
 .end method
 
 .method public static needsRead(Ljava/lang/String;)Z
   .registers 1
-  .line 109
+  .line 124
     if-eqz p0, :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
@@ -249,17 +324,16 @@
 .end method
 
 .method public static put(Ljava/lang/String;Ljava/lang/String;)V
-  .registers 3
-  .line 142
+  .catchall { :L3 .. :L6 } :L5
+  .registers 4
+  .line 153
     if-nez p0, :L0
     return-void
   :L0
-  .line 143
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
-  .line 144
-    sget-object v0, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+  .line 154
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
+  .line 155
     if-nez p1, :L1
     const-string p1, ""
     goto :L2
@@ -267,156 +341,192 @@
     invoke-virtual { p1 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object p1
   :L2
-    invoke-virtual { v0, p0, p1 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 145
+  .line 156
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
+  :L3
+  .line 157
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
+  .line 158
+    sget-object v1, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v1, p0, p1 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object p0
+    invoke-virtual { p1, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p0
+    if-eqz p0, :L4
+    monitor-exit v0
+    return-void
+  :L4
+  .line 159
     const/4 p0, 1
     sput-boolean p0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
-  .line 146
+  .line 160
+    sget p1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
+    add-int/2addr p1, p0
+    sput p1, Lcom/innioasis/ipp/AlbumArtist;->gen:I
+  .line 161
+    monitor-exit v0
+  .line 162
     return-void
+  :L5
+  .line 161
+    move-exception p0
+    monitor-exit v0
+  :L6
+    throw p0
 .end method
 
 .method public static read(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-  .registers 5
-  .line 118
+  .registers 4
+  .line 133
     const-string v0, ""
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 119
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->load()V
-  .line 121
-    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object p0
-  .line 122
-    sget-object v1, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
-    invoke-virtual { v1, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object v2
-    check-cast v2, Ljava/lang/String;
-  .line 123
-    if-eqz v2, :L1
-    return-object v2
+  .line 134
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v1
+  .line 135
+    if-eqz v1, :L1
+    return-object v1
   :L1
-  .line 124
+  .line 137
     nop
-  .line 125
+  .line 138
     if-eqz p1, :L2
-  .line 126
-    const/4 v2, 0
-    invoke-static { p1, v2 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
+  .line 139
+    const/4 v1, 0
+    invoke-static { p1, v1 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
     move-result-object p1
     iget-object p1, p1, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-  .line 127
+  .line 140
     if-eqz p1, :L2
     invoke-virtual { p1 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v0
   :L2
-  .line 129
-    invoke-virtual { v1, p0, v0 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 130
-    const/4 p0, 1
-    sput-boolean p0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
-  .line 131
+  .line 142
+    invoke-static { p0, v0 }, Lcom/innioasis/ipp/AlbumArtist;->put(Ljava/lang/String;Ljava/lang/String;)V
+  .line 143
     return-object v0
 .end method
 
 .method public static readAndSave(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 149
+  .line 166
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtist;->read(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 150
+  .line 167
     invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->save()V
-  .line 151
+  .line 168
     return-object p0
 .end method
 
-.method private static save()V
-  .catchall { :L0 .. :L5 } :L6
-  .registers 8
-  .line 78
-    sget-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
-    if-nez v0, :L0
-    return-void
+.method private static declared-synchronized save()V
+  .catchall { :L0 .. :L1 } :L11
+  .catchall { :L2 .. :L3 } :L9
+  .catchall { :L4 .. :L8 } :L9
+  .registers 9
+    const-class v0, Lcom/innioasis/ipp/AlbumArtist;
+    monitor-enter v0
   :L0
-  .line 80
-    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
-    move-result-object v0
-  .line 81
-    if-nez v0, :L1
-    return-void
+  .line 89
+    sget-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
   :L1
-  .line 82
-    new-instance v1, Ljava/lang/StringBuilder;
-    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 83
-    sget-object v2, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
-    invoke-virtual { v2 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
-    move-result-object v2
-    invoke-interface { v2 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
-    move-result-object v2
+    if-nez v1, :L2
+    monitor-exit v0
+    return-void
   :L2
-  .line 84
-    invoke-interface { v2 }, Ljava/util/Iterator;->hasNext()Z
-    move-result v3
-    if-eqz v3, :L4
-  .line 85
-    invoke-interface { v2 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
+  .line 91
+    invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->file()Ljava/io/File;
+    move-result-object v1
+  :L3
+  .line 92
+    if-nez v1, :L4
+    monitor-exit v0
+    return-void
+  :L4
+  .line 93
+    new-instance v2, Ljava/lang/StringBuilder;
+    invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
+  .line 94
+    sget-object v3, Lcom/innioasis/ipp/AlbumArtist;->map:Ljava/util/HashMap;
+    invoke-virtual { v3 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
     move-result-object v3
-    check-cast v3, Ljava/util/Map$Entry;
-  .line 86
-    invoke-interface { v3 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
+    invoke-interface { v3 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
+    move-result-object v3
+  :L5
+  .line 95
+    invoke-interface { v3 }, Ljava/util/Iterator;->hasNext()Z
+    move-result v4
+    if-eqz v4, :L7
+  .line 96
+    invoke-interface { v3 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
+    move-result-object v4
+    check-cast v4, Ljava/util/Map$Entry;
+  .line 97
+    invoke-interface { v4 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
+    move-result-object v5
+    check-cast v5, Ljava/lang/String;
+  .line 98
+    invoke-interface { v4 }, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/lang/String;
-  .line 87
-    invoke-interface { v3 }, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
-    move-result-object v3
-    check-cast v3, Ljava/lang/String;
-  .line 88
-    if-eqz v4, :L2
-    if-eqz v3, :L2
-    const/16 v5, 9
-    invoke-virtual { v4, v5 }, Ljava/lang/String;->indexOf(I)I
-    move-result v6
-    if-gez v6, :L2
-    const/16 v6, 10
-    invoke-virtual { v3, v6 }, Ljava/lang/String;->indexOf(I)I
+  .line 99
+    if-eqz v5, :L5
+    if-eqz v4, :L5
+    const/16 v6, 9
+    invoke-virtual { v5, v6 }, Ljava/lang/String;->indexOf(I)I
     move-result v7
-    if-ltz v7, :L3
-    goto :L2
-  :L3
-  .line 89
-    invoke-virtual { v1, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v4
-    invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-    move-result-object v4
-    invoke-virtual { v4, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    invoke-virtual { v3, v6 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 90
-    goto :L2
-  :L4
-  .line 91
-    new-instance v2, Ljava/io/FileOutputStream;
-    invoke-direct { v2, v0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
-  .line 92
-    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v0
-    const-string v1, "UTF-8"
-    invoke-virtual { v0, v1 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
-    move-result-object v0
-    invoke-virtual { v2, v0 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 93
-    invoke-virtual { v2 }, Ljava/io/FileOutputStream;->close()V
-  .line 94
-    const/4 v0, 0
-    sput-boolean v0, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
-  :L5
-  .line 97
-    goto :L7
+    if-gez v7, :L5
+    const/16 v7, 10
+    invoke-virtual { v4, v7 }, Ljava/lang/String;->indexOf(I)I
+    move-result v8
+    if-ltz v8, :L6
+    goto :L5
   :L6
-  .line 95
-    move-exception v0
+  .line 100
+    invoke-virtual { v2, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual { v5, v6 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual { v5, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    invoke-virtual { v4, v7 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
+  .line 101
+    goto :L5
   :L7
-  .line 98
+  .line 102
+    new-instance v3, Ljava/io/FileOutputStream;
+    invoke-direct { v3, v1 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
+  .line 103
+    invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
+    const-string v2, "UTF-8"
+    invoke-virtual { v1, v2 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
+    move-result-object v1
+    invoke-virtual { v3, v1 }, Ljava/io/FileOutputStream;->write([B)V
+  .line 104
+    invoke-virtual { v3 }, Ljava/io/FileOutputStream;->close()V
+  .line 105
+    const/4 v1, 0
+    sput-boolean v1, Lcom/innioasis/ipp/AlbumArtist;->dirty:Z
+  :L8
+  .line 108
+    goto :L10
+  :L9
+  .line 106
+    move-exception v1
+  :L10
+  .line 109
+    monitor-exit v0
     return-void
+  :L11
+  .line 88
+    move-exception v1
+    monitor-exit v0
+    goto :L13
+  :L12
+    throw v1
+  :L13
+    goto :L12
 .end method

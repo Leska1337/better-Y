@@ -27,10 +27,10 @@ import java.util.Map;
  * the other caches in the app's cache dir, so "Clear cache" wipes it with the rest, and
  * "Cache library" fills it in the same pass that fills the covers.
  *
- * What the toggle does and does not touch
- * "Show only the first artist" splits a multi-artist tag — it must not touch an album artist,
- * which is a single deliberate value ("Various Artists" is not two artists). So {@link #line} uses
- * the album artist as it stands and only falls back to {@link Feat#artist} when there is none.
+ * What is never done to it
+ * An album artist is a single deliberate value ("Various Artists" is not two artists), so it is
+ * never split and no setting rewrites it; {@link #line} falls back to the track's own tag only
+ * when there is none.
  *
  * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
  */
@@ -45,6 +45,17 @@ public final class AlbumArtist {
 
     private static final char SEP = '\t';
 
+    /**
+     * Bumped on every change of an answer, so the Album Artists grouping knows when to regroup.
+     * Everything touching the map is synchronized: album rows read it on their own threads while
+     * that screen fills it from its workers.
+     */
+    private static int gen;
+
+    public static synchronized int gen() {
+        return gen;
+    }
+
     private static File file() {
         Context c = Y1Application.Companion.getAppContext();
         if (c == null) return null;
@@ -52,7 +63,7 @@ public final class AlbumArtist {
         return d == null ? null : new File(d, "ipp_albumartist.txt");
     }
 
-    private static void load() {
+    private static synchronized void load() {
         if (loaded) return;
         loaded = true;
         try {
@@ -74,7 +85,7 @@ public final class AlbumArtist {
         }
     }
 
-    private static void save() {
+    private static synchronized void save() {
         if (!dirty) return;
         try {
             File f = file();
@@ -100,8 +111,12 @@ public final class AlbumArtist {
     /** The cached album artist: the tag, "" when the file has none, null when never read. */
     public static String get(String key) {
         if (key == null) return null;
-        load();
-        return (String) map.get(Albums.coverKey(key));
+        // same key for the same album whichever screen asked -- see Albums.coverKey
+        String k = Albums.coverKey(key);
+        synchronized (AlbumArtist.class) {
+            load();
+            return (String) map.get(k);
+        }
     }
 
     /** True while this album's tag has not been looked at yet — i.e. it is worth a background read. */
@@ -116,22 +131,18 @@ public final class AlbumArtist {
      */
     public static String read(String key, String path) {
         if (key == null) return "";
-        load();
-        // same key for the same album whichever screen asked -- see Albums.coverKey
-        key = Albums.coverKey(key);
-        String cached = (String) map.get(key);
+        String cached = get(key);
         if (cached != null) return cached;
+        // the file is opened outside the lock: rows bound on the UI thread ask get() meanwhile
         String v = "";
         if (path != null) {
             String s = Meta.read(path, false).albumArtist;
             if (s != null) v = s.trim();
         }
-        map.put(key, v);
-        dirty = true;
+        put(key, v);
         return v;
     }
 
-    /** Read + write the file straight away; for the one-album-at-a-time background path. */
     /**
      * Record one album's ALBUM ARTIST from a tag the caller has already read — "Cache library"
      * takes the album artist, the year and the thumbnail out of a single {@code setDataSource}, and
@@ -140,11 +151,17 @@ public final class AlbumArtist {
      */
     public static void put(String key, String tag) {
         if (key == null) return;
-        load();
-        map.put(Albums.coverKey(key), tag == null ? "" : tag.trim());
-        dirty = true;
+        String k = Albums.coverKey(key);
+        String v = tag == null ? "" : tag.trim();
+        synchronized (AlbumArtist.class) {
+            load();
+            if (v.equals(map.put(k, v))) return;
+            dirty = true;
+            gen++;
+        }
     }
 
+    /** Read + write the file straight away; for the one-album-at-a-time background path. */
     public static String readAndSave(String key, String path) {
         String v = read(key, path);
         save();
@@ -162,14 +179,18 @@ public final class AlbumArtist {
      */
     public static void forget(String key) {
         if (key == null) return;
-        load();
-        if (map.remove(Albums.coverKey(key)) != null) { dirty = true; save(); }
+        String k = Albums.coverKey(key);
+        synchronized (AlbumArtist.class) {
+            load();
+            if (map.remove(k) != null) { dirty = true; gen++; save(); }
+        }
     }
 
-    public static void clear() {
+    public static synchronized void clear() {
         map.clear();
         loaded = false;
         dirty = false;
+        gen++;
         try {
             File f = file();
             if (f != null && f.exists()) f.delete();
@@ -179,18 +200,12 @@ public final class AlbumArtist {
     }
 
     /**
-     * The artist line of an album row: the album artist when the file has one, otherwise the
-     * track's own artist tag put through the "Show only the first artist" setting (which knows
-     * about the "; "-over-", " priority and the comma_artists.txt exceptions).
-     *
-     * {@link Feat#first}, not {@code Feat.artist} — this line is shown as the tag is written, so
-     * the "; " -> ", " substitution is deliberately not applied to it. It is the one artist line that
-     * is not an artist of the library: it never becomes a row of the Artists list and is never
-     * split, so there is nothing here for that substitution to make consistent.
+     * The artist line of an album row — {@link AlbumArtists#of}, the very name the album is filed
+     * under in Music → Album Artists: the album artist as written, else the first artist of the
+     * track's own tag, else {@code Constant.UNKNOWN}. No setting touches it, or the two screens
+     * could name one album differently.
      */
     public static String line(String key, String tagArtist) {
-        String aa = get(key);
-        if (aa != null && aa.length() > 0) return aa;
-        return Feat.first(tagArtist);
+        return AlbumArtists.of(get(key), tagArtist);
     }
 }

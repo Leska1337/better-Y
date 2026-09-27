@@ -443,7 +443,7 @@ public final class Alpha {
         }
         if (o instanceof Album) return Prefs.albumLabel(((Album) o).getName());
         if (o instanceof Genre) return ((Genre) o).getName();     // the genre list of Genres
-        if (o instanceof String) return (String) o;
+        if (o instanceof String) return AlbumArtists.name((String) o);   // Album Artists rows carry a marker
         return null;
     }
 

@@ -148,6 +148,13 @@
 @img fixed_menu_pad_off.png {Off}
 @img fixed_menu_pad_on.png {On}
 
+[album_artists] 显示专辑艺术家
+在音乐菜单中"{app:artists}"的正下方添加"专辑艺术家"。
+
+专辑按 Album Artist 标签分组。没有该标签的专辑归入其歌曲的第一位艺术家，完全没有艺术家的归入 <unknown>。专辑总是完整打开。
+---
+首次打开时会读取每张专辑的标签，曲库较大时需要一些时间。之后即可立即打开；"{row:cache}"可提前读取标签。
+
 [[metadata]] 元数据
 
 [meta_title] 使用元数据中的歌曲标题

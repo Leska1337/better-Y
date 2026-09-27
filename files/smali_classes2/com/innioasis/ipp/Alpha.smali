@@ -689,7 +689,9 @@
     instance-of p0, p1, Ljava/lang/String;
     if-eqz p0, :L7
     check-cast p1, Ljava/lang/String;
-    return-object p1
+    invoke-static { p1 }, Lcom/innioasis/ipp/AlbumArtists;->name(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
+    return-object p0
   :L7
   .line 447
     const/4 p0, 0

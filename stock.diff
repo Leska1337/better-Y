@@ -30,7 +30,7 @@ index 2c8d26c0..952b0814 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d2ba5635 100644
+index 01b1f730..3db22a21 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -45,7 +45,7 @@ index 01b1f730..d2ba5635 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100020
++  versionCode: 10100023
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -885,10 +885,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..6eb3b3b1 100644
+index 50446006..23251f35 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,513 @@
+@@ -1,417 +1,514 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1818,6 +1818,7 @@ index 50446006..6eb3b3b1 100644
 +    <string name="ipp_pl_view">Ansicht</string>
 +    <string name="ipp_pl_list">Liste</string>
 +    <string name="ipp_pl_grid">Raster</string>
++    <string name="ipp_album_artists">Albumkünstler</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
 index a2f30ff6..7672d71f 100644
@@ -2138,10 +2139,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..94223f57 100644
+index 6f5a555d..744cb874 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,513 @@
+@@ -1,417 +1,514 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3071,12 +3072,13 @@ index 6f5a555d..94223f57 100644
 +    <string name="ipp_pl_view">Vista</string>
 +    <string name="ipp_pl_list">Lista</string>
 +    <string name="ipp_pl_grid">Cuadrícula</string>
++    <string name="ipp_album_artists">Artistas del álbum</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..90231fa2 100644
+index c242cee4..8a45adcb 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,513 @@
+@@ -1,417 +1,514 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4006,12 +4008,13 @@ index c242cee4..90231fa2 100644
 +    <string name="ipp_pl_view">Affichage</string>
 +    <string name="ipp_pl_list">Liste</string>
 +    <string name="ipp_pl_grid">Grille</string>
++    <string name="ipp_album_artists">Artistes d\'album</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..7f57ad66 100644
+index d82ac6bb..ddf7ab0d 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,513 @@
+@@ -1,417 +1,514 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4941,12 +4944,13 @@ index d82ac6bb..7f57ad66 100644
 +    <string name="ipp_pl_view">תצוגה</string>
 +    <string name="ipp_pl_list">רשימה</string>
 +    <string name="ipp_pl_grid">רשת</string>
++    <string name="ipp_album_artists">אומני אלבום</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..8ab6f789 100644
+index f71d0cb1..1f5ca026 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,430 @@
+@@ -1,334 +1,431 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5710,6 +5714,7 @@ index f71d0cb1..8ab6f789 100644
 +    <string name="ipp_pl_view">보기</string>
 +    <string name="ipp_pl_list">목록</string>
 +    <string name="ipp_pl_grid">격자</string>
++    <string name="ipp_album_artists">앨범 아티스트</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
 index d79cf0f6..f925eee4 100644
@@ -5959,10 +5964,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..780c8d07 100644
+index 4c84fd2b..b2055b3f 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,182 @@
+@@ -1,86 +1,183 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6230,12 +6235,13 @@ index 4c84fd2b..780c8d07 100644
 +    <string name="ipp_pl_view">Вид</string>
 +    <string name="ipp_pl_list">Список</string>
 +    <string name="ipp_pl_grid">Сетка</string>
++    <string name="ipp_album_artists">Исполнители альбомов</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..d33f32b7 100644
+index 5665bdd9..cd3d4a78 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,522 @@
+@@ -1,426 +1,523 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7183,6 +7189,7 @@ index 5665bdd9..d33f32b7 100644
 +    <string name="ipp_pl_view">视图</string>
 +    <string name="ipp_pl_list">列表</string>
 +    <string name="ipp_pl_grid">网格</string>
++    <string name="ipp_album_artists">专辑艺术家</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
 index ce849b8e..31964bc2 100644
@@ -8491,10 +8498,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..9152fbc2 100644
+index 803c1e7a..62c1a18f 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5661 @@
+@@ -1,5519 +1,5662 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18593,6 +18600,7 @@ index 803c1e7a..9152fbc2 100644
 +    <public type="string" name="ipp_pl_view" id="0x7f110266" />
 +    <public type="string" name="ipp_pl_list" id="0x7f110267" />
 +    <public type="string" name="ipp_pl_grid" id="0x7f110268" />
++    <public type="string" name="ipp_album_artists" id="0x7f110269" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19676,10 +19684,10 @@ index 803c1e7a..9152fbc2 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..43327d8e 100644
+index 71fe29d0..66484245 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,572 @@
+@@ -1,473 +1,573 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20625,7 +20633,7 @@ index 71fe29d0..43327d8e 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev20</string>
++    <string name="ipp_version">v1.1.0-dev23</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20723,6 +20731,7 @@ index 71fe29d0..43327d8e 100644
 +    <string name="ipp_pl_view">View</string>
 +    <string name="ipp_pl_list">List</string>
 +    <string name="ipp_pl_grid">Grid</string>
++    <string name="ipp_album_artists">Album Artists</string>
 +</resources>
 diff --git a/build/src/res/values/styles.xml b/build/src/res/values/styles.xml
 index fb6efacc..5850e990 100644
@@ -41277,6 +41286,25 @@ index 19a1aba9..7b95f3b7 100644
  
      move-result-object v1
  
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali
+index 74372071..91a5e17b 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali
+@@ -225,6 +225,14 @@
+ 
+     move-result-object p1
+ 
++    # ipp: Music -> Album Artists builds its own rows -- here, on the IO thread behind the
++    # loading dialog, because the first entry reads the album artist of every album
++    iget-object v1, p0, Lcom/innioasis/music/ArtistsActivity$showArtistsList$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
++
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/AlbumArtists;->screenList(Ljava/util/List;Landroid/app/Activity;)Ljava/util/List;
++
++    move-result-object p1
++
+     .line 74
+     invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
 index 2ae0be0f..1771362d 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialog$2.smali
@@ -42167,7 +42195,7 @@ index 9d6806a3..fedb0513 100644
      iget-object v3, v0, Lcom/innioasis/music/ArtistsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
-index dfdea4b6..a0bccb05 100644
+index dfdea4b6..bbb293d8 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
 @@ -759,7 +759,7 @@
@@ -42256,6 +42284,30 @@ index dfdea4b6..a0bccb05 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/music/ArtistsActivity;->startActivity(Landroid/content/Intent;)V
  
      :goto_1
+@@ -1198,6 +1223,11 @@
+ 
+     invoke-static {v0, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
++    # ipp: the same screen serves Music -> Album Artists
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/AlbumArtists;->title(Landroid/app/Activity;Ljava/lang/String;)Ljava/lang/String;
++
++    move-result-object v0
++
+     invoke-virtual {p0, v0}, Lcom/innioasis/music/ArtistsActivity;->setStateBarLeftText(Ljava/lang/String;)V
+ 
+     .line 57
+@@ -1571,6 +1601,11 @@
+ 
+     move-result-object p1
+ 
++    # ipp: Music -> Album Artists builds its own rows (the sort is the one just stored)
++    invoke-static {p1, p0}, Lcom/innioasis/ipp/AlbumArtists;->screenList(Ljava/util/List;Landroid/app/Activity;)Ljava/util/List;
++
++    move-result-object p1
++
+     invoke-virtual {v0, p1}, Lcom/innioasis/music/adapter/MainAdapter;->setItems(Ljava/util/List;)V
+ 
+     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
 index 717ead6e..2102d906 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
@@ -49228,7 +49280,7 @@ index ff3e0fc0..78e07bce 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f6278..1b7e4bfe 100644
+index 132f6278..8a67f293 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 @@ -123,7 +123,7 @@
@@ -49240,8 +49292,16 @@ index 132f6278..1b7e4bfe 100644
  
      .line 51
      invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
-@@ -136,7 +136,7 @@
+@@ -134,9 +134,15 @@
  
+     move-result v0
+ 
++    # ipp: the Album Artists row is opened there; the rows under it are handed back at the
++    # index this switch knows them by (-1 = ours, the switch does nothing)
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/AlbumArtists;->musicPick(Landroid/app/Activity;I)I
++
++    move-result v0
++
      packed-switch v0, :pswitch_data_0
  
 -    goto :goto_0
@@ -49249,7 +49309,7 @@ index 132f6278..1b7e4bfe 100644
  
      .line 80
      :pswitch_0
-@@ -153,7 +153,7 @@
+@@ -153,7 +159,7 @@
      .line 81
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -49258,7 +49318,7 @@ index 132f6278..1b7e4bfe 100644
  
      .line 74
      :pswitch_1
-@@ -169,7 +169,12 @@
+@@ -169,7 +175,12 @@
  
      const-string v1, "now_path"
  
@@ -49272,7 +49332,7 @@ index 132f6278..1b7e4bfe 100644
  
      .line 75
      invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-@@ -262,9 +267,12 @@
+@@ -262,9 +273,12 @@
      .line 55
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -49285,6 +49345,16 @@ index 132f6278..1b7e4bfe 100644
      :pswitch_data_0
      .packed-switch 0x0
          :pswitch_6
+@@ -489,6 +503,9 @@
+ 
+     move-result-object v1
+ 
++    # ipp: "Album Artists" right under Artists, while better-Y shows it
++    invoke-static {v1, p0}, Lcom/innioasis/ipp/AlbumArtists;->musicMenu(Ljava/util/List;Landroid/content/Context;)V
++
+     invoke-virtual {v0, v1}, Lcom/innioasis/music/objects/Constant;->setMainList(Ljava/util/List;)V
+ 
+     .line 30
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 index 943028f8..35f9ff86 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
