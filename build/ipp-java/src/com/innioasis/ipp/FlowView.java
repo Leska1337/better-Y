@@ -147,6 +147,16 @@ public final class FlowView extends View {
 
     public float getSpread() { return spread; }
 
+    private float labels = 1f;
+
+    /** Opacity of the name and artist under the row: 0 while the centre cover is turned over. */
+    public void setLabels(float a) {
+        labels = a;
+        invalidate();
+    }
+
+    public float getLabels() { return labels; }
+
     @Override
     protected void onSizeChanged(int nw, int nh, int ow, int oh) {
         w = nw;
@@ -179,7 +189,7 @@ public final class FlowView extends View {
             }
             Flow.Item it = (Flow.Item) items.get(Math.max(0, Math.min(n - 1, ci)));
             float cx = w / 2f;
-            int ta = (int) (255 * (1f - Math.min(1f, spread * 2f)));
+            int ta = (int) (255 * (1f - Math.min(1f, spread * 2f)) * labels);
             name.setAlpha(ta);
             artist.setAlpha(ta * ARTIST_ALPHA / 255);
             c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),

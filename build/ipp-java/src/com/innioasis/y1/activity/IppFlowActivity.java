@@ -193,8 +193,9 @@ public final class IppFlowActivity extends BaseActivity {
         card.setVisibility(View.VISIBLE);
         flow.hide(i);
         shrunk();
-        panel.setRotationY(-90);
-        card.animate().rotationY(90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
+        panel.setRotationY(90);
+        card.animate().rotationY(-90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
+        labels(0);
     }
 
     /** The panel drawn over the cover's own square, which is where its turn starts and ends. */
@@ -214,13 +215,14 @@ public final class IppFlowActivity extends BaseActivity {
 
     private void flipBack() {
         state = 3;
+        labels(1);
         edgeOn(Flow.FLIP_MS, new Half(this, false));
     }
 
     /** The track list shrinks onto the cover's square and turns edge-on. */
     private void edgeOn(int ms, Runnable end) {
         int ph = flow.getHeight();
-        panel.animate().rotationY(-90).scaleX((float) Flow.S / PANEL_W)
+        panel.animate().rotationY(90).scaleX((float) Flow.S / PANEL_W)
                 .scaleY(ph > 0 ? (float) Flow.S / ph : 1f)
                 .translationY(flow.coverTop() + Flow.S / 2f - ph / 2f)
                 .setDuration(ms).withEndAction(end);
@@ -239,6 +241,7 @@ public final class IppFlowActivity extends BaseActivity {
         panel.setScaleY(1);
         panel.setTranslationY(0);
         trip.animate().cancel();
+        flow.setLabels(1);
         if (!turn || trip.getDrawable() == null) {
             flow.setSpread(0);
             done(0);
@@ -273,6 +276,13 @@ public final class IppFlowActivity extends BaseActivity {
         card.animate().rotationY(0).setDuration(Flow.FLIP_MS).withEndAction(new Done(this, 0));
     }
 
+    /** The name and artist under the row fade out while the cover turns over, and back in. */
+    private void labels(float to) {
+        ObjectAnimator an = ObjectAnimator.ofFloat(flow, "labels", flow.getLabels(), to);
+        an.setDuration(Flow.FLIP_MS);
+        an.start();
+    }
+
     void done(int s) {
         state = s;
         if (s == 0) {
@@ -281,6 +291,7 @@ public final class IppFlowActivity extends BaseActivity {
             trip.setVisibility(View.GONE);
             trip.setImageBitmap(null);
             flow.hide(-1);
+            flow.setLabels(1);
             flipped = -1;
         }
     }
