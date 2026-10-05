@@ -63,7 +63,6 @@ public final class Flow {
             String label = c.getString(R.string.ipp_coverflow);
             if (!list.contains(label)) list.add(0, label);
         } catch (Throwable t) {
-            // the menu stands without it
         }
     }
 
@@ -514,7 +513,6 @@ public final class Flow {
                 }
             }
         } catch (Throwable t) {
-            // the defaults below
         }
         return flat ? new float[] { 10, 50, 230, 345, 115, 172.5f, 0, 0, 0, 15, 0 }
                 : new float[] { 10, 50, 265, 398, 0, 398 / 3f, 20, 0, 0, 0, 0 };
@@ -571,7 +569,6 @@ public final class Flow {
             if (s != null && a instanceof BasePlayerActivity) Cover.instantCover((BasePlayerActivity) a, s.getPath());
             fadeIn(a);
         } catch (Throwable t) {
-            // the player leaves the ordinary way
         }
     }
 
@@ -600,7 +597,6 @@ public final class Flow {
                 }
             }
         } catch (Throwable t) {
-            // shown at once
         }
     }
 

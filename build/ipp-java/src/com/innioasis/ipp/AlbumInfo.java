@@ -12,27 +12,17 @@ import java.util.Map;
 import com.innioasis.y1.Y1Application;
 
 /**
- * What an album row needs but cannot afford to look up while it is being drawn: the artist line and
- * the path of the album's representative song, kept per album key.
- *
- * Filled from the album row's own background thread ({@code AlbumListAdapter$getView$1}) and by
- * "Cache library"; read synchronously by the bind. Persisted as tab-separated lines in
- * {@code ipp_albums.txt} in the app cache dir, so "Clear cache" wipes it along with the others.
- *
- * The key goes through {@link Albums#coverKey} — see {@link #artist(String)}.
- *
- * The map is a raw {@code Hashtable}: raw because a generic field type makes javac emit a class
- * {@code Signature} attribute and the bundled d8 crashes dexing those, and a {@code Hashtable}
- * because its own synchronisation is what lets the drawing thread read while a worker writes. The
- * file is written under the map's monitor ({@link #save()}), which is what stops two workers
- * producing a half-written line.
+ * An album row's artist line and representative song path, per album key, so the bind never
+ * queries. Filled by the row's background thread and "Cache library"; persisted as tab-separated
+ * lines in {@code ipp_albums.txt} in the cache dir. A {@code Hashtable} so the drawing thread can
+ * read while a worker writes; the file is written under its monitor.
  */
 public final class AlbumInfo {
 
     private static final Hashtable map = new Hashtable();
     private static boolean loaded;
 
-    /** A value carrying a tab or a newline would break the line format; such an entry is dropped. */
+    /** A tab or newline would break the line format. */
     private static boolean bad(String s) {
         return s.indexOf('\t') >= 0 || s.indexOf('\n') >= 0;
     }
@@ -49,7 +39,7 @@ public final class AlbumInfo {
         return new File(dir, "ipp_albums.txt");
     }
 
-    /** Reads the file once. The flag is set BEFORE the read, so a failure is not retried per row. */
+    /** The flag is set before the read, so a failure is not retried per row. */
     private static void load() {
         if (loaded) {
             return;
@@ -109,13 +99,8 @@ public final class AlbumInfo {
     }
 
     /**
-     * The album's artist line, or null when nothing has been cached for it.
-     *
-     * ipp: the key is canonicalised first. The Genres screen feeds {@code AlbumListAdapter}
-     * PLAIN album names while the Albums screen feeds folder-encoded ones, so the same
-     * album was cached under two keys — re-read and re-written on entering All Albums under a
-     * genre, even though the Albums screen had already cached it. {@link Albums#coverKey} returns
-     * an encoded name untouched, so the Albums screen pays nothing.
+     * Null when nothing is cached. The key is canonicalised: Genres feeds plain album names,
+     * Albums feeds folder-encoded ones, and both must hit the same entry.
      */
     public static String artist(String album) {
         album = Albums.coverKey(album);
@@ -130,7 +115,7 @@ public final class AlbumInfo {
         return v[0];
     }
 
-    /** The album's representative song path, or null when there is none. Key as in {@link #artist}. */
+    /** Key as in {@link #artist}. */
     public static String path(String album) {
         album = Albums.coverKey(album);
         if (album == null) {
@@ -148,7 +133,7 @@ public final class AlbumInfo {
         return path;
     }
 
-    /** Records both, and writes the file — but only when something actually changed. */
+    /** Writes the file only when something changed. */
     public static void put(String album, String artist, String path) {
         album = Albums.coverKey(album);
         if (album == null) {

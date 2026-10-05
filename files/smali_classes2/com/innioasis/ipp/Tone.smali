@@ -105,29 +105,29 @@
     const-string v3, ".wav"
     aput-object v3, v0, v1
     sput-object v0, Lcom/innioasis/ipp/Tone;->EXT:[Ljava/lang/String;
-  .line 162
+  .line 159
     const-wide/16 v0, -1
     sput-wide v0, Lcom/innioasis/ipp/Tone;->lastDown:J
-  .line 188
+  .line 184
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Tone;->ids:Ljava/util/HashMap;
-  .line 189
+  .line 185
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Tone;->loaded:Ljava/util/HashMap;
-  .line 241
+  .line 236
     const/4 v0, 0
     sput-object v0, Lcom/innioasis/ipp/Tone;->soundFor:Ljava/lang/String;
-  .line 242
+  .line 237
     sput-object v0, Lcom/innioasis/ipp/Tone;->themeFor:Ljava/lang/String;
-  .line 532
+  .line 525
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v1
     invoke-direct { v0, v1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     sput-object v0, Lcom/innioasis/ipp/Tone;->H:Landroid/os/Handler;
-  .line 537
+  .line 530
     new-array v0, v2, [Ljava/lang/String;
     sput-object v0, Lcom/innioasis/ipp/Tone;->options:[Ljava/lang/String;
     return-void
@@ -211,15 +211,15 @@
 
 .method private static adapter(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/base/BaseBindingAdapter;
   .registers 2
-  .line 513
+  .line 506
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;
     iget-object p0, p0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
-  .line 514
+  .line 507
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object p0
-  .line 515
+  .line 508
     instance-of v0, p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     if-eqz v0, :L0
     check-cast p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
@@ -232,10 +232,10 @@
 
 .method private static audio(Ljava/lang/String;)Z
   .registers 5
-  .line 336
+  .line 330
     invoke-virtual { p0 }, Ljava/lang/String;->toLowerCase()Ljava/lang/String;
     move-result-object p0
-  .line 337
+  .line 331
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -252,13 +252,13 @@
     add-int/lit8 v1, v1, 1
     goto :L0
   :L2
-  .line 338
+  .line 332
     return v0
 .end method
 
 .method private static clicks(I)Z
   .registers 2
-  .line 158
+  .line 155
     const/4 v0, 3
     if-eq p0, v0, :L1
     const/16 v0, 82
@@ -289,12 +289,12 @@
 
 .method private static currentSound(Landroid/content/Context;)Ljava/lang/String;
   .registers 4
-  .line 378
+  .line 372
     const-string v0, "key_tone_sound"
     const-string v1, ""
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Prefs;->getString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 379
+  .line 373
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v0
     if-eqz v0, :L2
@@ -304,7 +304,7 @@
     if-eqz v0, :L0
     goto :L2
   :L0
-  .line 380
+  .line 374
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/Tone;->dir()Ljava/io/File;
     move-result-object v2
@@ -316,13 +316,13 @@
   :L1
     return-object v1
   :L2
-  .line 379
+  .line 373
     return-object p0
 .end method
 
 .method private static dir()Ljava/io/File;
   .registers 3
-  .line 276
+  .line 271
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
     move-result-object v1
@@ -335,7 +335,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 9
   :L0
-  .line 638
+  .line 631
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v0
     const-string v1, "setSoundEffectEnabled"
@@ -349,7 +349,7 @@
     aput-object v4, v3, v6
     invoke-virtual { v0, v1, v3 }, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
     move-result-object v0
-  .line 639
+  .line 632
     new-array v1, v2, [Ljava/lang/Object;
     const-string v2, "mtk_audioprofile_general"
     aput-object v2, v1, v5
@@ -358,20 +358,20 @@
     aput-object p1, v1, v6
     invoke-virtual { v0, p0, v1 }, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
   :L1
-  .line 642
+  .line 634
     goto :L3
   :L2
-  .line 640
+  .line 633
     move-exception p0
   :L3
-  .line 643
+  .line 635
     return-void
 .end method
 
 .method private static enabled(Ljava/lang/Object;)Z
   .catchall { :L0 .. :L1 } :L3
   .registers 7
-  .line 628
+  .line 621
     const/4 v0, 0
   :L0
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -383,13 +383,13 @@
     aput-object v5, v4, v0
     invoke-virtual { v1, v2, v4 }, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
     move-result-object v1
-  .line 629
+  .line 622
     new-array v2, v3, [Ljava/lang/Object;
     const-string v4, "mtk_audioprofile_general"
     aput-object v4, v2, v0
     invoke-virtual { v1, p0, v2 }, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 630
+  .line 623
     instance-of v1, p0, Ljava/lang/Boolean;
     if-eqz v1, :L2
     check-cast p0, Ljava/lang/Boolean;
@@ -401,30 +401,30 @@
   :L2
     return v0
   :L3
-  .line 631
+  .line 624
     move-exception p0
-  .line 632
+  .line 625
     return v0
 .end method
 
 .method private static endEdit(Lcom/innioasis/y1/activity/SettingActivity;Z)V
   .registers 6
-  .line 591
+  .line 584
     sget-object v0, Lcom/innioasis/ipp/Tone;->H:Landroid/os/Handler;
     sget-object v1, Lcom/innioasis/ipp/Tone;->blink:Lcom/innioasis/ipp/Tone$Blink;
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 592
+  .line 585
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->rowText(Lcom/innioasis/y1/activity/SettingActivity;)Landroid/widget/TextView;
     move-result-object v0
-  .line 593
+  .line 586
     if-eqz v0, :L0
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setVisibility(I)V
   :L0
-  .line 594
+  .line 587
     const/4 v0, 1
     if-eqz p1, :L2
-  .line 595
+  .line 588
     sget p1, Lcom/innioasis/ipp/Tone;->editRow:I
     if-ne p1, v0, :L1
     const-string p1, "key_tone_volume"
@@ -432,48 +432,48 @@
     invoke-static { p0, p1, v1 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
     goto :L2
   :L1
-  .line 596
+  .line 589
     sget-object p1, Lcom/innioasis/ipp/Tone;->options:[Ljava/lang/String;
     sget v1, Lcom/innioasis/ipp/Tone;->editVal:I
     aget-object p1, p1, v1
     const-string v1, "key_tone_sound"
     invoke-static { p0, v1, p1 }, Lcom/innioasis/ipp/Prefs;->setString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
   :L2
-  .line 598
+  .line 591
     const/4 p1, 0
     sput-object p1, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
-  .line 599
+  .line 592
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->adapter(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/base/BaseBindingAdapter;
     move-result-object p1
-  .line 600
+  .line 593
     if-eqz p1, :L3
-  .line 601
+  .line 594
     invoke-virtual { p1 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object v1
-  .line 602
+  .line 595
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
     move-result v2
-  .line 603
+  .line 596
     if-ltz v2, :L3
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v3
     if-ge v2, v3, :L3
-  .line 604
+  .line 597
     invoke-interface { v1, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
-  .line 605
+  .line 598
     sget v3, Lcom/innioasis/ipp/Tone;->editRow:I
     invoke-static { p0, v3 }, Lcom/innioasis/ipp/Tone;->value(Lcom/innioasis/y1/activity/SettingActivity;I)Ljava/lang/String;
     move-result-object v3
     invoke-virtual { v1, v3 }, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;->setText(Ljava/lang/String;)V
-  .line 606
+  .line 599
     invoke-virtual { p1, v2 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyItemChanged(I)V
   :L3
-  .line 609
+  .line 602
     sget p1, Lcom/innioasis/ipp/Tone;->editRow:I
     if-ne p1, v0, :L4
-  .line 610
+  .line 603
     const p1, 2131821163
     goto :L5
   :L4
@@ -481,15 +481,15 @@
   :L5
     invoke-virtual { p0, p1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object p1
-  .line 609
+  .line 602
     invoke-virtual { p0, p1 }, Lcom/innioasis/y1/activity/SettingActivity;->ippRefreshRight(Ljava/lang/String;)V
-  .line 611
+  .line 604
     return-void
 .end method
 
 .method private static eq(Ljava/lang/String;Ljava/lang/String;)Z
   .registers 2
-  .line 317
+  .line 311
     if-nez p0, :L1
     if-nez p1, :L0
     const/4 p0, 1
@@ -506,7 +506,7 @@
 
 .method private static gain(Landroid/content/Context;I)F
   .registers 2
-  .line 194
+  .line 190
     if-ltz p1, :L0
     goto :L1
   :L0
@@ -514,7 +514,7 @@
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result p1
   :L1
-  .line 195
+  .line 191
     if-ltz p1, :L2
     sget-object p0, Lcom/innioasis/ipp/Tone;->GAIN:[F
     array-length p0, p0
@@ -522,7 +522,7 @@
   :L2
     const/4 p1, 7
   :L3
-  .line 196
+  .line 192
     sget-object p0, Lcom/innioasis/ipp/Tone;->GAIN:[F
     aget p0, p0, p1
     return p0
@@ -531,7 +531,7 @@
 .method public static key(Landroid/view/KeyEvent;)V
   .catchall { :L0 .. :L5 } :L7
   .registers 7
-  .line 171
+  .line 168
     if-eqz p0, :L9
   :L0
     invoke-virtual { p0 }, Landroid/view/KeyEvent;->getAction()I
@@ -542,16 +542,16 @@
     if-eqz v0, :L1
     goto :L9
   :L1
-  .line 172
+  .line 169
     invoke-virtual { p0 }, Landroid/view/KeyEvent;->getKeyCode()I
     move-result v0
-  .line 173
+  .line 170
     invoke-static { v0 }, Lcom/innioasis/ipp/Tone;->clicks(I)Z
     move-result v1
     if-nez v1, :L2
     return-void
   :L2
-  .line 174
+  .line 171
     invoke-virtual { p0 }, Landroid/view/KeyEvent;->getDownTime()J
     move-result-wide v1
     sget-wide v3, Lcom/innioasis/ipp/Tone;->lastDown:J
@@ -561,17 +561,17 @@
     if-ne v0, v1, :L3
     return-void
   :L3
-  .line 175
+  .line 172
     invoke-virtual { p0 }, Landroid/view/KeyEvent;->getDownTime()J
     move-result-wide v1
     sput-wide v1, Lcom/innioasis/ipp/Tone;->lastDown:J
-  .line 176
+  .line 173
     sput v0, Lcom/innioasis/ipp/Tone;->lastKey:I
-  .line 177
+  .line 174
     sget-object p0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { p0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object p0
-  .line 180
+  .line 177
     if-eqz p0, :L6
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result v0
@@ -580,7 +580,7 @@
     if-eqz v0, :L4
     goto :L6
   :L4
-  .line 181
+  .line 178
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->sound(Landroid/content/Context;)Ljava/lang/String;
     move-result-object v0
     const/4 v1, -1
@@ -588,25 +588,25 @@
     move-result p0
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/Tone;->play(Ljava/lang/String;F)V
   :L5
-  .line 184
+  .line 180
     goto :L8
   :L6
-  .line 180
+  .line 177
     return-void
   :L7
-  .line 182
+  .line 179
     move-exception p0
   :L8
-  .line 185
+  .line 181
     return-void
   :L9
-  .line 171
+  .line 168
     return-void
 .end method
 
 .method private static label(Lcom/innioasis/y1/activity/SettingActivity;)Ljava/lang/String;
   .registers 3
-  .line 554
+  .line 547
     sget v0, Lcom/innioasis/ipp/Tone;->editRow:I
     const/4 v1, 1
     if-ne v0, v1, :L0
@@ -628,17 +628,17 @@
 .method private static manager(Landroid/content/Context;)Ljava/lang/Object;
   .catchall { :L0 .. :L1 } :L2
   .registers 4
-  .line 618
+  .line 611
     const/4 v0, 0
   :L0
     const-class v1, Landroid/content/Context;
     const-string v2, "AUDIOPROFILE_SERVICE"
     invoke-virtual { v1, v2 }, Ljava/lang/Class;->getDeclaredField(Ljava/lang/String;)Ljava/lang/reflect/Field;
     move-result-object v1
-  .line 619
+  .line 612
     invoke-virtual { v1, v0 }, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
-  .line 620
+  .line 613
     instance-of v2, v1, Ljava/lang/String;
     if-eqz v2, :L1
     check-cast v1, Ljava/lang/String;
@@ -647,9 +647,9 @@
   :L1
     return-object v0
   :L2
-  .line 621
+  .line 614
     move-exception p0
-  .line 622
+  .line 615
     return-object v0
 .end method
 
@@ -657,25 +657,25 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 148
+  .line 146
     sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result p0
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->setRingtone(Z)V
   :L1
-  .line 151
+  .line 148
     goto :L3
   :L2
-  .line 149
+  .line 147
     move-exception p0
   :L3
-  .line 152
+  .line 149
     return-void
 .end method
 
 .method public static on(Landroid/content/Context;)Z
   .registers 2
-  .line 125
+  .line 123
     const-string v0, "key_tone"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result p0
@@ -684,47 +684,47 @@
 
 .method private static play(Ljava/lang/String;F)V
   .registers 12
-  .line 210
+  .line 206
     if-nez p0, :L0
     return-void
   :L0
-  .line 211
+  .line 207
     sget-object v0, Lcom/innioasis/ipp/Tone;->pool:Landroid/media/SoundPool;
     const/4 v1, 1
     if-nez v0, :L1
-  .line 212
+  .line 208
     new-instance v0, Landroid/media/SoundPool;
     const/4 v2, 4
     const/4 v3, 0
     invoke-direct { v0, v2, v1, v3 }, Landroid/media/SoundPool;-><init>(III)V
     sput-object v0, Lcom/innioasis/ipp/Tone;->pool:Landroid/media/SoundPool;
-  .line 213
+  .line 209
     new-instance v2, Lcom/innioasis/ipp/Tone$Loaded;
     invoke-direct { v2 }, Lcom/innioasis/ipp/Tone$Loaded;-><init>()V
     invoke-virtual { v0, v2 }, Landroid/media/SoundPool;->setOnLoadCompleteListener(Landroid/media/SoundPool$OnLoadCompleteListener;)V
   :L1
-  .line 215
+  .line 211
     sget-object v0, Lcom/innioasis/ipp/Tone;->ids:Ljava/util/HashMap;
     invoke-virtual { v0, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
-  .line 216
+  .line 212
     if-nez v2, :L2
-  .line 217
+  .line 213
     sget-object v2, Lcom/innioasis/ipp/Tone;->pool:Landroid/media/SoundPool;
     invoke-virtual { v2, p0, v1 }, Landroid/media/SoundPool;->load(Ljava/lang/String;I)I
     move-result v1
     invoke-static { v1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v2
-  .line 218
+  .line 214
     invoke-virtual { v0, p0, v2 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L2
-  .line 220
+  .line 216
     sget-object p0, Lcom/innioasis/ipp/Tone;->loaded:Ljava/util/HashMap;
     invoke-virtual { p0, v2 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     if-eqz p0, :L3
-  .line 221
+  .line 217
     sget-object v3, Lcom/innioasis/ipp/Tone;->pool:Landroid/media/SoundPool;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v4
@@ -738,90 +738,90 @@
     sput p0, Lcom/innioasis/ipp/Tone;->previewStream:I
     goto :L4
   :L3
-  .line 223
+  .line 219
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Tone;->pending:I
-  .line 224
+  .line 220
     sput p1, Lcom/innioasis/ipp/Tone;->pendingGain:F
   :L4
-  .line 226
+  .line 222
     return-void
 .end method
 
 .method private static preview(Ljava/lang/String;F)V
   .registers 4
-  .line 204
+  .line 199
     sget-object v0, Lcom/innioasis/ipp/Tone;->pool:Landroid/media/SoundPool;
     if-eqz v0, :L0
     sget v1, Lcom/innioasis/ipp/Tone;->previewStream:I
     if-eqz v1, :L0
     invoke-virtual { v0, v1 }, Landroid/media/SoundPool;->stop(I)V
   :L0
-  .line 205
+  .line 200
     const/4 v0, 0
     sput v0, Lcom/innioasis/ipp/Tone;->previewStream:I
-  .line 206
+  .line 201
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->play(Ljava/lang/String;F)V
-  .line 207
+  .line 202
     return-void
 .end method
 
 .method private static rebuild(Lcom/innioasis/y1/activity/SettingActivity;)V
   .registers 3
-  .line 520
+  .line 513
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->adapter(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/base/BaseBindingAdapter;
     move-result-object v0
-  .line 521
+  .line 514
     if-nez v0, :L0
     return-void
   :L0
-  .line 522
+  .line 515
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 523
+  .line 516
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Tone;->settingsRows(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
-  .line 524
+  .line 517
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->setList(Ljava/util/Collection;)V
-  .line 525
+  .line 518
     const/4 v0, 0
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->setMark(I)V
-  .line 526
+  .line 519
     const v0, 2131820926
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->ippRefreshRight(Ljava/lang/String;)V
-  .line 527
+  .line 520
     return-void
 .end method
 
 .method private static resolve(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 7
-  .line 259
+  .line 254
     nop
-  .line 260
+  .line 255
     const-string v0, "\u0001theme"
     invoke-virtual { v0, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     const/4 v1, 0
     if-eqz v0, :L3
-  .line 261
+  .line 256
     if-eqz p1, :L4
     invoke-virtual { p1 }, Ljava/lang/String;->length()I
     move-result p0
     if-lez p0, :L4
-  .line 262
+  .line 257
     new-instance p0, Ljava/io/File;
     const-string v0, "/storage/sdcard0/Themes"
     invoke-direct { p0, v0, p1 }, Ljava/io/File;-><init>(Ljava/lang/String;Ljava/lang/String;)V
-  .line 263
+  .line 258
     const/4 p1, 0
   :L0
     sget-object v0, Lcom/innioasis/ipp/Tone;->EXT:[Ljava/lang/String;
     array-length v2, v0
     if-ge p1, v2, :L2
     if-nez v1, :L2
-  .line 264
+  .line 259
     new-instance v2, Ljava/io/File;
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
@@ -834,35 +834,35 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     invoke-direct { v2, p0, v0 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 265
+  .line 260
     invoke-virtual { v2 }, Ljava/io/File;->isFile()Z
     move-result v0
     if-eqz v0, :L1
     move-object v1, v2
   :L1
-  .line 263
+  .line 258
     add-int/lit8 p1, p1, 1
     goto :L0
   :L2
-  .line 267
+  .line 262
     goto :L4
   :L3
-  .line 268
+  .line 263
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result p1
     if-lez p1, :L4
-  .line 269
+  .line 264
     new-instance p1, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/Tone;->dir()Ljava/io/File;
     move-result-object v0
     invoke-direct { p1, v0, p0 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 270
+  .line 265
     invoke-virtual { p1 }, Ljava/io/File;->isFile()Z
     move-result p0
     if-eqz p0, :L4
     move-object v1, p1
   :L4
-  .line 272
+  .line 267
     if-eqz v1, :L5
     invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
@@ -875,7 +875,7 @@
 
 .method private static rowOf(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)I
   .registers 3
-  .line 359
+  .line 353
     const v0, 2131820926
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
@@ -885,7 +885,7 @@
     const/4 p0, 0
     return p0
   :L0
-  .line 360
+  .line 354
     const v0, 2131821163
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
@@ -895,7 +895,7 @@
     const/4 p0, 1
     return p0
   :L1
-  .line 361
+  .line 355
     const v0, 2131821164
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object p0
@@ -905,24 +905,24 @@
     const/4 p0, 2
     return p0
   :L2
-  .line 362
+  .line 356
     const/4 p0, -1
     return p0
 .end method
 
 .method private static rowText(Lcom/innioasis/y1/activity/SettingActivity;)Landroid/widget/TextView;
   .registers 2
-  .line 571
+  .line 564
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;
     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
-  .line 572
+  .line 565
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
     move-result p0
     invoke-virtual { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;->findViewHolderForAdapterPosition(I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
     move-result-object p0
-  .line 573
+  .line 566
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -938,7 +938,7 @@
 
 .method private static section(Lcom/innioasis/y1/activity/SettingActivity;)Z
   .registers 3
-  .line 351
+  .line 345
     const/4 v0, 0
     if-eqz p0, :L0
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getIntent()Landroid/content/Intent;
@@ -967,14 +967,14 @@
   .catchall { :L28 .. :L29 } :L30
   .catchall { :L32 .. :L33 } :L34
   .registers 6
-  .line 288
+  .line 283
     new-instance v0, Ljava/io/File;
     const-string v1, "/storage/sdcard0"
     invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
-  .line 289
+  .line 284
     invoke-static { }, Lcom/innioasis/ipp/Tone;->dir()Ljava/io/File;
     move-result-object v1
-  .line 290
+  .line 285
     invoke-virtual { v0 }, Ljava/io/File;->canWrite()Z
     move-result v0
     if-eqz v0, :L36
@@ -986,15 +986,15 @@
     if-nez v0, :L0
     goto :L36
   :L0
-  .line 291
+  .line 286
     nop
-  .line 292
+  .line 287
     nop
-  .line 293
+  .line 288
     new-instance v0, Ljava/io/File;
     const-string v2, "better-Y.mp3"
     invoke-direct { v0, v1, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 295
+  .line 290
     const/4 v1, 0
   :L1
     invoke-virtual { p0 }, Landroid/content/Context;->getAssets()Landroid/content/res/AssetManager;
@@ -1002,16 +1002,16 @@
     invoke-virtual { p0, v2 }, Landroid/content/res/AssetManager;->open(Ljava/lang/String;)Ljava/io/InputStream;
     move-result-object p0
   :L2
-  .line 296
+  .line 291
     new-instance v2, Ljava/io/FileOutputStream;
     invoke-direct { v2, v0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L3
-  .line 297
+  .line 292
     const/16 v1, 8192
   :L4
     new-array v1, v1, [B
   :L5
-  .line 298
+  .line 293
     invoke-virtual { p0, v1 }, Ljava/io/InputStream;->read([B)I
     move-result v3
     if-lez v3, :L7
@@ -1020,7 +1020,7 @@
   :L6
     goto :L5
   :L7
-  .line 302
+  .line 297
     if-eqz p0, :L11
   :L8
     invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
@@ -1029,12 +1029,12 @@
   :L10
     move-exception p0
   :L11
-  .line 303
+  .line 298
     invoke-virtual { v2 }, Ljava/io/OutputStream;->close()V
   :L12
     goto :L26
   :L13
-  .line 299
+  .line 294
     move-exception v1
     goto :L15
   :L14
@@ -1047,10 +1047,10 @@
     move-exception p0
     move-object v2, v1
   :L17
-  .line 300
+  .line 295
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
   :L18
-  .line 302
+  .line 297
     if-eqz v1, :L22
   :L19
     invoke-virtual { v1 }, Ljava/io/InputStream;->close()V
@@ -1059,7 +1059,7 @@
   :L21
     move-exception p0
   :L22
-  .line 303
+  .line 298
     if-eqz v2, :L26
   :L23
     invoke-virtual { v2 }, Ljava/io/OutputStream;->close()V
@@ -1067,13 +1067,13 @@
     goto :L26
   :L25
     move-exception p0
-  .line 304
+  .line 299
     nop
   :L26
-  .line 305
+  .line 300
     return-void
   :L27
-  .line 302
+  .line 297
     move-exception p0
     if-eqz v1, :L31
   :L28
@@ -1083,7 +1083,7 @@
   :L30
     move-exception v0
   :L31
-  .line 303
+  .line 298
     if-eqz v2, :L35
   :L32
     invoke-virtual { v2 }, Ljava/io/OutputStream;->close()V
@@ -1092,36 +1092,36 @@
   :L34
     move-exception v0
   :L35
-  .line 304
+  .line 299
     throw p0
   :L36
-  .line 290
+  .line 285
     return-void
 .end method
 
 .method public static setOn(Landroid/content/Context;Z)V
   .registers 3
-  .line 130
+  .line 128
     if-nez p0, :L0
     return-void
   :L0
-  .line 131
+  .line 129
     const-string v0, "key_tone"
     invoke-static { p0, v0, p1 }, Lcom/innioasis/ipp/Prefs;->setBool(Landroid/content/Context;Ljava/lang/String;Z)V
-  .line 132
+  .line 130
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->mirror(Landroid/content/Context;)V
-  .line 133
+  .line 131
     return-void
 .end method
 
 .method public static settingsConfirm(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
   .registers 4
-  .line 440
+  .line 434
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->section(Lcom/innioasis/y1/activity/SettingActivity;)Z
     move-result v0
     const/4 v1, 1
     if-nez v0, :L1
-  .line 441
+  .line 435
     const v0, 2131820926
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
@@ -1131,7 +1131,7 @@
     const/4 p0, 0
     return p0
   :L0
-  .line 442
+  .line 436
     new-instance p1, Landroid/content/Intent;
     const-class v0, Lcom/innioasis/y1/activity/SettingActivity;
     invoke-direct { p1, p0, v0 }, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
@@ -1139,60 +1139,60 @@
     invoke-virtual { p1, v0, v1 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
     move-result-object p1
     invoke-virtual { p0, p1 }, Lcom/innioasis/y1/activity/SettingActivity;->startActivity(Landroid/content/Intent;)V
-  .line 443
+  .line 437
     return v1
   :L1
-  .line 445
+  .line 439
     sget-object v0, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
     if-ne v0, p0, :L2
-  .line 446
+  .line 440
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Tone;->endEdit(Lcom/innioasis/y1/activity/SettingActivity;Z)V
-  .line 447
+  .line 441
     return v1
   :L2
-  .line 449
+  .line 443
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->rowOf(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)I
     move-result p1
-  .line 450
+  .line 444
     if-nez p1, :L3
-  .line 451
+  .line 445
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result p1
     xor-int/2addr p1, v1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->setOn(Landroid/content/Context;Z)V
-  .line 452
+  .line 446
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->rebuild(Lcom/innioasis/y1/activity/SettingActivity;)V
     goto :L5
   :L3
-  .line 453
+  .line 447
     if-eq p1, v1, :L4
     const/4 v0, 2
     if-ne p1, v0, :L5
   :L4
-  .line 454
+  .line 448
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->startEdit(Lcom/innioasis/y1/activity/SettingActivity;I)V
   :L5
-  .line 456
+  .line 450
     return v1
 .end method
 
 .method public static settingsPanel(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
   .registers 6
-  .line 461
+  .line 455
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->section(Lcom/innioasis/y1/activity/SettingActivity;)Z
     move-result v0
     if-nez v0, :L0
     const/4 p0, 0
     return p0
   :L0
-  .line 462
+  .line 456
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;
-  .line 463
+  .line 457
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     iget-object v2, v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->rightImage:Landroid/widget/ImageView;
-  .line 464
+  .line 458
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result v3
     if-eqz v3, :L1
@@ -1201,12 +1201,12 @@
   :L1
     const v3, 2131230981
   :L2
-  .line 463
+  .line 457
     invoke-virtual { v1, v2, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->commonSetIcon(Landroid/widget/ImageView;I)V
-  .line 465
+  .line 459
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->rowOf(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)I
     move-result p1
-  .line 466
+  .line 460
     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->infoStateTv:Landroid/widget/TextView;
     sget-object v1, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
     if-ne v1, p0, :L3
@@ -1224,7 +1224,7 @@
     move-result-object p0
   :L5
     invoke-virtual { v0, p0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 467
+  .line 461
     const/4 p0, 1
     return p0
 .end method
@@ -1232,39 +1232,39 @@
 .method public static settingsResume(Lcom/innioasis/y1/activity/SettingActivity;)V
   .catchall { :L0 .. :L3 } :L4
   .registers 5
-  .line 494
+  .line 488
     const v0, 2131820926
   :L0
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
-  .line 495
+  .line 489
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->section(Lcom/innioasis/y1/activity/SettingActivity;)Z
     move-result v1
     if-eqz v1, :L1
-  .line 496
+  .line 490
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->setStateBarLeftText(Ljava/lang/String;)V
-  .line 497
+  .line 491
     return-void
   :L1
-  .line 499
+  .line 493
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->adapter(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/base/BaseBindingAdapter;
     move-result-object v1
-  .line 500
+  .line 494
     if-nez v1, :L2
     return-void
   :L2
-  .line 501
+  .line 495
     invoke-virtual { v1 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object v1
-  .line 502
+  .line 496
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
     move-result v2
-  .line 503
+  .line 497
     if-ltz v2, :L3
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v3
     if-ge v2, v3, :L3
-  .line 504
+  .line 498
     invoke-interface { v1, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
@@ -1273,38 +1273,38 @@
     invoke-virtual { v0, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L3
-  .line 505
+  .line 499
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->ippRefreshRight(Ljava/lang/String;)V
   :L3
-  .line 509
+  .line 502
     goto :L5
   :L4
-  .line 507
+  .line 501
     move-exception p0
   :L5
-  .line 510
+  .line 503
     return-void
 .end method
 
 .method public static settingsRows(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
   .registers 7
-  .line 388
+  .line 382
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->section(Lcom/innioasis/y1/activity/SettingActivity;)Z
     move-result v0
     const v1, 2131820926
     const/4 v2, 1
     const/4 v3, 0
     if-nez v0, :L3
-  .line 390
+  .line 384
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object p0
-  .line 391
+  .line 385
     nop
   :L0
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v0
     if-ge v3, v0, :L2
-  .line 392
+  .line 386
     invoke-interface { p1, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
@@ -1313,37 +1313,37 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-eqz v0, :L1
-  .line 393
+  .line 387
     new-instance v0, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
     const-string v1, ""
     invoke-direct { v0, p0, v2, v1 }, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
     invoke-interface { p1, v3, v0 }, Ljava/util/List;->set(ILjava/lang/Object;)Ljava/lang/Object;
   :L1
-  .line 391
+  .line 385
     add-int/lit8 v3, v3, 1
     goto :L0
   :L2
-  .line 396
+  .line 390
     return-void
   :L3
-  .line 398
+  .line 392
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;
     iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->recycler:Landroidx/recyclerview/widget/RecyclerView;
-  .line 399
+  .line 393
     sget-object v4, Lcom/innioasis/ipp/Tone;->fitted:Landroidx/recyclerview/widget/RecyclerView;
     if-eq v0, v4, :L4
-  .line 400
+  .line 394
     sput-object v0, Lcom/innioasis/ipp/Tone;->fitted:Landroidx/recyclerview/widget/RecyclerView;
-  .line 401
+  .line 395
     new-instance v4, Lcom/innioasis/ipp/Tone$Fit;
     invoke-direct { v4, v0 }, Lcom/innioasis/ipp/Tone$Fit;-><init>(Landroidx/recyclerview/widget/RecyclerView;)V
     invoke-virtual { v0, v4 }, Landroidx/recyclerview/widget/RecyclerView;->addOnChildAttachStateChangeListener(Landroidx/recyclerview/widget/RecyclerView$OnChildAttachStateChangeListener;)V
   :L4
-  .line 403
+  .line 397
     invoke-interface { p1 }, Ljava/util/List;->clear()V
-  .line 404
+  .line 398
     new-instance v0, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v1
@@ -1351,13 +1351,13 @@
     move-result-object v4
     invoke-direct { v0, v1, v3, v4 }, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
     invoke-interface { p1, v0 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 405
+  .line 399
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result v0
     if-nez v0, :L5
     return-void
   :L5
-  .line 406
+  .line 400
     new-instance v0, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
     const v1, 2131821163
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -1366,7 +1366,7 @@
     move-result-object v2
     invoke-direct { v0, v1, v3, v2 }, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
     invoke-interface { p1, v0 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 407
+  .line 401
     new-instance v0, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;
     const v1, 2131821164
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -1376,34 +1376,34 @@
     move-result-object p0
     invoke-direct { v0, v1, v3, p0 }, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
     invoke-interface { p1, v0 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 408
+  .line 402
     return-void
 .end method
 
 .method public static settingsTop(Lcom/innioasis/y1/activity/SettingActivity;)Z
   .registers 3
-  .line 483
+  .line 477
     sget-object v0, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
     const/4 v1, 0
     if-eq v0, p0, :L0
     return v1
   :L0
-  .line 484
+  .line 478
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Tone;->endEdit(Lcom/innioasis/y1/activity/SettingActivity;Z)V
-  .line 485
+  .line 479
     const/4 p0, 1
     return p0
 .end method
 
 .method public static settingsWheel(Lcom/innioasis/y1/activity/SettingActivity;I)Z
   .registers 5
-  .line 472
+  .line 466
     sget-object v0, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
     if-eq v0, p0, :L0
     const/4 p0, 0
     return p0
   :L0
-  .line 473
+  .line 467
     sget v0, Lcom/innioasis/ipp/Tone;->editRow:I
     const/4 v1, 1
     if-ne v0, v1, :L1
@@ -1414,16 +1414,16 @@
     sget-object v0, Lcom/innioasis/ipp/Tone;->options:[Ljava/lang/String;
     array-length v0, v0
   :L2
-  .line 474
+  .line 468
     sget v2, Lcom/innioasis/ipp/Tone;->editVal:I
     add-int/2addr v2, p1
     rem-int/2addr v2, v0
     add-int/2addr v2, v0
     rem-int/2addr v2, v0
     sput v2, Lcom/innioasis/ipp/Tone;->editVal:I
-  .line 475
+  .line 469
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->showCandidate(Lcom/innioasis/y1/activity/SettingActivity;)V
-  .line 476
+  .line 470
     sget p1, Lcom/innioasis/ipp/Tone;->editRow:I
     if-ne p1, v1, :L3
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->sound(Landroid/content/Context;)Ljava/lang/String;
@@ -1434,7 +1434,7 @@
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/Tone;->preview(Ljava/lang/String;F)V
     goto :L4
   :L3
-  .line 477
+  .line 471
     sget-object p1, Lcom/innioasis/ipp/Tone;->options:[Ljava/lang/String;
     sget v0, Lcom/innioasis/ipp/Tone;->editVal:I
     aget-object p1, p1, v0
@@ -1448,60 +1448,60 @@
     move-result p0
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/Tone;->preview(Ljava/lang/String;F)V
   :L4
-  .line 478
+  .line 472
     return v1
 .end method
 
 .method private static showCandidate(Lcom/innioasis/y1/activity/SettingActivity;)V
   .registers 5
-  .line 559
+  .line 552
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->label(Lcom/innioasis/y1/activity/SettingActivity;)Ljava/lang/String;
     move-result-object v0
-  .line 560
+  .line 553
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/SettingActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v1
     check-cast v1, Lcom/innioasis/y1/databinding/ActivitySettingBinding;
     iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivitySettingBinding;->infoStateTv:Landroid/widget/TextView;
     invoke-virtual { v1, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 561
+  .line 554
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->rowText(Lcom/innioasis/y1/activity/SettingActivity;)Landroid/widget/TextView;
     move-result-object p0
-  .line 562
+  .line 555
     if-nez p0, :L0
     return-void
   :L0
-  .line 563
+  .line 556
     invoke-virtual { p0, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 564
+  .line 557
     sget-object v0, Lcom/innioasis/ipp/Tone;->H:Landroid/os/Handler;
     sget-object v1, Lcom/innioasis/ipp/Tone;->blink:Lcom/innioasis/ipp/Tone$Blink;
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 565
+  .line 558
     const/4 v1, 0
     invoke-virtual { p0, v1 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 566
+  .line 559
     new-instance v1, Lcom/innioasis/ipp/Tone$Blink;
     invoke-direct { v1, p0 }, Lcom/innioasis/ipp/Tone$Blink;-><init>(Landroid/widget/TextView;)V
     sput-object v1, Lcom/innioasis/ipp/Tone;->blink:Lcom/innioasis/ipp/Tone$Blink;
-  .line 567
+  .line 560
     const-wide/16 v2, 400
     invoke-virtual { v0, v1, v2, v3 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 568
+  .line 561
     return-void
 .end method
 
 .method private static sound(Landroid/content/Context;)Ljava/lang/String;
   .registers 3
-  .line 247
+  .line 242
     const-string v0, "key_tone_sound"
     const-string v1, ""
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Prefs;->getString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 248
+  .line 243
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v0 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
     move-result-object v0
-  .line 249
+  .line 244
     sget-object v1, Lcom/innioasis/ipp/Tone;->path:Ljava/lang/String;
     if-eqz v1, :L0
     sget-object v1, Lcom/innioasis/ipp/Tone;->soundFor:Ljava/lang/String;
@@ -1515,52 +1515,52 @@
     sget-object p0, Lcom/innioasis/ipp/Tone;->path:Ljava/lang/String;
     return-object p0
   :L0
-  .line 250
+  .line 245
     sput-object p0, Lcom/innioasis/ipp/Tone;->soundFor:Ljava/lang/String;
-  .line 251
+  .line 246
     sput-object v0, Lcom/innioasis/ipp/Tone;->themeFor:Ljava/lang/String;
-  .line 252
+  .line 247
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Tone;->resolve(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     sput-object p0, Lcom/innioasis/ipp/Tone;->path:Ljava/lang/String;
-  .line 253
+  .line 248
     const/4 v0, 0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Tone;->play(Ljava/lang/String;F)V
-  .line 254
+  .line 249
     const/4 p0, 0
     sput p0, Lcom/innioasis/ipp/Tone;->pending:I
-  .line 255
+  .line 250
     sget-object p0, Lcom/innioasis/ipp/Tone;->path:Ljava/lang/String;
     return-object p0
 .end method
 
 .method private static soundIds()[Ljava/lang/String;
   .registers 6
-  .line 322
+  .line 316
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 323
+  .line 317
     const-string v1, ""
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 324
+  .line 318
     const-string v1, "\u0001theme"
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 325
+  .line 319
     invoke-static { }, Lcom/innioasis/ipp/Tone;->dir()Ljava/io/File;
     move-result-object v1
     invoke-virtual { v1 }, Ljava/io/File;->list()[Ljava/lang/String;
     move-result-object v1
-  .line 326
+  .line 320
     if-eqz v1, :L2
-  .line 327
+  .line 321
     sget-object v2, Ljava/lang/String;->CASE_INSENSITIVE_ORDER:Ljava/util/Comparator;
     invoke-static { v1, v2 }, Ljava/util/Arrays;->sort([Ljava/lang/Object;Ljava/util/Comparator;)V
-  .line 328
+  .line 322
     const/4 v2, 0
   :L0
     array-length v3, v1
     if-ge v2, v3, :L2
-  .line 329
+  .line 323
     aget-object v3, v1, v2
     invoke-static { v3 }, Lcom/innioasis/ipp/Tone;->audio(Ljava/lang/String;)Z
     move-result v3
@@ -1576,11 +1576,11 @@
     aget-object v3, v1, v2
     invoke-interface { v0, v3 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L1
-  .line 328
+  .line 322
     add-int/lit8 v2, v2, 1
     goto :L0
   :L2
-  .line 332
+  .line 326
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v1
     new-array v1, v1, [Ljava/lang/String;
@@ -1592,7 +1592,7 @@
 
 .method private static soundName(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
   .registers 3
-  .line 342
+  .line 336
     invoke-virtual { p1 }, Ljava/lang/String;->length()I
     move-result v0
     if-nez v0, :L0
@@ -1601,7 +1601,7 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 343
+  .line 337
     const-string v0, "\u0001theme"
     invoke-virtual { v0, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1611,11 +1611,11 @@
     move-result-object p0
     return-object p0
   :L1
-  .line 344
+  .line 338
     const/16 p0, 46
     invoke-virtual { p1, p0 }, Ljava/lang/String;->lastIndexOf(I)I
     move-result p0
-  .line 345
+  .line 339
     if-lez p0, :L2
     const/4 v0, 0
     invoke-virtual { p1, v0, p0 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
@@ -1626,26 +1626,26 @@
 
 .method private static startEdit(Lcom/innioasis/y1/activity/SettingActivity;I)V
   .registers 3
-  .line 541
+  .line 534
     sput-object p0, Lcom/innioasis/ipp/Tone;->editing:Lcom/innioasis/y1/activity/SettingActivity;
-  .line 542
+  .line 535
     sput p1, Lcom/innioasis/ipp/Tone;->editRow:I
-  .line 543
+  .line 536
     const/4 v0, 1
     if-ne p1, v0, :L0
-  .line 544
+  .line 537
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->volumeIndex(Landroid/content/Context;)I
     move-result p1
     sput p1, Lcom/innioasis/ipp/Tone;->editVal:I
     goto :L1
   :L0
-  .line 546
+  .line 539
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->seed(Landroid/content/Context;)V
-  .line 547
+  .line 540
     invoke-static { }, Lcom/innioasis/ipp/Tone;->soundIds()[Ljava/lang/String;
     move-result-object p1
     sput-object p1, Lcom/innioasis/ipp/Tone;->options:[Ljava/lang/String;
-  .line 548
+  .line 541
     invoke-static { p1 }, Ljava/util/Arrays;->asList([Ljava/lang/Object;)Ljava/util/List;
     move-result-object p1
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->currentSound(Landroid/content/Context;)Ljava/lang/String;
@@ -1657,20 +1657,20 @@
     move-result p1
     sput p1, Lcom/innioasis/ipp/Tone;->editVal:I
   :L1
-  .line 550
+  .line 543
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->showCandidate(Lcom/innioasis/y1/activity/SettingActivity;)V
-  .line 551
+  .line 544
     return-void
 .end method
 
 .method public static stockWrite(Z)Z
   .registers 2
-  .line 141
+  .line 139
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/Tone;->setOn(Landroid/content/Context;Z)V
-  .line 142
+  .line 140
     const/4 p0, 0
     return p0
 .end method
@@ -1679,15 +1679,15 @@
   .catchall { :L0 .. :L3 } :L11
   .catchall { :L4 .. :L10 } :L11
   .registers 9
-  .line 110
+  .line 109
     const-string v0, "tone_muted"
     if-nez p0, :L0
     return-void
   :L0
-  .line 112
+  .line 111
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->manager(Landroid/content/Context;)Ljava/lang/Object;
     move-result-object v1
-  .line 113
+  .line 112
     const/4 v2, 1
     const/4 v3, 0
     if-eqz v1, :L1
@@ -1699,11 +1699,11 @@
   :L1
     const/4 v4, 0
   :L2
-  .line 114
+  .line 113
     invoke-static { p0, v0, v3 }, Lcom/innioasis/ipp/Prefs;->getBool(Landroid/content/Context;Ljava/lang/String;Z)Z
     move-result v5
   :L3
-  .line 115
+  .line 114
     const-string v6, "key_tone"
     if-nez v4, :L5
     if-nez v5, :L5
@@ -1720,29 +1720,29 @@
   :L7
     invoke-static { p0, v6, v2 }, Lcom/innioasis/ipp/Prefs;->setBool(Landroid/content/Context;Ljava/lang/String;Z)V
   :L8
-  .line 116
+  .line 115
     if-eqz v5, :L9
     invoke-static { p0, v0, v3 }, Lcom/innioasis/ipp/Prefs;->setBool(Landroid/content/Context;Ljava/lang/String;Z)V
   :L9
-  .line 117
+  .line 116
     if-eqz v4, :L10
     invoke-static { v1, v3 }, Lcom/innioasis/ipp/Tone;->enable(Ljava/lang/Object;Z)V
   :L10
-  .line 120
+  .line 118
     goto :L12
   :L11
-  .line 118
+  .line 117
     move-exception v0
   :L12
-  .line 121
+  .line 119
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->mirror(Landroid/content/Context;)V
-  .line 122
+  .line 120
     return-void
 .end method
 
 .method private static value(Lcom/innioasis/y1/activity/SettingActivity;I)Ljava/lang/String;
   .registers 3
-  .line 366
+  .line 360
     if-nez p1, :L2
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->on(Landroid/content/Context;)Z
     move-result p1
@@ -1756,7 +1756,7 @@
     move-result-object p0
     return-object p0
   :L2
-  .line 367
+  .line 361
     const/4 v0, 1
     if-ne p1, v0, :L3
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->volumeIndex(Landroid/content/Context;)I
@@ -1766,7 +1766,7 @@
     move-result-object p0
     return-object p0
   :L3
-  .line 368
+  .line 362
     invoke-static { p0 }, Lcom/innioasis/ipp/Tone;->currentSound(Landroid/content/Context;)Ljava/lang/String;
     move-result-object p1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Tone;->soundName(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
@@ -1776,11 +1776,11 @@
 
 .method private static volumeIndex(Landroid/content/Context;)I
   .registers 2
-  .line 372
+  .line 366
     const-string v0, "key_tone_volume"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result p0
-  .line 373
+  .line 367
     if-ltz p0, :L0
     sget-object v0, Lcom/innioasis/ipp/Tone;->GAIN:[F
     array-length v0, v0
@@ -1827,13 +1827,13 @@
     invoke-direct { v0, v1, p0 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
   :L4
-  .line 99
+  .line 98
     goto :L6
   :L5
   .line 97
     move-exception p0
   :L6
-  .line 100
+  .line 99
     return-void
   :L7
   .line 88

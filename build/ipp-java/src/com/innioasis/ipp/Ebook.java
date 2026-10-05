@@ -15,36 +15,18 @@ import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1_eBook.ui.main.MainActivity;
 
 /**
- * The e-book Library becomes a section of its own, reached by a row of the same name.
- *
- * One Activity, two modes
- * There is no second Activity: {@code MainActivity} is opened again with {@link #EXTRA}, and which
- * of its own views are shown decides what the screen is. That is the whole point — "don't touch
- * the functionality" is satisfied literally, because opening a book, the delete menu, the book
- * list and "Continue Reading" all stay exactly where stock put them.
- *
- *   menu mode     rows 0..2 = Continue Reading / Local file / Library, the list hidden
- *   library mode  the list alone, the three rows hidden
- *
- * Why the cursor never goes below fixedSum in library mode
- * Stock's {@code mark} counts the fixed rows first and the books after them ({@code fixedSum} = 2),
- * and its centre-press tests {@code mark == 0} and {@code mark == 1} before treating the mark as a
- * book. Rather than renumber any of that, library mode simply keeps the cursor at or above
- * {@code fixedSum}: the hidden rows keep their numbers, every book keeps the number stock gave it,
- * and the branch that opens a book is reached by the same arithmetic as before. So
- * {@link #minMark} is the floor, {@link #maxMark} the ceiling, and both are the only places that
- * know which mode this is.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * The e-book Library as a section of its own: the same {@code MainActivity} opened again with
+ * {@link #EXTRA}, so every stock function stays where it was. Menu mode shows rows 0..2 (Continue
+ * Reading / Local files / Library); library mode shows the list alone and keeps the cursor at or
+ * above {@code fixedSum}, so every book keeps stock's numbering. {@link #minMark} and
+ * {@link #maxMark} are the only places that know the mode.
  */
 public final class Ebook {
 
     private Ebook() { }
 
-    /** Intent flag: this MainActivity is the Library, not the menu. */
     public static final String EXTRA = "ipp_library";
 
-    /** The mark of the "Library" row in menu mode — the last of the three. */
     private static final int LIBRARY_ROW = 2;
 
     public static boolean library(Activity a) {
@@ -55,13 +37,7 @@ public final class Ebook {
         }
     }
 
-    // ------------------------------------------------------------------------- which screen it is
-
-    /**
-     * Injected into {@code MainActivity.initView}, just before stock's own {@code showItem()}:
-     * hide the half of the layout this mode is not, and in library mode put the cursor on the
-     * first book and the section's name in the state bar.
-     */
+    /** In {@code MainActivity.initView}, before stock's {@code showItem()}. */
     public static void setup(Activity a) {
         try {
             if (a == null) return;
@@ -77,8 +53,7 @@ public final class Ebook {
             show(local, !lib);
             show(row, !lib);
             show(list, lib);
-            // The caption and its rule belonged to the list while both lived on one screen. In the
-            // menu they are replaced by the row; in the Library the state bar already says it.
+            // The row replaces them in the menu; in the Library the state bar says it.
             show(caption, false);
             show(divider, false);
 
@@ -89,7 +64,6 @@ public final class Ebook {
                 label(row, a.getString(R.string.book_library));
             }
         } catch (Throwable t) {
-            // a screen that cannot be re-arranged is still the stock screen
         }
     }
 
@@ -103,55 +77,35 @@ public final class Ebook {
         if (tv instanceof TextView) ((TextView) tv).setText(text);
     }
 
-    // ------------------------------------------------------------------------------- the cursor
-
-    /** Lowest mark this mode allows: the first book's own number in the Library, row 0 in the menu. */
     public static int minMark(Activity a, int fixedSum) {
         return library(a) ? fixedSum : 0;
     }
 
-    /**
-     * Highest mark this mode allows. In the menu it is the Library row, whatever the book list
-     * holds — the list is not on screen. In the Library it is stock's own last row, with a floor
-     * of {@code fixedSum} so an empty library cannot push the cursor onto a hidden row.
-     */
+    /** Floored at {@code fixedSum}, so an empty library cannot put the cursor on a hidden row. */
     public static int maxMark(Activity a, int listSize, int fixedSum) {
         if (!library(a)) return LIBRARY_ROW;
         int last = (listSize - 1) + fixedSum;
         return last < fixedSum ? fixedSum : last;
     }
 
-    /**
-     * Where the cursor goes when a step up has taken it below {@code min}: back to {@code min}, or
-     * with loop scrolling round to the last row of this mode. The reader screens have no wheel
-     * acceleration, so this asks {@link Loop#on}, not {@link Loop#wrap}.
-     */
+    /** No wheel acceleration on these screens, so {@link Loop#on}, not {@link Loop#wrap}. */
     public static int belowFirst(Activity a, int min, int listSize, int fixedSum) {
         return Loop.on() ? maxMark(a, listSize, fixedSum) : min;
     }
 
-    /** Where a step down past the last row goes with loop scrolling — the first row; -1 without. */
+    /** -1 without loop scrolling. */
     public static int pastLast(Activity a, int fixedSum) {
         return Loop.on() ? minMark(a, fixedSum) : -1;
     }
 
-    /**
-     * The floor the long-press menu (remove / delete a book) needs: stock refuses it below
-     * {@code fixedSum}, i.e. on a fixed row. In the menu there is no book under the cursor at all,
-     * so nothing may open it.
-     */
+    /** The long-press book menu: never in menu mode, where no book is under the cursor. */
     public static int menuFloor(Activity a, int fixedSum) {
         return library(a) ? fixedSum : Integer.MAX_VALUE;
     }
 
-    // ------------------------------------------------------------------------------- the presses
-
     /**
-     * Injected at the top of the centre-press branch of {@code direction}. True = handled here.
-     *
-     * Two cases: the Library row of the menu opens this same Activity as the Library, and a press
-     * in an empty Library does nothing — stock would index the book list, which the floor above
-     * keeps the cursor pointing into even when there is nothing in it.
+     * Top of the centre-press branch; true = handled. The Library row opens the Library; a press
+     * in an empty Library does nothing (stock would index an empty list).
      */
     public static boolean confirm(Activity a, int mark) {
         try {
@@ -176,15 +130,9 @@ public final class Ebook {
         return ad == null ? 0 : ad.getItemCount();
     }
 
-    // ------------------------------------------------------------------------------- the painting
-
     /**
-     * Injected at the TOP of {@code showItem}, so stock reads the mark after this has settled it.
-     *
-     * Does the two things stock cannot know about: keeps the mark inside this mode's range (the
-     * delete path sets it to 1 or 2 outright, which is below the Library's floor when the last
-     * book goes), and paints the Library row, which is ours. Stock never touches that row, so the
-     * two cannot fight over it.
+     * Top of {@code showItem}: clamps the mark into this mode's range (stock's delete path sets it
+     * below the Library's floor) and paints the Library row, which stock never touches.
      */
     public static void beforeShow(Activity a, int fixedSum) {
         try {
@@ -196,15 +144,10 @@ public final class Ebook {
             if (library(a)) return;
             paint(a.findViewById(R.id.ipp_library_row), mark == LIBRARY_ROW);
         } catch (Throwable t) {
-            // cosmetic
         }
     }
 
-    /**
-     * The look of one fixed row, selected or not — the same calls stock's own private
-     * {@code selItem} makes, which cannot be called from here (it takes a generated binding).
-     * Kept identical to it on purpose: the three rows are the same row three times over.
-     */
+    /** Stock's private {@code selItem}, call for call — keep them identical. */
     private static void paint(View row, boolean sel) {
         if (row == null) return;
         View tv = row.findViewById(R.id.tv_item);
@@ -222,14 +165,7 @@ public final class Ebook {
         ThemeManager.INSTANCE.itemSetBackground(box, sel ? R.drawable.bg_fm_menu_sel : 0, sel);
     }
 
-    /**
-     * The size and the date under a file's name in Local files.
-     *
-     * Stock paints the name through ThemeManager and leaves those two at {@code @color/white},
-     * which on a light theme is a name in the theme's colour with two invisible lines beneath it.
-     * They take whatever the name became, cursor row included — called from both halves of
-     * {@code SearchActivity.selItem}, after it has painted the name.
-     */
+    /** Size and date under a Local files row take the name's colour (stock left them white). */
     public static void searchSub(com.innioasis.y1.databinding.ItemBookSearchBinding b) {
         if (b == null) return;
         Rows.subLine(b.name, b.size);
@@ -237,14 +173,8 @@ public final class Ebook {
     }
 
     /**
-     * The mod's own folder on the card is not a shelf, and Local files must not list it: that
-     * listing takes every {@code .txt} on the card, and it has a per-row menu that DELETES the
-     * file — {@code comma_artists.txt} above all, whose loss silently drops every exception the
-     * artist splitting was taught.
-     *
-     * Asked from the one predicate the walk filters everything through, which runs for folders
-     * too: refusing it there is what keeps the walk from descending into it at all. Matched on the
-     * full path, so a folder someone else calls better-Y deeper on the card is still their own.
+     * Local files never lists our folder: its row menu DELETES files, and losing
+     * {@code comma_artists.txt} silently drops the artist-splitting exceptions. Full path match.
      */
     public static boolean hidden(java.io.File f) {
         try {
@@ -252,7 +182,7 @@ public final class Ebook {
             java.io.File dir = Panel.card();
             return dir != null && f.getAbsolutePath().equals(dir.getAbsolutePath());
         } catch (Throwable t) {
-            return false;   // an unanswerable path is not ours to hide
+            return false;
         }
     }
 }

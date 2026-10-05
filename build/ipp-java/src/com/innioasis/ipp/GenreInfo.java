@@ -18,22 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The "<n> artists <n> albums" line under a genre's name.
- *
- * Stock computes it per row, on a background thread started from {@code GenreListAdapter.getView},
- * and keeps the answer on the {@code Genre} object — which {@code setGenres} rebuilds every time
- * the screen is opened. So the two queries ran again on every visit and, since a row is bound the
- * moment it scrolls into view, again for every row the user had not reached yet: the line arrived
- * a beat late each time, and the row grew as it did.
- *
- * The answer only changes when the library does, so it is written down — same shape as
- * {@code DiscCache} / {@code AlbumArtist}: a {@code name<TAB>line} text file beside them in the app
- * cache dir, loaded once. A cached line is put on the {@code Genre} before the row binds
- * ({@link #fill}), so there is nothing to wait for and nothing to resize.
- *
- * {@link #invalidate} is called from {@code Ipp.libraryChanged}, i.e. from every write to the Song
- * table — including once per file during a full scan, which is why it only clears memory and lets
- * the next {@link #put} rewrite the file.
+ * The "<n> artists <n> albums" line under a genre, cached in {@code ipp_genres.txt}. Stock
+ * recomputes it per row on every visit, so it arrived late and the row grew. {@link #invalidate}
+ * runs per file of a scan, which is why it clears memory only.
  */
 public final class GenreInfo {
 
@@ -44,12 +31,7 @@ public final class GenreInfo {
     private static boolean dirty;
     private static final char SEP = '\t';
 
-    /**
-     * Put the remembered line on a genre before its row is bound. Returns quietly when the genre
-     * already has one (stock's background thread has filled it in this session) or when we have
-     * never computed it — then stock's thread runs exactly as before, and {@link #put} catches the
-     * result on its way out.
-     */
+    /** Before the row binds; when nothing is cached, stock's per-row thread runs as before. */
     public static void fill(Genre g) {
         try {
             if (g == null || g.getName() == null) return;
@@ -59,19 +41,12 @@ public final class GenreInfo {
             Object v = map.get(g.getName());
             if (v != null) g.setInfo((String) v);
         } catch (Throwable t) {
-            // a missing subtitle is not worth taking the list down for
         }
     }
 
     /**
-     * Fill in every genre the cache does not know yet, in one background pass, and repaint
-     * the list once at the end. Called from {@code GenreListAdapter.setGenres}.
-     *
-     * Stock's per-row thread is still there and still correct, but it starts when a row scrolls
-     * into view: on a first run the lines therefore trickled in one row at a time, each arriving a
-     * frame or two after its row was drawn. One pass for the whole (short) genre list means one
-     * repaint, before the user has scrolled anywhere — and after it the file cache answers, so this
-     * never runs twice for the same library.
+     * From {@code GenreListAdapter.setGenres}: every uncached genre in one background pass and one
+     * repaint, instead of lines trickling in row by row.
      */
     public static void warm(MyBaseAdapter adapter) {
         try {
@@ -89,11 +64,9 @@ public final class GenreInfo {
             }
             if (!todo.isEmpty()) new Thread(new Warm(adapter, todo)).start();
         } catch (Throwable t) {
-            // the per-row thread is still there as a fallback
         }
     }
 
-    /** Named (d8 here crashes dexing anonymous classes). */
     static final class Warm implements Runnable {
         private final MyBaseAdapter adapter;
         private final ArrayList todo;
@@ -111,12 +84,10 @@ public final class GenreInfo {
                 for (int i = 0; i < todo.size(); i++) {
                     Genre g = (Genre) todo.get(i);
                     int artists = repo.getArtistsByGenreSync(g).size();
-                    // the ALBUM LIST of a genre splits a name shared by several folders
-                    // into one row per folder ("Demo"), so the count under the genre has to be
-                    // taken the same way or it names a number of albums the list does not show.
+                    // Counted as the genre's album list shows them: same-named albums split by folder.
                     int albums = Genres.albumCount(g);
-                    if (albums <= 0) albums = repo.getAlbumsByGenreSync(g).size();   // never 0
-                    // exactly stock's wording and spacing (GenreListAdapter$getView$1)
+                    if (albums <= 0) albums = repo.getAlbumsByGenreSync(g).size();
+                    // Stock's wording and spacing (GenreListAdapter$getView$1).
                     String line = artists + " "
                             + c.getString(artists > 1 ? R.string.genre_artists : R.string.genre_artist)
                             + " " + albums + " "
@@ -126,7 +97,6 @@ public final class GenreInfo {
                 }
                 if (c instanceof Activity) ((Activity) c).runOnUiThread(new Repaint(adapter));
             } catch (Throwable t) {
-                // ignore
             }
         }
     }
@@ -139,7 +109,7 @@ public final class GenreInfo {
         }
     }
 
-    /** Called from the adapter's background thread once it has counted the artists and albums. */
+    /** From stock's per-row thread, with its result. */
     public static void put(String name, String line) {
         try {
             if (name == null || line == null || line.length() == 0) return;
@@ -150,11 +120,9 @@ public final class GenreInfo {
             dirty = true;
             save();
         } catch (Throwable t) {
-            // ditto
         }
     }
 
-    /** The library changed, so the counts may have. Memory only — see the class comment. */
     public static void invalidate() {
         map.clear();
         loaded = true;      // do not read the stale file back
@@ -169,7 +137,6 @@ public final class GenreInfo {
             File f = file();
             if (f != null && f.exists()) f.delete();
         } catch (Throwable t) {
-            // ignore
         }
     }
 
@@ -181,9 +148,8 @@ public final class GenreInfo {
     }
 
     /**
-     * Format marker, first line of the file. Bump it whenever the LINE ITSELF is computed
-     * differently — the entries are answers, not raw data, so a file written by an older build is
-     * not stale in any way this class could notice. v2: the album count is the split one.
+     * First line of the file. Bump it whenever the line is computed differently: the entries are
+     * answers, so an older file is not stale in any way this class could notice.
      */
     private static final String VERSION = "#v2";
 
@@ -198,15 +164,14 @@ public final class GenreInfo {
             in.read(b);
             in.close();
             String[] lines = new String(b, "UTF-8").split("\n");
-            if (lines.length == 0 || !VERSION.equals(lines[0].trim())) return;   // written by an
-            for (int i = 1; i < lines.length; i++) {                             // older build
+            if (lines.length == 0 || !VERSION.equals(lines[0].trim())) return;
+            for (int i = 1; i < lines.length; i++) {
                 String s = lines[i];
                 int t = s.indexOf(SEP);
                 if (t <= 0) continue;
                 map.put(s.substring(0, t), s.substring(t + 1).trim());
             }
         } catch (Throwable t) {
-            // an unreadable cache is an empty cache
         }
     }
 
@@ -227,7 +192,6 @@ public final class GenreInfo {
             o.close();
             dirty = false;
         } catch (Throwable t) {
-            // keep what we have in memory for this run
         }
     }
 }

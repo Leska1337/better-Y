@@ -36,16 +36,10 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 /**
- * The Photos screen and its icon strip in the theme's colours instead of the ones stock wrote in.
- *
- * Tiles: the name takes the list rows' text colour, the frame of the tile under the cursor the
- * colour a focused row's text takes, and the folder picture is recoloured — its navy plate to the
- * menu's background, the folder itself to the player timeline's colour.
- *
- * Strip: dressed as the long-press menu is — its background, its text colours and font, and under
- * the entry at the cursor its row highlight (colour or theme bitmap), exactly as SubmenuAdapter
- * paints a row. Each icon takes its label's colour. The highlight is as wide as the widest label,
- * so it does not change size from entry to entry and follows the language.
+ * The Photos screen and its icon strip in the theme's colours. Tiles: list text colour, the
+ * focused frame, the folder picture recoloured (plate to the menu background, folder to the
+ * timeline's colour). Strip: dressed as the long-press menu, its highlight as wide as the widest
+ * label, so it keeps one size and follows the language.
  */
 public final class Photos {
 
@@ -53,10 +47,10 @@ public final class Photos {
 
     private static final int WHITE = 0xFFFFFFFF;
 
-    /** {@code bg_submenu}: the long-press menu's own colour when no theme names one. */
+    /** {@code bg_submenu}. */
     private static final int MENU_BG = 0xFF8C94B2;
 
-    /** Room on each side of the widest label inside the highlight. */
+    /** Each side of the widest label inside the highlight. */
     private static final int PAD = 6;
 
     public static int menuBg() {
@@ -70,11 +64,10 @@ public final class Photos {
         try {
             ThemeManager.INSTANCE.itemSetTextColor(tv, WHITE, false);
         } catch (Throwable t) {
-            // stock white
         }
     }
 
-    /** The plate's opacity on a tile the cursor is not on; under the cursor it is full. */
+    /** Off the cursor; full under it. */
     private static final float PLATE_IDLE = 0.8f;
 
     private static Bitmap folder;
@@ -82,11 +75,7 @@ public final class Photos {
     private static int folderBg;
     private static int folderFg;
 
-    /**
-     * After stock's {@code setImageResource(icon_folder)}; one recolour per pair of colours. The
-     * tile's focus is read off its card, which the bind has already painted: 0 when the cursor is
-     * elsewhere, the focus colour when it is here.
-     */
+    /** After stock's {@code setImageResource}; focus read off the card the bind already painted. */
     public static void folder(ImageView iv) {
         if (iv == null) return;
         try {
@@ -109,15 +98,13 @@ public final class Photos {
             }
             iv.setImageBitmap(focus ? folderFocus : folder);
         } catch (Throwable t) {
-            // the stock picture stays
         }
     }
 
     /**
-     * {@code icon_folder.png} is two colours at full alpha — a navy plate and a yellow folder — so
-     * each pixel is placed between the two by its luminance and redrawn between {@code bg} and
-     * {@code fg}. The antialiased edges land in between, as they did in the original. The plate's
-     * alpha is scaled by {@code plate}; the folder's is left as drawn.
+     * {@code icon_folder.png} is two flat colours: each pixel is placed between them by luminance
+     * and redrawn between {@code bg} and {@code fg}, edges included. {@code plate} scales the
+     * plate's alpha.
      */
     private static Bitmap recolour(Resources r, int bg, int fg, float plate) {
         Bitmap src = BitmapFactory.decodeResource(r, R.drawable.icon_folder);
@@ -160,9 +147,8 @@ public final class Photos {
     }
 
     /**
-     * From {@code PhotosDialog.onCreate}: the strip's colour. A theme's highlight bitmap may land
-     * after the entry was painted and on an entry that has since lost the cursor, so the strip is
-     * rebound whenever one arrives — by then it is cached and the rebind paints it synchronously.
+     * From {@code PhotosDialog.onCreate}. A late theme bitmap may land on an entry that has lost
+     * the cursor, so the strip is rebound when one arrives — cached by then.
      */
     public static void bar(RecyclerView rv) {
         if (rv == null) return;
@@ -176,21 +162,18 @@ public final class Photos {
                 try {
                     shapePopup((View) root);
                 } catch (Throwable t) {
-                    // the layout's white card
                 }
             }
             Repaint r = new Repaint(rv);
             Rows.watchFlat(r);
             Theme.watchMenuRows(r);
         } catch (Throwable t) {
-            // stock navy
         }
     }
 
-    /** Share of the menu's colour the strip keeps when the menu's own rows are see-through. */
+    /** The menu colour's share kept when the theme's menu rows are see-through. */
     private static final float SEE_THROUGH = 0.9f;
 
-    /** The rule along the strip's top edge: the list text's own colour, this thick. */
     private static final int RULE_PX = 2;
 
     private static void paintBar(RecyclerView rv) {
@@ -202,28 +185,24 @@ public final class Photos {
         }
     }
 
-    /** The strip's top rule: the list text's own colour, read back off a probe. */
+    /** The list text's colour, read back off a probe. */
     private static int ruleColor(Context c) {
         TextView probe = new TextView(c);
         ThemeManager.INSTANCE.itemSetTextColor(probe, WHITE, false);
         return probe.getCurrentTextColor();
     }
 
-    /** The popup's corners, as {@code dialog_photos.xml} has them. */
+    /** As {@code dialog_photos.xml}. */
     private static final int POPUP_RADIUS_DIP = 10;
-
-    /** The room around an entry's words, as the layout's margin had it. */
     private static final int POPUP_ENTRY_DIP = 10;
 
-    /** The line between the two entries: a better-Y menu row's hairline, 1px at this alpha. */
+    /** A better-Y menu row's hairline. */
     private static final int HAIR_ALPHA = 0x1F000000;
 
     /**
-     * The "desktop / everywhere" popup's geometry, once, while the dialog is built. The card is
-     * INVISIBLE and already holds its room: a size changed when it opens resizes the dialog's
-     * window, and the screen jumps. The card is cleared (on API 17 its shadow is a white rim), the
-     * box padded so a highlight's square corner stays inside the rounded frame. Entries are equal by
-     * MINIMUM width — all-MATCH_PARENT children stretch the popup across the screen.
+     * The "Set as" popup's geometry, once, while the dialog is built: it is INVISIBLE and holds its
+     * room, and a size changed on opening makes the screen jump. Card cleared (its API 17 shadow is
+     * a white rim); entries equal by MINIMUM width — MATCH_PARENT stretches the popup.
      */
     private static void shapePopup(View root) {
         View c = root.findViewById(R.id.set_wallpaper);
@@ -233,7 +212,7 @@ public final class Photos {
         CardView card = (CardView) c;
         TextView desktop = (TextView) dv;
         TextView global = (TextView) gv;
-        // the third entry, "Set playlist cover", is there only while Playlists is a grid (PlGrid)
+        // "Set playlist cover" only while Playlists is a grid.
         View pv = root.findViewById(R.id.ipp_pl_cover);
         TextView cover = pv instanceof TextView ? (TextView) pv : null;
         View coverLine = root.findViewById(R.id.ipp_pl_cover_line);
@@ -277,7 +256,6 @@ public final class Photos {
         card.setRadius(POPUP_RADIUS_DIP * d);
     }
 
-    /** The line between two entries: 1px of the rule's colour at a menu row's hairline alpha. */
     private static void hairline(View line, int rule) {
         line.setBackgroundColor((rule & 0x00FFFFFF) | HAIR_ALPHA);
         ViewGroup.LayoutParams lp = line.getLayoutParams();
@@ -288,17 +266,13 @@ public final class Photos {
         line.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
-    /**
-     * The wheel going down the popup: stock knew two entries and flipped between them; the third
-     * counts only while it is shown.
-     */
+    /** Stock knew two entries; the third counts only while shown. */
     public static int popupNext(CardView card, int pos) {
         int last = 1;
         try {
             View v = card == null ? null : card.findViewById(R.id.ipp_pl_cover);
             if (v != null && v.getVisibility() == View.VISIBLE) last = 2;
         } catch (Throwable t) {
-            // two entries
         }
         return Math.min(pos + 1, last);
     }
@@ -318,8 +292,8 @@ public final class Photos {
     }
 
     /**
-     * The popup's colours, from {@code PhotosDialog.refreshWallpaper} on every show and step: menu
-     * text colours and highlight. Nothing here may change a size (see {@link #shapePopup}).
+     * From {@code PhotosDialog.refreshWallpaper}, every show and step. Must not change a size
+     * (see {@link #shapePopup}).
      */
     public static void wallpaperPopup(CardView card, TextView desktop, TextView global, int pos) {
         if (desktop == null || global == null) return;
@@ -331,11 +305,9 @@ public final class Photos {
                 popupEntry((TextView) cover, pos == 2);
             }
         } catch (Throwable t) {
-            // the layout's colours
         }
     }
 
-    /** One entry of the popup, as the long-press menu paints a row: text and highlight. */
     private static void popupEntry(TextView tv, boolean focus) {
         int fg = tv.getResources().getColor(
                 focus ? R.color.selected_text_color_submenu : R.color.white);
@@ -343,18 +315,13 @@ public final class Photos {
         highlight(tv, focus);
     }
 
-    /** The width an entry's words and padding take, in the typeface already set on it. */
     private static int entryWidth(TextView tv) {
         CharSequence s = tv.getText();
         float w = s == null ? 0 : tv.getPaint().measureText(s.toString());
         return (int) Math.ceil(w) + tv.getPaddingLeft() + tv.getPaddingRight();
     }
 
-    /**
-     * The rule along the strip's top edge, inside the menu's fill. A decoration's
-     * {@code onDrawOver} runs after the entries are drawn, so the rule lies over a highlight
-     * instead of under it.
-     */
+    /** The strip's top rule; {@code onDrawOver}, so it lies over a highlight. */
     static final class Rule extends RecyclerView.ItemDecoration {
         final Paint paint = new Paint();
 
@@ -363,17 +330,13 @@ public final class Photos {
         }
     }
 
-    /**
-     * The menu's colour — at 90% where the theme's unfocused menu row is transparent, since the
-     * strip then stands where such a menu would let the screen show through.
-     */
+    /** At 90% where the theme's menu rows are see-through. */
     private static int barColor() {
         int c = menuBg();
         if (Theme.menuRowsPainted()) return c;
         return ((int) (Color.alpha(c) * SEE_THROUGH) << 24) | (c & 0x00FFFFFF);
     }
 
-    /** Named (d8 here crashes on anonymous classes); weak, the dialog is not ours to keep. */
     static final class Repaint implements Runnable {
         private final WeakReference rv;
 
@@ -392,10 +355,8 @@ public final class Photos {
     }
 
     /**
-     * A theme's row highlight on an entry of the strip. The bitmap is drawn for a 640px-wide row;
-     * stretched onto a ~90px entry its side borders shrink to a fraction of a pixel and vanish. So
-     * it is scaled by HEIGHT, and its two ends are drawn at that scale meeting in the middle — the
-     * uniform middle of the row is what is left out, its borders and corners are not.
+     * A theme's 640px row highlight on a ~90px entry: stretched, its borders vanish. Scaled by
+     * HEIGHT, its two ends meet in the middle; the uniform middle is what is left out.
      */
     static final class Ends extends Drawable {
         private final Bitmap b;
@@ -442,11 +403,7 @@ public final class Photos {
         }
     }
 
-    /**
-     * One entry of the strip, after stock painted it. The background is cleared first and the
-     * stock highlight guaranteed after: {@code menuItemSetBackground} leaves the view untouched
-     * while the theme's bitmap is still loading (same trap as in {@code PickDialog}).
-     */
+    /** One strip entry, after stock painted it. */
     public static void menuItem(Object adapter, ImageView icon, TextView label, boolean focus) {
         if (icon == null || label == null) return;
         try {
@@ -462,11 +419,13 @@ public final class Photos {
             highlight(cell, focus);
             fit(adapter, cell, label);
         } catch (Throwable t) {
-            // stock white / accent
         }
     }
 
-    /** The long-press menu's row highlight on {@code cell}, or none; shared by strip and popup. */
+    /**
+     * The menu's row highlight, strip and popup alike. Cleared first, stock's guaranteed after:
+     * ThemeManager leaves the view untouched while its bitmap loads (as in {@code PickDialog}).
+     */
     public static void highlight(View cell, boolean focus) {
         cell.setTag(Rows.FLAT);
         cell.setBackgroundDrawable(null);
@@ -483,21 +442,17 @@ public final class Photos {
         Rows.noSize(cell);
     }
 
-    /**
-     * The entry narrowed to the widest label and centred in its column. Both margin fields are
-     * written: a marginStart left unset would not matter, but one set elsewhere wins over leftMargin.
-     */
-    /**
-     * The words of one entry. Two screens raise this strip and each has a {@code SubItem} of its
-     * own; an item of the other kind skipped as "not mine" leaves the widest at zero, which is
-     * every entry drawn a dozen pixels wide.
-     */
+    /** Both screens' {@code SubItem}s: missing one leaves the widest at zero, every entry a sliver. */
     private static String textOf(Object o) {
         if (o instanceof PhotosDialog.SubItem) return ((PhotosDialog.SubItem) o).getText();
         if (o instanceof ThemeOptionsDialog.SubItem) return ((ThemeOptionsDialog.SubItem) o).getText();
         return null;
     }
 
+    /**
+     * Narrowed to the widest label, centred in its column. Both margin fields are written: a
+     * marginStart set elsewhere wins over leftMargin.
+     */
     private static void fit(Object adapter, View cell, TextView label) {
         if (!(adapter instanceof BaseQuickAdapter)) return;
         List items = ((BaseQuickAdapter) adapter).getData();
@@ -521,10 +476,10 @@ public final class Photos {
         cell.setLayoutParams(m);
     }
 
-    /** Per grid, one {first visible tile, its offset} for every folder level entered. */
+    /** Per grid, {first visible tile, offset} for each folder level entered. */
     private static final WeakHashMap windows = new WeakHashMap();
 
-    /** Opening a folder: remembers the grid's window, in step with stock's {@code stackIndex}. */
+    /** Opening a folder, in step with stock's {@code stackIndex}. */
     public static void enter(RecyclerView rv) {
         try {
             if (rv == null) return;
@@ -540,7 +495,7 @@ public final class Photos {
                 int first = l.findFirstVisibleItemPosition();
                 View v = first < 0 ? null : l.findViewByPosition(first);
                 if (v != null) {
-                    // scrollToPositionWithOffset measures from the padding to the tile's margin
+                    // As scrollToPositionWithOffset measures: from the padding to the margin.
                     ViewGroup.LayoutParams lp = v.getLayoutParams();
                     int margin = lp instanceof ViewGroup.MarginLayoutParams
                             ? ((ViewGroup.MarginLayoutParams) lp).topMargin : 0;
@@ -549,14 +504,10 @@ public final class Photos {
             }
             stack.add(w);
         } catch (Throwable t) {
-            // the folder still opens; coming back just lands the cursor's tile at an edge
         }
     }
 
-    /**
-     * Back out of a folder: the grid's window goes back where it stood, at once — stock's smooth
-     * scroll started from the top of the refilled list.
-     */
+    /** Back out of a folder: the window restored at once (stock smooth-scrolled from the top). */
     public static void back(RecyclerView rv, int mark) {
         try {
             if (rv == null) return;
@@ -574,7 +525,6 @@ public final class Photos {
             try {
                 rv.scrollToPosition(mark);
             } catch (Throwable ignored) {
-                // nothing left to try
             }
         }
     }

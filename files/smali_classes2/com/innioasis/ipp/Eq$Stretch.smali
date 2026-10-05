@@ -15,24 +15,24 @@
 
 .method constructor <init>(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 2
-  .line 427
+  .line 376
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 428
+  .line 377
     iput-object p1, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
-  .line 429
+  .line 378
     return-void
 .end method
 
 .method public onPreDraw()Z
   .catchall { :L0 .. :L9 } :L13
   .registers 12
-  .line 433
+  .line 382
     const/4 v0, 1
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v1 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v1
-  .line 434
+  .line 383
     const/4 v2, 0
     if-nez v1, :L1
     const/4 v1, 0
@@ -41,45 +41,45 @@
     invoke-virtual { v1 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
     move-result v1
   :L2
-  .line 435
+  .line 384
     iget-object v3, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v3 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
     move-result v3
-  .line 436
+  .line 385
     iget-object v4, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v4 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v4
-  .line 437
+  .line 386
     if-lez v1, :L12
     if-lez v3, :L12
     if-gtz v4, :L3
     goto :L12
   :L3
-  .line 438
+  .line 387
     div-int v5, v3, v1
-  .line 439
+  .line 388
     mul-int v1, v1, v5
     sub-int/2addr v3, v1
-  .line 440
+  .line 389
     nop
-  .line 441
+  .line 390
     const/4 v1, 0
     const/4 v6, 0
   :L4
     if-ge v1, v4, :L11
-  .line 442
+  .line 391
     iget-object v7, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v7, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v7
-  .line 443
+  .line 392
     iget-object v8, p0, Lcom/innioasis/ipp/Eq$Stretch;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v8, v7 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAdapterPosition(Landroid/view/View;)I
     move-result v8
-  .line 444
+  .line 393
     if-gez v8, :L5
     goto :L10
   :L5
-  .line 445
+  .line 394
     if-ge v8, v3, :L6
     const/4 v8, 1
     goto :L7
@@ -87,36 +87,36 @@
     const/4 v8, 0
   :L7
     add-int/2addr v8, v5
-  .line 446
+  .line 395
     invoke-virtual { v7 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v9
-  .line 447
+  .line 396
     if-eqz v9, :L10
     iget v10, v9, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-ne v10, v8, :L8
     goto :L10
   :L8
-  .line 448
+  .line 397
     iput v8, v9, Landroid/view/ViewGroup$LayoutParams;->height:I
-  .line 449
+  .line 398
     invoke-virtual { v7, v9 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
   :L9
-  .line 450
+  .line 399
     const/4 v6, 1
   :L10
-  .line 441
+  .line 390
     add-int/lit8 v1, v1, 1
     goto :L4
   :L11
-  .line 452
+  .line 401
     xor-int/2addr v0, v6
     return v0
   :L12
-  .line 437
+  .line 386
     return v0
   :L13
-  .line 453
+  .line 402
     move-exception v1
-  .line 454
+  .line 403
     return v0
 .end method

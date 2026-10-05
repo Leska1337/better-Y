@@ -43,23 +43,11 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The Playlists screen as a grid of covers — the theme gallery's tile, three to a row — while
- * the screen's own "View" menu entry says Grid. Stock's adapter and wheel stay: the grid is a
- * layout manager, a
- * different row layout and a different bind, each decided here.
- *
- * A cover is a JPEG on the card, {@code better-Y/playlists/<id>.jpg}, so it outlives a reflash and
- * the picture it was made from. A playlist without one takes the cover of its FIRST song — the
- * earliest row of the join table, which is what "the first song added" means for a playlist
- * filled before this existed as well — once, in the background, when its tile is first shown.
- * Favorites never does: its placeholder is the heart.
- *
- * {@code <id>.none} beside it records "the placeholder is what this playlist shows": written by
- * "Reset cover" and by a first song that has no picture, removed when songs go into an EMPTY
- * playlist, which starts it over. Without it a reset would be undone the next time the tile is
- * drawn.
- *
- * Raw types and named classes only — see CLAUDE.md on the bundled d8.
+ * The Playlists screen as a grid of covers — the theme gallery's tile, three to a row — when its
+ * "View" entry says Grid. Stock's adapter and wheel stay. A cover is a JPEG on the card,
+ * {@code better-Y/playlists/<id>.jpg}; without one a playlist takes its FIRST song's cover once,
+ * in the background (Favorites keeps the heart). {@code <id>.none} records "the placeholder", or a
+ * reset would be undone at the next draw; songs going into an EMPTY playlist clear it.
  */
 public final class PlGrid {
 
@@ -101,7 +89,6 @@ public final class PlGrid {
         new SubMenuDialog(a, l, new ViewPick(a), R.style.Dialog_Common).show();
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     static final class ViewPick implements SubMenuDialog.Callback {
         private final Activity a;
 
@@ -115,11 +102,8 @@ public final class PlGrid {
     }
 
     /**
-     * The screen changes in place: new layout manager, the pool emptied (a tile must never be
-     * handed to a list or the other way round — {@link #layout} is asked only for NEW holders),
-     * the adapter set again so every row is built afresh, and the cursor kept in view. The grid's
-     * top padding is set before the adapter comes back, i.e. before the first layout, which is the
-     * condition {@code Theme.tileGrid} has.
+     * The screen changes in place. The pool is emptied — {@link #layout} is asked only for NEW
+     * holders — and the grid's padding is set before the adapter returns ({@code Theme.tileGrid}).
      */
     private static void setView(Activity a, boolean grid) {
         try {
@@ -145,11 +129,8 @@ public final class PlGrid {
             int pos = ad.getSelectPosition();
             if (pos >= 0 && pos < ad.getItemCount()) rv.scrollToPosition(pos);
         } catch (Throwable t) {
-            // the setting is stored; the screen shows it next time it is opened
         }
     }
-
-    // ------------------------------------------------------------------------ the screen
 
     /** {@code PlaylistsActivity.initView}, after the adapter is set and before the list is filled. */
     public static void setup(RecyclerView rv) {
@@ -159,15 +140,10 @@ public final class PlGrid {
             Theme.tileGrid(rv);
             new Thread(new Sweep()).start();
         } catch (Throwable t) {
-            // the list it was
         }
     }
 
-    /**
-     * {@code MyAdapter.onCreateViewHolder}: the row layout. Asked of the list rather than the
-     * setting, so a setting changed while the screen sat in the back stack cannot mix tiles into
-     * a list or rows into a grid.
-     */
+    /** {@code MyAdapter.onCreateViewHolder}: asked of the list, not the setting, so they never mix. */
     public static int layout(ViewGroup parent, int stock) {
         if (parent instanceof RecyclerView
                 && ((RecyclerView) parent).getLayoutManager() instanceof GridLayoutManager) {
@@ -206,22 +182,17 @@ public final class PlGrid {
             // filled on the ticked ones; Favorites takes no part in a selection (Playlists.tickBlocked)
             Context c = row.getContext();
             RVBaseAdapter ad = adapter(c);
-            // The long-press menu switches the mode OFF the moment it opens (longConfirm) and
-            // leaves the ticks in place for its actions; the selection is still what the menu
-            // acts on, so the marks stay until the ticks themselves go — by an action, or by the
-            // top button closing the menu (stock clears them there).
+            // The menu turns the mode OFF as it opens but acts on the ticks: the marks stay until
+            // the ticks go.
             List ticks = ad == null ? null : ad.getMultiSelectIndexes();
             if (ticks == null || ticks.isEmpty()) menuMulti = false;
             boolean multi = multiMode(c) || menuMulti;
             if (multi != lastMulti) {
-                // every tile, once, after this bind: a mode change reaches only the tiles stock
-                // rebinds (switching it ON is covered in startMultiSelect itself — the flag is set
-                // after the tile under the cursor has already been bound)
+                // every tile once: stock rebinds only some on a mode change
                 lastMulti = multi;
                 if (ad != null) UI.post(new Rebind(ad));
             }
-            // stock hands the tile under the cursor "not ticked" whatever it is — its list row
-            // shows the tick by blinking instead — so the tick is read from the selection itself
+            // stock says "not ticked" for the tile under the cursor: ask the selection
             if (sel && !ticked && ad != null && ad.getMultiSelectIndexes() != null) {
                 ticked = ad.getMultiSelectIndexes().contains(Integer.valueOf(ad.getSelectPosition()));
             }
@@ -234,16 +205,11 @@ public final class PlGrid {
             }
             paint(row, card, img, p, sel, text.getCurrentTextColor());
         } catch (Throwable t) {
-            // a tile half painted is still a tile
         }
         return true;
     }
 
-    /**
-     * {@code ring} is the caption's colour as the theme left it: the card shows a 2px edge of its
-     * own background round the picture, and off the cursor that edge is drawn in the text colour
-     * rather than the layout's black, at 20% round a cover and a placeholder alike.
-     */
+    /** {@code ring}: the caption's colour, for the card's 2px edge off the cursor. */
     private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel,
                               int ring) {
         if (img.getTag(R.id.ipp_pl_cover) == null) {
@@ -283,19 +249,14 @@ public final class PlGrid {
     private static int heartColor;
     private static BitmapDrawable heartDrawable;
 
-    /**
-     * End of the stock bind of a LIST row: Favorites carries the player's filled heart in front of
-     * its name, in the colour the name has just been given (the rule every menu icon follows).
-     * Every other row loses it — rows are recycled.
-     */
+    /** End of a LIST row's bind: the heart before Favorites, in the name's colour; others lose it. */
     public static void listRow(View row) {
         try {
             if (row == null) return;
             View v = row.findViewById(R.id.tv_item);
             if (!(v instanceof TextView)) return;
             TextView tv = (TextView) v;
-            // The plain left slot, never the relative one: on API 17 clearing the START slot leaves
-            // the left drawable it was already resolved into, so a recycled row kept the heart.
+            // the plain left slot: clearing START on API 17 leaves the resolved left drawable
             if (!Playlists.isFav(row.getTag(R.id.ipp_pl_cover))) {
                 if (tv.getCompoundDrawables()[0] != null) tv.setCompoundDrawables(null, null, null, null);
                 return;
@@ -318,7 +279,6 @@ public final class PlGrid {
                 tv.setCompoundDrawables(heartDrawable, null, null, null);
             }
         } catch (Throwable t) {
-            // the name alone
         }
     }
 
@@ -339,7 +299,7 @@ public final class PlGrid {
     private static boolean lastMulti;
     private static boolean menuMulti;    // the menu was opened from the multi-selection
 
-    /** From {@code Playlists.favMenu}, i.e. just before the menu shows and the mode is dropped. */
+    /** From {@code Playlists.favMenu}, before the menu drops the mode. */
     static void noteMenu(Context c) {
         menuMulti = c != null && multiMode(c);
     }
@@ -389,8 +349,6 @@ public final class PlGrid {
             return false;
         }
     }
-
-    // ------------------------------------------------------------------------ the covers
 
     static File dir() {
         return new File(Panel.card(), "playlists");
@@ -459,11 +417,8 @@ public final class PlGrid {
             File d = dir();
             if (d.isDirectory() || d.mkdirs()) none(id).createNewFile();
         } catch (Throwable t) {
-            // the tile keeps what it had
         }
     }
-
-    // ------------------------------------------------ the first song's cover, taken once
 
     /** Ids a worker has been started for in this process — one try per playlist per run. */
     private static final HashSet tried = new HashSet();
@@ -477,7 +432,6 @@ public final class PlGrid {
         new Thread(new First(id, rv)).start();
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     static final class First implements Runnable {
         private final UUID id;
         private final WeakReference rv;
@@ -502,7 +456,6 @@ public final class PlGrid {
                 RecyclerView v = (RecyclerView) rv.get();
                 if (v != null) v.post(new Repaint(v));
             } catch (Throwable t) {
-                // the placeholder stays
             }
         }
     }
@@ -521,9 +474,8 @@ public final class PlGrid {
     }
 
     /**
-     * From {@code Likes.noteAdd}, i.e. the {@code addToPlayList} funnel, BEFORE the rows are
-     * written: songs going into an empty playlist start its cover over, so the first of them gets
-     * to be it. A cover already there — set by hand into an empty playlist — stays.
+     * {@code Likes.noteAdd}, BEFORE the rows are written: an empty playlist starts its cover over.
+     * A cover set by hand stays.
      */
     public static void noteAdd(UUID id) {
         try {
@@ -535,7 +487,6 @@ public final class PlGrid {
                 tried.remove(id);
             }
         } catch (Throwable t) {
-            // the placeholder stays
         }
     }
 
@@ -593,12 +544,9 @@ public final class PlGrid {
                     if (dot > 0 && !ids.contains(n.substring(0, dot))) fs[i].delete();
                 }
             } catch (Throwable t) {
-                // left for next time
             }
         }
     }
-
-    // ------------------------------------------------------------------------ the menus
 
     /** The Playlists screen's menu: "Reset cover" on a tile that has one of its own. */
     public static void menu(List l, Object adapter, Context c) {
@@ -607,21 +555,16 @@ public final class PlGrid {
             RVBaseAdapter a = (RVBaseAdapter) adapter;
             if (hasCover(a.getSelectItem())) l.add(c.getString(R.string.ipp_reset_pl_cover));
         } catch (Throwable t) {
-            // the menu without it
         }
     }
 
-    /**
-     * Its dispatch, in front of stock's {@code select} — the screen's one ipp dispatch, so the
-     * m3u export ({@link M3u#menuPick}) is answered from here too.
-     */
+    /** The screen's one ipp dispatch, in front of stock's {@code select}; M3u's too. */
     public static boolean menuPick(Activity a, Object adapter, String s) {
         if (M3u.menuPick(a, adapter, s)) return true;
         if (a != null && s != null && s.equals(a.getString(R.string.ipp_pl_view))) {
             try {
                 viewDialog(a);
             } catch (Throwable t) {
-                // no dialog is better than a crash out of a menu
             }
             return true;
         }
@@ -637,7 +580,6 @@ public final class PlGrid {
             ad.notifyItemChanged(ad.getSelectPosition());
             Toast.makeText(a, R.string.ipp_pl_cover_reset, Toast.LENGTH_SHORT).show();
         } catch (Throwable t) {
-            // nothing reset
         }
         return true;
     }
@@ -659,7 +601,6 @@ public final class PlGrid {
             if (!(o instanceof Song) || p == null) return true;
             new Thread(new FromSong(a, p.getPlaylistId(), ((Song) o).getPath())).start();
         } catch (Throwable t) {
-            // nothing set
         }
         return true;
     }
@@ -682,7 +623,6 @@ public final class PlGrid {
                 b = BigCover.track(path);
                 ok = write(id, b);
             } catch (Throwable t) {
-                // not set
             }
             if (ok) {
                 a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_set));
@@ -706,8 +646,6 @@ public final class PlGrid {
         }
     }
 
-    // ------------------------------------------------------- Photos -> "Set playlist cover"
-
     /** The third entry of the "Set as…" popup: which playlist gets this picture. */
     public static void fromPhoto(Activity a, String path) {
         try {
@@ -719,7 +657,6 @@ public final class PlGrid {
             // the 4th argument is the dialog THEME (ipp-menus-playlists)
             new SubMenuDialog(a, names, new PhotoPick(a, pls, path), R.style.Dialog_Common).show();
         } catch (Throwable t) {
-            // no dialog is better than a crash out of a menu
         }
     }
 
@@ -768,7 +705,6 @@ public final class PlGrid {
                 ok = write(id, b);
                 if (b != null) b.recycle();
             } catch (Throwable t) {
-                // not set
             }
             if (ok) a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_set));
         }

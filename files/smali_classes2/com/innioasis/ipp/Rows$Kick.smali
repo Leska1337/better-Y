@@ -15,11 +15,11 @@
 
 .method constructor <init>(Landroid/widget/TextView;)V
   .registers 2
-  .line 351
+  .line 250
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 352
+  .line 251
     iput-object p1, p0, Lcom/innioasis/ipp/Rows$Kick;->tv:Landroid/widget/TextView;
-  .line 353
+  .line 252
     return-void
 .end method
 
@@ -27,7 +27,7 @@
   .catchall { :L0 .. :L2 } :L4
   .registers 3
   :L0
-  .line 359
+  .line 257
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Kick;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getWidth()I
     move-result v0
@@ -38,24 +38,24 @@
     if-nez v0, :L1
     goto :L3
   :L1
-  .line 360
+  .line 258
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Kick;->tv:Landroid/widget/TextView;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setSelected(Z)V
-  .line 361
+  .line 259
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Kick;->tv:Landroid/widget/TextView;
     const/4 v1, 1
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setSelected(Z)V
   :L2
-  .line 364
+  .line 261
     goto :L5
   :L3
-  .line 359
+  .line 257
     return-void
   :L4
-  .line 362
+  .line 260
     move-exception v0
   :L5
-  .line 365
+  .line 262
     return-void
 .end method

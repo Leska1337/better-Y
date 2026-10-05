@@ -25,16 +25,9 @@ import com.innioasis.y1.theme.ThemeManager;
 import java.util.List;
 
 /**
- * "Import playlists": every .m3u / .m3u8 in /Playlists/ into the library ({@link M3u}).
- *
- * Four stages on one screen. The files of the folder, each with a tick: nothing is imported that
- * was not picked. The questions, over it — a name that is taken, Favorites — so the transfer that
- * follows runs without stopping. Then the transfer with its progress; it
- * cannot be interrupted, since a playlist left half-written is worse than one not touched. Then the
- * summary: per playlist how many songs made it, and under it the file name of each song that did
- * not. The wheel scrolls the summary, the top button leaves.
- *
- * Authored in Java (build/ipp-java); raw types and named nested classes only.
+ * "Import playlists" from /Playlists/ ({@link M3u}), four stages on one screen: the files to tick,
+ * the questions (a taken name, Favorites), the transfer — which cannot be interrupted: a playlist
+ * half-written is worse than untouched — and the summary of what did not make it.
  */
 public final class IppImportActivity extends BaseActivity {
 
@@ -76,7 +69,7 @@ public final class IppImportActivity extends BaseActivity {
         container.setOrientation(LinearLayout.VERTICAL);
         scroller = new ScrollView(this);
         scroller.addView(container, -1, -2);
-        // The file list's button stands under the scroller, at the bottom edge of the screen
+        // the file list's button under the scroller, at the bottom edge
         LinearLayout outer = new LinearLayout(this);
         outer.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(-1, 0);
@@ -107,8 +100,6 @@ public final class IppImportActivity extends BaseActivity {
         buildList();
     }
 
-    // ---------------------------------------------------------------- the file list
-
     private static final int ACCENT = 0xFF3CFFDE;
 
     private List all;                    // every file of the folder, List<M3u.Plan>
@@ -120,11 +111,7 @@ public final class IppImportActivity extends BaseActivity {
     private ImageView[] ticks;
     private int sel;
 
-    /**
-     * Nothing is imported before the user says which files: a tick per file, "Select all" on top
-     * (no tick of its own — it turns them all on or off), the button below. The centre press ticks
-     * or presses; the wheel moves the cursor.
-     */
+    /** A tick per file, "Select all" on top (toggles them all), the button below. */
     void buildList() {
         listing = true;
         container.removeAllViews();
@@ -173,9 +160,7 @@ public final class IppImportActivity extends BaseActivity {
             ticks[i] = t;
             if (step == 0) fit((int) (l.getTextSize() * 2.4f) + HAIR_H);
             if (i == n - 1) {
-                // A hairline of its own only where the list stops short of it: a row that touches
-                // the button already draws that boundary, and a second line beside it reads as one
-                // twice as thick. The footer keeps its height either way, so the fit holds.
+                // a hairline only where the list stops short of the button, or it doubles up
                 boolean touches = n - 1 >= fitRows;
                 int bh = step;
                 if (!touches) {
@@ -200,11 +185,8 @@ public final class IppImportActivity extends BaseActivity {
     private int fitRows;                 // how many list rows the scroller shows
 
     /**
-     * The file list's rows sized so the screen holds a whole number of them, the button included:
-     * the list scrolls a row at a time, and with a height that does not divide, the row at the top
-     * or the bottom edge was always cut. The rows are made a pixel or two shorter or taller than
-     * {@code want} to get there; what still does not divide goes to the top padding, as the grid
-     * of playlists does it ({@code Theme.tileGrid}).
+     * Rows sized so the screen holds a whole number of them, the button included, or an edge row
+     * is always cut; the remainder goes to the top padding.
      */
     private void fit(int want) {
         View body = (View) scroller.getParent();
@@ -230,7 +212,7 @@ public final class IppImportActivity extends BaseActivity {
         ThemeManager.INSTANCE.itemSetBackground(rows[i], on ? R.drawable.item_setting_sel : 0, on);
         ThemeManager.INSTANCE.itemSetTextColor(labels[i], on ? ACCENT : -1, on);
         ThemeManager.INSTANCE.itemSetTextColor(values[i], on ? ACCENT : -1, on);
-        // the colour the label actually got, not the one asked for: the theme answers for it
+        // the colour the label actually got
         Icons.menu(ticks[i], labels[i].getCurrentTextColor());
         boolean file = i > 0 && i <= all.size();
         if (file) {
@@ -298,8 +280,8 @@ public final class IppImportActivity extends BaseActivity {
     }
 
     /**
-     * The top button on a question: nothing is written yet, so the list comes back with the same
-     * ticks. The files are read again — the questions already answered changed the plans' names.
+     * Top on a question: nothing written yet, the list comes back with its ticks — re-read, since
+     * the answers so far renamed the plans.
      */
     void backToList() {
         java.util.HashSet ticked = new java.util.HashSet();
@@ -318,8 +300,6 @@ public final class IppImportActivity extends BaseActivity {
         }
         buildList();
     }
-
-    // ---------------------------------------------------------------- the transfer
 
     void start() {
         if (isFinishing()) return;
@@ -341,14 +321,13 @@ public final class IppImportActivity extends BaseActivity {
         which = line("", SMALL_SP);
         panel.addView(which, new LinearLayout.LayoutParams(-1, -2));
 
-        // The player's own timeline drawable, put through the same theme hook the player uses.
+        // the player's own timeline drawable and theme hook
         bar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         try {
             Drawable d = getResources().getDrawable(R.drawable.shape_progressbar_pro).mutate();
             bar.setProgressDrawable(d);
             ThemeManager.INSTANCE.setCustomBackground(bar);
         } catch (Throwable t) {
-            // the platform's own bar
         }
         bar.setMax(Math.max(1, total));
         LinearLayout.LayoutParams bp = new LinearLayout.LayoutParams(-1, 8);
@@ -403,8 +382,6 @@ public final class IppImportActivity extends BaseActivity {
         container.post(new Done(this));
     }
 
-    // ---------------------------------------------------------------- the summary
-
     void done() {
         running = false;
         finished = true;
@@ -447,8 +424,6 @@ public final class IppImportActivity extends BaseActivity {
         scroller.scrollTo(0, 0);
     }
 
-    // ---------------------------------------------------------------- views
-
     /** A line of text in the colour an unfocused row is painted. */
     private TextView line(String text, float sp) {
         TextView tv = new TextView(this);
@@ -464,10 +439,7 @@ public final class IppImportActivity extends BaseActivity {
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
     }
 
-    /**
-     * A summary row: one line, the theme's unfocused row background under it, a hairline along
-     * its bottom — the rows of the better-Y menu and of the queue, without a cursor.
-     */
+    /** A summary row, as the menu's and the queue's rows, without a cursor. */
     private View item(TextView tv) {
         tv.setSingleLine(true);
         tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
@@ -478,11 +450,7 @@ public final class IppImportActivity extends BaseActivity {
         return boxed(tv, (int) (tv.getTextSize() * 2.4f));
     }
 
-    /**
-     * A row inside a box carrying a hairline along its BOTTOM edge only: one line per boundary,
-     * the menu's caption rule thinner and far weaker. Height fixed, so a theme's row picture cannot
-     * stretch the row to its own size.
-     */
+    /** A row with a hairline on its BOTTOM edge only; a FIXED height, or a theme bitmap stretches it. */
     private View boxed(View row, int h) {
         LinearLayout box = new LinearLayout(this);
         box.setOrientation(LinearLayout.VERTICAL);
@@ -505,7 +473,7 @@ public final class IppImportActivity extends BaseActivity {
         lastHair = null;
     }
 
-    /** The theme's ordinary item colour — painted on a probe and read back, the only way to ask. */
+    /** The theme's ordinary item colour, read back off a probe. */
     private int itemRgb() {
         if (itemRgb < 0) {
             TextView probe = new TextView(this);
@@ -516,11 +484,7 @@ public final class IppImportActivity extends BaseActivity {
         return itemRgb;
     }
 
-    /**
-     * The better-Y menu's group caption: a rule, the washed strip, a rule. {@code top} false leaves
-     * the upper rule out, for a caption right under another one: two translucent rules side by
-     * side read as one line twice as thick.
-     */
+    /** The menu's caption band; {@code top} false for one right under another, or the rules double. */
     private View caption(String text, boolean top) {
         TextView tv = line(text, SMALL_SP);
         bold(tv);
@@ -549,8 +513,6 @@ public final class IppImportActivity extends BaseActivity {
         return box;
     }
 
-    // ---------------------------------------------------------------- keys
-
     private int step() {
         return (int) (getResources().getDisplayMetrics().scaledDensity * SMALL_SP * 2.5f);
     }
@@ -578,7 +540,7 @@ public final class IppImportActivity extends BaseActivity {
 
     @Override
     public void direction(BaseActivity.Direction d) {
-        // Not while the transfer runs: it cannot be stopped halfway, and leaving would hide it.
+        // not while the transfer runs
         if (d == BaseActivity.Direction.TOP && !running) finish();
     }
 
@@ -586,9 +548,6 @@ public final class IppImportActivity extends BaseActivity {
     public void quit() {
         if (!running) finish();
     }
-
-    // ---------------------------------------------------------------- named runnables
-    // (d8 here crashes on anonymous classes)
 
     static final class Begin implements Runnable {
         private final IppImportActivity a;

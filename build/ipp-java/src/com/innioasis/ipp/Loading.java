@@ -40,20 +40,11 @@ import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * The progress window ({@code LoadingDialog}: Update library, Cache library, clearing the cache,
- * the backup) in the theme's dialog colours — the same {@code dialogBackgroundColor} /
- * {@code dialogTextColor} the Yes/No dialogs take. Its layout has them written in (a white box,
- * #102162 text), and those are also the fallbacks here, so with no theme nothing changes.
- *
- * The spinner is tinted only when the theme names a text colour: its own blue is part of the stock
- * look, and a tint the theme did not ask for would replace it for no reason. It must not be tinted
- * with a plain colour filter: {@code loading.png} fades from navy to white at FULL alpha, so a
- * flat SRC_IN/ATOP fills the whole ring and the rotation stops being visible. {@link #FADE} turns
- * that darkness into alpha instead — the ring comes out in the theme's colour fading to nothing,
- * which is how the platform spinner on the USB screen looks.
- *
- * {@link #progress} dresses the OTHER progress window, the platform {@code ProgressDialog}; both
- * turn the same {@link Spin}.
+ * The progress windows in the theme's dialog colours: {@code LoadingDialog} and the platform
+ * {@code ProgressDialog} ({@link #progress}), both turning the same {@link Spin}. The ring is tinted
+ * only when the theme names a text colour, and never with a flat filter: {@code loading.png} fades
+ * navy to white at FULL alpha, so SRC_IN fills the ring and the rotation vanishes; {@link #fade}
+ * turns darkness into alpha instead.
  */
 public final class Loading {
 
@@ -66,10 +57,10 @@ public final class Loading {
     /** {@code dialog_loading.xml}. */
     private static final int TEXT = 0xFF102162;
 
-    /** Alpha 0: a real theme colour can never be this, so it answers "the theme names none". */
+    /** Alpha 0, never a real theme colour: the answer means "the theme names none". */
     private static final int PROBE = 0x00FEEDBE;
 
-    /** What a window holding the ring comes and goes with: the dialog's own fade, no scale. */
+    /** Fade only, no scale — see {@link Spin}. */
     private static final int FADE_STYLE = R.style.ipp_Fade;
 
     /** From {@code LoadingDialog.onCreate}, right after {@code setContentView}. */
@@ -94,26 +85,18 @@ public final class Loading {
                 ((ImageView) img).setColorFilter(fade(themed));
             }
         } catch (Throwable t) {
-            // a stock-coloured progress window is still a progress window
         }
     }
 
-    /**
-     * How much alpha one unit of darkness is worth. The ring's darkest pixel (#102162) has a
-     * luminance of about 32, so without the gain its head would stop at 87% opacity.
-     */
+    /** Alpha per unit of darkness: without the gain the ring's head stops at 87%. */
     private static final float FADE = 1.15f;
 
-    // ------------------------------------------------ the PLATFORM's progress window (wallpapers)
-
-    /** A rule under a dialog's title is a bare View a pixel or two high; nothing else here is. */
+    /** The rule under a dialog's title is a bare View this thin; nothing else here is. */
     private static final int RULE_MAX_DIP = 4;
 
     /**
-     * The platform {@code ProgressDialog} — the app's own window, so it can be dressed: title
-     * centred, message dropped (it repeated the title), the app's {@link Spin ring}, the theme's
-     * dialog colours when it names them. The parts are found by WALKING the window: an
-     * AlertDialog's ids are {@code com.android.internal.R.id.*}.
+     * The platform {@code ProgressDialog}: title centred, message dropped (it repeated the title),
+     * our ring. Parts are found by walking the window — its ids are internal.
      */
     public static void progress(ProgressDialog d) {
         if (d == null) return;
@@ -128,8 +111,7 @@ public final class Loading {
             boolean boxed = bg != PROBE;
             float density = decor.getResources().getDisplayMetrics().density;
             if (boxed) {
-                // The window's padding lives in its nine-patch background: read it off the
-                // drawable being replaced and put it back, or the title touches the edge.
+                // The padding lives in the nine-patch being replaced: carried over.
                 Rect pad = new Rect();
                 Drawable had = decor.getBackground();
                 if (had != null) had.getPadding(pad);
@@ -139,8 +121,7 @@ public final class Loading {
                 w.setBackgroundDrawable(box);
                 decor.setPadding(pad.left, pad.top, pad.right, pad.bottom);
             }
-            // From the decor's CHILDREN: the walk clears every group's background, and the
-            // decor's own is the box just given it.
+            // From the CHILDREN: the walk clears backgrounds, and the decor's is the new box.
             int fg = tm.dialogTextColor(PROBE);
             int rule = (int) (RULE_MAX_DIP * density);
             if (decor instanceof ViewGroup) {
@@ -152,21 +133,19 @@ public final class Loading {
             // Before the window's first draw, which is when its enter animation is chosen.
             if (holdsSpin(decor)) w.setWindowAnimations(FADE_STYLE);
         } catch (Throwable t) {
-            // the platform's own window is still a progress window
         }
     }
 
     /**
-     * A progress window raised but not seen (Photos opening a folder or a picture). It must stay
-     * raised: it holds the keys while the load runs, and a second load started over the first
-     * lands the wrong folder's list. Only its look goes.
+     * Photos' progress window, made invisible but kept up: it holds the keys during the load,
+     * and a second load over the first lands the wrong folder's list.
      */
     public static void hidden(ProgressDialog d) {
         if (d == null) return;
         try {
             Window w = d.getWindow();
             if (w == null) return;
-            // Before the window's first draw, which is when its enter animation is chosen.
+            // Before the first draw, when the enter animation is chosen.
             w.setWindowAnimations(0);
             w.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -176,7 +155,6 @@ public final class Loading {
                 for (int i = 0; i < g.getChildCount(); i++) g.getChildAt(i).setVisibility(View.INVISIBLE);
             }
         } catch (Throwable t) {
-            // a window that shows is still a window that holds the keys
         }
     }
 
@@ -194,37 +172,32 @@ public final class Loading {
             return;
         }
         if (v instanceof ProgressBar) {
-            // The line was laid out to hold circle and message side by side, so with the
-            // message gone the circle stays where it left it unless the row is told to centre.
+            // With the message gone the circle must be centred explicitly.
             if (!spin(v, color, (int) (PLATFORM_DIP * v.getResources().getDisplayMetrics().density))) {
                 centre(v);
             }
             return;
         }
         if (v instanceof ViewGroup) {
-            // Each panel of an AlertDialog carries a nine-patch of its own — a white box INSIDE
-            // the one the window was just given, so the panels give theirs up. Padding survives:
-            // a view keeps what a background gave it when that background goes.
+            // Each panel carries its own white nine-patch inside the box; its padding survives.
             if (boxed) v.setBackgroundDrawable(null);
             ViewGroup g = (ViewGroup) v;
             for (int i = 0; i < g.getChildCount(); i++) dress(g.getChildAt(i), color, ruleMax, boxed);
             return;
         }
         if (themed) {
-            // The rule under the title, in the platform's own accent. Height from the layout
-            // params, not the view: this runs before the window has been measured.
+            // The rule under the title. Height from the params: nothing is measured yet.
             ViewGroup.LayoutParams lp = v.getLayoutParams();
             if (lp != null && lp.height > 0 && lp.height <= ruleMax) v.setBackgroundColor(color);
         }
     }
 
-    /** The platform circle's size ({@code Widget.ProgressBar}), which the ring takes over. */
+    /** {@code Widget.ProgressBar}'s size. */
     private static final int PLATFORM_DIP = 48;
 
     /**
-     * Puts a {@link Spin} where {@code stand} is and hides the stand; false leaves it untouched.
-     * The ImageView of {@code dialog_loading.xml} stays (INVISIBLE, not replaced): {@code
-     * LoadingDialog.onStart} casts it by id. The platform ProgressBar goes GONE.
+     * A {@link Spin} in place of {@code stand}. The ImageView of {@code dialog_loading.xml} stays,
+     * INVISIBLE: {@code LoadingDialog.onStart} casts it by id.
      */
     private static boolean spin(View stand, int color, int sidePx) {
         ViewParent vp = stand == null ? null : stand.getParent();
@@ -324,7 +297,6 @@ public final class Loading {
             try {
                 t.join(500);
             } catch (InterruptedException e) {
-                // the loop reads the flag before every frame
             }
         }
 

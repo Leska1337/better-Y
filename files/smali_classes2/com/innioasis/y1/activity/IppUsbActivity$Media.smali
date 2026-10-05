@@ -14,19 +14,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppUsbActivity;)V
   .registers 2
-  .line 350
+  .line 335
     invoke-direct { p0 }, Landroid/content/BroadcastReceiver;-><init>()V
-  .line 351
+  .line 336
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Media;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
-  .line 352
+  .line 337
     return-void
 .end method
 
 .method public onReceive(Landroid/content/Context;Landroid/content/Intent;)V
   .registers 3
-  .line 356
+  .line 341
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Media;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/IppUsbActivity;->settle()V
-  .line 357
+  .line 342
     return-void
 .end method

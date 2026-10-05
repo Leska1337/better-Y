@@ -17,25 +17,25 @@
 
 .method constructor <init>(Ljava/util/HashMap;Z)V
   .registers 3
-  .line 574
+  .line 445
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 575
+  .line 446
     iput-object p1, p0, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->order:Ljava/util/HashMap;
-  .line 576
+  .line 447
     iput-boolean p2, p0, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->desc:Z
-  .line 577
+  .line 448
     return-void
 .end method
 
 .method private rank(Ljava/lang/Object;)I
   .registers 6
-  .line 580
+  .line 451
     instance-of v0, p1, Lcom/innioasis/y1/database/video/VideoInfo;
     const/4 v1, -1
     if-nez v0, :L0
     return v1
   :L0
-  .line 581
+  .line 452
     iget-object v0, p0, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->order:Ljava/util/HashMap;
     check-cast p1, Lcom/innioasis/y1/database/video/VideoInfo;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/video/VideoInfo;->getVideo_id()J
@@ -44,7 +44,7 @@
     move-result-object p1
     invoke-virtual { v0, p1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p1
-  .line 582
+  .line 453
     instance-of v0, p1, Ljava/lang/Integer;
     if-eqz v0, :L1
     check-cast p1, Ljava/lang/Integer;
@@ -56,17 +56,17 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 586
+  .line 457
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->rank(Ljava/lang/Object;)I
     move-result p1
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->rank(Ljava/lang/Object;)I
     move-result p2
-  .line 588
+  .line 458
     if-ltz p1, :L3
     if-gez p2, :L0
     goto :L3
   :L0
-  .line 589
+  .line 459
     iget-boolean v0, p0, Lcom/innioasis/ipp/Playlists$VideoAddedCmp;->desc:Z
     if-eqz v0, :L1
     sub-int/2addr p2, p1
@@ -76,7 +76,7 @@
   :L2
     return p2
   :L3
-  .line 588
+  .line 458
     if-gez p1, :L4
     if-gez p2, :L4
     const/4 p1, 0

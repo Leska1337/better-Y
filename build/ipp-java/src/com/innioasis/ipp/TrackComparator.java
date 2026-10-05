@@ -4,16 +4,7 @@ import java.util.Comparator;
 
 import com.innioasis.y1.database.Song;
 
-/**
- * Sorts songs by their TRACK NUMBER tag, read through {@link TrackCache}.
- *
- * Raw {@code Comparator} on purpose — a generic one makes javac emit a class {@code Signature}
- * attribute, and the bundled d8 (R8 8.2.2-dev) crashes dexing those. Hence the casts in
- * {@link #compare}.
- *
- * Songs with no tag come back as 0 from the cache and therefore sort first, which is what the
- * album screens want: an untagged file has nothing to place it by.
- */
+/** Songs by TRACK NUMBER ({@link TrackCache}); untagged files read 0 and sort first. */
 public final class TrackComparator implements Comparator {
 
     @Override

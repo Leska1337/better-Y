@@ -34,24 +34,24 @@
 
 .method public constructor <init>()V
   .registers 2
-  .line 357
+  .line 352
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 361
+  .line 356
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->lines:Ljava/util/ArrayList;
-  .line 362
+  .line 357
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->infos:Ljava/util/ArrayList;
-  .line 365
+  .line 360
     const/4 v0, 0
     iput v0, p0, Lcom/innioasis/ipp/M3u$Plan;->mode:I
-  .line 370
+  .line 365
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->missing:Ljava/util/ArrayList;
-  .line 371
+  .line 366
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->dups:Ljava/util/ArrayList;

@@ -19,13 +19,13 @@
 
 .method constructor <init>(Ljava/util/List;[Ljava/lang/String;)V
   .registers 3
-  .line 259
+  .line 227
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 260
+  .line 228
     iput-object p1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
-  .line 261
+  .line 229
     iput-object p2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Ljava/lang/String;
-  .line 262
+  .line 230
     return-void
 .end method
 
@@ -34,7 +34,7 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 265
+  .line 233
     iget v0, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->next:I
     iget-object v1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
@@ -51,7 +51,7 @@
     monitor-exit p0
     return v0
   :L4
-  .line 265
+  .line 233
     move-exception v0
     monitor-exit p0
     throw v0
@@ -60,16 +60,16 @@
 .method public run()V
   .catchall { :L1 .. :L2 } :L3
   .registers 5
-  .line 270
+  .line 238
     nop
   :L0
     invoke-direct { p0 }, Lcom/innioasis/ipp/AlbumArtists$Reader;->take()I
     move-result v0
     if-ltz v0, :L5
-  .line 271
+  .line 239
     const-string v1, ""
   :L1
-  .line 273
+  .line 241
     iget-object v2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v2, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
@@ -78,23 +78,23 @@
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
     move-result-object v2
     iget-object v2, v2, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-  .line 274
+  .line 242
     if-eqz v2, :L2
     invoke-virtual { v2 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v1
   :L2
-  .line 277
+  .line 244
     goto :L4
   :L3
-  .line 275
+  .line 243
     move-exception v2
   :L4
-  .line 278
+  .line 245
     iget-object v2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Ljava/lang/String;
     aput-object v1, v2, v0
-  .line 279
+  .line 246
     goto :L0
   :L5
-  .line 280
+  .line 247
     return-void
 .end method

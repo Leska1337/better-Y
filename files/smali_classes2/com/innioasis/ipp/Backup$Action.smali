@@ -14,7 +14,7 @@
 
 .method constructor <init>(Landroid/app/Activity;)V
   .registers 2
-  .line 122
+  .line 84
     invoke-direct { p0 }, Lcom/innioasis/ipp/BackupDialog$Go;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Backup$Action;->a:Landroid/app/Activity;
     return-void
@@ -22,17 +22,17 @@
 
 .method public go(I)V
   .registers 2
-  .line 125
+  .line 87
     if-nez p1, :L0
-  .line 126
+  .line 88
     iget-object p1, p0, Lcom/innioasis/ipp/Backup$Action;->a:Landroid/app/Activity;
     invoke-static { p1 }, Lcom/innioasis/ipp/Backup;->startSave(Landroid/app/Activity;)V
     goto :L1
   :L0
-  .line 128
+  .line 90
     iget-object p1, p0, Lcom/innioasis/ipp/Backup$Action;->a:Landroid/app/Activity;
     invoke-static { p1 }, Lcom/innioasis/ipp/Backup;->askLoad(Landroid/app/Activity;)V
   :L1
-  .line 130
+  .line 92
     return-void
 .end method

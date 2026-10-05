@@ -12,19 +12,9 @@ import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 
 /**
- * The Favorites playlist itself: creating it, and putting a track in or taking it out when the
- * heart on the Now-Playing row is pressed.
- *
- * Its UUID is a constant, not a lookup. The playlist has to be found again after a rename, in
- * another language, and from code that has no list in hand, so the id is what identifies it and the
- * name is only ever a label.
- *
- * Everything here is wrapped in a {@code catch (Throwable)} and does nothing on failure: the
- * heart is a button on the player's row, and a database that will not answer must not take the
- * player down with it.
- *
- * The heart the user SEES is a preference ({@code like:<path>}, see {@code Likes}) — this class
- * is the durable half, and the two are kept in step wherever the playlist is written.
+ * The Favorites playlist: created under a fixed UUID (found again after a rename or a language
+ * switch; the name is only a label), and edited when the heart is pressed. Every failure is
+ * swallowed — a database that will not answer must not take the player down.
  */
 public final class Fav {
 
@@ -32,11 +22,7 @@ public final class Fav {
         return Y1Application.Companion.getY1Repository();
     }
 
-    /**
-     * The Favorites playlist's fixed id — THE ONE PLACE it is written down. {@link Likes} reads
-     * this very constant: a second copy of it would let the heart and the playlist drift apart,
-     * and nothing would say so.
-     */
+    /** The one place the id is written down; {@link Likes} reads this very constant. */
     static final String UUID_STR = "1e5f0a00-0000-4000-8000-000000000001";
 
     private static UUID favUuid() {
@@ -48,13 +34,8 @@ public final class Fav {
     }
 
     /**
-     * Ipp: this only CREATES the playlist, and must never relabel an existing one. Relabelling here
-     * would fire on every "add to favourites", i.e. at the first heart press after the user has
-     * renamed the playlist by hand. That is the language switch's job alone
-     * ({@link #sync(Context)}, hooked into both language screens).
-     *
-     * Called from {@code Playlists.syncName} (i.e. {@code MainActivity.initView}) once per app
-     * start, so the playlist exists by default whatever the "Likes system" setting says.
+     * Only CREATES the playlist, never relabels it — that would undo a manual rename at the next
+     * heart press. Relabelling is {@link #sync}'s job alone. Called once per app start.
      */
     public static void ensure(Context c) {
         try {
@@ -67,18 +48,13 @@ public final class Fav {
                 return;
             }
             String name = nameFor(c);
-            // The real 5-argument constructor, and it is reachable: its three reference parameters
-            // all get a checkNotNullParameter and all three are passed non-null here. (The trap is
-            // the OTHER shape — a Kotlin data class whose defaults-synthetic is what stock's own
-            // decompiled source appears to call; javac cannot call a synthetic member and would
-            // resolve to the real one, which throws on the first null. See CLAUDE.md.)
+            // The real constructor, safe because all three references are non-null.
             repo.addPlaylist(new Playlist(id, name, name.toLowerCase(),
                     System.currentTimeMillis(), false));
         } catch (Throwable t) {
         }
     }
 
-    /** The heart pressed on: put this track in the playlist, creating the playlist if need be. */
     public static void add(Context c, String path) {
         if (path == null) {
             return;
@@ -89,14 +65,12 @@ public final class Fav {
             if (repo == null) {
                 return;
             }
-            // By FILE rather than by song: addToPlayListByFile is the path that also works for a
-            // track the library has not indexed.
+            // By file: also works for a track the library has not indexed.
             repo.addToPlayListByFile(new File(path), favUuid());
         } catch (Throwable t) {
         }
     }
 
-    /** The heart pressed off. A track the library does not know is not in the playlist either. */
     public static void remove(Context c, String path) {
         if (path == null) {
             return;
@@ -116,13 +90,8 @@ public final class Fav {
     }
 
     /**
-     * Relabel the playlist in the interface language — the ONE thing that undoes a manual rename,
-     * and only because the default name is generated and therefore belongs to the UI rather than to
-     * the user's data.
-     *
-     * Triggered by the language screens; {@code Playlists.syncName} is what decides that the
-     * language has actually changed (it keeps the stored index, {@code fav_lang}), because a name
-     * comparison cannot tell "renamed by hand" from "language switched".
+     * Relabels the playlist in the interface language — the one thing that undoes a manual rename.
+     * Whether the language actually changed is decided by {@code Playlists.syncName}.
      */
     public static void sync(Context c) {
         try {

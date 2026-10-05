@@ -12,25 +12,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The DISC NUMBER tag of a track (ID3 {@code TPOS}), for albums that are not split into CD
- * folders.
- *
- * Why the tag at all
- * The disc a track belongs to is otherwise read off its folder name ("CD1", "Disc 2", "Диск3"),
- * which is free and reflects how the files were actually laid out — but it is blind to an album
- * that sits in ONE folder and says "1/2" and "2/2" in its tags. So: the folder answers first, and
- * the tag only where the folder says nothing ({@link Albums#discOf}).
- *
- * Cost
- * Unlike the album artist, this is a property of the TRACK, so it is one metadata read per song —
- * the expensive class. It is therefore read only by "Cache library", and in the same file open as
- * the track number ({@link #read}), which that pass reads anyway: having both makes the disc
- * number practically free.
- *
- * A cached 0 means "read, the file has no disc tag" — the difference between that and "never
- * looked at" ({@link #known}) is what stops every tagless song being re-read on every pass.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * The DISC NUMBER tag per track, for albums not split into CD folders — the folder name answers
+ * first ({@link Albums#discOf}). One read per song, so only "Cache library" reads it, in the same
+ * file open as the track number. A stored 0 means "read, no tag", unlike "never read".
  */
 public final class DiscCache {
 
@@ -43,10 +27,8 @@ public final class DiscCache {
     private static final char SEP = '\t';
 
     /**
-     * First line of the file. Its absence means the entries were written before sides of a record
-     * were read (see {@link #sideOf}): a stored 0 then means "no DISC tag", which is exactly where
-     * a side may be hiding, so those entries are dropped and re-read. Real disc numbers are kept —
-     * nothing about them changed.
+     * First line of the file. Without it, a stored 0 predates {@link #sideOf} and may hide a
+     * vinyl side, so such entries are dropped and re-read.
      */
     private static final String VER = "#v2";
 
@@ -76,14 +58,12 @@ public final class DiscCache {
                 if (t <= 0) continue;
                 try {
                     int v = Integer.parseInt(s.substring(t + 1).trim());
-                    if (!cur && v == 0) continue;   // may hide a side -- forget it, it is re-read
+                    if (!cur && v == 0) continue;
                     map.put(s.substring(0, t), Integer.valueOf(v));
                 } catch (Throwable e) {
-                    // a corrupt line is one song that gets read again
                 }
             }
         } catch (Throwable t) {
-            // an unreadable cache is an empty cache
         }
     }
 
@@ -106,18 +86,17 @@ public final class DiscCache {
             o.close();
             dirty = false;
         } catch (Throwable t) {
-            // keep what we have in memory for this run
         }
     }
 
-    /** True once this song's tag has been looked at; a cached "no disc tag" counts. */
+    /** A cached "no disc tag" counts as known. */
     public static boolean known(String path) {
         if (path == null) return true;
         load();
         return map.containsKey(path);
     }
 
-    /** The song's disc number, or 0 when it has none / has never been read. */
+    /** 0 when it has none or was never read. */
     public static int get(String path) {
         if (path == null) return 0;
         load();
@@ -126,18 +105,14 @@ public final class DiscCache {
     }
 
     /**
-     * "Read, and this file carries no track number" — the very value {@code TrackCache.ensure}
-     * writes for such a song, so writing it here is what stops that method opening the same file a
-     * second time at the end of the caching pass. {@code TrackCache.put} parses its argument, and
-     * a plain number is the only thing it understands.
+     * "No track number", as {@code TrackCache.ensure} stores it — written here so that method does
+     * not open the file again at the end of the pass.
      */
     private static final String NO_TRACK = "2147483647";   // Integer.MAX_VALUE
 
-    /** What one track's file gives the caching pass. Filled by {@link #read}, stored by
-     *  {@link #commit} — the two are separate so the reading can be done by several threads while
-     *  the caches are only ever written from one. */
+    /** One file's yield: filled by {@link #read} on any thread, stored by {@link #commit} on one. */
     public static final class Tags {
-        /** Whether the tags were asked for at all; a picture-only read stores nothing. */
+        /** False for a picture-only read, which stores nothing. */
         public boolean wanted;
         public int disc;              // 0 = no disc tag
         public String track;          // the raw tag, or null for "none"
@@ -145,17 +120,8 @@ public final class DiscCache {
     }
 
     /**
-     * Everything the caching pass wants from one track, out of a single {@code
-     * setDataSource} — the two tags above and, for the Now-Playing cover, the artwork bytes.
-     *
-     * Opening the file is what a metadata read costs (the container has to be parsed before any
-     * key can be answered); pulling three values out of one open is practically free, while asking
-     * for them separately pays that price again each time — one open here, a second inside
-     * {@code BigCover} for the picture, and a third from {@code TrackCache.ensure} for every song
-     * whose file carries no track number at all.
-     *
-     * Writes nothing anywhere, so any number of threads may call it at once. Never call from the
-     * UI thread.
+     * Both tags and the artwork from one file open — opening is the whole cost of a metadata
+     * read. Writes nothing, so any thread may call it; never the UI thread.
      */
     public static Tags read(String path, boolean tags, boolean art) {
         Tags out = new Tags();
@@ -163,19 +129,17 @@ public final class DiscCache {
         if (path == null) return out;
         Meta.Info info = Meta.read(path, art);
         if (tags) {
-            out.disc = parse(info.disc);    // an unreadable file is "read, nothing there"
+            out.disc = parse(info.disc);
             out.track = info.track;
         }
         out.art = info.art;
         return out;
     }
 
-    /** Store one read. Single-threaded by contract — see {@link #read}. */
+    /** Single-threaded by contract. */
     public static void commit(String path, Tags t) {
         if (path == null || t == null || !t.wanted) return;
         load();
-        // "no track tag" is written down as the very value TrackCache.ensure would use, or that
-        // method opens the file a second time at the end of the pass looking for it
         TrackCache.put(path, t.track != null ? t.track : NO_TRACK);
         int d = t.disc;
         if (d == 0) d = sideOf(t.track);
@@ -184,15 +148,8 @@ public final class DiscCache {
     }
 
     /**
-     * The side of a record a vinyl-numbered track belongs to — "A1" → side A — as a disc number
-     * of {@code Disc.SIDE_BASE + n}, so the CD machinery shows it as a "Side A" divider and orders
-     * side A before side B. 0 for anything else.
-     *
-     * Only where the file has no DISC tag of its own: an explicit tag is the deliberate value and
-     * a letter in front of the track number is an interpretation of one. The pattern is exactly
-     * one letter followed by a digit, so "Track 3", "CD2" and a plain "3" are not sides — and the
-     * number itself is unaffected either way, {@code TrackCache} reading "A1" and "B1" both as 1,
-     * which is what puts 1..4 under each side.
+     * A vinyl track number "A1" as disc {@code Disc.SIDE_BASE + 1}, so the CD dividers show sides.
+     * Only without a DISC tag, and only one letter followed by a digit ("CD2" is not a side).
      */
     private static int sideOf(String track) {
         if (track == null || track.length() < 2) return 0;
@@ -204,20 +161,12 @@ public final class DiscCache {
         return Disc.SIDE_BASE + (c - 'A' + 1);
     }
 
-    /**
-     * Read the file in now, on the caller's thread. The map is loaded lazily, and a lazy load
-     * racing several readers is the one thing that could corrupt it — the caching pass calls this
-     * before starting its workers, which from then on only look keys up.
-     */
+    /** Called before the caching pass starts its workers: a lazy load racing them corrupts the map. */
     public static void warm() {
         load();
     }
 
-    /**
-     * The first number in the tag: "1/2" and "2/2" as well as a bare "1" or a zero-padded "01",
-     * and anything with a prefix ("CD2"). Same idea as {@code TrackCache.parse}, which reads
-     * "3/12" as 3.
-     */
+    /** The first number in the tag: "1/2", "01", "CD2". */
     private static int parse(String s) {
         if (s == null) return 0;
         int i = 0;
@@ -235,7 +184,6 @@ public final class DiscCache {
         save();
     }
 
-    /** One song's file was re-read ("Update library"), so its tag may have changed. */
     public static void forget(String path) {
         if (path == null) return;
         load();
@@ -250,7 +198,6 @@ public final class DiscCache {
             File f = file();
             if (f != null && f.exists()) f.delete();
         } catch (Throwable t) {
-            // ignore
         }
     }
 }

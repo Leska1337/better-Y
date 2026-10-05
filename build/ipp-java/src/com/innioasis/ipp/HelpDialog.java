@@ -26,55 +26,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The help window of a row of the better-Y screen: hold the top button on a row and
- * this comes up with what that row does. Text and screenshots alike, paged with the wheel.
- *
- * The wheel pages; it does not scroll
- * One gesture, one meaning: the wheel steps between whole pages, the top button closes, the centre
- * does nothing (the user's call — there is nothing here to confirm). Scrolling text with the same
- * wheel that pages the window would leave the reader unable to tell which of the two a click is
- * about to do, and a half-scrolled page has no honest page number to show.
- *
- * Pages are MEASURED, and so is the window
- * Nothing in the asset says where a page ends: the text is broken where it stops fitting, using
- * the very {@link TextPaint} it will be drawn with. That matters because the eight translations
- * differ in length by a third or more — hand-placed breaks would be right in one language and
- * leave half-empty pages in the others. {@code ---} forces a break where the author wants one, and
- * a picture is always a page of its own.
- *
- * The BOX is measured too, in both directions, and sized to the widest and tallest page of that
- * one description: a one-line row does not open a half-screen window, and a long one is not
- * cramped. Sized once per description rather than per page, so paging does not make the window
- * jump — the exception being a picture, which gets the height it needs to stay legible.
- *
- * Built in code on the {@code PickDialog} pattern, for the same reasons: the theme's colours
- * come through {@code ThemeManager}, and the box is a {@link GradientDrawable} rather than
- * {@code bg_submenu} (a theme replaces the colour, and {@code setBackgroundColor} would take the
- * rounded corners with it).
+ * A better-Y row's help window, paged by the wheel — paged, never scrolled: one gesture, one
+ * meaning. Pages are measured with the paint they are drawn with (translations differ in length by
+ * a third); the box is sized once per description to its widest and tallest page, so paging does
+ * not make it jump — except for a picture, which gets the height it needs.
  */
 public final class HelpDialog extends BaseDialog {
 
-    /** Screen is 480x360; leave a hair of wallpaper around the box in both directions. */
+    /** The screen is 480x360. */
     private static final int W_MAX = 460;
     private static final int W_MIN = 200;
     private static final int BODY_MAX = 268;
-    /** The body is never squeezed below this, however tall the title comes out. */
     private static final int BODY_MIN = 60;
 
-    /** Left and right padding of the box, which the content has to fit inside. */
     private static final int PAD_X = 10;
-    /** Top and bottom padding of the box, and the wallpaper left above and below it. */
+    /** Box padding; SLACK_Y is the wallpaper left above and below. */
     private static final int PAD_Y = 8;
     private static final int SLACK_Y = 10;
 
-    /**
-     * The colours of a STOCK dialog, and applied the way stock applies them: the box is
-     * {@code dialogBGColor(white)} and every line of text is {@code dialogTextColor(black)} — the
-     * two hooks {@code DialogUtil} itself calls on {@code popup_dialog.xml}, so a theme that
-     * repaints the app's dialogs repaints this one with them. The corner radius is that layout's
-     * own 10dip. (The message in stock is #555555 in the XML and then painted black by the code;
-     * black is therefore what it really shows.)
-     */
+    /** A stock dialog's colours, through the same two hooks {@code DialogUtil} uses. */
     private static final int BOX = 0xFFFFFFFF;
     private static final int INK = 0xFF000000;
     private static final float CORNER = 10.0f;
@@ -93,11 +63,10 @@ public final class HelpDialog extends BaseDialog {
     private TextView cap;
     private TextView foot;
 
-    private int contentW;              // the widest page's width, i.e. what the box is sized to
-    private int textH;                 // the tallest text page, so paging text does not resize
+    private int contentW;              // the widest page
+    private int textH;                 // the tallest text page
     private int bodyMax = BODY_MAX;    // what the title and the counter leave for the body
 
-    /** One page: a slice of a text block, or a picture with its caption. */
     private static final class Page {
         final String text;
         final String img;
@@ -133,7 +102,7 @@ public final class HelpDialog extends BaseDialog {
         head.setTextSize(15.0f);
         head.setTypeface(font(), Typeface.BOLD);
         head.setGravity(Gravity.CENTER);
-        head.setPadding(4, 0, 4, 12);          // the gap between the row's name and its description
+        head.setPadding(4, 0, 4, 12);
         head.setText(title);
         paint(head);
         box.addView(head, -1, -2);
@@ -147,8 +116,6 @@ public final class HelpDialog extends BaseDialog {
         body.setTypeface(font());
         body.setIncludeFontPadding(false);
         body.setLineSpacing(0.0f, 1.05f);
-        // Centred both ways: the box is only as big as the description, so a page that does not
-        // fill it sits in the middle of what room is left rather than hanging off one corner.
         body.setGravity(Gravity.CENTER);
         paint(body);
         hole.addView(body, new LinearLayout.LayoutParams(-1, -2));
@@ -158,7 +125,7 @@ public final class HelpDialog extends BaseDialog {
         shot.setScaleType(ImageView.ScaleType.FIT_CENTER);
         shot.setVisibility(View.GONE);
         LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(-1, 0);
-        sp.weight = 1.0f;                      // the caption takes what it needs, the shot the rest
+        sp.weight = 1.0f;                      // the caption takes what it needs
         hole.addView(shot, sp);
 
         cap = new TextView(activity);
@@ -183,11 +150,8 @@ public final class HelpDialog extends BaseDialog {
 
         setContentView(box);
 
-        // Two passes, and they settle: the first one is what fixes the box's WIDTH, and only at
-        // that width is it known how many lines the title takes -- i.e. how much height is left
-        // for the body. Re-breaking against the smaller height cannot move the width again
-        // (lines are always measured against W_MAX, never against the box), so one repeat is
-        // enough and a third pass would return the same pages.
+        // Two passes: the first fixes the width, which decides how many lines the title takes and
+        // so the body's height. Lines are always broken at W_MAX, so the width cannot move again.
         pages = paginate(BODY_MAX);
         bodyMax = room();
         if (bodyMax < BODY_MAX) pages = paginate(bodyMax);
@@ -203,7 +167,6 @@ public final class HelpDialog extends BaseDialog {
         show(0);
     }
 
-    /** Title, body, caption and footer, in the colour a stock dialog paints its own text. */
     private void paint(TextView tv) {
         tv.setTextColor(ThemeManager.INSTANCE.dialogTextColor(INK));
     }
@@ -212,15 +175,9 @@ public final class HelpDialog extends BaseDialog {
         return Typeface.MONOSPACE;
     }
 
-    // ---------------------------------------------------------------- measuring
-
     /**
-     * Break the text into pages against the largest box allowed, then record how wide and how tall
-     * that description's biggest page actually came out — which is what the window is sized to.
-     *
-     * Shrinking the box to the widest LINE cannot re-wrap anything: by construction every line
-     * already fits in that width. That is why the width may be measured after the break rather
-     * than solved together with it.
+     * Breaks against the largest box, then records the biggest page — the window's size. Shrinking
+     * to the widest LINE cannot re-wrap anything, so width is measured after the break.
      */
     private List paginate(int room) {
         List out = new ArrayList();
@@ -229,7 +186,7 @@ public final class HelpDialog extends BaseDialog {
         float line = tp.getFontSpacing() * 1.05f;
         int perPage = (int) (room / line);
         if (perPage < 1) perPage = 1;
-        int tallest = 0;               // in PIXELS, measured, not in lines
+        int tallest = 0;               // pixels, measured
         float widest = 0.0f;
 
         for (int i = 0; i < blocks.size(); i++) {
@@ -260,10 +217,8 @@ public final class HelpDialog extends BaseDialog {
                 if (to > n) to = n;
                 String part = blk.text.substring(sl.getLineStart(from), sl.getLineEnd(to - 1)).trim();
                 out.add(new Page(part, null, null));
-                // Measure the page as it will be LAID OUT rather than counting lines times the
-                // font spacing: the two are not the same number (spacing multiplier, rounding,
-                // includeFontPadding), and the arithmetic came out a few pixels short -- which is
-                // exactly enough to shave the bottom off the last line.
+                // Laid out, not lines × spacing: the arithmetic comes out a few pixels short and
+                // shaves the bottom off the last line.
                 StaticLayout pl = new StaticLayout(part, tp, max,
                         Layout.Alignment.ALIGN_NORMAL, 1.05f, 0.0f, false);
                 if (pl.getHeight() > tallest) tallest = pl.getHeight();
@@ -280,8 +235,6 @@ public final class HelpDialog extends BaseDialog {
         return out;
     }
 
-    // ---------------------------------------------------------------- showing
-
     private void show(int i) {
         if (pages == null || pages.isEmpty()) return;
         if (i < 0) i = 0;
@@ -297,8 +250,6 @@ public final class HelpDialog extends BaseDialog {
             if (bm == null) body.setText("");
             cap.setText(p.cap == null ? "" : p.cap);
             cap.setVisibility(p.cap == null || bm == null ? View.GONE : View.VISIBLE);
-            // A picture is a page of its own and gets the height it needs: a screenshot squeezed
-            // into the height of a paragraph is not worth showing at all.
             resize(bm == null ? textH : shotHeight(bm, p.cap));
         } else {
             shot.setVisibility(View.GONE);
@@ -308,18 +259,10 @@ public final class HelpDialog extends BaseDialog {
             body.setText(p.text);
             resize(textH);
         }
-        // One page needs no counter: a number that never changes only asks to be read.
         foot.setText(pages.size() < 2 ? "" : (page + 1) + " / " + pages.size());
     }
 
-    /**
-     * How much height is left for the body once the title and the page counter have taken theirs.
-     *
-     * A constant sized for a ONE-LINE title is not enough: a row whose name wraps to two lines
-     * ("Show songs only by selected artist inside of Artists - Album") then pushes the counter off
-     * the bottom of the screen. So everything here is measured rather than assumed: the title is broken at the width the box actually came out at, and the
-     * counter is one line of its own paint.
-     */
+    /** The body's height once title and counter are measured: a two-line title must fit too. */
     private int room() {
         try {
             int screen = activity.getResources().getDisplayMetrics().heightPixels;
@@ -339,12 +282,11 @@ public final class HelpDialog extends BaseDialog {
         }
     }
 
-    /** Height of a picture page: the fitted picture, plus its caption if it has one. */
     private int shotHeight(Bitmap bm, String caption) {
         int h = bodyMax;
         if (bm.getWidth() > 0) {
             h = (int) ((long) bm.getHeight() * contentW / bm.getWidth());
-            if (h > bm.getHeight()) h = bm.getHeight();      // never blow a screenshot up
+            if (h > bm.getHeight()) h = bm.getHeight();      // never enlarged
         }
         if (caption != null) {
             StaticLayout sl = new StaticLayout(caption, cap.getPaint(), contentW,
@@ -354,7 +296,6 @@ public final class HelpDialog extends BaseDialog {
         return h > bodyMax ? bodyMax : h;
     }
 
-    /** The box takes the height of what is on it; the window is wrap_content and follows. */
     private void resize(int h) {
         if (hole == null) return;
         if (h > bodyMax) h = bodyMax;
@@ -363,8 +304,6 @@ public final class HelpDialog extends BaseDialog {
         lp.height = h;
         hole.setLayoutParams(lp);
     }
-
-    // ---------------------------------------------------------------- the wheel
 
     @Override
     public void shortUp(int keyCode) {
@@ -378,7 +317,7 @@ public final class HelpDialog extends BaseDialog {
         }
     }
 
-    /** Long centre press blanks the screen everywhere in this app; keep it working here. */
+    /** A long centre press is the shutdown prompt everywhere. */
     @Override
     public void longDown(int keyCode, int repeatCount) {
         if (keyCode == KeyMap.INSTANCE.getKEY_ENTER() && repeatCount == 3

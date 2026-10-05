@@ -30,34 +30,27 @@ import com.mediatek.fm.databinding.ActivityFmmainBinding;
 import com.mediatek.view.FmView;
 
 /**
- * The FM Radio screen: the colours of the frequency ruler, of the big frequency over it and of the
- * volume bar, and the ruler's scroll.
- *
- * The ruler is a panel with a ground of its own, which is what a submenu is, so it is dressed from
- * the MENU section of the theme; the stations on it and the volume bar take the timeline colour,
- * and the big frequency, standing on the wallpaper, takes the LIST text colour. Each falls back to
- * the stock colour, so a screen with no theme looks as it did — except the ground, whose fallback
- * is {@code bg_submenu}'s colour rather than the ruler's own.
+ * The FM Radio screen's colours and the ruler's scroll. The ruler is a panel, so it is dressed
+ * from the theme's MENU section; stations and the volume bar take the timeline colour; the big
+ * frequency, on the wallpaper, the LIST text colour. Each falls back to stock, except the ground,
+ * which falls back to {@code bg_submenu}'s colour.
  */
 public final class Fm {
 
     private Fm() { }
 
-    /** {@code bg_submenu}'s own colour, as every other box the mod paints falls back to. */
-    private static final int BACK = 0xFF8C94B2;
+    private static final int BACK = 0xFF8C94B2;             // bg_submenu
     private static final int PLAIN = Color.WHITE;
     private static final int NOW = 0xFFFFB600;
 
-    /** A small tick against a half-MHz one: the same colour, one step weaker. */
     private static final int FAINT = 0xCC000000;            // 80%
 
-    /** The ruler's ground — the menu's background, opaque: nothing shows through a panel. */
+    /** Opaque: nothing shows through a panel. */
     public static int back() {
         try {
             Integer c = ThemeManager.INSTANCE.menuBGColor();
             if (c != null) return c.intValue() | 0xFF000000;
         } catch (Throwable t) {
-            // malformed theme colour -> stock ground
         }
         return BACK;
     }
@@ -68,40 +61,34 @@ public final class Fm {
         return c == 0 ? PLAIN : c;
     }
 
-    /** The small ticks: the half-MHz ticks' colour one step weaker, never a second colour. */
+    /** The small ticks: the same colour weaker, never a second colour. */
     public static int small() {
         return faint(plain());
     }
 
-    /** The line on the frequency being played, and the marker of a kept station. */
+    /** The played frequency's line and a kept station's marker. */
     public static int now() {
         int c = Icons.progressColor();
         return c == 0 ? NOW : c;
     }
 
-    /** The same colour, one step weaker: full hue at 80% opacity. */
     public static int faint(int c) {
         return (c & 0x00FFFFFF) | FAINT;
     }
 
-    /** The ruler's ground, from {@code FmView.onDraw} in place of its own {@code drawRGB}. */
+    /** From {@code FmView.onDraw} in place of its {@code drawRGB}. */
     public static void ground(Canvas c) {
         if (c == null) return;
         try {
             c.drawColor(back());
         } catch (Throwable t) {
-            // ignore
         }
     }
 
     /**
-     * The marker of a station, DRAWN rather than the artwork recoloured: {@code icon_fm_mark} and
-     * {@code icon_fm_collect_mark} carry a black shadow beside the diamond, and a tint paints the
-     * shadow too. Its size comes from the artwork ({@link #geometry}), which is what keeps it
-     * where stock put it — the draw site computes x from the frequency and expects that size.
-     *
-     * A found station is the same diamond filled with the GROUND: opaque, so it covers the line
-     * of the played frequency instead of letting it through the shape.
+     * A station marker, DRAWN: the artwork carries a shadow a tint would paint too. Sized from the
+     * artwork, which the draw site expects. A found station is filled with the opaque ground, so
+     * it covers the played frequency's line.
      */
     public static Bitmap diamond(boolean kept) {
         int want = kept ? now() : back();
@@ -124,10 +111,9 @@ public final class Fm {
     private static int keptEdge;
     private static int foundEdge;
 
-    /** The artwork's own geometry: width, height, and the box the solid pixels sit in. */
     private static int[] box;
 
-    /** The outline's width, px. The device is 160 dpi, so this is also its dp. */
+    /** px (= dp at 160 dpi). */
     private static final float EDGE = 2f;
 
     private static Bitmap draw(int colour, int edge) {
@@ -147,9 +133,8 @@ public final class Fm {
             paint.setStyle(Paint.Style.FILL);
             c.drawPath(path(cx, cy, a, h), paint);
 
-            // The outline sits INSIDE the shape, so the marker keeps the artwork's size. Pulling
-            // a diamond in by d is not scaling it by d: its faces stand at a*h/hypot(a,h) from
-            // the centre, and that is the distance which has to lose half the stroke's width.
+            // The outline sits INSIDE, keeping the artwork's size: the faces stand at
+            // a*h/hypot(a,h) from the centre, and that distance loses half the stroke.
             float k = 1f - (EDGE / 2f) * (float) Math.sqrt(a * a + h * h) / (a * h);
             if (k > 0f) {
                 paint.setColor(edge);
@@ -184,7 +169,7 @@ public final class Fm {
         int l = w, t = h, r = -1, b = -1;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                // Half opaque is the cut: the shadow never reaches it, the shape's own edge does.
+                // The shadow never reaches this alpha; the shape's edge does.
                 if ((src.getPixel(x, y) >>> 24) < 0xC0) continue;
                 if (x < l) l = x;
                 if (x > r) r = x;
@@ -198,49 +183,37 @@ public final class Fm {
         return box;
     }
 
-    /**
-     * Everything on the screen that is not drawn by the ruler itself. Called from
-     * {@code FMMainActivity.initView}; a theme switch recreates the Activity, so once is enough.
-     */
+    /** From {@code FMMainActivity.initView}; a theme switch recreates the Activity. */
     public static void screen(ActivityFmmainBinding vb) {
         if (vb == null) return;
         try {
-            // The big frequency stands on the wallpaper, not on the ruler: the LIST text colour,
-            // the same one the player's own lines take. Both labels, so "MHz" cannot part company
-            // with the number it belongs to.
+            // "MHz" takes the number's colour, so the two never part.
             ThemeManager.INSTANCE.itemSetTextColor(vb.mainDiantai, PLAIN, false);
             ThemeManager.INSTANCE.itemSetTextColor(vb.mainDiantai2,
                     vb.mainDiantai.getCurrentTextColor(), false);
-            // Before the outlines: each of those copies the size of the label it stands behind.
+            // Before the outlines, which copy the label's size.
             unit(vb.mainDiantai, vb.mainDiantai2);
             int edge = Icons.themeSelColor();
             outline(vb.mainDiantai, edge);
             outline(vb.mainDiantai2, edge);
 
-            // The panel behind the ruler and the scroll view inside it: @color/white over
-            // @color/black in the layout, both of them visible for as long as the ruler has not
-            // drawn itself over them.
+            // Visible until the ruler has drawn itself over them.
             int back = back();
             vb.tuneFrequency.setBackgroundColor(back);
             vb.radioRuler.setBackgroundColor(back);
 
             volume(vb.mainVolumeSeekbar);
         } catch (Throwable t) {
-            // the screen in stock colours is better than no screen
         }
     }
 
-    /** The outline round the big frequency, px. */
     private static final float TEXT_EDGE = 1f;
 
-    /** ...and how solid: an outline states the shape, it does not compete with the fill. */
     private static final int TEXT_EDGE_ALPHA = 0x80000000;   // 50%
 
     /**
-     * Size "MHz" so that its top sits halfway up the number beside it — the two share a baseline,
-     * so both are one measurement: how far above it the glyphs reach. Measured rather than taken
-     * as a fraction of the number's size, because a font's cap height is its own business, and
-     * measured on the NUMBER's own text, a font with old-style figures having several heights.
+     * "MHz" sized so its top sits halfway up the number. Measured on the number's own text: cap
+     * heights differ by font, and old-style figures have several.
      */
     private static void unit(TextView number, TextView unit) {
         if (number == null || unit == null) return;
@@ -254,7 +227,7 @@ public final class Fm {
         float half = -r.top / 2f;                  // baseline to the middle of the digits
         if (half <= 0f) return;
 
-        // Bounds are linear in the text size, so one measurement answers for every size.
+        // Bounds are linear in the text size.
         Paint p = new Paint(unit.getPaint());
         p.setTextSize(100f);
         Rect ur = new Rect();
@@ -264,13 +237,8 @@ public final class Fm {
     }
 
     /**
-     * Outline the label in the row-highlight colour. A TextView paints its text once and in one
-     * style, so this is a second label behind the first carrying the text in STROKE only, kept in
-     * step by a watcher on the original.
-     *
-     * BEHIND, at twice the width, is what makes the outline an outer one: a stroke straddles the
-     * contour, and the fill covers the half that falls inside the glyph. With no theme there is no
-     * highlight colour to use and nothing is added at all.
+     * A STROKE-only copy of the label behind it, kept in step by a watcher. Behind and at twice the
+     * width makes the outline an outer one: the fill covers the inner half. No theme, no outline.
      */
     private static void outline(TextView src, int colour) {
         if (src == null || colour == 0) return;
@@ -281,8 +249,7 @@ public final class Fm {
         TextView o = new TextView(src.getContext());
         ViewGroup.LayoutParams lp = src.getLayoutParams();
         if (lp instanceof ConstraintLayout.LayoutParams) {
-            // Fresh params, not the same object and not the copy constructor: both would leave the
-            // clone sharing the original's layout widget, laid out in its frame and never measured.
+            // Not shared and not copy-constructed: either would share the layout widget.
             o.setLayoutParams(Pad.copy((ConstraintLayout.LayoutParams) lp));
         } else if (lp != null) {
             o.setLayoutParams(new ViewGroup.LayoutParams(lp));
@@ -302,7 +269,6 @@ public final class Fm {
         src.addTextChangedListener(new Echo(o));
     }
 
-    /** Keeps an outline label showing what the label under it shows. */
     static final class Echo implements TextWatcher {
         private final TextView out;
 
@@ -318,18 +284,11 @@ public final class Fm {
             try {
                 out.setText(s);
             } catch (Throwable t) {
-                // an outline left behind is better than a crash on a frequency step
             }
         }
     }
 
-    /**
-     * The volume bar: its groove is the ruler's ground and the part that moves is the timeline
-     * colour — it is a progress bar, and that is the colour every progress bar here has.
-     *
-     * The drawable is MUTATED first: it comes from resources and is shared with whatever else
-     * inflates it, so a filter set on it as it stands travels to other screens.
-     */
+    /** Mutated first: the drawable is shared, and an unmutated filter travels to other screens. */
     private static void volume(SeekBar sb) {
         if (sb == null) return;
         Drawable d = sb.getProgressDrawable();
@@ -343,10 +302,8 @@ public final class Fm {
     }
 
     /**
-     * Put the ruler where the frequency is, at once, from the top of
-     * {@code FMMainActivity.scrollRuler}. True when it did, and stock's delayed coroutine is then
-     * skipped: it would cost a second frame per step. False while the ruler has no width yet —
-     * the delayed pass is what catches that.
+     * Top of {@code FMMainActivity.scrollRuler}: true skips stock's delayed coroutine (a second
+     * frame per step). False while the ruler has no width — the delayed pass catches that.
      */
     public static boolean ruler(HorizontalScrollView sv, FmView ruler, float frequency) {
         if (sv == null || ruler == null) return false;
@@ -378,7 +335,7 @@ public final class Fm {
         return w == null ? 0 : Math.max(0, Math.min(last, (w[0] - TICK) / TICK - 1));
     }
 
-    /** The span of the ruler worth drawing, in its own x: the window plus a window each side. */
+    /** In the ruler's x: the window plus a window each side. */
     private static int[] window(android.view.View ruler) {
         try {
             if (ruler == null || ruler.getLayoutDirection() == android.view.View.LAYOUT_DIRECTION_RTL) {

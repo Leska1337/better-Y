@@ -22,68 +22,68 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 45
+  .line 23
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method private static color(Landroid/app/Activity;Ljava/lang/String;I)I
   .registers 4
-  .line 107
+  .line 77
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result p1
-  .line 108
+  .line 78
     const/4 v0, 1
     if-ne p1, v0, :L0
     const p0, -15592942
     return p0
   :L0
-  .line 109
+  .line 79
     const/4 v0, 2
     if-ne p1, v0, :L3
-  .line 110
+  .line 80
     invoke-static { p0 }, Lcom/innioasis/ipp/Icons;->timelineColor(Landroid/app/Activity;)I
     move-result p0
-  .line 111
+  .line 81
     if-eqz p0, :L1
     return p0
   :L1
-  .line 112
+  .line 82
     invoke-static { }, Lcom/innioasis/ipp/Icons;->themeColor()I
     move-result p0
-  .line 113
+  .line 83
     if-eqz p0, :L2
     return p0
   :L2
-  .line 114
+  .line 84
     return p2
   :L3
-  .line 116
+  .line 86
     const/4 p0, -1
     return p0
 .end method
 
 .method private static lyrics(Landroid/app/Activity;)V
   .registers 5
-  .line 91
+  .line 61
     const v0, 2131362183
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 92
+  .line 62
     instance-of v1, v0, Lme/wcy/lrcview/LrcView;
     if-nez v1, :L0
     return-void
   :L0
-  .line 93
+  .line 63
     const-string v1, "lyrics_tint"
     const v2, -12779554
     invoke-static { p0, v1, v2 }, Lcom/innioasis/ipp/Tint;->color(Landroid/app/Activity;Ljava/lang/String;I)I
     move-result p0
-  .line 94
+  .line 64
     check-cast v0, Lme/wcy/lrcview/LrcView;
-  .line 96
+  .line 66
     invoke-virtual { v0, p0 }, Lme/wcy/lrcview/LrcView;->setCurrentColor(I)V
-  .line 97
+  .line 67
     invoke-static { p0 }, Landroid/graphics/Color;->red(I)I
     move-result v1
     invoke-static { p0 }, Landroid/graphics/Color;->green(I)I
@@ -94,67 +94,67 @@
     invoke-static { v3, v1, v2, p0 }, Landroid/graphics/Color;->argb(IIII)I
     move-result p0
     invoke-virtual { v0, p0 }, Lme/wcy/lrcview/LrcView;->setNormalColor(I)V
-  .line 98
+  .line 68
     return-void
 .end method
 
 .method private static paint(Landroid/app/Activity;II)V
   .registers 3
-  .line 101
+  .line 71
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 102
+  .line 72
     instance-of p1, p0, Landroid/widget/TextView;
     if-eqz p1, :L0
     check-cast p0, Landroid/widget/TextView;
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setTextColor(I)V
   :L0
-  .line 103
+  .line 73
     return-void
 .end method
 
 .method public static player(Landroid/app/Activity;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 72
+  .line 44
     if-nez p0, :L0
     return-void
   :L0
-  .line 74
+  .line 46
     const-string v0, "text_tint"
     const/4 v1, -1
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Tint;->color(Landroid/app/Activity;Ljava/lang/String;I)I
     move-result v0
-  .line 75
+  .line 47
     const v1, 2131362486
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 76
+  .line 48
     const v1, 2131362487
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 77
+  .line 49
     const v1, 2131362484
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 78
+  .line 50
     const v1, 2131362490
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 79
+  .line 51
     const v1, 2131362494
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 80
+  .line 52
     const v1, 2131362493
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 83
+  .line 54
     const v1, 2131362501
     invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Tint;->paint(Landroid/app/Activity;II)V
-  .line 84
+  .line 55
     invoke-static { p0 }, Lcom/innioasis/ipp/Tint;->lyrics(Landroid/app/Activity;)V
   :L1
-  .line 87
+  .line 57
     goto :L3
   :L2
-  .line 85
+  .line 56
     move-exception p0
   :L3
-  .line 88
+  .line 58
     return-void
 .end method

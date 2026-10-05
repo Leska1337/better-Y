@@ -18,27 +18,12 @@ import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * Light / dark / themed icons.
- *
- * The set encodes state ACROSS FILES, not inside them: "shuffle on" and "shuffle off" are two
- * drawings, and each file is filled with exactly one flat colour — #FFFFFF for an on state,
- * #C5C5C5 for an off one. That is what makes the dark mode a recolour rather than a second set of
- * artwork: SRC_IN replaces RGB and keeps alpha, so tinting the light file is pixel-for-pixel what
- * a dark file would be, antialiased edges included — so there is no second, dark set of PNGs to
- * keep in step.
- *
- * Three modes ({@code icon_tint}):
- *   0 LIGHT — the artwork's own colours (stock look).
- *   1 DARK  — recoloured #121212 on / #717171 off.
- *   2 THEME — the ACTIVE icons painted in the timeline's colour, the inactive ones left at their
- *             own #C5C5C5, which is what keeps the two states distinguishable. A theme with no
- *             colour of its own falls back to plain light.
- *
- * The setting covers the Now-Playing button row only. Menu icons ({@link #menu}) always take the
- * colour of the text beside them — see the note there.
- *
- * Everything is applied through {@link #apply} / {@link #menu}, so a recycled ImageView never
- * keeps a stale filter or alpha (an album cover inheriting one would come out tinted).
+ * Icon colours, and the theme colours read through ThemeManager. Each icon file is one flat colour
+ * (#FFFFFF on, #C5C5C5 off; state is ACROSS files), so a SRC_IN recolour is pixel-exact and there
+ * is no dark set to keep in step. {@code icon_tint}, Now-Playing row only: 0 LIGHT (stock),
+ * 1 DARK, 2 THEME — active icons in the timeline's colour, inactive ones left grey so the states
+ * stay apart. Always applied through {@link #apply}/{@link #menu}: a recycled ImageView must not
+ * keep a stale filter.
  */
 public final class Icons {
 
@@ -48,13 +33,11 @@ public final class Icons {
 
     private static final int FULL_ALPHA = 255;
 
-    // Fed to itemSetTextColor as the "theme has no colour" fallback; if it comes back unchanged
-    // the theme defines none. Alpha 0 -> can never collide with a real theme colour.
+    // Alpha 0, never a real theme colour: coming back unchanged means the theme names none.
     private static final int PROBE = 0x00FEEDBE;
     private static final int NO_COLOR = 0;
 
-    // Reused, never attached to a window. Built on the APPLICATION context on purpose:
-    // a static View holding an Activity would leak it.
+    // On the application context: a static View holding an Activity would leak it.
     private static TextView probe;
 
     private static int mode() {
@@ -62,29 +45,19 @@ public final class Icons {
         return Prefs.val(c, "icon_tint");
     }
 
-    /** The theme's LIST row text colour ({@code itemTextColor}), or 0 when it names none. */
+    /** The theme's {@code itemTextColor}, or 0 when it names none. */
     public static int themeColor() {
         return probeColor(false, false);
     }
 
-    /**
-     * The theme's LIST row text colour UNDER THE CURSOR ({@code itemSelectedTextColor}), or 0.
-     * Unlike {@link #themeColor} it has no stock value to fall back to — every screen passes a
-     * highlight of its own — so a caller must be able to do without an answer.
-     */
+    /** {@code itemSelectedTextColor}, or 0 — no stock fallback, so callers must cope without. */
     public static int themeSelColor() {
         return probeColor(false, true);
     }
 
     /**
-     * The theme's MENU text colour ({@code menuItemTextColor}) — the text of the sort and
-     * long-press submenus, which a theme sets independently of its list rows and often has to:
-     * the menu has a background of its own ({@code menuBackgroundColor}), so a theme with dark
-     * text on light rows may well need light text over it ("InnoPod Rev_2": #000000 against
-     * #ffffff). Anything drawn on that background asks for this one rather than for the row colour.
-     *
-     * Public for the fast-scroll plate ({@link Alpha}), which is the submenu's background carrying
-     * a letter, so both of its colours come from the same section of the theme.
+     * {@code menuItemTextColor}: anything drawn on the menu's own background asks for this, not the
+     * row colour — a theme may need light text there over dark list text.
      */
     public static int menuColor() {
         return probeColor(true, false);
@@ -95,29 +68,26 @@ public final class Icons {
     private static final int MENU_TEXT = 0xFFFFFFFF;
     private static final int MENU_SEL = 0xFF3B3D78;
 
-    /** The long-press menu's background ({@code menuBackgroundColor}), stock's when none is named. */
+    /** Stock's when the theme names none. */
     public static int menuBackground() {
         try {
             Integer c = ThemeManager.INSTANCE.menuBGColor();
             if (c != null) return c.intValue();
         } catch (Throwable t) {
-            // malformed theme colour
         }
         return MENU_BG;
     }
 
-    /** The long-press menu's text colour, plain or under the cursor, stock's when none is named. */
+    /** Stock's when the theme names none. */
     public static int menuText(boolean focus) {
         int c = probeColor(true, focus);
         return c != NO_COLOR ? c : (focus ? MENU_SEL : MENU_TEXT);
     }
 
     /**
-     * Read through the only public door there is: ThemeManager keeps its parsed config private,
-     * but its text-colour setters substitute the theme's own colour for the one passed in whenever
-     * it has one — so paint a scratch TextView with a sentinel and see whether it survived. Read
-     * live (never memoised) so a theme switch is picked up without restarting the app; the parse
-     * itself is memoised in Theme.parseColor.
+     * ThemeManager's config is private, but its setters substitute the theme's colour: paint a
+     * scratch TextView with a sentinel and see whether it survived. Read live, so a theme switch
+     * needs no restart.
      */
     private static int probeColor(boolean menu, boolean focus) {
         Context c = Y1Application.Companion.getAppContext();
@@ -133,7 +103,7 @@ public final class Icons {
         }
     }
 
-    /** The dimmed ("off") members of the set — the files drawn at #C5C5C5. */
+    /** The "off" drawings. */
     private static boolean isDimmed(int light) {
         return light == R.mipmap.ipp_heart_off
                 || light == R.mipmap.ipp_AB_off
@@ -148,11 +118,6 @@ public final class Icons {
     private static final int ON_DARK = 0xFF121212;
     private static final int OFF_DARK = 0xFF717171;
 
-    /**
-     * The colour an icon in the given state is drawn in right now. Public because the audiobook
-     * speed / timer value beside its icon is a TextView and has to be painted the same, or the
-     * pair would read as two things.
-     */
     public static int stateColor(boolean on, int tint) {
         int m = mode();
         if (m == DARK) return on ? ON_DARK : OFF_DARK;
@@ -160,23 +125,12 @@ public final class Icons {
             int c = (tint == NO_COLOR) ? themeColor() : tint;
             if (c != NO_COLOR) return c;
         }
-        // THEME leaves the "off" state at its own grey, for the same reason isDimmed exists.
         return on ? ON_LIGHT : OFF_LIGHT;
     }
 
     /**
-     * Draw one Now-Playing button, honouring the current mode. {@code tint} is the colour THEME
-     * mode paints with at this site (the timeline's own colour); 0 falls back to the theme's item
-     * text colour.
-     *
-     * The state is read off the file: {@link #isDimmed} lists the "off" drawings. In THEME mode
-     * only the ACTIVE icons take the theme colour — the dimmed ones stay at their own #C5C5C5.
-     * Painting both in one colour, even with the "off" one at 77% alpha, left the two states too
-     * close to tell apart; keeping the off state grey is what makes "shuffle on" read differently
-     * from "shuffle off" whatever the theme colour is.
-     *
-     * When the wanted colour IS the artwork's own, the filter is cleared instead of set — same
-     * pixels, and no filter left on a view that may be recycled for a real picture.
+     * One Now-Playing button. {@code tint} is THEME mode's colour at this site; 0 = the theme's
+     * item text colour. The artwork's own colour clears the filter instead of setting it.
      */
     public static void apply(ImageView iv, int light, int tint) {
         if (iv == null || light == 0) return;
@@ -187,43 +141,25 @@ public final class Icons {
         else paint(iv, c);
     }
 
-    /** Same as {@link #apply} with no site colour of its own. */
     public static void apply(ImageView iv, int light) {
         apply(iv, light, NO_COLOR);
     }
 
-    // ---- icons that carry a value: audiobook speed and sleep timer ---------------------
-    //
-    // Five rates and five timer steps cannot be told apart by artwork, so the value is written
-    // into the window the "on" drawings leave empty. Beside the icon it does not work: the number
-    // is 2-4 characters wide depending on the setting, so the buttons after it would shift every
-    // time it changed.
-    //
-    // The window is measured off the artwork's alpha, in the 72x72 space the set is drawn in, and
-    // scaled to whatever the bitmap turns out to be — redrawing the icons at another size changes
-    // nothing here, only moving the hole does.
-    //
-    // It is the hole inside the ring of ipp_timer_on, which runs y 25..58 and is centred on
-    // x 35 — NOT on the bitmap's own 36, and not on the middle of the ring's outer bounds either,
-    // because the stem hangs into it from the top. Centring the text on the bitmap instead of on
-    // the hole is what left the digits sitting high and to the right of the ring.
+    // The value is written INTO the icon (beside it, its changing width would shift the row).
+    // The window is the hole inside ipp_timer_on's ring, in the set's 72x72 space, measured off
+    // the alpha: centred on x 35, not the bitmap's 36 — the stem hangs into it.
     private static final float WIN_L = 20f;
     private static final float WIN_T = 28f;
     private static final float WIN_R = 51f;
     private static final float WIN_B = 53f;
 
-    /** Box the value gets when it is drawn on its OWN, with no artwork under it (speed). */
+    /** The value drawn alone, with no artwork (speed). */
     private static final float BOX_W = 68f;
     private static final float BOX_H = 52f;
 
-    /** res|text -> the stamped bitmap. A handful of entries, all 72x72. */
     private static final java.util.HashMap stamps = new java.util.HashMap();
 
-    /**
-     * Draw a button with its value inside it. Only ever called for an "on" drawing (the default
-     * setting shows no number at all), so the digits are written in that artwork's own white and
-     * the mode's recolour then covers icon and number alike — they are one bitmap by then.
-     */
+    /** "On" drawings only: the digits are drawn white, then recoloured with the icon as one bitmap. */
     public static void label(ImageView iv, int light, int tint, String text) {
         if (iv == null || light == 0) return;
         if (text == null || text.length() == 0) {
@@ -240,13 +176,8 @@ public final class Icons {
     }
 
     /**
-     * A button whose whole face IS the value — no artwork under it. The audiobook speed uses this
-     * once it leaves 1.0: written inside the speedometer the number had to be abbreviated to two
-     * or three characters, and "0.75" at that size is a smudge; given the whole button it is
-     * roughly twice the size and needs no abbreviating.
-     *
-     * {@code widest} is the longest label the setting can take, and the type size is measured from
-     * it, so the number does not change size as the cycle is clicked through.
+     * A button whose whole face is the value (the audiobook speed off 1.0). Sized from
+     * {@code widest}, so the number keeps one size through the cycle.
      */
     public static void value(ImageView iv, String text, String widest, int tint) {
         if (iv == null || text == null || text.length() == 0) return;
@@ -294,11 +225,9 @@ public final class Icons {
             float l = WIN_L * sx, r = WIN_R * sx, t = WIN_T * sy, b = WIN_B * sy;
             android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
             p.setColor(ON_LIGHT);
-            // the theme's font, read per call the way every code-built view here has to
             p.setTypeface(android.graphics.Typeface.create(android.graphics.Typeface.MONOSPACE,
                     android.graphics.Typeface.BOLD));
             p.setTextAlign(android.graphics.Paint.Align.CENTER);
-            // start from the window's height and shrink until the widest value fits its width
             p.setTextSize(b - t);
             float w = p.measureText(text);
             if (w > (r - l)) p.setTextSize((b - t) * (r - l) / w);
@@ -311,12 +240,7 @@ public final class Icons {
         }
     }
 
-    /**
-     * A menu icon: always painted in the colour of the text beside it, whatever {@code icon_tint}
-     * says — that setting is about the Now-Playing button row alone. Called after the row's own
-     * ThemeManager colour has been applied, so it also re-colours with the text when the wheel
-     * lands on the row. These icons have no "off" state, so there is nothing to keep apart.
-     */
+    /** A menu icon takes the colour of the text beside it, whatever {@code icon_tint} says. */
     public static void menu(ImageView iv, int textColor) {
         if (iv == null) return;
         if (textColor == NO_COLOR) reset(iv);
@@ -328,27 +252,22 @@ public final class Icons {
         iv.setImageAlpha(FULL_ALPHA);
     }
 
-    /** Drop tint + dim. Needed wherever one of these icons shares a recycled view with real art. */
+    /** Wherever an icon shares a recycled view with real art. */
     public static void reset(ImageView iv) {
         if (iv == null) return;
         iv.clearColorFilter();
         iv.setImageAlpha(FULL_ALPHA);
     }
 
-    // ---- the Now-Playing timeline colour -----------------------------------------------------
-    //
-    // Sampled from the progress bar's own drawable rather than guessed, so it is right in all
-    // three cases: the stock XML gradient (#0067CF -> #32FFEB, vertical), a theme that sets
-    // playerConfig.progressColor (ThemeManager applies that as a SRC_IN filter on this very
-    // Drawable instance), and any future change to either. Memoised on the drawable instance —
-    // a new player Activity inflates a new one, and a theme switch recreates the Activity.
+    // The timeline colour, sampled from the progress drawable itself — right for the stock
+    // gradient and for a theme's progressColor filter alike. Memoised per drawable instance.
     private static Object tlKey;
     private static int tlColor;
 
     private static final int SW = 4;
     private static final int SH = 8;
 
-    /** Average colour of the played part of the timeline, or 0 when it can't be read. */
+    /** 0 when it cannot be read. */
     public static int timelineColor(Activity a) {
         if (a == null) return NO_COLOR;
         try {
@@ -370,11 +289,7 @@ public final class Icons {
     private static String pcTheme;
     private static int pcColor;
 
-    /**
-     * The colour {@link #timelineColor} would give, for a screen with no timeline on it: the
-     * player's own progress drawable, put through the same {@code setCustomBackground} the player
-     * calls, then sampled. Memoised on the theme name — one decode per theme, not per row.
-     */
+    /** {@link #timelineColor} for a screen without a timeline. Memoised per theme name. */
     public static int progressColor() {
         try {
             String theme = ThemeManager.INSTANCE.getThemeName();
@@ -396,12 +311,7 @@ public final class Icons {
         }
     }
 
-    /**
-     * Render the progress layer into a tiny bitmap and average its opaque pixels. The layer is a
-     * ClipDrawable whose level is the current playback position, so it must be temporarily opened
-     * to full — level and bounds are both restored before returning, and the bar redraws itself
-     * from the next progress tick anyway.
-     */
+    /** Averages the opaque pixels; the clip level is opened to full and restored. */
     private static int sample(Drawable d) {
         Rect old = d.copyBounds();
         int level = d.getLevel();
@@ -432,7 +342,6 @@ public final class Icons {
                 d.setLevel(level);
                 d.setBounds(old);
             } catch (Throwable t) {
-                // restoring must never take the player down
             }
             if (bm != null) bm.recycle();
         }

@@ -16,31 +16,15 @@ import com.innioasis.y1.utils.SharedPreferencesUtils;
 import java.lang.ref.WeakReference;
 
 /**
- * Now-Playing interactive-button navigation (click-wheel over heart/shuffle/repeat/
- * lyrics/AB/queue) + AB-loop icon state. Wheel = move focus, center/ENTER = activate,
- * back = exit / cancel AB / close lyrics. Visibility of buttons depends on the
- * {@code top_hold} setting. State (shuffle/repeat) lives in SharedPreferencesUtils.
- *
- * On an audiobook the same row is shuffle / repeat / speed / timer instead, all four
- * on the audiobook's own preferences — see {@link #book} and {@link Audio}.
- *
- * Java source of the ipp Deck helper; compiled to smali by build/ipp-java.ps1.
- * Public API (called from stock MusicPlayerActivity/BasePlayerActivity and DeckAnim):
- * render, enter, side, wheel, back, reset, animTick, topHold. Keep those public.
+ * The Now-Playing button row: the wheel moves focus, centre activates, back exits / cancels AB /
+ * closes lyrics; plus the AB-loop icon. Which buttons show follows {@code top_hold}. On an
+ * audiobook the row is the book's own: shuffle, repeat, speed, timer ({@link Audio}).
  */
 public final class Deck {
-    // The nine slots, in slot order: heart, shuffle, repeat, lyrics, AB, queue, speed, timer,
-    // book-action — the last three are audiobook-only. Slot 8 is one button with two meanings: the
-    // one of Bookmark / Queue that the long top press is NOT doing (see Audio.bookTopHold). It sits
-    // at the head of the row, where the heart sits on music.
+    // Slots: 0 heart, 1 shuffle, 2 repeat, 3 lyrics, 4 AB, 5 queue, 6 speed, 7 timer, 8 bookmark;
+    // 6-8 are audiobook-only. On a book, 5 and 8 swap: the one the long top press is NOT doing.
 
-    /**
-     * The order the wheel walks, per mode — NOT the slot numbers in order, and it has to match the
-     * LinearLayout's own order exactly. Slot 8 (bookmark) is the row's first child and slot 5
-     * (queue) its last, so the book row reads bookmark, shuffle, repeat, speed, timer — or, with
-     * the setting the other way round, shuffle, repeat, speed, timer, queue. Exactly one of the
-     * two is ever on the screen; the queue is last on the music row as well.
-     */
+    /** The walking order per mode: must match the LinearLayout's child order exactly. */
     private static final int[] ORDER_MUSIC = { 0, 1, 2, 3, 4, 5 };
     private static final int[] ORDER_BOOK = { 8, 1, 2, 6, 7, 5 };
 
@@ -55,7 +39,7 @@ public final class Deck {
     static boolean animPhase = false;
     static boolean animRunning = false;
     static BasePlayerActivity animAct = null;
-    /** Last rendered player, so state changes can repaint the row. Weak — never leak an Activity. */
+    /** The last rendered player, for repaints on state changes. */
     static WeakReference lastAct = null;
 
     private static Context appCtx() {
@@ -71,8 +55,6 @@ public final class Deck {
     }
 
     private static boolean curLiked() {
-        // Likes owns the preference now: adding the song to the Favorites playlist from an
-        // ordinary menu writes the same key, so the heart follows that too.
         return Likes.get(curPath());
     }
 
@@ -90,13 +72,7 @@ public final class Deck {
         }
     }
 
-    /**
-     * The same row, on an audiobook. The screen is the one that decides, not the player
-     * service: {@code AudioPlayerActivity} shares this layout with the music player, so without
-     * the distinction its buttons went on toggling the MUSIC shuffle, liking the music track and
-     * opening the music queue. In book mode the row is shuffle / repeat / speed / timer, and all
-     * four read and write the audiobook's own preferences.
-     */
+    /** The screen decides, not the service: both players share this layout. */
     private static boolean book(BasePlayerActivity a) {
         return a instanceof com.innioasis.y1.activity.AudioPlayerActivity;
     }
@@ -107,15 +83,11 @@ public final class Deck {
     }
 
     /**
-     * Flipping shuffle also starts (or ends) a shuffled pass — a fresh plan and a counter that
-     * restarts at 1, see {@link Queue#onShuffleChanged}. The counter beside the title is repainted
-     * here rather than through {@code refreshUI}, which would reload the cover and the lyrics for
-     * a two-character change; without it the number would stay wrong until the next track.
+     * Also starts or ends a shuffled pass ({@link Queue#onShuffleChanged}). The counter is repainted
+     * here, not via {@code refreshUI}, which would reload cover and lyrics.
      */
     private static void toggleShuffle(BasePlayerActivity a) {
         SharedPreferencesUtils s = SharedPreferencesUtils.INSTANCE;
-        // an audiobook goes through the same plan as music now, so both write their own
-        // preference and then let Queue start (or end) a shuffled pass on the list that is playing.
         if (book(a)) s.setAudiobookIsShuffle(!s.getAudiobookIsShuffle());
         else s.setMusicIsShuffle(!s.getMusicIsShuffle());
         Queue.onShuffleChanged();
@@ -129,15 +101,13 @@ public final class Deck {
             if (ps == null) return;
             java.util.List ml = book(a) ? ps.getAudiobookList() : ps.getMusicList();
             if (ml == null) return;
-            // A book resumed from a bookmark shows stock's own "0/n-1" instead of a track number;
-            // leave that alone rather than paint a number over it.
+            // A book resumed from a bookmark shows stock's "0/n-1"; left alone.
             if (book(a) && ps.getBookMarkProgress() != null) return;
             View v = ((android.app.Activity) a).findViewById(R.id.tv_index_of_songs);
             if (v instanceof android.widget.TextView) {
                 ((android.widget.TextView) v).setText(Queue.trackNo(ps) + "/" + ml.size());
             }
         } catch (Throwable t) {
-            // the number is cosmetic; the next refreshUI paints it anyway
         }
     }
 
@@ -182,9 +152,7 @@ public final class Deck {
         return topHold() != 1;
     }
 
-    // A/B points live on PlayerService; BasePlayerActivity's own getAPoint/getBPoint
-    // are private and just delegate here with a -1 fallback, so read PlayerService
-    // directly (public) to keep identical behavior without touching stock code.
+    // From PlayerService: BasePlayerActivity's getAPoint/getBPoint are private delegates to it.
     private static int abState(BasePlayerActivity a) {
         PlayerService ps = Y1Application.Companion.getPlayerService();
         long ap = ps != null ? ps.getAPoint() : -1L;
@@ -193,32 +161,17 @@ public final class Deck {
         return bp < 0 ? 1 : 2;
     }
 
-    // ------------------------------------------------------ the A and B time labels on the bar
-
     /**
-     * Where each A/B point's time is written under the progress bar
-     * ({@code ProgressMaskView.onDraw}, one call in place of each label's own x).
-     *
-     * Stock puts BOTH labels the same way — a little to the left of their own pin — and the A and
-     * B points of a loop are routinely a few seconds apart, so the two strings were drawn on top of
-     * each other and read as one ("000:26" for 0:04 and 0:26). Only the label moves: the pins mark
-     * the real positions and must stay where they are.
-     *
-     * The B label is the one that gives way, because A is drawn first and is already in place.
-     * It keeps stock's position while that is free, steps to the other side of its own pin when it
-     * is not, and past A's label altogether when even that overlaps — the last case being two pins
-     * within a second of each other.
-     *
-     * Direction is never assumed. The bar is mirrored in Hebrew ({@code isIW}), where A
-     * is the RIGHT-hand pin, so a fixed "A left, B right" rule would collide there instead. This
-     * reacts to the overlap that actually happened, which is the same answer in both directions.
+     * The A/B time labels under the bar ({@code ProgressMaskView.onDraw}), kept from overlapping;
+     * the pins never move. B gives way: stock's place, else the other side of its pin, else past
+     * A's label. Reacts to the actual overlap — the bar is mirrored in Hebrew.
      */
     private static final float AB_GAP = 5f;
 
     private static float abLeft, abRight;
     private static boolean abHaveA;
 
-    /** A's label: stock's own place, kept inside the view, and remembered for {@link #abBX}. */
+    /** Stock's place, kept inside the view, remembered for {@link #abBX}. */
     public static float abAX(View v, android.graphics.Paint p, String text, float pinX) {
         try {
             float w = p.measureText(text);
@@ -233,13 +186,11 @@ public final class Deck {
         }
     }
 
-    /** B's label: stock's place unless A is already sitting there. */
     public static float abBX(View v, android.graphics.Paint p, String text, float pinX) {
         try {
             float w = p.measureText(text);
             float x = abFit(v, pinX - p.getTextSize() - 2f, w);
-            // Consumed, not merely read: a frame that draws B without an A (which the AB loop
-            // cannot produce, since A is always set first) must not be pushed by a stale rectangle.
+            // Consumed: B must never be pushed by a stale A.
             boolean haveA = abHaveA;
             abHaveA = false;
             if (!haveA || !abHits(x, w)) return x;
@@ -251,7 +202,6 @@ public final class Deck {
         }
     }
 
-    /** True when a label at {@code x} would touch A's, gap included. */
     private static boolean abHits(float x, float w) {
         return x + w > abLeft - AB_GAP && x < abRight + AB_GAP;
     }
@@ -318,29 +268,19 @@ public final class Deck {
     }
 
     private static ImageView iv(BasePlayerActivity a, int id) {
-        // cast to Activity to disambiguate Activity.findViewById(int) from the
-        // generic AppCompatActivity.<T>findViewById(int) overload at compile time.
+        // Cast: findViewById is ambiguous with AppCompatActivity's generic overload.
         View v = ((android.app.Activity) a).findViewById(id);
         if (v instanceof ImageView) return (ImageView) v;
         return null;
     }
 
-    /** The focus wash painted behind the button that has the cursor. */
+    /** The focus wash behind the button with the cursor. */
     private static final int HILITE = 1715273694;
 
     /**
-     * Paints (or clears) that wash. Cheap ONLY because every button already has a background.
-     *
-     * {@code setBackgroundColor} is not the harmless setter it looks like: with nothing behind
-     * the view it goes through {@code View.setBackgroundDrawable}, which compares the old and the
-     * new drawable's minimum size and calls {@code requestLayout()} when they differ — and "no old
-     * drawable" counts as differing. Nine buttons painted from {@link #render} therefore dirtied
-     * the whole player, and the traversal that followed re-measured it end to end: ~20 ms at the
-     * first render and on every track change, measured from the requestLayout's own stack. Two
-     * ColorDrawables report the same minimum size, so once the buttons carry a transparent one from
-     * the layout there is nothing to re-measure — which is why {@code activity_music_player.xml}
-     * gives each of them {@code android:background="#00000000"} and why that must not be tidied
-     * away. The theme-bitmap version of the same trap is written up in {@code Rows.bg}.
+     * Cheap ONLY because every button already has a background: from none, setBackgroundColor
+     * requests a layout of the whole player (~20 ms per render). So the
+     * {@code android:background="#00000000"} in {@code activity_music_player.xml} must stay.
      */
     private static void hl(ImageView iv, boolean on) {
         if (iv == null) return;
@@ -351,11 +291,7 @@ public final class Deck {
         return active && focus == i;
     }
 
-    /**
-     * Slots 6/7/8 exist only on an audiobook; 0/3/4 only on music. Slot 5 (queue) belongs to both,
-     * and on a book it swaps with slot 8 (bookmark): whichever of the two the long top press is
-     * NOT doing is the one on the row.
-     */
+    /** 6-8 on a book only, 0/3/4 on music only; on a book 5 and 8 swap. */
     private static boolean visible(BasePlayerActivity a, int i) {
         if (book(a)) {
             if (i == 8) return Audio.bookTopHold() == 1;
@@ -377,7 +313,7 @@ public final class Deck {
         return 0;
     }
 
-    /** Where the focused slot stands in the walking order, or -1. */
+    /** -1 when not in this mode's order. */
     private static int posOf(BasePlayerActivity a, int slot) {
         int[] o = order(a);
         for (int i = 0; i < o.length; i++) {
@@ -395,18 +331,13 @@ public final class Deck {
         } else {
             iv.setVisibility(0);
             if (icon != 0) {
-                // light / dark artwork, or the theme mode painted in the timeline's own
-                // colour -- the button row sits right under it, so they read as one element.
                 Icons.apply(iv, icon, tint);
             }
             hl(iv, focused(slot));
         }
     }
 
-    /**
-     * The two buttons that carry a value, written inside the icon. {@code text == null} means the
-     * setting is at its default, and then only the plain "off" artwork is drawn.
-     */
+    /** Speed and timer. {@code text == null}: at the default, plain "off" artwork. */
     private static void label(BasePlayerActivity a, int id, int slot, boolean show, int icon,
                               int tint, String text, String widest) {
         ImageView iv = iv(a, id);
@@ -417,8 +348,7 @@ public final class Deck {
             return;
         }
         iv.setVisibility(0);
-        // icon 0 = the value IS the button (speed, once it is off its default); otherwise the
-        // number goes into the window the artwork leaves blank (timer), or there is none at all.
+        // icon 0: the value IS the button (speed); else it goes inside the artwork (timer).
         if (icon == 0) Icons.value(iv, text, widest, tint);
         else Icons.label(iv, icon, tint, text);
         hl(iv, focused(slot));
@@ -427,22 +357,16 @@ public final class Deck {
     public static void render(BasePlayerActivity a) {
         lastAct = a == null ? null : new WeakReference(a);
         boolean bk = book(a);
-        int tint = Icons.timelineColor((android.app.Activity) a);   // once per pass, memoised
-        // bookmark at the head of the book row, queue at its end; whichever of the two the
-        // long top press is not doing is the one shown, so exactly one is ever on the screen.
+        int tint = Icons.timelineColor((android.app.Activity) a);   // memoised
         apply(a, R.id.ipp_bookmark, 8, visible(a, 8), R.mipmap.ipp_bookmark, tint);
-        // the hidden buttons are passed icon 0: reading a "like" or an A-B point that nothing is
-        // going to draw would be work done for a button that is not on the screen.
+        // Hidden buttons get icon 0: no reading state nothing will draw.
         apply(a, R.id.ipp_heart, 0, !bk && heartShow(), bk ? 0 : iconHeart(), tint);
         apply(a, R.id.is_shuffle, 1, true, iconShuffle(a), tint);
         apply(a, R.id.repeat_mode, 2, true, iconRepeatOrAb(a), tint);
         apply(a, R.id.ipp_text, 3, !bk && showText(), R.mipmap.ipp_lyrics, tint);
         apply(a, R.id.ipp_ab, 4, !bk && showAb(), bk ? 0 : iconAb(a), tint);
         apply(a, R.id.ipp_queue, 5, visible(a, 5), R.mipmap.ipp_queue, tint);
-        // Both follow the SETTING and nothing else. At the default (speed 1.0, timer off) each
-        // draws its plain "off" artwork with no number. Set: the timer keeps its ring with the
-        // minutes inside it, the speed drops the speedometer altogether and IS the number —
-        // "0.75" written inside that dial is unreadable at 30x30 screen px.
+        // Set, the speed drops its dial and IS the number: "0.75" inside it is unreadable at 30px.
         boolean spOn = !Audio.rateOff();
         boolean tmOn = !Audio.timerOff();
         label(a, R.id.ipp_speed, 6, bk, spOn ? 0 : R.mipmap.ipp_speed_off,
@@ -456,7 +380,7 @@ public final class Deck {
         }
     }
 
-    /** Repaint whatever player was rendered last, if it is still alive (the sleep timer uses it). */
+    /** For the sleep timer. */
     public static void repaintLast() {
         Object a = (lastAct == null ? null : lastAct.get());
         if (a instanceof BasePlayerActivity) render((BasePlayerActivity) a);
@@ -495,12 +419,7 @@ public final class Deck {
         render(a);
     }
 
-    /**
-     * Open the play-queue screen (queue button, or top-button hold when top_hold=Queue).
-     * Leaves the button row deactivated and repainted first: the deck is reset in onPause anyway,
-     * so without repainting here the highlight would stay burned onto the button while the row
-     * is no longer active.
-     */
+    /** The row is deactivated and repainted first, or the highlight stays burned on. */
     public static void openQueue(BasePlayerActivity a) {
         if (a == null) return;
         active = false;
@@ -515,8 +434,7 @@ public final class Deck {
         int[] o = order(a);
         int i = posOf(a, focus);
         if (i < 0) {
-            // The focus is on a slot this mode does not walk — the row was left active on the other
-            // player. Take the first button rather than sit there refusing to move.
+            // Left active on the other player: take the first button.
             focus = firstVisible(a);
             render(a);
             return true;
@@ -558,11 +476,7 @@ public final class Deck {
         return true;
     }
 
-    /**
-     * Called from BasePlayerActivity.onPause. Repaints the button row after clearing the state —
-     * otherwise the highlight stays drawn on whichever button had focus while the row is already
-     * inactive, and nothing repaints it until the next refreshUI (i.e. the next track change).
-     */
+    /** From {@code onPause}; repainted, or the highlight stays until the next track. */
     public static void reset() {
         active = false;
         focus = 0;

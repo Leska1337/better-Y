@@ -16,18 +16,10 @@ import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 
 /**
- * The TRACK NUMBER tag of a song, kept per path in {@code ipp_tracks.txt}.
- *
- * {@link #get(String)} answers {@code Integer.MAX_VALUE} for a song with no number — which is
- * what puts untagged songs at the end of "Sort by track" — and it deliberately does NOT read the
- * file: it is the drawing path, so the one read is done by {@link #warmIfWanted()} from the two
- * screens that show track numbers — {@code AlbumsActivity.initView} and {@code Genres.songs}.
- *
- * A tagless file is written down as that same MAX_VALUE by {@link #ensure}, so it is not opened
- * again on the next pass.
- *
- * The map is a raw {@code HashMap} — a generic field type makes javac emit a class
- * {@code Signature} attribute and the bundled d8 crashes dexing those.
+ * The TRACK NUMBER tag per path, in {@code ipp_tracks.txt}. No number reads as MAX_VALUE, which
+ * sorts last, and is stored as such so the file is not opened again. {@link #get} never reads the
+ * cache file — it is the drawing path; {@link #warmIfWanted} does, from the screens that show
+ * the numbers.
  */
 public final class TrackCache {
 
@@ -48,13 +40,7 @@ public final class TrackCache {
         }
     }
 
-    /**
-     * Reads the track number of every song of the list that has none cached.
-     *
-     * A file whose tag gives nothing is written down as MAX_VALUE — the very value {@link #get}
-     * would have answered — so it is not opened again. Without that, every untagged song in the
-     * library was re-read on every sort.
-     */
+    /** Reads every song not cached yet; no number is stored as MAX_VALUE so it is not re-read. */
     private static void ensure(List songs) {
         if (songs == null) {
             return;
@@ -76,12 +62,7 @@ public final class TrackCache {
         }
     }
 
-    /**
-     * Ipp: this song's file was re-read ("Update library"), so its TRACK NUMBER tag may have
-     * changed — drop the remembered one. Its counterpart in {@code DiscCache.forget} is called from
-     * the same place ({@code Ipp.songChanged}); the two must be dropped together, because
-     * {@code DiscCache} is what records for both of them that a file has been looked at.
-     */
+    /** Always together with {@code DiscCache.forget}: DiscCache records that the file was read. */
     public static void forget(String path) {
         if (path == null) {
             return;
@@ -94,15 +75,7 @@ public final class TrackCache {
         save();
     }
 
-    /**
-     * Ipp: read the cache file in NOW, before any album row asks for a track number.
-     * {@link #get} answers from memory only, and a row bind is the drawing path — so the one file
-     * read is done here, once, from {@code AlbumsActivity.initView} and from {@code Genres.songs}
-     * (the Genres screen shows the column for a real album too).
-     *
-     * Gated on the setting, because with it off nothing on any screen asks for a track number
-     * and the read would be pure cost.
-     */
+    /** Loads the file before any row asks; from AlbumsActivity.initView and Genres.songs. */
     public static void warmIfWanted() {
         Context c = Y1Application.Companion.getAppContext();
         if (c == null) {
@@ -126,7 +99,7 @@ public final class TrackCache {
         return new File(dir, "ipp_tracks.txt");
     }
 
-    /** The song's track number, or {@code Integer.MAX_VALUE}. Memory only — never opens a file. */
+    /** Memory only. */
     public static int get(String path) {
         if (path == null) {
             return Integer.MAX_VALUE;
@@ -170,13 +143,8 @@ public final class TrackCache {
     }
 
     /**
-     * Ipp: skip whatever stands in FRONT of the number, then read it — the first number in
-     * the value, which is the rule {@code DiscCache.parse} has always used and the one the docs
-     * claimed this method used too. It did not: it read digits from index 0 and stopped at the
-     * first non-digit, so "1/12" worked but " 1", "A1" (vinyl side numbering) and "Track 3" all
-     * parsed as 0 — and 0 is not stored at all, i.e. the song counts as having no track number. One
-     * such song is enough to put a whole album back on row numbers, which is what it looked like on
-     * the device: an album whose tags are all filled showing 1..N positions instead.
+     * The first number in the value. The prefix must be skipped: " 1", "A1" or "Track 3" read as 0
+     * means no number, and one such song puts the whole album back on row numbers.
      */
     private static int parse(String s) {
         int n = 0;
@@ -200,7 +168,7 @@ public final class TrackCache {
         return n;
     }
 
-    /** Records one song's number from a tag the caller has already read. Does not write the file. */
+    /** A tag the caller already read. Does not write the file. */
     public static void put(String path, String tag) {
         if (path == null || tag == null) {
             return;
@@ -239,7 +207,7 @@ public final class TrackCache {
         }
     }
 
-    /** A copy of the song list ordered by track number, reading whatever is missing first. */
+    /** A sorted copy; reads whatever is missing first. */
     public static List sorted(List songs) {
         if (songs == null) {
             return null;

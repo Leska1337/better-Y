@@ -15,19 +15,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppUsbActivity;)V
   .registers 2
-  .line 337
+  .line 322
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 338
+  .line 323
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$GiveUp;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
-  .line 339
+  .line 324
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 342
+  .line 327
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppUsbActivity$GiveUp;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppUsbActivity;->giveUp()V
-  .line 343
+  .line 328
     return-void
 .end method

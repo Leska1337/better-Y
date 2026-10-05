@@ -17,30 +17,16 @@ import com.innioasis.y1.base.BaseDialog;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * A dialog that is a list to pick ONE row out of - the "Data backup" row uses it twice: once to
- * ask Save or Load, once to pick which archive to read back; the m3u import and export ask with it
- * what to do about a name that is taken ({@link M3u}).
- *
- * It is {@link PickDialog} without the ticks and without the button: a centre press takes the row
- * the cursor is on, and there is nothing else to confirm. The top button closes it, as it closes
- * the innermost thing on screen everywhere in this app.
- *
- * Everything about how it is dressed is {@code PickDialog}'s, for the same reasons written down
- * there: the rounded box is a {@link GradientDrawable} so a theme's {@code menuBackgroundColor}
- * can replace the colour without taking the corners with it, the rows go through
- * {@code ThemeManager.menuItemSetBackground} / {@code menuItemSetTextColor}, each row is painted
- * in three steps because ThemeManager may do nothing at all, and {@code Rows.noSize} keeps a
- * theme's highlight bitmap from dictating the height of a row.
- *
- * Authored in Java (build/ipp-java); raw types and named nested classes only.
+ * A list to pick ONE row from: Save/Load and the archive in "Data backup", a taken name in M3U
+ * import/export. {@link PickDialog} without ticks or button — the centre press takes the row —
+ * and dressed exactly like it, for the reasons written there.
  */
 public final class BackupDialog extends BaseDialog {
 
-    /** What to do with the row the user took. Named class: d8 crashes on anonymous ones. */
     public static abstract class Go {
         public abstract void go(int row);
 
-        /** With the switch row's state, for a dialog that has one; the rest never see it. */
+        /** With the switch row's state, for a dialog that has one. */
         public void go(int row, boolean all) {
             go(row);
         }
@@ -52,10 +38,7 @@ public final class BackupDialog extends BaseDialog {
     private final String[] extras;
     private final Go go;
 
-    /**
-     * An On/Off row under the choices ("Same for the rest"): the centre press flips it and leaves
-     * the dialog open, and its state goes to {@link Go#go(int, boolean)} with the row taken.
-     */
+    /** An On/Off row under the choices ("Same for the rest"); the press flips it, the dialog stays. */
     private final String toggle;
     private boolean toggled;
 
@@ -68,10 +51,7 @@ public final class BackupDialog extends BaseDialog {
     private static final int BOX = 0xFF8C94B2;
     private static final float CORNER = 10.0f;
 
-    /**
-     * @param rows   one label per line, in the order they are shown
-     * @param extras the right-hand column, or null when the rows carry nothing but a label
-     */
+    /** @param extras the right-hand column, or null */
     public BackupDialog(Activity a, String title, String[] rows, String[] extras, Go go) {
         this(a, title, rows, extras, null, go);
     }
@@ -130,9 +110,7 @@ public final class BackupDialog extends BaseDialog {
         }
 
         paintAll();
-        // A theme's row bitmap arrives from a background load and is applied to the view that
-        // asked for it, however long ago; each one that lands after its row was cleared again
-        // leaves that row highlighted. This repaint is what settles it - see PickDialog.
+        // A late theme bitmap lands on a row already cleared; see PickDialog.
         Rows.watchFlat(new Repaint(this));
     }
 
@@ -142,7 +120,6 @@ public final class BackupDialog extends BaseDialog {
         super.dismiss();
     }
 
-    /** Named (d8 crashes on anonymous classes). */
     static final class Repaint implements Runnable {
         private final BackupDialog d;
 
@@ -161,10 +138,7 @@ public final class BackupDialog extends BaseDialog {
 
     private boolean repainting;
 
-    /**
-     * The theme's font, as everywhere else that builds views in code: the app theme asks for
-     * {@code monospace} and ThemeManager swaps that typeface for the theme's own font.ttf.
-     */
+    /** The theme font: ThemeManager swaps MONOSPACE for it. */
     private static Typeface font() {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
     }
@@ -174,7 +148,7 @@ public final class BackupDialog extends BaseDialog {
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setGravity(Gravity.CENTER_VERTICAL);
         r.setPadding(5, 3, 5, 3);
-        r.setTag(Rows.FLAT);      // see paint(): the theme's highlight must not dictate a height
+        r.setTag(Rows.FLAT);
 
         TextView l = new TextView(activity);
         l.setTextSize(14.0f);
@@ -204,8 +178,6 @@ public final class BackupDialog extends BaseDialog {
         return r;
     }
 
-    // ---------------------------------------------------------------- painting
-
     private void paintAll() {
         for (int i = 0; i < views.length; i++) paint(i);
     }
@@ -216,12 +188,9 @@ public final class BackupDialog extends BaseDialog {
         int fg = activity.getResources().getColor(focus
                 ? R.color.selected_text_color_submenu : R.color.white);
 
-        // Cleared FIRST and the highlight guaranteed AFTER, because ThemeManager may do neither:
-        // its setBackground leaves the view untouched while the theme's bitmap is not in the cache
-        // yet, so a row losing the highlight can simply keep it.
+        // Cleared first and the highlight guaranteed after: ThemeManager may do neither while the
+        // theme bitmap is loading. 0 for an unfocused row, as SubmenuAdapter does.
         views[i].setBackgroundDrawable(null);
-        // 0 for an unfocused row, exactly as SubmenuAdapter does it: with no theme the resource is
-        // applied as it stands, so handing over the highlight drawable would paint every row.
         ThemeManager.INSTANCE.menuItemSetBackground(views[i],
                 focus ? R.drawable.item_selected_submenu : 0, focus);
         if (focus && views[i].getBackground() == null) {
@@ -231,8 +200,6 @@ public final class BackupDialog extends BaseDialog {
         ThemeManager.INSTANCE.menuItemSetTextColor(labels[i], fg, focus);
         ThemeManager.INSTANCE.menuItemSetTextColor(values[i], fg, focus);
     }
-
-    // ---------------------------------------------------------------- the wheel
 
     @Override
     public void shortUp(int keyCode) {
@@ -248,7 +215,7 @@ public final class BackupDialog extends BaseDialog {
         }
     }
 
-    /** Long centre press is the shutdown prompt everywhere in this app; keep it working here. */
+    /** A long centre press is the shutdown prompt everywhere. */
     @Override
     public void longDown(int keyCode, int repeatCount) {
         if (keyCode == KeyMap.INSTANCE.getKEY_ENTER() && repeatCount == 3
@@ -270,10 +237,10 @@ public final class BackupDialog extends BaseDialog {
         paint(sel);
     }
 
-    /** The dialog goes first: what the row starts may put a dialog of its own on the screen. */
+    /** Dismissed first: what the row starts may open a dialog of its own. */
     private void take() {
         int row = sel;
-        if (row >= rows.length) {                 // the switch row: flip it, stay open
+        if (row >= rows.length) {
             toggled = !toggled;
             values[row].setText(activity.getString(toggled ? R.string.ipp_on : R.string.ipp_off));
             return;
@@ -287,7 +254,6 @@ public final class BackupDialog extends BaseDialog {
             kotlin.jvm.functions.Function0 back = getOnBack();
             if (back != null) back.invoke();
         } catch (Throwable t) {
-            // nothing to do
         }
         dismiss();
     }

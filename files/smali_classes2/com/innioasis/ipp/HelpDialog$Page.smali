@@ -18,14 +18,14 @@
 
 .method constructor <init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
   .registers 4
-  .line 106
+  .line 75
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 107
+  .line 76
     iput-object p1, p0, Lcom/innioasis/ipp/HelpDialog$Page;->text:Ljava/lang/String;
-  .line 108
+  .line 77
     iput-object p2, p0, Lcom/innioasis/ipp/HelpDialog$Page;->img:Ljava/lang/String;
-  .line 109
+  .line 78
     iput-object p3, p0, Lcom/innioasis/ipp/HelpDialog$Page;->cap:Ljava/lang/String;
-  .line 110
+  .line 79
     return-void
 .end method

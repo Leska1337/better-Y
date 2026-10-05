@@ -95,7 +95,6 @@ public final class Tone {
             sound(app);                      // load ahead, or the first press is silent
             new Thread(new Seed(app), "ipp-tone").start();
         } catch (Throwable t) {
-            // a key tone that cannot be set up is a nuisance; a crash in onCreate is not
         }
     }
 
@@ -116,7 +115,6 @@ public final class Tone {
             if (muted) Prefs.setBool(c, P_MUTED, false);
             if (sys) enable(m, false);
         } catch (Throwable t) {
-            // as above
         }
         mirror(c);
     }
@@ -147,7 +145,6 @@ public final class Tone {
         try {
             SharedPreferencesUtils.INSTANCE.setRingtone(on(c));
         } catch (Throwable t) {
-            // stock's preferences not up yet
         }
     }
 
@@ -180,7 +177,6 @@ public final class Tone {
             if (c == null || !on(c) || editing != null) return;
             play(sound(c), gain(c, -1));
         } catch (Throwable t) {
-            // never let a click cost a key press
         }
     }
 
@@ -196,7 +192,6 @@ public final class Tone {
         return GAIN[v];
     }
 
-    /** Plays the file now if it is loaded; otherwise loads it and plays it on arrival. */
     private static int previewStream;
 
     /** A candidate cuts the one before it short, so a fast wheel never stacks them. */
@@ -206,6 +201,7 @@ public final class Tone {
         play(path, gain);
     }
 
+    /** Now if loaded; otherwise loads it and plays it on arrival. */
     private static void play(String path, float gain) {
         if (path == null) return;
         if (pool == null) {
@@ -225,7 +221,6 @@ public final class Tone {
         }
     }
 
-    /** Named: d8 here crashes on anonymous classes. */
     static final class Loaded implements SoundPool.OnLoadCompleteListener {
         @Override
         public void onLoadComplete(SoundPool p, int id, int status) {
@@ -304,7 +299,6 @@ public final class Tone {
         }
     }
 
-    /** Named: d8 here crashes on anonymous classes. */
     static final class Seed implements Runnable {
         private final Context c;
         Seed(Context c) { this.c = c; }
@@ -505,7 +499,6 @@ public final class Tone {
                 a.ippRefreshRight(name);
             }
         } catch (Throwable t) {
-            // a stale row is a nuisance; a crash on returning to Settings is not
         }
     }
 
@@ -638,7 +631,6 @@ public final class Tone {
             Method s = m.getClass().getMethod("setSoundEffectEnabled", String.class, Boolean.TYPE);
             s.invoke(m, PROFILE, Boolean.valueOf(on));
         } catch (Throwable t) {
-            // the system tone stays as it was
         }
     }
 }

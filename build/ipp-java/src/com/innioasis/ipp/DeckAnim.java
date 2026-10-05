@@ -1,11 +1,8 @@
 package com.innioasis.ipp;
 
 /**
- * The AB-loop icon's animation tick.
- *
- * A class of its own rather than a lambda because {@link Deck} keeps ONE instance of it and
- * cancels it by identity ({@code Handler.removeCallbacks}) — a lambda would be a fresh object on
- * every post and nothing would ever be cancelled.
+ * The AB-loop icon's animation tick. Not a lambda: {@link Deck} cancels its one instance by
+ * identity, and a lambda would be a new object on every post.
  */
 public final class DeckAnim implements Runnable {
 

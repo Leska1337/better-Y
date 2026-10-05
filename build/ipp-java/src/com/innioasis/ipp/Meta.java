@@ -10,33 +10,16 @@ import java.io.RandomAccessFile;
 import java.util.Locale;
 
 /**
- * Everything anyone here wants to know about an audio file: the tags and, on request, the bytes of
- * the artwork embedded in it.
- *
- * One place, because the answer is not always the platform's
- * {@code MediaMetadataRetriever} decodes the container in-process and answers every key from one
- * open, which is why it is the default. But its ID3 parser refuses a tag larger than 3 MB
- * ("skipping huge ID3 metadata of size %d" in libstagefright) and silently falls back to the
- * 128-byte ID3v1 block at the end of the file. What comes back then is an album and a title
- * truncated to 30 bytes, no album artist, no disc number, no artwork at all — and, for anything not
- * written in Latin, mojibake: ID3v1 has no encoding field, so a CP1251 title arrives as the bytes
- * it is and goes through a UTF-8 decoder ("Пятна Роршаха" reaches the screen as "Ю..堀"). A five
- * megabyte cover in the tag is all it takes.
- *
- * So this class reads such a tag itself ({@link #id3}), and every caller asks it rather than the
- * retriever, so a file that needs the second path is not a special case anybody has to remember.
- * FLAC, m4a and ogg were measured on the device and need none of this — their extractors carry no
- * such limit and hand over even a huge picture — while WMA gives up nothing at all, having no ASF
- * extractor in this ROM; that one is a second implementation behind the same call, not a change at
- * any call site.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * The one place a file's tags and embedded artwork are read. {@code MediaMetadataRetriever} by
+ * default; but its ID3 parser refuses a tag over 3 MB (a big cover is enough) and silently falls
+ * back to ID3v1 — 30-byte fields, no album artist, disc or art, mojibake for non-Latin. Such a tag
+ * is read here ({@link #id3}). FLAC, m4a and ogg have no such limit; WMA yields nothing on this ROM.
  */
 public final class Meta {
 
     private Meta() { }
 
-    /** What one file has to say. A null field is "not present", never "empty". */
+    /** A null field is "not present", never "empty". */
     public static final class Info {
         public String title;
         public String artist;
@@ -50,63 +33,34 @@ public final class Meta {
         public byte[] art;              // only when it was asked for
     }
 
-    /**
-     * The platform's limit, less a margin.
-     *
-     * {@code kMaxMetadataSize} is 3 MB exactly, but what is compared against it is the tag size as
-     * that parser computes it, and whether the ten header bytes and a v2.4 footer are inside that
-     * number is not worth depending on. Reading a tag ourselves that the platform would have read
-     * costs one file open and produces the same values, so the margin errs in the safe direction.
-     */
+    /** The platform's 3 MB less a margin: reading a tag it could have read costs only a file open. */
     private static final long HUGE = 3L * 1024 * 1024 - 64 * 1024;
 
-    /** A text frame larger than this is not a tag anybody wrote; skip it rather than allocate. */
+    /** A text frame this big is nobody's tag; skipped. */
     private static final int MAX_TEXT = 64 * 1024;
 
-    /** A picture larger than this is not read into memory even when one was asked for. */
     private static final int MAX_ART = 8 * 1024 * 1024;
 
-    // ------------------------------------------------------------------ has the library been read
-
     /**
-     * Which version of this reader the rows of the Song table were read with.
-     *
-     * A library scanned before this class existed holds what the platform made of an oversized tag,
-     * and nothing re-reads it on its own: the scan skips paths it already knows and "Update library"
-     * skips files whose date has not changed. So the number below says whether that has been dealt
-     * with, and "Update library" does the one pass that deals with it while it has not.
-     *
-     * Bump it whenever this class starts reading something it could not read before (an ASF tag,
-     * say), and the same single pass brings every existing library up to date.
+     * The reader version the Song table was read with. Nothing re-reads a known file on its own,
+     * so "Update library" does one pass while this is behind. Bump it when the reader learns to
+     * read something new.
      */
     private static final int READER = 1;
 
     private static final String KEY_READER = "meta_v";
 
-    /** True when this library's rows were read by this reader, i.e. nothing needs re-reading. */
     public static boolean libraryRead(Context c) {
         return c != null && Prefs.getInt(c, KEY_READER, 0) >= READER;
     }
 
-    /**
-     * Write that down. Called from the end of the "Update library" pass, and from the scan when it
-     * starts with an empty table — everything such a scan inserts goes through {@link #fixSong},
-     * so there is nothing for the pass to find and a fresh install need not pay for the search.
-     */
+    /** End of "Update library", and a scan that starts on an empty table. */
     public static void noteLibraryRead(Context c) {
         if (c == null) return;
         Prefs.setInt(c, KEY_READER, READER);
     }
 
-    // ------------------------------------------------------------------ the one entry point
-
-    /**
-     * Read {@code path}. Artwork is fetched only when {@code wantArt}, because that is the one key
-     * that is not nearly free once the container is open.
-     *
-     * Never call from the UI thread. Writes nothing anywhere, so any number of threads may call it
-     * at once.
-     */
+    /** Art only when {@code wantArt}: the one key not free once open. Thread-safe; not the UI thread. */
     public static Info read(String path, boolean wantArt) {
         Info out = new Info();
         if (path == null) return out;
@@ -125,22 +79,17 @@ public final class Meta {
             out.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
             if (wantArt) out.art = r.getEmbeddedPicture();
         } catch (Throwable t) {
-            // an unreadable file answers with nothing, exactly as the retriever alone would
         }
         try {
             r.release();
         } catch (Throwable t) {
-            // nothing to do
         }
 
         if (oversized(path)) id3(path, out, wantArt);
         return out;
     }
 
-    /**
-     * The artwork embedded in a file, or null — the picture alone, for the callers that want
-     * nothing else out of the file and would otherwise pay for every key of {@link #read}.
-     */
+    /** The picture alone, without paying for every key of {@link #read}. */
     public static byte[] art(String path) {
         if (path == null) return null;
         byte[] out = null;
@@ -149,22 +98,17 @@ public final class Meta {
             r.setDataSource(path);
             out = r.getEmbeddedPicture();
         } catch (Throwable t) {
-            // fall through to our own reader, which is the answer for an oversized tag anyway
         }
         try {
             r.release();
         } catch (Throwable t) {
-            // nothing to do
         }
         return out != null && out.length > 0 ? out : tagArt(path);
     }
 
     /**
-     * The artwork of a file whose tag the platform gave up on, or null — including null for every
-     * ordinary file, which is what makes this cheap enough for the drawing path.
-     *
-     * For the callers that have already asked the retriever and been told "no picture"
-     * ({@code Art.external}, reached from stock {@code Other.getAlbumCover}'s null return).
+     * For callers the retriever already told "no picture" ({@code Art.external}). Null for every
+     * ordinary file after ten bytes, so cheap enough for the drawing path.
      */
     public static byte[] tagArt(String path) {
         if (!oversized(path)) return null;
@@ -174,13 +118,8 @@ public final class Meta {
     }
 
     /**
-     * Put the tags of an oversized-tag file back into a freshly scanned song, pinyin keys included.
-     *
-     * Injected at the end of stock {@code Y1Repository.fileToSong}, i.e. on the one path that both
-     * the library scan and "Update library" go through. An ordinary file leaves after ten bytes are
-     * read; only a file the platform mis-read is opened again and re-tagged, and only the values
-     * actually found in the tag are written — what the retriever produced for the rest is still the
-     * better answer.
+     * End of stock {@code fileToSong} (scan and "Update library"): an oversized tag's values put
+     * back, pinyin keys included — only those actually found; the rest stays the retriever's.
      */
     public static void fixSong(Song song) {
         if (song == null) return;
@@ -210,19 +149,10 @@ public final class Meta {
                 song.setPinyinGenre(h.getString(i.genre));
             }
         } catch (Throwable t) {
-            // a song carrying what the retriever said is better than no song at all
         }
     }
 
-    // ------------------------------------------------------------------ is the second path needed
-
-    /**
-     * True when the file starts with an ID3v2 tag the platform's parser will refuse — i.e. when
-     * whatever the platform said about this file is the ID3v1 block and not the tag.
-     *
-     * Ten bytes, and only for the extensions that carry ID3 at all — this runs once per file of a
-     * scan, so it may not cost more than that.
-     */
+    /** An ID3v2 tag the platform will refuse. Ten bytes: runs once per file of a scan. */
     public static boolean oversized(String path) {
         if (path == null) return false;
         int dot = path.lastIndexOf('.');
@@ -245,16 +175,9 @@ public final class Meta {
         }
     }
 
-    // ------------------------------------------------------------------ the ID3v2 reader
-
     /**
-     * Fill in whatever the tag says, leaving every field it does not mention alone.
-     *
-     * The frames are walked by their headers and their bodies are stepped over with {@code seek},
-     * so the five megabyte picture in front of which the text frames of an oversized tag often sit
-     * is never read unless it was asked for. Versions 2.2, 2.3 and 2.4 differ in three places only
-     * — the length of a frame id, the length of a frame header, and how the frame's size is
-     * encoded — so one walk covers them.
+     * Fills what the tag says, leaving the rest alone. Frames are walked by header and stepped over
+     * with {@code seek}, so a huge picture is read only when asked for. One walk for 2.2-2.4.
      */
     private static void id3(String path, Info out, boolean wantArt) {
         RandomAccessFile f = null;
@@ -301,8 +224,7 @@ public final class Meta {
                 if (unsync) d = resync(d);
 
                 if (picture) {
-                    // A tag may carry several pictures; the front cover is the album's, anything
-                    // else (a back cover, an artist photo) only stands in when there is no front.
+                    // The front cover wins; another picture only stands in.
                     Pic got = picture(d, major);
                     if (got != null && (pic == null || (got.front && !pic.front))) pic = got;
                     continue;
@@ -311,23 +233,17 @@ public final class Meta {
             }
             if (pic != null) out.art = pic.data;
         } catch (Throwable t) {
-            // whatever was filled in before the file went wrong stays; the rest is the retriever's
         } finally {
             close(f);
         }
     }
 
-    /**
-     * One parsed picture frame. A return value rather than a pair of fields on the class: the
-     * caching pass reads files on several threads at once, and statics would hand one worker's
-     * answer to another.
-     */
+    /** A return value, not statics: several threads read files at once. */
     private static final class Pic {
-        boolean front;                                  // picture type 3, i.e. the front cover
+        boolean front;                                  // picture type 3
         byte[] data;
     }
 
-    /** The frames worth reading; everything else is stepped over unread. */
     private static boolean wanted(String id) {
         return id.equals("TIT2") || id.equals("TT2")
             || id.equals("TPE1") || id.equals("TP1")
@@ -354,13 +270,8 @@ public final class Meta {
     }
 
     /**
-     * A genre as text, or null.
-     *
-     * ID3v2 inherited v1's numbering, so a genre may be written "(17)", "(17)Rock" or "Rock". The
-     * name is taken where there is one; a bare number is left alone rather than expanded here,
-     * because the table that turns it into a name is stock's own ({@code Y1Repository}'s
-     * STANDARD_GENRES, applied to the retriever's answer) and a second copy of it would be a second
-     * thing to keep in step. A number-only genre in a v2 tag is a relic anyway.
+     * "(17)Rock" -> "Rock". A bare number gives null rather than a second copy of stock's
+     * STANDARD_GENRES table.
      */
     private static String genre(String v) {
         String s = v.trim();
@@ -377,12 +288,8 @@ public final class Meta {
     }
 
     /**
-     * The size of a frame's body.
-     *
-     * 2.4 made it synchsafe; 2.3 and 2.2 write a plain big-endian number. Tools that label a tag
-     * 2.4 while writing 2.3 sizes exist, and they are not handled: the walk stops at the first
-     * frame id that is not one, which is the safe way to be wrong — the fields already read stand,
-     * the rest stays the retriever's.
+     * Synchsafe in 2.4, plain big-endian before. A "2.4" tag written with 2.3 sizes is not handled;
+     * the walk stops at the first bad frame id, which is the safe way to be wrong.
      */
     private static long frameLen(byte[] fh, int major) {
         if (major == 2) {
@@ -391,7 +298,6 @@ public final class Meta {
         return major >= 4 ? syncsafe(fh, 4) : be32(fh, 4);
     }
 
-    /** How far past the tag header the frames start when an extended header sits in between. */
     private static long extendedHeader(RandomAccessFile f, long pos, int major) throws Exception {
         byte[] e = new byte[4];
         f.seek(pos);
@@ -401,12 +307,8 @@ public final class Meta {
     }
 
     /**
-     * The picture out of an APIC (2.3/2.4) or PIC (2.2) frame.
-     *
-     * Layout: text encoding, then the image type — a null-terminated MIME string, or three
-     * characters ("JPG") in 2.2 — then the picture type byte, then a description in that same
-     * encoding, then the bytes. The description is what makes this fiddly: it is terminated by one
-     * zero byte in the 8-bit encodings and by two in the 16-bit ones.
+     * APIC/PIC: encoding, MIME (three chars in 2.2), picture type, description, bytes. The
+     * description ends with one zero in 8-bit encodings, two in 16-bit ones.
      */
     private static Pic picture(byte[] d, int major) {
         if (d.length < 4) return null;
@@ -436,13 +338,7 @@ public final class Meta {
         return out;
     }
 
-    /**
-     * A text frame's value: one encoding byte, then the string.
-     *
-     * A 2.4 frame may hold several values separated by a zero, and older tags often end the single
-     * one with a zero as well — either way the first value is the answer, so the string stops at
-     * the first terminator.
-     */
+    /** The FIRST value: 2.4 separates several with a zero, older tags often end with one. */
     private static String text(byte[] d) {
         int enc = d[0] & 0xff;
         int off = 1;
@@ -483,10 +379,7 @@ public final class Meta {
         }
     }
 
-    /**
-     * Undo the unsynchronisation scheme: every {@code FF 00} in the stored bytes is an {@code FF}
-     * that had a zero inserted after it so no run could be mistaken for an MPEG frame header.
-     */
+    /** Unsynchronisation: every stored {@code FF 00} is an {@code FF}. */
     private static byte[] resync(byte[] d) {
         int n = 0;
         for (int i = 0; i < d.length; i++) {
@@ -502,8 +395,6 @@ public final class Meta {
         }
         return out;
     }
-
-    // ------------------------------------------------------------------ small change
 
     private static boolean isFrameId(String id) {
         for (int i = 0; i < id.length(); i++) {
@@ -536,7 +427,6 @@ public final class Meta {
         try {
             f.close();
         } catch (Throwable t) {
-            // nothing to do
         }
     }
 }

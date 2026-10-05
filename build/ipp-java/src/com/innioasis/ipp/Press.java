@@ -17,19 +17,14 @@ import com.innioasis.y1.base.BasePlayerActivity;
 import com.innioasis.y1.service.PlayerService;
 
 /**
- * What a hardware button press means: how long a hold has to be before it counts as a long press,
- * and what the bottom button does when it is pressed once against twice.
- *
- * Both questions are answered here rather than in the Activities because stock hardcodes them in
- * more than one place — the long-press threshold exists twice ({@code BaseActivity} and
- * {@code BasePlayerActivity}, with different numbers), and a value hardcoded twice is the shape of
- * bug this class exists to prevent.
+ * What a button press means: the long-press thresholds (stock hardcodes them twice, with different
+ * numbers) and the bottom button's single press against double press.
  */
 public final class Press {
 
     private static final Handler h = new Handler(Looper.getMainLooper());
 
-    /** The pending play/pause of a first bottom press, waiting to see whether a second arrives. */
+    /** A first bottom press's play/pause, waiting to see whether a second arrives. */
     private static Runnable pending;
 
     public static void clearPending(Runnable r) {
@@ -39,42 +34,26 @@ public final class Press {
     }
 
     /**
-     * Ipp: how many key-repeat events a hold must produce before it counts as a long press.
-     *
-     * Stock hardcodes 3 for every key (~500 ms: the ~400 ms Android key-repeat timeout plus
-     * 3 × 50 ms). The top (MENU) button fires on the FIRST repeat, as early as the stock repeat
-     * mechanism allows. Called from {@code BaseActivity.dispatchKeyEvent} in BOTH places that need
-     * the number: the long-press trigger ({@code repeatCount == limit}) and the short-press gate
-     * ({@code downRepeatCount < limit}) — they must stay the same number or a hold fires both.
-     *
-     * Every other key keeps 3: the wheel (KEY_UP/KEY_DOWN) needs that tolerance, a slightly
-     * long-held click must still scroll one row.
+     * Key repeats before a hold is a long press, for {@code BaseActivity.dispatchKeyEvent}. Both the
+     * trigger and the short-press gate there ask this, and must get the same number or a hold fires
+     * both. The top button fires on the first repeat; everything else keeps 3, so a slightly long
+     * wheel click still scrolls one row.
      */
     public static int longLimit(int key) {
         return key == KeyMap.INSTANCE.getKEY_MENU() ? 1 : 3;
     }
 
     /**
-     * Ipp: same idea as {@link #longLimit}, for the Now-Playing screen. That threshold is hardcoded
-     * a SECOND time — {@code BasePlayerActivity} overrides {@code dispatchKeyEvent} with its own
-     * {@code repeatCount == 8} (~800 ms) — so a fix to {@link #longLimit} alone leaves the top
-     * button slow on the player. Here too it fires on the first repeat.
-     *
-     * LEFT/RIGHT keep 8 on purpose: their long press starts seeking, and a hair-trigger there
-     * would turn ordinary track skips into scrubs. ENTER (shutdown dialog) and PLAY (stop) keep it
-     * for the same reason.
+     * The same for {@code BasePlayerActivity}, which has its own threshold of 8. LEFT/RIGHT keep it:
+     * their long press seeks, and a hair trigger would turn track skips into scrubs.
      */
     public static int playerLongLimit(int key) {
         return key == KeyMap.INSTANCE.getKEY_MENU() ? 1 : 8;
     }
 
     /**
-     * The bottom button, which serves two gestures: pressed once it is play/pause, pressed twice it
-     * opens the player. Nothing distinguishes them at the moment of the first press, so the
-     * play/pause is posted 250 ms into the future ({@link Run}) and a second press within that
-     * window cancels it and opens the player instead.
-     *
-     * Not on the player itself — there the button is stock's.
+     * Pressed once: play/pause, posted 250 ms ahead. Pressed again inside that window: cancel it and
+     * open the player. On the player itself the button stays stock's.
      */
     public static boolean bottomPressed(BaseActivity a) {
         if (a == null || a instanceof BasePlayerActivity) {
@@ -92,11 +71,7 @@ public final class Press {
         return true;
     }
 
-    /**
-     * Ipp: the double press means "show what is playing", and that is not always music — an
-     * audiobook or the radio opens its OWN screen. Same dispatch stock's own "Now playing" menu
-     * entry does; everything below stays the music path.
-     */
+    /** An audiobook or the radio opens its own screen, as stock's "Now playing" entry does. */
     private static boolean openPlayer(Activity a) {
         if (Audio.openOther(a)) {
             return true;
@@ -119,8 +94,7 @@ public final class Press {
         } catch (Throwable t) {
             return false;
         }
-        // Nothing loaded: say so and still report the press as handled, or the stock branch would
-        // act on it as well.
+        // Still handled, or the stock branch acts on the press too.
         try {
             Toast.makeText(a, a.getString(R.string.no_content), Toast.LENGTH_SHORT).show();
         } catch (Throwable t) {
@@ -129,19 +103,8 @@ public final class Press {
     }
 
     /**
-     * The deferred half of a single bottom press.
-     *
-     * Named, never anonymous: d8 8.2.2-dev crashes dexing anonymous inner classes here, and this
-     * one has to be an object anyway — {@link #bottomPressed} cancels it by identity
-     * ({@code Handler.removeCallbacks}).
-     *
-     * The first thing it does is drop itself from {@link #pending} — otherwise a press arriving
-     * just after the tick has fired would find a stale Runnable there and take the "second press"
-     * branch on what the user meant as a fresh first one.
-     *
-     * The Activity is held RAW, without its {@code ViewBinding} type parameter: a generic field
-     * type makes javac emit a class {@code Signature} attribute and the bundled d8 crashes dexing
-     * those.
+     * The deferred single press, cancelled by identity. It clears {@link #pending} first, or a press
+     * right after it fired would be taken for the second one.
      */
     public static final class Run implements Runnable {
 
@@ -157,7 +120,7 @@ public final class Press {
             if (a == null || a.isFinishing()) {
                 return;
             }
-            // Unmute first: the stock code mutes while it decides what the press meant.
+            // Stock mutes while it decides what the press meant.
             PlayerService ps = Y1Application.Companion.getPlayerService();
             if (ps != null) {
                 ps.muteOrNoMuteMusic(false);

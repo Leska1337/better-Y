@@ -12,14 +12,9 @@ import android.os.Parcel;
 import com.innioasis.y1.activity.IppUsbActivity;
 
 /**
- * The system's "USB connected" screen, replaced by ours ({@code IppUsbActivity}).
- *
- * The screen is {@code com.android.systemui/.usb.UsbStorageActivity}; its layout and text live in
- * {@code framework-res}, so none of it can be themed from here. It cannot be disabled either:
- * SystemUI starts it with a bare {@code startActivity} and dies on the ActivityNotFoundException.
- * So its START is refused instead, through the ActivityManager's activity controller — the caller
- * is told the start succeeded, and nothing is stored: the controller lives in memory and goes
- * away with our process or a reboot, which brings the system's screen back on its own.
+ * Replaces SystemUI's "USB connected" screen with {@code IppUsbActivity}. That screen can be
+ * neither themed nor disabled (SystemUI dies on ActivityNotFoundException), so its start is refused
+ * through an activity controller. Nothing is stored: the controller dies with our process.
  */
 public final class Usb {
 
@@ -32,7 +27,7 @@ public final class Usb {
     private static Handler main;
     private static Context app;
 
-    /** Called from {@code BaseActivity.onCreate}; the work is done once per process. */
+    /** From {@code BaseActivity.onCreate}; once per process. */
     public static void boot(Context c) {
         if (done || c == null) return;
         done = true;
@@ -51,7 +46,6 @@ public final class Usb {
         }
     }
 
-    /** Runs on the main thread, after the refused start has already been answered. */
     static final class Open implements Runnable {
         public void run() {
             try {
@@ -65,13 +59,10 @@ public final class Usb {
     }
 
     /**
-     * {@code IActivityController} by hand: the interface is hidden, so its five transactions are
-     * answered here in the order of its AIDL (1..5). ActivityManager waits on every answer while
-     * holding its own lock, so an answer decides and returns — anything more is posted.
-     *
-     * Nothing may escape {@code onTransact}: an exception is carried back to {@code system_server},
-     * which catches only RemoteException. Every path writes the answer that means "carry on as
-     * usual": allow the start, allow the resume, show the normal crash and ANR dialogs.
+     * The hidden {@code IActivityController}, its five AIDL transactions answered by hand.
+     * ActivityManager waits on each answer holding its lock, so work is posted, never done here.
+     * Nothing may escape {@code onTransact} — system_server catches only RemoteException — and every
+     * path answers "carry on as usual".
      */
     static final class Watcher extends Binder {
         static final String DESC = "android.app.IActivityController";
@@ -100,13 +91,11 @@ public final class Usb {
                     }
                 }
             } catch (Throwable t) {
-                // the answer below still goes out
             }
             try {
                 reply.writeNoException();
                 reply.writeInt(answer);
             } catch (Throwable t) {
-                // nothing more can be done from here
             }
             return true;
         }

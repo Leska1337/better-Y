@@ -30,34 +30,13 @@ import java.util.UUID;
 import java.util.WeakHashMap;
 
 /**
- * The long-press menu of a screen with SEVERAL rows ticked shows only what several rows can mean —
- * delete, remove, add to the queue, add to a playlist, select all. Sorting a list, opening one
- * song's album or its artist, renaming a playlist: none of that is an action on a selection, and
- * offering it there either does nothing or quietly acts on one arbitrary row of the tick list.
+ * Filters long-press menus: with SEVERAL rows ticked, only what a selection can mean. One hook per
+ * dialog class ({@link SubMenuDialog}, {@code SubMenuVideoDialog}) covers every menu.
  *
- * One hook per menu CLASS, not per screen. Every menu of the app proper is a {@link SubMenuDialog}
- * and the Videos section's are a {@code SubMenuVideoDialog}; both are shown through their own
- * {@code onStart}, so two injections cover the eleven places menus are built — including the ipp
- * menus rebuilt per press ({@code Albums.songMenu}, {@code Find.menu}, {@code Genres.menu},
- * {@code Playlists.favMenu}), with nothing added to any of them. The two dialog classes share
- * nothing but the layout their ListView lives in and {@code MyBaseAdapter} under it, which is
- * exactly what {@link #filter} works with; their menu ITEMS are two unrelated classes with the
- * same two getters, hence {@link #label} and {@link #isPlaylistEntry}.
- *
- * The signal is MORE THAN ONE ticked row, and it has to be that rather than "any tick at
- * all": a plain long press ticks the row under the cursor to highlight it, and the screens do not
- * agree on when — {@code AlbumsActivity} ticks it BEFORE {@code show()}, everything else after. So
- * one tick is ambiguous (a long press, or a selection of one), while two are not. With a single
- * ticked row the whole menu is shown, which is right either way: every entry in it means something
- * for one row.
- *
- * The index a callback sees is the one the UNFILTERED menu would have given
- * ({@link #index}, injected in {@code shortUp}). Most screens dispatch on the item's string, but
- * {@code FilesActivity} and {@code GenresActivity} dispatch by INDEX ("anything past the fixed
- * items is a playlist"), and dropping an entry above those would silently change what every entry
- * below it does.
- *
- * Raw types and named classes only — see CLAUDE.md on the bundled d8.
+ * The signal is MORE THAN ONE tick: a plain long press ticks the row under the cursor, before or
+ * after {@code show()} depending on the screen, so one tick is ambiguous. Callbacks get the index
+ * of the UNFILTERED menu ({@link #index}): some screens dispatch by index, and a dropped entry
+ * would silently change what every entry below it does.
  */
 public final class Menus {
 
@@ -65,15 +44,12 @@ public final class Menus {
     }
 
     /**
-     * What survives a multi-selection. A whitelist rather than a list of things to hide: a menu
-     * entry that is not here is either a sort, a single-row action or a screen command, and any of
-     * those is a mistake to offer for a selection. Playlist rows ("Add to Playlist N") are kept by
-     * {@link #keeps} without being named here — how many there are is up to the user.
+     * A whitelist: anything else is a sort, a single-row action or a screen command. Playlist rows
+     * are kept by {@link #keeps}.
      */
     private static final int[] MULTI = {
             R.string.all_select,
-            // "MultiSelect" stays: it is the switch OUT of the mode the selection is in, which is
-            // the one screen command that means something while rows are ticked.
+            // The switch OUT of the mode the selection is in.
             R.string.music_multi_select,
             R.string.music_delete_file,
             R.string.audiobook_delete,
@@ -87,7 +63,7 @@ public final class Menus {
             R.string.ipp_m3u_export,
     };
 
-    /** Per dialog, because they are lazy singletons reused on every press. */
+    /** Per dialog: they are lazy singletons reused on every press. */
     private static final WeakHashMap SNAPS = new WeakHashMap();
 
     private static final class Snap {
@@ -97,40 +73,24 @@ public final class Menus {
     }
 
     /**
-     * Injected at the top of {@code SubMenuDialog.onStart}, i.e. once per {@code show()} — the one
-     * point every menu of every screen goes through, and the only one that runs again when a lazily
-     * built dialog is shown a second time.
-     *
-     * The unfiltered menu is remembered and put back before each pass, because the entries we
-     * drop must come back next time. Whether the screen has rebuilt the menu in the meantime is
-     * answered by comparing what is there now against what we left ({@code shown}) — by reference,
-     * so a rebuilt list is never mistaken for the one we filtered.
+     * Top of {@code SubMenuDialog.onStart}, once per {@code show()}. The full menu is put back
+     * before each pass; "rebuilt by the screen meanwhile" is told by reference against what we left.
      */
     public static void onShow(SubMenuDialog d) {
-        // A menu standing over a list stops that list's "the wheel has fallen silent" clock: the
-        // user is reading it, and the row it was raised on must still be there when they choose.
-        // Released from SubMenuDialog.onStop. Before the guards below, so a menu this method has
-        // nothing to filter still holds the clock. See Follow.hold.
+        // The menu stops the list's idle clock until SubMenuDialog.onStop — even when there is
+        // nothing to filter.
         Follow.hold(true);
         filter(d);
     }
 
     /**
-     * The Videos section builds its menus from a class of its own — {@code SubMenuVideoDialog},
-     * with items of its own ({@code SubmenuVideoAdapter.Item}) — so {@link #onShow} never sees
-     * them, and the section showed "Sort by File name" over a selection of several videos.
-     * Injected at the top of ITS {@code onStart}, right after the super call and before stock puts
-     * the cursor back on row 0, so the cursor lands on row 0 of the FILTERED list.
-     *
-     * No {@code Follow.hold} here, unlike the music one: nothing in the Videos section registers
-     * with {@link Follow} (its lists are RecyclerViews and none of them draws a playing marker),
-     * so there is no clock to stop — and this dialog's {@code onStop} would have to release it.
+     * Top of {@code SubMenuVideoDialog.onStart}, before stock puts the cursor on row 0. No
+     * {@code Follow.hold}: no Videos list registers with {@link Follow}.
      */
     public static void onShowVideo(SubMenuVideoDialog d) {
         filter(d);
     }
 
-    /** The half both of them share: the dialog's own ListView, its adapter, and the rules. */
     private static void filter(Dialog d) {
         try {
             if (d == null) return;
@@ -145,10 +105,10 @@ public final class Menus {
             Snap s = (Snap) SNAPS.get(d);
             if (s != null && same(items, s.shown)) {
                 items.clear();
-                items.addAll(s.full);              // untouched since we filtered it: restore
+                items.addAll(s.full);
             } else {
                 s = new Snap();
-                s.full = new ArrayList(items);     // the screen built this one
+                s.full = new ArrayList(items);
                 SNAPS.put(d, s);
             }
             s.map = null;
@@ -166,9 +126,7 @@ public final class Menus {
                         idx.add(Integer.valueOf(i));
                     }
                 }
-                // Never leave an empty box on screen: a menu with nothing multi-capable in it is a
-                // menu this rule has nothing to say about (a sort submenu raised over a selection),
-                // and it is shown whole.
+                // Nothing kept means a menu this rule is not about (a sort submenu): shown whole.
                 if (!keep.isEmpty() && keep.size() < items.size()) {
                     items.clear();
                     items.addAll(keep);
@@ -181,24 +139,15 @@ public final class Menus {
             s.shown = new ArrayList(items);
             a.notifyDataSetChanged();
         } catch (Throwable t) {
-            // a menu that could not be filtered is still a usable menu
         }
     }
 
-    /**
-     * The index the callback is handed: where this entry stands in the menu the screen BUILT, not
-     * where it stands after filtering. Injected in {@code shortUp}, after the item itself has been
-     * taken (that one is looked up by the shown index).
-     */
+    /** In {@code shortUp}, after the item was taken by the shown index. */
     public static int index(SubMenuDialog d, int shown) {
         return mapped(d, shown);
     }
 
-    /**
-     * The same for the Videos section, injected in {@code SubMenuVideoDialog.shortUp} after the
-     * item has been taken by the shown index. Its menus need it as much as the music ones:
-     * {@code showVideoListDialog} and {@code showFolderDialog} both dispatch by INDEX.
-     */
+    /** The same in {@code SubMenuVideoDialog.shortUp}. */
     public static int videoIndex(SubMenuVideoDialog d, int shown) {
         return mapped(d, shown);
     }
@@ -214,12 +163,8 @@ public final class Menus {
     }
 
     /**
-     * Whether this entry belongs in the menu as the screen stands. Three rules:
-     *   - "Add to this playlist" is not offered while standing INSIDE that playlist —
-     *       every song there is in it by definition, so the entry can only ever answer "already in
-     *       the playlist";
-     *   - "Set as playlist cover" is offered there only while the Playlists screen is a grid;
-     *   - with several rows ticked, only what a selection can mean (see {@link #MULTI}).
+     * No "Add to this playlist" inside that playlist; "Set as playlist cover" only while Playlists
+     * is a grid; with several ticks only {@link #MULTI}.
      */
     private static boolean keeps(Activity host, Object o, boolean multi, UUID self) {
         if (isPlaylistEntry(o)) {
@@ -227,22 +172,19 @@ public final class Menus {
             return self == null || id == null || !self.equals(id);
         }
         String s = label(o);
-        // a playlist's cover shows only in the grid (PlGrid); the menu inside a playlist is built
-        // once, so the entry is always there and taken out here while the list view is on
         if (self != null && s != null && !PlGrid.on()
                 && s.equals(host.getString(R.string.ipp_set_pl_cover))) {
             return false;
         }
         if (!multi) return true;
-        if (s == null) return true;            // not an entry we understand: leave it alone
+        if (s == null) return true;
         for (int i = 0; i < MULTI.length; i++) {
             if (s.equals(host.getString(MULTI[i]))) return true;
         }
         return false;
     }
 
-    // The two menu item classes -- the app's own and the Videos section's -- have the same two
-    // getters and no common ancestor, so each question is asked of whichever this is.
+    // The two item classes share the getters but no ancestor.
 
     private static String label(Object o) {
         if (o instanceof SubmenuAdapter.Item) return ((SubmenuAdapter.Item) o).getString();
@@ -250,7 +192,7 @@ public final class Menus {
         return null;
     }
 
-    /** "Add to &lt;playlist&gt;", of either kind — always kept, whatever a selection holds. */
+    /** "Add to <playlist>": always kept. */
     private static boolean isPlaylistEntry(Object o) {
         if (o instanceof SubmenuAdapter.Item) return ((SubmenuAdapter.Item) o).getPlaylist() != null;
         if (o instanceof SubmenuVideoAdapter.Item) {
@@ -259,22 +201,14 @@ public final class Menus {
         return false;
     }
 
-    /**
-     * ...and which playlist it is, for the "not inside itself" rule. Only the music kind answers:
-     * that rule is about {@code PlayListActivity}, and a video playlist is a different table with
-     * a different id.
-     */
+    /** Music playlists only: the rule is about {@code PlayListActivity}. */
     private static UUID playlistId(Object o) {
         if (!(o instanceof SubmenuAdapter.Item)) return null;
         Playlist pl = ((SubmenuAdapter.Item) o).getPlaylist();
         return (pl == null) ? null : pl.getPlaylistId();
     }
 
-    /**
-     * The playlist the screen IS, when it is a playlist at all. Wrapped because the field is a
-     * Kotlin {@code lateinit} — asking before {@code initView} has filled it throws rather than
-     * answering null, and this runs on whatever dialog any screen happens to raise.
-     */
+    /** Wrapped: the field is a {@code lateinit}, and throws before {@code initView}. */
     private static UUID selfPlaylist(Activity a) {
         try {
             if (!(a instanceof PlayListActivity)) return null;
@@ -285,7 +219,7 @@ public final class Menus {
         }
     }
 
-    /** Same entries, in the same order, by reference — "has the screen rebuilt this menu?" */
+    /** By reference. */
     private static boolean same(List now, List then) {
         if (then == null || now.size() != then.size()) return false;
         for (int i = 0; i < now.size(); i++) {
@@ -294,12 +228,7 @@ public final class Menus {
         return true;
     }
 
-    /**
-     * How many rows are ticked on the screen behind the menu. The list is found by walking the
-     * Activity's own view tree: a screen may show several lists (Albums shows albums and songs
-     * through one ListView, Genres four levels), and which of them is on screen is exactly what
-     * the view tree already knows.
-     */
+    /** Found by walking the view tree, which knows which of a screen's lists is shown. */
     private static int ticks(Activity a) {
         try {
             if (a == null || a.getWindow() == null) return 0;
@@ -330,11 +259,7 @@ public final class Menus {
                         .getMultiSelectIndexes();
                 return (s == null) ? 0 : s.size();
             }
-            // The Videos list keeps its selection NOWHERE THE ADAPTER CAN BE ASKED FOR IT: its
-            // adapter is a plain BaseBindingAdapter, which has no multi-select of its own, and the
-            // tick is a boolean ON EACH ROW's own BrowseItem. Asking the adapter for a list of
-            // ticked indexes therefore answered 0 for the whole section, and the filter never
-            // engaged there however many videos were selected. The rows are counted instead.
+            // Videos keeps its ticks on each row's BrowseItem, not in the adapter.
             if (ad instanceof BaseBindingAdapter) {
                 return browseTicks(((BaseBindingAdapter) ad).getData());
             }
@@ -352,11 +277,7 @@ public final class Menus {
         return 0;
     }
 
-    /**
-     * Ticked rows of a Videos list. Every other screen built on {@code BaseBindingAdapter} — the
-     * main menu, Settings, Language, Bluetooth — holds something else entirely, and answers 0 on
-     * the first test.
-     */
+    /** Other {@code BaseBindingAdapter} screens hold no BrowseItems and answer 0. */
     private static int browseTicks(List data) {
         if (data == null) return 0;
         int n = 0;
@@ -371,26 +292,9 @@ public final class Menus {
     }
 
     /**
-     * The screen the menu belongs to. {@code Dialog.getContext()} is a {@code ContextThemeWrapper}
-     * around the Activity (the dialog carries a theme), so it is unwrapped; the Activity on top is
-     * the fallback, and it is the right one — a dialog does not pause the screen under it.
-     */
-    /**
-     * The Photos bar, which is a menu of another kind: {@code PhotosDialog}, a strip of five
-     * icons along the bottom rather than a {@code SubMenuDialog}, so {@link #onShow} never sees
-     * it. Called from {@code PhotosActivity.longTop} with the list the dialog is about to be
-     * built from and the row the cursor is on.
-     *
-     * A FOLDER CANNOT BE A WALLPAPER, so the last entry goes. Nothing has to be recentred by hand:
-     * the dialog lays the strip out with {@code GridLayoutManager(context, subs.size())}, one
-     * column per entry, so four entries share the width the same way five did.
-     *
-     * ONLY THE LAST ENTRY MAY BE DROPPED THIS WAY, and that is not a coincidence to be relied on
-     * quietly: both dispatchers here work by INDEX — the Activity's callback branches on 0..3 and
-     * {@code PhotosDialog} compares the cursor against a hardcoded 4 to open its desktop/global
-     * popup — so anything taken out of the middle would silently change what every entry below it
-     * does. Dropping the tail leaves 0..3 saying exactly what they said, and the position the
-     * popup answers to simply stops existing.
+     * The Photos icon strip ({@code PhotosDialog}, from {@code PhotosActivity.longTop}): a folder
+     * cannot be a wallpaper, so the last entry goes. ONLY the last may be dropped — both
+     * dispatchers work by index, the dialog even compares against a hardcoded 4.
      */
     public static List photos(List subs, List data, int mark) {
         try {
@@ -401,10 +305,14 @@ public final class Menus {
             if (!((com.innioasis.y1.activity.PhotosActivity.Item) row).isDirectory()) return subs;
             return new ArrayList(subs.subList(0, subs.size() - 1));
         } catch (Throwable t) {
-            return subs;                       // a menu with one entry too many is still a menu
+            return subs;
         }
     }
 
+    /**
+     * The dialog's context is a theme wrapper around the Activity; the top Activity is the
+     * fallback, and right — a dialog does not pause the screen under it.
+     */
     private static Activity hostOf(Dialog d) {
         try {
             Activity own = d.getOwnerActivity();
@@ -415,7 +323,6 @@ public final class Menus {
                 c = ((ContextWrapper) c).getBaseContext();
             }
         } catch (Throwable t) {
-            // fall through to the top Activity
         }
         try {
             return ActivityUtils.getTopActivity();

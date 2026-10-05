@@ -51,16 +51,9 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * The "Up Next" screen. Row 0 is the track playing right now (marked ▶), then the
- * tracks added via "Add to queue", then the next {@link Queue#LOOKAHEAD} playlist tracks
- * (sequential, or the shuffle plan when shuffle is on — see {@link Queue}).
- *
- * Click-wheel driven, like IppActivity: UP/DOWN move focus, centre plays the focused track
- * right away, long top opens the row's menu, top closes.
- * The view is rebuilt from {@link Queue#upNext()} on every render and on every
- * {@code MY_PLAY_SONG} broadcast, so it follows track changes live.
- *
- * Raw collection types + named nested classes only (d8 constraints — see CLAUDE.md).
+ * The "Up Next" screen: the playing track pinned on top, then the queued tracks, then what the
+ * playlist has left ({@link Queue#upNext()}). Centre plays a row, long top opens its menu, top
+ * closes. Rebuilt on every {@code MY_PLAY_SONG}, so it follows track changes live.
  */
 public final class IppQueueActivity extends BaseActivity {
 
@@ -73,8 +66,7 @@ public final class IppQueueActivity extends BaseActivity {
     private int sel;
     private PlayWatch watch;
 
-    // Per-row views, so a wheel click repaints two rows instead of rebuilding the list. With
-    // more than a handful of manually queued tracks the rebuild is what made the screen crawl.
+    // per-row views: a wheel click repaints two rows instead of rebuilding the list
     private View[] rowViews;
     private TextView[] tagViews;       // the marker's colour source (only added for "•"/"▶")
     private TextView[] titleViews;
@@ -84,22 +76,9 @@ public final class IppQueueActivity extends BaseActivity {
     private boolean scrollPending;
 
     /**
-     * Only what will be VISIBLE is built before the first frame; the rest is posted and lands one
-     * frame later ({@link Tail}).
-     *
-     * This screen is opened from the player, and the player's title is SCROLLING while it opens
-     * — the marquee is a Handler tick on the very thread that builds this list, so every
-     * millisecond spent in {@link #initView} is a millisecond the title cannot move. Frozen on a
-     * screen that has not changed yet, it reads as the device having hung, and that is what the
-     * user reported: the scroll stops before the queue appears. Twenty-one rows were built for a
-     * screen that shows about five.
-     *
-     * How many that is comes from the SCREEN, not from a constant — see {@link #syncRows()}.
-     * A fixed six was one row short of a screenful, and once the tail stopped delaying the window
-     * (see {@link #render()}) that missing row became visible: the list appeared with five songs
-     * and the rest arrived a moment later, in plain sight. The floor below is what the count may
-     * never drop under; a cursor already further down extends the synchronous part instead, or
-     * {@link #scrollToSel} would have no row to scroll to.
+     * Only the VISIBLE rows are built before the first frame, the rest a frame later
+     * ({@link Tail}): the player's marquee freezes while this screen builds, which reads as a hang.
+     * How many is the screen's ({@link #syncRows()}); this is the floor.
      */
     private static final int SYNC_ROWS_MIN = 8;
 
@@ -108,13 +87,10 @@ public final class IppQueueActivity extends BaseActivity {
     private static final int CAPTION_PAD = 3;
     /** A rule along a band's top and bottom edge, px. */
     private static final int RULE_H = 2;
-    /**
-     * The playing row's wash. Weaker than a caption's: the row carries a cover and two lines of
-     * its own, and it is a row rather than a heading over one.
-     */
+    /** The playing row's wash, weaker than a caption's. */
     private static final int PLAY_ALPHA = 0x2E000000;
 
-    /** ...and weaker again on a theme with transparent rows — see {@link IppActivity#BAND_ALPHA_BARE}. */
+    /** ...weaker again over the wallpaper ({@link IppActivity#BAND_ALPHA_BARE}). */
     private static final int PLAY_ALPHA_BARE = 0x17000000;
 
     private static int playAlpha() {
@@ -125,30 +101,20 @@ public final class IppQueueActivity extends BaseActivity {
     private static final float PLAY_NAME_SP = 18.0f;
     private static final float PLAY_SUB_SP = 14.0f;
 
-    /**
-     * The hairlines a song row is being tried with: the caption's rules, thinner and far weaker —
-     * they run between every two rows, so at the caption's own strength the list would read as a
-     * grid.
-     */
+    /** Between every two rows, so far weaker than a caption's rule. */
     private static final int HAIR_H = 1;
     private static final int HAIR_ALPHA = 0x1F000000;
 
     /**
-     * Rows to build before the first frame: as many as the scroller can show, plus one for the row
-     * the screen cuts in half and one to spare.
-     *
-     * It is the same arithmetic {@link #build} does — a song row is 1.5x its text size plus its
-     * hairline, and the playing row is its two lines — so it follows the theme's text size and the
-     * screen without a second number to keep in step. Over-counting is the safe direction: a row
-     * built and not shown costs a couple of milliseconds, a row shown and not built is the flash.
+     * Rows to build before the first frame: what the scroller shows plus two, by {@link #build}'s
+     * own arithmetic. Over-counting is the safe side.
      */
     private int syncRows() {
         try {
             android.util.DisplayMetrics m = getResources().getDisplayMetrics();
             int screen = m.heightPixels;
             int bar = (int) getResources().getDimension(R.dimen.status_bar_height);
-            // The pinned block: the "Now playing" caption, the playing row and its two lines, and
-            // the bar naming the group at the top of the list.
+            // the pinned block: two captions and the playing row
             int cap = px(CAPTION_SP, m) + CAPTION_PAD * 2 + RULE_H * 2;
             int play = px(PLAY_NAME_SP, m) + px(PLAY_SUB_SP, m);
             if (play < COVER_PX) play = COVER_PX;
@@ -175,9 +141,8 @@ public final class IppQueueActivity extends BaseActivity {
     private boolean manualHeaderDone;   // group captions, carried across the two build passes
     private boolean autoHeaderDone;
 
-    // The pinned caption — the group the top of the list belongs to, standing under the playing
-    // row while that group's rows scroll past beneath it. The in-list captions and their words,
-    // in list order, are what it is worked out from; the first group's caption is only ever here.
+    // The pinned caption: the group the top of the list belongs to, worked out from the in-list
+    // captions. The first group's caption is only ever here.
     private LinearLayout pinned;
     private TextView pinnedText;
     private String pinnedShown;
@@ -189,18 +154,11 @@ public final class IppQueueActivity extends BaseActivity {
     private int playExtra;
     private String[] labels;            // one label() per row per render, not one per paint
 
-    /**
-     * One dot and one tick per (size, colour). Every unticked row draws the SAME mark, and drawing
-     * it per row meant a Bitmap, a Canvas and a Paint each — twenty of them on the path that opens
-     * the screen. Dies with the Activity, and a theme switch kills the process anyway (skill
-     * {@code ipp-perf-profiling}), so nothing here can go stale.
-     */
+    /** One dot and one tick bitmap per (size, colour), not per row. */
     private final java.util.HashMap markCache = new java.util.HashMap();
 
-    // Multi-select. The ticked rows carry the very highlight the cursor does — stock draws
-    // its multi-selection that way too — and the cursor is told apart by BLINKING, again as stock
-    // does it (there from a 500 ms thread per screen; here one posted Runnable, stopped with the
-    // screen). Row 0 can never be ticked: the track playing now is not something to remove.
+    // Multi-select, as stock draws it: ticked rows carry the highlight, the cursor BLINKS. Row 0
+    // is never ticked.
     private static final int BLINK_MS = 500;
     private boolean multi;
     private final HashSet marked = new HashSet();   // Integer row numbers
@@ -225,20 +183,15 @@ public final class IppQueueActivity extends BaseActivity {
         ViewGroup root = (ViewGroup) getVb().getRoot();
         root.removeAllViews();
 
-        // The playing track sits OUTSIDE the scroller: it is what the screen is about, and with
-        // twenty rows below it it would otherwise scroll away as soon as the cursor moved down.
+        // the playing track OUTSIDE the scroller, so it never scrolls away
         LinearLayout outer = new LinearLayout(this);
         outer.setOrientation(LinearLayout.VERTICAL);
 
-        // No side padding: a row's background is the theme's, and 8px of it either side let the
-        // wallpaper through as a stripe down both edges of the screen. The text keeps its distance
-        // from the edge through the row's OWN padding, which is inside that background.
+        // no side padding, or the wallpaper shows as a stripe down both edges
         header = new LinearLayout(this);
         header.setOrientation(LinearLayout.VERTICAL);
         outer.addView(header, -1, -2);
 
-        // Between the playing row and the list, and outside the scroller: it is the list's own
-        // heading and has to stay put while the list moves under it.
         pinnedText = captionView("");
         pinned = band(pinnedText, -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.bandAlpha());
         pinned.setVisibility(View.GONE);
@@ -255,16 +208,13 @@ public final class IppQueueActivity extends BaseActivity {
 
         root.addView(outer, -1, -1);
 
-        // Every frame of a scroll, animated ones included. Registered on the tree rather than on
-        // the view (ScrollView.setOnScrollChangeListener is API 23, the device is 17) and never
-        // removed by hand: the observer dies with the window.
+        // on the tree: setOnScrollChangeListener is API 23
         Pin pin = new Pin(this);
         scroller.getViewTreeObserver().addOnScrollChangedListener(pin);
         scroller.getViewTreeObserver().addOnPreDrawListener(pin);
 
         sel = 0;
-        // A theme's row picture is decoded off the main thread, so a screen built before it lands
-        // is told the rows are not painted. Repaint when it arrives.
+        // a theme's row picture lands late: repaint when it does
         retheme = new Retheme(this);
         Theme.watchRows(retheme);
         render();
@@ -282,38 +232,25 @@ public final class IppQueueActivity extends BaseActivity {
             try {
                 unregisterReceiver(watch);
             } catch (Exception e) {
-                // already gone
             }
             watch = null;
         }
         super.onDestroy();
     }
 
-    /**
-     * Keep the focused row on the same kind of entry when the track changes under us.
-     *
-     * A multi-selection does NOT survive it: the ticks are row numbers, and a track change shifts
-     * every row up by one — the same ticks would then stand on other songs. Better to drop them
-     * than to remove the wrong tracks.
-     */
+    /** A track change drops the ticks: they are row numbers, and every row just moved. */
     void onTrackChanged() {
         endMulti();
         render();
     }
 
-    /** The playing row is deliberately bigger: taller and 2pt larger than the rest. */
+    /** The playing row is bigger. */
     private static float textSize(int row) {
         return row == 0 ? 18.0f : 16.0f;
     }
 
-    /**
-     * Build the whole list. Called when the CONTENT changes — opening the screen, a track change,
-     * a removal — never for a wheel click, which only changes how two rows look ({@link #move}).
-     * The manual part of the queue is unbounded, so with a few dozen queued tracks rebuilding
-     * every row per click was the whole of the lag.
-     */
+    /** Build the list when its CONTENT changes — never for a wheel click ({@link #move}). */
     void render() {
-        // Only the visible part is built here; see syncRows() for why that matters at all.
         rows = Queue.upNext();
         header.removeAllViews();
         container.removeAllViews();
@@ -350,9 +287,7 @@ public final class IppQueueActivity extends BaseActivity {
         if (sel < 0) sel = 0;
 
         childIndex = new int[n];
-        // The cursor's own row must exist before scrollToSel can find it, so a cursor that already
-        // stands further down (a track change with the list scrolled) extends the synchronous part
-        // rather than being left to the tail.
+        // the cursor's row must exist for scrollToSel
         int sync = Math.max(syncRows(), sel + 2);
         if (sync > n) sync = n;
         build(0, sync);
@@ -360,26 +295,13 @@ public final class IppQueueActivity extends BaseActivity {
             tailFrom = sync;
             tailPending = true;
             if (tailRun == null) tailRun = new Tail(this);
-            // The tail may not touch the tree until the window is really on the screen, and a
-            // View.post does NOT wait for that. Measured: it lands between the first traversal and
-            // the second, and its addView calls then force the whole tree to be measured again
-            // (~45 ms) and the first real draw to cover all twenty-odd rows instead of the six that
-            // are visible (58..124 ms instead of ~15) — i.e. posting the tail this way made the
-            // screen appear LATER, on the one screen that is opened from the player while the
-            // marquee is running. Window focus arrives after the first draw has been reported, so
-            // that is what the first tail waits for; a later render (a track change) already has
-            // the focus and posts straight away.
+            // The tail waits for window FOCUS (onWindowFocusChanged): a View.post lands before the
+            // first draw and drags every row into it, so the screen appeared later.
             if (hasWindowFocus()) header.post(tailRun);
         }
-        // The scrollbar is woken by the first layout and stays on screen for about half a second —
-        // longer than the tail takes to arrive — so with a short list underneath it the user
-        // watched the thumb shrink as the rest of the rows landed. While the list is incomplete
-        // the bar would be lying about the length anyway, so it is off until the tail is in.
-        // Nothing is lost by that: it is an overlay (no space reserved, no re-layout), and the
-        // first wheel click both completes the list and wakes the bar with the right range.
+        // the scrollbar would shrink before the user's eyes as the tail lands
         scroller.setVerticalScrollBarEnabled(!tailPending);
         scrollToSel();
-        // The list has just been rebuilt under a bar that was naming a group of the old one.
         repin();
     }
 
@@ -391,10 +313,7 @@ public final class IppQueueActivity extends BaseActivity {
             boolean mine = Queue.isManualRow(i);
             float size = textSize(i);
 
-            // Group captions, each shown only when its group has anything in it: "Up next" over
-            // the hand-queued tracks, "Up next from: <list>" over what the playlist itself has
-            // left. The second is therefore absent exactly when there is nothing left to play —
-            // the last track of the list, or a list of one.
+            // a group's caption only when the group has anything in it
             if (!playing && mine && !manualHeaderDone) {
                 caption(manualCaption());
                 manualHeaderDone = true;
@@ -410,8 +329,7 @@ public final class IppQueueActivity extends BaseActivity {
             row.setGravity(Gravity.CENTER_VERTICAL);
             row.setPadding(5, 0, 5, 0);
 
-            // The playing row shows the album thumbnail instead of a marker; if the cover is
-            // unavailable it falls back to ▶ so the row is still recognisable.
+            // the playing row: its cover, else ▶
             Bitmap art = playing ? cover(s) : null;
             TextView tag = new TextView(this);
             if (playing) {
@@ -431,9 +349,7 @@ public final class IppQueueActivity extends BaseActivity {
                     row.addView(tag, -2, -2);
                 }
             } else {
-                // Every song row carries the same mark now — hand-queued and playlist tracks are
-                // told apart by the captions above them, not by the colour of a dot. Drawn, not a
-                // glyph: a text shadow is a blur, and a real ring has to be stroked separately.
+                // a drawn mark, not a glyph: its ring is stroked, a text shadow would blur
                 ImageView dot = new ImageView(this);
                 LinearLayout.LayoutParams dp = new LinearLayout.LayoutParams(-2, -2);
                 dp.rightMargin = 8;
@@ -443,7 +359,7 @@ public final class IppQueueActivity extends BaseActivity {
 
             TextView title = new TextView(this);
             title.setTextSize(playing ? PLAY_NAME_SP : size);
-            // Base weight is normal; only the song's own name is bold (see spanned()).
+            // only the song's own name is bold (spanned())
             title.setTypeface(Typeface.MONOSPACE, Typeface.NORMAL);
             title.setIncludeFontPadding(false);
             title.setGravity(Gravity.CENTER_VERTICAL);
@@ -451,9 +367,7 @@ public final class IppQueueActivity extends BaseActivity {
 
             TextView sub = null;
             if (playing) {
-                // Two lines, not one label with a separator: the name is the bigger of the two and
-                // the artist under it the smaller, and a marquee belongs to the line it runs on.
-                // The name is bold as a whole here, so this row needs no BoldTitle (see paint()).
+                // two lines: the name, bold as a whole, and the artist under it
                 title.setText(nameAt(i));
                 bold(title);
 
@@ -487,43 +401,28 @@ public final class IppQueueActivity extends BaseActivity {
             subViews[i] = sub;
             paint(i);
 
-            // Fixed height derived from the text: a theme background bitmap would otherwise
-            // stretch the row to its own intrinsic height (the tall blue block on HoloBubble).
+            // a FIXED height: a theme bitmap would stretch the row
             int h = rowHeight(title);
-            // Both lines, and never less than the cover standing beside them. What stretch() adds
-            // on top of it is measured from this, so it is remembered rather than read back.
             if (playing) {
                 h = Math.max(h + rowHeight(sub), COVER_PX);
-                playBase = h;
+                playBase = h;                        // stretch() adds to this
             }
             if (playing) {
-                // Its own caption, so the top of the screen says what that row IS rather than
-                // leaving it to be told from the two groups by its size. The words are the main
-                // menu's own ({@code main_now}) — the same thing named the same way, in every
-                // language, with nothing to translate here.
+                // captioned with the main menu's own words (main_now)
                 header.addView(divider(getString(R.string.main_now)), dividerParams());
-                // The playing row takes the caption's WASH but not its rules: the caption above it
-                // already carries one along its bottom edge, and a second directly under it would
-                // read as an empty band between the two.
+                // the wash without rules: the caption above already carries one
                 header.addView(band(row, h, 0, 0, playAlpha()),
                         new LinearLayout.LayoutParams(-1, -2));
                 childIndex[i] = -1;                  // pinned, never scrolled to
             } else {
-                // Song rows carry no margins at all: the theme paints them, and any gap between
-                // two of them is a line of wallpaper through the middle of the list. The hairlines
-                // are drawn INSIDE the box instead, so they separate without letting anything
-                // through.
+                // no margins (a gap shows wallpaper): the hairline is inside the box
                 childIndex[i] = container.getChildCount();
                 container.addView(rowBox(row, h), new LinearLayout.LayoutParams(-1, -2));
             }
         }
     }
 
-    /**
-     * The rows that were below the screen when it opened, built one frame after the window came
-     * up. Also called from every key handler, so a press that somehow beats the posted message
-     * finds the whole list there — the tail is a frame away, not a promise.
-     */
+    /** The rows below the screen, a frame later. Also from every key handler, in case one wins. */
     void buildTail() {
         if (!tailPending) return;
         tailPending = false;
@@ -532,14 +431,10 @@ public final class IppQueueActivity extends BaseActivity {
         build(tailFrom, rows.size());
         if (scroller != null) scroller.setVerticalScrollBarEnabled(true);
         scrollToSel();
-        // The second group's caption is usually one of the rows the tail brings.
         repin();
     }
 
-    /**
-     * The first tail waits here: the window has been drawn and handed over before focus arrives,
-     * so building the rest of the list from this point costs the user nothing he can see.
-     */
+    /** The first tail waits for focus, which arrives after the first draw. */
     @Override
     public void onWindowFocusChanged(boolean has) {
         super.onWindowFocusChanged(has);
@@ -551,7 +446,6 @@ public final class IppQueueActivity extends BaseActivity {
         if (tailRun != null && header != null) header.removeCallbacks(tailRun);
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     static final class Tail implements Runnable {
         private final IppQueueActivity a;
         Tail(IppQueueActivity a) { this.a = a; }
@@ -566,11 +460,7 @@ public final class IppQueueActivity extends BaseActivity {
         scrollToSel();
     }
 
-    /**
-     * The highlighted look of a row: the cursor, and — in multi-select — every ticked row. While
-     * the blink is off the cursor draws unselected, which is the whole point of it: the ticks
-     * stand still and the cursor flashes, so the two are never confused.
-     */
+    /** The highlight: the cursor, and every ticked row; blinked off, the cursor draws unselected. */
     private void paintFocus(int i) {
         if (rowViews == null || i < 0 || i >= rowViews.length || rowViews[i] == null) return;
         boolean on = highlighted(i);
@@ -578,35 +468,27 @@ public final class IppQueueActivity extends BaseActivity {
         TextView tag = tagViews[i];
         TextView title = titleViews[i];
 
-        // Only a highlighted row carries the background; the playing one is marked by text colour
-        // instead (a theme's selected background can be a big bitmap, so giving it to the playing
-        // row as well as the cursor reads as two cursors).
+        // the playing row is marked by colour, not background: that would read as two cursors
         ThemeManager.INSTANCE.itemSetBackground(rowViews[i], on ? R.drawable.item_setting_sel : 0, on);
         TextView sub = subViews[i];
         ThemeManager.INSTANCE.itemSetTextColor(tag, on ? ACCENT : -1, on);
         ThemeManager.INSTANCE.itemSetTextColor(title, on ? ACCENT : -1, on);
         if (sub != null) ThemeManager.INSTANCE.itemSetTextColor(sub, on ? ACCENT : -1, on);
-        // The playing row is tinted the theme way, exactly like the "CD N" dividers: pass
-        // selected_text_color through ThemeManager so a theme's own colour wins.
+        // through ThemeManager, so a theme's own colour wins
         if (playing && !on) {
             int cd = getResources().getColor(R.color.selected_text_color);
             ThemeManager.INSTANCE.itemSetTextColor(tag, cd, false);
             ThemeManager.INSTANCE.itemSetTextColor(title, cd, false);
             if (sub != null) ThemeManager.INSTANCE.itemSetTextColor(sub, cd, false);
         }
-        // Redrawn per paint because with no theme its fill comes from the row's OWN text colour,
-        // which is what has just changed. tag is coloured above, so it is the right source now.
+        // per paint: its fill follows the text colour just set on tag
         if (dotViews[i] != null) {
             dotViews[i].setImageBitmap(marked.contains(Integer.valueOf(i))
                     ? tickMark(textSize(i), tag) : queuedDot(textSize(i), tag));
         }
     }
 
-    /**
-     * The cursor is the thing that blinks — a ticked row under it included, or standing on a row
-     * that is already ticked would look like standing on nothing. What says "ticked" while the
-     * highlight is away is the tick itself, in the marker column.
-     */
+    /** The cursor blinks even over a ticked row; the tick mark says "ticked" meanwhile. */
     private boolean highlighted(int i) {
         if (i == sel) return !multi || blinkOn;
         return marked.contains(Integer.valueOf(i));
@@ -619,41 +501,22 @@ public final class IppQueueActivity extends BaseActivity {
         boolean on = (i == sel);
         TextView title = titleViews[i];
 
-        // Only the focused row scrolls its text. The rows outlive the focus change now, so the
-        // one that lost it has to be stopped explicitly: the marquee is a self-posting Handler
-        // tick inside Ipp's Scroll, which setEllipsize/setSelected do not touch at all.
-        // The playing row's name stands on a line of its own, with the artist under it: what it
-        // shows, and therefore what scrolls when it is focused, is the name alone.
+        // Only the focused row scrolls; the one that lost focus is stopped explicitly (Scroll's
+        // marquee is a Handler tick). The playing row scrolls its name alone.
         String plain = (i == 0) ? nameAt(i) : labelAt(i);
         if (on) {
             Scroll.marqueeText(title, plain);
         } else {
             Scroll.stopMarquee(title);
         }
-        // That row is bold as a whole and needs no span; setting one would also have to be undone
-        // by every path that rewrites the text.
-        if (i == 0) return;
-        // AFTER the marquee, never before: starting one goes through TextView.setSingleLine(),
-        // which installs a SingleLineTransformationMethod of its own and would throw ours away —
-        // which is exactly what made the bold vanish the moment a row took the focus. Setting it
-        // re-runs it over the text the view already holds, and it keeps running over whatever
-        // the marquee puts there on its next tick.
+        if (i == 0) return;                      // bold as a whole, no span
+        // AFTER the marquee: its setSingleLine() installs its own transformation over ours
         title.setTransformationMethod(new BoldTitle(plain, titleLen(plain)));
     }
 
     /**
-     * The mark of a user-queued row: a filled circle in the theme's **menu background** colour —
-     * the colour behind the sort / long-press submenu ({@code menuBackgroundColor} in config.json)
-     * — ringed with that colour's complement.
-     *
-     * Why drawn and not a "•" glyph: a TextView can only be given a {@code setShadowLayer}, which
-     * is a soft blur and stayed barely visible around a dot this small. A real outline has to be
-     * stroked separately from the fill, which needs a Canvas. It also makes the mark legible when
-     * {@code menuBackgroundColor} happens to equal the list's own text colour (theme1 sets it to
-     * #000000) — the ring still separates it from the plain dots of the projected rows.
-     *
-     * With no theme selected there is no {@code menuBackgroundColor} at all; then the fill is the
-     * complement of the row's text colour, so the mark is still the inverse of its surroundings.
+     * A row's dot: the theme's menu background colour ringed with its complement — legible even
+     * when that colour equals the text's. No theme: the text colour's complement.
      */
     private Bitmap queuedDot(float sizeSp, TextView colourSource) {
         int fill;
@@ -661,7 +524,6 @@ public final class IppQueueActivity extends BaseActivity {
         try {
             c = ThemeManager.INSTANCE.menuBGColor();
         } catch (Throwable t) {
-            // malformed theme colour -> treat as absent
         }
         if (c != null) {
             fill = c.intValue() | 0xFF000000;
@@ -671,14 +533,11 @@ public final class IppQueueActivity extends BaseActivity {
         int ring = (fill ^ 0x00FFFFFF) | 0xFF000000;
         int box = markBox(sizeSp);
 
-        // Every row's dot is this same bitmap; see markCache for why that is worth saying once.
         String key = "d" + box + ":" + fill;
         Object hit = markCache.get(key);
         if (hit instanceof Bitmap) return (Bitmap) hit;
 
-        // The dot's own size is the row's "•": same font, same text size, so it is not visually
-        // bigger than the glyph it stands for. The BOX it is drawn in is the marker column's, so
-        // the dot and the tick take exactly the same room (see markBox).
+        // the size of the row's "•" glyph, in the marker column's box
         Paint p = new Paint();
         p.setAntiAlias(true);
         p.setTypeface(font());
@@ -706,15 +565,7 @@ public final class IppQueueActivity extends BaseActivity {
         return bm;
     }
 
-    /**
-     * The tick of a ticked row — the second marker of a selection, the first being the
-     * highlight. Drawn, like the tick of the cache picker and for the same reason: two strokes on
-     * a transparent square are one bitmap and follow the row's colour, where an asset would have
-     * to be shipped per theme. Geometry is that dialog's 16px tick scaled to the marker column.
-     *
-     * Painted in the colour the text beside it has just been given, so it follows both the theme
-     * and the focus highlight — the rule every mark in this app follows.
-     */
+    /** A ticked row's tick, drawn in the colour its text has just been given. */
     private Bitmap tickMark(float sizeSp, TextView colourSource) {
         int box = markBox(sizeSp);
         int colour = colourSource.getCurrentTextColor();
@@ -736,41 +587,25 @@ public final class IppQueueActivity extends BaseActivity {
         return bm;
     }
 
-    /**
-     * The marker column: one square for the dot and the tick alike, so ticking a row cannot shift
-     * its title sideways. Derived from the row's text size, so it scales with the row the way the
-     * dot always did.
-     */
+    /** One square for dot and tick alike, so ticking never shifts the title. */
     private int markBox(float sizeSp) {
         int n = Math.round(sizeSp * getResources().getDisplayMetrics().scaledDensity * 0.8f);
         return n < 10 ? 10 : n;
     }
 
-    /**
-     * A group caption, in the shape of the "CD N" dividers of an album: small, bold, and coloured
-     * through {@code ThemeManager.itemSetTextColor} with {@code selected_text_color} so a theme's
-     * own colour wins. Not selectable — the wheel walks songs, and these sit between them.
-     */
+    /** A group caption: not selectable — the wheel walks songs. */
     private View divider(String text) {
         return band(captionView(text), -2, IppActivity.RULE_ALPHA, RULE_H, IppActivity.bandAlpha());
     }
 
-    /**
-     * A group caption, on its way either into the list or onto the pinned bar.
-     *
-     * The FIRST one is not drawn in the list at all: the bar carries it from the moment the screen
-     * opens, and the two together would read as a duplicate — the same rule the album screen's disc
-     * strip follows, where row 0 carries no label for exactly that reason.
-     */
+    /** A caption into the list — but the FIRST only onto the pinned bar, or it shows twice. */
     private void caption(String text) {
         if (pinnedFirst == null) {
             pinnedFirst = text;
             setPinned(text);
             return;
         }
-        // The row above this caption gives its hairline up: the caption's own rule is what draws
-        // that boundary, and the two together are a line of a different thickness from every other.
-        dropHair();
+        dropHair();                              // the caption's rule draws this boundary
         View box = divider(text);
         capViews.add(box);
         capLabels.add(text);
@@ -778,14 +613,8 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Keep the pinned bar naming the group the top of the list belongs to. A caption whose top
-     * edge has reached the top of the scroller has become that group's heading, so the bar takes
-     * its words — the next one covering the last exactly as "CD 2" covers "CD 1" on the album
-     * screen. Captions are in list order, so the walk stops at the first one still below the edge.
-     *
-     * Driven by a scroll listener rather than by the key handler: a key press is not the only thing
-     * that moves this list, and the answer depends on where it ended up rather than on what was
-     * asked for.
+     * The pinned bar names the group at the top of the list: the last caption gone above the edge.
+     * From a scroll listener, since keys are not the only thing that moves the list.
      */
     void repin() {
         try {
@@ -798,21 +627,14 @@ public final class IppQueueActivity extends BaseActivity {
             String label = pinnedFirst;
             for (int i = 0; i < capViews.size(); i++) {
                 View v = (View) capViews.get(i);
-                // A view that has not been laid out yet answers top 0, i.e. "I am at the very top"
-                // — and this runs from render() and buildTail() with the captions just added, so
-                // without this the bar took the last group's name the moment the screen opened and
-                // only came right once something had scrolled. Height is the tell: a laid-out
-                // caption has one. Captions are in list order, so the walk stops at the first.
+                // not laid out yet: its top reads 0, "at the very top"
                 if (v.getHeight() <= 0) break;
-                // Its BOTTOM edge, not its top: until the caption itself has gone above the edge it
-                // is still on screen doing its job, and the bar naming the same group above it
-                // reads as the heading printed twice.
+                // its BOTTOM edge: while on screen it is the heading itself
                 if (v.getTop() + v.getHeight() - y > 0) break;
                 label = (String) capLabels.get(i);
             }
             setPinned(label);
         } catch (Throwable t) {
-            // a bar that cannot be painted must never take the screen down
         }
     }
 
@@ -825,23 +647,10 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Give every song row the same height, and make that height divide the space the list has, so
-     * the row at the bottom of the screen ends exactly on its edge instead of being cut in half.
-     *
-     * The height cannot be settled in {@code build()}: what it has to divide is known only once the
-     * screen is laid out, the block above the list (the "Now playing" caption, the playing row, the
-     * pinned bar) being measured from the theme's own font. So the rows are built at their natural
-     * height and this runs from the pre-draw, the way the equaliser's rows are stretched
-     * ({@code Eq.stretch}) — a pass that changed anything cancels the frame, so the first thing
-     * drawn is already the finished layout.
-     *
-     * The remainder — under one row's worth — goes into the PLAYING row, the one thing on screen
-     * whose height nothing else is measured against. Spreading it over the song rows instead makes
-     * them unequal, and a list scrolled by whole rows then lands differently every time.
-     *
-     * {@code playExtra} is what keeps this from oscillating: growing the playing row shrinks the
-     * scroller, so the height being divided has to be measured back to the state before our own
-     * adjustment — otherwise the next pass divides a different number and undoes this one.
+     * Song rows of one height that divides the list's space, so the bottom row ends on the edge.
+     * From the pre-draw (known only after layout); a changing pass cancels its frame. The remainder
+     * goes into the PLAYING row, so song rows stay equal; {@code playExtra} is measured back out,
+     * or the passes oscillate.
      */
     boolean stretch() {
         try {
@@ -879,12 +688,7 @@ public final class IppQueueActivity extends BaseActivity {
         return true;
     }
 
-    /**
-     * Watches the scroller, including the frames of a smooth scroll — and every layout as well,
-     * because the answer depends on where the captions were laid out and a freshly built list has
-     * not been laid out when {@code render()} asks. Costs an int comparison per frame over at most
-     * two captions, and the bar is only ever written to when the words actually change.
-     */
+    /** Every scroll frame and every layout: the captions' positions settle only after layout. */
     static final class Pin implements android.view.ViewTreeObserver.OnScrollChangedListener,
             android.view.ViewTreeObserver.OnPreDrawListener {
         private final IppQueueActivity a;
@@ -899,9 +703,7 @@ public final class IppQueueActivity extends BaseActivity {
 
         public boolean onPreDraw() {
             a.repin();
-            // A pass that resized the rows has made this frame stale — cancel it and let the
-            // layout it just asked for produce the finished one.
-            return !a.stretch();
+            return !a.stretch();                 // resized: this frame is stale
         }
     }
 
@@ -912,8 +714,7 @@ public final class IppQueueActivity extends BaseActivity {
         bold(tv);
         tv.setIncludeFontPadding(false);
         tv.setGravity(Gravity.CENTER_VERTICAL);
-        // A little air above and below the words, so the wash behind them reads as a band rather
-        // than as a highlight sitting on the glyphs.
+        // air above and below, so the wash reads as a band, not a highlight
         tv.setPadding(5, CAPTION_PAD, 5, CAPTION_PAD);
         tv.setSingleLine(true);
         tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
@@ -924,19 +725,9 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * The banded shape of the better-Y menu's group captions, down to the two alphas it defines: a
-     * rule along the top edge and another along the bottom, the strip between them washed. Used
-     * for the two captions and for the playing row — the three things on this screen that are not
-     * part of the list. Nothing on this screen has a margin, so those rules are also what separates
-     * one group from the next, which is why the playing row is asked for the wash alone
-     * ({@code rules} false): it stands under the status bar with no list above it to be told from.
-     *
-     * Both colours are read off a scratch TextView rather than chosen here: {@code
-     * itemSetTextColor} answers with the theme's own colour and ignores the one it is passed, so
-     * painting and looking is the only way to know either. ACCENT is passed for the selected one
-     * for the same reason {@code paintFocus} passes it — that is what this screen shows when the
-     * theme names none. The probe is its own view because the content may already be painted (the
-     * playing row's title) and must not be repainted here.
+     * The better-Y menu's caption band: rules top and bottom, a wash between ({@code ruleAlpha} 0 =
+     * the wash alone). Colours read off a scratch TextView — {@code itemSetTextColor} ignores the
+     * colour passed — never off the content, which may be painted already.
      */
     private LinearLayout band(View content, int contentH, int ruleAlpha, int ruleH, int washAlpha) {
         TextView probe = new TextView(this);
@@ -954,14 +745,7 @@ public final class IppQueueActivity extends BaseActivity {
         return box;
     }
 
-    /**
-     * A song row inside its box, with a hairline along the BOTTOM edge only.
-     *
-     * One line per boundary, and the row below owns none: with a line on each edge every boundary
-     * carried two of them, and a boundary with a caption carried its rule as well — three
-     * thicknesses on one screen where there should be one. The last row's line is the only one
-     * nothing sits under, and it is off the bottom of the screen anyway.
-     */
+    /** A song row with a hairline on its BOTTOM edge only: one line per boundary. */
     private LinearLayout rowBox(View row, int h) {
         LinearLayout box = new LinearLayout(this);
         box.setOrientation(LinearLayout.VERTICAL);
@@ -978,14 +762,14 @@ public final class IppQueueActivity extends BaseActivity {
         lastHair = null;
     }
 
-    /** The theme's SELECTED item colour — a band's wash — read the only way there is. */
+    /** The theme's SELECTED item colour: a band's wash. */
     private int washRgb() {
         TextView probe = new TextView(this);
         ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
         return probe.getCurrentTextColor() & 0x00FFFFFF;
     }
 
-    /** The theme's ordinary item colour, read the only way there is (see {@link #band}). */
+    /** The theme's ordinary item colour (see {@link #band}). */
     private int itemRgb() {
         TextView probe = new TextView(this);
         ThemeManager.INSTANCE.itemSetTextColor(probe,
@@ -1001,8 +785,7 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     private LinearLayout.LayoutParams dividerParams() {
-        // No margin anywhere on this screen: every gap is a line of wallpaper across it, and what
-        // separates the groups is the caption's own rules.
+        // no margins on this screen: a gap is a line of wallpaper
         return new LinearLayout.LayoutParams(-1, -2);
     }
 
@@ -1011,41 +794,19 @@ public final class IppQueueActivity extends BaseActivity {
         return (int) (tv.getTextSize() * 1.5f);
     }
 
-    /**
-     * The theme's font. The app theme sets {@code android:typeface="monospace"} and ThemeManager
-     * swaps {@code Typeface.MONOSPACE} for the theme's font.ttf (or plain {@code DEFAULT} when the
-     * theme carries none), so reading that field is how code-built views follow the theme.
-     */
+    /** The theme's font: ThemeManager swaps {@code Typeface.MONOSPACE} for it. */
     private static Typeface font() {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
     }
 
-    /**
-     * Bold text in the theme's font. The TWO-argument form, not {@code Typeface.create}: only
-     * this one fakes the weight when the theme's font.ttf has no bold cut, which is what an XML
-     * {@code textStyle="bold"} does. With {@code create()} the rows rendered visibly thinner.
-     */
+    /** The TWO-argument form: only it fakes bold for a theme font without a bold cut. */
     private static void bold(TextView tv) {
         tv.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
     }
 
     /**
-     * The picture of the playing track — the one Now Playing is showing, not its album's.
-     *
-     * This row stands for one song, so the same rule the big cover follows applies at
-     * 50px: a track with artwork of its own inside an album that has different artwork (a folder
-     * of singles, a compilation, a song falling back to {@code folder.jpg}) was drawn with its
-     * neighbour's picture, and the player right underneath showed the other one. {@code peekTrack}
-     * answers with strictly what is already known for THIS track — it never reads a tag, so it is
-     * safe here on the main thread, and it hands back the album's representative only for a track
-     * recorded as sharing it, which is a pixel comparison rather than a guess. The album thumbnail
-     * remains the fallback for a track nobody has read yet.
-     *
-     * The 300px result is scaled once per track rather than left to the ImageView: the row is
-     * rebuilt on every render (a track change, a removal), and a 300px bitmap in a 50px view is
-     * that much filtering per frame. Six times down is more than one bilinear pass can average, so
-     * {@code Cover.square} halves its way there — see it for why that is what removes the stair
-     * steps on the edges.
+     * The playing TRACK's own picture, as Now Playing shows it ({@code peekTrack}, no tag read);
+     * the album thumbnail as the fallback. Scaled once per track, not per frame.
      */
     private Bitmap cover(Song s) {
         try {
@@ -1063,11 +824,7 @@ public final class IppQueueActivity extends BaseActivity {
         }
     }
 
-    /**
-     * The caption over the hand-queued rows. It carries the count only while the screen is not
-     * showing all of them — "Next in queue (20 of 137)" — so an ordinary queue reads exactly as it
-     * did, and a long one says at a glance that there is more behind the twenty rows.
-     */
+    /** The queued rows' caption, with "20 of 137" only when not all are shown. */
     private String manualCaption() {
         int all = Queue.manualCount();
         int shown = Queue.manualShown();
@@ -1094,11 +851,7 @@ public final class IppQueueActivity extends BaseActivity {
         return name + SEP + artist;
     }
 
-    /**
-     * The row's label, computed once per row per render. Building a row asked for it and then
-     * {@code paint} asked again, and it is not free: a resolved song, the "titles from tags"
-     * preference and two {@code unNamed} calls per ask.
-     */
+    /** The row's label, computed once per row per render. */
     private String labelAt(int i) {
         if (rows == null || i < 0 || i >= rows.size()) return "";
         if (labels != null && i < labels.length && labels[i] != null) return labels[i];
@@ -1107,7 +860,6 @@ public final class IppQueueActivity extends BaseActivity {
         return s;
     }
 
-    /** How much of the label is the song's own name — everything before the separator. */
     /** The song's own name, and the artist under it — the playing row's two lines. */
     private String nameAt(int i) {
         String s = labelAt(i);
@@ -1121,6 +873,7 @@ public final class IppQueueActivity extends BaseActivity {
         return n >= s.length() ? "" : s.substring(n);
     }
 
+    /** How much of the label is the song's own name — everything before the separator. */
     private static int titleLen(String plain) {
         if (plain == null) return 0;
         int i = plain.indexOf(SEP);
@@ -1128,16 +881,9 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Bold title, plain artist — and it STAYS that way while the row scrolls.
-     *
-     * A span set on the text would not: the marquee re-sets the view's text on every tick (with
-     * its own {@code label + gap + label} copy), which drops the styling. A TransformationMethod
-     * is the one hook that runs on every setText, so the styling is re-derived from whatever text
-     * the marquee has just put there — including both copies of the doubled string, which is why
-     * this matches the label rather than a fixed range.
-     *
-     * {@code StyleSpan} fakes the weight exactly like the two-argument {@code setTypeface} when
-     * the theme's font.ttf carries no bold cut.
+     * Bold title, plain artist, kept while the row scrolls: the marquee re-sets the text every
+     * tick, dropping spans, and a TransformationMethod runs on every setText — both copies of the
+     * doubled string included.
      */
     static final class BoldTitle implements TransformationMethod {
         private final String plain;
@@ -1164,11 +910,7 @@ public final class IppQueueActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Stock stores an unknown tag as {@code Constant.UNKNOWN}, which is "<unknown>" behind
-     * four U+FFE6 — a sort-key prefix that keeps unknowns last, stripped for display by
-     * {@code Other.unNamed}. Missing it is what drew the "￦￦￦￦" as four struck-through W's.
-     */
+    /** Strips {@code Constant.UNKNOWN}'s "￦￦￦￦" sort prefix, or it shows as struck-through W's. */
     private static String unNamed(String s) {
         if (s == null) return "";
         try {
@@ -1179,15 +921,8 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Folders puts PATH-ONLY songs into the playlist: {@code FilesActivity} builds every entry as
-     * {@code new Song(path)}, so the name is empty and every tag is {@code Constant.UNKNOWN} —
-     * which is why a folder's tracks all read alike here. Stock's own Now Playing has the same
-     * problem and answers it the same way, by re-reading the song when the name is blank.
-     *
-     * The library row is tried first ({@code getSongByPathSync} — an indexed query, and Room here
-     * allows main-thread queries) and only a file outside the library falls through to reading its
-     * tags. Memoised by path: rows are rebuilt on every track change, and a metadata read per row
-     * per rebuild is exactly the cost this screen cannot afford.
+     * Folders puts PATH-ONLY songs in the playlist: re-read one with a blank name, as stock's Now
+     * Playing does — the library row first, the file's tags only outside it. Memoised by path.
      */
     private Song resolved(Song s) {
         try {
@@ -1209,19 +944,8 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Rows are rebuilt on every render, so their geometry is only known after the next layout
-     * pass — scrolling has to be posted, otherwise every getTop() is still 0 and the selection
-     * walks off screen.
-     */
-    /**
-     * Scroll in the VERY frame the highlight moved, and only fall back to a posted one when the
-     * geometry to scroll by does not exist yet (a list just built has not been laid out).
-     *
-     * A posted scroll lands one frame later, and that frame is drawn: the row that lost the
-     * highlight has already given it up while the row that took it is still off the screen, so for
-     * one frame nothing on the screen is highlighted at all — which is what "the highlight blinks"
-     * is. Doing it now costs nothing to defer: the scroll is a {@code scrollTo}, an offset and an
-     * invalidate, with no layout behind it.
+     * Scroll in the SAME frame the highlight moved — posted, one frame shows no highlight at all.
+     * Posted only when the rows are not laid out yet.
      */
     private void scrollToSel() {
         if (scroller == null) return;
@@ -1238,8 +962,7 @@ public final class IppQueueActivity extends BaseActivity {
     boolean doScroll() {
         scrollPending = false;
         if (scroller == null || container == null) return false;
-        // Row 0 is pinned, and the scroller also holds the group captions, so a row's position
-        // among the scroller's children is not its position in the list.
+        // row 0 is pinned and captions sit between rows: childIndex maps the two
         if (childIndex == null || sel < 0 || sel >= childIndex.length) return false;
         int idx = childIndex[sel];
         if (idx < 0) {
@@ -1249,13 +972,10 @@ public final class IppQueueActivity extends BaseActivity {
         if (idx >= container.getChildCount()) return false;
         View v = container.getChildAt(idx);
         if (v == null) return false;
-        // A row that has never been laid out answers 0 for both edges, i.e. "I am at the very top":
-        // scrolling by that lands the list somewhere it was never asked to go.
-        if (v.getHeight() <= 0) return false;
+        if (v.getHeight() <= 0) return false;    // not laid out: its edges read 0
         int top = v.getTop();
         int bottom = v.getBottom();
-        // The caption above a row belongs with it: scrolling to the row alone would leave the
-        // group it opens cut off at the top edge.
+        // the caption above a row comes into view with it
         if (idx > 0 && container.getChildAt(idx - 1) instanceof TextView) {
             top = container.getChildAt(idx - 1).getTop();
         }
@@ -1269,15 +989,7 @@ public final class IppQueueActivity extends BaseActivity {
         return true;
     }
 
-    /**
-     * Move the list to {@code y}, at once.
-     *
-     * The wheel is faster than any animation worth watching, and a list that is still travelling
-     * when the next click arrives is a list the cursor has already left: the highlight ends up off
-     * the screen. Every ListView screen in the app moves its window in one step for the same
-     * reason ({@code Wheel.list}), and this is the same rule for the two screens that scroll a
-     * ScrollView instead. What was tried before settling on it: skill {@code wip-scroll-animation}.
-     */
+    /** Move the list to {@code y} at once, never animated (skill {@code wip-scroll-animation}). */
     private void glide(int y) {
         int max = container.getHeight() - scroller.getHeight();
         if (max < 0) max = 0;
@@ -1288,7 +1000,7 @@ public final class IppQueueActivity extends BaseActivity {
 
     @Override
     public void clockwise() {
-        buildTail();                    // a press cannot outrun the tail, but it may not race it
+        buildTail();
         if (rows == null) return;
         int old = sel;
         if (sel >= rows.size() - 1) {
@@ -1301,8 +1013,7 @@ public final class IppQueueActivity extends BaseActivity {
         move(old);
     }
 
-    /** In multi-select the playing row is not merely un-tickable, the cursor never reaches it:
-     *  a row the centre button does nothing on has no business being stood on. */
+    /** In multi-select the cursor never reaches the playing row. */
     @Override
     public void antiClockwise() {
         buildTail();
@@ -1318,19 +1029,15 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Centre — play the focused track now; the pointer then follows it to the playing row.
-     * On the playing row itself there is nothing to switch to, so it goes back to Now Playing
-     * (this screen is always opened from the player, so finishing returns there).
-     *
-     * In multi-select the centre button ticks the row instead, exactly as it does in every stock
-     * list. Row 0 is not tickable.
+     * Centre plays the row now; on the playing row it goes back to Now Playing. In multi-select
+     * it ticks the row instead.
      */
     @Override
     public void confirm() {
         buildTail();
         if (rows == null || rows.isEmpty()) return;
         if (multi) {
-            if (sel == 0) return;                    // the track playing now cannot be ticked
+            if (sel == 0) return;
             Integer k = Integer.valueOf(sel);
             if (!marked.remove(k)) marked.add(k);
             paintFocus(sel);
@@ -1346,21 +1053,9 @@ public final class IppQueueActivity extends BaseActivity {
     }
 
     /**
-     * Long TOP — the row's menu. {@code longConfirm} is what BaseActivity.dispatchKeyEvent calls
-     * for a held top button ("长按 上"); {@code Direction.LTOP} exists in the enum but is dispatched
-     * by nothing in this APK, so anything hung off THAT never fires at all.
-     *
-     * Three menus, one per state of the screen:
-     *   - the PLAYING row — nothing to remove and nothing to tick, so: its artist, its album,
-     *       the screen it was started from ("Open source" — the one thing not on this screen),
-     *       and the playlists;
-     *   - any other row — Remove, MultiSelect, its artist, its album, and the playlists;
-     *   - in multi-select — only what several tracks at once can mean: Remove and a playlist.
-     *
-     * Built per press and dispatched BY STRING, never by index: the playlists are appended by
-     * stock's own {@code addPlaylistsToOptions} and their number is whatever the user has made it.
-     * There is no "clear the whole queue" here: it hung off LTOP, so it had never once run, and
-     * the queue now goes with the list it was queued into anyway.
+     * Long TOP: the row's menu ({@code Direction.LTOP} is dispatched by nothing in this APK). Per
+     * state: the playing row, another row, or multi-select. Dispatched BY STRING: the playlists
+     * appended after ours vary in number.
      */
     @Override
     public void longConfirm() {
@@ -1379,18 +1074,13 @@ public final class IppQueueActivity extends BaseActivity {
             if (artistsOf(sel) != null) l.add(getString(R.string.ipp_open_artist));
             l.add(getString(R.string.ipp_open_album));
         }
-        // The theme, not a flag: SubMenuDialog's trailing int is the dialog style, and 0 gives a
-        // window sized for about twice the rows it has.
+        // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
         menuDlg = new SubMenuDialog(getActivity(), l, new QMenu(this), R.style.Dialog_Common);
         menuDlg.addPlaylistsToOptions();
         menuDlg.show();
     }
 
-    /**
-     * One menu pick. Returns what {@code SubMenuDialog.Callback.select} means: true = close the
-     * menu, false = leave it up (the "Open artist" submenu dismisses it itself, so the two dialogs
-     * are never both waiting for a press).
-     */
+    /** One menu pick: true = close the menu, false = a submenu is up and dismisses it itself. */
     boolean pick(SubmenuAdapter.Item item) {
         if (item == null) return true;
         Playlist pl = item.getPlaylist();
@@ -1413,8 +1103,6 @@ public final class IppQueueActivity extends BaseActivity {
             return true;
         }
         if (s.equals(getString(R.string.ipp_open_source))) {
-            // The queue screen is only ever opened from the player, so leaving it behind is right:
-            // the user asked to go back to where the track came from.
             if (Queue.openSource(this)) finish();
             return true;
         }
@@ -1425,7 +1113,6 @@ public final class IppQueueActivity extends BaseActivity {
                 openArtist((String) a.get(0));
                 return true;
             }
-            // Several artists on one tag — one entry each, in a menu of their own.
             new SubMenuDialog(getActivity(), a, new QArtists(this), R.style.Dialog_Common).show();
             return false;                          // QArtists dismisses this one on its pick
         }
@@ -1441,17 +1128,9 @@ public final class IppQueueActivity extends BaseActivity {
         openArtist(name);
     }
 
-    // ------------------------------------------------------------------ what the menu does
-
     /**
-     * Remove — the ticked rows, or the row under the cursor when nothing is ticked. No confirm
-     * dialog: picking the entry out of a menu is already the deliberate act.
-     *
-     * Descending order matters. Everything {@link Queue} keeps is a POSITION: removing a
-     * queued row takes its guest out of the playlist and shifts every index behind it down, and
-     * the row → playlist-index table of the last projection is not shifted with them. Highest row
-     * first means every projected row (they all stand below the queued ones) is dealt with before
-     * the first shift happens, and the queued rows above are unaffected by the ones below them.
+     * Remove the ticked rows, or the cursor's. HIGHEST row first: removing a queued row shifts the
+     * list's indices, and the last projection's row table is not shifted with them.
      */
     private void removePicked() {
         ArrayList todo = new ArrayList();
@@ -1470,8 +1149,7 @@ public final class IppQueueActivity extends BaseActivity {
         render();
     }
 
-    /** Add — the ticked rows, or the row under the cursor. Silent, like every other "Add to
-     *  playlist" in the app; the write is off the main thread because a tick list can be long. */
+    /** Add the ticked rows, or the cursor's, silently and off the main thread. */
     private void addToPlaylist(UUID id) {
         if (id == null) return;
         ArrayList songs = new ArrayList();
@@ -1499,15 +1177,15 @@ public final class IppQueueActivity extends BaseActivity {
         return out;
     }
 
-    /** "Open album" — the album this song sits in, landing on the song (the same machinery "Open album" uses elsewhere). */
+    /** "Open album": the song's album, landing on the song. The player stays underneath. */
     private void openAlbum() {
         Song s = songAt(sel);
         if (s == null) return;
         Albums.openAlbumOfSong(this, s);
-        finish();                                  // same rule as "Open source": the player stays
+        finish();
     }
 
-    /** "Open artist" — the artist's album list, exactly what picking them in Artists opens. */
+    /** "Open artist": the artist's album list. */
     private void openArtist(String name) {
         if (name == null || name.length() == 0) return;
         Intent i = new Intent(this, com.innioasis.music.AlbumsActivity.class);
@@ -1516,13 +1194,7 @@ public final class IppQueueActivity extends BaseActivity {
         finish();
     }
 
-    /**
-     * The artists of a row, or null when there is nothing to open. With multi-artist splitting on
-     * this is the same split the Artists list is built with ({@link Artists#parts}, exceptions
-     * file included), so every entry is a row that really exists there; with it off the tag is one
-     * artist, which is what the list shows then. Either way the string IS the key the artist's
-     * songs are looked up by.
-     */
+    /** The row's artists as rows of the Artists list ({@link Artists#of}), or null. */
     private List artistsOf(int row) {
         return Artists.of(songAt(row));
     }
@@ -1534,15 +1206,11 @@ public final class IppQueueActivity extends BaseActivity {
         return (o instanceof Song) ? resolved((Song) o) : null;
     }
 
-    // ------------------------------------------------------------------ multi-select
-
     private void startMulti() {
         if (multi) return;
         multi = true;
         marked.clear();
-        // The row the menu was raised on is ticked straight away: it is the row the user was
-        // pointing at when they asked for a selection, so making them tick it again is a press
-        // for nothing.
+        // the row the menu was raised on starts ticked
         if (sel > 0) marked.add(Integer.valueOf(sel));
         blinkOn = false;
         blink = new Blink(this);
@@ -1582,8 +1250,7 @@ public final class IppQueueActivity extends BaseActivity {
     @Override
     public void direction(BaseActivity.Direction d) {
         if (d == BaseActivity.Direction.TOP) {
-            // The top button closes the innermost thing on screen, everywhere in this app: in
-            // multi-select that is the selection, not the screen.
+            // the innermost thing open: the selection, then the screen
             if (multi) {
                 endMulti();
                 repaintAll();
@@ -1598,24 +1265,23 @@ public final class IppQueueActivity extends BaseActivity {
         finish();
     }
 
-    /** Posted so the scroll runs after the rebuilt rows have been laid out (see scrollToSel). */
     private Retheme retheme;
 
     /**
-     * The theme's row picture has arrived, so a band's wash may want another alpha. {@link #render}
-     * repaints everything banded except the PINNED caption — that one is built once in
-     * {@link #initView} — so it is washed again here by hand. Named (d8 crashes on anonymous).
+     * The theme's row picture arrived: a wash may want another alpha. {@link #render} repaints all
+     * but the PINNED caption, built once in {@link #initView}.
      */
     private static final class Retheme implements Runnable {
         private final IppQueueActivity a;
         Retheme(IppQueueActivity a) { this.a = a; }
         public void run() {
-            if (a.isFinishing()) return;       // posted: the screen may have gone
+            if (a.isFinishing()) return;
             if (a.pinned != null) a.pinned.setBackgroundColor(a.washRgb() | IppActivity.bandAlpha());
             a.render();
         }
     }
 
+    /** The scroll, once the rebuilt rows are laid out (see scrollToSel). */
     private static final class ScrollTask implements Runnable {
         private final IppQueueActivity a;
 
@@ -1643,7 +1309,7 @@ public final class IppQueueActivity extends BaseActivity {
         }
     }
 
-    /** The row's long-press menu (named, never anonymous — d8 crashes on those here). */
+    /** The row's long-press menu. */
     private static final class QMenu implements SubMenuDialog.Callback {
         private final IppQueueActivity a;
 
@@ -1672,7 +1338,7 @@ public final class IppQueueActivity extends BaseActivity {
         }
     }
 
-    /** The multi-select blink of the cursor row — stock does this from a thread per screen. */
+    /** The multi-select blink of the cursor row. */
     private static final class Blink implements Runnable {
         private final IppQueueActivity a;
 
@@ -1686,10 +1352,7 @@ public final class IppQueueActivity extends BaseActivity {
         }
     }
 
-    /**
-     * "Add to Playlist N", off the main thread the way every stock screen does it. Room here
-     * allows main-thread queries, but a tick list can be long and this is a write per song.
-     */
+    /** "Add to Playlist N", off the main thread: a write per song. */
     private static final class AddTask implements Runnable {
         private final List songs;
         private final UUID id;
@@ -1705,7 +1368,6 @@ public final class IppQueueActivity extends BaseActivity {
                 Y1Repository repo = Y1Application.Companion.getY1Repository();
                 if (repo != null) repo.addToPlayList(songs, id);
             } catch (Throwable t) {
-                // a playlist that could not be written is not worth taking the screen down for
             }
         }
     }

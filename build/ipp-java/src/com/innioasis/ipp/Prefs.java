@@ -9,31 +9,16 @@ import java.util.HashMap;
 import com.innioasis.y1.Y1Application;
 
 /**
- * The mod's own preferences — the {@code "innioasis_plus"} SharedPreferences file — plus the
- * handful of small answers that are read out of it everywhere.
- *
- * Nothing here is cached: {@code getSharedPreferences} hands back a process-wide instance whose
- * values are already in memory, so a get is a map lookup and the wrapper costs nothing.
- *
- * Some of these questions have no preference behind them: where a toggle turned out to be the
- * right behaviour rather than a choice, the row is absent from the better-Y menu and the method
- * answers a constant. That keeps the call sites (stock smali among them) untouched, which is the
- * whole point of them going through here.
+ * The mod's preferences ({@code "innioasis_plus"}, never stock's file) and the small answers read
+ * from them everywhere. A few methods answer a constant: the behaviour is settled, and stock smali
+ * still calls them.
  */
 public final class Prefs {
 
     /**
-     * What every better-Y setting answers before anyone has touched it — the one place.
-     *
-     * A default named twice — once by the menu row, once by the feature's own
-     * {@code getBool(key, def)} — is a default that drifts, and the failure is silent in the worst
-     * way: the row shows "On" over a feature still behaving as "Off". So readers never state one;
-     * they ask {@link #on} / {@link #val} and the answer lives here.
-     *
-     * Booleans are 0/1. A key that is not listed answers 0 (Off / the first choice), which is
-     * what an unlisted key should mean anyway. Preferences that are not menu settings — sort modes,
-     * cache stamps, the per-song {@code like:} flags — have no business here and keep passing their
-     * own default to {@link #getBool} / {@link #getInt}.
+     * Every better-Y setting's default, in one place. Readers never state their own — a default
+     * named twice drifts, and the row shows "On" over a feature behaving as "Off". Unlisted keys
+     * answer 0. Non-menu preferences (sort modes, stamps, {@code like:}) pass their own default.
      */
     private static final HashMap DEFAULTS = new HashMap();
 
@@ -78,46 +63,27 @@ public final class Prefs {
         DEFAULTS.put(key, Integer.valueOf(value));
     }
 
-    /**
-     * The default of a CHOICE/NUMBER setting.
-     *
-     * One of them is not a constant and cannot be tabled: the keyboard's second layout depends
-     * on the language the device is in, because stock gives a Russian device no way to type Latin
-     * at all. It is asked of {@link Keys} instead.
-     */
+    /** The keyboard's second layout depends on the device language, so {@link Keys} answers it. */
     public static int defInt(String key) {
         if (Keys.KEY_SECOND.equals(key)) return Keys.defaultSecond();
         Object v = DEFAULTS.get(key);
         return v == null ? 0 : ((Integer) v).intValue();
     }
 
-    /** The default of a TOGGLE. */
     public static boolean defBool(String key) {
         return defInt(key) != 0;
     }
 
-    /**
-     * Is this toggle on? The reader does not get to state a default — that is the whole point.
-     * A null Context answers the default rather than false: "the app is not up yet" is not the
-     * same as "the user turned it off", and without this every caller would guard for it by hand.
-     */
+    /** A null Context answers the default: "app not up yet" is not "turned off". */
     public static boolean on(Context c, String key) {
         return c == null ? defBool(key) : getBool(c, key, defBool(key));
     }
 
-    /** The value of a CHOICE/NUMBER row, with the same rule. */
     public static int val(Context c, String key) {
         return c == null ? defInt(key) : getInt(c, key, defInt(key));
     }
 
-    /**
-     * The album row's label: the real album name (stripped of the {@code name<SOH>folder} encoding
-     * that keeps same-named albums of different folders apart) with the year appended when
-     * "Show album year" is on.
-     *
-     * {@link YearCache} is still asked with the ENCODED name — that is its key, one entry per
-     * physical album — while what is shown is the decoded one.
-     */
+    /** Decoded name plus " (year)"; {@link YearCache} is keyed by the encoded name. */
     public static String albumLabel(String album) {
         String out = Albums.realName(album);
         if (album == null || !albumYearEnabled()) {
@@ -135,25 +101,15 @@ public final class Prefs {
         return on(c, "album_year");
     }
 
-    /**
-     * Ipp: an artist opens on his ALBUMS, always — the flat song list is reachable from the
-     * "Show all songs" row.
-     */
+    /** An artist opens on his albums; the songs are behind "Show all songs". */
     public static boolean artistAlbumsEnabled() {
         return true;
     }
 
-    /**
-     * Ipp: Music → Folders opens {@code \Music\}, always; the card's root is the fallback when
-     * there is no {@code \Music\} folder at all. See also {@link #videoFolderPath()}.
-     *
-     * The Context is unused and kept because the call sites are stock smali.
-     */
+    /** Music → Folders opens Music, else the card root. The Context is for the stock call sites. */
     public static String defaultFolderPath(Context c) {
         return isDir("/storage/sdcard0/Music") ? "/storage/sdcard0/Music" : "/storage/sdcard0";
     }
-
-    /** ipp: the same for Videos → Folders. */
     public static String videoFolderPath() {
         return isDir("/storage/sdcard0/Videos") ? "/storage/sdcard0/Videos" : "/storage/sdcard0";
     }
@@ -166,15 +122,11 @@ public final class Prefs {
         return new File(path).isDirectory();
     }
 
-    /**
-     * The mod's own preferences file, never stock's — everything ipp stores is in here, so clearing
-     * or backing it up touches nothing the launcher itself depends on.
-     */
     private static SharedPreferences prefs(Context c) {
         return c.getSharedPreferences("innioasis_plus", 0);
     }
 
-    /** Everything stored, for the diagnostic report ({@link Diag}). Raw map: values differ in type. */
+    /** For the diagnostic report. */
     static java.util.Map all(Context c) {
         return c == null ? null : prefs(c).getAll();
     }
@@ -199,17 +151,11 @@ public final class Prefs {
         prefs(c).edit().putString(key, value).apply();
     }
 
-    /** Whether the key was ever written — for a migration that must run once. */
     public static boolean has(Context c, String key) {
         return prefs(c).contains(key);
     }
 
-    /**
-     * Ipp: on for good — the track numbers it needs are read by "Cache library" in the same file
-     * open as the disc numbers, so there is nothing to opt out of. The DEFAULT sort of an album's
-     * song list is unaffected: stock's {@code getSortAlbumSong()} answers {@code FileName_A_To_Z}
-     * until the user picks something else.
-     */
+    /** The "Track number" sort is always offered; the album's default sort stays stock's. */
     public static boolean trackSortEnabled() {
         return true;
     }

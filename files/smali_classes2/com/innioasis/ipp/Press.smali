@@ -14,7 +14,7 @@
 
 .method static constructor <clinit>()V
   .registers 2
-  .line 30
+  .line 25
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v1
@@ -25,68 +25,68 @@
 
 .method public constructor <init>()V
   .registers 1
-  .line 28
+  .line 23
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public static bottomPressed(Lcom/innioasis/y1/base/BaseActivity;)Z
   .registers 4
-  .line 80
+  .line 59
     if-eqz p0, :L2
     instance-of v0, p0, Lcom/innioasis/y1/base/BasePlayerActivity;
     if-eqz v0, :L0
     goto :L2
   :L0
-  .line 83
+  .line 62
     sget-object v0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
-  .line 84
+  .line 63
     if-eqz v0, :L1
-  .line 85
+  .line 64
     const/4 v1, 0
     sput-object v1, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
-  .line 86
+  .line 65
     sget-object v1, Lcom/innioasis/ipp/Press;->h:Landroid/os/Handler;
     invoke-virtual { v1, v0 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 87
+  .line 66
     invoke-static { p0 }, Lcom/innioasis/ipp/Press;->openPlayer(Landroid/app/Activity;)Z
     move-result p0
     return p0
   :L1
-  .line 89
+  .line 68
     new-instance v0, Lcom/innioasis/ipp/Press$Run;
     invoke-direct { v0, p0 }, Lcom/innioasis/ipp/Press$Run;-><init>(Lcom/innioasis/y1/base/BaseActivity;)V
-  .line 90
+  .line 69
     sput-object v0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
-  .line 91
+  .line 70
     sget-object p0, Lcom/innioasis/ipp/Press;->h:Landroid/os/Handler;
     const-wide/16 v1, 250
     invoke-virtual { p0, v0, v1, v2 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 92
+  .line 71
     const/4 p0, 1
     return p0
   :L2
-  .line 81
+  .line 60
     const/4 p0, 0
     return p0
 .end method
 
 .method public static clearPending(Ljava/lang/Runnable;)V
   .registers 2
-  .line 36
+  .line 31
     sget-object v0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
     if-ne v0, p0, :L0
-  .line 37
+  .line 32
     const/4 p0, 0
     sput-object p0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
   :L0
-  .line 39
+  .line 34
     return-void
 .end method
 
 .method public static longLimit(I)I
   .registers 2
-  .line 54
+  .line 43
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_MENU()I
     move-result v0
@@ -103,56 +103,56 @@
   .catchall { :L1 .. :L4 } :L10
   .catchall { :L6 .. :L7 } :L8
   .registers 5
-  .line 101
+  .line 76
     invoke-static { p0 }, Lcom/innioasis/ipp/Audio;->openOther(Landroid/app/Activity;)Z
     move-result v0
     const/4 v1, 1
     if-eqz v0, :L0
-  .line 102
+  .line 77
     return v1
   :L0
-  .line 105
+  .line 80
     const/4 v0, 0
   :L1
     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v2
-  .line 106
+  .line 81
     if-nez v2, :L2
-  .line 107
+  .line 82
     return v0
   :L2
-  .line 109
+  .line 84
     invoke-virtual { v2 }, Lcom/innioasis/y1/service/PlayerService;->getMusicList()Ljava/util/List;
     move-result-object v2
-  .line 110
+  .line 85
     if-eqz v2, :L5
     invoke-interface { v2 }, Ljava/util/List;->size()I
     move-result v2
     if-lez v2, :L5
-  .line 111
+  .line 86
     invoke-virtual { p0 }, Landroid/app/Activity;->isFinishing()Z
     move-result v2
     if-eqz v2, :L3
-  .line 112
+  .line 87
     return v0
   :L3
-  .line 114
+  .line 89
     new-instance v2, Landroid/content/Intent;
     const-class v3, Lcom/innioasis/music/MusicPlayerActivity;
     invoke-direct { v2, p0, v3 }, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-  .line 115
+  .line 90
     const-string v3, "from_now_playing"
     invoke-virtual { v2, v3, v1 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
-  .line 116
+  .line 91
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
   :L4
-  .line 117
+  .line 92
     return v1
   :L5
-  .line 121
+  .line 96
     nop
-  .line 125
+  .line 99
     const v2, 2131820857
   :L6
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
@@ -161,24 +161,24 @@
     move-result-object p0
     invoke-virtual { p0 }, Landroid/widget/Toast;->show()V
   :L7
-  .line 127
+  .line 101
     goto :L9
   :L8
-  .line 126
+  .line 100
     move-exception p0
   :L9
-  .line 128
+  .line 102
     return v1
   :L10
-  .line 119
+  .line 94
     move-exception p0
-  .line 120
+  .line 95
     return v0
 .end method
 
 .method public static playerLongLimit(I)I
   .registers 2
-  .line 68
+  .line 51
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_MENU()I
     move-result v0

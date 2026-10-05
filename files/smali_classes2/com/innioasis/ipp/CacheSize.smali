@@ -21,7 +21,7 @@
 
 .method static constructor <clinit>()V
   .registers 1
-  .line 49
+  .line 28
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/CacheSize;->stale:Z
     return-void
@@ -29,35 +29,35 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 33
+  .line 18
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$002(Ljava/lang/String;)Ljava/lang/String;
   .registers 1
-  .line 31
+  .line 16
     sput-object p0, Lcom/innioasis/ipp/CacheSize;->value:Ljava/lang/String;
     return-object p0
 .end method
 
 .method static synthetic access$102(J)J
   .registers 2
-  .line 31
+  .line 16
     sput-wide p0, Lcom/innioasis/ipp/CacheSize;->measuredAt:J
     return-wide p0
 .end method
 
 .method static synthetic access$202(Z)Z
   .registers 1
-  .line 31
+  .line 16
     sput-boolean p0, Lcom/innioasis/ipp/CacheSize;->running:Z
     return p0
 .end method
 
 .method static dirSize(Ljava/io/File;)J
   .registers 6
-  .line 131
+  .line 100
     const-wide/16 v0, 0
     if-eqz p0, :L5
     invoke-virtual { p0 }, Ljava/io/File;->exists()Z
@@ -65,7 +65,7 @@
     if-nez v2, :L0
     goto :L5
   :L0
-  .line 132
+  .line 101
     invoke-virtual { p0 }, Ljava/io/File;->isFile()Z
     move-result v2
     if-eqz v2, :L1
@@ -73,16 +73,16 @@
     move-result-wide v0
     return-wide v0
   :L1
-  .line 133
+  .line 102
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
-  .line 134
+  .line 103
     if-nez p0, :L2
     return-wide v0
   :L2
-  .line 135
+  .line 104
     nop
-  .line 136
+  .line 105
     const/4 v2, 0
   :L3
     array-length v3, p0
@@ -94,19 +94,19 @@
     add-int/lit8 v2, v2, 1
     goto :L3
   :L4
-  .line 137
+  .line 106
     return-wide v0
   :L5
-  .line 131
+  .line 100
     return-wide v0
 .end method
 
 .method static format(J)Ljava/lang/String;
   .registers 10
-  .line 142
+  .line 111
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 143
+  .line 112
     const-wide/16 v1, 1024
     cmp-long v3, p0, v1
     if-gez v3, :L0
@@ -119,25 +119,25 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 146
+  .line 115
     const-wide/32 v3, 1048576
     const-wide/16 v5, 10
     cmp-long v7, p0, v3
     if-gez v7, :L1
-  .line 147
+  .line 116
     mul-long p0, p0, v5
     div-long/2addr p0, v1
-  .line 148
+  .line 117
     const-string v1, " KB"
     goto :L2
   :L1
-  .line 150
+  .line 119
     mul-long p0, p0, v5
     div-long/2addr p0, v3
-  .line 151
+  .line 120
     const-string v1, " MB"
   :L2
-  .line 153
+  .line 122
     div-long v2, p0, v5
     invoke-virtual { v0, v2, v3 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -156,45 +156,45 @@
 
 .method public static refresh(Lcom/innioasis/y1/activity/SettingActivity;)V
   .registers 2
-  .line 63
+  .line 39
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/CacheSize;->stale:Z
-  .line 64
+  .line 40
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->start(Lcom/innioasis/y1/activity/SettingActivity;)V
-  .line 65
+  .line 41
     return-void
 .end method
 
 .method private static start(Lcom/innioasis/y1/activity/SettingActivity;)V
   .registers 3
-  .line 68
+  .line 44
     sget-boolean v0, Lcom/innioasis/ipp/CacheSize;->running:Z
     if-nez v0, :L1
     if-nez p0, :L0
     goto :L1
   :L0
-  .line 69
+  .line 45
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/CacheSize;->running:Z
-  .line 70
+  .line 46
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/CacheSize;->stale:Z
-  .line 71
+  .line 47
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/ipp/CacheSize$Measure;
     invoke-direct { v1, p0 }, Lcom/innioasis/ipp/CacheSize$Measure;-><init>(Lcom/innioasis/y1/activity/SettingActivity;)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 72
+  .line 48
     return-void
   :L1
-  .line 68
+  .line 44
     return-void
 .end method
 
 .method public static text(Lcom/innioasis/y1/activity/SettingActivity;)Ljava/lang/String;
   .registers 6
-  .line 57
+  .line 33
     sget-boolean v0, Lcom/innioasis/ipp/CacheSize;->stale:Z
     if-nez v0, :L0
     sget-object v0, Lcom/innioasis/ipp/CacheSize;->value:Ljava/lang/String;
@@ -209,7 +209,7 @@
   :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->start(Lcom/innioasis/y1/activity/SettingActivity;)V
   :L1
-  .line 58
+  .line 34
     sget-object p0, Lcom/innioasis/ipp/CacheSize;->value:Ljava/lang/String;
     if-nez p0, :L2
     const-string p0, "\u2026"
@@ -219,18 +219,18 @@
 
 .method static total(Landroid/content/Context;)J
   .registers 8
-  .line 121
+  .line 90
     nop
-  .line 122
+  .line 91
     new-instance v0, Ljava/io/File;
     const-string v1, "/data/data"
     invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 123
+  .line 92
     const-wide/16 v1, 0
     if-eqz v0, :L1
-  .line 124
+  .line 93
     const/4 v3, 0
   :L0
     array-length v4, v0
@@ -245,7 +245,7 @@
     add-int/lit8 v3, v3, 1
     goto :L0
   :L1
-  .line 126
+  .line 95
     if-eqz p0, :L2
     invoke-virtual { p0 }, Landroid/content/Context;->getExternalCacheDir()Ljava/io/File;
     move-result-object p0
@@ -253,6 +253,6 @@
     move-result-wide v3
     add-long/2addr v1, v3
   :L2
-  .line 127
+  .line 96
     return-wide v1
 .end method

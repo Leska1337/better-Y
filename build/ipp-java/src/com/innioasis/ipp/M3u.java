@@ -73,8 +73,6 @@ public final class M3u {
         return Y1Application.Companion.getY1Repository();
     }
 
-    // ======================================================================== export
-
     /** "Export to m3u" in the Playlists screen's menu — under every row, Favorites included. */
     public static void menu(List l, Context c) {
         l.add(c.getString(R.string.ipp_m3u_export));
@@ -220,7 +218,6 @@ public final class M3u {
         }
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     static final class ExportGo extends BackupDialog.Go {
         private final Export e;
 
@@ -351,8 +348,6 @@ public final class M3u {
         }
     }
 
-    // ======================================================================== import: the files
-
     /** One file of /Playlists/, read, and what is to be done with it. */
     public static final class Plan {
         public String name;          // the playlist it becomes (the file name, unless taken)
@@ -420,7 +415,6 @@ public final class M3u {
             try {
                 d = FileEncodingDetector.INSTANCE.detectCharset(f.getPath(), fb);
             } catch (Throwable t) {
-                // the fallback stands
             }
             cs = d != null ? d : fb;
         }
@@ -474,8 +468,6 @@ public final class M3u {
         }
     }
 
-    // ======================================================================== import: the questions
-
     /**
      * Before anything is written: every file whose name is taken is asked about — Replace, Add
      * missing or Create new for an ordinary playlist, Replace or Add missing for Favorites (there
@@ -507,7 +499,6 @@ public final class M3u {
                     if (p.getName() != null) existing.put(p.getName().toLowerCase(), p);
                 }
             } catch (Throwable t) {
-                // nothing is taken, then
             }
         }
 
@@ -629,8 +620,6 @@ public final class M3u {
             return Unit.INSTANCE;
         }
     }
-
-    // ======================================================================== import: the writing
 
     /** Told after every entry, off the main thread. */
     public static abstract class Tick {
@@ -759,8 +748,6 @@ public final class M3u {
             db.endTransaction();
         }
     }
-
-    // ======================================================================== import: the paths
 
     private static void vote(HashMap dirs, Song s) {
         if (s == null || s.getPath() == null) return;

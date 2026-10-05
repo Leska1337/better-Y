@@ -17,40 +17,40 @@
 
 .method constructor <init>(Landroid/app/Activity;Lcom/innioasis/music/util/SubMenuDialog;)V
   .registers 3
-  .line 685
+  .line 548
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 686
+  .line 549
     iput-object p1, p0, Lcom/innioasis/ipp/Artists$Pick;->a:Landroid/app/Activity;
-  .line 687
+  .line 550
     iput-object p2, p0, Lcom/innioasis/ipp/Artists$Pick;->parent:Lcom/innioasis/music/util/SubMenuDialog;
-  .line 688
+  .line 551
     return-void
 .end method
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 691
+  .line 554
     iget-object p1, p0, Lcom/innioasis/ipp/Artists$Pick;->parent:Lcom/innioasis/music/util/SubMenuDialog;
     if-eqz p1, :L3
   :L0
-  .line 693
+  .line 556
     invoke-virtual { p1 }, Lcom/innioasis/music/util/SubMenuDialog;->dismiss()V
   :L1
-  .line 696
+  .line 558
     goto :L3
   :L2
-  .line 694
+  .line 557
     move-exception p1
   :L3
-  .line 698
+  .line 560
     if-eqz p2, :L4
     iget-object p1, p0, Lcom/innioasis/ipp/Artists$Pick;->a:Landroid/app/Activity;
     invoke-virtual { p2 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p2
     invoke-static { p1, p2 }, Lcom/innioasis/ipp/Artists;->open(Landroid/app/Activity;Ljava/lang/String;)V
   :L4
-  .line 699
+  .line 561
     const/4 p1, 1
     return p1
 .end method

@@ -14,79 +14,34 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * The stock library scan ({@code Y1Repository.refreshDatabase}) — two things bolted onto it, both
- * through single-call injections into its per-file lambda.
+ * Speeds up the stock scan ({@code Y1Repository.refreshDatabase}) through single-call injections
+ * into its per-file lambda. Workers build the {@code Song}s of the current folder a few files ahead
+ * of the scan, which stays on stock's thread; whether a path is already known is answered from
+ * memory. {@code fileToSong} is thread-safe only because {@code HanziToPinyin.getString} is
+ * patched {@code synchronized}.
  *
- * 1. The songs are built ahead of the scan, on several threads
- * The scan's cost is {@code fileToSong}: one {@code MediaMetadataRetriever} open per new file.
- * Its walk cannot be split — the queue, the batching and the inserts are stock's and stay on stock's
- * thread — so the work is moved in front of it instead: when the scan asks for a file, this
- * hands back a {@code Song} that a worker has already built, and the workers run on down the same
- * folder, a few files ahead. The scan thread keeps doing its own share (the first file of each
- * folder, the walk, the row lookups, the inserts) while they read.
- *
- * The folder is the unit because the scan's breadth-first walk adds a directory's children to its
- * queue together, so a folder's files are consumed in listing order. Workers stop as soon as the
- * scan moves on, never run more than {@link #LOOK} files ahead, and skip files the scan will skip
- * (a path already in the library) — otherwise an ordinary scan of an unchanged library would read
- * every file on the device for nothing.
- *
- * {@code fileToSong} is only thread-safe because of one stock patch: it calls
- * {@code HanziToPinyin.getString} five times per song, and that walks a single static ICU
- * {@code Collator} for every character above U+00FF (i.e. for every Cyrillic tag). That method is
- * now {@code synchronized} — the calls are short and the collator is the only shared thing in the
- * whole path, so serialising them costs nothing next to the file reads.
- *
- * DO NOT turn this into read-ahead
- * Using the same structure to pull the next files into the page cache (head and tail) rather than
- * to parse them measures consistently SLOWER on the device — 15-17 s against 11 s for 887 songs —
- * because the card is already the limit and the read-ahead adds ~576 KB of reading per file on top
- * of what the tag read actually touches. Overlapping is only worth anything when the extra thread
- * does the same work sooner, not more of it.
- *
- * 2. Whether a file is already in the library is answered from memory
- * {@link #known} answers it from a set of every path the Song table holds. An indexed query per
- * file would run for every file the walk meets, not only for the music it keeps.
+ * Do NOT turn this into read-ahead into the page cache: it measured slower (15-17 s against 11 s);
+ * the card is the limit, so only doing the same work sooner helps, never doing more of it.
  */
 public final class Scan {
 
     private Scan() { }
 
-    // ----------------------------------------------------------------- the "already known" test
-
     /**
-     * Replaces the scan's {@code songDao.getSongByPathSync(path)}: same answer — null means
-     * "not in the library, read it" — out of a set of every path the Song table holds, loaded once
-     * per scan instead of one indexed query per file on the device.
-     *
-     * Only the null-ness of the answer is ever looked at, so a shared empty row stands for "known".
-     *
-     * The direction of any mistake matters here and only one of them is safe: a path we wrongly
-     * call unknown is read and written again (the row's key comes from the path, so it replaces
-     * itself — wasted work, nothing lost), while a path we wrongly call known would be dropped from
-     * the library. So the set is built from the table itself and never guesses: both halves of it
-     * ({@code isAudiobook} 0 and 1), reloaded whenever more than {@link #GAP_MS} has passed since
-     * the last file — a walk asks about files continuously, so a gap that long means the previous
-     * scan is over and the next one must not be answered from a stale set.
+     * Replaces the scan's {@code getSongByPathSync}; only null-ness is read. A wrong "unknown"
+     * re-reads a file harmlessly, a wrong "known" drops it from the library — so the set is the
+     * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
         return inDb(path) ? MARKER : null;
     }
 
-    /**
-     * Our own folder on the card — key tones, logs, backups — is not music. Asked by the walk
-     * right after stock's {@code pathInThemes}, so the folder is not even listed, as the themes
-     * are not.
-     */
+    /** Our card folder is not music; asked right after stock's {@code pathInThemes}. */
     public static boolean skip(boolean stock, String path) {
         return stock || ours(path);
     }
 
-    /**
-     * Asked by the scan's clean-up in place of the row's {@code File.exists()}: a row from our
-     * folder goes the way a deleted file's does — {@code SongDao.delete}, the row only, the file
-     * stays.
-     */
+    /** In the clean-up, in place of {@code File.exists()}: rows from our folder go (row only). */
     public static boolean stays(boolean exists, Song s) {
         return exists && (s == null || !ours(s.getPath()));
     }
@@ -99,22 +54,16 @@ public final class Scan {
         return p.equals(dir) || p.startsWith(dir + "/");
     }
 
-    /** Non-null stands for "this path is already in the library"; nothing reads its fields. */
+    /** Non-null = known; nothing reads its fields. */
     private static final Song MARKER = new Song();
 
     private static volatile HashSet paths;
     private static long asked;
-    /** A gap this long between files means a different scan, and the set has to be read again. */
     private static final long GAP_MS = 5000L;
 
     /**
-     * The path has to be normalised first. What was replaced here is not a plain query:
-     * {@code SongDao.getSongByPathSync} is a default method whose body is
-     * {@code getSongByPathSyncDB(Constant.normalizeAudioBookPath(path))}, and {@code fileToSong}
-     * stores the normalised form too — so for an audiobook (whose folder differs in case) the raw
-     * path the walk hands over never matches what the table holds, every book counts as new, and
-     * the scan re-reads and re-inserts all of them on every boot. No duplicates appear, because the
-     * insert replaces the same row, so the only visible sign is the "added" count.
+     * Normalised as stock's query normalises it: the table holds the normalised audiobook path,
+     * and without it every book is re-read and re-inserted on every boot.
      */
     static boolean inDb(String path) {
         if (path == null) return false;
@@ -133,22 +82,15 @@ public final class Scan {
 
     private static HashSet load() {
         try {
-            // Once per scan, which is once per boot and once per USB detach -- the two moments
-            // the card can have lost comma_artists.txt, and the one place that already knows a
-            // scan has begun. See Artists.ensureExceptions for why it is not seeded lazily.
+            // Once per scan (boot, USB detach): when the card may have lost comma_artists.txt.
             Artists.ensureExceptions();
             Y1Repository r = Y1Application.Companion.getY1Repository();
-            if (r == null) return paths;                  // keep whatever we had
+            if (r == null) return paths;
             HashSet p = new HashSet();
             fill(p, r.getSongsSync(0));                   // music
             fill(p, r.getSongsSync(1));                   // audiobooks
             Diag.note("library scan: " + p.size() + " path(s) already known");
-            // A scan that starts on an EMPTY table fills it through fileToSong, i.e. with the
-            // current reader, so there is nothing left for "Update library" to go looking for
-            // (Meta.libraryRead). A scan over a table that already holds rows says nothing about
-            // those rows — it skips every path it knows — so the mark belongs here and only here.
-            // Being interrupted half way is harmless for the same reason: whatever did not reach
-            // the table is not in it, and the next scan reads it with this reader too.
+            // Only a scan of an EMPTY table reads every row with the current reader.
             if (p.isEmpty()) Meta.noteLibraryRead(Y1Application.Companion.getAppContext());
             paths = p;
             return p;
@@ -167,13 +109,10 @@ public final class Scan {
         }
     }
 
-    // ---------------------------------------------------------------- building ahead
-
-    /** How many songs may stand ready in front of the scan. */
+    /** Songs that may stand ready in front of the scan. */
     private static final int LOOK = 4;
-    /** A worker with nothing to do for this long goes away; the next file starts a new one. */
     private static final long IDLE_MS = 5000L;
-    /** How long the scan waits for a song a worker is already building before doing it itself. */
+    /** The scan's wait for a song a worker is building, before doing it itself. */
     private static final long WAIT_MS = 20000L;
 
     private static final Object LOCK = new Object();
@@ -187,10 +126,7 @@ public final class Scan {
     private static final HashMap ready = new HashMap();       // path -> Song, built and waiting
     private static final HashSet building = new HashSet();     // paths a worker has taken
 
-    /**
-     * Injected in place of {@code fileToSong} in the scan's per-file lambda: the same song, built
-     * by a worker if one got there first, and the rest of the folder started behind it.
-     */
+    /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
         Song s = null;
         try {
@@ -201,10 +137,7 @@ public final class Scan {
         return s != null ? s : r.fileToSong(f);
     }
 
-    /**
-     * The song for {@code f} if it is ready or on its way, else null (the caller builds it itself).
-     * Also what drives the queue: the file the scan is on marks how far the workers may fall behind.
-     */
+    /** Ready or on its way, else null. The file the scan is on also drives the workers' queue. */
     private static Song take(Y1Repository r, File f) {
         String path = f.getPath();
         String folder = f.getParent();
@@ -213,7 +146,6 @@ public final class Scan {
         synchronized (LOCK) {
             repo = r;
             if (!folder.equals(dir)) {
-                // A new folder: start again from the file the scan is actually on.
                 dir = folder;
                 files = audio(r, new File(folder));
                 next = indexAfter(path);
@@ -235,7 +167,7 @@ public final class Scan {
                 LOCK.notifyAll();
                 return null;                    // nobody is on it: quicker to do it here
             }
-            // A worker is already parsing this very file; waiting for it beats starting over.
+            // A worker is on this very file: waiting beats starting over.
             long deadline = SystemClock.uptimeMillis() + WAIT_MS;
             while (building.contains(path) && folder.equals(dir)) {
                 long left = deadline - SystemClock.uptimeMillis();
@@ -252,7 +184,6 @@ public final class Scan {
         }
     }
 
-    /** Index just after {@code path} in the current folder's listing, or the current one. */
     private static int indexAfter(String path) {
         if (files == null) return 0;
         for (int i = 0; i < files.length; i++) {
@@ -261,7 +192,7 @@ public final class Scan {
         return next;
     }
 
-    /** Under the lock: make sure enough workers are alive to keep the queue full. */
+    /** Under the lock. */
     private static void start() {
         int want = pool();
         while (live < want) {
@@ -274,10 +205,10 @@ public final class Scan {
         int c = Runtime.getRuntime().availableProcessors();
         if (c < 1) c = 1;
         if (c > 3) c = 3;
-        return c;               // plus the scan thread itself, which is doing its own share
+        return c;               // plus the scan thread itself
     }
 
-    /** The folder's audio files, by stock's own rule, in the order its walk will meet them. */
+    /** By stock's rule, in the order its walk meets them. */
     private static File[] audio(Y1Repository r, File folder) {
         File[] all = folder.listFiles();
         if (all == null) return new File[0];
@@ -287,7 +218,6 @@ public final class Scan {
             try {
                 if (all[i].isFile() && r.endIsMusic(all[i])) out[n++] = all[i];
             } catch (Throwable t) {
-                // not a music file as far as we are concerned
             }
         }
         File[] cut = new File[n];
@@ -295,7 +225,6 @@ public final class Scan {
         return cut;
     }
 
-    /** Named (d8 here crashes on anonymous classes). */
     static final class Builder implements Runnable {
 
         public void run() {
@@ -322,11 +251,10 @@ public final class Scan {
 
                     Song s = null;
                     try {
-                        // Skipped for the same reason the scan skips it, and answered from the same
-                        // set of known paths. Not under the lock: the read below it is a file read.
+                        // Known paths are skipped, as the scan skips them. Outside the lock.
                         if (!inDb(f.getPath())) s = r.fileToSong(f);
                     } catch (Throwable t) {
-                        s = null;               // the scan will try it again the ordinary way
+                        s = null;
                     }
 
                     synchronized (LOCK) {
@@ -345,7 +273,7 @@ public final class Scan {
             }
         }
 
-        /** Under the lock: the next file worth building, or null while the queue is full enough. */
+        /** Under the lock; null while the queue is full. */
         private static File claim() {
             if (files == null || dir == null) return null;
             if (ready.size() + building.size() >= LOOK) return null;

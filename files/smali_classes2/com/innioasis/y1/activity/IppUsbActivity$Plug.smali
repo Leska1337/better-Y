@@ -14,17 +14,17 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppUsbActivity;)V
   .registers 2
-  .line 364
+  .line 349
     invoke-direct { p0 }, Landroid/content/BroadcastReceiver;-><init>()V
-  .line 365
+  .line 350
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Plug;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
-  .line 366
+  .line 351
     return-void
 .end method
 
 .method public onReceive(Landroid/content/Context;Landroid/content/Intent;)V
   .registers 4
-  .line 370
+  .line 355
     if-eqz p2, :L0
     const-string p1, "connected"
     const/4 v0, 0
@@ -34,6 +34,6 @@
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Plug;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/IppUsbActivity;->finish()V
   :L0
-  .line 371
+  .line 356
     return-void
 .end method

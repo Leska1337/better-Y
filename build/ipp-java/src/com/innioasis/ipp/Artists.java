@@ -32,38 +32,14 @@ import java.util.Locale;
 import java.util.Set;
 
 /**
- * Split artists that a tag glues together with "," or ";" into separate
- * entries (e.g. "Lil Wayne, Eminem" -> "Lil Wayne" + "Eminem"). Separator priority:
- * if the string contains "; " split on that only, otherwise split on ", ".
- *
- * The separator is the punctuation AND the space after it. "A;B" and "A,B"
- * are one artist, not two: without a space the character is at least as likely to be part of
- * a name as to be separating two of them, and a wrong split here is not cosmetic — it invents
- * an artist in the list and takes the songs of a real one away. The same rule decides the
- * visual ';' -> ',' of {@link #display}, so what is shown and what is split can never disagree.
- *
- * Comma-split respects an EXCEPTIONS list of names that legitimately contain a comma
- * ("Tyler, the Creator", "Earth, Wind & Fire", ...): those are kept whole. The list
- * lives in a user-editable file on external storage, seeded on first run with a
- * built-in default set (see {@link #DEFAULTS}); if storage is unavailable the built-in
- * defaults are used from memory. Matching is a greedy longest-run merge, so an exception
- * is protected both standalone and inside a collab tag ("Tyler, the Creator, Frank Ocean").
- *
- * Two stock injection points call in here:
- *  - Y1Repository.getArtistsBySort -> {@link #list} expands the artist list.
- *  - Y1Repository.getSongsByArtist -> {@link #songs} returns the union of songs where
- *    the picked name is one of the parts; returns null for ordinary (non-split) artists
- *    so the native SQL query + ordering is used unchanged. This also fixes the
- *    artist->albums path, which routes through getSongsByArtist.
- *
- * Gated by {@link #KEY_SPLIT} ("Split artists that are divided by commas and semicolons"),
- * which is On unless switched off.
- * Raw (non-generic) types are used throughout on purpose: the bundled d8 crashes
- * dexing generic Signature attributes (Deck, which has none, compiles fine).
+ * Multi-artist tags split into separate artists: on "; " if the tag has one, otherwise on ", ".
+ * The separator includes the SPACE — "A,B" is one artist; a wrong split invents an artist and
+ * takes a real one's songs away. Names that contain a comma are kept whole by the user-editable
+ * {@code comma_artists.txt} (greedy longest-run match).
  */
 public final class Artists {
 
-    // Built-in default keep-whole names; also seeds the user-editable file on first run.
+    // Also seeds comma_artists.txt.
     private static final String[] DEFAULTS = {
         "Tyler, the Creator",
         "Earth, Wind & Fire",
@@ -77,14 +53,11 @@ public final class Artists {
         "The Good, the Bad & the Queen",
     };
 
-    private static Set exceptions;   // canonicalised names to keep whole (lazy-loaded)
+    private static Set exceptions;   // canonicalised, lazy
 
     /**
-     * better-Y → "Split artists that are divided by commas and semicolons", ON by default.
-     *
-     * The row says what switching it ON does, and the key follows that wording. Inverting a row's
-     * sentence without renaming its key turns every device that has ever touched the row into its
-     * opposite.
+     * better-Y → "Split artists that are divided by commas and semicolons". Inverting the row's
+     * wording without renaming the key turns every device that touched it into its opposite.
      */
     public static final String KEY_SPLIT = "artist_split";
 
@@ -98,8 +71,7 @@ public final class Artists {
         return s == null ? "" : s.trim().toLowerCase(Locale.ROOT);
     }
 
-    // Canonical key for a possibly-comma-containing name: parts trimmed, joined ", ", lowercased.
-    // Makes file entries match regardless of the user's spacing around commas.
+    // Parts trimmed and joined by ", ": the user's spacing around commas does not matter.
     private static String canon(String s) {
         if (s == null) return "";
         String[] c = s.split(",");
@@ -111,23 +83,10 @@ public final class Artists {
         return norm(sb.toString());
     }
 
-    // ---- exceptions file ----
-
-    /**
-     * The card's root is taken from {@code Constant.ROOT_PATH}, not from
-     * {@code Environment.getExternalStorageDirectory()}: the app runs as uid {@code system}
-     * ({@code sharedUserId}), and for that uid the platform refuses the static storage paths —
-     * {@code Environment.throwIfSystem} logs a {@code wtf} with a full stack ("Static storage paths
-     * aren't available from AID_SYSTEM") on every call, which lands in the system dropbox. The
-     * answer would be that same path anyway; every other place in the app that needs the card names
-     * it through this constant.
-     */
     private static File exceptionsFile() {
         try {
             File base = new File(Constant.ROOT_PATH);
             if (!base.isDirectory()) return null;
-            // Panel.card() names the mod's folder on the card in one place -- it does not create
-            // it; seed() below does that when there is a list to write.
             return new File(Panel.card(), "comma_artists.txt");
         } catch (Throwable t) {
             return null;
@@ -173,32 +132,19 @@ public final class Artists {
                 if (!f.exists()) seed(f);
                 if (f.exists()) {
                     readInto(f, set);
-                    return set;   // file is the source of truth when readable
+                    return set;
                 }
             }
         } catch (Throwable t) {
-            // fall through to in-memory defaults
         }
         for (int i = 0; i < DEFAULTS.length; i++) set.add(canon(DEFAULTS[i]));
         return set;
     }
 
     /**
-     * The file is the user's, and a user may delete it from a PC over USB. Seeding it lazily is
-     * not enough on its own: {@link #loadExceptions} runs on the first comma-split of the session,
-     * which happens only once a screen or the player actually asks about an artist -- and if the
-     * card is not mounted yet at that moment, the answer is the in-memory defaults and the cached
-     * set never asks again.
-     *
-     * So the library scan asks instead ({@code Scan.load}), which is the right moment twice over:
-     * it runs at system start and on USB detach -- the very event that can have removed the file --
-     * the card is certainly mounted by then, and it is the scan thread, not the main one. Cost is
-     * one {@code exists()} against two full-table reads standing next to it.
-     *
-     * A missing file is written back from {@link #DEFAULTS} and the cached set is dropped, so the
-     * split reloads from what was just written; a file that is there is left completely alone,
-     * a user's edits to it included. No card means no answer, so nothing is written and the next
-     * scan asks again.
+     * Re-seed a deleted exceptions file, from the library scan: it runs at start and on USB detach
+     * (when the file may have been removed), with the card mounted. An existing file is never
+     * touched.
      */
     public static void ensureExceptions() {
         try {
@@ -210,7 +156,6 @@ public final class Artists {
                 PARTS.clear();
             }
         } catch (Throwable t) {
-            // an unwritable card is not worth a crash on the way into the main menu
         }
     }
 
@@ -219,22 +164,13 @@ public final class Artists {
         return exceptions;
     }
 
-    // ---- splitting ----
-
-    /** The separators, space included — see the class comment for why the space is part of them. */
+    /** The separators, space included. */
     static final String SEMI = "; ";
     static final String COMMA = ", ";
 
-    /**
-     * Split one raw artist tag into its parts using the "; "-over-", " priority + exceptions.
-     * Public because {@link Feat} reuses exactly this splitting — including the
-     * comma_artists.txt exceptions — to decide which artists the player may hide.
-     */
+    /** One tag's parts. Memoised per tag; callers only read the list. */
     public static List parts(String raw) {
         if (raw == null) return new ArrayList();
-        // Memoised per tag: opening an artist splits every tag of the library, and a library has
-        // far fewer distinct tags than songs. Callers only read the list. Dropped with the
-        // exceptions it was split by.
         synchronized (PARTS) {
             List had = (List) PARTS.get(raw);
             if (had != null) return had;
@@ -259,33 +195,21 @@ public final class Artists {
         } else {
             commaSplit(out, raw);
         }
-        if (out.isEmpty()) out.add(raw);   // preserve non-splittable / empty tags as-is
+        if (out.isEmpty()) out.add(raw);
         return out;
     }
 
-    /**
-     * Visual only: a tag that separates its artists with "; " reads as ", ".
-     *
-     * Same rule as {@link #parts}: only the separator with a space after it, so a ';' that is
-     * part of the text itself is left where it is. Nothing here reaches the database or a query
-     * key — the callers are row text and the player's artist line.
-     */
+    /** Visual only: "; " reads as ", ". Never a query key. */
     public static String display(String raw) {
         if (raw == null || raw.indexOf(SEMI) < 0) return raw;
         return raw.replace(SEMI, COMMA);
     }
 
     /**
-     * {@link #display} for a {@code MainAdapter} row, which is the Artists list — and also the
-     * main Music menu and the Genres screen's own levels, none of which have artists in them.
-     * So the screen decides: only the two Activities whose MainAdapter holds artist names
-     * (ArtistsActivity, and GenresActivity's second level) get the substitution.
-     *
-     * The row's text is the only thing touched. That same String is the key the songs of the
-     * artist are looked up by ({@code getSongsByArtist}), and the list still holds it unchanged.
+     * {@link #display} for a {@code MainAdapter} row — only on the screens whose MainAdapter holds
+     * artists. Only the row's text changes; the list keeps the key.
      */
     public static String rowName(String name, Object adapter) {
-        // a row of Music -> Album Artists: the marker goes, the name stays exactly as written
         if (AlbumArtists.is(name)) return Other.INSTANCE.unNamed(AlbumArtists.name(name));
         if (name == null || name.indexOf(SEMI) < 0 || !(adapter instanceof MyBaseAdapter)) return name;
         Context c = ((MyBaseAdapter) adapter).getContext();
@@ -293,7 +217,7 @@ public final class Artists {
         return name;
     }
 
-    // Split on ", " but greedily keep together any run of parts that forms an exception.
+    // The longest run of parts that forms an exception stays together.
     private static void commaSplit(List out, String raw) {
         String[] chunks = raw.split(COMMA);
         ArrayList cp = new ArrayList();
@@ -326,11 +250,7 @@ public final class Artists {
         }
     }
 
-    /**
-     * Expand a raw distinct-artist list into split parts, de-duplicated
-     * case-insensitively (first display form kept) and re-sorted A-Z / Z-A.
-     * Called from Y1Repository.getArtistsBySort; returns the input untouched when disabled.
-     */
+    /** getArtistsBySort: the artist list expanded into parts, de-duplicated case-insensitively. */
     public static List list(List raw, Y1Repository.SortArtistsType type) {
         if (raw == null || !splitEnabled()) return raw;
         LinkedHashMap seen = new LinkedHashMap();
@@ -348,14 +268,8 @@ public final class Artists {
     }
 
     /**
-     * The artist list of one genre — the same expansion as {@link #list}, wrapped around
-     * {@code Y1Repository.getArtistsByGenreSync}. Without it the Genres screen was the one place
-     * left showing raw "A, B" rows while every other screen showed A and B separately.
-     *
-     * The sort is not {@code SortArtistsType} here: the genre query picks one of four DAO methods
-     * from the app-wide "sort by name / by date" pair. So the incoming order is preserved (a split
-     * tag's parts appear where the tag was) and only re-sorted where the query itself sorted by
-     * name — sorting a by-date list alphabetically would be a different list, not a split one.
+     * The same expansion for one genre ({@code getArtistsByGenreSync}). Re-sorted only when the
+     * query sorted by name — a by-date list keeps its order.
      */
     public static List listGenre(List raw) {
         if (raw == null || !splitEnabled()) return raw;
@@ -375,24 +289,17 @@ public final class Artists {
     }
 
     /**
-     * Songs of one artist within one genre, part-matching multi-artist tags — the genre
-     * counterpart of {@link #songs}, injected into {@code getSongsByArtistSync}'s genre branch.
-     * Same contract: null means "not a split artist, use the stock exact-match query".
-     *
-     * The genre's songs come from the stock query and are then filtered in Java, so the genre
-     * membership rule stays the database's. The order mirrors the four DAO variants the stock
-     * branch would have used.
+     * {@link #songs} within a genre ({@code getSongsByArtistSync}'s genre branch); null = use the
+     * stock exact-match query. The order mirrors the four stock DAO variants.
      */
     public static List songsInGenre(String artist, Genre genre) {
         if (genre == null) return null;
-        // a genre that a composite tag contributes to has no exact-match query to fall back
-        // to -- stock's `genre = (?)` answers with nothing for it -- so this method has to answer
-        // whether or not the ARTIST is a split one, and even with artist splitting switched off.
+        // a composite genre has no stock query to fall back to, so it is always answered here
         boolean splitGenre = GenreSplit.composite(genre);
         if (!splitEnabled() && !splitGenre) return null;
         Y1Repository repo = Y1Application.Companion.getY1Repository();
         if (repo == null) return null;
-        List all = repo.getSongsByGenreSync(genre);   // GenreSplit.songsIn answers for a split one
+        List all = repo.getSongsByGenreSync(genre);
         if (all == null) return null;
         String target = norm(artist);
         ArrayList matched = new ArrayList();
@@ -420,10 +327,8 @@ public final class Artists {
     }
 
     /**
-     * True when {@code tag} credits {@code artist}: an exact tag match, and — while splitting
-     * is on — any of the tag's parts. The exact check comes first on purpose: with splitting
-     * off ("Merge multi-artist tags") the artist list shows whole tags, so "A, B" must match
-     * itself rather than being compared against its own parts. Used by {@link Albums}.
+     * True when {@code tag} credits {@code artist}: exactly, or — while splitting is on — by a
+     * part. Exact first: with splitting off the list shows whole tags.
      */
     public static boolean has(String tag, String artist) {
         String target = norm(artist);
@@ -447,26 +352,11 @@ public final class Artists {
     }
 
     /**
-     * An artist's songs for a MENU action — "Add to Playlist N" on an artist row, and anything
-     * else that gathers an artist's songs to act on them rather than to draw them.
+     * An artist's songs to ACT on (playlists, the album list): the same set the screen draws.
+     * Never null and never empty while the artist has songs — the row is a name derived from the
+     * tag, which the exact-match stock query can miss; {@link #byTag} uses the row's own test.
      *
-     * Never null: unlike {@link #songs}, whose null means "let the indexed query answer", a call
-     * site here has nowhere to fall back to, so the fallback is made inside. Stock's own
-     * {@code getSongsByArtistSync} matches the tag EXACTLY, which for a split artist is a
-     * different set from the one the screen is showing — an artist with two songs of their own and
-     * three credited as "BEAT CRUSADERS, ASPARAGUS" had five rows on screen and put two in the
-     * playlist. The list drawn and the list acted on have to be the same list.
-     *
-     * And it is never EMPTY either, while the artist really has songs — which is the second half
-     * of the same rule and cost its own report (VADDY_NN in the genre Acoustic, then the same
-     * artist on the Artists screen). A row of the artist list is a name this class produced:
-     * {@link #parts} splits the tag and {@link #norm} trims and lower-cases what comes out. The
-     * query behind the row matches the {@code artist} column exactly as written, so a tag with a
-     * stray space or a different case leaves a row on screen with nothing behind it — no albums
-     * under the artist, nothing added to a playlist. {@link #byTag} answers with the SAME test the
-     * row was drawn by, so the two cannot disagree.
-     *
-     * @param genre non-null inside the Genres section, where an artist means "in this genre".
+     * @param genre non-null inside Genres, where an artist means "in this genre".
      */
     public static List forMenu(String artist, Genre genre) {
         if (AlbumArtists.is(artist)) return AlbumArtists.songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
@@ -474,7 +364,6 @@ public final class Artists {
             List split = (genre != null) ? songsInGenre(artist, genre)
                                          : songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
             if (split != null && !split.isEmpty()) return split;
-            // an ordinary artist: the cached table answers without a query (see byTag)
             if (genre == null) {
                 List cached = byTag(artist, null);
                 if (cached != null && !cached.isEmpty()) return cached;
@@ -487,16 +376,11 @@ public final class Artists {
             List byTag = byTag(artist, genre);
             if (byTag != null) return byTag;
         } catch (Throwable t) {
-            // fall through to an empty list: a menu action on nothing does nothing
         }
         return new ArrayList();
     }
 
-    /**
-     * Every song whose tag credits {@code artist} by the rule the artist LIST is built with, out of
-     * the cached song table — the last resort of {@link #forMenu}, for a row whose name no query
-     * can match because the name is derived from the tag rather than taken from it.
-     */
+    /** Songs crediting {@code artist} by the rule the artist LIST is built with. */
     private static List byTag(String artist, Genre genre) {
         try {
             List all = Albums.allSongs();
@@ -518,16 +402,12 @@ public final class Artists {
     }
 
     /**
-     * Songs where {@code artist} is one of the parts of a song's (possibly multi-artist)
-     * tag. Returns null when {@code artist} never appears as a sub-part of a multi-artist
-     * tag — signalling the caller to fall back to the native exact-match query so ordinary
-     * artists keep the stock SQL ordering untouched.
+     * getSongsByArtist: songs where {@code artist} is a part of the tag; null when it never is a
+     * part, so an ordinary artist keeps the stock query.
      */
     public static List songs(String artist, Y1Repository.SongSortType sortType) {
         if (AlbumArtists.is(artist)) return AlbumArtists.songs(artist, sortType);
         if (!splitEnabled()) return null;
-        // the cached table, not a fresh getSongsSync: a full read here cost ~0.4 s on every
-        // artist opened, and the cache is dropped by every write to the Song table anyway
         List all = Albums.allSongs();
         if (all == null) return null;
         String target = norm(artist);
@@ -545,12 +425,12 @@ public final class Artists {
                 if (!norm(s.getArtist()).equals(target)) appearsAsPart = true;
             }
         }
-        if (!appearsAsPart) return null;   // ordinary standalone artist -> use stock query
+        if (!appearsAsPart) return null;
         Collections.sort(matched, new SongCmp(sortType));
         return matched;
     }
 
-    /** Java re-implementation of the stock ORDER BY used by getSongsByArtist per sort type. */
+    /** The stock ORDER BY of getSongsByArtist. */
     static final class SongCmp implements Comparator {
         private final Y1Repository.SongSortType type;
         SongCmp(Y1Repository.SongSortType type) { this.type = type; }
@@ -563,7 +443,6 @@ public final class Artists {
             if (type == Y1Repository.SongSortType.SongName_Z_To_A) return -cmpStr(a.getPinyinSongName(), b.getPinyinSongName());
             if (type == Y1Repository.SongSortType.Album) return cmpStr(a.getPinyinAlbum(), b.getPinyinAlbum());
             if (type == Y1Repository.SongSortType.FileName_Z_To_A) return -cmpStr(a.getPinyinName(), b.getPinyinName());
-            // FileName_A_To_Z and any default: order by lower(pinyinName)
             return cmpStr(a.getPinyinName(), b.getPinyinName());
         }
     }
@@ -572,25 +451,13 @@ public final class Artists {
         return norm(a).compareTo(norm(b));
     }
 
-    // Long.compare is API 19; device is API 17, so compare manually.
     private static int cmpLong(long a, long b) {
         return a < b ? -1 : (a > b ? 1 : 0);
     }
 
-    // ================================================================== "Open artist" in a menu
-    //
-    // The queue screen's entry, offered on the song lists that do not stand for one artist:
-    // All songs, an album inside Albums, and the "Show all songs" lists of Genres.
-    // One implementation for all of them, because the split, the submenu and the Intent must not
-    // be able to drift apart between screens.
+    // "Open artist" in a menu: one implementation for every screen, so they cannot drift apart.
 
-    /**
-     * The artists of a song, or null when there is nothing to open. With multi-artist splitting on
-     * this is the same split the Artists list itself is built with ({@link #parts}, the
-     * {@code comma_artists.txt} exceptions included), so every entry is a row that really exists
-     * there; with it off the tag is one artist, which is what the list shows then. Either way the
-     * string IS the key the artist's songs are looked up by.
-     */
+    /** The artists of a song as rows of the Artists list, or null when there is nothing to open. */
     public static List of(Song s) {
         if (s == null) return null;
         String tag = s.getArtist();
@@ -637,8 +504,6 @@ public final class Artists {
         try {
             Song s = focused(songs);
             if (of(s) == null) return true;
-            // Same as the "Open album" entry beside it: the highlight would be left on a row of a
-            // screen the user is walking away from.
             if (songs != null) {
                 List sel = songs.getSelectedIndexList();
                 if (sel != null) sel.clear();
@@ -659,9 +524,7 @@ public final class Artists {
                 open(a, (String) names.get(0));
                 return true;
             }
-            // Several artists on one tag — one entry each, in a menu of their own. Stock's
-            // own submenu pattern: the parent's select returns false and the child dismisses it on
-            // its pick, so the two dialogs are never both waiting for a press.
+            // A submenu: the parent's select returns false and the child dismisses it on its pick.
             new SubMenuDialog(a, names, new Pick(a, parent), R.style.Dialog_Common).show();
             return false;
         } catch (Throwable t) {
@@ -677,7 +540,7 @@ public final class Artists {
         a.startActivity(i);
     }
 
-    /** A pick in the "which of these artists?" submenu. Named, never anonymous: d8 crashes here. */
+    /** A pick in the "which of these artists?" submenu. */
     private static final class Pick implements SubMenuDialog.Callback {
         private final Activity a;
         private final SubMenuDialog parent;
@@ -692,7 +555,6 @@ public final class Artists {
                 try {
                     parent.dismiss();
                 } catch (Throwable t) {
-                    // it is already gone; nothing to close
                 }
             }
             if (item != null) open(a, item.getString());

@@ -66,67 +66,41 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * better-Y settings screen (reuses ActivityAboutBinding). Click-wheel driven, two levels: the
- * groups first, one row each; the centre button opens a group and shows its rows alone, the top
- * button goes back to the groups and from there closes the screen.
- *
- * The menu is a DECLARATIVE model ({@link #buildItems()}): each entry is one {@link Item}
- * (group header, toggle, choice or action). render / navigation / confirm all iterate that
- * list generically, so adding a row or a whole group is a single line in buildItems() -- no
- * fixed indices anywhere. A header becomes a row of the first level; a row with {@code showIf}
- * set is hidden unless that pref is on (e.g. likes_names only when likes is on).
- *
- * Authored in Java (build/ipp-java) and compiled to smali; do not hand-edit the generated
- * IppActivity*.smali. Raw collection types are used deliberately (the bundled d8 crashes on
- * generic Signature attributes); API is kept <= 17.
+ * The better-Y settings screen (reuses ActivityAboutBinding): the groups first, the centre button
+ * opens one, the top button goes back. A declarative model ({@link #buildItems()}): adding a row
+ * is one line in {@link #registry()} plus its line in the help asset; no fixed indices anywhere.
  */
 public final class IppActivity extends BaseActivity {
 
-    // item kinds
-    private static final int HEADER = 0;   // non-selectable group title
-    private static final int TOGGLE = 1;   // On/Off boolean pref
-    private static final int CHOICE = 2;   // cycles through choices[] (string resources)
+    private static final int HEADER = 0;   // a group
+    private static final int TOGGLE = 1;   // On/Off
+    private static final int CHOICE = 2;   // cycles through words from the asset
     private static final int ACTION = 3;   // runs an action on confirm
-    // Like CHOICE, but choices[] holds the numbers themselves and the row shows them as-is.
-    // A plain number is the same in every language, so this needs no string resources at all.
+    // like CHOICE, but over the numbers in choices[], shown as they are
     private static final int NUMBER = 4;
 
     private static final int ACCENT = Color.parseColor("#3CFFDE");
 
     /**
-     * A group caption's two rules and the strip between them, as alpha over the theme's colours:
-     * the rules carry the item colour, the strip the selected one. Public because the queue screen
-     * ({@code IppQueueActivity.divider}) and the Bluetooth screen ({@code Blue.band}) draw the same
-     * caption — one number, so the three cannot drift apart.
+     * A group caption's rules and band, as alpha over the theme's colours — shared with the queue
+     * screen and {@code Blue.band}, so they cannot drift apart.
      */
     public static final int RULE_ALPHA = 0x59000000;
     public static final int BAND_ALPHA = 0x59000000;
 
-    /**
-     * ...and weaker where the theme leaves its rows transparent ({@link Theme#rowsPainted}): there
-     * the wash lies on the WALLPAPER, where the same number reads as a stain across the picture
-     * rather than as a band. The rules keep one value — a line is as legible over a photograph as
-     * over a colour.
-     */
+    /** Weaker over the WALLPAPER ({@link Theme#rowsPainted} false), where it reads as a stain. */
     public static final int BAND_ALPHA_BARE = 0x2E000000;
 
     public static int bandAlpha() {
         return Theme.rowsPainted() ? BAND_ALPHA : BAND_ALPHA_BARE;
     }
 
-    /** The hairlines a menu row is being tried with: a caption's rule, thinner and far weaker. */
     private static final int HAIR_H = 1;
     private static final int HAIR_ALPHA = 0x1F000000;
 
     /**
-     * One menu entry. Headers use only the label; the rest is per-kind.
-     *
-     * Every word of it comes from the help asset — {@code label}, {@code values} and
-     * {@code showIf} are filled in by {@link #buildItems()} from {@code Help.rows}. Nothing here
-     * carries a string resource: keeping the names in {@code strings.xml} as well would mean writing
-     * every new row twice, and a second copy that is only ever a fallback is a copy that silently
-     * goes stale. A row the asset does not name shows its KEY instead, which is never
-     * blank and says exactly which line of which file is missing.
+     * One menu entry. Every word comes from the help asset ({@link #buildItems()}), never from
+     * {@code strings.xml} — a second copy goes stale. A row the asset misses shows its KEY.
      */
     private static final class Item {
         final int type;
@@ -138,10 +112,7 @@ public final class IppActivity extends BaseActivity {
         String[] values;       // CHOICE: from the asset; null shows the index
         String showIf;         // if non-null, row shown only while that pref is on
 
-        // What the row answers before anyone touches it is NOT here: it lives once, in
-        // Prefs.DEFAULTS, and both this screen and the feature itself read it from there. A row
-        // that carried its own copy is how a setting comes to say "On" over a feature behaving
-        // as "Off" -- see the table's own comment.
+        // No default here: it lives once, in Prefs.DEFAULTS, read by this screen and the feature.
         Item(int type, String key, int count, int[] choices, String showIf) {
             this.type = type;
             this.key = key;
@@ -162,10 +133,7 @@ public final class IppActivity extends BaseActivity {
     private ScrollView scroller;
     private LinearLayout rowList;       // the rows of every group; only the open group's are shown
 
-    // The screen opens on its GROUPS, one row each, drawn as the rows inside Music are; the centre
-    // button opens one and shows its rows alone, the top button comes back to the group it left.
-    // group == -1 is the list of groups.
-    private int group = -1;
+    private int group = -1;             // -1 = the list of groups
     private int[] cats;                 // index into items of each header, in order
     private View[] catRows;
     private TextView[] catLabels;
@@ -173,8 +141,7 @@ public final class IppActivity extends BaseActivity {
     private int catSel;                 // index into cats
     private LinearLayout catList;
 
-    // NUMBER edit mode: centre press opens the row for editing, the wheel then picks the value
-    // instead of moving the cursor. The blinking value is what says "the wheel is in here now".
+    // NUMBER edit mode: the wheel picks the value, which blinks while it does.
     private static final long BLINK_MS = 400;
     private boolean editing;
     private int editIndex;              // index into items of the row being edited
@@ -182,21 +149,10 @@ public final class IppActivity extends BaseActivity {
     private Blink blink;
 
     /**
-     * The menu, arranged the way the help asset says and behaving the way {@link #registry()} says.
-     *
-     * Order, grouping, names and {@code showIf} all come from {@code assets/help/en.txt} —
-     * English alone, so a translator can regroup nothing by accident. The registry supplies what a
-     * text file cannot: the kind of each row, its preference key, its default, and the numbers a
-     * NUMBER row runs over.
-     *
-     * Nothing the asset says can LOSE a setting, which is the whole reason the registry keeps
-     * its own order: a row the file forgets is appended at the end rather than dropped, a key the
-     * file invents is skipped, and an asset that cannot be read at all leaves the menu exactly as
-     * it was before any of this existed.
-     *
-     * A row whose {@code showIf} is set is a SUB-ITEM of the row it depends on and is drawn
-     * with the arrow that says so; there is no separate flag, because a row that only exists while
-     * another one is on IS that row's sub-item.
+     * The menu: order, grouping, names and {@code showIf} from {@code assets/help/en.txt}
+     * (English alone, so a translator cannot regroup), behaviour from {@link #registry()}. The
+     * asset can never LOSE a setting: a row it forgets is appended, a key it invents is skipped.
+     * A row with {@code showIf} is that row's SUB-ITEM.
      */
     private List buildItems() {
         List reg = registry();
@@ -208,7 +164,7 @@ public final class IppActivity extends BaseActivity {
         for (int i = 0; i < rows.size(); i++) {
             Help.Row r = (Help.Row) rows.get(i);
             Item it = find(reg, r.key);
-            if (it == null || used.contains(r.key)) continue;   // a key nothing in the app answers
+            if (it == null || used.contains(r.key)) continue;
             used.add(r.key);
             it.label = r.label;
             it.showIf = r.showIf;
@@ -217,8 +173,7 @@ public final class IppActivity extends BaseActivity {
             }
             out.add(it);
         }
-        // Whatever the file did not mention keeps its place at the end, headers included: a typo
-        // must cost the arrangement of one row, never the row itself.
+        // a typo costs one row's place, never the row
         for (int i = 0; i < reg.size(); i++) {
             Item it = (Item) reg.get(i);
             if (!used.contains(it.key)) out.add(it);
@@ -236,47 +191,30 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * Every row the app can actually draw, with what it DOES and a sane order to fall back on.
-     *
-     * The groups here are the user's ([Tools], [Now Playing], [Menu], [Metadata], [System]) —
-     * the rows are grouped by WHERE their effect is seen, not by what they technically are, which
-     * is why the two "titles from metadata" switches sit with the tags and the two "top button
-     * hold" ones sit with the player. The asset may rearrange all of it; this is what stands when
-     * it does not.
+     * Every row the app can draw, with its kind and key, in the fallback order. Grouped by WHERE
+     * the effect is seen, not by what a row technically is.
      */
     private List registry() {
         List l = new ArrayList();
 
-        // [Tools] -- device actions, pinned at the very top
         l.add(new Item(HEADER, "tools", 0, null, null));
         l.add(new Item(ACTION, "cache", 0, null, null));
         l.add(new Item(ACTION, "scan", 0, null, null));
-        // Settings, likes, playlists, bookmarks and reading progress to the card and back: the
-        // Updater rewrites usrdata, so a copy on the card is the only one that survives an
-        // update. Two actions behind one row -- Save and Load -- so it opens a dialog. See Backup.
-        l.add(new Item(ACTION, "backup", 0, null, null));
-        // /Playlists/*.m3u(8) into the library, on a screen of its own. Export is per playlist, in
-        // the Playlists screen's menu. See M3u.
-        l.add(new Item(ACTION, "m3u_import", 0, null, null));
-        // one file to attach to a bug report -- build, settings, library, logcat. See Diag.
-        l.add(new Item(ACTION, "log", 0, null, null));
+        l.add(new Item(ACTION, "backup", 0, null, null));           // Backup
+        l.add(new Item(ACTION, "m3u_import", 0, null, null));       // M3u
+        l.add(new Item(ACTION, "log", 0, null, null));              // Diag
 
-        // [Now Playing] -- everything whose effect is seen on the player screen
         l.add(new Item(HEADER, "player", 0, null, null));
         l.add(new Item(CHOICE, "icon_tint", 3, null, null));
         l.add(new Item(CHOICE, Tint.KEY_TEXT, 3, null, null));
         l.add(new Item(CHOICE, Tint.KEY_LYRICS, 3, null, null));
         l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
-        // Two rows, one question, asked per section: what the long top press does in the player.
-        // They carry their own labels rather than the group telling them apart, because they no
-        // longer sit in groups of their own.
         l.add(new Item(CHOICE, "top_hold", 3, null, null));
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));
         l.add(new Item(TOGGLE, "first_artist_only", 0, null, null));
         l.add(new Item(TOGGLE, "feat_in_title", 0, null, "first_artist_only"));
         l.add(new Item(CHOICE, Ipp.KEY_LINE_SCROLL, 4, null, null));
 
-        // [Menu] -- how the lists behave under the wheel
         l.add(new Item(HEADER, "menu", 0, null, null));
         l.add(new Item(TOGGLE, "alpha_scroll", 0, null, null));
         l.add(new Item(NUMBER, "alpha_threshold", Alpha.THRESHOLDS.length, Alpha.THRESHOLDS, null));
@@ -286,7 +224,6 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
 
-        // [Metadata] -- what is read out of a tag and what is done with it
         l.add(new Item(HEADER, "metadata", 0, null, null));
         l.add(new Item(TOGGLE, "meta_title", 0, null, null));
         l.add(new Item(TOGGLE, "book_meta_title", 0, null, null));
@@ -296,24 +233,19 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, GenreSplit.KEY_SPLIT, 0, null, null));
         l.add(new Item(TOGGLE, Albums.KEY_SCOPE, 0, null, null));
 
-        // [System] -- the device rather than the music
         l.add(new Item(HEADER, "system", 0, null, null));
         l.add(new Item(TOGGLE, "delete_folder", 0, null, null));
         l.add(new Item(TOGGLE, "keep_awake", 0, null, null));
         l.add(new Item(TOGGLE, "likes", 0, null, null));
-        // "Show likes next to song names" (likes_names) is deliberately NOT built: the toggle
-        // exists and does nothing yet. Its preference stays for when it does.
+        // likes_names is deliberately not built: it does nothing yet
         l.add(new Item(CHOICE, Keys.KEY_SECOND, 2, null, null));
 
         return l;
     }
 
     /**
-     * The theme's font. The app theme sets {@code android:typeface="monospace"} and ThemeManager
-     * swaps {@code Typeface.MONOSPACE} for the theme's font.ttf (or plain {@code DEFAULT} when the
-     * theme carries none), so reading that field is how code-built views follow the theme —
-     * a hard-coded {@code DEFAULT_BOLD} would ignore it. Read per call: the field changes when
-     * the theme does.
+     * The theme's font: ThemeManager swaps {@code Typeface.MONOSPACE} for it. Read per call — it
+     * changes with the theme.
      */
     private static Typeface font() {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
@@ -323,7 +255,7 @@ public final class IppActivity extends BaseActivity {
         return it.showIf == null || Prefs.on(this, it.showIf);
     }
 
-    /** A TOGGLE's state, with {@code def == 1} meaning "On until switched off". */
+    /** A TOGGLE's state, default from {@code Prefs.DEFAULTS}. */
     private boolean toggleOn(Item it) {
         return Prefs.on(this, it.key);
     }
@@ -359,9 +291,8 @@ public final class IppActivity extends BaseActivity {
         ViewGroup root = (ViewGroup) getVb().getRoot();
         root.removeAllViews();
 
-        // No side padding: a row's background is the theme's, and 8px of it either side let the
-        // wallpaper through as a stripe down both edges of the screen. The text keeps its distance
-        // from the edge through the row's OWN padding, which is inside that background.
+        // No side padding, or the wallpaper shows as a stripe down both edges; the row's own
+        // padding keeps the text off the edge.
         rowList = new LinearLayout(this);
         rowList.setOrientation(LinearLayout.VERTICAL);
 
@@ -391,8 +322,7 @@ public final class IppActivity extends BaseActivity {
         for (int i = 0; i < n; i++) {
             Item it = (Item) items.get(i);
             if (it.type == HEADER) {
-                // A group is a row of the first level, and the same row the Music menu draws
-                // (item_main): the theme paints it exactly as it paints Music, arrow included.
+                // a group is the Music menu's own row (item_main), themed alike
                 cur = i;
                 groupOf[i] = i;
                 View v = getLayoutInflater().inflate(R.layout.item_main, catList, false);
@@ -406,22 +336,15 @@ public final class IppActivity extends BaseActivity {
                 c++;
             } else {
                 groupOf[i] = cur;
-                // Full-width row carries the highlight, but its height is fixed to the text:
-                // a theme's selected background can be a large bitmap and would otherwise
-                // stretch the row to the bitmap's own height. Text is centred vertically.
+                // a FIXED height: a theme's selection bitmap would stretch it
                 LinearLayout row = new LinearLayout(this);
                 row.setOrientation(LinearLayout.HORIZONTAL);
                 row.setBaselineAligned(false);
                 row.setGravity(Gravity.CENTER_VERTICAL);
                 row.setPadding(5, 0, 5, 0);
 
-                // A row that exists only while another one is on is that row's SUB-ITEM, and says
-                // so with an arrow leading the label. It is the docs' own "\u21b4" turned 180
-                // degrees -- which is exactly "flipped and mirrored": it then points upwards and
-                // runs right to left, back towards the row it belongs to. Rotating the glyph
-                // rather than picking a ready-made character keeps the theme's font and asks the
-                // font for nothing it may not carry (the up-and-leftwards arrows live in a much
-                // rarer Unicode block than this one).
+                // A sub-item's arrow: "\u21b4" rotated 180\u00b0, pointing back to its row. Rotated
+                // rather than a ready glyph, which theme fonts may lack.
                 if (it.showIf != null) {
                     TextView mark = new TextView(this);
                     mark.setTextSize(13.0f);
@@ -436,9 +359,7 @@ public final class IppActivity extends BaseActivity {
                     marks[i] = mark;
                 }
 
-                // The text of the Music menu's rows (item_main): 22sp, bold. The two-argument
-                // setTypeface, as XML's textStyle does it — the only form that fakes bold for a
-                // theme font that carries no bold cut.
+                // item_main's text. The two-argument setTypeface fakes bold for a font without it.
                 TextView label = new TextView(this);
                 label.setTextSize(TEXT_SP);
                 label.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
@@ -460,8 +381,7 @@ public final class IppActivity extends BaseActivity {
                 labels[i] = label;
                 values[i] = value;
 
-                // Inside a box carrying a hairline along its BOTTOM edge. One line per boundary and
-                // the row below owns none: a line on each edge doubles up between two rows.
+                // a hairline on the BOTTOM edge only, or two rows double it up
                 LinearLayout box = new LinearLayout(this);
                 box.setOrientation(LinearLayout.VERTICAL);
                 // Two lines of text; fitRows() then stretches it to fill the screen evenly.
@@ -478,11 +398,7 @@ public final class IppActivity extends BaseActivity {
         show(-1);
     }
 
-    /**
-     * Put the list of groups ({@code g == -1}) or the rows of one group on screen. A group's name
-     * goes up in the status bar, so its rows need no caption of their own. Coming back to the
-     * groups leaves the cursor on the one just left.
-     */
+    /** The groups ({@code g == -1}) or one group's rows, its name in the status bar. */
     private void show(int g) {
         group = g;
         scroller.removeAllViews();
@@ -499,22 +415,19 @@ public final class IppActivity extends BaseActivity {
         render();
     }
 
-    /** The text size of a row inside a group — the Music menu's, item_main — and how far it may shrink. */
+    /** item_main's text size, and how far it may shrink. */
     private static final float TEXT_SP = 22.0f;
     private static final float TEXT_MIN_SP = 14.0f;
 
-    /** Rows on one screen inside a group. The visible height is shared out between them. */
+    /** Rows on one screen inside a group. */
     private static final int ROWS = 5;
 
     private int minRow;                 // px: two lines of a row's text, until fitRows() runs
     private boolean rowsFitted;
 
     /**
-     * Five rows fill the visible height exactly (5 x 63 = 315 here), and the text is then sized to
-     * them: the Music menu's 22sp, or smaller until every label of the device's language fits in
-     * two lines beside the widest value its row can show. One size for every row, so the rows
-     * read alike; measured, because the eight languages differ in length by a third. Done once,
-     * when the first group opens — by then the scroller has been laid out by the list of groups.
+     * {@link #ROWS} rows fill the visible height exactly; one text size for all, shrunk until every
+     * label of this language fits two lines beside its widest value. Once, at the first group.
      */
     private void fitRows() {
         int visible = scroller.getHeight();
@@ -537,7 +450,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /** Whether every row's label fits in two lines of {@code h} at text size {@code px}. */
+    /** Every label fits two lines of {@code h} at {@code px}. */
     private boolean fits(float px, int width, int h) {
         for (int i = 0; i < rowViews.length; i++) {
             if (rowViews[i] == null) continue;
@@ -579,7 +492,7 @@ public final class IppActivity extends BaseActivity {
         return new String[0];
     }
 
-    /** The groups, open in turn from the centre button. Empty ones are not opened. */
+    /** Open the group under the cursor, unless it has nothing to show. */
     private void openGroup() {
         if (cats.length == 0) return;
         int g = cats[catSel];
@@ -603,8 +516,7 @@ public final class IppActivity extends BaseActivity {
             Item it = (Item) items.get(i);
             if (it.type == HEADER) continue;
 
-            // The BOX, not the row: hiding the row alone would leave its hairline behind as a
-            // stripe where a sub-item is not currently shown.
+            // the BOX, or a hidden sub-item leaves its hairline behind
             boolean vis = groupOf[i] == group && visible(it);
             rowBoxes[i].setVisibility(vis ? View.VISIBLE : View.GONE);
             if (!vis) continue;
@@ -637,15 +549,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Move the highlight without rebuilding the menu — what a wheel click actually needs.
-     *
-     * {@link #render} touches every row: two getString calls, a ThemeManager background and two
-     * ThemeManager text colours each. That is fine once, but the wheel's speed util replays a
-     * click up to eleven times inside one key event, so a fast scroll ran it eleven times over
-     * ~20 rows. Only two rows ever change appearance, and the scroll is coalesced (see
-     * {@link #postScroll}) so a burst ends in one animation instead of eleven restarts.
-     */
+    /** A wheel click repaints the two rows that change, not the whole menu ({@link #render}). */
     private void move(int old) {
         clampSel();
         if (old == sel) return;
@@ -655,9 +559,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * A row's hairline, in the theme's ordinary item colour far weakened. The colour is read off a
-     * scratch TextView painted with it ({@code itemSetTextColor} answers with the theme's own and
-     * ignores what it is passed, so painting and looking is the only way to ask).
+     * A row's hairline in the theme's item colour, weakened — read off a scratch TextView, since
+     * {@code itemSetTextColor} ignores the colour it is passed.
      */
     private View hair() {
         if (hairColor == 0) {
@@ -695,7 +598,6 @@ public final class IppActivity extends BaseActivity {
 
     private boolean scrollPending;
 
-    /** Named (d8 here crashes on anonymous classes). */
     static final class Scroll implements Runnable {
         private final IppActivity a;
         Scroll(IppActivity a) { this.a = a; }
@@ -724,8 +626,7 @@ public final class IppActivity extends BaseActivity {
 
     private void scrollToSel(boolean mayPost) {
         if (scroller == null) return;
-        // The box: it is the list's own child, so its top and bottom are the coordinates the
-        // scroller works in. The row inside it is offset by a hairline.
+        // the box: the list's own child, in the scroller's coordinates
         View v;
         boolean first;
         if (group < 0) {
@@ -738,8 +639,7 @@ public final class IppActivity extends BaseActivity {
             first = sel == firstSelectable();
         }
         if (v == null) return;
-        // Not laid out yet — a list just built answers 0 for every edge. Try again next frame; the
-        // posted path never re-posts, so this cannot loop.
+        // not laid out yet: once more next frame (the posted path never re-posts)
         if (v.getHeight() <= 0) {
             if (mayPost) postScroll();
             return;
@@ -759,15 +659,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Move the list to {@code y}, at once.
-     *
-     * The wheel is faster than any animation worth watching, and a list still travelling when the
-     * next click arrives is a list the cursor has already left. Every ListView screen in the app
-     * moves its window in one step for the same reason ({@code Wheel.list}); this is that rule for
-     * the two screens that scroll a ScrollView instead. What was tried first, and what it cost:
-     * skill {@code wip-scroll-animation}.
-     */
+    /** Move the list to {@code y} at once, never animated (skill {@code wip-scroll-animation}). */
     private void glide(int y) {
         View content = scroller.getChildCount() > 0 ? scroller.getChildAt(0) : null;
         int max = content == null ? 0 : content.getHeight() - scroller.getHeight();
@@ -784,7 +676,6 @@ public final class IppActivity extends BaseActivity {
             i += dir;
         }
         if (!Loop.wrap()) return from;
-        // Loop scrolling: past the end, the first row of the group from the other end.
         i = dir > 0 ? 0 : items.size() - 1;
         while (i != from) {
             if (selectable(i)) return i;
@@ -822,13 +713,9 @@ public final class IppActivity extends BaseActivity {
         move(old);
     }
 
-    // ---------------------------------------------------------------- NUMBER edit mode
-
     /**
-     * A NUMBER row is not cycled by repeated presses: the centre button opens it, the wheel then
-     * runs over the values (wrapping at both ends), and the next centre press takes the one shown
-     * while the top button puts the old one back. Repeated presses would mean 11 of them to get
-     * from 5 to 60, and no way to change your mind on the way.
+     * A NUMBER row is edited, not cycled: the wheel runs over the values, centre takes the one
+     * shown, top puts the old one back.
      */
     private void startEdit(Item it) {
         editing = true;
@@ -847,7 +734,7 @@ public final class IppActivity extends BaseActivity {
         showCandidate(it);
     }
 
-    /** Paint the candidate and restart the blink from "visible", so a fresh value is readable. */
+    /** The candidate, the blink restarted from "visible". */
     private void showCandidate(Item it) {
         TextView v = values[editIndex];
         if (v == null) return;
@@ -865,7 +752,7 @@ public final class IppActivity extends BaseActivity {
         v.postDelayed(blink, BLINK_MS);
     }
 
-    /** Leave edit mode; {@code commit} false simply drops the candidate and re-reads the pref. */
+    /** Leave edit mode; {@code commit} false drops the candidate. */
     private void endEdit(boolean commit) {
         if (!editing) return;
         editing = false;
@@ -879,7 +766,7 @@ public final class IppActivity extends BaseActivity {
         render();
     }
 
-    /** The value blinks while the wheel belongs to it. Named: d8 here crashes on anonymous ones. */
+    /** The value blinks while the wheel belongs to it. */
     static final class Blink implements Runnable {
         private final IppActivity a;
         Blink(IppActivity a) { this.a = a; }
@@ -893,19 +780,11 @@ public final class IppActivity extends BaseActivity {
         clampSel();
         Item it = (Item) items.get(sel);
         if (it.type == TOGGLE) {
-            // Read back through toggleOn, which knows the row's own default: a "flip it" helper
-            // that reads the pref with a false default would show On for a row whose default is On
-            // and then need two presses to turn it off. (Prefs had exactly such a helper; it was
-            // unused for this reason and has been removed.)
+            // read back with the row's own default, or a default-On row takes two presses
             Prefs.setBool(this, it.key, !toggleOn(it));
-            // the Favorites playlist exists by default (Playlists.syncName, from
-            // MainActivity.initView) and the setting only shows or hides it. This stays as the
-            // backstop for the one case startup cannot cover — a build with the delete protection
-            // off, where the playlist can actually be removed while the app is running.
+            // a backstop: Favorites can be deleted only with the delete protection off
             if ("likes".equals(it.key) && Prefs.on(this, it.key)) Fav.ensure(this);
-            // the line under a genre ("N artists N albums") is a written-down ANSWER, and
-            // the split changes it. GenreInfo is invalidated by library writes and by nothing
-            // else, so a toggle has to say so itself, or the subtitles keep yesterday's counts.
+            // the genre subtitles are cached counts the split changes
             if (GenreSplit.KEY_SPLIT.equals(it.key)) GenreInfo.clear();
             render();
         } else if (it.type == NUMBER) {
@@ -920,8 +799,7 @@ public final class IppActivity extends BaseActivity {
             } else if ("cache".equals(it.key)) {
                 confirmCache();
             } else if ("backup".equals(it.key)) {
-                // No Yes/No here: the row's two halves are the dialog's two rows, and the one
-                // that needs confirming (Load) asks for it after the archive has been picked.
+                // no Yes/No: Load asks for itself once an archive is picked
                 Backup.open(getActivity(), label(it));
             } else if ("m3u_import".equals(it.key)) {
                 startActivity(new android.content.Intent(this, IppImportActivity.class));
@@ -947,16 +825,11 @@ public final class IppActivity extends BaseActivity {
                 new Confirm(this, ACT_LOG), false, true);
     }
 
-    /**
-     * "Cache library" asks WHAT to fill rather than whether to start: the covers are the expensive
-     * half by a wide margin, so re-reading only the tags after an edit — or only the pictures after
-     * new artwork — is worth being able to say. {@link PickDialog} replaces the plain confirm.
-     */
+    /** "Cache library" asks WHAT to fill ({@link PickDialog}): the covers are the expensive half. */
     private void confirmCache() {
         Pick.askCache(getActivity(), new CachePick(this));
     }
 
-    /** Named (d8 here crashes on anonymous classes). */
     static final class CachePick extends PickDialog.Go {
         private final IppActivity a;
 
@@ -968,18 +841,12 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /**
-     * "Update library" = refresh the metadata of songs ALREADY in the library, nothing
-     * else. It does not look for new or deleted files: that is the stock scan's job (after a
-     * reboot / USB detach), and it is left untouched so it stays fast — which is also why this button
-     * does not start it: the stock "Scanning files" dialog would then appear on top of ours.
-     *
-     * A song is re-read only when its file's mtime differs from the row's fileDate (a tag edit
-     * bumps it), so an unchanged library costs one lastModified() per row instead of a full
-     * metadata decode, and the button can honestly report "already up to date".
-     */
     private LoadingDialog progress;
 
+    /**
+     * "Update library": re-read the songs ALREADY in the library whose mtime changed. New and
+     * deleted files are the stock scan's job, not started here (its dialog would cover ours).
+     */
     void runFullRescan() {
         try {
             progress = new LoadingDialog(getActivity(), getString(R.string.ipp_scan_running), "",
@@ -1001,15 +868,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * "Cache library" — read once, up front, everything the lists otherwise read while the user
-     * is looking at them: the album thumbnails, each album's artist and representative song, its
-     * release year, and (only when "Sort by Track Number" is on) every song's track number. All
-     * four caches are file-backed, so this survives a restart.
-     *
-     * Whether there is anything to do is decided by a signature of the library — the row count and
-     * the newest file date — stored when a pass completes. It matches only if the library has not
-     * changed since, and that is what "already cached" means; the track-number half has its own
-     * flag, so switching the sort on afterwards makes the button work again.
+     * "Cache library": read up front, into file-backed caches, what the lists otherwise read while
+     * the user looks. "Already cached" is the library signature ({@code Albums.cached}).
      */
     void runCacheLibrary(int mask) {
         if (mask == 0) return;
@@ -1027,10 +887,7 @@ public final class IppActivity extends BaseActivity {
         runOnUiThread(new CacheDone(this, albums));
     }
 
-    // Named nested classes (NOT anonymous): the bundled d8 (R8 8.2.2-dev) crashes dexing
-    // anonymous inner classes here, but named nested classes dex fine.
-
-    /** Wheel-navigable Yes/No callback for the Tools actions. */
+    /** Yes/No for the Tools actions. */
     private static final class Confirm extends DialogUtil.DialogCallback {
         private final IppActivity a;
         private final int action;
@@ -1055,9 +912,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * Background worker: walk the song rows, re-read the ones whose file changed.
-     * {@code ippReplaceSong} = fileToSong + INSERT OR REPLACE on the path-stable songId; it never
-     * touches the file itself (unlike {@code deleteSong}, which deletes it from disk).
+     * Re-read the rows whose file changed. {@code ippReplaceSong} never touches the file — unlike
+     * {@code deleteSong}, which DELETES it from disk.
      */
     private static final class RescanTask implements Runnable {
         private final IppActivity a;
@@ -1074,9 +930,7 @@ public final class IppActivity extends BaseActivity {
                 List songs = repo.getSongsSync(0);
                 int n = songs == null ? 0 : songs.size();
                 String label = a.getString(R.string.ipp_scan_running);
-                // Once per library: rows read before this build carry what the platform made of an
-                // oversized tag. Asked here rather than per row, so a library already dealt with
-                // costs not one extra file open.
+                // once per library: re-read rows the platform's tag limit truncated (Meta)
                 boolean migrate = !Meta.libraryRead(a);
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
@@ -1085,12 +939,8 @@ public final class IppActivity extends BaseActivity {
                     File f = new File(s.getPath());
                     if (!f.exists()) continue;                      // gone: the stock scan removes it
 
-                    // An external cover.jpg / folder.jpg is not part of the song file, so replacing
-                    // one leaves every mtime below untouched and the old picture cached. Art keeps
-                    // a stamp of the cover files per folder and answers once per album.
-                    // A folder seen for the first time (a song the stock scan has just added) is
-                    // re-read the same way, but it is not something the user changed — counting it
-                    // reported every freshly scanned song as updated.
+                    // An external cover changes no song's mtime: Art stamps the cover files per
+                    // folder. A folder seen for the first time is re-read but not counted.
                     int cover = Art.coverState(s.getPath());
                     if (cover != Art.COVER_SAME) {
                         CoverCache.forget(Albums.keyOf(s));                  // the list thumbnail
@@ -1099,11 +949,6 @@ public final class IppActivity extends BaseActivity {
                         if (cover == Art.COVER_CHANGED) updated++;
                     }
 
-                    // A file whose ID3 tag the platform refused was read wrong whatever its date
-                    // says: what stands in its row is the 30-byte ID3v1 block, with no album
-                    // artist, no disc number and mojibake for anything not written in Latin. Such
-                    // a row is re-read once — the pass then marks the library (Meta.libraryRead)
-                    // and this question is not asked again on any later run.
                     if (f.lastModified() == s.getFileDate()
                             && !(migrate && Meta.oversized(s.getPath()))) continue;
                     repo.ippReplaceSong(f);
@@ -1111,7 +956,6 @@ public final class IppActivity extends BaseActivity {
                 }
                 Meta.noteLibraryRead(a);        // only on a pass that ran to the end
             } catch (Throwable t) {
-                // never leave the dialog up: the report below runs either way
             } finally {
                 Art.flushStamps();
                 a.scanFinished(updated);
@@ -1119,10 +963,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /**
-     * Background worker for "Cache library". Nothing here writes to the database — it only fills
-     * the caches the album lists read from, so the worst case of getting it wrong is wasted work.
-     */
+    /** "Cache library". Writes no database: the worst a mistake here costs is wasted work. */
     private static final class CacheTask implements Runnable {
         private final IppActivity a;
         /** What the user ticked: {@code Pick.COVERS} and/or {@code Pick.TAGS}. */
@@ -1140,11 +981,7 @@ public final class IppActivity extends BaseActivity {
             this.mask = mask;
         }
 
-        /**
-         * One item done, from whichever thread. The percentage is the only thing the workers share
-         * besides the queue, so it is a counter under a lock rather than anything cleverer; the
-         * dialog is only re-texted every 1/60 of the library.
-         */
+        /** One item done, from any worker; the dialog re-texted every 1/60 of the work. */
         void tick() {
             int v;
             synchronized (lock) {
@@ -1175,16 +1012,9 @@ public final class IppActivity extends BaseActivity {
                     done = -1;                      // nothing changed since the last pass
                     return;
                 }
-                // Hold the per-track cover notes back until the end: they are one file, and the
-                // workers below produce them by the thousand.
-                BigCover.beginCache();
+                BigCover.beginCache();              // the cover notes saved once, at the end
 
-                // Replaced external artwork, before anything is filled: a cover.jpg / folder.jpg is
-                // not part of any song file, so nothing else in this pass can notice that it
-                // changed, and the stale thumbnail would simply be kept (it is already cached) and
-                // the stale player covers with it. Same bookkeeping "Update library" uses — one
-                // look per folder, and it also means whichever button the user presses leaves the
-                // cover stamps in the same state.
+                // replaced external artwork first: nothing else here can notice it
                 if (covers) {
                     for (int i = 0; i < n; i++) {
                         Song s = (Song) songs.get(i);
@@ -1196,8 +1026,7 @@ public final class IppActivity extends BaseActivity {
                     }
                 }
 
-                // One representative song per album — the lowest path, which is the one the album
-                // row itself reads (Albums.songsSync orders by path, so CD1 wins over CD2).
+                // one representative per album: the lowest path, as the row reads it
                 LinkedHashMap reps = new LinkedHashMap();
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
@@ -1211,18 +1040,14 @@ public final class IppActivity extends BaseActivity {
                 ArrayList keys = new ArrayList(reps.keySet());
                 int m = keys.size();
                 label = a.getString(R.string.ipp_cache_running);
-                // One scale over both halves: with the albums already cached their loop is over in
-                // an instant and everything that is left is the per-song pass, so a percentage of
-                // the albums alone would sit at 100% for the whole of the long part.
+                // one scale over both halves, or it sits at 100% through the long one
                 total = m + n;
                 if (total <= 0) total = 1;
                 tickEvery = total / 60;
                 if (tickEvery < 1) tickEvery = 1;
 
-                // The album half. What each album needs is decided HERE, on this thread — those are
-                // plain map lookups, and deciding them up front is what keeps the workers away from
-                // the caches' lazy loading. The workers only open files and build thumbnails; the
-                // answers come back and are written into the caches below, again on this thread.
+                // Albums. What each needs is decided HERE, so workers never touch the caches' lazy
+                // loading; their answers are committed below, on this thread.
                 ArrayList jobs = new ArrayList();
                 for (int i = 0; i < m; i++) {
                     String key = (String) keys.get(i);
@@ -1253,35 +1078,19 @@ public final class IppActivity extends BaseActivity {
                 }
                 if (tags) {
                     AlbumArtist.flush();
-                    // Every album now has its year, so this walks the list, finds nothing to do and
-                    // writes the file out — which is the only reason it is still called.
-                    YearCache.warm(keys);
+                    YearCache.warm(keys);           // finds nothing to read; writes the file out
                 }
 
-                // The expensive half — the tags of every SONG, and this is where the whole pass
-                // spends its minute. What a metadata read costs is the file OPEN: the container has
-                // to be parsed before any key can be answered, and after that each key is nearly
-                // free. So everything a song is needed for comes out of ONE open
-                // (DiscCache.readTrack): the disc number, the track number and the artwork bytes.
-                // Opening each file once matters: a separate open here, inside BigCover and from
-                // TrackCache.ensure is three opens per song with no track-number tag.
-                //
-                // The Now-Playing cover is per-track, so it belongs in this half: without it the
-                // player still reads a tag the first time each song is opened, which is the flash
-                // the caching pass exists to remove. Walked in PATH order rather than
-                // the library's own (name/date) order: BigCover holds one album representative at a
-                // time to compare against, and that only works when a folder's songs arrive
-                // together.
+                // Songs, the expensive half. A metadata read costs the file OPEN, so everything a
+                // song gives — disc, track number, artwork — comes from ONE (DiscCache.read). In
+                // PATH order: BigCover compares against one folder's representative at a time.
                 if (songs != null && n > 0) {
                     ArrayList byPath = new ArrayList(songs);
                     try {
                         Collections.sort(byPath, new ByPath());
                     } catch (Throwable t) {
-                        // an unsortable list only costs cache locality
                     }
-                    // Read the disc numbers in before the workers start: they only look the table
-                    // up, and a lazy load racing three readers is the one thing that could corrupt
-                    // it. Everything they write goes into their own list and is committed below.
+                    // loaded before the workers: a lazy load racing them could corrupt the table
                     DiscCache.warm();
                     Blocks q = Blocks.folders(byPath);
                     SongWorker[] w = new SongWorker[workers()];
@@ -1290,26 +1099,19 @@ public final class IppActivity extends BaseActivity {
                     }
                     spread(w);
                     if (tags) {
-                        // The commits, on this thread and in one place, so no cache needs a lock.
-                        // TrackCache is pulled in first: its file is read lazily, and reading it
-                        // AFTER the puts would let the older numbers on disk overwrite them.
+                        // Commits on this thread, so no cache needs a lock. TrackCache loaded
+                        // FIRST: loaded after the puts, the older file would overwrite them.
                         TrackCache.sorted(new ArrayList());
                         for (int i = 0; i < w.length; i++) w[i].commit();
                         DiscCache.flush();
-                        // Writes out the track numbers collected above, and picks up any song whose
-                        // number was still missing (TrackCache.sorted = load + read what is missing
-                        // + save) — which, since the read writes down "this file has none" too, is
-                        // now nothing at all.
-                        TrackCache.sorted(songs);
+                        TrackCache.sorted(songs);   // saves; finds nothing left to read
                     }
                 }
 
                 Albums.noteCached(a, n, stamp, mask);
             } catch (Throwable t) {
-                // report whatever was managed
             } finally {
-                // in the finally, not after the loop: a pass that died half way must still write
-                // down what it did learn about the covers it read
+                // a pass that died half way still writes down what it learned
                 try { BigCover.endCache(); } catch (Throwable t) { }
                 try { Art.flushStamps(); } catch (Throwable t) { }
                 a.cacheFinished(done);
@@ -1317,22 +1119,11 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    // ---------------------------------------------------------------- the caching pass, in parallel
-    //
-    // The pass is bound by opening files: one open per song and one per album, and most of that time
-    // the thread is waiting on the card rather than computing. The chip here is a dual-core MT6572,
-    // so a small pool covers both the second core and the waiting.
-    //
-    // What makes it safe is where the work is split, not locks: the library is cut into whole ALBUM
-    // FOLDERS and a worker takes one at a time, so the one piece of state a cover walk carries — the
-    // album's representative picture — never crosses threads (BigCover.Walk). Everything else is
-    // arranged so the caches are only ever written from the pass thread: what each item needs is
-    // decided before the workers start (plain map lookups), the workers only read files and write
-    // what belongs to one key (their own JPEGs, whose names no two folders share), and their answers
-    // are committed afterwards. The two caches that are genuinely shared during a pass — BigCover's
-    // per-track notes and its bitmap tables — are synchronized and Hashtables respectively.
+    // The pass is bound by file opens, so it runs a small pool. Safe by how the work is split, not
+    // by locks: a worker takes whole FOLDERS (a cover walk's representative never crosses threads),
+    // writes only its own keys, and its answers are committed on the pass thread afterwards.
 
-    /** How many workers. One more than the cores, because each spends much of its time waiting. */
+    /** One more than the cores: each spends much of its time waiting on the card. */
     private static int workers() {
         int c = Runtime.getRuntime().availableProcessors();
         if (c < 1) c = 1;
@@ -1352,15 +1143,11 @@ public final class IppActivity extends BaseActivity {
             try {
                 ts[i].join();
             } catch (Throwable t) {
-                // interrupted: carry on, the pass reports what it managed
             }
         }
     }
 
-    /**
-     * The queue the workers share: ranges of an index, handed out one at a time. Blocks rather than
-     * single items because a cover walk is per folder — see {@link BigCover.Walk}.
-     */
+    /** The workers' shared queue of index ranges — per folder, for {@link BigCover.Walk}. */
     static final class Blocks {
         private final int[] from;
         private final int[] to;
@@ -1457,7 +1244,6 @@ public final class IppActivity extends BaseActivity {
                     try {
                         album((AlbumJob) jobs.get(i));
                     } catch (Throwable t) {
-                        // one unreadable album must not stop the pass
                     }
                     task.tick();
                 }
@@ -1491,7 +1277,6 @@ public final class IppActivity extends BaseActivity {
                     try {
                         one(w, (Song) byPath.get(i));
                     } catch (Throwable t) {
-                        // one unreadable file must not stop the pass
                     }
                     task.tick();
                 }
@@ -1522,27 +1307,14 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * Everything one ALBUM needs, out of a single {@code setDataSource} on its representative song:
-     * the ALBUM ARTIST tag, the release year and the 50px thumbnail.
-     *
-     * These are three separate caches, and each opening the file for itself — the thumbnail through
-     * {@code Other.getAlbumCover}, the album artist inside {@code AlbumArtist.read}, the year inside
-     * {@code YearCache.warm} (plus a Room query per album to find the very song we already have
-     * here) — is two extra opens per album. Opening the file is what a metadata read costs, so on a
-     * library with a few hundred albums that is a sizeable part of the whole pass.
-     *
-     * Nothing is read that the ticked categories do not need, so this does not tie the two
-     * categories together: with only "Metadata" on, no picture is asked for; with only "Album
-     * covers" on, no tags are; and an album that has all of it already is not opened at all. The
-     * thumbnail's own priority is untouched — a pinned song or an external {@code folder.jpg} still
-     * wins, and the tags are only consulted where they would have been anyway ({@code
-     * Art.thumbFromTags}), which is also why the picture is not read when a cover file exists.
+     * Everything an ALBUM needs — album artist, year, thumbnail — from ONE {@code setDataSource}
+     * on its representative, and only what the ticked categories need. The thumbnail's priority is
+     * untouched: a pinned song or a cover file still wins.
      */
     private static void album(AlbumJob j) {
         if (j == null || j.path == null) return;
         if (!j.artist && !j.year && !j.art) {
-            // Nothing to read out of the file -- but the thumbnail may still have to be built from
-            // a cover file sitting next to it, and that costs no metadata read at all.
+            // the thumbnail may still come from a cover file: no metadata read
             if (j.thumb) CoverCache.get(j.key, j.path);
             return;
         }
@@ -1558,14 +1330,11 @@ public final class IppActivity extends BaseActivity {
             }
             if (j.art) art = r.getEmbeddedPicture();
         } catch (Throwable t) {
-            // an unreadable file is "read, nothing there" for each of them
         }
         try { r.release(); } catch (Throwable t) { }
 
         if (j.thumb) {
-            // The hint is consumed by Art.thumb as the LAST resort, after the pinned song and the
-            // cover files -- so the thumbnail is the same picture it would have been. It is held
-            // per thread, so several album workers never see each other's.
+            // the hint is Art.thumb's LAST resort, held per thread
             if (j.art) Art.hint(j.path, art);
             try {
                 CoverCache.get(j.key, j.path);
@@ -1575,7 +1344,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /** Library order is by name or date; the cover pass wants a folder's songs together. */
+    /** The cover pass wants a folder's songs together. */
     private static final class ByPath implements Comparator {
         @Override
         public int compare(Object a, Object b) {
@@ -1654,7 +1423,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /** LoadingDialog's back-key callback; nothing to do (the dialog is not cancellable). */
+    /** LoadingDialog's back-key callback; it is not cancellable. */
     private static final class Noop implements Function0 {
         @Override
         public Object invoke() {
@@ -1665,40 +1434,27 @@ public final class IppActivity extends BaseActivity {
     @Override
     public void direction(BaseActivity.Direction d) {
         if (d == BaseActivity.Direction.TOP) {
-            // While a value is open the top button cancels the edit rather than the screen —
-            // one button, the innermost thing it can close.
+            // the innermost thing open: the edit, then the group, then the screen
             if (editing) { endEdit(false); return; }
-            // ...and inside a group that is the group: back to the list of groups, cursor on it.
             if (group >= 0) { show(-1); return; }
             finish();
         }
     }
 
-    /**
-     * Hold the top button on a row and it explains itself. The text lives in
-     * {@code assets/help/<lang>.txt}, keyed by the row's own key, and is paged with the wheel
-     * ({@link HelpDialog}).
-     *
-     * Long top press is free on this screen: stock routes it to {@code longConfirm}, which
-     * every list uses for its long-press menu and which this screen has never had one for.
-     */
+    /** A long top press on a row shows its help from {@code assets/help/<lang>.txt}. */
     @Override
     public void longConfirm() {
-        if (editing) return;               // the wheel is inside a value; one thing at a time
-        if (group < 0) return;             // a group has no description of its own
+        if (editing) return;
+        if (group < 0) return;             // a group has no description
         if (items == null || sel < 0 || sel >= items.size()) return;
         Item it = (Item) items.get(sel);
         if (it.type == HEADER || it.key == null) return;
         List blocks = Help.blocks(this, it.key);
-        if (blocks.isEmpty()) return;      // nothing written for this row yet: say nothing
+        if (blocks.isEmpty()) return;
         new HelpDialog(getActivity(), label(it), blocks).show();
     }
 
-    /**
-     * The rows as last built, so a description can name another row in the language on screen
-     * ({@code {row:<key>}}). Static because {@link Help} is asked while this screen is the one on
-     * top, which is the only way a description is ever read.
-     */
+    /** The rows as last built, for {@code {row:<key>}} in a description. */
     private static List lastItems;
 
     /** A row's name for {@code {row:<key>}}, or null when this screen has never been built. */
@@ -1712,7 +1468,7 @@ public final class IppActivity extends BaseActivity {
         return null;
     }
 
-    /** The row's name: what the asset called it, or its key when no file names it. */
+    /** The asset's name for the row, or its key. */
     private static String label(Item it) {
         return it.label != null ? it.label : it.key;
     }

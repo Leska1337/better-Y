@@ -15,41 +15,18 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A genre tag that lists several genres at once ("Rock, Pop", "Electronic/Ambient") becomes
- * several genres, the way {@link Artists} splits a multi-artist tag.
+ * A genre tag naming several genres ("Rock, Pop", "Electronic/Ambient") becomes several genres.
+ * Separators are {@code , ; /} with or without spaces — deliberately not the artists' rule; a
+ * genre named with a slash ("R&B/Soul") is split, a known and accepted cost.
  *
- * The separator rule is NOT the artists' one, and that is deliberate (the user's call).
- * There it is the punctuation plus the space after it, because a comma inside an artist's name is
- * common enough to need an exceptions file ("Tyler, the Creator"); a genre is a word out of a short
- * vocabulary, taggers write it every which way ("Rock,Pop", "Rock / Pop"), and a comma inside a
- * genre name is not a thing. So the separators are {@code , ; /} with any amount of space
- * around them or none. The cost is accepted and known: a genre whose NAME carries a slash
- * ("Folk/Rock", "R&B/Soul") is split in two.
- *
- * Where it applies. Every genre-scoped query of {@code Y1Repository} — the genre list
- * itself, the artists, the albums and the songs of a genre — plus the genre filters the mod already
- * does in Java ({@code Albums.songsSync}, {@code Genres.split}/{@code albumCount},
- * {@code Artists.byTag}). The three query redirects follow the pattern the data layer uses
- * everywhere here: answer in Java only when the genre really is one that a composite tag
- * contributes to, and return null otherwise so the ordinary genre keeps stock's indexed SQL
- * and its collation. That is what {@link #collect} decides, and it is the same test the genre LIST
- * is built with — a row and its contents must be found by one test, or the row opens empty (the
- * lesson of {@code Artists.byTag}, skill {@code ipp-albums-artists}).
- *
- * With the toggle off nothing changes at all: {@link #has} then makes the very comparison
- * stock's SQL makes (equality on the raw string), and the three redirects answer null.
- *
- * Gated by {@link #KEY_SPLIT} ("Split genres that are divided by commas, semicolons and
- * slashes"), On unless switched off — as the artist row is.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature
- * attributes.
+ * The query redirects answer in Java only for a genre a composite tag contributes to, and null
+ * otherwise so stock's indexed SQL answers. A row and its contents must be found by the same test,
+ * or the row opens empty. With the toggle off {@link #has} is stock's exact comparison.
  */
 public final class GenreSplit {
 
     private GenreSplit() { }
 
-    /** better-Y → "Split genres that are divided by commas, semicolons and slashes". */
     public static final String KEY_SPLIT = "genre_split";
 
     public static boolean enabled() {
@@ -65,16 +42,11 @@ public final class GenreSplit {
         return (a == null ? "" : a).equals(b == null ? "" : b);
     }
 
-    /**
-     * Does this tag carry a separator at all? Asked before {@link #parts}, because the answer is no
-     * for almost every song in the library and a "no" here costs three {@code indexOf}s instead of
-     * a regex split — this runs once per song per genre-scoped list.
-     */
+    /** The cheap pre-check before a regex split; runs per song per genre-scoped list. */
     private static boolean joined(String s) {
         return s != null && (s.indexOf(',') >= 0 || s.indexOf(';') >= 0 || s.indexOf('/') >= 0);
     }
 
-    /** One raw genre tag → its parts, trimmed; a tag that carries no separator is one part. */
     public static List parts(String raw) {
         ArrayList out = new ArrayList();
         if (raw == null) return out;
@@ -91,11 +63,7 @@ public final class GenreSplit {
         return out;
     }
 
-    /**
-     * True when {@code tag} carries {@code genre} — the one test every genre filter in the mod
-     * makes. With splitting off it is stock's own comparison, so a filter that goes through here
-     * behaves exactly as it did before the toggle existed.
-     */
+    /** The one test every genre filter makes; with splitting off, stock's own comparison. */
     public static boolean has(String tag, String genre) {
         if (!enabled()) return eq(tag, genre);
         String target = norm(genre);
@@ -106,12 +74,7 @@ public final class GenreSplit {
         return inParts(tag, target);
     }
 
-    /**
-     * {@link #has} for the fallback lookups — {@code Artists.byTag} and its like — whose whole
-     * point is that the row's text and the tag it came from may differ by a stray space or a
-     * difference in case. Those were lenient about that before this class existed and stay so with
-     * the split off; what is added is the parts.
-     */
+    /** {@link #has} ignoring case and stray spaces, for fallback lookups like {@code Artists.byTag}. */
     public static boolean hasLoose(String tag, String genre) {
         String target = norm(genre);
         if (norm(tag).equals(target)) return true;
@@ -126,13 +89,7 @@ public final class GenreSplit {
         return false;
     }
 
-    /**
-     * The songs of a genre, gathered by {@link #has} — or null when this genre owes nothing
-     * to a composite tag, which is the signal to let stock's indexed query answer.
-     *
-     * Read off the cached song table ({@code Albums.allSongs}), so a burst of these — the genre
-     * list's subtitles ask per row — shares one Room load.
-     */
+    /** Null when no composite tag contributes, so stock's query answers. Off the cached table. */
     private static ArrayList collect(Genre g) {
         if (g == null || !enabled()) return null;
         String target = norm(g.getName());
@@ -154,11 +111,7 @@ public final class GenreSplit {
         return fromComposite ? out : null;
     }
 
-    /**
-     * True when a query for this genre has to be answered in Java — i.e. some song reaches it
-     * through a composite tag. Asked by {@code Artists.songsInGenre}, which may not fall back to
-     * the stock exact-match query for such a genre: that query would answer with nothing.
-     */
+    /** True when stock's exact-match query would miss songs of this genre. */
     public static boolean composite(Genre g) {
         try {
             return collect(g) != null;
@@ -167,9 +120,7 @@ public final class GenreSplit {
         }
     }
 
-    // ---- the three query redirects ------------------------------------------------------------
-
-    /** {@code getSongsByGenreSync}: stock orders by {@code lower(pinyinName)} and offers no sort. */
+    /** {@code getSongsByGenreSync}, in stock's {@code lower(pinyinName)} order. */
     public static List songsIn(Genre g) {
         try {
             ArrayList out = collect(g);
@@ -202,14 +153,8 @@ public final class GenreSplit {
     }
 
     /**
-     * {@code getGenresSync}: the genre list itself, expanded into parts and de-duplicated
-     * case-insensitively (the first spelling seen is the one kept).
-     *
-     * Re-sorted only under the query's own name order — exactly {@code Artists.listGenre}'s rule
-     * and for the same two reasons: a by-date list sorted alphabetically would be a different list,
-     * and the alphabetical jump ({@code Alpha}) reads "no sort chosen" on this level as "the order
-     * the query gave, which IS A→Z" (skill {@code ipp-genres}). Leaving the parts where their
-     * composite tag stood would quietly break that.
+     * {@code getGenresSync}: expanded into parts, de-duplicated ignoring case (first spelling
+     * kept), re-sorted only under the name order — {@code Alpha} relies on it being A→Z.
      */
     public static List list(List raw) {
         if (raw == null || !enabled()) return raw;
@@ -234,20 +179,12 @@ public final class GenreSplit {
         }
     }
 
-    // ---- distinct artist / album, in the order the DAO would have given -------------------------
-
     private static final int F_ARTIST = 0, F_ALBUM = 1;
 
     /**
-     * The distinct values of one column over these songs, ordered the way the stock query orders
-     * them: {@code lower(pinyinArtist)} / {@code lower(pinyinAlbum)} under "sort by name",
-     * {@code fileDate} otherwise, each with its reverse — the four DAO methods the repository picks
-     * between.
-     *
-     * De-duplication is on the RAW value, case included, because SQL's {@code distinct} is: what
-     * comes out of here is a query key ({@code Genres.split} looks an album name up by
-     * {@code equals}, and an artist row is what the songs behind it are matched by), so a name
-     * folded to another case would be a row that opens empty.
+     * Distinct values of one column in the stock DAO's order. De-duplicated on the RAW value, case
+     * included, as SQL's {@code distinct} is: the values are query keys, and a case-folded one is a
+     * row that opens empty.
      */
     private static List distinct(ArrayList songs, int field) {
         SharedPreferencesUtils sp = SharedPreferencesUtils.INSTANCE;

@@ -10,44 +10,20 @@ import com.innioasis.y1.R;
 import me.wcy.lrcview.LrcView;
 
 /**
- * The colour of the player's own TEXT: the four information lines, the two time marks beside the
- * timeline, and the lyrics window.
+ * The colour of the player's text: "text_tint" for the information lines and time marks,
+ * "lyrics_tint" for the lyrics window. Values as "Icon color": 0 LIGHT (white, stock), 1 DARK,
+ * 2 THEME (the timeline's colour, then the list text's, then a last resort — 0 is invisible).
+ * Unsung lyric lines are the sung colour at half alpha.
  *
- * Every one of those was {@code @color/white} in the layout, which is right on a dark wallpaper
- * and unreadable on a light one — and unlike a list row there is no ThemeManager hook here at all:
- * the player draws over the wallpaper rather than over themed rows, so nothing was ever going to
- * colour these for us. Two settings answer it, both {@code CHOICE} rows carrying the same three
- * values as "Icon color", so the player's three colour questions read alike:
- *
- *   {@code text_tint}   — the information lines and the time marks.
- *   {@code lyrics_tint} — the lyrics window and nothing else.
- *
- *   0 LIGHT — white, the stock look.
- *   1 DARK  — #121212, the same near-black the dark icons use.
- *   2 THEME — the timeline's colour ({@link Icons#timelineColor}), which is what "Theme color"
- *             already means for the buttons right above these lines, so the two match. A theme
- *             may set none, so it falls back to the theme's list-row text colour and then to a
- *             colour of last resort: text left at 0 is invisible text.
- *
- * The lyrics window differs in one thing only — its last resort is the accent #3CFFDE the sung
- * line was hard-coded to, so the colour the lyrics have always had is what a theme with nothing
- * to say still gives. Under every setting the unsung lines are the sung one at half alpha, which
- * is what the stock pair (#3CFFDE against #80ffffff) said in two colours and this says in one.
- *
- * Applied once, from {@code BasePlayerActivity.initView}: nothing in either player re-colours
- * these views afterwards (they only ever have their text replaced), and the setting can only be
- * changed while the player is gone — it is {@code finish()}ed on exit.
- *
- * Raw (non-generic) types: the bundled d8 crashes dexing generic Signature attrs.
+ * Applied once from {@code BasePlayerActivity.initView}: nothing re-colours these views later, and
+ * the setting cannot change while a player is open.
  */
 public final class Tint {
 
     private Tint() { }
 
-    /** The information lines and the time marks. */
     public static final String KEY_TEXT = "text_tint";
 
-    /** The lyrics window. */
     public static final String KEY_LYRICS = "lyrics_tint";
 
     private static final int DARK = 1;
@@ -56,18 +32,14 @@ public final class Tint {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF121212;
 
-    /** The colour the sung line was hard-coded to; THEME's last resort in the lyrics window. */
+    /** Stock's sung-line colour; THEME's last resort in the lyrics window. */
     private static final int ACCENT = 0xFF3CFFDE;
 
-    /** An unsung line, as a share of the sung one's alpha. */
     private static final int HALF = 0x80;
 
     private static final int NO_COLOR = 0;
 
-    /**
-     * Paint every text the player owns. Either player may be handed here — both inflate
-     * {@code activity_music_player}, so these are the same views on both.
-     */
+    /** Either player: both inflate {@code activity_music_player}. */
     public static void player(Activity a) {
         if (a == null) return;
         try {
@@ -78,12 +50,10 @@ public final class Tint {
             paint(a, R.id.tv_index_of_songs, text);
             paint(a, R.id.tv_play_now, text);
             paint(a, R.id.tv_play_all, text);
-            // The song's name above the lyrics is a title, not a lyric: it follows the lines it
-            // is the heading of, not the words under it.
+            // The heading above the lyrics follows the information lines, not the lyrics.
             paint(a, R.id.tv_song_name2, text);
             lyrics(a);
         } catch (Throwable t) {
-            // A player that comes up in stock white beats a player that does not come up.
         }
     }
 
@@ -92,7 +62,7 @@ public final class Tint {
         if (!(v instanceof LrcView)) return;
         int c = color(a, KEY_LYRICS, ACCENT);
         LrcView lrc = (LrcView) v;
-        // The sung line, and also the "no lyrics" label — LrcView draws that in this same colour.
+        // Also the colour of the "no lyrics" label.
         lrc.setCurrentColor(c);
         lrc.setNormalColor(Color.argb(HALF, Color.red(c), Color.green(c), Color.blue(c)));
     }
@@ -102,7 +72,7 @@ public final class Tint {
         if (v instanceof TextView) ((TextView) v).setTextColor(color);
     }
 
-    /** {@code last} is what THEME comes down to when the theme names no colour of its own. */
+    /** {@code last}: THEME's answer when the theme names no colour. */
     private static int color(Activity a, String key, int last) {
         int m = Prefs.val(a, key);
         if (m == DARK) return BLACK;
@@ -113,6 +83,6 @@ public final class Tint {
             if (c != NO_COLOR) return c;
             return last;
         }
-        return WHITE;                          // LIGHT
+        return WHITE;
     }
 }

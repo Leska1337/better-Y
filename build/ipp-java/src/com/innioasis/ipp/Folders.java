@@ -33,35 +33,10 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * "Show all songs" in Folders: every music file below the folder on screen, in one list.
- *
- * Why it exists
- * A folder that holds only sub-folders can be listened to only one sub-folder at a time, and there
- * is no way to shuffle or queue the whole thing. The row appears exactly where that is the case:
- * the open folder has no songs of its own, does have folders, and there is something to play
- * underneath it. Anywhere else it would either duplicate the list already on screen or open an
- * empty one.
- *
- * How it works — one screen, two modes
- * There is no new Activity. The row opens {@code FilesActivity} again on the SAME folder with the
- * {@link #EXTRA} flag, and {@link #build} then fills that screen with the songs found recursively
- * instead of with the folder's own children. Everything the folder view already does then applies
- * to the flat list for free: the rows, playback (the whole list becomes the playlist), the ▶
- * marker, the long-press menu with "Add to queue" and multi-select.
- *
- * The two modes must not share a state-bar title: the queue's source and the ▶ marker identify a
- * list by its Activity class plus that title ({@code Queue.keyOf}), so two screens of the same
- * class showing different lists under one title would be taken for the same list. Hence
- * {@link #title}.
- *
- * The row itself
- * A sentinel {@code File} at index 0 — the same shape of trick as the artist view's "Show all
- * songs" marker album ({@code Albums.isAllSongs}), for the same reason: the list's item type is
- * fixed, and a marker item rides every path a real one does. Its name can never collide with a
- * real file (a control character), and nothing on disk answers to it, so the delete flow that
- * might be handed it finds nothing to delete.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * Folders' button rows, its icons and its sort. "Show all songs" opens {@code FilesActivity} again
+ * on the same folder with {@link #EXTRA}, and {@link #build} fills it with every song below — so
+ * the flat list gets everything the folder view does. It needs its own title ({@link #title}): the
+ * queue tells lists apart by class plus title. A button is a sentinel {@code File} at index 0.
  */
 public final class Folders {
 
@@ -70,20 +45,10 @@ public final class Folders {
     /** Intent flag: this FilesActivity shows everything below its folder, not its children. */
     public static final String EXTRA = "ipp_all";
 
-    /**
-     * Sentinel row name. It really does start with a raw U+0001 — invisible in an editor,
-     * and that is the point: no file on a card can be called this, so the marker can never be
-     * confused with a real row. Do not "tidy" the literal.
-     */
+    /** Starts with a raw, invisible U+0001 that no file name can have. Do not "tidy" the literal. */
     private static final String MARK = "ipp_show_all";
 
-    /**
-     * The second marker: Shuffle, and only inside the flat list — the folder view plays a folder
-     * at a time and stock's own Shuffle row is what that means there.
-     *
-     * Same semantics as {@code ShufflePlaylistItemView}: it does not switch shuffle MODE on, it
-     * hands the player a shuffled copy of the list. Its own U+0001 prefix, as above.
-     */
+    /** Shuffle: like stock's row, a shuffled copy of the list, not the shuffle MODE. */
     private static final String SHUF = MARK + "_shuffle";   // inherits MARK's U+0001 prefix
 
     private static File mark(File dir) { return new File(dir, MARK); }
@@ -99,19 +64,7 @@ public final class Folders {
 
     private static boolean isAnyMark(File f) { return isMark(f) || isShuffle(f); }
 
-    // ------------------------------------------------- a marker row is a button, not a file
-
-    /**
-     * Multi-select and its long-press menu must pass the two marker rows by: they are buttons, and
-     * there is nothing behind them to delete, move or add to a playlist (the file they stand for
-     * does not exist on the card at all).
-     *
-     * The two ticking paths are both in {@code MyBaseAdapter} — {@code addItemToSelectedIndex}
-     * (the centre press) and {@code allSelect} ("Select all") — which every list in the app goes
-     * through; only a Folders list can hold a marker, so everything else answers false on the
-     * first test. The menu itself is stopped in {@code FilesActivity.longConfirm}, before the
-     * dialog is shown.
-     */
+    /** {@code MyBaseAdapter.addItemToSelectedIndex}: a marker row is a button, never ticked. */
     public static boolean noSelect(Object adapter, int index) {
         return markAt(adapter, index);
     }
@@ -127,7 +80,6 @@ public final class Folders {
                 if (o instanceof Integer && markAt(adapter, ((Integer) o).intValue())) sel.remove(i);
             }
         } catch (Throwable t) {
-            // a marker left ticked is not worth a crash on a select-all
         }
     }
 
@@ -142,10 +94,8 @@ public final class Folders {
     }
 
     /**
-     * In multi-select the cursor does not stop on a marker row at all — the same way the Shuffle
-     * row of a song list cannot be the cursor there. Called at the end of both wheel handlers of
-     * {@code FilesActivity}: the markers are the FIRST row of the list, so the way off one is
-     * always downwards, whichever direction the wheel came from.
+     * In multi-select the cursor skips a marker row — always downwards, the markers being first.
+     * From the end of both wheel handlers of {@code FilesActivity}.
      */
     public static void skipMark(Object adapter, boolean multi) {
         if (!multi || !(adapter instanceof MyBaseAdapter)) return;
@@ -156,9 +106,8 @@ public final class Folders {
             int n = ad.getCount();
             int to = pos + 1;
             while (to < n && markAt(ad, to)) to++;
-            if (to < n) ad.setPosition(to);   // setPosition notifies for us
+            if (to < n) ad.setPosition(to);
         } catch (Throwable t) {
-            // the cursor sitting on a button it cannot tick is not worth a crash
         }
     }
 
@@ -182,17 +131,12 @@ public final class Folders {
         }
     }
 
-    // ------------------------------------------------------------------------------- the content
-
     /**
-     * Called from the end of {@code FilesActivity.refresh}'s coroutine, off the UI thread.
+     * End of {@code FilesActivity.refresh}'s coroutine, off the UI thread. In "all" mode: the flat
+     * song list, which becomes {@code nowSongFileList}; otherwise null, with a button row inserted.
      *
-     * Returns the flat song list when this screen is in "all" mode — the caller writes it to
-     * {@code nowSongFileList}, which is what playback is built from — and null otherwise, having
-     * inserted the marker row into {@code fileList} if this folder deserves one.
-     *
-     * @param fileList  the rows the screen is about to show (folders, then the folder's own songs)
-     * @param ownSongs  the folder's own songs, i.e. the second half of that list
+     * @param fileList  the rows about to be shown (folders, then the folder's own songs)
+     * @param ownSongs  the folder's own songs, the second half of that list
      */
     public static List build(Activity a, File dir, List fileList, List ownSongs) {
         try {
@@ -202,60 +146,38 @@ public final class Folders {
                 fileList.clear();
                 if (!songs.isEmpty()) fileList.add(shufMark(dir));
                 fileList.addAll(songs);
-                // The Shuffle row is a row of the list, so the two are one short of each other --
-                // which nothing has to know about: playback finds its index by PATH (stock's own
-                // confirm, Rows.filePlaying and Follow all match File.getPath()), never by counting.
+                // One row short of fileList: harmless, playback matches by PATH, never by index.
                 return new ArrayList(songs);   // a copy: refresh() clears fileList in place
             }
             File row = folderRow(a, dir, fileList, ownSongs);
             if (row != null) fileList.add(0, row);
         } catch (Throwable t) {
-            // a folder that cannot be walked is simply a folder without the row
         }
         return null;
     }
 
     /**
-     * Which button, if any, an ordinary folder gets — and it is never both, because the two answer
-     * different situations:
-     *
-     *   - Any sub-folders (with or without songs of its own) → Show all songs:
-     *       what is on screen is not the music, it is the way to it, and this is the one row that
-     *       opens all of it at once.
-     *   - Songs and nothing else → Shuffle: everything is already on screen, so
-     *       there is nothing to "show"; the only thing missing is playing it in a random order,
-     *       which is what the same row does in every other song list in the app.
-     *
-     * "Sub-folders that are not empty either" is checked as what it is for — there must be songs
-     * somewhere below, or the row opens an empty list. A folder of folders of folders passes;
-     * one whose sub-folders hold nothing but pictures does not.
-     *
-     * Music only ({@code Prefs.defaultFolderPath}, and never inside Audiobooks): an audiobook is
-     * listened to one book at a time and in order, which is the opposite of both these rows.
+     * The button of an ordinary folder: sub-folders with songs somewhere below → Show all songs;
+     * songs only → Shuffle; never both. Music only — an audiobook is played in order.
      */
     private static File folderRow(Activity a, File dir, List fileList, List ownSongs) {
-        if (fileList.isEmpty()) return null;                         // nothing here at all
+        if (fileList.isEmpty()) return null;
         String p = dir.getPath();
         if (p == null) return null;
         String root = Prefs.defaultFolderPath(a == null ? Y1Application.Companion.getAppContext() : a);
         if (root == null || !p.startsWith(root)) return null;
         if (Constant.INSTANCE.pathInAudiobook(p)) return null;
 
-        // fileList is the sub-folders followed by the folder's own songs, so the difference of the
-        // two sizes is exactly "does this folder have sub-folders" -- no second listing needed.
+        // fileList = sub-folders + own songs: the size difference says whether there are folders
         int songs = ownSongs == null ? 0 : ownSongs.size();
         boolean hasDirs = fileList.size() > songs;
         if (hasDirs) return songsUnder(dir).isEmpty() ? null : mark(dir);
-        return songs > 1 ? shufMark(dir) : null;   // one song is nothing to shuffle
+        return songs > 1 ? shufMark(dir) : null;
     }
 
     /**
-     * The cursor a folder opens on: the row under the button, when there is a button.
-     *
-     * The row is a button, and a folder is opened to look at what is in it — landing on the button
-     * would mean every folder opens with the cursor on something that is not its contents. The
-     * list is left where stock put it (row 0 at the top), so the button is on screen and one step
-     * up reaches it. Injected after stock's own {@code setPosition(0)} / {@code setSelection(0)}.
+     * A folder opens with the cursor under its button, the button still on screen. After stock's
+     * own {@code setPosition(0)} / {@code setSelection(0)}.
      */
     public static void startRow(Object adapter) {
         if (!(adapter instanceof MyBaseAdapter)) return;
@@ -265,19 +187,10 @@ public final class Folders {
             Object o = ad.getItem(0);
             if (o instanceof File && isAnyMark((File) o)) ad.setPosition(1);
         } catch (Throwable t) {
-            // the cursor staying on row 0 is not worth a crash
         }
     }
 
-    /**
-     * Every song of the library that lives below this folder, in path order — so a sub-folder's
-     * tracks stay together and the sub-folders come in the order the folder view shows them.
-     *
-     * The source is {@code Albums.allSongs()}, the cached full song table, not a walk of the disk:
-     * the folder view's own list is the library's too ({@code getSongsByParentPath}), so this
-     * shows exactly what the screen it was opened from would show one folder at a time, and it
-     * costs one pass over a list that is in memory anyway.
-     */
+    /** Every library song below this folder, in path order — off the cached table, not the disk. */
     private static List songsUnder(File dir) {
         ArrayList out = new ArrayList();
         List all = Albums.allSongs();
@@ -305,8 +218,6 @@ public final class Folders {
         }
     }
 
-    // ---------------------------------------------------------------------------- the row and it
-
     /** {@code FilesActivity.confirm}: either marker row acts instead of opening a file. */
     public static boolean open(Activity a, File item, Object adapter) {
         if (a == null) return false;
@@ -324,25 +235,9 @@ public final class Folders {
     }
 
     /**
-     * The Shuffle row: play the flat list in a shuffled order, which is exactly what stock's own
-     * Shuffle row means ({@code ShufflePlaylistItemView.getPlaylist} returns a shuffled copy) —
-     * the shuffle SETTING is left alone, so what the row does is visible in the queue and can be
-     * stepped back through like any other order.
-     *
-     * The songs come off the ADAPTER, not off the disk again: the list is on screen, so this costs
-     * nothing and cannot disagree with what the user is looking at. Songs carry the path and
-     * nothing else, the way {@code FilesActivity} builds them everywhere else — Now Playing and
-     * the queue screen both re-read a song whose name is blank.
-     *
-     * {@code new Song()} then {@code setPath}, never the 17-argument constructor with nulls.
-     * {@code Song} is a Kotlin data class whose every String parameter is non-null, so that
-     * constructor opens with a {@code checkNotNullParameter} per argument and a null throws
-     * immediately. Stock's {@code new Song(null, …, path, …)} is not that constructor at all — it
-     * is the synthetic one carrying the default-argument mask, which fills the defaults in before
-     * the real one is reached, and javac cannot call a synthetic member. The no-argument
-     * constructor goes through the same mask with every slot defaulted, which is the same object.
-     * (This cost a build: the NPE was caught by the {@code catch} below, so pressing the row did
-     * nothing at all and said nothing anywhere.)
+     * Play the list on screen in a shuffled copy. Path-only songs, as {@code FilesActivity} builds
+     * them. {@code new Song()} + {@code setPath}, never the 17-argument constructor: it throws on
+     * the first null, silently inside the catch (cost a build).
      */
     private static boolean shufflePlay(Activity a, Object adapter) {
         try {
@@ -368,32 +263,18 @@ public final class Folders {
         return true;
     }
 
-    /**
-     * The flat list must not be called what the folder view is called — see the class comment.
-     * Injected at the end of {@code FilesActivity.initView}, after stock has set the folder name.
-     */
+    /** The flat list's own title. End of {@code FilesActivity.initView}. */
     public static void title(Activity a) {
         if (!allMode(a) || !(a instanceof BaseActivity)) return;
         try {
             ((BaseActivity) a).setStateBarLeftText(a.getString(R.string.ipp_show_all_songs));
         } catch (Throwable t) {
-            // a title is not worth a crash
         }
     }
 
     /**
-     * Every row's icon, at the very END of {@code FileListAdapter.getView} — which is where it has
-     * to be, because the colour each one takes is the colour the row's NAME ended up with, and
-     * that is settled by the ThemeManager calls above.
-     *
-     * A marker row also gets its label and the icon of the identically named row in the artist
-     * view ({@code ipp_show_all_songs}); an ordinary row gets the mod's folder or file drawing.
-     * All four are one set — 72x72 with the glyph inside a ~56 box — so they draw at one size in
-     * the row's fixed 22dip frame and need no scaling to agree with each other.
-     *
-     * Nothing to undo of the LABEL on an ordinary row: stock's getView writes the name of every
-     * row it binds, so a recycled marker row is overwritten before this runs. The icon is another
-     * matter — see the tint and the tag below.
+     * Every row's icon, at the END of {@code FileListAdapter.getView} — it takes the colour the
+     * row's name ended up with. A marker row also gets its label.
      */
     public static void row(View row, int pos, Object adapter) {
         if (row == null || !(adapter instanceof MyBaseAdapter)) return;
@@ -411,22 +292,9 @@ public final class Folders {
         ImageView img = (iv instanceof ImageView) ? (ImageView) iv : null;
 
         if (!mine) {
-            // An ordinary row: the mod's own folder / file drawings in place of the stock ones,
-            // painted in the colour the row's name has just been given. Same rule and the same
-            // reason as the marker rows above them -- the whole list is then one set of artwork,
-            // one size and one colour, and it follows the theme and the focus highlight.
-            //
-            // Stock's commonSetIcon has already run at the top of getView, so this OVERWRITES what
-            // it set. That is deliberate: it is also the call that gives a theme its own
-            // fileTypeFolder / fileTypeMusic picture, and such a theme keeps it exactly as drawn --
-            // the tint is SRC_IN, which flattens a multi-coloured drawing into one colour.
-            // Theme.hasFileIcon is what answers that, memoised per theme.
-            //
-            // The tag is cleared whatever happens, and so is the tint when it is not wanted: rows
-            // are recycled, and a filter left on the view paints whatever lands in it next. With
-            // seven rows on screen that reads as every seventh icon being the wrong colour, and it
-            // only shows on themes whose item text colour differs from the icon's own -- the user
-            // saw it on "Frutiger Aero" and "Win98 Refix".
+            // The mod's drawings over stock's, tinted — unless the theme has its own folder/file
+            // picture, which a SRC_IN tint would flatten. Tag and tint are always reset: rows are
+            // recycled.
             if (img != null) {
                 img.setTag(R.id.ipp_row_icon, null);
                 boolean dir = f != null && !f.isFile();
@@ -452,22 +320,15 @@ public final class Folders {
             img.setImageResource(shuf ? R.mipmap.music_shuffle : R.mipmap.ipp_show_all_songs);
             if (tv != null) Icons.menu(img, tv.getCurrentTextColor());
             scale(img, BIG);
-            // Which picture this view is supposed to be holding, for keepIcon() below.
+            // for keepIcon()
             img.setTag(R.id.ipp_row_icon, Integer.valueOf(
                     shuf ? R.mipmap.music_shuffle : R.mipmap.ipp_show_all_songs));
         }
     }
 
     /**
-     * A theme's icon arriving LATE must not land on a marker row.
-     *
-     * {@code ThemeManager.setBackground(ImageView…)} reads the theme's picture through a cache
-     * and, when it is not there yet, hands the load a callback that calls {@code setImageBitmap}
-     * whenever it finishes. On the first visit to Folders the cache is empty, so our icon is set
-     * first and the theme's folder icon overwrites it a moment later — "Win98 Refix shows the wrong
-     * icon on Show all songs the first time". The row remembers which picture it should be showing
-     * (the tag above), and this call, injected at the top of that callback, puts it back and
-     * answers true so the theme's bitmap is dropped for this one view.
+     * A theme icon loading LATE ({@code ThemeManager.setBackground}'s callback, on an empty cache)
+     * must not land on a marker row: top of that callback, true = drop the theme's bitmap.
      */
     public static boolean keepIcon(ImageView iv) {
         try {
@@ -482,20 +343,12 @@ public final class Folders {
     }
 
     /**
-     * How much bigger the mod's own icons are drawn than the box they are given.
-     *
-     * The set is a glyph inside a ~56 box of a 72x72 canvas, and the row's frame is a fixed 22dip
-     * with the default {@code fitCenter} — which scales the whole CANVAS, transparent margin and
-     * all, so the glyph itself lands at about 17dip and reads small beside the text. 1.3 is very
-     * nearly the 72/56 the margin takes away, and is applied as a SCALE rather than a bigger box:
-     * growing the box would push every label right and the rows would stop lining up.
-     *
-     * Not applied to a theme's own {@code fileTypeFolder} / {@code fileTypeMusic} picture, which
-     * is drawn to fill its canvas the way the stock one was.
+     * ~72/56: the mod's glyphs sit in a margin of their 72px canvas. A SCALE, not a bigger box,
+     * which would push the labels right. Not for a theme's own pictures.
      */
     private static final float BIG = 1.3f;
 
-    /** Rows are recycled, so the scale is always SET, never only raised. */
+    /** Always SET: rows are recycled. */
     private static void scale(ImageView iv, float s) {
         if (iv == null || iv.getScaleX() == s) return;
         iv.setScaleX(s);
@@ -503,13 +356,8 @@ public final class Folders {
     }
 
     /**
-     * Videos → Folders is a screen of its own ({@code VideoListActivity}), and its folder rows put
-     * the icon in {@code file_img} with a plain {@code setImageResource} — the theme is not asked
-     * there at all, in stock or here. This replaces that call: the mod's folder drawing, and a tag
-     * saying the view is holding it.
-     *
-     * The colour cannot be taken here — the row's name is painted several branches further down —
-     * so the tag is what {@link #videoIcon} reads at the end of the bind.
+     * Videos → Folders: replaces the folder row's {@code setImageResource}. Tinted later by
+     * {@link #videoIcon}, once the name has its colour.
      */
     public static void videoFolder(ImageView iv) {
         if (iv == null) return;
@@ -518,12 +366,8 @@ public final class Folders {
     }
 
     /**
-     * ...and the end of that bind: the icon takes the colour its name ended up with, and its
-     * scale, exactly as in the Folders list.
-     *
-     * The same ImageView also carries a VIDEO's thumbnail, so the tag is read and cleared in one
-     * go: a recycled row that has become a video must lose both the tint and the enlargement, or
-     * the picture comes out one flat colour and 30% too big.
+     * End of that bind. The same view carries a video's thumbnail, so a recycled row loses the
+     * tint and the scale.
      */
     public static void videoIcon(com.innioasis.y1.databinding.ItemVideoBinding b) {
         if (b == null) return;
@@ -540,25 +384,13 @@ public final class Folders {
         }
     }
 
-    // ------------------------------------------------------------ the order the folder is listed in
-
     /**
-     * How this section lists a folder: 0 A-Z, 1 Z-A, 2 oldest first, 3 newest first — the four
-     * {@code FilesActivity.refresh} has always been able to produce. It could not be CHOSEN here,
-     * though: the two flags it read are one global "sort" that Photos, the Settings screen and
-     * several {@code Y1Repository} queries share, so a pick made in Folders would have reordered
-     * screens the user was not looking at. This is Folders' own key, and nothing else reads it.
+     * Folders' own sort: 0 A-Z, 1 Z-A, 2 oldest, 3 newest. Not stock's flags — they are one global
+     * sort shared with other screens.
      */
     public static final String KEY_SORT = "folders_sort";
 
-    /**
-     * ...and Audiobooks keeps its own, because Folders is a SUB-SECTION of each section rather
-     * than a section of its own: Music → Folders and Audiobooks → Folders are the same screen with
-     * a different root, and one order shared between them means sorting a book by date puts the
-     * albums in date order too. Which of the two a listing belongs to is answered by the folder
-     * itself ({@code Constant.pathInAudiobook}), so no state has to be carried around. Videos →
-     * Folders is a screen of its own and follows the section's own {@code videoSort}.
-     */
+    /** Audiobooks → Folders keeps its own, told apart by the path itself. */
     public static final String KEY_SORT_BOOK = "folders_sort_ab";
 
     private static final int SORT_A_Z = 0;
@@ -570,7 +402,6 @@ public final class Folders {
         try {
             if (path != null && Constant.INSTANCE.pathInAudiobook(path)) return KEY_SORT_BOOK;
         } catch (Throwable t) {
-            // an unanswerable path is the music one, which is what the section usually is
         }
         return KEY_SORT;
     }
@@ -589,42 +420,28 @@ public final class Folders {
         return v == SORT_A_Z || v == SORT_Z_A;
     }
 
-    /** {@code FilesActivity.refresh}: which way round? A-Z and "oldest first" are both ascending. */
+    /** {@code FilesActivity.refresh}: A-Z and "oldest first" are both ascending. */
     public static boolean sortAsc(File dir) {
         int v = sortValue(pathOf(dir));
         return v == SORT_A_Z || v == SORT_OLD;
     }
 
     /**
-     * The folder's OWN songs, in the same order — the second half of the sort, and the half stock
-     * never had.
-     *
-     * What {@code refresh} sorts is the array of SUB-FOLDERS; the songs under them come from the
-     * library ({@code getSongsByParentPath}) and were shown in whatever order the query returned.
-     * A folder of folders therefore re-sorted and a folder of tracks did not, which is why picking
-     * a sort in an audiobook — a book being exactly a folder of chapters — appeared to do nothing
-     * at all. Sorted in place, before the list is handed on: this list is also the PLAY order
-     * ({@code nowSongFileList}), so the two cannot be allowed to disagree.
+     * The folder's OWN songs in the same order — stock sorts only the sub-folders. In place, before
+     * it becomes the play order too.
      */
     public static void sortFiles(List files, File dir) {
         try {
             if (files == null || files.size() < 2) return;
             order(files, true, sortByName(dir), sortAsc(dir), false, false);
         } catch (Throwable t) {
-            // a list in the library's own order is still a list
         }
     }
 
     /**
-     * The one place a folder listing is ordered, for all three sections.
-     *
-     * Every question the file system can answer is asked ONCE PER FILE, before the sort, which then
-     * compares the answers: a comparator asking the file itself is called O(n log n) times and each
-     * call is a stat — twenty thousand of them on a thousand videos sorted by date, against a
-     * thousand here. {@code isDirectory} is only asked where the halves have to be separated.
-     *
-     * {@code sorted == false} is stock's unsorted mode: the file system's order is kept (which
-     * works because {@code Arrays.sort} of objects is stable) and only the folders move up.
+     * The one place a folder listing is ordered. Each file is stat'ed ONCE, before the sort — not
+     * O(n log n) times from the comparator. {@code sorted == false} keeps the file system's order
+     * (a stable sort) and only moves folders up.
      */
     private static void order(List items, boolean sorted, boolean byName, boolean asc,
                               boolean dirsFirst, boolean rows) {
@@ -643,7 +460,6 @@ public final class Folders {
         for (int i = 0; i < n; i++) items.set(i, keys[i].item);
     }
 
-    /** What one row of the list answers about itself, read once. */
     private static final class Key {
         final Object item;
         final boolean dir;
@@ -655,7 +471,6 @@ public final class Folders {
         }
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     private static final class KeySort implements Comparator {
         private final boolean sorted;
         private final boolean byName;
@@ -676,30 +491,15 @@ public final class Folders {
                 r = x.name.compareTo(y.name);
             } else {
                 r = x.time < y.time ? -1 : (x.time > y.time ? 1 : 0);
-                // FILES COPIED ONTO THE CARD IN ONE OPERATION ALL CARRY THE SAME MINUTE, and a
-                // whole folder of them is the normal case rather than the exception — a season of
-                // a series, an album's tracks, the videos someone has just dragged across. With
-                // nothing to tell them apart the sort is stable, i.e. it leaves the list exactly
-                // as it found it, and the entry reads as broken. The name is the tie-break, so
-                // "oldest first" always produces SOME order and the two directions always differ.
+                // Files copied in one go share a minute: without a tie-break the two directions
+                // look identical.
                 if (r == 0) r = x.name.compareTo(y.name);
             }
             return asc ? r : -r;
         }
     }
 
-    // ------------------------------------------- the same, for the folder list of the Videos section
-
-    /**
-     * The Videos section browses the card with a screen of its own ({@code VideoListActivity}),
-     * and its folder list had no order to ask for either — it was whatever {@code listFiles}
-     * returned. It follows the section's OWN sort, the stock {@code videoSort} the all-videos list
-     * already uses, rather than {@link #KEY_SORT}: one section, one order, and nothing a person
-     * picks in Videos reaches the Folders section or the other way round.
-     *
-     * Stock offers only A-Z and Z-A for it; the enum has always had the two creation-time values
-     * as well, and the menu below offers all four.
-     */
+    /** Videos → Folders follows the section's own stock {@code videoSort}, all four directions. */
     public static void sortVideoFiles(List files) {
         try {
             if (files == null || files.size() < 2) return;
@@ -712,15 +512,10 @@ public final class Folders {
             boolean none = v == Y1Repository.SortVideoType.None.getType();
             order(files, !none, byName, asc, true, false);
         } catch (Throwable t) {
-            // a folder listed in the file system's own order is still a folder
         }
     }
 
-    /**
-     * The file a row of the video browser stands for. A row that is a folder carries only its
-     * {@code targetFile}; a video carries a {@code VideoInfo} as well, and its path is the
-     * honest answer for it (the two are built side by side in {@code VideoListActivity.confirm}).
-     */
+    /** The file a video browser row stands for: a folder's target, else the video's path. */
     private static File rowFile(Object o) {
         if (!(o instanceof VideoListActivity.BrowseItem)) return null;
         VideoListActivity.BrowseItem b = (VideoListActivity.BrowseItem) o;
@@ -731,7 +526,7 @@ public final class Folders {
         return p == null ? null : new File(p);
     }
 
-    /** "Sort by File name" in the video folder menu: the four directions, then re-order the list. */
+    /** "Sort by File name" in the video folder menu. */
     public static void videoSortMenu(Activity a) {
         try {
             if (a == null) return;
@@ -742,11 +537,9 @@ public final class Folders {
             l.add(a.getString(R.string.sort_time_desc));
             new SubMenuDialog(a, l, new VideoSortPick(a), R.style.Dialog_Common).show();
         } catch (Throwable t) {
-            // a sort that cannot be offered leaves the list in the order it is in
         }
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     public static final class VideoSortPick implements SubMenuDialog.Callback {
         private final Activity a;
 
@@ -762,20 +555,12 @@ public final class Folders {
                 SharedPreferencesUtils.INSTANCE.setVideoSort(t.getType());
                 resortVideoList(a);
             } catch (Throwable t) {
-                // the preference is written or it is not; either way the menu closes
             }
             return true;
         }
     }
 
-    /**
-     * Re-order the folder list that is ON SCREEN, rather than listing the card again.
-     *
-     * The list is built inside {@code VideoListActivity.confirm} — there is no "load this folder"
-     * method to call a second time — and it is already exactly the rows the sort is about, so
-     * sorting it in place is both the cheapest and the most honest answer. Rows are compared by
-     * the file each one stands for, which is what the next listing will compare too.
-     */
+    /** Re-order the list ON SCREEN: there is no "load this folder" method to call again. */
     private static void resortVideoList(Activity a) {
         try {
             View root = a.findViewById(R.id.recycler);
@@ -794,16 +579,12 @@ public final class Folders {
             order(data, !none, byName, asc, true, true);
             ad.notifyDataSetChanged();
         } catch (Throwable t) {
-            // the order is stored; the folder shows it the next time it is opened
         }
     }
 
     /**
-     * "Sort by File name" in the folder's long-press menu: the four directions, then re-list.
-     *
-     * The entry is matched by STRING in {@code FilesActivity.subMenuSelectCallback} and acted on
-     * before stock's dispatch, the way "Add to queue" is — that menu reads "anything past the
-     * fixed entries is a playlist", and an entry of ours reaching it would be taken for one.
+     * "Sort by File name" in the folder's menu — matched by STRING before stock's dispatch, which
+     * would take an entry past its own for a playlist.
      */
     public static void sortMenu(Activity a) {
         try {
@@ -813,14 +594,12 @@ public final class Folders {
             l.add(a.getString(R.string.sort_z_a));
             l.add(a.getString(R.string.sort_time_asc));
             l.add(a.getString(R.string.sort_time_desc));
-            // The 4th argument is the dialog THEME, not a flag (see ipp-menus-playlists).
+            // the 4th argument is the dialog THEME, not a flag
             new SubMenuDialog(a, l, new SortPick(a), R.style.Dialog_Common).show();
         } catch (Throwable t) {
-            // a sort that cannot be offered leaves the list in the order it is in
         }
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     public static final class SortPick implements SubMenuDialog.Callback {
         private final Activity a;
 
@@ -837,21 +616,14 @@ public final class Folders {
                 clearTicks(a);
                 relist(a);
             } catch (Throwable t) {
-                // the preference is written or it is not; either way the menu closes
             }
             return true;
         }
     }
 
     /**
-     * Take back the tick the long-press put on the row it was raised on.
-     *
-     * {@code FilesActivity.longConfirm} ticks that row to highlight it behind the menu, and the
-     * tick belongs to the SCREEN, not to the dialog — so an action that ends by rebuilding the
-     * list has to clear it, or the row keeps its highlight beside the cursor for the rest of the
-     * visit: two highlights on one screen, and moving the wheel only adds a second. Rebuilding
-     * the list does not clear it either, because the selection is a list of INDEXES and survives
-     * a new set of items. Same rule as {@code Queue.addFromAdapter}.
+     * Clear the tick the long-press put on its row: it belongs to the screen and, being an INDEX,
+     * survives the re-list as a second highlight.
      */
     private static void clearTicks(Activity a) {
         try {
@@ -865,18 +637,10 @@ public final class Folders {
             sel.clear();
             m.notifyDataSetChanged();
         } catch (Throwable t) {
-            // a tick left behind is a cosmetic defect, not a reason to lose the sort
         }
     }
 
-    /**
-     * List the folder again, exactly as entering it does.
-     *
-     * NOT a re-sort of what the adapter holds: what the list IS — the marker row at its head, the
-     * flat "all songs" mode, the state bar — is decided inside {@code refresh} and its coroutine,
-     * so a second place that builds the list would drift from this one on the first change to
-     * either. The path is worked out the way {@code initView} works it out.
-     */
+    /** List the folder again through {@code refresh} — not a second place that builds the list. */
     private static void relist(Activity a) {
         if (!(a instanceof FilesActivity)) return;
         String p = currentPath(a);
@@ -884,11 +648,7 @@ public final class Folders {
         ((FilesActivity) a).refresh(p);
     }
 
-    /**
-     * The folder this screen is showing, worked out the way {@code FilesActivity.initView} works it
-     * out — the intent's path, or the section's default when there is none. It answers both "which
-     * folder to list again" and "which section's sort key this is".
-     */
+    /** The folder on screen, worked out as {@code FilesActivity.initView} does. */
     private static String currentPath(Activity a) {
         String p = null;
         if (a != null && a.getIntent() != null) p = a.getIntent().getStringExtra("now_path");

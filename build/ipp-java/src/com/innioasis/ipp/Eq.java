@@ -27,22 +27,10 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * The Equalizer's preview — the big icon and the caption beside the list — painted after the wheel
- * click instead of before it, and at most once per 70 ms while the wheel turns.
- *
- * Stock calls {@code EqActivity.showThisEq()} at the top of {@code clockwise()} /
- * {@code antiClockwise()}, i.e. before the list is even told the cursor moved, and it is by
- * far the most expensive thing a click there can do: {@code ThemeManager.commonSetIcon} swaps the
- * image of a 200dip {@code wrap_content} + {@code adjustViewBounds} ImageView, so every click asks
- * for a layout of the whole screen (and, with a theme that ships its own equaliser icons, decodes a
- * bitmap for it). The list itself costs nothing to move — all ten rows fit, so {@code Wheel.follow}
- * never scrolls and only rebinds the two rows whose highlight changed. That is the whole of "the
- * equaliser scrolls thick and unresponsive": the highlight was waiting behind the picture.
- *
- * Same answer as the panel beside the Settings list ({@code Wheel.postRest}), and it rides on the
- * same messages: {@link #preview} only notes which screen is asking, {@code Wheel.follow} — called
- * immediately after it — posts them, and {@link #paint} runs from there once the highlight has
- * moved.
+ * The Equalizer screen and its preset editor. The preview (big icon and caption) is painted after
+ * the highlight moves, not before as stock did: swapping that image lays out the whole screen, and
+ * the highlight waited behind it. It rides on the Settings panel's messages ({@code Wheel.postRest}):
+ * {@link #preview} notes the screen, {@code Wheel.follow} posts, {@link #paint} runs.
  */
 public final class Eq {
 
@@ -56,21 +44,14 @@ public final class Eq {
     /** Stock's hardcoded #ADFF2F, when the sample cannot be read. */
     private static final int ACTIVE = 0xFFADFF2F;
 
-    /**
-     * The text of the preset in use, when the cursor is not on it: the colour of the player's
-     * timeline ({@code Icons.progressColor}), so a theme's {@code progressColor} reaches it.
-     */
+    /** The preset in use, cursor elsewhere: the timeline's colour. */
     public static void active(TextView tv) {
         if (tv == null) return;
         int c = Icons.progressColor();
         tv.setTextColor(c != 0 ? c : ACTIVE);
     }
 
-    /**
-     * The preset in use is underlined, cursor or not: a theme's timeline colour may equal its text
-     * colour, and then the underline is what still tells the row apart. Set on every bind, since
-     * the row is recycled.
-     */
+    /** Also underlined: a theme's timeline colour may equal its text colour. Every bind (recycled). */
     public static void underline(TextView tv, int pos) {
         if (tv == null) return;
         int f = tv.getPaintFlags();
@@ -78,7 +59,7 @@ public final class Eq {
         tv.setPaintFlags(on ? f | Paint.UNDERLINE_TEXT_FLAG : f & ~Paint.UNDERLINE_TEXT_FLAG);
     }
 
-    // ---- the preset editor (EqEditDialog) in the long-press menu's colours --------------------
+    // The preset editor (EqEditDialog), in the long-press menu's colours.
 
     /** Stock's #3CFFDE, when the progress colour cannot be read. */
     private static final int BAR = 0xFF3CFFDE;
@@ -106,14 +87,10 @@ public final class Eq {
             b.title.setTextColor(menuText(false));
             editReset(b.reset, false);
         } catch (Throwable t) {
-            // the stock white box stays
         }
     }
 
-    /**
-     * {@code EqEditDialog.switchReset}: the button is filled with the menu's text colour, at 80%
-     * while the cursor is elsewhere, and its label is the menu's background made opaque.
-     */
+    /** {@code EqEditDialog.switchReset}: filled with the menu text colour (80% unfocused). */
     public static void editReset(TextView tv, boolean focus) {
         if (tv == null) return;
         try {
@@ -125,11 +102,10 @@ public final class Eq {
             tv.setBackgroundDrawable(g);
             tv.setTextColor(menuBg() | 0xFF000000);
         } catch (Throwable t) {
-            // keep whatever the button had
         }
     }
 
-    // Sizes worked out once per dialog by editFit and applied to every row by editRow.
+    // Worked out once per dialog by editFit, applied to every row by editRow.
     private static float fitScale = 1f;
     private static int sideW;
     private static int sideH;
@@ -138,17 +114,15 @@ public final class Eq {
     private static final float SIZE_RESET = 14f;
     private static final int KNOB_DP = 14;
     private static final int OUTLINE_PX = 2;
-    /** The value column is sized by both: the band range is ±1500 mB, and "+" may be the wider. */
+    /** Range ±1500 mB; "+" may be the wider. */
     private static final String WIDEST = "-15";
     private static final String WIDEST_PLUS = "+15";
-    /** Below this the text is unreadable anyway; the box stays fixed and the text may clip. */
+    /** Below this the text may clip instead. */
     private static final float MIN_SCALE = 0.5f;
 
     /**
-     * End of {@code EqEditDialog.showDialog}: a fixed box — the screen's height less 16dp above and
-     * below, stock's 300 wide growing to the screen less 8dp a side for the value column — and the
-     * text shrunk until everything fits it, whatever the theme's font. The bands share the list's
-     * height ({@link #stretch}), so no row changes size with the cursor.
+     * End of {@code EqEditDialog.showDialog}: a fixed box (screen height less 16dp each side,
+     * 300 wide or more for the value column) and the text shrunk until it fits, whatever the font.
      */
     public static void editFit(android.app.Dialog d, DialogEqEditBinding b) {
         if (d == null || b == null) return;
@@ -212,11 +186,10 @@ public final class Eq {
             RecyclerView.Adapter a = b.recycler.getAdapter();
             if (a != null) a.notifyDataSetChanged();
         } catch (Throwable t) {
-            // the stock wrap_content box stays
         }
     }
 
-    /** A single line's height at {@code sp}, as a TextView with font padding lays it out. */
+    /** One line's height, as a TextView with font padding lays it out. */
     private static int line(TextPaint p, float sp, android.util.DisplayMetrics dm) {
         p.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, dm));
         Paint.FontMetricsInt fm = p.getFontMetricsInt();
@@ -224,10 +197,8 @@ public final class Eq {
     }
 
     /**
-     * One band row, in place of the tail of the adapter's {@code init}: menu-coloured text, bar and
-     * knob in the progress colour, the cursor's knob outlined ({@link #outline}), and the band's
-     * level in a fixed column right of the bar. The left label stays hidden — {@link #value} reads
-     * the range out of it.
+     * One band row, in place of the tail of the adapter's {@code init}. The left label stays
+     * hidden: {@link #value} reads the range out of it.
      */
     public static void editRow(ItemEqEditBinding b, int index, int pos) {
         if (b == null) return;
@@ -269,14 +240,10 @@ public final class Eq {
             if (cur) knob.setStroke(OUTLINE_PX, outline(bar));
             sb.setThumb(knob);
         } catch (Throwable t) {
-            // a stale row is better than a crash on a wheel click
         }
     }
 
-    /**
-     * The band's level in dB (the Equalizer works in millibels). Stock's bind has just written the
-     * range's low end into the left label and set the bar to {@code (|min| + level) / 100}.
-     */
+    /** dB. Stock's bind wrote the range's low end into the left label and the bar from it. */
     private static int value(ItemEqEditBinding b) {
         int min = 0;
         try {
@@ -301,11 +268,7 @@ public final class Eq {
         }
     }
 
-    /**
-     * The knob's outline must stand out against both the box and the bar, and a theme's menu
-     * colours can equal either. The first of selected text, plain text, white, black that
-     * contrasts with both wins; failing that, the one whose weaker contrast is strongest.
-     */
+    /** The first candidate contrasting with both box and bar; else the best of the weaker contrasts. */
     private static int outline(int bar) {
         int bg = menuBg() | 0xFF000000;
         int[] tries = { menuText(true), menuText(false), 0xFFFFFFFF, 0xFF000000 };
@@ -314,7 +277,7 @@ public final class Eq {
         for (int i = 0; i < tries.length; i++) {
             int c = tries[i] | 0xFF000000;
             double s = Math.min(contrast(c, bg), contrast(c, bar));
-            // A float on purpose: a round double literal is const-wide/high16, which apktool refuses.
+            // float: a round double literal is const-wide/high16, which apktool refuses.
             if ((float) s >= 2f) return c;
             if (s > bestScore) {
                 bestScore = s;
@@ -341,7 +304,7 @@ public final class Eq {
         return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
     }
 
-    /** The bar's drawable, remembering its colours so a rebind with the same ones keeps it. */
+    /** Remembers its colours, so a rebind with the same ones keeps it. */
     static final class Track extends LayerDrawable {
         final int bar;
         final int track;
@@ -388,38 +351,24 @@ public final class Eq {
             ThemeManager.INSTANCE.commonSetIcon(vb.image, eq.getIcon());
             vb.text.setText(eq.getStr());
         } catch (Throwable t) {
-            // a stale preview is better than a crash on a wheel click
         }
     }
 
     /**
-     * The preset rows share the list's whole height instead of leaving a strip under the last one.
-     *
-     * The rows are a fixed 30dip in the layout and there are ten of them, so they came to 300 of
-     * the 315 the screen has below the status bar. 315 / 10 is not a whole number, which is why the
-     * height cannot simply be written into {@code item_eq.xml}: the remainder is handed out one
-     * pixel at a time to the topmost rows, and that is what makes the last row end exactly at the
-     * bottom edge.
-     *
-     * Applied from a layout listener because the height has to come from the list's measured
-     * one, and re-checked on every pass so a rebound row cannot come back at its layout height. It
-     * settles after one pass — nothing is written once every row already has the height it wants,
-     * so the {@code requestLayout} this causes is not repeated.
+     * The rows share the list's measured height; the remainder goes a pixel each to the top rows,
+     * so the last row ends at the bottom edge (not expressible in {@code item_eq.xml}).
      */
     public static void stretch(RecyclerView rv) {
         try {
             if (rv != null) rv.getViewTreeObserver().addOnPreDrawListener(new Stretch(rv));
         } catch (Throwable t) {
-            // the rows keep their layout height
         }
     }
 
     /**
-     * A PRE-DRAW listener, not a layout one, and it returns false on the pass that changes
-     * anything: that cancels the frame about to be drawn, so the rows are never shown at their
-     * layout height first and corrected afterwards — which is exactly the twitch a layout listener
-     * produced (the first pass drew 30px rows, the second 31/32). Once every row has the height it
-     * wants nothing is written and the frame goes through.
+     * PRE-DRAW, returning false on a pass that changes anything: the frame is cancelled, so rows are
+     * never drawn at their layout height first. Settles after one pass; re-checked on every one,
+     * since rebound rows come back at their layout height.
      */
     static final class Stretch implements ViewTreeObserver.OnPreDrawListener {
         private final RecyclerView rv;
@@ -451,7 +400,7 @@ public final class Eq {
                 }
                 return !changed;
             } catch (Throwable t) {
-                return true;    // leave the rows as the layout made them
+                return true;
             }
         }
     }

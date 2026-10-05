@@ -29,33 +29,21 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
- * The "Show all …" rows of Genres and Artists: they are buttons, not entries, and everything a list
- * does to an entry has to pass them by.
- *
- * Two of them live here — Genres' Show all albums (row 0 of the artist level, stock's
- * "All Albums", relabelled and given an icon) and the Show all songs row of an album list
- * ({@code Albums.isAllSongs}, used by an artist's albums and by Genres' album level). Folders has
- * rows of the same kind and answers for itself ({@code Folders}, skill {@code ipp-folders}); the
- * rules are the ones written down there:
- *
- *   - no tick in multi-select ({@code MyBaseAdapter.addItemToSelectedIndex}, and "select all"
- *       drops it again),
- *   - no long-press menu,
- *   - the cursor does not START on it — opening the screen puts it on the row below, because the
- *       list is what the user came to look at and the button is one click up.
+ * The "Show all …" button rows of Genres and of album lists: Genres' "Show all albums" (stock's
+ * "All Albums", row 0 of the artist level) and an album list's "Show all songs". As in Folders: no
+ * tick, no long-press menu, and the cursor does not START on one.
  */
 public final class Mark {
 
     private Mark() { }
 
-    /** Row 0 of Genres' artist level: stock's "All Albums". */
+    /** Row 0 of Genres' artist level. */
     public static boolean isGenreAllAlbums(Object adapter, int position) {
         if (position != 0 || !(adapter instanceof MainAdapter)) return false;
         Context c = ((MainAdapter) adapter).getContext();
         return c instanceof GenresActivity;
     }
 
-    /** The "Show all songs" row of an album list (artist's albums, Genres' album level). */
     public static boolean isAllSongsRow(Object adapter, int position) {
         try {
             if (position < 0 || !(adapter instanceof AlbumListAdapter)) return false;
@@ -68,42 +56,25 @@ public final class Mark {
         }
     }
 
-    // ---- Genres: the "Show all songs" row of a genre's album list ------------------------------
-    //
-    // The genre is noted when its album list is asked for and consumed when the list comes back:
-    // the list arrives on the main thread through a static lambda that has no field for it, and
-    // the two run one after the other with nothing in between that could open another genre.
-
+    // Noted when a genre's album list is asked for, consumed when it comes back (through a static
+    // lambda with no field for it); nothing in between can open another genre.
     private static String pendingGenre;
     private static Genre genreObj;
 
-    /** Called wherever the Genre object is to hand: opening a genre, and listing its albums. */
     public static void noteGenre(Genre g) {
         pendingGenre = g == null ? null : g.getName();
         genreObj = g;
     }
 
     /**
-     * Genres, third level: picking an ARTIST opens that artist's albums instead of dropping every
-     * one of their songs into one list — the same shape the Artists section has, and the reason
-     * "Show all albums" above it now has a counterpart here. The list is built by hand because
-     * stock has no query for "this artist's albums within this genre":
-     *
-     *   - the artist's songs in this genre (the very query stock's own branch used), then
-     *   - their album keys, in first-seen order, deduplicated — the same encoded name a row
-     *       carries everywhere else, so opening one lands in {@code Albums.songsSync} and the genre
-     *       is applied there as well, and
-     *   - the artist's "Show all songs" marker on top, which is what the old behaviour becomes.
-     *
-     * Returns false when there is nothing to show, and then stock's own branch runs untouched.
+     * Genres, picking an ARTIST: that artist's albums within the genre, with "Show all songs" on
+     * top, as in Artists. Album keys are the usual encoded names, so opening one applies the genre
+     * in {@code Albums.songsSync}. False = nothing to show; stock's branch runs.
      */
     public static boolean artistAlbums(GenresActivity a, String artist) {
         try {
             if (a == null || artist == null || artist.length() == 0) return false;
-            // The list the screen draws and the list behind it have to be found by ONE test:
-            // an artist row is a name Artists produced out of a tag, and the query matches the
-            // column as written. forMenu owns that fallback now (Artists.byTag), so the Artists
-            // screen and this one cannot drift apart.
+            // The same test that built the artist row (Artists.byTag), or the row opens empty.
             List songs = Artists.forMenu(artist, genreObj);
             if (songs == null || songs.isEmpty()) return false;
 
@@ -117,9 +88,7 @@ public final class Mark {
                 if (seen.add(key)) names.add(key);
             }
             if (names.isEmpty()) return false;
-            // The album level's own sort, before the button goes on top. This runs on the MAIN
-            // thread (confirm calls us directly), so a year sort takes the years that are cached
-            // and hands `a` over for the missing ones to be read on a thread of their own.
+            // On the main thread: a year sort uses cached years and reads the rest on a thread.
             Genres.albums(names, a);
             names.add(0, Albums.artistMark(artist));
 
@@ -138,19 +107,13 @@ public final class Mark {
             afterFill(ad, lv);
             return true;
         } catch (Throwable t) {
-            return false;       // stock's branch takes over
+            return false;
         }
     }
 
     /**
-     * Put the "Show all songs" row at the top of a genre's album list, exactly as an artist's album
-     * list gets one.
-     *
-     * The list handed to {@code AlbumListAdapter.setAlbums} is a list of NAMES — the adapter
-     * builds the {@link Album} objects itself — so the row is the marker STRING, not an Album.
-     * (Putting an Album in threw {@code ClassCastException} inside setAlbums.) From there it
-     * travels the stock path: the bind paints it ({@code Albums.allSongsRow}) and picking it ends
-     * in {@code Albums.songsSync}, which answers with the genre's songs.
+     * "Show all songs" on top of a genre's album list. {@code setAlbums} takes NAMES, so the row is
+     * the marker string — an {@link Album} there throws {@code ClassCastException}.
      */
     public static void genreAlbums(List albums) {
         try {
@@ -160,38 +123,19 @@ public final class Mark {
             if (first instanceof String && Albums.isGenreAll((String) first)) return;
             albums.add(0, Albums.genreMark(g));
         } catch (Throwable t) {
-            // no button: the genre's albums are still all there
         }
     }
 
-    /**
-     * The artist's songs found the way the LIST that shows them is built, for when the query comes
-     * back empty.
-     *
-     * The names on the artist level of Genres are produced by {@code Artists.listGenre}, which
-     * splits composite tags apart — so a row can be one name out of "A; B", while the query behind
-     * it (stock, and the hook in front of it) matches the artist column as written. Anything the
-     * split normalised away — a stray space, a difference in case — leaves the row on screen with
-     * nothing behind it, which is what "this artist has no songs" was. Here the test is
-     * {@code Artists.has}, the very one the splitting uses, over the cached song table.
-     */
-
-    /** The title bar of a list opened from one of those rows — the marker byte is not shown. */
+    /** Without the marker byte. */
     public static String title(String albumName) {
         return Albums.realName(albumName);
     }
 
-    /** True for a row that is one of the buttons. */
     public static boolean blocked(Object adapter, int position) {
         return isGenreAllAlbums(adapter, position) || isAllSongsRow(adapter, position);
     }
 
-    /**
-     * True while the CURSOR stands on a button. Called at the top of a screen's {@code longConfirm},
-     * where the list is all there is to go on — the adapter carries the cursor ({@code getPosition})
-     * and the ListView carries the adapter, so one call answers for every level a screen pages
-     * through.
-     */
+    /** The cursor is on a button; top of a screen's {@code longConfirm}, for every level. */
     public static boolean blockedList(ListView lv) {
         try {
             Object a = lv == null ? null : lv.getAdapter();
@@ -202,10 +146,7 @@ public final class Mark {
         }
     }
 
-    /**
-     * "Select all" ticks every row it walks, so the buttons are un-ticked right after its loop —
-     * the same shape {@code Folders.dropMarks} has.
-     */
+    /** After "Select all"'s loop, which ticks every row. */
     public static void dropMarks(Object adapter, List selected) {
         try {
             if (selected == null || selected.isEmpty()) return;
@@ -215,25 +156,17 @@ public final class Mark {
                 if (blocked(adapter, ((Integer) o).intValue())) selected.remove(i);
             }
         } catch (Throwable t) {
-            // a tick too many is better than a crash while selecting
         }
     }
 
-    /**
-     * Just after a list that may begin with a button has been filled: move the cursor off it.
-     *
-     * Only when the cursor is still on row 0, i.e. the list has just been built — re-sorting a
-     * list the user has already walked leaves their row alone.
-     */
+    /** Moves the cursor off a leading button, only while it is still on row 0 (a fresh list). */
     public static void afterFill(Object adapter) {
         afterFill(adapter, null);
     }
 
     /**
-     * @param lv the list, when it is to hand: the cursor goes to row 1 but the list itself is left
-     *           resting at row 0, or the button scrolls off the top edge and the screen opens with
-     *           no sign that it is there at all. {@code Other.gotoAdapter(lv, a, 1)} does both at
-     *           once and is exactly what must NOT happen here.
+     * @param lv kept resting at row 0 while the cursor goes to row 1, or the button scrolls off
+     *           the top — so NOT {@code Other.gotoAdapter(lv, a, 1)}.
      */
     public static void afterFill(Object adapter, ListView lv) {
         try {
@@ -244,15 +177,12 @@ public final class Mark {
             a.setPosition(1);
             if (lv != null) lv.setSelection(0);
         } catch (Throwable t) {
-            // the cursor stays where it was
         }
     }
 
     /**
-     * The cursor does not stop on a button while multi-select is on — there is nothing to tick, so
-     * standing on it is a dead step. Called at the end of both wheel handlers of a screen that has
-     * one, the same place and the same rule as {@code Folders.skipMark}: always push DOWNWARDS,
-     * because the button is the first row whichever way the wheel came from.
+     * In multi-select the cursor never stops on a button. End of both wheel handlers, as
+     * {@code Folders.skipMark}; always pushes DOWN — the button is the first row.
      */
     public static void skip(Object adapter, boolean multi) {
         if (!multi || !(adapter instanceof MyBaseAdapter)) return;
@@ -263,19 +193,14 @@ public final class Mark {
             int n = a.getCount();
             int to = pos + 1;
             while (to < n && blocked(a, to)) to++;
-            if (to < n) a.setPosition(to);      // setPosition notifies for us
+            if (to < n) a.setPosition(to);      // setPosition notifies
         } catch (Throwable t) {
-            // a cursor on a row it cannot tick is not worth a crash
         }
     }
 
     /**
-     * Paint Genres' "Show all albums" row, at the very END of {@code MainAdapter.getView} — the row's
-     * text colour has to be set already, because the icon copies it (the rule every menu icon in the
-     * mod follows, so it tracks the theme and the focus highlight).
-     *
-     * Both states are written on every bind: the rows are recycled, so an ordinary artist row
-     * that once was this one would keep the icon.
+     * Genres' "Show all albums" row, at the END of {@code MainAdapter.getView}: the icon copies the
+     * text colour already set. Both states are written on every bind — rows are recycled.
      */
     public static void mainRow(View row, TextView tv, Object adapter) {
         try {
@@ -291,25 +216,17 @@ public final class Mark {
                 labelTop(tv, true);
                 return;
             }
-            // The button is as tall as the Shuffle row (49) rather than as a menu row (45); the
-            // height has to be set here because item_main.xml is every other row as well, and it is
-            // set BOTH ways because the rows are recycled.
+            // As tall as an album row, not a menu row; item_main.xml is every other row too.
             rowHeight(row, 0);
             labelTop(tv, false);
             iv.setVisibility(View.VISIBLE);
             iv.setImageResource(R.mipmap.ipp_show_all_albums);
             if (tv != null) Icons.menu(iv, tv.getCurrentTextColor());
         } catch (Throwable t) {
-            // an unpainted icon is not worth a crash in a list bind
         }
     }
 
-    /**
-     * The bind knows the row by its LABEL rather than by its position, because at the point the
-     * icon is painted — the end of {@code MainAdapter.getView} — the position argument is gone:
-     * stock has reused that register for something else by then. Only ever asked on the Genres
-     * screen, so the {@code getString} costs nothing anywhere else.
-     */
+    /** By LABEL: at the end of {@code MainAdapter.getView} the position register is reused. */
     private static boolean isAllAlbumsLabel(Object adapter, TextView tv) {
         if (tv == null || !(adapter instanceof MainAdapter)) return false;
         Context c = ((MainAdapter) adapter).getContext();
@@ -319,23 +236,15 @@ public final class Mark {
     }
 
     /**
-     * The label of an ordinary menu row is aligned to the row's TOP ({@code item_main.xml}) — that
-     * is what keeps it from moving by a pixel when the marquee starts. In a 45-tall row the label
-     * fills it anyway; in the button's 49 it left the text hanging above centre, out of line with
-     * the Shuffle row it is supposed to match. So the button centres its label and every other row
-     * puts the top alignment back (the rows are recycled).
+     * A menu row's label is top-aligned (so the marquee does not shift it); the taller button
+     * centres its label instead, and recycled rows get the top alignment back.
      */
     private static void labelTop(TextView tv, boolean top) {
         try {
             if (tv == null) return;
 
-            // Measured on the device, screenshot against screenshot, over the letters the two rows
-            // share ("Show all", nothing descending): the album list's row draws them at y 67..85
-            // and this one at 66..84. Both rows are 60 tall and both labels are centred in them —
-            // but this view carries a 5dip padding and measures 44 where the other measures 32
-            // (item_album pins its name to 32dip), and (60-44)/2 lands a pixel above (60-32)/2.
-            // One pixel moves from the bottom padding to the top, which shifts the glyphs without
-            // changing the view's height.
+            // One pixel from bottom padding to top: measured, it lines the glyphs up with the
+            // album list's "Show all songs" row.
             int p = tv.getResources().getDimensionPixelSize(R.dimen.main_item_padding);
             int wantTop = top ? p : p + 1;
             if (tv.getPaddingTop() != wantTop) {
@@ -350,14 +259,13 @@ public final class Mark {
             lp.gravity = want;
             tv.setLayoutParams(lp);
         } catch (Throwable t) {
-            // the label keeps the alignment the layout gave it
         }
     }
 
-    /** The album row's height, in dip — what {@code item_album} measures, cover box included. */
+    /** {@code item_album}'s height, cover box included. */
     private static final int MARK_ROW_DIP = 60;
 
-    /** @param dimen the dimension to take the height from, or 0 for the album row's height. */
+    /** @param dimen 0 for the album row's height. */
     private static void rowHeight(View row, int dimen) {
         try {
             int want = dimen != 0
@@ -373,17 +281,14 @@ public final class Mark {
             lp.height = want;
             row.setLayoutParams(lp);
         } catch (Throwable t) {
-            // the row keeps the height its layout gave it
         }
     }
 
-    /** The label stock's "All Albums" row now carries. */
     public static String allAlbumsLabel() {
         try {
             Context c = Y1Application.Companion.getAppContext();
             if (c != null) return c.getString(R.string.ipp_show_all_albums);
         } catch (Throwable t) {
-            // fall through
         }
         return "Show all albums";
     }

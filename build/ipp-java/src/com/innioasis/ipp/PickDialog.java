@@ -22,32 +22,16 @@ import com.innioasis.y1.base.BaseDialog;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * The tick list in front of "Cache library" and "Clear cache": which categories the button touches.
- *
- * A plain table with no borders: one row per category, the tick on the left, the label next to it
- * and its weight on disk at the end (clearing only, where the number is known). The first row is
- * "Select all" — it carries no tick of its own, it simply turns every category on or off. The last
- * row is the button, so the wheel runs over the whole dialog in one line; there is no Cancel,
- * because the top button closes the innermost thing on screen everywhere in this app.
- *
- * The look is {@code SubMenuDialog}'s, because that is the app's list-inside-a-dialog: a rounded box
- * in the menu's background colour, rows highlighted through
- * {@code ThemeManager.menuItemSetBackground} / {@code menuItemSetTextColor} and the button dressed
- * by {@code optionSetBackground} / {@code optionSetTextColor}, which is what every stock dialog's
- * buttons go through — so a theme dresses this dialog without knowing about it.
- *
- * The box is built as a {@link GradientDrawable} rather than {@code bg_submenu}: that drawable
- * carries the rounded corners, but a theme's {@code menuBackgroundColor} has to replace the colour,
- * and {@code setBackgroundColor} would replace the whole drawable — corners and all.
- *
- * Authored in Java (build/ipp-java); raw types and named nested classes only — see the notes in
- * CLAUDE.md about the bundled d8.
+ * The category tick list in front of "Cache library" and "Clear cache": "Select all", one row per
+ * category with its weight on disk, and the button as the last row; the top button closes. Dressed
+ * like {@code SubMenuDialog} through ThemeManager's menu and option hooks, so a theme dresses it
+ * unawares. The box is a {@link GradientDrawable}: {@code setBackgroundColor} on {@code bg_submenu}
+ * would lose its corners.
  */
 public final class PickDialog extends BaseDialog {
 
-    /** What to do with the categories the user ticked. Named class: d8 crashes on anonymous ones. */
     public static abstract class Go {
-        /** {@code mask} is an OR of {@code Pick.COVERS} / {@code TAGS} / {@code SYSTEM}; 0 = none. */
+        /** An OR of {@code Pick.COVERS} / {@code TAGS} / {@code SYSTEM}. */
         public abstract void go(int mask);
     }
 
@@ -58,7 +42,7 @@ public final class PickDialog extends BaseDialog {
     private final boolean sizes;
     private final Go go;
 
-    /** One entry per line the wheel can stop on: "select all", the categories, ok, cancel. */
+    /** [0] "Select all", then the categories. */
     private boolean[] on;
     private long[] size;              // -1 while not measured
     private View[] rows;
@@ -69,7 +53,7 @@ public final class PickDialog extends BaseDialog {
 
     private int okRow;
 
-    /** {@code bg_submenu}'s own colour, for when the theme has nothing to say. */
+    /** {@code bg_submenu}'s colour. */
     private static final int BOX = 0xFF8C94B2;
     private static final float CORNER = 10.0f;
 
@@ -91,11 +75,11 @@ public final class PickDialog extends BaseDialog {
         on = new boolean[n + 1];
         size = new long[n + 1];
         for (int i = 0; i <= n; i++) {
-            on[i] = true;                 // "Select all" is on to begin with, so everything is
+            on[i] = true;
             size[i] = -1L;
         }
         okRow = n + 1;
-        sel = 0;                          // the wheel starts at the top, on "Select all"
+        sel = 0;
 
         rows = new View[n + 2];
         labels = new TextView[n + 2];
@@ -121,14 +105,11 @@ public final class PickDialog extends BaseDialog {
                 activity.getResources().getColor(R.color.white), false);
         box.addView(head, -1, -2);
 
-        // "Select all", then one row per category.
         box.addView(row(0, activity.getString(R.string.ipp_pick_all)), -1, -2);
         for (int i = 0; i < n; i++) {
             box.addView(row(i + 1, activity.getString(Pick.label(cats[i]))), -1, -2);
         }
 
-        // One button, centred. There is no Cancel: the top button closes the innermost thing on
-        // screen everywhere in this app, and here that is the dialog.
         LinearLayout buttons = new LinearLayout(activity);
         buttons.setOrientation(LinearLayout.HORIZONTAL);
         buttons.setGravity(Gravity.CENTER);
@@ -147,12 +128,8 @@ public final class PickDialog extends BaseDialog {
         }
 
         paintAll();
-        // A theme's row bitmaps are loaded in the background and applied by a callback that holds
-        // the view which asked for them. Scroll faster than the first load and several rows have a
-        // highlight in flight; each lands after its row has been cleared again, and the dialog
-        // ends up highlighted end to end. A list never shows this because its next bind paints
-        // over it — this is that repaint: once a bitmap has arrived it is cached, so painting again
-        // is synchronous and settles it.
+        // A theme's row bitmap lands asynchronously on the view that asked, possibly after the row
+        // was cleared again, leaving stray highlights. Repainting once it is cached settles it.
         Rows.watchFlat(new Repaint(this));
         if (sizes) new Thread(new Measure(this)).start();
     }
@@ -163,7 +140,6 @@ public final class PickDialog extends BaseDialog {
         super.dismiss();
     }
 
-    /** Named (d8 here crashes on anonymous classes). */
     static final class Repaint implements Runnable {
         private final PickDialog d;
 
@@ -182,10 +158,7 @@ public final class PickDialog extends BaseDialog {
 
     private boolean repainting;
 
-    /**
-     * The theme's font, exactly as everywhere else that builds views in code: the app theme asks for
-     * {@code monospace} and ThemeManager swaps that typeface for the theme's own font.ttf.
-     */
+    /** The theme font: ThemeManager swaps MONOSPACE for it. */
     private static Typeface font() {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
     }
@@ -195,10 +168,9 @@ public final class PickDialog extends BaseDialog {
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setGravity(Gravity.CENTER_VERTICAL);
         r.setPadding(5, 3, 5, 3);
-        r.setTag(Rows.FLAT);      // see paint(): the theme's highlight must not dictate a height
+        r.setTag(Rows.FLAT);
 
-        // The tick leads the row. "Select all" keeps the view but never shows it, so every label
-        // starts at the same x.
+        // "Select all" keeps an invisible tick, so every label starts at the same x.
         ImageView t = new ImageView(activity);
         t.setImageBitmap(tick());
         t.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -209,7 +181,6 @@ public final class PickDialog extends BaseDialog {
         TextView l = new TextView(activity);
         l.setTextSize(14.0f);
         l.setTypeface(font());
-        // NOT single-line: a category says what it holds, and that does not fit on one line.
         l.setMaxLines(3);
         l.setText(label);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2);
@@ -232,7 +203,7 @@ public final class PickDialog extends BaseDialog {
 
     private View button(int i, String text) {
         TextView b = new TextView(activity);
-        b.setTag(Rows.FLAT);      // a theme's dialog-option bitmap sizes it the same way a row's does
+        b.setTag(Rows.FLAT);
         b.setTextSize(15.0f);
         b.setTypeface(font());
         b.setGravity(Gravity.CENTER);
@@ -243,8 +214,6 @@ public final class PickDialog extends BaseDialog {
         labels[i] = b;
         return b;
     }
-
-    // ---------------------------------------------------------------- painting
 
     private void paintAll() {
         for (int i = 0; i < rows.length; i++) paint(i);
@@ -257,12 +226,7 @@ public final class PickDialog extends BaseDialog {
                 ? R.color.selected_text_color_submenu : R.color.white);
 
         if (i == okRow) {
-            // Exactly what DialogUtil does to its own buttons — optionSetBackground /
-            // optionSetTextColor are the theme's hooks for a dialog button, and going straight to
-            // setBackgroundResource (as this did at first) is why it stayed stock-coloured under a
-            // theme. -1 (white) is the default text colour stock passes there.
-            // Same reason as the rows below: the stock pill goes on first, so a theme that answers
-            // with nothing leaves a button that still looks like a button.
+            // As DialogUtil dresses its buttons; the stock pill first, in case the theme says nothing.
             labels[i].setBackgroundResource(focus ? R.drawable.conform_bg : R.drawable.cancle_bg);
             ThemeManager.INSTANCE.optionSetBackground(labels[i],
                     focus ? R.drawable.conform_bg : R.drawable.cancle_bg, focus);
@@ -271,55 +235,33 @@ public final class PickDialog extends BaseDialog {
             return;
         }
 
-        // Cleared FIRST, and the highlight guaranteed AFTER, because ThemeManager may do neither.
-        // Its setBackground leaves the view untouched whenever the theme's bitmap is not in its
-        // cache yet (it returns "loading" and lets a callback paint later), so a row that is losing
-        // the highlight can simply keep it — which is what left every row the cursor had passed
-        // painted blue, at any scrolling speed. Here the dialog decides: nothing, then whatever the
-        // theme has to say, then a fallback if it said nothing at all.
+        // Cleared FIRST and the highlight guaranteed AFTER: while the theme bitmap is loading
+        // ThemeManager leaves the view untouched, and a row losing the highlight would keep it.
+        // 0 for an unfocused row, as SubmenuAdapter does — with no theme the resource is applied.
         rows[i].setBackgroundDrawable(null);
-        // 0 for an unfocused row, exactly as SubmenuAdapter does it: with no theme the resource is
-        // applied as it stands, so handing over the highlight drawable would paint every row.
         ThemeManager.INSTANCE.menuItemSetBackground(rows[i],
                 focus ? R.drawable.item_selected_submenu : 0, focus);
         if (focus && rows[i].getBackground() == null) {
             rows[i].setBackgroundResource(R.drawable.item_selected_submenu);
         }
-        // A theme's highlight is a bitmap drawn for a 640px-wide device (640x91), and a view's
-        // height is at least its background's minimum — so the focused row grew to the bitmap's
-        // own height and shoved the rest of the dialog about. Same defect the list rows have, same
-        // answer: wrap it in a drawable with no intrinsic size. The tag is for the asynchronous
-        // applier, which sets a fresh bitmap of its own long after this call.
+        // A theme's 640x91 highlight bitmap would set the row's height.
         Rows.noSize(rows[i]);
         ThemeManager.INSTANCE.menuItemSetTextColor(labels[i], fg, focus);
         ThemeManager.INSTANCE.menuItemSetTextColor(values[i], fg, focus);
-        // The tick takes the colour the label ACTUALLY got, not the one we asked for: under a theme
-        // menuItemSetTextColor answers with the theme's own colour (its menuItemTextColor /
-        // menuItemSelectedTextColor) and ignores fg entirely, so the two parted company — a white
-        // tick beside black text, and unchanged as the cursor arrived. Reading the colour back off
-        // the label is the rule every menu icon in the mod follows (Icons.menu), and it also gets
-        // the tint mode right: SRC_IN, the shape being carried by the bitmap's alpha.
+        // The colour the label ACTUALLY got: under a theme fg is ignored.
         Icons.menu(ticks[i], labels[i].getCurrentTextColor());
-        // Row 0 is "Select all" — it drives the ticks below it and carries none of its own.
         ticks[i].setVisibility(i > 0 && on[i] ? View.VISIBLE : View.INVISIBLE);
         values[i].setText(sizeText(i));
     }
 
-    /**
-     * The weight of one category — and on the "Select all" row the sum, which is the number the
-     * Settings row itself shows. Nothing until the measurement is in.
-     */
+    /** On "Select all", the sum. */
     private String sizeText(int i) {
         if (!sizes) return "";
         long n = size[i];
         return n < 0L ? "…" : Pick.sizeText(n);
     }
 
-    /**
-     * The tick itself, drawn rather than shipped as an asset: two strokes on a transparent square,
-     * tinted per row through {@code setColorFilter}, so it follows the theme's text colour and the
-     * focus highlight the way every other mark in the app does. One bitmap for the whole app.
-     */
+    /** White strokes on transparent, tinted per row. One bitmap for the whole app. */
     private static Bitmap mark;
 
     public static Bitmap tick() {
@@ -336,8 +278,6 @@ public final class PickDialog extends BaseDialog {
         return b;
     }
 
-    // ---------------------------------------------------------------- the wheel
-
     @Override
     public void shortUp(int keyCode) {
         KeyMap k = KeyMap.INSTANCE;
@@ -352,7 +292,7 @@ public final class PickDialog extends BaseDialog {
         }
     }
 
-    /** Long centre press is the shutdown prompt everywhere in this app; keep it working here. */
+    /** A long centre press is the shutdown prompt everywhere. */
     @Override
     public void longDown(int keyCode, int repeatCount) {
         if (keyCode == KeyMap.INSTANCE.getKEY_ENTER() && repeatCount == 3
@@ -387,10 +327,7 @@ public final class PickDialog extends BaseDialog {
         toggle(sel);
     }
 
-    /**
-     * "Select all" turns every category on, or — when they are all on already — off. It shows no
-     * tick of its own, so its state is simply what the rows below it say.
-     */
+    /** "Select all": all on, or all off when they already are. */
     private void toggle(int i) {
         if (i == 0) {
             boolean all = true;
@@ -407,17 +344,11 @@ public final class PickDialog extends BaseDialog {
             kotlin.jvm.functions.Function0 back = getOnBack();
             if (back != null) back.invoke();
         } catch (Throwable t) {
-            // nothing to do
         }
         dismiss();
     }
 
-    // ---------------------------------------------------------------- the weight column
-
-    /**
-     * Measuring means walking the cache directories, so it is never done on the way to a frame: the
-     * dialog opens with "…" in the column and fills the numbers in when they arrive.
-     */
+    /** Walks the cache directories, so never on the way to a frame. */
     static final class Measure implements Runnable {
         private final PickDialog d;
 
@@ -435,12 +366,10 @@ public final class PickDialog extends BaseDialog {
             try {
                 d.activity.runOnUiThread(new Apply(d, out));
             } catch (Throwable t) {
-                // the dialog is gone
             }
         }
     }
 
-    /** Named (d8 here crashes on anonymous classes). */
     static final class Apply implements Runnable {
         private final PickDialog d;
         private final long[] out;

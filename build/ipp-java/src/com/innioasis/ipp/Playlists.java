@@ -30,46 +30,25 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Where the favourites playlist ({@link Fav}) sits in a playlist list, and what may be done to it.
- *
- * It is not an ordinary playlist — it is generated, always present, and it is the heart on the
- * Now-Playing row seen from the other side — so three things are true of it that are not true of
- * the others, and all three are decided here because both list sources in {@code Y1Repository}
- * ({@code getAllPlaylistSync} and {@code getPlayListBySort}) already run through {@link #first}:
- *   - It is pinned to the top, whatever the chosen sort.
- *   - It is hidden entirely while "Likes system" is off — the setting hides the heart, and
- *       a playlist the user cannot fill from the player has no business being in the list either.
- *       Nothing is deleted: the playlist, its songs and the {@code like:} preferences all stay, so
- *       turning the setting back on brings everything back exactly as it was.
- *   - It cannot be deleted ({@link #trimMenu} takes the entry out of the long-press menu, and
- *       {@code Y1Repository.deletePlaylist} refuses it outright for the multi-select path).
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * Playlists beyond stock. The Favorites playlist ({@link Fav}) is pinned to the top, hidden (not
+ * deleted) while "Likes system" is off, and cannot be deleted — both list sources in
+ * {@code Y1Repository} pass through {@link #first}. Also: date-added order for music and video
+ * playlists, "Add to <playlist>" inside a playlist, and "already in the playlist".
  */
 public final class Playlists {
 
-    /** The id itself lives in {@link Fav#UUID_STR} — never write a second copy of it here. */
+    /** The id lives only in {@link Fav#UUID_STR}. */
     private static final String FAV_ID = Fav.UUID_STR;
 
-    /**
-     * The favourites playlist cannot be deleted by hand. Ships as {@code true}; a test build
-     * that has to delete it — to check that switching "Likes system" on creates it again, which
-     * otherwise needs a full reflash — sets this to false and nothing else.
-     */
+    /** False only in a test build that must delete Favorites to check it is re-created. */
     private static final boolean PROTECT = true;
 
-    /**
-     * True for the favourites playlist while it is protected, i.e. for the three guards that keep
-     * it: the menu entry, the multi-select untick and the delete loop in {@code PlaylistsActivity}.
-     *
-     * Kept apart from {@link #isFav} because that one also answers "pin this row to the top" and
-     * "hide it while likes are off", and those hold whether the delete guard is on or not.
-     */
+    /** For the delete guards; {@link #isFav} also answers pinning and hiding, which always hold. */
     public static boolean locked(Object o) {
         return PROTECT && isFav(o);
     }
 
-    /** True for the favourites playlist. Accepts a {@code Playlist} or a {@code UUID}. */
+    /** A {@code Playlist} or a {@code UUID}. */
     public static boolean isFav(Object o) {
         try {
             if (o instanceof Playlist) return FAV_ID.equals(String.valueOf(((Playlist) o).getPlaylistId()));
@@ -80,17 +59,13 @@ public final class Playlists {
         }
     }
 
-    /** The "Likes system" setting — the same one that shows or hides the heart in {@code Deck}. */
+    /** "Likes system", which also shows the heart in {@code Deck}. */
     public static boolean enabled() {
         Context c = Y1Application.Companion.getAppContext();
         return Prefs.on(c, "likes");
     }
 
-    /**
-     * Same list with the favourites playlist first — or without it at all while likes are off.
-     * Returns the input untouched when there is nothing to do, so the common case allocates
-     * nothing.
-     */
+    /** Favorites first, or absent while likes are off. The input untouched when nothing to do. */
     public static List first(List playlists) {
         try {
             if (playlists == null || playlists.isEmpty()) return playlists;
@@ -98,47 +73,33 @@ public final class Playlists {
             for (int i = 0; i < playlists.size(); i++) {
                 if (isFav(playlists.get(i))) { at = i; break; }
             }
-            if (at < 0) return playlists;                 // absent
+            if (at < 0) return playlists;
             if (!enabled()) {
-                ArrayList out = new ArrayList(playlists); // hidden, not deleted
+                ArrayList out = new ArrayList(playlists);
                 out.remove(at);
                 return out;
             }
-            if (at == 0) return playlists;                // already first
+            if (at == 0) return playlists;
             ArrayList out = new ArrayList(playlists);
             out.add(0, out.remove(at));
             return out;
         } catch (Throwable t) {
-            return playlists;                             // never let ordering break the list
+            return playlists;
         }
     }
 
-    // ---- the playlist's name follows the interface language ------------------------------------
-    //
-    // Two rules that have to coexist: the user may rename it like any other playlist, and switching
-    // the interface language must relabel it (it is a generated playlist, so it belongs to the UI,
-    // not to the user's data). So the rename is undone by a LANGUAGE CHANGE and by nothing else —
-    // which is why the trigger is the stored language index, not the name.
-    //
-    // Stock renamed it from Fav.ensure instead, i.e. on every "add to favourites", so a manual name
-    // never survived the next heart press; and the Settings language screen never renamed it at all
-    // (only the first-boot one did), so the label lagged a language behind. Both are fixed by
-    // asking here, from MainActivity.initView, which is where the app lands after a language change
-    // and — unlike the language screen itself — with the new locale genuinely in effect: the switch
-    // goes through the system configuration, so a getString taken straight after it still answers
-    // in the old language.
+    // The user may rename Favorites, and a LANGUAGE CHANGE relabels it — nothing else does, so the
+    // trigger is the stored language index, not the name. From MainActivity.initView: the language
+    // screen itself still answers getString in the old locale.
 
     private static final String LANG_KEY = "fav_lang";
     private static final String HEART = "❤ ";
 
+    /** Once per app start, from {@code MainActivity.initView}. */
     public static void syncName(Context c) {
         try {
             if (c == null) return;
-            // the playlist EXISTS by default, whatever the "Likes system" setting says; the
-            // setting only decides whether it is shown (see first() above). Creating it when the
-            // system is switched on instead would leave an install that never touched the toggle
-            // with no Favorites playlist at all. ensure() is a no-op once it is there, and this runs
-            // from MainActivity.initView, i.e. once per app start.
+            // It EXISTS whatever the setting says, which only decides whether it is shown.
             Fav.ensure(c);
 
             int lang = SharedPreferencesUtils.INSTANCE.getLanguage();
@@ -148,34 +109,22 @@ public final class Playlists {
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             if (repo == null) return;
             Playlist p = repo.getPlaylistById(UUID.fromString(FAV_ID));
-            if (p == null) return;                       // created on the first heart, in this locale
+            if (p == null) return;
             String name = c.getString(R.string.ipp_favorites);
             if (name.equals(p.getName())) return;
-            // A name stored with the heart in front of it is the generated one of an older build,
-            // not a rename: the heart is an icon beside the row now (PlGrid.listRow).
+            // "❤ name" is an older build's generated name, not a rename.
             if (!relabel && !(HEART + name).equals(p.getName())) return;
             p.setName(name);
             p.setLowerName(name.toLowerCase());
             repo.updatePlaylist(p);
         } catch (Throwable t) {
-            // a playlist named in the previous language is not worth a crash on startup
         }
     }
 
     /**
-     * The Playlists screen's long-press menu, with "Delete playlist" left out on the favourites
-     * row. Called from {@code longConfirm} immediately before {@code show()}.
-     *
-     * It builds the whole list rather than editing one, because stock only rebuilds the menu
-     * {@code if (canChangePlayList)} — a flag that starts false and is only ever set by creating or
-     * renaming a playlist. Until then the dialog keeps the list its lazy constructor made, so
-     * trimming the list stock had just built worked in one state and did nothing in the other; that
-     * is why the entry came back after a rename flipped the flag. Reached on every long press, the
-     * result is the same menu whichever path stock took.
-     *
-     * The delete loop is guarded as well ({@code PlaylistsActivity$deletePlaylist$…$confirm$1}) —
-     * multi-select deletes every ticked row and the menu cannot know about those. This is so the
-     * user is not offered an action that would silently do nothing.
+     * The Playlists screen's long-press menu, built WHOLE before {@code show()}: stock rebuilds it
+     * only after a create or rename, so editing its list worked in one state and not the other.
+     * On Favorites: no delete, and no entries that start a multi-selection it cannot join.
      */
     public static void favMenu(SubMenuDialog dlg, Object adapter, Context c) {
         try {
@@ -184,12 +133,10 @@ public final class Playlists {
             boolean fav = adapter instanceof RVBaseAdapter
                     && locked(((RVBaseAdapter) adapter).getSelectItem());
             List l = new ArrayList();
-            // the order stock builds, minus the one entry
+            // Stock's order.
             if (SharedPreferencesUtils.INSTANCE.getSortPlayListIsChange()) {
                 l.add(c.getString(R.string.song_menu_sort_by));
             }
-            // The favourites row takes no part in a multi-selection (see tickBlocked), so the two
-            // entries that start one are not offered on it either — a mode this row cannot enter.
             if (!fav) {
                 l.add(c.getString(R.string.music_multi_select));
                 l.add(c.getString(R.string.all_select));
@@ -202,25 +149,14 @@ public final class Playlists {
             PlGrid.viewEntry(l, c);
             dlg.setList(l);
         } catch (Throwable t) {
-            // leave whatever menu the dialog already has
         }
     }
 
     /**
-     * The favourites row takes no part in a multi-selection at all (the user's call).
-     *
-     * Ticked and swept up by "Select all", with the tick taken back only at the moment a delete
-     * runs ({@link #untickFav}), it would highlight itself, join a count of "3 selected" and then
-     * quietly not be one of them. A row that cannot be acted on
-     * has no business being selectable, which is the rule the button rows of Genres and Folders
-     * already follow ({@code Mark.blocked}, skill {@code ipp-genres}).
-     *
-     * Three places say it, because a tick has three ways in: this one is the tick itself
-     * (injected at the top of {@code RVBaseAdapter.addOrRemoveMultiSelectIndex}, which also covers
-     * the one the long press puts on the row it was raised on), {@link #untickFav} at the end of
-     * {@code allSelect}, and {@link #skip} in the wheel handlers. The menu on that row loses
-     * "MultiSelect" and "Select all" with them ({@link #favMenu}) — offering a mode the row cannot
-     * enter is the same defect one step earlier.
+     * Favorites takes no part in a multi-selection (the user's call), like the button rows of
+     * Genres and Folders. A tick has three ways in: here (top of
+     * {@code addOrRemoveMultiSelectIndex}), {@link #untickFav} after {@code allSelect}, and
+     * {@link #skip} in the wheel handlers.
      */
     public static boolean tickBlocked(Object adapter, int position) {
         try {
@@ -231,15 +167,7 @@ public final class Playlists {
         }
     }
 
-    /**
-     * The cursor does not stop on the favourites row while multi-select is on — there is nothing to
-     * tick there, so standing on it is a dead step. Called at the end of both wheel handlers of
-     * {@code PlaylistsActivity}, which is where its own {@code isMultiSelect} can be read.
-     *
-     * Always pushes DOWNWARDS, the same rule {@code Mark.skip} follows for the button rows: the
-     * favourites row is pinned to the top of the list ({@link #first}), so it is the first row
-     * whichever way the wheel came from.
-     */
+    /** End of both wheel handlers; pushes DOWN, as {@code Mark.skip}: Favorites is the first row. */
     public static void skip(Object adapter, boolean multi) {
         if (!multi || !(adapter instanceof RVBaseAdapter)) return;
         try {
@@ -249,24 +177,17 @@ public final class Playlists {
             int n = a.getItemCount();
             int to = pos + 1;
             while (to < n && locked(a.getItemByPosition(to))) to++;
-            if (to >= n) return;                 // nothing below it: leave the cursor where it is
+            if (to >= n) return;
             a.setSelectPosition(to, true);       // sets the field only
             a.notifyItemChanged(pos);
             a.notifyItemChanged(to);
         } catch (Throwable t) {
-            // a cursor on a row it cannot tick is not worth a crash
         }
     }
 
     /**
-     * Take the favourites row out of the multi-select before a delete runs. Called at the top of
-     * {@code PlaylistsActivity.deletePlaylist}, i.e. before the confirm dialog is even raised.
-     *
-     * The repository call was already guarded, but that only stopped HALF of a delete: the UI
-     * half is {@code RVBaseAdapter.removeMultiSelectItems}, which drops every ticked row from the
-     * adapter whatever the loop decided — so Favorites disappeared off the screen and stayed gone
-     * until the list was rebuilt from the DB. "Select all" made that the normal case. Unticking it
-     * here fixes both halves at once, and it is the main thread, so the row can be repainted.
+     * Top of {@code deletePlaylist}: {@code removeMultiSelectItems} drops every ticked row from the
+     * screen whatever the repository refused, so Favorites must not be ticked by then.
      */
     public static void untickFav(Object adapter) {
         try {
@@ -284,27 +205,17 @@ public final class Playlists {
             }
             if (dropped) a.notifyDataSetChanged();
         } catch (Throwable t) {
-            // the guard in the delete loop still stands
         }
     }
 
-    // ---- a playlist's songs in the order they were ADDED ---------------------------------------
-    //
-    // The join table (songCatPlaylist) carries the moment each song was put into the playlist, and
-    // nothing in stock ever reads it: its seven sorts are all properties of the file. Adding an
-    // eighth SongSortType is not an option — every `when` over that enum compiles to a
-    // $WhenMappings array sized values().length and would throw on the new ordinal — so this rides
-    // an ordinary sort (FileName_A_To_Z) and re-orders the result the repository hands back.
-    //
-    // Which order that is lives in one field: 0 = off (the stock sort stands), 1 = oldest first,
-    // 2 = newest first. It is persisted, so it survives leaving the screen, and it is CLEARED by
-    // any stock sort pick. Telling the two apart is what `pending` does: reopening the screen goes
-    // through getSongListBySort$default (which restores the stored sort and calls keepAdded), a
-    // stock pick calls getSongListBySort directly, and our own pick arms `pending` first.
+    // A playlist's songs in the order ADDED (songCatPlaylist.date). Not a new SongSortType — every
+    // `when` over it has a $WhenMappings array that would throw — so it rides FileName_A_To_Z and
+    // re-orders the result. 0 off, 1 oldest first, 2 newest; persisted, CLEARED by any stock pick.
+    // `pending` tells a reopen (keepAdded) from a stock pick and from ours.
     private static final String ADDED_KEY = "pl_added";
     private static final int KEEP = -1;
 
-    private static int added = -1;          // -1 = not read from the preferences yet
+    private static int added = -1;          // -1 = not read yet
     private static int pending;
 
     private static int mode() {
@@ -315,21 +226,17 @@ public final class Playlists {
         return added;
     }
 
-    /**
-     * True while the playlist is showing its songs in the order they were ADDED, which is not a
-     * name order — so the alphabetical jump has to stay off there whatever the stock sort field
-     * still says (the mode rides on {@code FileName_A_To_Z}, see {@link #byAdded}).
-     */
+    /** Not a name order, so the alphabetical jump stays off whatever the stock field says. */
     public static boolean byAddedOn() {
         return mode() != 0;
     }
 
-    /** Top of {@code getSongListBySort$default}: this call restores the stored sort, it is not a pick. */
+    /** Top of {@code getSongListBySort$default}: a restore, not a pick. */
     public static void keepAdded() {
         pending = KEEP;
     }
 
-    /** Top of {@code getSongListBySort}: consume the pick, if there was one. */
+    /** Top of {@code getSongListBySort}. */
     public static void notePlaylistSort() {
         int p = pending;
         pending = 0;
@@ -339,23 +246,18 @@ public final class Playlists {
         if (c != null) Prefs.setInt(c, ADDED_KEY, p);
     }
 
-    /** The long-press menu entry: pick a direction, then reload the list. */
     public static void addedSortDialog(Activity a, SubMenuDialog parent) {
         try {
             if (!(a instanceof PlayListActivity)) return;
             List l = new ArrayList();
             l.add(a.getString(R.string.ipp_sort_date_asc));
             l.add(a.getString(R.string.ipp_sort_date_desc));
-            // The 4th argument is the DIALOG THEME, not a flag -- stock reaches this constructor
-            // through the defaults-synthetic, which substitutes Dialog_Common. Passing 0 gives the
-            // platform's own dialog theme, which is what sized the window for four rows.
+            // The 4th argument is the dialog THEME, not a flag: 0 is the platform's theme.
             new SubMenuDialog(a, l, new AddedPick((PlayListActivity) a, parent), R.style.Dialog_Common).show();
         } catch (Throwable t) {
-            // no dialog is better than a crash out of a menu
         }
     }
 
-    /** Named, never anonymous: d8 8.2.2-dev crashes dexing anonymous classes here. */
     public static final class AddedPick implements SubMenuDialog.Callback {
         private final PlayListActivity activity;
         private final SubMenuDialog parent;
@@ -368,9 +270,9 @@ public final class Playlists {
         public boolean select(int index, SubmenuAdapter.Item item) {
             String s = (item == null) ? null : item.getString();
             pending = activity.getString(R.string.ipp_sort_date_desc).equals(s) ? 2 : 1;
-            // The carrier sort: case 1 of the screen's own `when`, which shows plain file names.
+            // The carrier sort.
             activity.getSongListBySort(Y1Repository.SongSortType.FileName_A_To_Z);
-            if (parent != null) parent.dismiss();   // stock's pattern: the pick closes both levels
+            if (parent != null) parent.dismiss();   // the pick closes both levels, as stock's
             return true;
         }
     }
@@ -378,12 +280,7 @@ public final class Playlists {
     private static final String SQL_ADDED =
             "select songId from songCatPlaylist where playlistId = ? order by date";
 
-    /**
-     * Injected at the single exit of {@code Y1Repository.getSongsByPlaylistSortByType}. Returns the
-     * list untouched unless the date-added order is on, so the ordinary sorts cost one int compare.
-     * The database is read through the repository's own field (the call site is inside that class);
-     * one query, on the IO dispatcher the caller already runs on.
-     */
+    /** The single exit of {@code getSongsByPlaylistSortByType}; untouched unless the mode is on. */
     public static List byAdded(RoomDatabase db, UUID playlistId, List songs) {
         if (mode() == 0 || db == null || playlistId == null || songs == null || songs.size() < 2) {
             return songs;
@@ -405,7 +302,7 @@ public final class Playlists {
             Collections.sort(out, new AddedCmp(order, added == 2));
             return out;
         } catch (Throwable t) {
-            return songs;   // an unsortable list is still a usable list
+            return songs;
         }
     }
 
@@ -426,28 +323,18 @@ public final class Playlists {
 
         public int compare(Object a, Object b) {
             int ra = rank(a), rb = rank(b);
-            // a song the join table does not know about goes last whichever way round we are
+            // Unknown to the join table: last either way.
             if (ra < 0 || rb < 0) return (ra < 0 && rb < 0) ? 0 : (ra < 0 ? 1 : -1);
             return desc ? (rb - ra) : (ra - rb);
         }
     }
 
-    // ---- a VIDEO playlist in the order it was filled --------------------------------------------
-    //
-    // The same entry for the Videos section, and the order lives somewhere else there: the join
-    // table (playlist_video) carries no date, and its order_index column holds 0 for every row —
-    // addVideoToPlayList lets that argument default and nothing ever assigns it. The table itself
-    // records the order: rows are appended as videos are added, the insert is INSERT OR IGNORE so
-    // re-adding one does not move it, and SQLite's rowid is therefore the order it was filled in.
-    //
-    // The mode rides on the video sort, which is SHARED by every video screen — so sorting the
-    // all-videos list ends the added order here too. Every stock pick goes through
-    // SharedPreferencesUtils.setVideoSort, so that is where the mode is cleared; our own pick
-    // writes that preference as well (carrier None, "leave the DAO order alone") and arms `vKeep`
-    // so it does not clear itself.
+    // The same for a VIDEO playlist: playlist_video has no date and order_index is always 0, but
+    // INSERT OR IGNORE appends, so rowid is the order filled. The mode rides on the video sort,
+    // SHARED by every video screen; stock picks clear it in setVideoSort, ours arms `vKeep`.
     private static final String VADDED_KEY = "vpl_added";
 
-    private static int vAdded = -1;         // -1 = not read from the preferences yet
+    private static int vAdded = -1;         // -1 = not read yet
     private static boolean vKeep;
 
     private static int vMode() {
@@ -465,7 +352,7 @@ public final class Playlists {
         if (c != null) Prefs.setInt(c, VADDED_KEY, v);
     }
 
-    /** Top of {@code SharedPreferencesUtils.setVideoSort}: a stock sort pick ends the added order. */
+    /** Top of {@code setVideoSort}. */
     public static void noteVideoSort() {
         if (vKeep) {
             vKeep = false;
@@ -474,21 +361,17 @@ public final class Playlists {
         setVMode(0);
     }
 
-    /** The menu entry: pick a direction, then let the screen re-list itself. */
     public static void videoAddedDialog(Activity a) {
         try {
             if (a == null) return;
             List l = new ArrayList();
             l.add(a.getString(R.string.ipp_sort_date_asc));
             l.add(a.getString(R.string.ipp_sort_date_desc));
-            // The 4th argument is the dialog THEME, not a flag — see the music dialog above.
             new SubMenuDialog(a, l, new VideoAddedPick(a), R.style.Dialog_Common).show();
         } catch (Throwable t) {
-            // no dialog is better than a crash out of a menu
         }
     }
 
-    /** Named, never anonymous: d8 crashes dexing anonymous classes here. */
     public static final class VideoAddedPick implements SubMenuDialog.Callback {
         private final Activity a;
 
@@ -498,27 +381,18 @@ public final class Playlists {
             try {
                 String s = item == null ? null : item.getString();
                 setVMode(a.getString(R.string.ipp_sort_date_desc).equals(s) ? 2 : 1);
-                // The carrier: None leaves the DAO's own order alone, which is what byAddedVideo
-                // then re-orders. This write is not a pick, hence vKeep.
+                // Carrier None keeps the DAO order for byAddedVideo; not a pick, hence vKeep.
                 vKeep = true;
                 SharedPreferencesUtils.INSTANCE.setVideoSort(
                         Y1Repository.SortVideoType.None.getType());
                 relistVideos(a);
             } catch (Throwable t) {
-                // the preference is written or it is not; either way the menu closes
             }
             return true;
         }
     }
 
-    /**
-     * Let the screen list the playlist again — the one thing here that cannot be a plain call.
-     *
-     * {@code VideoListActivity.getVideoBySort()} is private, and its Kotlin accessor
-     * ({@code access$getVideoBySort}) is SYNTHETIC, which javac refuses to resolve from source at
-     * all: a synthetic member cannot be named. Making the method public would be a two-phase build
-     * for one call that happens when a person picks a sort, so it is reflected instead.
-     */
+    /** Reflection: {@code getVideoBySort()} is private and its accessor synthetic. */
     private static void relistVideos(Activity a) {
         try {
             if (!(a instanceof VideoListActivity)) return;
@@ -526,7 +400,6 @@ public final class Playlists {
             m.setAccessible(true);
             m.invoke(a);
         } catch (Throwable t) {
-            // the order is stored either way; the screen shows it next time it lists the playlist
         }
     }
 
@@ -535,10 +408,8 @@ public final class Playlists {
             + " on vp.playlist_id = pv.playlist_id where vp.playlist_name = ? order by pv.rowid";
 
     /**
-     * Injected at the single exit of {@code Y1Repository.getVideoToVideoPlayListNameBySort}, which
-     * is handed the playlist's NAME — the name is saved into a spare register at the top of that
-     * method, because every branch of it reuses the parameter as scratch. Returns the list
-     * untouched unless the added order is on, so the stock sorts cost one int compare.
+     * The single exit of {@code getVideoToVideoPlayListNameBySort}; the name is saved to a spare
+     * register at its top, since every branch reuses the parameter.
      */
     public static List byAddedVideo(RoomDatabase db, String playlistName, List videos) {
         if (vMode() == 0 || db == null || playlistName == null || videos == null
@@ -563,7 +434,7 @@ public final class Playlists {
             Collections.sort(out, new VideoAddedCmp(order, vAdded == 2));
             return out;
         } catch (Throwable t) {
-            return videos;   // an unsortable list is still a usable list
+            return videos;
         }
     }
 
@@ -584,27 +455,15 @@ public final class Playlists {
 
         public int compare(Object a, Object b) {
             int ra = rank(a), rb = rank(b);
-            // a video the join table does not know about goes last whichever way round we are
             if (ra < 0 || rb < 0) return (ra < 0 && rb < 0) ? 0 : (ra < 0 ? 1 : -1);
             return desc ? (rb - ra) : (ra - rb);
         }
     }
 
-    // ------------------------------------------------- "Add to <playlist>" inside a playlist
-
     /**
-     * The playlists were appended to the playlist screen's own long-press menu, and stock's
-     * {@code select()} there dispatches on strings it knows — so an entry naming a playlist fell
-     * through and did nothing. This answers it, and only ever claims an entry that really carries
-     * a {@link Playlist}, so it can sit in front of the stock dispatch without hiding anything.
-     *
-     * The ticked songs, or the row under the cursor when nothing is ticked — the same rule
-     * {@code Queue.addFromAdapter} follows, selection cleared afterwards for the same reason (the
-     * rows stay highlighted otherwise and the next pick re-adds them).
-     *
-     * The toast is the stock one, and it goes through {@code BaseActivity.showToast} on purpose:
-     * that is where {@link #addMsg} turns it into "already in the playlist" when the songs were all
-     * there already — which, adding from one playlist to another, is a thing that happens often.
+     * "Add to <playlist>" inside a playlist: stock's {@code select()} there knows only its own
+     * strings. Claims only entries carrying a {@link Playlist}. The ticked songs or the focused
+     * row, selection cleared after; the toast goes through {@code showToast} for {@link #addMsg}.
      */
     public static boolean addFromMenu(MyBaseAdapter adapter, SubmenuAdapter.Item item) {
         try {
@@ -632,21 +491,13 @@ public final class Playlists {
                 ((BaseActivity) c).showToast(c.getString(R.string.added_successfully));
             }
         } catch (Throwable t) {
-            // an add that failed is not worth taking the screen down for
         }
         return true;
     }
 
-    // ------------------------------------------------- "it is already in that playlist"
-
     /**
-     * Stock says "Added successfully" whatever happened, and {@code Y1Repository.addToPlayList}
-     * quietly skips every song the playlist already holds — so adding a track twice looked like it
-     * had worked and nothing changed.
-     *
-     * Noted at the one place that knows: the funnel where the rows that are actually NEW have
-     * just been counted (every add in the app ends up there, the single-song overload and
-     * {@code addToPlayListByFile} included).
+     * Stock says "Added successfully" even when every song was already there. Noted in the add
+     * funnel, where the actually NEW rows have just been counted.
      */
     private static boolean nothingNew;
 
@@ -654,11 +505,7 @@ public final class Playlists {
         nothingNew = fresh != null && fresh.isEmpty() && songs != null && !songs.isEmpty();
     }
 
-    /**
-     * Injected at the top of {@code BaseActivity.showToast} — one hook instead of the nineteen
-     * places that raise this toast. Nothing but that exact message is ever touched, and the note
-     * is consumed, so a later toast of any kind reads as it was written.
-     */
+    /** Top of {@code BaseActivity.showToast}: that exact message only; the note is consumed. */
     public static String addMsg(Context c, String msg) {
         try {
             if (!nothingNew || c == null || msg == null) return msg;

@@ -17,33 +17,33 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/SettingActivity;Lcom/innioasis/y1/utils/LoadingDialog;)V
   .registers 3
-  .line 133
+  .line 108
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 134
+  .line 109
     iput-object p1, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
-  .line 135
+  .line 110
     iput-object p2, p0, Lcom/innioasis/ipp/Pick$Done;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 136
+  .line 111
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
   .registers 2
-  .line 139
+  .line 114
     iget-object v0, p0, Lcom/innioasis/ipp/Pick$Done;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
     if-eqz v0, :L3
   :L0
-  .line 140
+  .line 115
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->dismiss()V
   :L1
     goto :L3
   :L2
     move-exception v0
   :L3
-  .line 142
+  .line 117
     iget-object v0, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/CacheSize;->refresh(Lcom/innioasis/y1/activity/SettingActivity;)V
-  .line 143
+  .line 118
     return-void
 .end method

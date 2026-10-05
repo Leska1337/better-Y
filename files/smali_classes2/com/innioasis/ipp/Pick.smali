@@ -22,42 +22,42 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 39
+  .line 27
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$000(Lcom/innioasis/y1/activity/SettingActivity;I)V
   .registers 2
-  .line 37
+  .line 25
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Pick;->clearWithDialog(Lcom/innioasis/y1/activity/SettingActivity;I)V
     return-void
 .end method
 
 .method static synthetic access$100(Landroid/content/Context;)V
   .registers 1
-  .line 37
+  .line 25
     invoke-static { p0 }, Lcom/innioasis/ipp/Pick;->ownCache(Landroid/content/Context;)V
     return-void
 .end method
 
 .method public static askCache(Landroid/app/Activity;Lcom/innioasis/ipp/PickDialog$Go;)V
   .registers 11
-  .line 311
+  .line 251
     if-nez p0, :L0
     return-void
   :L0
-  .line 312
+  .line 252
     const/4 v0, 1
     const/4 v1, 2
     filled-new-array { v0, v1 }, [I
     move-result-object v6
-  .line 313
+  .line 253
     new-instance v0, Lcom/innioasis/ipp/PickDialog;
     const v1, 2131821072
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v4
-  .line 314
+  .line 254
     const v1, 2131821085
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v5
@@ -67,28 +67,28 @@
     move-object v8, p1
     invoke-direct/range { v2 .. v8 }, Lcom/innioasis/ipp/PickDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;[IZLcom/innioasis/ipp/PickDialog$Go;)V
     invoke-virtual { v0 }, Lcom/innioasis/ipp/PickDialog;->show()V
-  .line 315
+  .line 255
     return-void
 .end method
 
 .method public static askClear(Lcom/innioasis/y1/activity/SettingActivity;)V
   .registers 11
-  .line 64
+  .line 46
     if-nez p0, :L0
     return-void
   :L0
-  .line 65
+  .line 47
     const/4 v0, 2
     const/4 v1, 4
     const/4 v2, 1
     filled-new-array { v2, v0, v1 }, [I
     move-result-object v7
-  .line 66
+  .line 48
     new-instance v0, Lcom/innioasis/ipp/PickDialog;
     const v1, 2131820574
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v5
-  .line 67
+  .line 49
     const v1, 2131821086
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
     move-result-object v6
@@ -99,64 +99,64 @@
     move-object v4, p0
     invoke-direct/range { v3 .. v9 }, Lcom/innioasis/ipp/PickDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;[IZLcom/innioasis/ipp/PickDialog$Go;)V
     invoke-virtual { v0 }, Lcom/innioasis/ipp/PickDialog;->show()V
-  .line 68
+  .line 50
     return-void
 .end method
 
 .method public static clear(I)V
   .registers 2
-  .line 190
+  .line 154
     and-int/lit8 v0, p0, 1
     if-eqz v0, :L0
-  .line 191
+  .line 155
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->clear()V
-  .line 192
+  .line 156
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->clear()V
   :L0
-  .line 194
+  .line 158
     and-int/lit8 v0, p0, 2
     if-eqz v0, :L1
-  .line 198
+  .line 160
     invoke-static { }, Lcom/innioasis/ipp/Art;->clearStamps()V
-  .line 199
+  .line 161
     invoke-static { }, Lcom/innioasis/ipp/YearCache;->clear()V
-  .line 200
+  .line 162
     invoke-static { }, Lcom/innioasis/ipp/TrackCache;->clear()V
-  .line 201
+  .line 163
     invoke-static { }, Lcom/innioasis/ipp/AlbumInfo;->clear()V
-  .line 202
+  .line 164
     invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->clear()V
-  .line 203
+  .line 165
     invoke-static { }, Lcom/innioasis/ipp/DiscCache;->clear()V
-  .line 204
+  .line 166
     invoke-static { }, Lcom/innioasis/ipp/GenreInfo;->clear()V
   :L1
-  .line 208
+  .line 169
     and-int/lit8 p0, p0, 3
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->cacheCleared(I)V
-  .line 209
+  .line 170
     return-void
 .end method
 
 .method public static clearAsync(I)V
   .registers 3
-  .line 164
+  .line 133
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/ipp/Pick$AsyncClear;
     invoke-direct { v1, p0 }, Lcom/innioasis/ipp/Pick$AsyncClear;-><init>(I)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 165
+  .line 134
     return-void
 .end method
 
 .method private static clearWithDialog(Lcom/innioasis/y1/activity/SettingActivity;I)V
   .catchall { :L0 .. :L1 } :L2
   .registers 9
-  .line 91
+  .line 71
     nop
   :L0
-  .line 93
+  .line 73
     new-instance v6, Lcom/innioasis/y1/utils/LoadingDialog;
     const v0, 2131820576
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -168,43 +168,43 @@
     move-object v0, v6
     move-object v1, p0
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
-  .line 95
+  .line 75
     invoke-virtual { v6 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V
   :L1
-  .line 98
+  .line 78
     goto :L3
   :L2
-  .line 96
+  .line 76
     move-exception v0
-  .line 97
+  .line 77
     const/4 v6, 0
   :L3
-  .line 99
+  .line 79
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/ipp/Pick$ClearTask;
     invoke-direct { v1, p0, p1, v6 }, Lcom/innioasis/ipp/Pick$ClearTask;-><init>(Lcom/innioasis/y1/activity/SettingActivity;ILcom/innioasis/y1/utils/LoadingDialog;)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 100
+  .line 80
     return-void
 .end method
 
 .method private static delete(Ljava/io/File;)V
   .registers 4
-  .line 258
+  .line 208
     if-nez p0, :L0
     return-void
   :L0
-  .line 259
+  .line 209
     invoke-virtual { p0 }, Ljava/io/File;->isDirectory()Z
     move-result v0
     if-eqz v0, :L2
-  .line 260
+  .line 210
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 261
+  .line 211
     if-eqz v0, :L2
-  .line 262
+  .line 212
     const/4 v1, 0
   :L1
     array-length v2, v0
@@ -214,27 +214,27 @@
     add-int/lit8 v1, v1, 1
     goto :L1
   :L2
-  .line 265
+  .line 215
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
-  .line 266
+  .line 216
     return-void
 .end method
 
 .method public static label(I)I
   .registers 2
-  .line 52
+  .line 39
     const/4 v0, 1
     if-ne p0, v0, :L0
     const p0, 2131821082
     return p0
   :L0
-  .line 53
+  .line 40
     const/4 v0, 2
     if-ne p0, v0, :L1
     const p0, 2131821083
     return p0
   :L1
-  .line 54
+  .line 41
     const p0, 2131821084
     return p0
 .end method
@@ -242,7 +242,7 @@
 .method private static ownCache(Landroid/content/Context;)V
   .catchall { :L0 .. :L7 } :L9
   .registers 4
-  .line 245
+  .line 196
     const/4 v0, 0
     if-nez p0, :L0
     move-object p0, v0
@@ -251,23 +251,23 @@
     invoke-virtual { p0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object p0
   :L1
-  .line 246
+  .line 197
     if-nez p0, :L2
     goto :L3
   :L2
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
   :L3
-  .line 247
+  .line 198
     if-nez v0, :L4
     return-void
   :L4
-  .line 248
+  .line 199
     const/4 p0, 0
   :L5
     array-length v1, v0
     if-ge p0, v1, :L8
-  .line 249
+  .line 200
     aget-object v1, v0, p0
     invoke-virtual { v1 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v1
@@ -277,46 +277,46 @@
     if-eqz v1, :L6
     goto :L7
   :L6
-  .line 250
+  .line 201
     aget-object v1, v0, p0
     invoke-static { v1 }, Lcom/innioasis/ipp/Pick;->delete(Ljava/io/File;)V
   :L7
-  .line 248
+  .line 199
     add-int/lit8 p0, p0, 1
     goto :L5
   :L8
-  .line 254
+  .line 204
     goto :L10
   :L9
-  .line 252
+  .line 203
     move-exception p0
   :L10
-  .line 255
+  .line 205
     return-void
 .end method
 
 .method public static packages(Ljava/util/List;I)Ljava/util/List;
   .registers 6
-  .line 222
+  .line 177
     if-nez p0, :L0
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L0
-  .line 223
+  .line 178
     const/4 v0, 3
     and-int/2addr p1, v0
     if-ne p1, v0, :L1
     return-object p0
   :L1
-  .line 224
+  .line 179
     new-instance p1, Ljava/util/ArrayList;
     invoke-direct { p1 }, Ljava/util/ArrayList;-><init>()V
-  .line 225
+  .line 180
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 226
+  .line 181
     if-nez v0, :L2
     const/4 v0, 0
     goto :L3
@@ -324,23 +324,23 @@
     invoke-virtual { v0 }, Landroid/content/Context;->getPackageName()Ljava/lang/String;
     move-result-object v0
   :L3
-  .line 227
+  .line 182
     const/4 v1, 0
   :L4
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L8
-  .line 228
+  .line 183
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
-  .line 229
+  .line 184
     instance-of v3, v2, Landroid/content/pm/PackageInfo;
     if-nez v3, :L5
     goto :L7
   :L5
-  .line 230
+  .line 185
     check-cast v2, Landroid/content/pm/PackageInfo;
-  .line 231
+  .line 186
     if-eqz v0, :L6
     iget-object v3, v2, Landroid/content/pm/PackageInfo;->packageName:Ljava/lang/String;
     invoke-virtual { v0, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -348,14 +348,14 @@
     if-eqz v3, :L6
     goto :L7
   :L6
-  .line 232
+  .line 187
     invoke-virtual { p1, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L7
-  .line 227
+  .line 182
     add-int/lit8 v1, v1, 1
     goto :L4
   :L8
-  .line 235
+  .line 190
     invoke-virtual { p1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v0
     if-eqz v0, :L9
@@ -369,13 +369,13 @@
 .method public static size(I)J
   .catchall { :L0 .. :L6 } :L9
   .registers 9
-  .line 277
+  .line 221
     const-wide/16 v0, 0
   :L0
     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v2
-  .line 278
+  .line 222
     if-nez v2, :L1
     const/4 v3, 0
     goto :L2
@@ -383,14 +383,14 @@
     invoke-virtual { v2 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v3
   :L2
-  .line 279
+  .line 223
     if-nez v3, :L3
     return-wide v0
   :L3
-  .line 280
+  .line 224
     const/4 v4, 1
     if-ne p0, v4, :L4
-  .line 281
+  .line 225
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_covers"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
@@ -399,24 +399,24 @@
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_big"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 282
+  .line 226
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_bigcover.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 283
+  .line 227
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v0
     add-long/2addr v4, v0
-  .line 281
+  .line 225
     return-wide v4
   :L4
-  .line 285
+  .line 229
     const/4 v5, 2
     if-ne p0, v5, :L5
-  .line 286
+  .line 230
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_art.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
@@ -425,49 +425,49 @@
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_years.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 287
+  .line 231
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_tracks.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 288
+  .line 232
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_albums.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 289
+  .line 233
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_albumartist.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 290
+  .line 234
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_discs.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 291
+  .line 235
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v6
     add-long/2addr v4, v6
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_genres.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 292
+  .line 236
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v0
     add-long/2addr v4, v0
-  .line 286
+  .line 230
     return-wide v4
   :L5
-  .line 295
+  .line 238
     invoke-static { v2 }, Lcom/innioasis/ipp/CacheSize;->total(Landroid/content/Context;)J
     move-result-wide v2
     invoke-static { v4 }, Lcom/innioasis/ipp/Pick;->size(I)J
@@ -477,7 +477,7 @@
     move-result-wide v4
   :L6
     sub-long/2addr v2, v4
-  .line 296
+  .line 239
     cmp-long p0, v2, v0
     if-gez p0, :L7
     goto :L8
@@ -486,15 +486,15 @@
   :L8
     return-wide v0
   :L9
-  .line 297
+  .line 240
     move-exception p0
-  .line 298
+  .line 241
     return-wide v0
 .end method
 
 .method public static sizeText(J)Ljava/lang/String;
   .registers 2
-  .line 304
+  .line 246
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/CacheSize;->format(J)Ljava/lang/String;
     move-result-object p0
     return-object p0

@@ -94,38 +94,38 @@
 
 .method private back(Z)V
   .registers 12
-  .line 246
+  .line 244
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/view/ViewPropertyAnimator;->cancel()V
-  .line 247
+  .line 245
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/4 v1, 4
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setVisibility(I)V
-  .line 248
+  .line 246
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setRotationY(F)V
-  .line 249
+  .line 247
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/high16 v2, 0x3F800000
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setScaleX(F)V
-  .line 250
+  .line 248
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setScaleY(F)V
-  .line 251
+  .line 249
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setTranslationY(F)V
-  .line 252
+  .line 250
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v0 }, Landroid/widget/ImageView;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/view/ViewPropertyAnimator;->cancel()V
-  .line 253
+  .line 251
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v0, v2 }, Lcom/innioasis/ipp/FlowView;->setLabels(F)V
-  .line 254
+  .line 252
     const/4 v0, 0
     if-eqz p1, :L2
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
@@ -134,10 +134,10 @@
     if-nez p1, :L0
     goto/16 :L2
   :L0
-  .line 259
+  .line 257
     const/4 p1, 5
     iput p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
-  .line 261
+  .line 259
     iget p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
     const/16 v3, 260
     const/4 v4, 2
@@ -147,7 +147,7 @@
     invoke-interface { v6 }, Ljava/util/List;->size()I
     move-result v6
     if-ge p1, v6, :L1
-  .line 262
+  .line 260
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
     iget v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
     invoke-interface { p1, v6 }, Ljava/util/List;->get(I)Ljava/lang/Object;
@@ -157,72 +157,72 @@
     const/4 v6, 0
     invoke-static { v6, p1 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
     move-result-object p1
-  .line 263
+  .line 261
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
     move-result-object v6
-  .line 266
+  .line 264
     if-eqz p1, :L1
     instance-of v7, v6, Landroid/graphics/drawable/BitmapDrawable;
     if-eqz v7, :L1
     move-object v7, v6
     check-cast v7, Landroid/graphics/drawable/BitmapDrawable;
-  .line 267
+  .line 265
     invoke-virtual { v7 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
     move-result-object v7
     invoke-virtual { p1, v7 }, Landroid/graphics/Bitmap;->sameAs(Landroid/graphics/Bitmap;)Z
     move-result v7
     if-nez v7, :L1
-  .line 268
+  .line 266
     new-instance v7, Landroid/graphics/drawable/TransitionDrawable;
     new-array v8, v4, [Landroid/graphics/drawable/Drawable;
     aput-object v6, v8, v0
     new-instance v6, Landroid/graphics/drawable/BitmapDrawable;
-  .line 269
+  .line 267
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->getResources()Landroid/content/res/Resources;
     move-result-object v9
     invoke-direct { v6, v9, p1 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
     aput-object v6, v8, v5
     invoke-direct { v7, v8 }, Landroid/graphics/drawable/TransitionDrawable;-><init>([Landroid/graphics/drawable/Drawable;)V
-  .line 270
+  .line 268
     invoke-virtual { v7, v5 }, Landroid/graphics/drawable/TransitionDrawable;->setCrossFadeEnabled(Z)V
-  .line 271
+  .line 269
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { p1, v7 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 272
+  .line 270
     invoke-virtual { v7, v3 }, Landroid/graphics/drawable/TransitionDrawable;->startTransition(I)V
   :L1
-  .line 275
+  .line 273
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->placeTrip()V
-  .line 276
+  .line 274
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->startPose()[F
     move-result-object p1
-  .line 277
+  .line 275
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6, v1 }, Landroid/widget/ImageView;->setTranslationX(F)V
-  .line 278
+  .line 276
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6, v1 }, Landroid/widget/ImageView;->setTranslationY(F)V
-  .line 279
+  .line 277
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6, v2 }, Landroid/widget/ImageView;->setScaleX(F)V
-  .line 280
+  .line 278
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6, v2 }, Landroid/widget/ImageView;->setScaleY(F)V
-  .line 281
+  .line 279
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->geo(Landroid/content/Context;)[F
     move-result-object v7
     const/4 v8, 6
     aget v7, v7, v8
     invoke-virtual { v6, v7 }, Landroid/widget/ImageView;->setRotationY(F)V
-  .line 282
+  .line 280
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6, v0 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 283
+  .line 281
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v6, v2 }, Lcom/innioasis/ipp/FlowView;->setSpread(F)V
-  .line 284
+  .line 282
     iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v6 }, Landroid/widget/ImageView;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v6
@@ -240,7 +240,7 @@
     move-result-object p1
     invoke-virtual { p1, v1 }, Landroid/view/ViewPropertyAnimator;->rotationY(F)Landroid/view/ViewPropertyAnimator;
     move-result-object p1
-  .line 285
+  .line 283
     const-wide/16 v4, 260
     invoke-virtual { p1, v4, v5 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
     move-result-object p1
@@ -250,31 +250,31 @@
     move-result-object p1
     new-instance v4, Lcom/innioasis/y1/activity/IppFlowActivity$Done;
     invoke-direct { v4, p0, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Done;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;I)V
-  .line 286
+  .line 284
     invoke-virtual { p1, v4 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 287
+  .line 285
     new-instance p1, Landroid/view/animation/DecelerateInterpolator;
     invoke-direct { p1 }, Landroid/view/animation/DecelerateInterpolator;-><init>()V
     invoke-direct { p0, v2, v1, v3, p1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->spread(FFILandroid/animation/TimeInterpolator;)V
-  .line 288
+  .line 286
     return-void
   :L2
-  .line 255
+  .line 253
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { p1, v1 }, Lcom/innioasis/ipp/FlowView;->setSpread(F)V
-  .line 256
+  .line 254
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->done(I)V
-  .line 257
+  .line 255
     return-void
 .end method
 
 .method private edgeOn(ILjava/lang/Runnable;)V
   .registers 8
-  .line 233
+  .line 231
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v0 }, Lcom/innioasis/ipp/FlowView;->getHeight()I
     move-result v0
-  .line 234
+  .line 232
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v1
@@ -284,7 +284,7 @@
     const/high16 v3, 0x3F000000
     invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->scaleX(F)Landroid/view/ViewPropertyAnimator;
     move-result-object v1
-  .line 235
+  .line 233
     if-lez v0, :L0
     const/high16 v3, 0x43340000
     int-to-float v4, v0
@@ -296,7 +296,7 @@
     invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->scaleY(F)Landroid/view/ViewPropertyAnimator;
     move-result-object v1
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
-  .line 236
+  .line 234
     invoke-virtual { v3 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
     move-result v3
     int-to-float v3, v3
@@ -308,20 +308,20 @@
     invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->translationY(F)Landroid/view/ViewPropertyAnimator;
     move-result-object v0
     int-to-long v1, p1
-  .line 237
+  .line 235
     invoke-virtual { v0, v1, v2 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
     move-result-object p1
     invoke-virtual { p1, p2 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 238
+  .line 236
     return-void
 .end method
 
 .method private flipBack()V
   .registers 4
-  .line 224
+  .line 222
     const/4 v0, 3
     iput v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
-  .line 227
+  .line 225
     const/high16 v0, 0x3F800000
     const/16 v1, 220
     invoke-direct { p0, v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->labels(FI)Landroid/animation/ObjectAnimator;
@@ -330,132 +330,132 @@
     const/high16 v2, 0x3FC00000
     invoke-direct { v1, v2 }, Landroid/view/animation/AccelerateInterpolator;-><init>(F)V
     invoke-virtual { v0, v1 }, Landroid/animation/ObjectAnimator;->setInterpolator(Landroid/animation/TimeInterpolator;)V
-  .line 228
+  .line 226
     new-instance v0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;
     const/4 v1, 0
     invoke-direct { v0, p0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Half;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Z)V
     const/16 v1, 90
     invoke-direct { p0, v1, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(ILjava/lang/Runnable;)V
-  .line 229
+  .line 227
     return-void
 .end method
 
 .method private flipOver()V
   .registers 7
-  .line 173
+  .line 171
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v0 }, Lcom/innioasis/ipp/FlowView;->target()I
     move-result v0
-  .line 174
+  .line 172
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
     invoke-interface { v1, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/Flow$Item;
-  .line 175
+  .line 173
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->loader:Lcom/innioasis/ipp/Flow$Loader;
     invoke-virtual { v2, v0 }, Lcom/innioasis/ipp/Flow$Loader;->get(I)Landroid/graphics/Bitmap;
     move-result-object v2
-  .line 176
+  .line 174
     const/4 v3, 1
     iput v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
-  .line 177
+  .line 175
     iput v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
-  .line 178
+  .line 176
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v4, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->show(Lcom/innioasis/ipp/Flow$Item;)V
-  .line 179
+  .line 177
     new-instance v4, Ljava/lang/Thread;
     new-instance v5, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;
     invoke-direct { v5, p0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;)V
     const-string v1, "ipp-flow-tracks"
     invoke-direct { v4, v5, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
     invoke-virtual { v4 }, Ljava/lang/Thread;->start()V
-  .line 181
+  .line 179
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v1 }, Landroid/widget/ImageView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v1
     check-cast v1, Landroid/widget/FrameLayout$LayoutParams;
-  .line 182
+  .line 180
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v4 }, Lcom/innioasis/ipp/FlowView;->coverLeft()I
     move-result v4
     add-int/lit8 v4, v4, -2
     iput v4, v1, Landroid/widget/FrameLayout$LayoutParams;->leftMargin:I
-  .line 183
+  .line 181
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v4 }, Lcom/innioasis/ipp/FlowView;->coverLeft()I
     move-result v4
     add-int/lit8 v4, v4, -2
     invoke-virtual { v1, v4 }, Landroid/widget/FrameLayout$LayoutParams;->setMarginStart(I)V
-  .line 184
+  .line 182
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v4 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
     move-result v4
     add-int/lit8 v4, v4, -2
     iput v4, v1, Landroid/widget/FrameLayout$LayoutParams;->topMargin:I
-  .line 185
+  .line 183
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v4, v1 }, Landroid/widget/ImageView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 186
+  .line 184
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v1
     check-cast v1, Landroid/widget/FrameLayout$LayoutParams;
-  .line 187
+  .line 185
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v4 }, Lcom/innioasis/ipp/FlowView;->getWidth()I
     move-result v4
     add-int/lit16 v4, v4, -360
     div-int/lit8 v4, v4, 2
-  .line 188
+  .line 186
     iput v4, v1, Landroid/widget/FrameLayout$LayoutParams;->leftMargin:I
-  .line 189
+  .line 187
     invoke-virtual { v1, v4 }, Landroid/widget/FrameLayout$LayoutParams;->setMarginStart(I)V
-  .line 190
+  .line 188
     iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v4, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 192
+  .line 190
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 193
+  .line 191
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/high16 v2, 0x42B80000
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setPivotX(F)V
-  .line 194
+  .line 192
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/high16 v2, 0x43080000
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setPivotY(F)V
-  .line 195
+  .line 193
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/4 v2, 0
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setTranslationX(F)V
-  .line 196
+  .line 194
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setTranslationY(F)V
-  .line 197
+  .line 195
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/high16 v4, 0x3F800000
     invoke-virtual { v1, v4 }, Landroid/widget/ImageView;->setScaleX(F)V
-  .line 198
+  .line 196
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v1, v4 }, Landroid/widget/ImageView;->setScaleY(F)V
-  .line 199
+  .line 197
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setRotationY(F)V
-  .line 200
+  .line 198
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/4 v4, 0
     invoke-virtual { v1, v4 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 201
+  .line 199
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v1, v0 }, Lcom/innioasis/ipp/FlowView;->hide(I)V
-  .line 202
+  .line 200
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->shrunk()V
-  .line 203
+  .line 201
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/high16 v1, 0x42B40000
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setRotationY(F)V
-  .line 204
+  .line 202
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v0 }, Landroid/widget/ImageView;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
@@ -468,16 +468,16 @@
     new-instance v1, Lcom/innioasis/y1/activity/IppFlowActivity$Half;
     invoke-direct { v1, p0, v3 }, Lcom/innioasis/y1/activity/IppFlowActivity$Half;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Z)V
     invoke-virtual { v0, v1 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 205
+  .line 203
     const/16 v0, 90
     invoke-direct { p0, v2, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->labels(FI)Landroid/animation/ObjectAnimator;
-  .line 206
+  .line 204
     return-void
 .end method
 
 .method private labels(FI)Landroid/animation/ObjectAnimator;
   .registers 7
-  .line 305
+  .line 303
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     const/4 v1, 2
     new-array v1, v1, [F
@@ -490,46 +490,46 @@
     const-string p1, "labels"
     invoke-static { v0, p1, v1 }, Landroid/animation/ObjectAnimator;->ofFloat(Ljava/lang/Object;Ljava/lang/String;[F)Landroid/animation/ObjectAnimator;
     move-result-object p1
-  .line 306
+  .line 304
     int-to-long v0, p2
     invoke-virtual { p1, v0, v1 }, Landroid/animation/ObjectAnimator;->setDuration(J)Landroid/animation/ObjectAnimator;
-  .line 307
+  .line 305
     invoke-virtual { p1 }, Landroid/animation/ObjectAnimator;->start()V
-  .line 308
+  .line 306
     return-object p1
 .end method
 
 .method private placeTrip()V
   .registers 7
-  .line 371
+  .line 369
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->geo(Landroid/content/Context;)[F
     move-result-object v0
-  .line 372
+  .line 370
     const/4 v1, 2
     new-array v2, v1, [I
-  .line 373
+  .line 371
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v3 }, Landroid/widget/ImageView;->getParent()Landroid/view/ViewParent;
     move-result-object v3
     check-cast v3, Landroid/view/View;
     invoke-virtual { v3, v2 }, Landroid/view/View;->getLocationInWindow([I)V
-  .line 374
+  .line 372
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v3 }, Landroid/widget/ImageView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v3
     check-cast v3, Landroid/widget/FrameLayout$LayoutParams;
-  .line 375
+  .line 373
     aget v1, v0, v1
     invoke-static { v1 }, Ljava/lang/Math;->round(F)I
     move-result v1
     iput v1, v3, Landroid/widget/FrameLayout$LayoutParams;->width:I
-  .line 376
+  .line 374
     const/4 v1, 3
     aget v1, v0, v1
     invoke-static { v1 }, Ljava/lang/Math;->round(F)I
     move-result v1
     iput v1, v3, Landroid/widget/FrameLayout$LayoutParams;->height:I
-  .line 377
+  .line 375
     const/4 v1, 0
     aget v4, v0, v1
     invoke-static { v4 }, Ljava/lang/Math;->round(F)I
@@ -537,10 +537,10 @@
     aget v1, v2, v1
     sub-int/2addr v4, v1
     iput v4, v3, Landroid/widget/FrameLayout$LayoutParams;->leftMargin:I
-  .line 378
+  .line 376
     iget v1, v3, Landroid/widget/FrameLayout$LayoutParams;->leftMargin:I
     invoke-virtual { v3, v1 }, Landroid/widget/FrameLayout$LayoutParams;->setMarginStart(I)V
-  .line 379
+  .line 377
     const/4 v1, 1
     aget v4, v0, v1
     invoke-static { v4 }, Ljava/lang/Math;->round(F)I
@@ -548,20 +548,20 @@
     aget v1, v2, v1
     sub-int/2addr v4, v1
     iput v4, v3, Landroid/widget/FrameLayout$LayoutParams;->topMargin:I
-  .line 380
+  .line 378
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v1, v3 }, Landroid/widget/ImageView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 381
+  .line 379
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v2, 4
     aget v2, v0, v2
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setPivotX(F)V
-  .line 382
+  .line 380
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v2, 5
     aget v2, v0, v2
     invoke-virtual { v1, v2 }, Landroid/widget/ImageView;->setPivotY(F)V
-  .line 383
+  .line 381
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v2, 7
     aget v2, v0, v2
@@ -580,73 +580,73 @@
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
     invoke-virtual { v1, v2, v3, v4, v0 }, Landroid/widget/ImageView;->setPadding(IIII)V
-  .line 384
+  .line 382
     return-void
 .end method
 
 .method private play()V
   .catchall { :L0 .. :L1 } :L2
   .registers 5
-  .line 331
+  .line 329
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     iget-object v0, v0, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->songs:Ljava/util/List;
-  .line 332
+  .line 330
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->track()I
     move-result v1
-  .line 333
+  .line 331
     if-eqz v0, :L3
     if-gez v1, :L0
     goto :L3
   :L0
-  .line 335
+  .line 333
     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v2
-  .line 336
+  .line 334
     if-eqz v2, :L1
     invoke-virtual { v2, v0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setMusicPlaylist(Ljava/util/List;I)V
   :L1
-  .line 339
+  .line 337
     nop
-  .line 340
+  .line 338
     const/4 v0, 4
     iput v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
-  .line 341
+  .line 339
     new-instance v0, Landroid/view/animation/AccelerateInterpolator;
     invoke-direct { v0 }, Landroid/view/animation/AccelerateInterpolator;-><init>()V
     const/4 v1, 0
     const/high16 v2, 0x3F800000
     const/16 v3, 200
     invoke-direct { p0, v1, v2, v3, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->spread(FFILandroid/animation/TimeInterpolator;)V
-  .line 342
+  .line 340
     new-instance v0, Lcom/innioasis/y1/activity/IppFlowActivity$ToPlayer;
     invoke-direct { v0, p0 }, Lcom/innioasis/y1/activity/IppFlowActivity$ToPlayer;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
     const/16 v1, 90
     invoke-direct { p0, v1, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(ILjava/lang/Runnable;)V
-  .line 343
+  .line 341
     return-void
   :L2
-  .line 337
+  .line 335
     move-exception v0
-  .line 338
+  .line 336
     return-void
   :L3
-  .line 333
+  .line 331
     return-void
 .end method
 
 .method private shrunk()V
   .registers 5
-  .line 210
+  .line 208
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v0 }, Lcom/innioasis/ipp/FlowView;->getHeight()I
     move-result v0
-  .line 211
+  .line 209
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/high16 v2, 0x3F000000
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setScaleX(F)V
-  .line 212
+  .line 210
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     if-lez v0, :L0
     const/high16 v2, 0x43340000
@@ -657,7 +657,7 @@
     const/high16 v2, 0x3F800000
   :L1
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setScaleY(F)V
-  .line 213
+  .line 211
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v2 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
@@ -670,13 +670,13 @@
     div-float/2addr v0, v3
     sub-float/2addr v2, v0
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setTranslationY(F)V
-  .line 214
+  .line 212
     return-void
 .end method
 
 .method private spread(FFILandroid/animation/TimeInterpolator;)V
   .registers 8
-  .line 291
+  .line 289
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     const/4 v1, 2
     new-array v1, v1, [F
@@ -687,42 +687,42 @@
     const-string p1, "spread"
     invoke-static { v0, p1, v1 }, Landroid/animation/ObjectAnimator;->ofFloat(Ljava/lang/Object;Ljava/lang/String;[F)Landroid/animation/ObjectAnimator;
     move-result-object p1
-  .line 292
+  .line 290
     int-to-long p2, p3
     invoke-virtual { p1, p2, p3 }, Landroid/animation/ObjectAnimator;->setDuration(J)Landroid/animation/ObjectAnimator;
-  .line 293
+  .line 291
     invoke-virtual { p1, p4 }, Landroid/animation/ObjectAnimator;->setInterpolator(Landroid/animation/TimeInterpolator;)V
-  .line 294
+  .line 292
     invoke-virtual { p1 }, Landroid/animation/ObjectAnimator;->start()V
-  .line 295
+  .line 293
     return-void
 .end method
 
 .method private startPose()[F
   .registers 12
-  .line 391
+  .line 389
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->geo(Landroid/content/Context;)[F
     move-result-object v0
-  .line 392
+  .line 390
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v1 }, Landroid/widget/ImageView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v1
     check-cast v1, Landroid/widget/FrameLayout$LayoutParams;
-  .line 393
+  .line 391
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v2 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
     move-result-object v2
     invoke-virtual { v2 }, Landroid/graphics/drawable/Drawable;->getIntrinsicWidth()I
     move-result v2
     int-to-float v2, v2
-  .line 394
+  .line 392
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v3 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
     move-result-object v3
     invoke-virtual { v3 }, Landroid/graphics/drawable/Drawable;->getIntrinsicHeight()I
     move-result v3
     int-to-float v3, v3
-  .line 395
+  .line 393
     const/4 v4, 2
     aget v5, v0, v4
     const/4 v6, 7
@@ -743,21 +743,21 @@
     div-float/2addr v8, v3
     invoke-static { v5, v8 }, Ljava/lang/Math;->min(FF)F
     move-result v3
-  .line 396
+  .line 394
     const/high16 v5, 0x40800000
     sub-float/2addr v2, v5
     mul-float v2, v2, v3
-  .line 397
+  .line 395
     const/high16 v5, 0x43340000
     div-float/2addr v5, v2
-  .line 398
+  .line 396
     aget v2, v0, v6
     const/high16 v6, 0x40000000
     mul-float v3, v3, v6
     add-float/2addr v2, v3
     aget v6, v0, v9
     add-float/2addr v6, v3
-  .line 399
+  .line 397
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v3 }, Lcom/innioasis/ipp/FlowView;->coverLeft()I
     move-result v3
@@ -770,7 +770,7 @@
     sub-float/2addr v2, v8
     mul-float v2, v2, v5
     sub-float/2addr v3, v2
-  .line 400
+  .line 398
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v2 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
     move-result v2
@@ -783,7 +783,7 @@
     sub-float/2addr v6, v0
     mul-float v6, v6, v5
     sub-float/2addr v1, v6
-  .line 401
+  .line 399
     new-array v0, v7, [F
     const/4 v2, 0
     aput v3, v0, v2
@@ -883,42 +883,42 @@
 
 .method done(I)V
   .registers 4
-  .line 312
+  .line 310
     iput p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
-  .line 313
+  .line 311
     const/4 v0, 2
     if-ne p1, v0, :L0
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->restart()V
   :L0
-  .line 314
+  .line 312
     if-nez p1, :L1
-  .line 315
+  .line 313
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/16 v0, 8
     invoke-virtual { p1, v0 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 316
+  .line 314
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/4 v1, 0
     invoke-virtual { p1, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 317
+  .line 315
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { p1, v0 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 318
+  .line 316
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { p1, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 319
+  .line 317
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     const/4 v0, -1
     invoke-virtual { p1, v0 }, Lcom/innioasis/ipp/FlowView;->hide(I)V
-  .line 320
+  .line 318
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     const/high16 v1, 0x3F800000
     invoke-virtual { p1, v1 }, Lcom/innioasis/ipp/FlowView;->setLabels(F)V
-  .line 321
+  .line 319
     iput v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
   :L1
-  .line 323
+  .line 321
     return-void
 .end method
 
@@ -942,15 +942,15 @@
 
 .method halfBack()V
   .registers 5
-  .line 298
+  .line 296
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/4 v1, 4
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setVisibility(I)V
-  .line 299
+  .line 297
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 300
+  .line 298
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     invoke-virtual { v0 }, Landroid/widget/ImageView;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
@@ -963,21 +963,21 @@
     new-instance v2, Lcom/innioasis/y1/activity/IppFlowActivity$Done;
     invoke-direct { v2, p0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Done;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;I)V
     invoke-virtual { v0, v2 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 301
+  .line 299
     return-void
 .end method
 
 .method halfOver()V
   .registers 4
-  .line 217
+  .line 215
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->card:Landroid/widget/ImageView;
     const/16 v1, 8
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 218
+  .line 216
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setVisibility(I)V
-  .line 219
+  .line 217
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
@@ -997,9 +997,9 @@
     new-instance v1, Lcom/innioasis/y1/activity/IppFlowActivity$Done;
     const/4 v2, 2
     invoke-direct { v1, p0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Done;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;I)V
-  .line 220
+  .line 218
     invoke-virtual { v0, v1 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 221
+  .line 219
     return-void
 .end method
 
@@ -1218,20 +1218,20 @@
 
 .method openPlayer()V
   .registers 4
-  .line 405
+  .line 403
     new-instance v0, Landroid/content/Intent;
     const-class v1, Lcom/innioasis/music/MusicPlayerActivity;
     invoke-direct { v0, p0, v1 }, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-  .line 406
+  .line 404
     const-string v1, "ipp_flip"
     const/4 v2, 1
     invoke-virtual { v0, v1, v2 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
-  .line 407
+  .line 405
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->startActivity(Landroid/content/Intent;)V
-  .line 408
+  .line 406
     const/4 v0, 0
     invoke-virtual { p0, v0, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->overridePendingTransition(II)V
-  .line 409
+  .line 407
     return-void
 .end method
 
@@ -1245,21 +1245,21 @@
 
 .method toPlayer()V
   .registers 6
-  .line 346
+  .line 344
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     const/4 v1, 4
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setVisibility(I)V
-  .line 347
+  .line 345
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
     iget v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
     invoke-interface { v0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/ipp/Flow$Item;
-  .line 348
+  .line 346
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->track()I
     move-result v1
-  .line 349
+  .line 347
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     iget-object v2, v2, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->songs:Ljava/util/List;
     if-eqz v2, :L0
@@ -1273,52 +1273,52 @@
   :L0
     const/4 v1, 0
   :L1
-  .line 350
+  .line 348
     iget-object v0, v0, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 351
+  .line 349
     if-nez v0, :L2
-  .line 352
+  .line 350
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->openPlayer()V
-  .line 353
+  .line 351
     return-void
   :L2
-  .line 355
+  .line 353
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v1, v0 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 356
+  .line 354
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->placeTrip()V
-  .line 357
+  .line 355
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->startPose()[F
     move-result-object v0
-  .line 358
+  .line 356
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v2, 0
     aget v3, v0, v2
     invoke-virtual { v1, v3 }, Landroid/widget/ImageView;->setTranslationX(F)V
-  .line 359
+  .line 357
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v3, 1
     aget v3, v0, v3
     invoke-virtual { v1, v3 }, Landroid/widget/ImageView;->setTranslationY(F)V
-  .line 360
+  .line 358
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/4 v3, 2
     aget v4, v0, v3
     invoke-virtual { v1, v4 }, Landroid/widget/ImageView;->setScaleX(F)V
-  .line 361
+  .line 359
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     aget v0, v0, v3
     invoke-virtual { v1, v0 }, Landroid/widget/ImageView;->setScaleY(F)V
-  .line 362
+  .line 360
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     const/high16 v1, 0xC2B40000
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setRotationY(F)V
-  .line 363
+  .line 361
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v0, v2 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 364
+  .line 362
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
     invoke-virtual { v0 }, Landroid/widget/ImageView;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v0
@@ -1338,7 +1338,7 @@
     move-result-object v0
     invoke-virtual { v0, v1 }, Landroid/view/ViewPropertyAnimator;->scaleY(F)Landroid/view/ViewPropertyAnimator;
     move-result-object v0
-  .line 365
+  .line 363
     const-wide/16 v1, 260
     invoke-virtual { v0, v1, v2 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
     move-result-object v0
@@ -1348,8 +1348,8 @@
     move-result-object v0
     new-instance v1, Lcom/innioasis/y1/activity/IppFlowActivity$Open;
     invoke-direct { v1, p0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Open;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
-  .line 366
+  .line 364
     invoke-virtual { v0, v1 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
-  .line 367
+  .line 365
     return-void
 .end method

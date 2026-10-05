@@ -13,21 +13,21 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 296
+  .line 233
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/GenreSplit$1;)V
   .registers 2
-  .line 296
+  .line 233
     invoke-direct { p0 }, Lcom/innioasis/ipp/GenreSplit$FileNameCmp;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 3
-  .line 298
+  .line 235
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object p1

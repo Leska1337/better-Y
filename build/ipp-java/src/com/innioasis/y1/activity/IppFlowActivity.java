@@ -167,8 +167,6 @@ public final class IppFlowActivity extends BaseActivity {
         finish();
     }
 
-    // ---- turning the cover over ---------------------------------------------------------------
-
     private void flipOver() {
         int i = flow.target();
         Flow.Item it = (Flow.Item) items.get(i);
@@ -408,8 +406,6 @@ public final class IppFlowActivity extends BaseActivity {
         overridePendingTransition(0, 0);
     }
 
-    // ---- the back of the cover ----------------------------------------------------------------
-
     /** The album's name and artist over its tracks, a cursor bar on the track under the wheel. */
     static final class Panel extends View {
         private static final int HEAD = 54;
@@ -462,7 +458,6 @@ public final class IppFlowActivity extends BaseActivity {
                         c.getResources().getColor(R.color.selected_text_color_submenu), true);
                 fgSel = probe.getCurrentTextColor();
             } catch (Throwable t) {
-                // stock white and black
             }
             bg.setColor(Photos.menuBg());
             head.setColor(fg);
@@ -478,7 +473,6 @@ public final class IppFlowActivity extends BaseActivity {
             try {
                 Photos.highlight(hl, true);
             } catch (Throwable t) {
-                // the flat bar below
             }
             invalidate();
         }
@@ -628,8 +622,6 @@ public final class IppFlowActivity extends BaseActivity {
             }
         }
     }
-
-    // ---- named runnables (d8 here cannot dex anonymous classes) --------------------------------
 
     static final class Load implements Runnable {
         private final IppFlowActivity a;

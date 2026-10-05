@@ -13,29 +13,29 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 440
+  .line 355
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Find$1;)V
   .registers 2
-  .line 440
+  .line 355
     invoke-direct { p0 }, Lcom/innioasis/ipp/Find$NameCmp;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 5
-  .line 442
+  .line 357
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object p1
-  .line 443
+  .line 358
     check-cast p2, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object p2
-  .line 444
+  .line 359
     const-string v0, ""
     if-nez p1, :L0
     move-object p1, v0
@@ -45,7 +45,7 @@
     invoke-virtual { p1, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p1
   :L1
-  .line 445
+  .line 360
     if-nez p2, :L2
     goto :L3
   :L2
@@ -53,7 +53,7 @@
     invoke-virtual { p2, v0 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v0
   :L3
-  .line 446
+  .line 361
     invoke-virtual { p1, v0 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result p1
     return p1

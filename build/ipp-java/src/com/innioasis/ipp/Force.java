@@ -22,53 +22,24 @@ import java.io.FileInputStream;
 import java.util.List;
 
 /**
- * Force reboot: hold the TOP and BOTTOM buttons together for three seconds. Plus a watchdog
- * for the case the buttons cannot get through at all.
+ * Force reboot: TOP + BOTTOM held for three seconds, with fallbacks for a system that no longer
+ * answers ({@link #reboot}). While both are held the pair is SWALLOWED, or their own long presses
+ * (menu, stop) fire half a second in. State is static: a press can start on one Activity and end
+ * on the next. Hooked into every {@code dispatchKeyEvent} that does not delegate.
  *
- * It has to work whatever state the device is in, which is what {@link #reboot} is built
- * around: the real reboot first, and two harder fallbacks under it for when the system itself has
- * stopped answering. Nothing here goes through a Handler — the main thread is the one thing that
- * cannot be relied on at the moment any of this is wanted.
- *
- * The buttons are {@code KEY_MENU} (keycode 4, the top one) and {@code KEY_PLAY} (85, the
- * bottom one) — the same pair every screen reads through {@link KeyMap}. While both are held the
- * pair is SWALLOWED: without that, the top button's own long press opens the long-press menu and
- * the bottom one stops playback about half a second in, so letting go to change your mind would
- * leave both behind. Releasing either before the three seconds are up cancels it and costs nothing.
- *
- * State is static because the keys are the device's, not a screen's — a press can start on one
- * Activity and end on the next. A DOWN whose UP never arrives (the Activity it belonged to went
- * away with it) would otherwise leave a button "held" forever and swallow the other one from then
- * on, so a press older than {@link #STALE_MS} is dropped.
- *
- * Hooked into the top of every {@code dispatchKeyEvent} in the app that does not delegate to
- * another one: the two base Activities (music and e-book), {@code BasePlayerActivity},
- * {@code BaseDialog} (a dialog takes the keys away from the Activity under it),
- * {@code InputMethodDialog}, and the four screens that override the method without calling super.
- *
- * The watchdog exists because all of the above hangs off {@code dispatchKeyEvent}, i.e.
- * off the MAIN THREAD — which is exactly the thread that is not running when a screen is stuck, so
- * the one moment the combination is wanted is the one moment it cannot be noticed. A plain thread
- * therefore pings the main thread every {@link #PING_MS} and restarts the process when the answer
- * has not come back for {@link #STUCK_MS}. Reading the buttons straight from the kernel was tried
- * first and is not possible: {@code /dev/input/event*} is {@code root:input 0660} and the app's
- * process (uid {@code system}) is not in the {@code input} group — and no permission grants it.
+ * The keys arrive on the MAIN thread, which is the one stuck when this is wanted, so a watchdog
+ * thread restarts things when the main thread stops answering. The kernel's input devices are not
+ * readable for uid {@code system}.
  */
 public final class Force {
 
     private Force() { }
 
-    /** How long both buttons must be down. */
     private static final long HOLD_MS = 3000;
-    /** A key that has been "down" longer than this never got its UP; forget it. */
+    /** A DOWN older than this never got its UP (its Activity went away). */
     private static final long STALE_MS = 8000;
-    /** How often the watchdog asks the main thread whether it is still there. */
     private static final long PING_MS = 2000;
-    /**
-     * No answer for this long means the main thread is wedged. Well above anything legitimate:
-     * Android calls 5 s an ANR, and the heavy passes in this app (the library scan, "Cache
-     * library") all run on threads of their own.
-     */
+    /** Well above an ANR's 5 s; every heavy pass here runs on its own thread. */
     private static final long STUCK_MS = 20000;
 
     private static final Handler H = new Handler(Looper.getMainLooper());
@@ -79,19 +50,13 @@ public final class Force {
     private static Boom pending;
     private static volatile boolean fired;
 
-    /**
-     * Called first thing in {@code dispatchKeyEvent}. Returns true when the event must not reach
-     * the app at all — i.e. while both buttons are down, and for the release that ends it.
-     */
+    /** First thing in {@code dispatchKeyEvent}; true = swallow. */
     public static boolean key(KeyEvent e) {
         try {
             if (e == null) return false;
-            watch();                       // the watchdog starts with the first key press of the run
-            // Once the reboot is on its way the app takes NO further key events at all. The pair is
-            // still held at that moment and their releases are yet to come — and the top button's
-            // short press is delivered on the UP, so anything let through here changes the screen
-            // underneath the system's shutdown window. Everything else on the device is about to go
-            // away too, so swallowing the lot costs nothing.
+            watch();
+            // After firing, nothing gets through: the top button's short press arrives on its UP
+            // and would change the screen under the shutdown window.
             if (fired) return true;
             int code = e.getKeyCode();
             boolean menu = code == KeyMap.INSTANCE.getKEY_MENU();
@@ -122,7 +87,7 @@ public final class Force {
                 if (menuAt == 0 && playAt == 0) {
                     boolean was = armed;
                     armed = false;
-                    return was;   // the release that broke the pair is not a button press either
+                    return was;   // the release that ends it is swallowed too
                 }
             }
             return armed;
@@ -146,16 +111,7 @@ public final class Force {
         armed = false;
     }
 
-    /**
-     * Fires three seconds into the hold.
-     *
-     * The swallowing stays ARMED — only the pending fire is dropped. The buttons are still down
-     * at this point and their releases are yet to come: the top one's short press is delivered on
-     * the UP, so clearing {@code armed} here handed the app a "back" the moment the user let go,
-     * i.e. the screen changed underneath the system's shutdown window. {@link #key} disarms itself
-     * when both buttons are up, swallowing the release that does it, exactly as it does when the
-     * hold is abandoned early.
-     */
+    /** Leaves {@code armed} set: the releases still to come must be swallowed (see {@link #key}). */
     private static final class Boom implements Runnable {
         public void run() {
             cancel();
@@ -163,18 +119,11 @@ public final class Force {
         }
     }
 
-    // ---- the Shutdown confirm dialog ----------------------------------------------------------
-    //
-    // Stock's callback shuts the device down inside `confirm()`, and `DialogUtil.shortUp` calls
-    // `dismiss()` only AFTER the callback returns — but `Other.shutdown()` never returns: it
-    // reflects into IPowerManager and blocks in the system while the shutdown screen comes up. So
-    // the confirm dialog stayed on screen underneath it. Exactly the same shape as the Reboot row
-    // below, and the same answer: hand the frame back first, shut down 400 ms later. The delay is not a race to win — nothing after this
-    // point matters, the device is going down either way.
-
+    // Shutdown and reboot never return, and DialogUtil dismisses only after the callback has, so
+    // the confirm dialog would stay under the shutdown screen: the frame is handed back first.
     private static final int SHUTDOWN_DELAY_MS = 400;
 
-    /** Replaces `Other.INSTANCE.shutdown()` in `BaseActivity$askShutdown$1.confirm`. */
+    /** Replaces {@code Other.INSTANCE.shutdown()} in {@code BaseActivity$askShutdown$1.confirm}. */
     public static void postShutdown() {
         H.postDelayed(new Down(), SHUTDOWN_DELAY_MS);
     }
@@ -185,13 +134,10 @@ public final class Force {
         }
     }
 
-    // ---- the Reboot row of the stock Settings screen ------------------------------------------
-    //
-    // It stands right under Shutdown and wears Shutdown's picture: the two are the same question
-    // about the device. Stock finds a row by its TITLE in all three places (the list, confirm,
-    // the panel), so these three hooks do the same with ipp_reboot.
+    // The Reboot row of stock Settings, under Shutdown and with its picture. Stock finds rows by
+    // TITLE in the list, confirm and the panel, and so do these three hooks.
 
-    /** From the end of {@code SettingActivity.setRecyclerData}: slot the row in under Shutdown. */
+    /** End of {@code SettingActivity.setRecyclerData}. */
     public static void settingsRow(SettingActivity a, List list) {
         String off = a.getString(R.string.setting_shutdown);
         int at = list.size();
@@ -222,11 +168,6 @@ public final class Force {
         return true;
     }
 
-    /**
-     * {@code PowerManager.reboot()} does not return, and {@code DialogUtil} dismisses only after
-     * the callback has — so, as with Shutdown above, the dialog is let go first and the reboot
-     * follows 400 ms later, or it stays on screen behind the system's shutdown window.
-     */
     private static final class Again extends DialogUtil.DialogCallback {
         @Override
         public void confirm() {
@@ -240,7 +181,6 @@ public final class Force {
 
     private static final class Restart implements Runnable {
         public void run() {
-            // Stock writes its saved state only when the device is SHUT DOWN — see saveState.
             saveState();
             Context c = Y1Application.Companion.getAppContext();
             if (c != null) Other.INSTANCE.reboot(c);
@@ -248,27 +188,14 @@ public final class Force {
     }
 
     /**
-     * Both paths end here, and only one of them may get through. Three steps, each a fallback for
-     * the one before, so that something happens whatever state the device is in:
-     *
-     *   - {@code PowerManager.reboot} — the real thing, a full reboot. Called from a
-     *       thread of our own, never from a Handler: a wedged main thread must not be able to hold
-     *       it up, and the call is a Binder round trip to {@code system_server} either way. It does
-     *       not return when it works.
-     *   - kill {@code system_server} — if we are still here seconds later, the system
-     *       process is not answering, and a reboot that has to be asked for politely is exactly
-     *       what cannot work then. The app runs as uid {@code system} ({@code sharedUserId}), which
-     *       is the same uid {@code system_server} runs as, so {@code kill(2)} is permitted; init
-     *       restarts zygote and the whole framework comes back up. Not a kernel reboot, but from
-     *       the outside it is a full restart of everything the user can see.
-     *   - kill ourselves — the last resort; the launcher is the HOME app, so the system
-     *       starts it again at once.
+     * Both paths end here, once. On a thread of our own, never a Handler: {@code PowerManager.reboot};
+     * if still alive, kill {@code system_server} (same uid, so permitted — init restarts the
+     * framework); last, kill ourselves (the HOME app is restarted at once).
      */
     private static void reboot() {
         if (fired) return;
         fired = true;
-        // The ring dies with the process, and a forced reboot is precisely a session worth
-        // reading afterwards -- it means the device was wedged enough to be held down.
+        // A forced reboot is exactly the session worth reading afterwards.
         Diag.spill("force reboot (top + bottom held)", null);
         Thread t = new Thread(new Boot(), "ipp-force-boot");
         t.setDaemon(true);
@@ -276,35 +203,22 @@ public final class Force {
     }
 
     /**
-     * Write down what is playing before going down.
-     *
-     * Stock saves that state in exactly two places — {@code Other.shutdown()} and a 2% battery
-     * warning — so a REBOOT came back to whatever the last shutdown had left behind: the wrong
-     * track, the wrong list, and (since the queue's source is written in the same breath) the
-     * wrong screen behind "Open source". Always the same wrong one, too, which is what it looked
-     * like on the device. Both of our reboot paths call this first.
-     *
-     * It is the whole playlist through Gson and a file write, which is a moment's work — and
-     * this is a reboot, so the moment is free.
+     * Stock saves the playing state only on shutdown and at 2% battery, so without this a reboot
+     * comes back to the last shutdown's track, list and source.
      */
     public static void saveState() {
         try {
             PlayerService ps = Y1Application.Companion.getPlayerService();
             if (ps != null) ps.saveState();
         } catch (Throwable t) {
-            // going down without it is what stock did anyway
         }
     }
 
     private static final class Boot implements Runnable {
         public void run() {
             saveState();
-            // Whether the system took the request at all. It matters because the reboot itself
-            // takes seconds during which the framework tears everything down — escalating in the
-            // middle of that restarts the launcher (and the framework with it) on the way to a
-            // reboot that was already happening, which is exactly what it looked like: the screen
-            // came back once before the device finally went down. So a request that was accepted
-            // gets a long grace period, and only a REFUSED one is escalated at once.
+            // An accepted request gets a long grace: escalating while the framework tears down
+            // restarts the screen once on the way to a reboot already happening.
             boolean asked = false;
             try {
                 Context c = Y1Application.Companion.getAppContext();
@@ -324,7 +238,6 @@ public final class Force {
                 try {
                     android.os.Process.killProcess(pid);
                 } catch (Throwable t) {
-                    // not ours to kill after all
                 }
                 sleep(4000);
             }
@@ -344,16 +257,11 @@ public final class Force {
         }
     }
 
-    /** The pid of {@code system_server}, or 0. */
     private static int systemServer() {
         return pidOf("system_server");
     }
 
-    /**
-     * The pid of the process whose command line is exactly {@code name}, or 0. Read from
-     * {@code /proc}, which needs no permission — and no {@code ps}, which is a process of its own
-     * and might be exactly what a wedged system cannot start.
-     */
+    /** From {@code /proc}, not {@code ps}: a wedged system may not start a process. 0 = none. */
     private static int pidOf(String name) {
         try {
             File[] fs = new File("/proc").listFiles();
@@ -369,7 +277,6 @@ public final class Force {
                 if (name.equals(readCmdline(fs[i]))) return pid;
             }
         } catch (Throwable t) {
-            // fall through
         }
         return 0;
     }
@@ -390,17 +297,12 @@ public final class Force {
             try {
                 if (in != null) in.close();
             } catch (Throwable t) {
-                // ignore
             }
         }
     }
 
-    // ------------------------------------------------------------------------------------------
-    // The watchdog.
-    // ------------------------------------------------------------------------------------------
-
     private static boolean watching;
-    /** Uptime of the last answer from the main thread. */
+    /** Uptime of the main thread's last answer. */
     private static volatile long pong;
 
     private static void watch() {
@@ -412,23 +314,16 @@ public final class Force {
             t.setDaemon(true);
             t.start();
         } catch (Throwable t) {
-            // no watchdog: the button combination above still works while the app does
         }
     }
 
-    /** Runs on the main thread; the one thing it does is say that it ran. */
     private static final class Pong implements Runnable {
         public void run() {
             pong = SystemClock.uptimeMillis();
         }
     }
 
-    /**
-     * A plain thread, so a wedged main thread cannot hold it up. It posts {@link Pong} and looks at
-     * how long ago the last one came back — posting every round rather than waiting for the
-     * previous one keeps it correct when the main thread is merely slow: a late answer simply moves
-     * the mark forward again.
-     */
+    /** Posts every round instead of waiting for the last answer, so a slow main thread is not "stuck". */
     private static final class Ping implements Runnable {
         public void run() {
             Pong back = new Pong();

@@ -15,22 +15,8 @@ import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 
 /**
- * The year of an album, read from the tags of ONE of its songs and remembered in
- * {@code ipp_years.txt}.
- *
- * A year is a property of the album, not of the track — one {@code MediaMetadataRetriever} per
- * album, which is what makes it affordable at all. (A per-track year range "(2001 – 2004)" was
- * considered and deferred for exactly that reason: it needs every file of the library read.)
- *
- * {@code ""} means "read, and this album has no year": without it every untagged album would be
- * opened again on every pass. {@link #get(String)} therefore answers "" and null differently, and
- * {@link YearComparator} treats both as "no year".
- *
- * Keys go through {@link Albums#coverKey}, so an album asked about by its plain name from Genres
- * and by its folder-encoded name from Albums is one entry, not two.
- *
- * The map is a raw {@code HashMap} — a generic field type makes javac emit a class
- * {@code Signature} attribute and the bundled d8 crashes dexing those.
+ * An album's year, read from ONE of its songs and kept in {@code ipp_years.txt}. {@code ""} means
+ * "read, no year" — without it every untagged album is opened again on every pass.
  */
 public final class YearCache {
 
@@ -51,7 +37,7 @@ public final class YearCache {
         }
     }
 
-    /** The first run of four digits in the string, or null. "1997-08-12" and "1997" both give 1997. */
+    /** The first run of four digits: "1997-08-12" gives 1997. */
     private static String digits4(String s) {
         if (s == null) {
             return null;
@@ -86,12 +72,7 @@ public final class YearCache {
         return new File(dir, "ipp_years.txt");
     }
 
-    /**
-     * The album's year, "" for "read, no year", null for "never looked at".
-     *
-     * ipp: the key is canonicalised — the Genres screen asks with a PLAIN album name where the
-     * Albums screen asks with a folder-encoded one (see {@link Albums#coverKey} / CoverCache.peek).
-     */
+    /** "" for "read, no year", null for "never looked at". The key is canonicalised. */
     public static String get(String album) {
         album = Albums.coverKey(album);
         if (album == null) {
@@ -128,7 +109,6 @@ public final class YearCache {
         }
     }
 
-    /** Writes the file, but only when something has been added since the last write. */
     private static void save() {
         if (!dirty) {
             return;
@@ -156,12 +136,8 @@ public final class YearCache {
     }
 
     /**
-     * Records ONE album's year from tags the caller has already read out of a file it had open
-     * anyway ("Cache library" reads the album artist, the year and the thumbnail from a single
-     * {@code setDataSource}). Exactly {@link #warm}'s rule: YEAR first, DATE as the fallback, four
-     * digits out of either, and "" for "read, no year" so it is not read again.
-     *
-     * It does not write the file — the caller's pass ends in {@link #warm}, which does.
+     * Tags the caller already read ("Cache library"). YEAR, else DATE, as {@link #warm} does.
+     * Does not write the file — the caller's pass ends in {@link #warm}.
      */
     public static void put(String album, String year, String date) {
         album = Albums.coverKey(album);
@@ -180,7 +156,7 @@ public final class YearCache {
         dirty = true;
     }
 
-    /** Reads the year of every album of the list that has none cached, then writes the file once. */
+    /** Reads every album not cached yet, then writes the file once. */
     public static void warm(List names) {
         if (names == null) {
             return;
@@ -194,8 +170,6 @@ public final class YearCache {
                 if (album == null) {
                     continue;
                 }
-                // ipp: the "Show all songs" row is not an album — never scan the artist
-                // for a year.
                 if (Albums.isAllSongs(album)) {
                     continue;
                 }

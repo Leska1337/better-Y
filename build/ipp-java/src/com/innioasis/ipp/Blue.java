@@ -37,14 +37,10 @@ import com.innioasis.y1.utils.InputMethodDialog;
 import java.util.ArrayList;
 
 /**
- * The Bluetooth screen's paired devices: a long press on one opens a menu instead of going
- * straight to the unpair dialog, and the second entry renames it.
- *
- * The rename is OURS, not the system's: Android 4.2 has no public way to set a device's alias
- * ({@code BluetoothDevice.setAlias} is @hide on this platform), so the chosen name is kept in the
- * ipp preferences under the device's MAC address and applied wherever a row draws a name. That also
- * means it cannot be lost by the stack re-reading the device's advertised name, and unpairing the
- * device leaves it behind harmlessly (pairing it again shows the name the user gave it).
+ * The Bluetooth screen: a paired device's long-press menu (forget / rename), its banded captions,
+ * the search circle, and every text in the theme's colour. The rename is OURS, kept per MAC in
+ * the ipp preferences: Android 4.2 hides {@code setAlias}. It survives unpairing and the stack
+ * re-reading the advertised name.
  */
 public final class Blue {
 
@@ -52,7 +48,7 @@ public final class Blue {
 
     private static final String KEY = "bt_name:";
 
-    /** The name a row shows: the user's own if there is one, the device's otherwise. */
+    /** The user's name if there is one, the device's otherwise. */
     public static String name(BluetoothDevice d) {
         if (d == null) return "";
         try {
@@ -63,18 +59,12 @@ public final class Blue {
                 if (mine != null && mine.length() != 0) return mine;
             }
         } catch (Throwable t) {
-            // fall through to the device's own name
         }
         String n = d.getName();
         return n == null ? "" : n;
     }
 
-    // ------------------------------------------------------------------ the long-press menu
-
-    /**
-     * Long TOP on a paired device. Stock raised the unpair confirm straight away; it is the first
-     * of two entries now. Dispatched by string, like every other menu the mod builds.
-     */
+    /** Long TOP on a paired device. Dispatched by string. */
     public static void menu(BluetoothActivity a, BluetoothDevice d) {
         if (a == null || d == null) return;
         ArrayList l = new ArrayList();
@@ -101,14 +91,9 @@ public final class Blue {
         }
     }
 
-    // ------------------------------------------------------------------ forget
-
     /**
-     * The same confirm stock's {@code longConfirm} raised, kept word for word ({@code bl_unpair}),
-     * and the same three things afterwards — unpair, put the cursor back on the On/Off row, repaint.
-     * {@code showItemTips()} itself is private and reachable only through a synthetic accessor,
-     * which Java cannot call, so its mark-0 branch is reproduced here: the title row takes the
-     * highlight and both lists are rebound.
+     * Stock's confirm and aftermath. {@code showItemTips()} is private (synthetic accessor only),
+     * so its mark-0 branch is reproduced: highlight on the On/Off row, both lists rebound.
      */
     private static void forget(BluetoothActivity a, BluetoothDevice d) {
         new DialogUtil(a, true, R.style.Dialog_Common)
@@ -130,7 +115,6 @@ public final class Blue {
             try {
                 BLUtils.INSTANCE.unPairDevice(d);
             } catch (Throwable t) {
-                // the stack refused; the list below still repaints from what it has
             }
             a.setMark(0);
             title(a, true);
@@ -138,17 +122,10 @@ public final class Blue {
         }
     }
 
-    // ------------------------------------------------------------------ rename
-
     /**
-     * Seeding the keyboard takes TWO calls, and that is not a detail: {@code setEditText} writes the
-     * display box only, while every key the dialog handles works on {@code valueLiveData}. With the
-     * model left empty, Delete ({@code inputChar("-")}) takes its early exit — "nothing to delete" —
-     * and the name on screen can only be added to, never shortened, until a character has been
-     * typed. Stock's own seeded input (SearchActivity) sets both for exactly this reason.
-     *
-     * The model is reachable only through {@code onInit}, which the dialog calls from
-     * {@code onCreate}, i.e. inside the first {@code show()} — hence the order here.
+     * Seeding takes TWO calls: {@code setEditText} fills the display only, while the keys work on
+     * {@code valueLiveData} — left empty, Delete does nothing. The model arrives through
+     * {@code onInit} inside the first {@code show()}, hence the order.
      */
     private static void rename(BluetoothActivity a, BluetoothDevice d) {
         Rename cb = new Rename(a, d);
@@ -158,14 +135,7 @@ public final class Blue {
         dlg.setEditText(name(d));
     }
 
-    /**
-     * The keyboard dialog hands its live value out through {@code onInit} and calls {@code onBack}
-     * when it closes — which is the only moment this screen needs, so no observer is registered:
-     * the value is read once, at the end.
-     *
-     * An empty name means "no name of my own": the entry is removed and the row goes back to what
-     * the device calls itself, which is also how a rename is undone.
-     */
+    /** Read once, on close. An empty name removes ours: how a rename is undone. */
     private static final class Rename implements InputMethodDialog.Callback {
         private final BluetoothActivity a;
         private final BluetoothDevice d;
@@ -180,7 +150,6 @@ public final class Blue {
             live = valueLiveData;
         }
 
-        /** Put the current name into the dialog's own model, not just into its display box. */
         void seed(String s) {
             if (live != null) live.setValue(s);
         }
@@ -196,21 +165,16 @@ public final class Blue {
                 else p.edit().putString(KEY + addr, s).commit();
                 repaint(a);
             } catch (Throwable t) {
-                // a rename that cannot be stored must not take the screen down
             }
         }
     }
 
-    // ------------------------------------------------------------------ shared bits
-
-    /** Rebind both device lists — the adapters are reached through the binding, not the Activity. */
     private static void repaint(BluetoothActivity a) {
         try {
             ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
             rebind(vb.recyclerMyDevice);
             rebind(vb.recyclerOtherDevice);
         } catch (Throwable t) {
-            // nothing to repaint
         }
     }
 
@@ -220,7 +184,7 @@ public final class Blue {
         if (ad != null) ad.notifyDataSetChanged();
     }
 
-    /** The On/Off row's highlight, the way {@code showItemTips} paints it for mark 0. */
+    /** As {@code showItemTips} paints mark 0. */
     private static void title(BluetoothActivity a, boolean on) {
         try {
             ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
@@ -228,32 +192,26 @@ public final class Blue {
             ThemeManager.INSTANCE.itemSetBackground(t, on ? R.drawable.item_selected_no_arrow : 0, on);
             row(t, on);
         } catch (Throwable t) {
-            // the row keeps the look it had
         }
     }
 
-    // ------------------------------------------------------------------ the shape of the screen
-
-    /** A caption's text size, sp, and the air above and below its words, px. */
     private static final float CAPTION_SP = 13.0f;
     private static final int CAPTION_PAD = 3;
 
-    /** Where a caption's words start, and how close to the edge of the screen the circle sits. */
     private static final int CAP_START_DIP = 10;
     private static final int CAP_END_DIP = 8;
 
-    /** A band's rules, and the hairline under a device row — the menu's own two thicknesses. */
+    /** The menu's own two thicknesses: a band's rules and a row's hairline. */
     private static final int RULE_H = 2;
     private static final int HAIR_ALPHA = 0x1F000000;
 
-    /** The circle: how much bigger than the caption's letters, and its ring as a share of that. */
+    /** The circle against the caption's letters, and its ring as a share of that. */
     private static final float SPIN = 1.4f;
     private static final float SPIN_RING = 0.16f;
 
     /**
-     * The two captions in the banded shape of the better-Y menu's group titles — built here and
-     * not in the layout because not one of their colours can be chosen, all three are read back
-     * off the theme. Called at the END of {@code initView}: {@link #paint} would undo the words.
+     * The two captions as better-Y's banded group titles, in colours read off the theme. At the
+     * END of {@code initView}: {@link #paint} would undo them.
      */
     public static void style(BluetoothActivity a) {
         try {
@@ -261,16 +219,13 @@ public final class Blue {
             TextView mine = vb.title;
             LinearLayout col = (LinearLayout) mine.getParent();
             band(col, mine, null);
-            // The first is inside its band by now, so the column's remaining TextView is the
-            // other caption — which carries no id of its own to be asked for.
+            // The other caption has no id: it is the column's one remaining TextView.
             band(col, plain(col), spinner(a));
             searching(a);
         } catch (Throwable t) {
-            // the stock captions are still captions
         }
     }
 
-    /** The column's own TextView child, there being exactly one left by the time this is asked. */
     private static TextView plain(LinearLayout col) {
         for (int i = 0; i < col.getChildCount(); i++) {
             View v = col.getChildAt(i);
@@ -279,7 +234,7 @@ public final class Blue {
         return null;
     }
 
-    /** One caption, taken out of the column and put back in a band, with {@code tail} beside it. */
+    /** The caption moved into a band, with {@code tail} beside it. */
     private static void band(LinearLayout col, TextView cap, View tail) {
         if (col == null || cap == null) return;
         int at = col.indexOfChild(cap);
@@ -289,8 +244,7 @@ public final class Blue {
         Context c = col.getContext();
         float d = col.getResources().getDisplayMetrics().density;
         cap.setTextSize(CAPTION_SP);
-        // Two-argument setTypeface, never Typeface.create: only this form fakes bold for a theme
-        // font with no bold cut, and MONOSPACE is what ThemeManager swaps for that font.
+        // Two-argument form: it fakes bold for a theme font with no bold cut.
         cap.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
         cap.setIncludeFontPadding(false);
         cap.setGravity(Gravity.CENTER_VERTICAL);
@@ -317,33 +271,26 @@ public final class Blue {
         box.addView(line, new LinearLayout.LayoutParams(-1, -2));
         box.addView(rule(c, rgb, IppActivity.RULE_ALPHA), new LinearLayout.LayoutParams(-1, RULE_H));
         box.setBackgroundColor(washRgb(c) | IppActivity.bandAlpha());
-        // No margin, here or on a row: the theme paints the rows, so a gap between two of them is
-        // a line of wallpaper across the list. What separates the parts is the rules themselves.
+        // No margin: a gap between theme-painted rows is a line of wallpaper.
         col.addView(box, at, new LinearLayout.LayoutParams(-1, -2));
     }
 
-    /**
-     * The circle that turns while the stack is looking for devices, at the right-hand end of the
-     * "Other devices" caption. Drawn rather than scaled from {@code loading.png} (see {@link Spin}).
-     */
+    /** The search circle, at the end of the "Other devices" caption. */
     private static View spinner(Context c) {
         int n = Math.round(CAPTION_SP * c.getResources().getDisplayMetrics().scaledDensity * SPIN);
         View v = new Spin(c, itemRgb(c), Math.max(2.0f, n * SPIN_RING));
         v.setId(R.id.ipp_bl_spin);
-        // INVISIBLE, not GONE: the circle is taller than the caption's letters, and a caption of
-        // a different height steps the whole list up and down as the discovery starts and stops.
+        // INVISIBLE, not GONE: it is taller than the caption, and the list would jump.
         v.setVisibility(View.INVISIBLE);
         v.setLayoutParams(new LinearLayout.LayoutParams(n, n));
         return v;
     }
 
     /**
-     * A ring fading from the theme's colour to nothing round the circle, with a gap: a closed ring
-     * of one even colour looks still however fast it spins. Drawn instead of {@code loading.png}
-     * because at this size that picture's ring is a pixel and a half and cannot be thickened.
+     * A fading ring with a gap (an even closed ring looks still). Drawn: {@code loading.png}'s ring
+     * is a pixel and a half at this size.
      */
     private static final class Spin extends View {
-        /** How much of the circle the arc covers; the rest is the gap that shows it turning. */
         private static final float SWEEP = 300.0f;
 
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -363,14 +310,13 @@ public final class Blue {
         protected void onSizeChanged(int w, int h, int ow, int oh) {
             float half = ring / 2.0f;
             box.set(half, half, w - half, h - half);
-            // The stops are placed by hand because a sweep is spread over the FULL turn whatever
-            // is drawn of it: with the default two the tail meets the gap half opaque, and the
-            // two ends read as one line crossing itself.
+            // Stops by hand: a sweep spans the FULL turn, and by default the tail meets the gap
+            // half opaque.
             paint.setShader(new SweepGradient(w / 2.0f, h / 2.0f,
                     new int[] { 0xFF000000 | rgb, rgb }, new float[] { 0.0f, SWEEP / 360.0f }));
         }
 
-        /** Mirrored: a sweep only runs clockwise, so flipping is the only way to lead with the head. */
+        /** Mirrored: a sweep only runs clockwise, and the head must lead. */
         protected void onDraw(Canvas canvas) {
             int save = canvas.save();
             canvas.scale(-1.0f, 1.0f, getWidth() / 2.0f, getHeight() / 2.0f);
@@ -380,16 +326,14 @@ public final class Blue {
     }
 
     /**
-     * Start or stop the circle, from the end of stock's {@code showState}. What it follows is the
-     * "Searching..." line, drawn at no height ({@code activity_blutooth.xml}): three branches
-     * there set its visibility, and reading it back is one place where deciding again would be
-     * three.
+     * End of stock's {@code showState}: follows the zero-height "Searching..." line, whose
+     * visibility three branches set — read back rather than decided a fourth time.
      */
     public static void searching(BluetoothActivity a) {
         try {
             ActivityBlutoothBinding vb = (ActivityBlutoothBinding) a.getVb();
             View spin = vb.getRoot().findViewById(R.id.ipp_bl_spin);
-            if (spin == null) return;               // before style() has run, i.e. from initView
+            if (spin == null) return;               // before style()
             boolean on = vb.loading.getVisibility() == View.VISIBLE;
             if (on == (spin.getVisibility() == View.VISIBLE)) return;
             if (on) {
@@ -400,11 +344,10 @@ public final class Blue {
                 spin.setVisibility(View.INVISIBLE);
             }
         } catch (Throwable t) {
-            // a circle that will not turn must not take the screen down
         }
     }
 
-    /** One turn, clockwise: {@code R.anim.loading}'s 1.5 s, which turns the other way and is shared. */
+    /** {@code R.anim.loading}'s 1.5 s, clockwise (that one turns the other way). */
     private static RotateAnimation turn() {
         RotateAnimation r = new RotateAnimation(0.0f, 360.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
@@ -414,18 +357,14 @@ public final class Blue {
         return r;
     }
 
-    /** The theme's SELECTED item colour — a band's wash — read the only way there is. */
+    /** The theme's SELECTED item colour: a band's wash. */
     private static int washRgb(Context c) {
         TextView probe = new TextView(c);
         ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
         return probe.getCurrentTextColor() & 0x00FFFFFF;
     }
 
-    /**
-     * The theme's ordinary item colour — the rules, the hairlines and the spinner. Read off a
-     * scratch TextView because {@code itemSetTextColor} answers with the theme's own colour and
-     * ignores the one it is passed, so painting and looking is the only way to ask.
-     */
+    /** The ordinary item colour, read back off a scratch TextView (the setter ignores its argument). */
     private static int itemRgb(Context c) {
         TextView probe = new TextView(c);
         ThemeManager.INSTANCE.itemSetTextColor(probe,
@@ -433,52 +372,35 @@ public final class Blue {
         return probe.getCurrentTextColor() & 0x00FFFFFF;
     }
 
-    /** One band of a caption, or a row's hairline: the text's own colour thinned out. */
     private static View rule(Context c, int rgb, int alpha) {
         View v = new View(c);
         v.setBackgroundColor(rgb | alpha);
         return v;
     }
 
-    /** What a focused row shows where the theme names no colour of its own. */
+    /** A focused row's colour when the theme names none. */
     private static final int ACCENT = 0xFF3CFFDE;
 
     /**
-     * Every text on this screen in the theme's ordinary row colour.
-     *
-     * The whole screen was {@code @color/white} in the layouts — the On/Off row, the "My devices"
-     * and "Other devices" captions, the searching line, and both labels of a device row — which is
-     * a screen of invisible text on any light theme.
-     *
-     * The tree is walked rather than the views named one by one because one of them has no id at
-     * all — the "Other devices" caption — so a binding cannot reach it. Called for the whole
-     * screen once it is built, which is also the only moment it is right for every row: the lists
-     * are still empty then, and from that point on each row paints itself through {@link #row}.
+     * Every text of the screen (all {@code @color/white} in the layouts) in the theme's row colour.
+     * The tree is walked: the "Other devices" caption has no id. Once, while the lists are still
+     * empty; rows then paint themselves through {@link #row}.
      */
     public static void paint(View v) {
         walk(v, false);
     }
 
     /**
-     * One row, painted for the cursor or off it — the two device lists and the On/Off row, which
-     * is a row of this screen like any other however little it looks like one.
-     *
-     * The flag is the SAME one the row's background was just given, and comes from the caller
-     * rather than being worked out here: the three lists number their rows differently (the On/Off
-     * row is mark 0, the paired devices follow it, the found ones follow those), and a second
-     * place doing that arithmetic is a second place to get it wrong.
+     * {@code sel} comes from the caller, the same flag the background just got: the lists number
+     * their rows differently, and a second copy of that arithmetic is a second place to err.
      */
     public static void row(View v, boolean sel) {
         walk(v, sel);
     }
 
     /**
-     * A DEVICE row: the same text, plus the hairline along its bottom edge
-     * ({@code item_blutooth.xml}'s last child) in the theme's colour.
-     *
-     * The LAST row of a list gives its hairline up: the band under it draws that boundary with a
-     * rule of its own, and the two together are a thickness found nowhere else on the screen.
-     * The count comes from the adapter because {@code getMyItem} is private.
+     * A DEVICE row, plus its bottom hairline. A list's last row drops it — the band below draws
+     * that boundary.
      */
     public static void row(View v, boolean sel, BaseBindingAdapter ad, int pos) {
         walk(v, sel);
@@ -489,7 +411,6 @@ public final class Blue {
             boolean last = ad != null && pos == ad.getDataListSize() - 1;
             hair.setVisibility(last ? View.GONE : View.VISIBLE);
         } catch (Throwable t) {
-            // a row without its line is still a row
         }
     }
 
@@ -507,11 +428,10 @@ public final class Blue {
                 for (int i = 0; i < g.getChildCount(); i++) walk(g.getChildAt(i), sel);
             }
         } catch (Throwable t) {
-            // stock white is a look; a crash on the way into the screen is not
         }
     }
 
-    /** What the layouts said, and what a theme naming no colour of its own still gets. */
+    /** The layouts' colour, when the theme names none. */
     private static final int PLAIN = 0xFFFFFFFF;
 
     private static SharedPreferences prefs() {

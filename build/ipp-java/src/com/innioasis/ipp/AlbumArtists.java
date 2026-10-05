@@ -22,41 +22,28 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Music → Album Artists: the Artists screen with every ALBUM filed under the one artist it is by.
- *
- * An album's artist is {@link #of}: the ALBUM ARTIST tag of its representative track (the lowest
- * path, the same track the album row reads) exactly as written, else the first artist of that
- * track's own tag, else {@code Constant.UNKNOWN}. The same function draws the artist line of an
- * album row, so an album can never sit under one name here and show another on the Albums screen.
- * Names are grouped trimmed and case-blind, and the spelling shown is the one most albums carry.
- *
- * The screen is {@code ArtistsActivity} started with {@link #EXTRA}, and its rows are the names
- * behind {@link #MARK}. The marker rides every path an artist name already rides — the
- * {@code ipp_artist} extra, the "Show all songs" row, {@code Artists.forMenu}, the queue and the
- * playlist menus — and is decoded only by {@link #songs} and at the few points that draw text.
- * An album opened from here is always shown whole: the artist scope of Artists → Album would hide
- * exactly the guest tracks an album artist exists to gather.
- *
- * Raw (non-generic) types throughout: the bundled d8 crashes dexing generic Signature attrs.
+ * Music → Album Artists: {@code ArtistsActivity} started with {@link #EXTRA}, every album filed
+ * under {@link #of}. Names group trimmed and case-blind; the spelling shown is the commonest. Rows
+ * carry {@link #MARK}, which rides every path an artist name already rides and is decoded only by
+ * {@link #songs} and where text is drawn. An album opened from here is shown whole — the artist
+ * scope would hide exactly the guest tracks an album artist gathers.
  */
 public final class AlbumArtists {
 
     private AlbumArtists() { }
 
-    /** better-Y → "Show Album Artists": the row in the Music menu. Off by default. */
     public static final String KEY = "album_artists";
 
-    /** The Intent extra that turns ArtistsActivity into this screen. */
     public static final String EXTRA = "ipp_album_artists";
 
-    // EOT (0x04): SOH..ETX already mark album keys and the two "Show all songs" rows (Albums)
+    // EOT: SOH..ETX already mark album keys and the two "Show all songs" rows (Albums).
     private static final char MARK = (char) 4;
 
     public static boolean is(String s) {
         return s != null && s.length() > 0 && s.charAt(0) == MARK;
     }
 
-    /** The name a row stands for, marker stripped; anything else is returned as it is. */
+    /** Marker stripped; anything else returned as it is. */
     public static String name(String s) {
         return is(s) ? s.substring(1) : s;
     }
@@ -65,12 +52,10 @@ public final class AlbumArtists {
         return s == null ? "" : s.trim().toLowerCase(Locale.ROOT);
     }
 
-    // ------------------------------------------------------------------ the album's artist
-
     /**
-     * The artist an album is filed under and shown by: ALBUM ARTIST as written, else the first
-     * artist of the representative track's tag (never subject to any toggle), else
-     * {@code Constant.UNKNOWN}. {@code aa} is the cached tag — "" or null when there is none.
+     * ALBUM ARTIST as written, else the first artist of the representative track (no toggle
+     * applies), else {@code Constant.UNKNOWN}. Also the album row's artist line, so the two screens
+     * always agree.
      */
     public static String of(String aa, String tagArtist) {
         if (aa != null && aa.trim().length() > 0) return aa.trim();
@@ -86,9 +71,7 @@ public final class AlbumArtists {
         return p.length() == 0 ? Constant.UNKNOWN : p;
     }
 
-    // ------------------------------------------------------------------ the Music menu
-
-    /** Injected in MusicMainActivity.initView before setMainList: the row goes right under Artists. */
+    /** MusicMainActivity.initView, before setMainList: the row goes under Artists. */
     public static void musicMenu(List list, Context c) {
         try {
             if (list == null || c == null || !Prefs.on(c, KEY)) return;
@@ -97,14 +80,10 @@ public final class AlbumArtists {
             int at = list.indexOf(c.getString(R.string.music_artists));
             list.add(at < 0 ? list.size() : at + 1, label);
         } catch (Throwable t) {
-            // the stock menu without our row is still the menu
         }
     }
 
-    /**
-     * Injected at the top of MusicMainActivity.confirm: opens this screen for our row and hands
-     * stock the index its own switch knows — -1 (its default branch, nothing) when the row was ours.
-     */
+    /** Top of MusicMainActivity.confirm: the index stock's switch knows; -1 when the row was ours. */
     public static int musicPick(Activity a, int pos) {
         try {
             List l = Constant.INSTANCE.getMainList();
@@ -121,8 +100,6 @@ public final class AlbumArtists {
         }
     }
 
-    // ------------------------------------------------------------------ the screen
-
     private static boolean screen(Activity a) {
         try {
             return a != null && a.getIntent() != null && a.getIntent().getBooleanExtra(EXTRA, false);
@@ -131,16 +108,11 @@ public final class AlbumArtists {
         }
     }
 
-    /** ArtistsActivity.initView: the title bar. */
     public static String title(Activity a, String stock) {
         return screen(a) ? a.getString(R.string.ipp_album_artists) : stock;
     }
 
-    /**
-     * ArtistsActivity's two list builds (the first fill, on the IO coroutine behind the loading
-     * dialog, and a sort change): the stock artist list, or this screen's. The order is the stock
-     * artist sort, which the query just before this has stored.
-     */
+    /** ArtistsActivity's two list builds (first fill on IO, sort change), in stock's artist sort. */
     public static List screenList(List stock, Activity a) {
         if (!screen(a)) return stock;
         try {
@@ -152,25 +124,21 @@ public final class AlbumArtists {
         }
     }
 
-    // ------------------------------------------------------------------ the model
-
     private static List memoAll;           // Albums.allSongs() the model was built from
     private static int memoGen = -1;       // AlbumArtist.gen() it was built with
     private static HashMap keyToNorm;      // album key -> group
     private static LinkedHashMap names;    // group -> the spelling shown
 
     /**
-     * Group every album of the library. The albums whose tag has never been read are read first —
-     * one file each, several at a time — so this may take seconds on the first entry and must not
-     * run on the main thread then; afterwards it is map lookups, redone only when the library or
-     * an album artist changes.
+     * Unread tags are read first, one file each — seconds on a first entry, so never on the main
+     * thread then. Rebuilt only when the library or an album artist changes.
      */
     private static synchronized boolean build() {
         List all = Albums.allSongs();
         if (all == null) return false;
         if (all == memoAll && memoGen == AlbumArtist.gen() && keyToNorm != null) return true;
 
-        // album key -> its representative: the lowest path, as the album row takes it
+        // The representative is the lowest path, as the album row takes it.
         HashMap reps = new HashMap();
         for (int i = 0; i < all.size(); i++) {
             Object o = all.get(i);
@@ -219,7 +187,7 @@ public final class AlbumArtists {
         return true;
     }
 
-    /** Read the ALBUM ARTIST of every album not read yet, on a few threads; commit here. */
+    /** On a few threads; committed here, on one. */
     private static void readMissing(HashMap reps) {
         ArrayList keys = new ArrayList();
         ArrayList paths = new ArrayList();
@@ -273,14 +241,13 @@ public final class AlbumArtists {
                     String s = Meta.read((String) paths.get(i), false).albumArtist;
                     if (s != null) v = s.trim();
                 } catch (Throwable t) {
-                    // unreadable: "no album artist", the track's own tag answers
                 }
                 out[i] = v;
             }
         }
     }
 
-    /** The rows of the screen, sorted by name; the unknown one last whichever the direction. */
+    /** The unknown artist last in either direction. */
     public static List rows(boolean desc) {
         ArrayList out = new ArrayList();
         if (!build()) return out;
@@ -301,10 +268,7 @@ public final class AlbumArtists {
         }
     }
 
-    /**
-     * Every song of every album filed under this row, in the order asked for. Never null: it
-     * answers both the drawn list ("Show all songs", the album list) and the menu actions on it.
-     */
+    /** Every song filed under this row. Never null. */
     public static List songs(String row, Y1Repository.SongSortType type) {
         ArrayList out = new ArrayList();
         try {
@@ -322,7 +286,6 @@ public final class AlbumArtists {
                     ? Y1Repository.SongSortType.Album : type;
             Collections.sort(out, new Artists.SongCmp(t));
         } catch (Throwable t) {
-            // a partial list is still the right songs
         }
         return out;
     }

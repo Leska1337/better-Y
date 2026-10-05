@@ -8,53 +8,25 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * The settings a backup has to carry that do NOT live in the app's own folder - and therefore
- * cannot be copied as a file at all. Each one is read through the API that owns it and written back
- * through the same one ({@link Backup}).
+ * Backed-up settings that live outside the app's folder, read and written through their owners:
+ * brightness and screen timeout in {@code Settings.System}; key vibration in MediaTek's AudioProfile
+ * service (stock's {@code vibrator} preference is only a mirror — restoring it alone changes the
+ * list, not the device); key tone through {@link Tone}; and the clock, restored to the moment of
+ * the backup because after a flash it comes back years out.
  *
- * There are three owners, and finding out which is which is the whole of this class:
- *
- *   - **Brightness, auto-brightness and the backlight timeout** are {@code Settings.System}
- *     ({@code screen_brightness}, {@code screen_brightness_mode}, {@code screen_off_timeout}) -
- *     stock reads and writes them exactly there, from {@code BrightnessActivity} and
- *     {@code SettingActivity}.
- *   - **Key vibration** is held by MediaTek's AudioProfile service, under the profile
- *     {@code mtk_audioprofile_general}. Key tone is the launcher's own ({@link Tone}) and is
- *     carried as its on/off. The {@code ringtone} / {@code vibrator} entries in stock's
- *     own preferences are a MIRROR for the settings list, not the state: {@code clickRingtone}
- *     writes the preference and then calls the service, and {@code updateVibrator} reads the
- *     service back and overwrites the preference with it. So a restore that only put the
- *     preference file back showed the new value in the list while the player went on beeping as
- *     before - which is exactly what it did.
- *   - **The clock** is the device's own. It cannot be restored faithfully - the player has no
- *     network and no way of knowing how long ago the backup was taken - so what is restored is the
- *     moment the backup was written. After a flash the clock comes back years out (2022 has been
- *     seen), and the right date with the wrong minutes is worth more than that. The time zone is
- *     left alone: this firmware has no screen for it.
- *
- * The AudioProfile service is reached by reflection because both the service name
- * ({@code Context.AUDIOPROFILE_SERVICE}) and the manager's methods are MediaTek additions absent
- * from the SDK - the same reflection stock itself uses, kept call for call.
- *
- * Every value is optional in both directions: a key the snapshot does not carry is left as it is,
- * and a value this device refuses to give up is simply not in the snapshot. That is what makes an
- * archive from another build safe to read.
+ * Every key is optional both ways, so an archive from another build is safe to read.
  */
 public final class Sys {
 
     private Sys() { }
 
-    /** The AudioProfile profile every one of stock's calls names. */
     private static final String PROFILE = "mtk_audioprofile_general";
 
     private static final String BRIGHTNESS = "screen_brightness";
     private static final String BRIGHTNESS_MODE = "screen_brightness_mode";
     private static final String SCREEN_OFF = "screen_off_timeout";
 
-    /**
-     * The snapshot for the archive: {@code key=value} per line, missing keys simply absent. Plain
-     * text on purpose - it is the one part of a backup a person may want to read or edit by hand.
-     */
+    /** {@code key=value} per line: plain text, so a person can read or edit it. */
     static String snapshot(Context c) {
         StringBuilder s = new StringBuilder(128);
         put(s, BRIGHTNESS, sysInt(c, BRIGHTNESS));
@@ -66,10 +38,7 @@ public final class Sys {
         return s.toString();
     }
 
-    /**
-     * Apply a snapshot. Nothing here is allowed to stop the restore: a device that refuses one of
-     * these settings still gets everything else, and the failure is written to the log ring.
-     */
+    /** A setting the device refuses is logged and skipped; the rest still applies. */
     static void apply(Context c, String text) {
         if (c == null || text == null) return;
         String[] lines = text.split("\n");
@@ -100,7 +69,7 @@ public final class Sys {
         if (value >= 0) s.append(key).append('=').append(value).append('\n');
     }
 
-    /** One {@code Settings.System} int, or -1 when this device does not carry it. */
+    /** -1 when this device does not carry the key. */
     private static int sysInt(Context c, String key) {
         try {
             return Settings.System.getInt(c.getContentResolver(), key, -1);
@@ -109,7 +78,7 @@ public final class Sys {
         }
     }
 
-    /** 1, 0, or -1 for "the service did not answer" - which keeps the key out of the snapshot. */
+    /** 1, 0, or -1 when the service did not answer. */
     private static int profileFlag(Context c, String getter) {
         try {
             Object m = manager(c);
@@ -131,25 +100,15 @@ public final class Sys {
         set.invoke(m, PROFILE, Boolean.valueOf(on));
     }
 
-    /**
-     * MediaTek's AudioProfileManager, or null. Both the service name and the class are additions to
-     * this firmware, so the name is read off {@code Context} as a field - stock does the same, and
-     * hardcoding the string would tie us to a value only this ROM knows.
-     */
+    /** A MediaTek addition: the service name is read off {@code Context} by reflection, as stock does. */
     private static Object manager(Context c) throws Throwable {
         Field f = Context.class.getDeclaredField("AUDIOPROFILE_SERVICE");
         Object name = f.get(null);
         return name == null ? null : c.getSystemService((String) name);
     }
 
-    /**
-     * Set the clock. {@code AlarmManager.setTime} is the way the framework means it to be done and
-     * needs {@code SET_TIME}, which the manifest carries; {@code SystemClock} is the same call one
-     * layer down and stands in if the manager refuses.
-     */
+    /** {@code AlarmManager.setTime} (SET_TIME is in the manifest), {@code SystemClock} as fallback. */
     private static void setClock(Context c, long millis) {
-        // A backup old enough that the value is nonsense is not worth arguing about, but zero and
-        // negative are: they would put the device in 1970.
         if (millis <= 0L) return;
         try {
             AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);

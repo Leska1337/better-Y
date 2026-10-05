@@ -26,49 +26,31 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * The Search screen: its rows, its long-press menu.
- *
- * Stock drew a result row from a background thread it started on EVERY bind: the song row's cover,
- * and the album row's cover, title AND subtitle. So scrolling showed rows whose text arrived a
- * thread hop after the row itself, and covers that were decoded again for every row that scrolled
- * past — with the decoded bitmap parked on the Item and thrown away again by the adapter's own
- * "±10 rows" cleanup. That is the blinking.
- *
- * Everything a row can answer from memory is written on the calling thread, exactly the shape the
- * album list already has (`AlbumListAdapter.getView`): the texts always, the cover from
- * {@link CoverCache} when it is there and the placeholder when it is not, and only a genuine cache
- * miss starts a thread — one per row subject per session, not one per bind.
- *
- * The other fixes carried over from the sections that already have them: the song title obeys
- * "Show titles from tags" ({@link Ipp#songTitle}), the artist line reads "; " as ", ", an ALBUM name is not a file name so it does not go through `processFileExtensions`
- * — that would cut "Vol.2" down to "Vol" — and a name shared by several folders is
- * several rows ({@link Albums#splitAlbums}).
+ * The Search screen: rows, matching, long-press menu. A row is written on the calling thread from
+ * memory — texts always, the cover from {@link CoverCache} or the placeholder — and only a real
+ * cache miss starts a thread, once per subject per session (stock started one per bind, which
+ * blinked). An ALBUM name skips {@code processFileExtensions}, which cuts "Vol.2" to "Vol".
  */
 public final class Find {
 
     private Find() {}
 
-    /**
-     * From {@code initView} of both search screens (one layout): the magnifier's plate in the
-     * menu's background, the magnifier — one flat shape — tinted its text colour.
-     */
+    /** {@code initView} of both search screens: the magnifier's plate and tint, menu colours. */
     public static void head(ActivitySearchBinding b) {
         if (b == null) return;
         try {
             menuPlate(b.iconBg);
             b.icon.setColorFilter(Icons.menuText(false), PorterDuff.Mode.SRC_IN);
         } catch (Throwable t) {
-            // stock colours stay
         }
     }
 
-    /** From both search screens' view holder constructors: the plate behind a result thumbnail. */
+    /** Both screens' view holders: the plate behind a thumbnail. */
     public static void plate(View row) {
         if (row == null) return;
         try {
             menuPlate(row.findViewById(R.id.icon_bg));
         } catch (Throwable t) {
-            // stock navy stays
         }
     }
 
@@ -80,43 +62,35 @@ public final class Find {
         v.setBackgroundDrawable(g);
     }
 
-    /** The list thumbnail size, the one {@link CoverCache} stores. */
     private static final int THUMB = 50;
 
-    /** album key -> its song count and representative path. Dropped with the library. */
+    /** album key -> its song count and representative path. */
     private static final Hashtable infos = new Hashtable();
 
-    /** keys a background read has already been started for (album keys and track paths). */
+    /** Keys a background read was started for (album keys and track paths). */
     private static final Hashtable reading = new Hashtable();
 
     /**
-     * Track path -> its OWN 50px artwork, or {@link #SAME} when it has none of its own and the
-     * album's thumbnail is the right picture. Memory only and bounded: a search list is short and
-     * scrolled once, and the expensive half of the answer (BigCover's per-track note) is persisted
-     * anyway.
+     * Track path -> its OWN 50px artwork, or {@link #SAME} when the album's thumbnail is right.
+     * Memory only and bounded; BigCover's per-track note is the persisted half.
      */
     private static final Hashtable own = new Hashtable();
     private static final Object SAME = new Object();
     private static final int OWN_MAX = 32;
 
-    /** Called from {@link Albums#invalidate()}, i.e. from every write to the Song table. */
+    /** From {@link Albums#invalidate()}. */
     public static void clear() {
         infos.clear();
         reading.clear();
         own.clear();
     }
 
-    // ------------------------------------------------------------------ the two row kinds
-
     public static void songRow(ImageView icon, TextView title, TextView info, Song song, Bitmap def) {
         if (song == null) return;
         if (title != null) {
-            // the tag title when "Show titles from tags" is on, the file name otherwise.
-            // unNamed() around it because a tagless song's name is Constant.UNKNOWN, not "".
             String t = Ipp.songTitle(title.getContext(), song.getSongName(), song.getName());
             title.setText(Other.INSTANCE.unNamed(t));
         }
-        // "; " reads as ", ", the same substitution every other song row makes.
         if (info != null) info.setText(Other.INSTANCE.unNamed(Artists.display(song.getArtist())));
         songCover(icon, song, def);
     }
@@ -124,22 +98,13 @@ public final class Find {
     public static void albumRow(ImageView icon, TextView title, TextView info, Album album, Bitmap def) {
         if (album == null) return;
         String name = album.getName();
-        // an album name is not a file name — no extension stripping here. albumLabel is
-        // what every other album row in the mod shows: the real name out of the encoded key
-        //, plus the year when "Show album year" is on — which is also what tells two
-        // same-named albums apart now that they are separate rows.
         if (title != null) title.setText(Other.INSTANCE.unNamed(Prefs.albumLabel(name)));
         Info in = infoOf(name);
         if (info != null) info.setText(label(info.getContext(), in));
         albumCover(icon, name, in == null ? null : in.path, def);
     }
 
-    // ------------------------------------------------------------------ the covers
-
-    /**
-     * An album row shows the album's thumbnail — the very entry the Albums screen caches, so the
-     * two screens share one decode.
-     */
+    /** The very entry the Albums screen caches: one decode for both screens. */
     private static void albumCover(ImageView icon, String key, String path, Bitmap def) {
         if (icon == null) return;
         Bitmap b = null;
@@ -157,16 +122,9 @@ public final class Find {
     }
 
     /**
-     * A SONG row shows THAT SONG's artwork, not its album's — a compilation, a folder of singles
-     * or one track carrying a cover of its own were all drawn with the album's picture, which is
-     * the same rule the Now-Playing cover follows, at 50px.
-     *
-     * The album's thumbnail is still what goes up instantly: for the overwhelming majority of
-     * tracks it IS the track's picture, so painting it costs no read and nothing swaps afterwards.
-     * The background pass then asks {@link BigCover} — whose per-track note ("no artwork" / "the
-     * same picture as this folder's representative" / "its own") is persisted and is exactly the
-     * question being asked here — and only a track noted as having its own artwork is read at 50px
-     * and repainted. A track whose note is already there costs one map lookup and no file at all.
+     * A SONG row shows that song's own artwork, as Now Playing does. The album's thumbnail goes up
+     * at once (usually it IS the picture); {@link BigCover}'s persisted per-track note decides in
+     * the background, and only a track with art of its own is read and repainted.
      */
     private static void songCover(ImageView icon, Song song, Bitmap def) {
         if (icon == null) return;
@@ -183,11 +141,11 @@ public final class Find {
         }
         icon.setTag(path);
         icon.setImageBitmap(b != null ? b : def);
-        if (path == null || t != null) return;      // already resolved: its own picture, or SAME
+        if (path == null || t != null) return;      // already resolved
         if (start(path)) new Thread(new TrackRead(icon, key, path, def)).start();
     }
 
-    /** True when this key's background read has not been started yet — and claims it. */
+    /** Claims the key's background read; false when already started. */
     private static boolean start(String key) {
         if (reading.containsKey(key)) return false;
         reading.put(key, key);
@@ -214,7 +172,7 @@ public final class Find {
             } catch (Throwable t) {
                 b = null;
             }
-            if (b == null) return;              // no artwork: the placeholder is already on the row
+            if (b == null) return;
             post(icon, key, b, def);
         }
     }
@@ -239,24 +197,19 @@ public final class Find {
             Bitmap show = mine;
             if (show == null) {
                 try {
-                    show = CoverCache.get(key, path);   // the album's, read now if it was missing
+                    show = CoverCache.get(key, path);
                 } catch (Throwable t) {
                     show = null;
                 }
             }
-            if (show == null) return;           // nothing anywhere: the placeholder stands
+            if (show == null) return;
             post(icon, path, show, def);
         }
     }
 
     /**
-     * The track's own 50px artwork, or null when it has none of its own.
-     *
-     * {@link BigCover#track} is what settles the question the first time — it reads the file, com-
-     * pares the picture against the folder's representative and writes the answer down — so this
-     * costs one metadata open per track ever, in the background. The thumbnail itself is then read
-     * from the ORIGINAL rather than scaled down from BigCover's 300px JPEG: a thumbnail is never
-     * made from another compressed copy anywhere in this cache (skill `ipp-covers`).
+     * Null when the track has no art of its own. {@link BigCover#track} settles that once per
+     * track ever; the thumbnail is read from the ORIGINAL, never from BigCover's JPEG.
      */
     private static Bitmap trackArt(String path) {
         try {
@@ -272,15 +225,11 @@ public final class Find {
         }
     }
 
-    /**
-     * The ImageView carries the key it is showing, so a read that comes back after its row has been
-     * recycled onto another result is dropped instead of putting one song's cover on another's row.
-     */
+    /** Dropped when the ImageView has been recycled onto another key meanwhile. */
     private static void post(ImageView icon, String tag, Bitmap bmp, Bitmap def) {
         try {
             icon.post(new Paint(icon, tag, bmp, def));
         } catch (Throwable t) {
-            // the row is gone; the next bind answers from the cache
         }
     }
 
@@ -303,21 +252,14 @@ public final class Find {
         }
     }
 
-    // ------------------------------------------------------------------ "<n> songs"
-
     private static final class Info {
         int n;
         String path;
     }
 
     /**
-     * How many songs the album holds and which of them stands for it — taken from
-     * {@link Albums#songsOf}, i.e. off the cached Song table the album lists are already built
-     * from, so the row needs no query of its own and the folder-encoded key is honoured.
-     * Memoised per key, because a bind must not walk the library.
-     *
-     * The representative is the FIRST song in path order, the same one `Albums.songsSync` hands
-     * the album row, so the cover read finds what the Albums screen would have cached.
+     * Off the cached table, memoised (a bind must not walk the library). The representative is
+     * the first song in path order, as the album row's, so the cover read finds the same entry.
      */
     private static Info infoOf(String key) {
         if (key == null) return null;
@@ -329,7 +271,7 @@ public final class Find {
         } catch (Throwable t) {
             songs = null;
         }
-        if (songs == null) return null;         // not memoised: the next bind tries again
+        if (songs == null) return null;         // not memoised
         Info in = new Info();
         in.n = songs.size();
         if (in.n > 0) {
@@ -343,31 +285,14 @@ public final class Find {
     private static String label(Context c, Info in) {
         if (c == null) return "";
         String word = c.getString(R.string.music_songs);
-        // Stock concatenated the number straight onto the word ("12Songs"); every locale's value is
-        // the bare noun, so the space belongs here.
+        // Every locale's value is the bare noun; the space belongs here.
         return (in == null ? 0 : in.n) + " " + word;
     }
 
-    // ------------------------------------------------------------------ what the search matches
-
     /**
-     * The song half of the search, widened from the file name to the TAGS.
-     *
-     * Stock matches one column: {@code lowerName}, the file name lowercased
-     * ({@code where isAudiobook = 0 and lowerName like ?}). So a track whose tag says "Numb" while
-     * the file is called `03.mp3` could not be found at all, and neither could an artist.
-     *
-     * Done in Java over {@link Albums#allSongs()} — the cached Song table the album lists are
-     * already built from, and the very list this screen's album half has just walked — rather than
-     * by widening the SQL, for two reasons: there is no lowercased column for the title or the
-     * artist, and SQLite's {@code like}/{@code lower()} fold ASCII only, so a Cyrillic query would
-     * have matched only tags that happen to be capitalised the same way. {@link String#toLowerCase}
-     * folds every alphabet.
-     *
-     * The album tag is deliberately NOT matched here: an album that matches is already a row of its
-     * own above the songs, and adding all of its tracks under it would say the same thing twice.
-     *
-     * Returns null when the cached list is unavailable, and the stock query stands.
+     * The song half of the search: file name, title tag and artist (stock matched the file name
+     * only). In Java, not SQL: SQLite folds ASCII only, so Cyrillic would miss. The album tag is
+     * left out on purpose — a matching album is its own row above. Null = stock's query stands.
      */
     public static List songs(String key) {
         if (key == null) return null;
@@ -388,24 +313,13 @@ public final class Find {
                 out.add(s);
             }
         }
-        Collections.sort(out, NAME_CMP);        // stock's own order: lower(pinyinName)
+        Collections.sort(out, NAME_CMP);        // stock's order: lower(pinyinName)
         return out;
     }
 
     /**
-     * An untagged song does not carry an empty string, it carries {@code Constant.UNKNOWN} —
-     * "<unknown>" behind four U+FFE6 — so without this every one of them would answer to a
-     * search for "unknown".
-     */
-    /**
-     * A file name without the track number in front of it.
-     *
-     * The file name is what stock searches, and on a properly named library nearly every one of
-     * them opens with the position on the disc — so "01" matched a track of every album at once and
-     * a two-digit query was useless. Two written forms are recognised, both only at the START:
-     * bare digits ({@code 01 - Song}) and digits in brackets ({@code (01) Song}). A number anywhere
-     * else is part of the name ("Song 2", "Blink 182") and still matches. A name that is nothing
-     * but its number is left as it is — stripping it would leave nothing to search.
+     * Without a leading track number ({@code 01 - Song}, {@code (01) Song}), or "01" matches every
+     * album. A number elsewhere is part of the name; a name that is only a number is kept.
      */
     private static String unnumbered(String name) {
         if (name == null || name.length() == 0) return name;
@@ -429,6 +343,7 @@ public final class Find {
         return c >= '0' && c <= '9';
     }
 
+    /** An untagged field is {@code Constant.UNKNOWN}, which must not answer a search for "unknown". */
     private static boolean hit(String value, String lowerKey) {
         if (value == null || value.length() == 0) return false;
         if (value.equals(com.innioasis.music.objects.Constant.UNKNOWN)) return false;
@@ -447,18 +362,10 @@ public final class Find {
         }
     }
 
-    // ------------------------------------------------------------------ the long-press menu
-
     /**
-     * Built per long press, right before {@code show()}, the way `Albums.songMenu` is — the dialog
-     * is a lazy singleton but the list it should show depends on the row under the cursor.
-     *
-     * The first three entries are stock's `Constant.SubMenuList` in stock's order, because this
-     * screen's callback dispatches those BY INDEX (0/1 = multi-select, 2 = delete, anything past
-     * that = a playlist). They are built from the string resources rather than copied out of that
-     * list: it is filled in `MusicMainActivity.initView` and would be empty on any path that did
-     * not go through the Music menu. The two ipp entries are matched by string in front of the
-     * index dispatch.
+     * Built per long press, before {@code show()}. The first three are stock's
+     * {@code Constant.SubMenuList} in stock's order — the callback dispatches them BY INDEX — but
+     * from the resources, since that list is empty unless the Music menu was passed through.
      */
     public static void menu(SubMenuDialog dlg, Activity a, RVBaseAdapter adapter) {
         if (dlg == null || a == null) return;
@@ -468,21 +375,17 @@ public final class Find {
         l.add(a.getString(R.string.all_select));
         l.add(a.getString(R.string.music_delete_file));
         l.add(a.getString(R.string.ipp_queue_add));
-        // Both only on a song row: the album row IS the album, and the centre press already opens
-        // it. Same rule the flat song lists follow, artist above album as everywhere.
+        // Song rows only: an album row's centre press already opens it.
         if (Artists.of(songOf(adapter)) != null) l.add(a.getString(R.string.ipp_open_artist));
         if (songOf(adapter) != null) l.add(a.getString(R.string.ipp_open_album));
         dlg.setList(l);
-        dlg.addPlaylistsToOptions();            // setList dropped them, and it refreshes the set
+        dlg.addPlaylistsToOptions();            // setList dropped them
     }
 
-    /** The dialog {@link #menu} last built, so the artist submenu can dismiss it on its pick. */
+    /** For the artist submenu to dismiss on its pick. */
     private static SubMenuDialog menuDlg;
 
-    /**
-     * "Open artist" — the artist's album list. Answers what {@code select} means: false leaves this
-     * menu up behind the "which of these artists?" submenu, which dismisses it itself.
-     */
+    /** As {@code select}'s result: false leaves this menu up under the artist submenu. */
     public static boolean openArtist(Activity a, RVBaseAdapter adapter) {
         Song s = songOf(adapter);
         if (s == null) return true;
@@ -494,7 +397,7 @@ public final class Find {
         return Artists.openFrom(a, menuDlg, s);
     }
 
-    /** "Open album" — the album the focused song belongs to, landing on that song. */
+    /** Lands on that song. */
     public static void openAlbum(Activity a, RVBaseAdapter adapter) {
         Song s = songOf(adapter);
         if (s == null) return;
@@ -506,7 +409,7 @@ public final class Find {
         Albums.openAlbumOfSong(a, s);
     }
 
-    /** The song under the cursor, or null when the focused row is an album (or there is none). */
+    /** Null on an album row. */
     private static Song songOf(RVBaseAdapter adapter) {
         if (adapter == null) return null;
         Object o = adapter.getSelectItem();

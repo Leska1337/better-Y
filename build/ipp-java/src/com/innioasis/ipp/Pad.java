@@ -10,34 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.innioasis.y1.R;
 
 /**
- * The main menu's and Settings' list geometry, put back the way stock had it.
- *
- * ON (the default) both lists run to the screen's left edge and down to its bottom: the 9dip left
- * margin goes away and the width grows by exactly that, so a row's right edge does not move, and
- * 307/305 becomes 315 = 360 − the 45px status bar. That is right for the default look and wrong for
- * some themes, whose row artwork is drawn expecting the stock inset — hence the toggle: with
- * {@code fixed_menu_pad} OFF, the two lists are handed the stock margin, width and height again.
- *
- * The row is worded as the thing it does ("Fixed menu margins") rather than as its negation, and
- * the key follows the wording. A key whose sentence is inverted without renaming it flips the
- * geometry on every device that has ever touched the row.
- *
- * Applied in code rather than by keeping two layouts because the layouts are shared with
- * everything else the screens draw, and a preference cannot pick an XML file at inflate time here.
- * One call at the end of each {@code initView}; which of the two screens it is, is answered by the
- * list's own id, so both share one method (and one method reference in the full {@code classes.dex}
- * — the Settings screen lives there).
+ * The main menu's and Settings' list geometry. "fixed_menu_pad" ON (default): edge to edge, no
+ * left margin, down to the bottom. OFF: stock's inset, which some themes' row artwork expects.
+ * Inverting the row's wording without renaming the key flips the geometry on every device.
+ * One method for both screens, told apart by the list's id — one reference in the full classes.dex.
  */
 public final class Pad {
 
     private Pad() { }
 
-    /** The preference key; ON (the default) = the mod's edge-to-edge lists, off = stock's. */
     public static final String KEY = "fixed_menu_pad";
 
-    // Stock geometry, in dip (the device is 160 dpi, so dip == px), and the mod's beside it. Both
-    // are written, never just the stock one: the setting can be turned back OFF, and a screen that
-    // is only re-measured (not re-created) would otherwise keep the stock inset until a reboot.
+    // dip == px on this 160 dpi device. Both sets are written: the setting can be turned back on.
     private static final int MARGIN = 9;
     private static final int MAIN_W = 204;
     private static final int MAIN_H = 307;
@@ -47,11 +31,7 @@ public final class Pad {
     private static final int IPP_SET_W = 227;
     private static final int IPP_H = 315;      // 360 - the 45px status bar
 
-    /**
-     * Called where each list is built, and again from {@code MainActivity.onResume} — the main menu
-     * is not re-created when the user comes back to it from the settings screen, so its
-     * {@code initRecycler} does not run again and the toggle would appear to do nothing there.
-     */
+    /** Also from {@code MainActivity.onResume}: the main menu is not re-created on return. */
     public static void list(RecyclerView rv) {
         try {
             if (rv == null) return;
@@ -85,7 +65,6 @@ public final class Pad {
             lp.leftMargin = mPx;
             rv.setLayoutParams(lp);
         } catch (Throwable t) {
-            // the lists keep the geometry the layout gave them
         }
     }
 
