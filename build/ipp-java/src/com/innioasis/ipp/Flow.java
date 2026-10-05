@@ -201,6 +201,22 @@ public final class Flow {
         return Bitmap.createBitmap(out, w, h, Bitmap.Config.ARGB_8888);
     }
 
+    private static Bitmap mask;
+
+    /** A slide's shape, opaque over the cover and its reflection alike: what a slide hides. */
+    static Bitmap mask() {
+        if (mask == null) {
+            int w = S + 2 * PAD;
+            int h = PAD + S + REFL;
+            int[] out = new int[w * h];
+            for (int y = PAD; y < h; y++) {
+                for (int x = PAD; x < PAD + S; x++) out[y * w + x] = 0xFF000000;
+            }
+            mask = Bitmap.createBitmap(out, w, h, Bitmap.Config.ARGB_8888);
+        }
+        return mask;
+    }
+
     // ---- the loader -------------------------------------------------------------------------
 
     /**

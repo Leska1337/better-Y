@@ -6,11 +6,16 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.TextView;
+
+import com.innioasis.y1.theme.ThemeManager;
 
 import java.util.List;
 
@@ -54,25 +59,48 @@ public final class FlowView extends View {
     private final float[] src = new float[8];
     private final float[] dst = new float[8];
     private final Paint bmpPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+    private final Paint erase = new Paint(Paint.FILTER_BITMAP_FLAG);
 
     private final TextPaint name = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private final TextPaint artist = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    /** The artist line is the name's colour, fainter — as at the head of the track list. */
+    private static final int ARTIST_ALPHA = 0xB0;
 
     public FlowView(Context c) {
         super(c);
         offX = Flow.S / 2f * (1f - (float) Math.cos(ANGLE)) + Flow.S;
         offY = Flow.S / 2f * (float) Math.sin(ANGLE) + Flow.S / 4f;
-        name.setColor(Color.WHITE);
+        // the slides erase what stands behind them, which needs a layer of their own over the wallpaper
+        setLayerType(LAYER_TYPE_HARDWARE, null);
+        erase.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+        int fg = textColor(c);
+        int shadow = lum(fg) > 128 ? 0xC0000000 : 0x80FFFFFF;
+        name.setColor(fg);
         name.setTextSize(20);
         name.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
         name.setFakeBoldText(true);
         name.setTextAlign(Paint.Align.CENTER);
-        name.setShadowLayer(2, 0, 1, 0xC0000000);
-        artist.setColor(0xFFE0E0E0);
+        name.setShadowLayer(2, 0, 1, shadow);
+        artist.setColor(fg);
         artist.setTextSize(17);
         artist.setTypeface(Typeface.MONOSPACE);
         artist.setTextAlign(Paint.Align.CENTER);
-        artist.setShadowLayer(2, 0, 1, 0xC0000000);
+        artist.setShadowLayer(2, 0, 1, shadow);
+    }
+
+    /** The list rows' text colour, as the theme answers it. */
+    private static int textColor(Context c) {
+        try {
+            TextView probe = new TextView(c);
+            ThemeManager.INSTANCE.itemSetTextColor(probe, Color.WHITE, false);
+            return probe.getCurrentTextColor();
+        } catch (Throwable t) {
+            return Color.WHITE;
+        }
+    }
+
+    private static int lum(int p) {
+        return (((p >> 16) & 0xFF) * 299 + ((p >> 8) & 0xFF) * 587 + (p & 0xFF) * 114) / 1000;
     }
 
     public void setItems(List items, Flow.Loader loader, int start) {
@@ -153,7 +181,7 @@ public final class FlowView extends View {
             float cx = w / 2f;
             int ta = (int) (255 * (1f - Math.min(1f, spread * 2f)));
             name.setAlpha(ta);
-            artist.setAlpha(ta);
+            artist.setAlpha(ta * ARTIST_ALPHA / 255);
             c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 40, name);
             c.drawText(TextUtils.ellipsize(it.artist, artist, w - 24, TextUtils.TruncateAt.END).toString(),
@@ -206,6 +234,12 @@ public final class FlowView extends View {
         src[4] = bw; src[5] = bh;
         src[6] = 0; src[7] = bh;
         if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
+        // the reflection is see-through, so what is behind it is cleared first and does not show
+        Bitmap mk = Flow.mask();
+        if (mk != null) {
+            erase.setAlpha(sAlpha);
+            c.drawBitmap(mk, m, erase);
+        }
         bmpPaint.setAlpha(sAlpha);
         c.drawBitmap(b, m, bmpPaint);
     }

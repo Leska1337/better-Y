@@ -59,7 +59,7 @@ public final class Photos {
     /** Room on each side of the widest label inside the highlight. */
     private static final int PAD = 6;
 
-    private static int menuBg() {
+    public static int menuBg() {
         Integer c = ThemeManager.INSTANCE.menuBGColor();
         return c == null ? MENU_BG : c.intValue();
     }
@@ -467,7 +467,7 @@ public final class Photos {
     }
 
     /** The long-press menu's row highlight on {@code cell}, or none; shared by strip and popup. */
-    private static void highlight(View cell, boolean focus) {
+    public static void highlight(View cell, boolean focus) {
         cell.setTag(Rows.FLAT);
         cell.setBackgroundDrawable(null);
         ThemeManager.INSTANCE.menuItemSetBackground(cell,

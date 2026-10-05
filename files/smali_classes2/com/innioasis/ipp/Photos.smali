@@ -553,7 +553,7 @@
     return-void
 .end method
 
-.method private static highlight(Landroid/view/View;Z)V
+.method public static highlight(Landroid/view/View;Z)V
   .registers 5
   .line 471
     const-string v0, "ipp_flat"
@@ -620,7 +620,7 @@
     return v0
 .end method
 
-.method private static menuBg()I
+.method public static menuBg()I
   .registers 1
   .line 63
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;

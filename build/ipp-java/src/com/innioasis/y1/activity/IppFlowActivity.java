@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -16,11 +17,14 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
+import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
+import com.innioasis.ipp.Rows;
 import com.innioasis.ipp.Theme;
 import com.innioasis.music.MusicPlayerActivity;
 import com.innioasis.y1.R;
@@ -29,6 +33,7 @@ import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.databinding.ActivityAboutBinding;
 import com.innioasis.y1.service.PlayerService;
+import com.innioasis.y1.theme.ThemeManager;
 
 import java.util.List;
 
@@ -85,6 +90,7 @@ public final class IppFlowActivity extends BaseActivity {
         panel.setVisibility(View.INVISIBLE);   // laid out from the start: the flip needs its size
         box.addView(panel, new FrameLayout.LayoutParams(PANEL_W, -1));
         root.addView(box, -1, -1);
+        Rows.watchFlat(new Highlight(panel));
         new Thread(new Load(this), "ipp-flow-list").start();
     }
 
@@ -112,6 +118,7 @@ public final class IppFlowActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        Rows.watchFlat(null);
         if (loader != null) loader.quit();
         if (items != null && flow != null) Prefs.setInt(this, KEY_POS, flow.target());
         super.onDestroy();
@@ -383,22 +390,54 @@ public final class IppFlowActivity extends BaseActivity {
         int sel;
         private int first;
 
+        /** Carries the menu's row highlight, colour or theme bitmap, for onDraw to paint with. */
+        private final View hl;
+        private int fg = 0xFFFFFFFF;
+        private int fgSel = 0xFF000000;
+
         Panel(Context c) {
             super(c);
-            head.setColor(0xFFFFFFFF);
             head.setTextSize(18);
             head.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
             head.setFakeBoldText(true);
-            sub.setColor(0xFFB8B8B8);
             sub.setTextSize(15);
             sub.setTypeface(Typeface.MONOSPACE);
-            text.setColor(0xFFFFFFFF);
             text.setTextSize(16);
             text.setTypeface(Typeface.MONOSPACE);
-            bg.setColor(0xFF1C1C1C);
-            line.setColor(0xFF505050);
+            hl = new View(c);
+            colours();
+        }
+
+        /** The long-press menu's colours: its background, its two text colours, its highlight. */
+        private void colours() {
+            try {
+                Context c = getContext();
+                TextView probe = new TextView(c);
+                ThemeManager.INSTANCE.menuItemSetTextColor(probe, c.getResources().getColor(R.color.white), false);
+                fg = probe.getCurrentTextColor();
+                ThemeManager.INSTANCE.menuItemSetTextColor(probe,
+                        c.getResources().getColor(R.color.selected_text_color_submenu), true);
+                fgSel = probe.getCurrentTextColor();
+            } catch (Throwable t) {
+                // stock white and black
+            }
+            bg.setColor(Photos.menuBg());
+            head.setColor(fg);
+            sub.setColor((0xB0 << 24) | (fg & 0xFFFFFF));
+            line.setColor((0x50 << 24) | (fg & 0xFFFFFF));
             int sc = Theme.menuSelectedColor();
-            bar.setColor(sc != 0 ? sc : 0xFF3B6FD0);
+            bar.setColor(sc != 0 ? sc : 0xFF00F5FF);
+            highlight();
+        }
+
+        /** Again once a theme's bitmap has landed: it is cached by then, and applied at once. */
+        void highlight() {
+            try {
+                Photos.highlight(hl, true);
+            } catch (Throwable t) {
+                // the flat bar below
+            }
+            invalidate();
         }
 
         void show(Flow.Item it) {
@@ -449,8 +488,16 @@ public final class IppFlowActivity extends BaseActivity {
                 int i = first + r;
                 int top = HEAD + r * ROW;
                 boolean on = i == sel;
-                if (on) c.drawRect(1, top, w - 1, top + ROW, bar);
-                text.setColor(on ? 0xFF000000 : 0xFFFFFFFF);
+                if (on) {
+                    Drawable d = hl.getBackground();
+                    if (d != null) {
+                        d.setBounds(1, top, w - 1, top + ROW);
+                        d.draw(c);
+                    } else {
+                        c.drawRect(1, top, w - 1, top + ROW, bar);
+                    }
+                }
+                text.setColor(on ? fgSel : fg);
                 String s = (i + 1) + ". " + names[i];
                 c.drawText(TextUtils.ellipsize(s, text, w - 16, TextUtils.TruncateAt.END).toString(),
                         8, top + 19, text);
@@ -544,6 +591,14 @@ public final class IppFlowActivity extends BaseActivity {
         ToPlayer(IppFlowActivity a) { this.a = a; }
 
         public void run() { a.toPlayer(); }
+    }
+
+    static final class Highlight implements Runnable {
+        private final Panel p;
+
+        Highlight(Panel p) { this.p = p; }
+
+        public void run() { p.highlight(); }
     }
 
     static final class Open implements Runnable {
