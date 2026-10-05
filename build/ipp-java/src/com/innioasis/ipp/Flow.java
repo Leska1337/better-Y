@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.innioasis.music.objects.Constant;
 import com.innioasis.music.util.Other;
@@ -420,9 +421,45 @@ public final class Flow {
             PlayerService ps = Y1Application.Companion.getPlayerService();
             Song s = ps == null ? null : ps.getPlayingMusic();
             if (s != null && a instanceof BasePlayerActivity) Cover.instantCover((BasePlayerActivity) a, s.getPath());
+            fadeIn(a);
         } catch (Throwable t) {
             // the player leaves the ordinary way
         }
+    }
+
+    public static final int FADE_MS = 250;
+
+    /** The player comes in around a cover already in place: everything but it and the backdrop fades in. */
+    private static void fadeIn(Activity a) {
+        try {
+            View center = a.findViewById(R.id.cl_player_center);
+            View cover = a.findViewById(R.id.cover_bg);
+            View cover2 = a.findViewById(R.id.cover_bg2);
+            if (center == null || !(center.getParent() instanceof ViewGroup)) return;
+            ViewGroup root = (ViewGroup) center.getParent();
+            for (int i = 0; i < root.getChildCount(); i++) {
+                View v = root.getChildAt(i);
+                int id = v.getId();
+                if (id == R.id.player_bg || id == R.id.mask_bg) continue;
+                if (v != center) {
+                    fade(v);
+                    continue;
+                }
+                ViewGroup g = (ViewGroup) center;
+                for (int k = 0; k < g.getChildCount(); k++) {
+                    View c = g.getChildAt(k);
+                    if (c != cover && c != cover2) fade(c);
+                }
+            }
+        } catch (Throwable t) {
+            // shown at once
+        }
+    }
+
+    private static void fade(View v) {
+        float to = v.getAlpha();
+        v.setAlpha(0f);
+        v.animate().alpha(to).setDuration(FADE_MS).withLayer();
     }
 
     /**
