@@ -54,7 +54,7 @@
     move-result-object v0
   :L4
   .line 161
-    invoke-static { }, Lcom/innioasis/ipp/Blue;->access$400()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v1
   .line 162
     iget-object v2, p0, Lcom/innioasis/ipp/Blue$Rename;->d:Landroid/bluetooth/BluetoothDevice;

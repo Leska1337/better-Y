@@ -354,38 +354,38 @@
 
 .method private static decode(Ljava/io/File;II)Landroid/graphics/Bitmap;
   .registers 6
-  .line 470
+  .line 465
     if-lez p1, :L1
     if-gtz p2, :L0
     goto :L1
   :L0
-  .line 471
+  .line 466
     new-instance v0, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v0 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 472
+  .line 467
     const/4 v1, 1
     iput-boolean v1, v0, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 473
+  .line 468
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object v1
     invoke-static { v1, v0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  .line 474
+  .line 469
     iget v1, v0, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     iget v2, v0, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     invoke-static { v1, v2, p1, p2 }, Lcom/innioasis/ipp/Art;->sample(IIII)I
     move-result p1
     iput p1, v0, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 475
+  .line 470
     const/4 p1, 0
     iput-boolean p1, v0, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 476
+  .line 471
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0, v0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object p0
     return-object p0
   :L1
-  .line 470
+  .line 465
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;)Landroid/graphics/Bitmap;
@@ -570,7 +570,7 @@
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
   .line 385
-    invoke-static { }, Lcom/innioasis/ipp/Art;->prefs()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v1
   .line 386
     if-eqz p0, :L2
@@ -749,7 +749,7 @@
     return-object v0
   :L1
   .line 372
-    invoke-static { }, Lcom/innioasis/ipp/Art;->prefs()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v1
   .line 373
     if-nez v1, :L2
@@ -805,25 +805,6 @@
   .line 182
     const/4 p0, 0
     return-object p0
-.end method
-
-.method private static prefs()Landroid/content/SharedPreferences;
-  .registers 3
-  .line 464
-    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
-    move-result-object v0
-  .line 465
-    if-nez v0, :L0
-    const/4 v0, 0
-    goto :L1
-  :L0
-    const-string v1, "innioasis_plus"
-    const/4 v2, 0
-    invoke-virtual { v0, v1, v2 }, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
-    move-result-object v0
-  :L1
-    return-object v0
 .end method
 
 .method private static repaint(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;Ljava/lang/String;)V
@@ -899,7 +880,7 @@
     return v1
   :L0
   .line 425
-    invoke-static { }, Lcom/innioasis/ipp/Art;->prefs()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v2
   .line 426
     if-nez v2, :L1
@@ -954,19 +935,19 @@
 
 .method static sample(IIII)I
   .registers 6
-  .line 485
+  .line 480
     nop
-  .line 486
+  .line 481
     const/4 v0, 1
     if-gt p1, p3, :L0
     if-le p0, p2, :L2
   :L0
-  .line 487
+  .line 482
     div-int/lit8 p1, p1, 2
-  .line 488
+  .line 483
     div-int/lit8 p0, p0, 2
   :L1
-  .line 489
+  .line 484
     div-int v1, p1, v0
     if-lt v1, p3, :L2
     div-int v1, p0, v0
@@ -974,7 +955,7 @@
     mul-int/lit8 v0, v0, 2
     goto :L1
   :L2
-  .line 491
+  .line 486
     return v0
 .end method
 
@@ -1112,7 +1093,7 @@
     goto :L8
   :L5
   .line 411
-    invoke-static { }, Lcom/innioasis/ipp/Art;->prefs()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v4
   .line 412
     if-nez v4, :L6

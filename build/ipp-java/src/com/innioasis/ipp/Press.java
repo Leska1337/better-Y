@@ -124,9 +124,6 @@ public final class Press {
             PlayerService ps = Y1Application.Companion.getPlayerService();
             if (ps != null) {
                 ps.muteOrNoMuteMusic(false);
-            }
-            ps = Y1Application.Companion.getPlayerService();
-            if (ps != null) {
                 ps.playOrPause();
             }
             a.direction(BaseActivity.Direction.BOTTOM);

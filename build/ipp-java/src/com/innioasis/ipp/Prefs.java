@@ -126,6 +126,12 @@ public final class Prefs {
         return c.getSharedPreferences("innioasis_plus", 0);
     }
 
+    /** The file itself, for keys that need {@code remove} or {@code commit}. Null before the app is up. */
+    static SharedPreferences file() {
+        Context c = Y1Application.Companion.getAppContext();
+        return c == null ? null : prefs(c);
+    }
+
     /** For the diagnostic report. */
     static java.util.Map all(Context c) {
         return c == null ? null : prefs(c).getAll();

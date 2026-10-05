@@ -52,7 +52,7 @@ public final class Blue {
     public static String name(BluetoothDevice d) {
         if (d == null) return "";
         try {
-            SharedPreferences p = prefs();
+            SharedPreferences p = Prefs.file();
             String addr = d.getAddress();
             if (p != null && addr != null) {
                 String mine = p.getString(KEY + addr, null);
@@ -158,7 +158,7 @@ public final class Blue {
             try {
                 Object v = live == null ? null : live.getValue();
                 String s = v == null ? "" : String.valueOf(v).trim();
-                SharedPreferences p = prefs();
+                SharedPreferences p = Prefs.file();
                 String addr = d.getAddress();
                 if (p == null || addr == null) return;
                 if (s.length() == 0) p.edit().remove(KEY + addr).commit();
@@ -433,9 +433,4 @@ public final class Blue {
 
     /** The layouts' colour, when the theme names none. */
     private static final int PLAIN = 0xFFFFFFFF;
-
-    private static SharedPreferences prefs() {
-        Context c = Y1Application.Companion.getAppContext();
-        return c == null ? null : c.getSharedPreferences("innioasis_plus", 0);
-    }
 }

@@ -653,21 +653,21 @@
 .method public static atSource()Z
   .catchall { :L0 .. :L1 } :L4
   .registers 3
-  .line 1303
+  .line 1298
     invoke-static { }, Lcom/innioasis/ipp/Queue;->ensureSource()V
-  .line 1304
+  .line 1299
     sget-object v0, Lcom/innioasis/ipp/Queue;->srcKey:Ljava/lang/String;
-  .line 1305
+  .line 1300
     const/4 v1, 1
     if-nez v0, :L0
     return v1
   :L0
-  .line 1307
+  .line 1302
     invoke-static { }, Lcom/blankj/utilcode/util/ActivityUtils;->getTopActivity()Landroid/app/Activity;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->keyOf(Landroid/app/Activity;)Ljava/lang/String;
     move-result-object v2
-  .line 1308
+  .line 1303
     if-eqz v2, :L3
     invoke-virtual { v0, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -679,36 +679,36 @@
   :L3
     return v1
   :L4
-  .line 1309
+  .line 1304
     move-exception v0
-  .line 1310
+  .line 1305
     return v1
 .end method
 
 .method public static atSource(Ljava/lang/Object;)Z
   .catchall { :L0 .. :L10 } :L11
   .registers 7
-  .line 1367
+  .line 1362
     const/4 v0, 1
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Queue;->ensureSource()V
-  .line 1368
+  .line 1363
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcKey:Ljava/lang/String;
-  .line 1369
+  .line 1364
     if-nez v1, :L1
     return v0
   :L1
-  .line 1370
+  .line 1365
     instance-of v2, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v2, :L2
     return v0
   :L2
-  .line 1371
+  .line 1366
     move-object v2, p0
     check-cast v2, Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getContext()Landroid/content/Context;
     move-result-object v2
-  .line 1372
+  .line 1367
     instance-of v3, v2, Lcom/innioasis/y1/base/BaseActivity;
     const/4 v4, 0
     if-eqz v3, :L3
@@ -720,7 +720,7 @@
   :L3
     move-object v3, v4
   :L4
-  .line 1373
+  .line 1368
     sget-object v5, Lcom/innioasis/ipp/Queue;->memoAdapter:Ljava/lang/Object;
     if-ne p0, v5, :L5
     sget-object v5, Lcom/innioasis/ipp/Queue;->memoTitle:Ljava/lang/String;
@@ -730,7 +730,7 @@
     sget-boolean p0, Lcom/innioasis/ipp/Queue;->memoAns:Z
     return p0
   :L5
-  .line 1374
+  .line 1369
     instance-of v5, v2, Landroid/app/Activity;
     if-eqz v5, :L6
     move-object v4, v2
@@ -738,13 +738,13 @@
   :L6
     invoke-static { v4 }, Lcom/innioasis/ipp/Queue;->keyOf(Landroid/app/Activity;)Ljava/lang/String;
     move-result-object v2
-  .line 1375
+  .line 1370
     sput-object p0, Lcom/innioasis/ipp/Queue;->memoAdapter:Ljava/lang/Object;
-  .line 1376
+  .line 1371
     sput-object v3, Lcom/innioasis/ipp/Queue;->memoTitle:Ljava/lang/String;
-  .line 1377
+  .line 1372
     sput-object v1, Lcom/innioasis/ipp/Queue;->memoKey:Ljava/lang/String;
-  .line 1378
+  .line 1373
     if-eqz v2, :L8
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p0
@@ -758,12 +758,12 @@
   :L9
     sput-boolean p0, Lcom/innioasis/ipp/Queue;->memoAns:Z
   :L10
-  .line 1379
+  .line 1374
     return p0
   :L11
-  .line 1380
+  .line 1375
     move-exception p0
-  .line 1381
+  .line 1376
     return v0
 .end method
 
@@ -823,7 +823,7 @@
 
 .method public static canRemoveRow(I)Z
   .registers 3
-  .line 1681
+  .line 1669
     const/4 v0, 1
     if-lt p0, v0, :L1
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
@@ -910,41 +910,41 @@
 
 .method public static consumeSkipRestart()Z
   .registers 2
-  .line 1351
+  .line 1346
     sget-boolean v0, Lcom/innioasis/ipp/Queue;->skipRestart:Z
-  .line 1352
+  .line 1347
     const/4 v1, 0
     sput-boolean v1, Lcom/innioasis/ipp/Queue;->skipRestart:Z
-  .line 1353
+  .line 1348
     return v0
 .end method
 
 .method private static dropFromPlan(I)V
   .registers 4
-  .line 1686
+  .line 1674
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v2
     if-ge v0, v2, :L2
-  .line 1687
+  .line 1675
     invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
     if-ne v2, p0, :L1
-  .line 1688
+  .line 1676
     invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1689
+  .line 1677
     return-void
   :L1
-  .line 1686
+  .line 1674
     add-int/lit8 v0, v0, 1
     goto :L0
   :L2
-  .line 1692
+  .line 1680
     return-void
 .end method
 
@@ -1135,7 +1135,7 @@
 
 .method private static dropPlanThrough(I)V
   .registers 5
-  .line 1729
+  .line 1717
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -1143,32 +1143,32 @@
     invoke-virtual { v2 }, Ljava/util/ArrayList;->size()I
     move-result v3
     if-ge v1, v3, :L4
-  .line 1730
+  .line 1718
     invoke-virtual { v2, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
     if-ne v2, p0, :L3
-  .line 1731
+  .line 1719
     const/4 p0, 0
   :L1
     if-gt p0, v1, :L2
-  .line 1732
+  .line 1720
     sget-object v2, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     invoke-virtual { v2, v0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1731
+  .line 1719
     add-int/lit8 p0, p0, 1
     goto :L1
   :L2
-  .line 1734
+  .line 1722
     return-void
   :L3
-  .line 1729
+  .line 1717
     add-int/lit8 v1, v1, 1
     goto :L0
   :L4
-  .line 1737
+  .line 1725
     return-void
 .end method
 
@@ -1320,7 +1320,7 @@
 .method private static ensureSource()V
   .catchall { :L1 .. :L13 } :L15
   .registers 11
-  .line 1207
+  .line 1202
     const-string v0, ""
     sget-boolean v1, Lcom/innioasis/ipp/Queue;->srcLoaded:Z
     if-nez v1, :L17
@@ -1328,32 +1328,32 @@
     if-eqz v1, :L0
     goto/16 :L17
   :L0
-  .line 1209
+  .line 1204
     const/4 v1, 1
   :L1
     invoke-static { }, Lcom/innioasis/ipp/Queue;->svc()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v2
-  .line 1210
+  .line 1205
     if-nez v2, :L2
     return-void
   :L2
-  .line 1211
+  .line 1206
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->listSig(Lcom/innioasis/y1/service/PlayerService;)Ljava/lang/String;
     move-result-object v2
-  .line 1212
+  .line 1207
     if-nez v2, :L3
     return-void
   :L3
-  .line 1213
+  .line 1208
     sput-boolean v1, Lcom/innioasis/ipp/Queue;->srcLoaded:Z
-  .line 1214
-    invoke-static { }, Lcom/innioasis/ipp/Queue;->prefs()Landroid/content/SharedPreferences;
+  .line 1209
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v3
-  .line 1215
+  .line 1210
     if-nez v3, :L4
     return-void
   :L4
-  .line 1216
+  .line 1211
     const-string v4, "src_sig"
     invoke-interface { v3, v4, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v4
@@ -1362,15 +1362,15 @@
     if-nez v2, :L5
     return-void
   :L5
-  .line 1217
+  .line 1212
     const-string v2, "src_key"
     invoke-interface { v3, v2, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
-  .line 1218
+  .line 1213
     const-string v4, "src_uri"
     invoke-interface { v3, v4, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v4
-  .line 1219
+  .line 1214
     invoke-virtual { v2 }, Ljava/lang/String;->length()I
     move-result v5
     if-eqz v5, :L14
@@ -1379,71 +1379,71 @@
     if-nez v5, :L6
     goto :L14
   :L6
-  .line 1220
+  .line 1215
     const/4 v5, 0
     invoke-static { v4, v5 }, Landroid/content/Intent;->parseUri(Ljava/lang/String;I)Landroid/content/Intent;
     move-result-object v4
-  .line 1221
+  .line 1216
     const-string v6, "src_uuid"
     invoke-interface { v3, v6, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v6
-  .line 1222
+  .line 1217
     invoke-virtual { v6 }, Ljava/lang/String;->length()I
     move-result v7
     if-lez v7, :L10
-  .line 1223
+  .line 1218
     const-string v7, "\n"
     invoke-virtual { v6, v7 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
     move-result-object v6
-  .line 1224
+  .line 1219
     const/4 v7, 0
   :L7
     array-length v8, v6
     if-ge v7, v8, :L10
-  .line 1225
+  .line 1220
     aget-object v8, v6, v7
     const/16 v9, 61
     invoke-virtual { v8, v9 }, Ljava/lang/String;->indexOf(I)I
     move-result v8
-  .line 1226
+  .line 1221
     if-gtz v8, :L8
     goto :L9
   :L8
-  .line 1227
+  .line 1222
     aget-object v9, v6, v7
     invoke-virtual { v9, v5, v8 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object v9
     aget-object v10, v6, v7
     add-int/lit8 v8, v8, 1
-  .line 1228
+  .line 1223
     invoke-virtual { v10, v8 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
     move-result-object v8
     invoke-static { v8 }, Ljava/util/UUID;->fromString(Ljava/lang/String;)Ljava/util/UUID;
     move-result-object v8
-  .line 1227
+  .line 1222
     invoke-virtual { v4, v9, v8 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/io/Serializable;)Landroid/content/Intent;
   :L9
-  .line 1224
+  .line 1219
     add-int/lit8 v7, v7, 1
     goto :L7
   :L10
-  .line 1231
+  .line 1226
     sput-object v2, Lcom/innioasis/ipp/Queue;->srcKey:Ljava/lang/String;
-  .line 1232
+  .line 1227
     const-string v2, "src_name"
     invoke-interface { v3, v2, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     sput-object v2, Lcom/innioasis/ipp/Queue;->source:Ljava/lang/String;
-  .line 1233
+  .line 1228
     sput-object v4, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
-  .line 1234
+  .line 1229
     const/4 v2, 0
     sput-object v2, Lcom/innioasis/ipp/Queue;->srcAct:Ljava/lang/ref/WeakReference;
-  .line 1235
+  .line 1230
     const-string v4, "src_level"
     invoke-interface { v3, v4, v0 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
-  .line 1236
+  .line 1231
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v4
     if-nez v4, :L11
@@ -1452,32 +1452,32 @@
     move-object v2, v0
   :L12
     sput-object v2, Lcom/innioasis/ipp/Queue;->srcLevel:Ljava/lang/String;
-  .line 1237
+  .line 1232
     const-string v0, "src_genre"
     invoke-interface { v3, v0, v5 }, Landroid/content/SharedPreferences;->getBoolean(Ljava/lang/String;Z)Z
     move-result v0
     sput-boolean v0, Lcom/innioasis/ipp/Queue;->srcGenre:Z
-  .line 1238
+  .line 1233
     const-string v0, "src_ordered"
     invoke-interface { v3, v0, v1 }, Landroid/content/SharedPreferences;->getBoolean(Ljava/lang/String;Z)Z
     move-result v0
     sput-boolean v0, Lcom/innioasis/ipp/Queue;->srcOrdered:Z
   :L13
-  .line 1241
+  .line 1236
     goto :L16
   :L14
-  .line 1219
+  .line 1214
     return-void
   :L15
-  .line 1239
+  .line 1234
     move-exception v0
-  .line 1240
+  .line 1235
     sput-boolean v1, Lcom/innioasis/ipp/Queue;->srcLoaded:Z
   :L16
-  .line 1242
+  .line 1237
     return-void
   :L17
-  .line 1207
+  .line 1202
     return-void
 .end method
 
@@ -1655,30 +1655,30 @@
 
 .method private static indexOf(Ljava/util/List;Lcom/innioasis/y1/database/Song;)I
   .registers 5
-  .line 1404
+  .line 1392
     const/4 v0, -1
     if-eqz p0, :L5
     if-nez p1, :L0
     goto :L5
   :L0
-  .line 1405
+  .line 1393
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p1
-  .line 1406
+  .line 1394
     if-nez p1, :L1
     return v0
   :L1
-  .line 1407
+  .line 1395
     const/4 v1, 0
   :L2
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L4
-  .line 1408
+  .line 1396
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/database/Song;
-  .line 1409
+  .line 1397
     if-eqz v2, :L3
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v2
@@ -1687,14 +1687,14 @@
     if-eqz v2, :L3
     return v1
   :L3
-  .line 1407
+  .line 1395
     add-int/lit8 v1, v1, 1
     goto :L2
   :L4
-  .line 1411
+  .line 1399
     return v0
   :L5
-  .line 1404
+  .line 1392
     return v0
 .end method
 
@@ -1783,7 +1783,7 @@
 
 .method public static isManualRow(I)Z
   .registers 3
-  .line 1661
+  .line 1649
     const/4 v0, 1
     if-lt p0, v0, :L0
     sget v1, Lcom/innioasis/ipp/Queue;->rowManual:I
@@ -1797,13 +1797,13 @@
 
 .method private static keyOf(Landroid/app/Activity;)Ljava/lang/String;
   .registers 4
-  .line 1292
+  .line 1287
     instance-of v0, p0, Lcom/innioasis/y1/base/BaseActivity;
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 1293
+  .line 1288
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Class;->getName()Ljava/lang/String;
@@ -1814,12 +1814,12 @@
     if-eqz v0, :L1
     return-object v1
   :L1
-  .line 1294
+  .line 1289
     move-object v0, p0
     check-cast v0, Lcom/innioasis/y1/base/BaseActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/base/BaseActivity;->getStateBarLeftText()Ljava/lang/String;
     move-result-object v0
-  .line 1295
+  .line 1290
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -1945,40 +1945,40 @@
 .method private static listSig(Lcom/innioasis/y1/service/PlayerService;)Ljava/lang/String;
   .catchall { :L0 .. :L3 } :L6
   .registers 7
-  .line 1173
+  .line 1168
     const-string v0, "|"
     const/4 v1, 0
     if-nez p0, :L0
     return-object v1
   :L0
-  .line 1174
+  .line 1169
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object p0
-  .line 1175
+  .line 1170
     if-eqz p0, :L5
     invoke-interface { p0 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L1
     goto :L5
   :L1
-  .line 1176
+  .line 1171
     const/4 v2, 0
     invoke-interface { p0, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
-  .line 1177
+  .line 1172
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v3
     add-int/lit8 v3, v3, -1
     invoke-interface { p0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
-  .line 1178
+  .line 1173
     instance-of v4, v2, Lcom/innioasis/y1/database/Song;
     if-eqz v4, :L4
     instance-of v4, v3, Lcom/innioasis/y1/database/Song;
     if-nez v4, :L2
     goto :L4
   :L2
-  .line 1179
+  .line 1174
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     sget v5, Lcom/innioasis/ipp/Queue;->kind:I
@@ -2009,15 +2009,15 @@
   :L3
     return-object p0
   :L4
-  .line 1178
+  .line 1173
     return-object v1
   :L5
-  .line 1175
+  .line 1170
     return-object v1
   :L6
-  .line 1180
+  .line 1175
     move-exception p0
-  .line 1181
+  .line 1176
     return-object v1
 .end method
 
@@ -2033,18 +2033,6 @@
   .line 100
     sget v0, Lcom/innioasis/ipp/Queue;->rowManual:I
     return v0
-.end method
-
-.method public static markAlbum()V
-  .registers 0
-  .line 1387
-    return-void
-.end method
-
-.method public static markAlbum(Ljava/lang/String;)V
-  .registers 1
-  .line 1390
-    return-void
 .end method
 
 .method private static moveGuest(Ljava/util/List;II)I
@@ -2187,45 +2175,45 @@
 
 .method private static nextShuffled(II)I
   .registers 4
-  .line 1506
+  .line 1494
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Queue;->popCycle(II)I
     move-result p0
-  .line 1507
+  .line 1495
     if-ltz p0, :L0
     return p0
   :L0
-  .line 1508
+  .line 1496
     invoke-static { }, Lcom/innioasis/ipp/Queue;->repeatAll()Z
     move-result p0
     const/4 p1, -1
     if-nez p0, :L1
     return p1
   :L1
-  .line 1509
+  .line 1497
     invoke-static { }, Lcom/innioasis/ipp/Queue;->dropGuests()V
-  .line 1510
+  .line 1498
     invoke-static { }, Lcom/innioasis/ipp/Queue;->sizeCur()[I
     move-result-object p0
-  .line 1511
+  .line 1499
     const/4 v0, 0
     aget v0, p0, v0
-  .line 1512
+  .line 1500
     const/4 v1, 1
     aget p0, p0, v1
-  .line 1513
+  .line 1501
     if-gtz v0, :L2
     return p1
   :L2
-  .line 1514
+  .line 1502
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/Queue;->randomOther(II)I
     move-result p0
-  .line 1515
+  .line 1503
     if-gez p0, :L3
     return p1
   :L3
-  .line 1516
+  .line 1504
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/Queue;->newCycle(II)V
-  .line 1517
+  .line 1505
     return p0
 .end method
 
@@ -2409,12 +2397,12 @@
 
 .method public static noteReopen(Ljava/util/List;I)Z
   .registers 4
-  .line 1335
+  .line 1330
     nop
-  .line 1336
+  .line 1331
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/Queue;->skipRestart:Z
-  .line 1337
+  .line 1332
     invoke-static { }, Lcom/innioasis/ipp/Queue;->atSource()Z
     move-result v1
     if-eqz v1, :L0
@@ -2423,27 +2411,27 @@
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v1
     if-ge p1, v1, :L0
-  .line 1338
+  .line 1333
     invoke-interface { p0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p0
-  .line 1339
+  .line 1334
     instance-of p1, p0, Lcom/innioasis/y1/database/Song;
     if-eqz p1, :L0
-  .line 1340
+  .line 1335
     invoke-static { }, Lcom/innioasis/ipp/Queue;->playingMusicPath()Ljava/lang/String;
     move-result-object p1
-  .line 1341
+  .line 1336
     if-eqz p1, :L0
-  .line 1342
+  .line 1337
     check-cast p0, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
     invoke-virtual { p1, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
-  .line 1343
+  .line 1338
     sput-boolean v0, Lcom/innioasis/ipp/Queue;->skipRestart:Z
   :L0
-  .line 1347
+  .line 1342
     return v0
 .end method
 
@@ -2620,17 +2608,17 @@
 .method public static openSource(Landroid/app/Activity;)Z
   .catchall { :L0 .. :L12 } :L14
   .registers 6
-  .line 1253
+  .line 1248
     const/4 v0, 0
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Queue;->ensureSource()V
-  .line 1254
+  .line 1249
     if-eqz p0, :L13
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
     if-nez v1, :L1
     goto :L13
   :L1
-  .line 1255
+  .line 1250
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcAct:Ljava/lang/ref/WeakReference;
     if-nez v1, :L2
     const/4 v1, 0
@@ -2640,19 +2628,19 @@
     move-result-object v1
     check-cast v1, Landroid/app/Activity;
   :L3
-  .line 1256
+  .line 1251
     invoke-static { }, Lcom/blankj/utilcode/util/ActivityUtils;->getActivityList()Ljava/util/List;
     move-result-object v2
-  .line 1257
+  .line 1252
     nop
-  .line 1258
+  .line 1253
     const/4 v3, 0
   :L4
     if-eqz v2, :L6
     invoke-interface { v2 }, Ljava/util/List;->size()I
     move-result v4
     if-ge v3, v4, :L6
-  .line 1259
+  .line 1254
     invoke-interface { v2, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v4
     if-ne v4, v1, :L5
@@ -2660,69 +2648,69 @@
     move-result v3
     goto :L7
   :L5
-  .line 1258
+  .line 1253
     add-int/lit8 v3, v3, 1
     goto :L4
   :L6
-  .line 1261
+  .line 1256
     const/4 v3, 0
   :L7
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->notePlayerToDrop(Ljava/util/List;)V
-  .line 1263
+  .line 1258
     new-instance v2, Landroid/content/Intent;
     sget-object v4, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
     invoke-direct { v2, v4 }, Landroid/content/Intent;-><init>(Landroid/content/Intent;)V
-  .line 1264
+  .line 1259
     const/4 v4, 1
     if-eqz v3, :L8
-  .line 1265
+  .line 1260
     const/high16 v3, 0x00020000
     invoke-virtual { v2, v3 }, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
-  .line 1266
+  .line 1261
     invoke-static { }, Lcom/innioasis/ipp/Follow;->armPending()V
-  .line 1267
+  .line 1262
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
-  .line 1268
+  .line 1263
     invoke-static { v1 }, Lcom/innioasis/ipp/Follow;->toPlaying(Landroid/app/Activity;)V
-  .line 1269
+  .line 1264
     return v4
   :L8
-  .line 1271
+  .line 1266
     const/high16 v1, 0x24000000
     invoke-virtual { v2, v1 }, Landroid/content/Intent;->addFlags(I)Landroid/content/Intent;
-  .line 1272
+  .line 1267
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcLevel:Ljava/lang/String;
     if-eqz v1, :L9
-  .line 1273
+  .line 1268
     invoke-static { }, Lcom/innioasis/ipp/Queue;->playingPath()Ljava/lang/String;
     move-result-object v3
     invoke-static { v2, v1, v3 }, Lcom/innioasis/ipp/Albums;->restore(Landroid/content/Intent;Ljava/lang/String;Ljava/lang/String;)V
     goto :L11
   :L9
-  .line 1274
+  .line 1269
     sget-boolean v1, Lcom/innioasis/ipp/Queue;->srcGenre:Z
     if-eqz v1, :L10
-  .line 1275
+  .line 1270
     invoke-static { }, Lcom/innioasis/ipp/Queue;->playingPath()Ljava/lang/String;
     move-result-object v1
     invoke-static { v2, v1 }, Lcom/innioasis/ipp/Genres;->restore(Landroid/content/Intent;Ljava/lang/String;)V
     goto :L11
   :L10
-  .line 1277
+  .line 1272
     invoke-static { }, Lcom/innioasis/ipp/Follow;->armPending()V
   :L11
-  .line 1279
+  .line 1274
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
   :L12
-  .line 1280
+  .line 1275
     return v4
   :L13
-  .line 1254
+  .line 1249
     return v0
   :L14
-  .line 1281
+  .line 1276
     move-exception p0
-  .line 1282
+  .line 1277
     return v0
 .end method
 
@@ -2912,120 +2900,120 @@
   .catch Ljava/lang/Exception; { :L0 .. :L10 } :L14
   .registers 6
   :L0
-  .line 1700
+  .line 1688
     invoke-static { }, Lcom/innioasis/ipp/Queue;->svc()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 1701
+  .line 1689
     if-eqz v0, :L13
     if-gez p0, :L1
     goto :L13
   :L1
-  .line 1702
+  .line 1690
     invoke-static { }, Lcom/innioasis/ipp/Queue;->syncKind()V
-  .line 1703
+  .line 1691
     invoke-static { v0 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object v1
-  .line 1704
+  .line 1692
     if-eqz v1, :L12
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L2
     goto :L12
   :L2
-  .line 1705
+  .line 1693
     if-nez p0, :L3
     return-void
   :L3
-  .line 1707
+  .line 1695
     invoke-static { v0 }, Lcom/innioasis/ipp/Queue;->index(Lcom/innioasis/y1/service/PlayerService;)I
     move-result v2
-  .line 1708
+  .line 1696
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
     move-result v3
     if-eqz v3, :L5
-  .line 1709
+  .line 1697
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->pushHist(I)V
-  .line 1710
+  .line 1698
     add-int/lit8 p0, p0, -1
     invoke-static { v1, p0, v2 }, Lcom/innioasis/ipp/Queue;->takeManual(Ljava/util/List;II)I
     move-result p0
-  .line 1711
+  .line 1699
     if-gez p0, :L4
     return-void
   :L4
-  .line 1712
+  .line 1700
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
-  .line 1713
+  .line 1701
     goto :L9
   :L5
-  .line 1714
+  .line 1702
     sget-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     array-length v4, v3
     if-lt p0, v4, :L6
     return-void
   :L6
-  .line 1715
+  .line 1703
     aget p0, v3, p0
-  .line 1716
+  .line 1704
     if-ltz p0, :L11
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
     if-lt p0, v1, :L7
     goto :L11
   :L7
-  .line 1717
+  .line 1705
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->pushHist(I)V
-  .line 1718
+  .line 1706
     const/4 v1, -1
     sput v1, Lcom/innioasis/ipp/Queue;->resume:I
-  .line 1719
+  .line 1707
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v1
     if-eqz v1, :L8
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropPlanThrough(I)V
   :L8
-  .line 1720
+  .line 1708
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
   :L9
-  .line 1722
+  .line 1710
     const/4 p0, 0
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->restartPlay(Z)V
   :L10
-  .line 1724
+  .line 1712
     goto :L15
   :L11
-  .line 1716
-    return-void
-  :L12
   .line 1704
     return-void
+  :L12
+  .line 1692
+    return-void
   :L13
-  .line 1701
+  .line 1689
     return-void
   :L14
-  .line 1723
+  .line 1711
     move-exception p0
   :L15
-  .line 1725
+  .line 1713
     return-void
 .end method
 
 .method private static playingMusicPath()Ljava/lang/String;
   .registers 2
-  .line 1322
+  .line 1317
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 1323
+  .line 1318
     const/4 v1, 0
     if-nez v0, :L0
-  .line 1324
+  .line 1319
     return-object v1
   :L0
-  .line 1326
+  .line 1321
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingMusic()Lcom/innioasis/y1/database/Song;
     move-result-object v0
-  .line 1327
+  .line 1322
     if-nez v0, :L1
     goto :L2
   :L1
@@ -3038,12 +3026,12 @@
 .method private static playingPath()Ljava/lang/String;
   .catchall { :L0 .. :L4 } :L5
   .registers 2
-  .line 1395
+  .line 1383
     const/4 v0, 0
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Queue;->svc()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v1
-  .line 1396
+  .line 1384
     if-nez v1, :L1
     move-object v1, v0
     goto :L2
@@ -3051,7 +3039,7 @@
     invoke-virtual { v1 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingSong()Lcom/innioasis/y1/database/Song;
     move-result-object v1
   :L2
-  .line 1397
+  .line 1385
     if-nez v1, :L3
     goto :L4
   :L3
@@ -3060,9 +3048,9 @@
   :L4
     return-object v0
   :L5
-  .line 1398
+  .line 1386
     move-exception v1
-  .line 1399
+  .line 1387
     return-object v0
 .end method
 
@@ -3097,54 +3085,35 @@
     return p0
 .end method
 
-.method private static prefs()Landroid/content/SharedPreferences;
-  .registers 3
-  .line 1142
-    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
-    move-result-object v0
-  .line 1143
-    if-nez v0, :L0
-    const/4 v0, 0
-    goto :L1
-  :L0
-    const-string v1, "innioasis_plus"
-    const/4 v2, 0
-    invoke-virtual { v0, v1, v2 }, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
-    move-result-object v0
-  :L1
-    return-object v0
-.end method
-
 .method public static prevAction(Lcom/innioasis/y1/service/PlayerService;)I
   .catch Ljava/lang/Exception; { :L0 .. :L12 } :L14
   .registers 9
-  .line 1538
+  .line 1526
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 1539
+  .line 1527
     invoke-static { }, Lcom/innioasis/ipp/Queue;->syncKind()V
-  .line 1540
+  .line 1528
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object v1
-  .line 1541
+  .line 1529
     if-eqz v1, :L13
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L1
     goto/16 :L13
   :L1
-  .line 1542
+  .line 1530
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v2
-  .line 1543
+  .line 1531
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->index(Lcom/innioasis/y1/service/PlayerService;)I
     move-result v3
-  .line 1544
+  .line 1532
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Queue;->syncShuffle(II)V
-  .line 1546
+  .line 1534
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->pastRestartPoint(Lcom/innioasis/y1/service/PlayerService;)Z
     move-result v4
     if-eqz v4, :L2
@@ -3152,13 +3121,13 @@
     move-result p0
     return p0
   :L2
-  .line 1548
+  .line 1536
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v4
     const/4 v5, -1
     const/4 v6, 1
     if-eqz v4, :L8
-  .line 1550
+  .line 1538
     sget v1, Lcom/innioasis/ipp/Queue;->passLen:I
     sget-object v4, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     invoke-virtual { v4 }, Ljava/util/ArrayList;->size()I
@@ -3171,7 +3140,7 @@
     if-eqz v1, :L3
     return v6
   :L3
-  .line 1552
+  .line 1540
     sget-object v1, Lcom/innioasis/ipp/Queue;->hist:Ljava/util/ArrayList;
     invoke-virtual { v1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v7
@@ -3180,7 +3149,7 @@
     move-result p0
     return p0
   :L4
-  .line 1553
+  .line 1541
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v7
     sub-int/2addr v7, v6
@@ -3189,50 +3158,50 @@
     check-cast v1, Ljava/lang/Integer;
     invoke-virtual { v1 }, Ljava/lang/Integer;->intValue()I
     move-result v1
-  .line 1554
+  .line 1542
     if-ltz v1, :L7
     if-lt v1, v2, :L5
     goto :L7
   :L5
-  .line 1555
+  .line 1543
     invoke-static { v3, v1, v2 }, Lcom/innioasis/ipp/Queue;->putBackInPlan(III)V
-  .line 1556
+  .line 1544
     invoke-virtual { v4 }, Ljava/util/ArrayList;->size()I
     move-result v3
     sget v7, Lcom/innioasis/ipp/Queue;->passLen:I
     if-lt v3, v7, :L6
-  .line 1558
+  .line 1546
     invoke-virtual { v4 }, Ljava/util/ArrayList;->clear()V
-  .line 1559
+  .line 1547
     sput v2, Lcom/innioasis/ipp/Queue;->planFor:I
-  .line 1560
+  .line 1548
     sput v2, Lcom/innioasis/ipp/Queue;->passLen:I
   :L6
-  .line 1562
+  .line 1550
     sput v5, Lcom/innioasis/ipp/Queue;->resume:I
-  .line 1563
+  .line 1551
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
-  .line 1564
+  .line 1552
     return v6
   :L7
-  .line 1554
+  .line 1542
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->toStart(Lcom/innioasis/y1/service/PlayerService;)I
     move-result p0
     return p0
   :L8
-  .line 1567
+  .line 1555
     invoke-static { v3 }, Lcom/innioasis/ipp/Queue;->prevSeq(I)I
     move-result v2
-  .line 1568
+  .line 1556
     if-gez v2, :L11
-  .line 1569
+  .line 1557
     sget-object v2, Lcom/innioasis/ipp/Queue;->past:Ljava/util/ArrayList;
     invoke-static { p0, v2, v0 }, Lcom/innioasis/ipp/Queue;->restorePass(Lcom/innioasis/y1/service/PlayerService;Ljava/util/ArrayList;Z)Z
     move-result v2
     if-eqz v2, :L9
     return v6
   :L9
-  .line 1570
+  .line 1558
     invoke-static { }, Lcom/innioasis/ipp/Queue;->repeatAll()Z
     move-result v2
     if-nez v2, :L10
@@ -3240,37 +3209,37 @@
     move-result p0
     return p0
   :L10
-  .line 1573
+  .line 1561
     sget-object v2, Lcom/innioasis/ipp/Queue;->future:Ljava/util/ArrayList;
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->notePass(Ljava/util/ArrayList;)V
-  .line 1574
+  .line 1562
     invoke-static { }, Lcom/innioasis/ipp/Queue;->stripGuests()V
-  .line 1575
+  .line 1563
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
-  .line 1576
+  .line 1564
     invoke-static { v1 }, Lcom/innioasis/ipp/Queue;->prevSeq(I)I
     move-result v2
-  .line 1577
+  .line 1565
     if-gez v2, :L11
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->toStart(Lcom/innioasis/y1/service/PlayerService;)I
     move-result p0
     return p0
   :L11
-  .line 1579
+  .line 1567
     sput v5, Lcom/innioasis/ipp/Queue;->resume:I
-  .line 1580
+  .line 1568
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
   :L12
-  .line 1581
+  .line 1569
     return v6
   :L13
-  .line 1541
+  .line 1529
     return v0
   :L14
-  .line 1582
+  .line 1570
     move-exception p0
-  .line 1583
+  .line 1571
     return v0
 .end method
 
@@ -3321,41 +3290,41 @@
 
 .method private static putBackInPlan(III)V
   .registers 4
-  .line 1592
+  .line 1580
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v0
     if-nez v0, :L0
     return-void
   :L0
-  .line 1593
+  .line 1581
     if-ltz p0, :L4
     if-ge p0, p2, :L4
     if-ne p0, p1, :L1
     goto :L4
   :L1
-  .line 1594
+  .line 1582
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->skipped(I)Z
     move-result p1
     if-eqz p1, :L2
     return-void
   :L2
-  .line 1595
+  .line 1583
     sget p1, Lcom/innioasis/ipp/Queue;->planFor:I
     if-eq p1, p2, :L3
     return-void
   :L3
-  .line 1596
+  .line 1584
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropFromPlan(I)V
-  .line 1597
+  .line 1585
     sget-object p1, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     const/4 p2, 0
     invoke-static { p0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object p0
     invoke-virtual { p1, p2, p0 }, Ljava/util/ArrayList;->add(ILjava/lang/Object;)V
-  .line 1598
+  .line 1586
     return-void
   :L4
-  .line 1593
+  .line 1581
     return-void
 .end method
 
@@ -3382,14 +3351,14 @@
 
 .method private static randomOther(II)I
   .registers 5
-  .line 1522
+  .line 1510
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1523
+  .line 1511
     const/4 v1, 0
   :L0
     if-ge v1, p0, :L2
-  .line 1524
+  .line 1512
     if-eq v1, p1, :L1
     invoke-static { v1 }, Lcom/innioasis/ipp/Queue;->skipped(I)Z
     move-result v2
@@ -3401,18 +3370,18 @@
     move-result-object v2
     invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L1
-  .line 1523
+  .line 1511
     add-int/lit8 v1, v1, 1
     goto :L0
   :L2
-  .line 1526
+  .line 1514
     invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result p0
     if-eqz p0, :L3
     const/4 p0, -1
     return p0
   :L3
-  .line 1527
+  .line 1515
     sget-object p0, Lcom/innioasis/ipp/Queue;->rnd:Ljava/util/Random;
     invoke-virtual { v0 }, Ljava/util/ArrayList;->size()I
     move-result p1
@@ -3594,52 +3563,52 @@
 
 .method public static removeRow(I)V
   .registers 3
-  .line 1666
+  .line 1654
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
     move-result v0
     if-eqz v0, :L1
-  .line 1667
+  .line 1655
     sget-object v0, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     add-int/lit8 p0, p0, -1
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1668
+  .line 1656
     sget-object v0, Lcom/innioasis/ipp/Queue;->guestIdx:Ljava/util/ArrayList;
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Ljava/lang/Integer;
     invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
     move-result p0
-  .line 1669
+  .line 1657
     if-ltz p0, :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropGuest(I)V
   :L0
-  .line 1670
+  .line 1658
     return-void
   :L1
-  .line 1672
+  .line 1660
     if-lez p0, :L4
     sget-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     array-length v1, v0
     if-lt p0, v1, :L2
     goto :L4
   :L2
-  .line 1673
+  .line 1661
     aget p0, v0, p0
-  .line 1674
+  .line 1662
     if-gez p0, :L3
     return-void
   :L3
-  .line 1675
+  .line 1663
     sget-object v0, Lcom/innioasis/ipp/Queue;->skip:Ljava/util/ArrayList;
     invoke-static { p0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1676
+  .line 1664
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropFromPlan(I)V
-  .line 1677
+  .line 1665
     return-void
   :L4
-  .line 1672
+  .line 1660
     return-void
 .end method
 
@@ -3842,17 +3811,17 @@
   .catchall { :L4 .. :L11 } :L12
   .registers 5
   :L0
-  .line 1149
-    invoke-static { }, Lcom/innioasis/ipp/Queue;->prefs()Landroid/content/SharedPreferences;
+  .line 1144
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v0
-  .line 1150
+  .line 1145
     if-nez v0, :L1
     return-void
   :L1
-  .line 1151
+  .line 1146
     invoke-interface { v0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object v0
-  .line 1152
+  .line 1147
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
     if-nez v1, :L2
     const/4 p0, 0
@@ -3861,45 +3830,45 @@
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->listSig(Lcom/innioasis/y1/service/PlayerService;)Ljava/lang/String;
     move-result-object p0
   :L3
-  .line 1153
+  .line 1148
     const-string v1, "src_sig"
     const-string v2, ""
     if-nez p0, :L5
   :L4
-  .line 1154
+  .line 1149
     invoke-interface { v0, v1, v2 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
     goto :L10
   :L5
-  .line 1156
+  .line 1151
     invoke-interface { v0, v1, p0 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1157
+  .line 1152
     const-string p0, "src_key"
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcKey:Ljava/lang/String;
     if-nez v1, :L6
     move-object v1, v2
   :L6
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1158
+  .line 1153
     const-string p0, "src_name"
     sget-object v1, Lcom/innioasis/ipp/Queue;->source:Ljava/lang/String;
     if-nez v1, :L7
     move-object v1, v2
   :L7
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1159
+  .line 1154
     const-string p0, "src_uri"
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
     const/4 v3, 0
     invoke-virtual { v1, v3 }, Landroid/content/Intent;->toUri(I)Ljava/lang/String;
     move-result-object v1
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1160
+  .line 1155
     const-string p0, "src_uuid"
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcIntent:Landroid/content/Intent;
     invoke-static { v1 }, Lcom/innioasis/ipp/Queue;->uuidExtras(Landroid/content/Intent;)Ljava/lang/String;
     move-result-object v1
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1161
+  .line 1156
     const-string p0, "src_level"
     sget-object v1, Lcom/innioasis/ipp/Queue;->srcLevel:Ljava/lang/String;
     if-nez v1, :L8
@@ -3908,25 +3877,25 @@
     move-object v2, v1
   :L9
     invoke-interface { v0, p0, v2 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
-  .line 1162
+  .line 1157
     const-string p0, "src_genre"
     sget-boolean v1, Lcom/innioasis/ipp/Queue;->srcGenre:Z
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
-  .line 1163
+  .line 1158
     const-string p0, "src_ordered"
     sget-boolean v1, Lcom/innioasis/ipp/Queue;->srcOrdered:Z
     invoke-interface { v0, p0, v1 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
   :L10
-  .line 1165
+  .line 1160
     invoke-interface { v0 }, Landroid/content/SharedPreferences$Editor;->commit()Z
   :L11
-  .line 1167
+  .line 1162
     goto :L13
   :L12
-  .line 1166
+  .line 1161
     move-exception p0
   :L13
-  .line 1168
+  .line 1163
     return-void
 .end method
 
@@ -4406,32 +4375,32 @@
 
 .method private static takeManual(Ljava/util/List;II)I
   .registers 5
-  .line 1420
+  .line 1408
     sget-object v0, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     invoke-virtual { v0, p1 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/database/Song;
-  .line 1421
+  .line 1409
     sget-object v1, Lcom/innioasis/ipp/Queue;->guestIdx:Ljava/util/ArrayList;
     invoke-virtual { v1, p1 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Ljava/lang/Integer;
     invoke-virtual { p1 }, Ljava/lang/Integer;->intValue()I
     move-result p1
-  .line 1422
+  .line 1410
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Queue;->guestAt(Ljava/util/List;ILcom/innioasis/y1/database/Song;)I
     move-result p1
-  .line 1423
+  .line 1411
     if-ltz p1, :L1
-  .line 1424
+  .line 1412
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Queue;->moveGuest(Ljava/util/List;II)I
     move-result p0
-  .line 1425
+  .line 1413
     sget-object p1, Lcom/innioasis/ipp/Queue;->spent:Ljava/util/ArrayList;
     invoke-static { p0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object p2
     invoke-virtual { p1, p2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1427
+  .line 1415
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result p1
     if-eqz p1, :L0
@@ -4441,111 +4410,111 @@
     add-int/lit8 p1, p1, 1
     sput p1, Lcom/innioasis/ipp/Queue;->passLen:I
   :L0
-  .line 1428
+  .line 1416
     return p0
   :L1
-  .line 1431
+  .line 1419
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Queue;->indexOf(Ljava/util/List;Lcom/innioasis/y1/database/Song;)I
     move-result p1
-  .line 1432
+  .line 1420
     if-gez p1, :L3
-  .line 1433
+  .line 1421
     invoke-interface { p0, v0 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 1434
+  .line 1422
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result p1
     add-int/lit8 p1, p1, -1
-  .line 1435
+  .line 1423
     sget p2, Lcom/innioasis/ipp/Queue;->planFor:I
     if-ltz p2, :L2
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Queue;->planFor:I
   :L2
-  .line 1436
+  .line 1424
     sget-object p0, Lcom/innioasis/ipp/Queue;->spent:Ljava/util/ArrayList;
     invoke-static { p1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object p2
     invoke-virtual { p0, p2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L5
   :L3
-  .line 1438
+  .line 1426
     sget p0, Lcom/innioasis/ipp/Queue;->resume:I
     if-gez p0, :L4
     sput p2, Lcom/innioasis/ipp/Queue;->resume:I
   :L4
-  .line 1440
+  .line 1428
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result p0
     if-eqz p0, :L5
     invoke-static { p1 }, Lcom/innioasis/ipp/Queue;->dropFromPlan(I)V
   :L5
-  .line 1442
+  .line 1430
     return p1
 .end method
 
 .method public static takeNext(Lcom/innioasis/y1/service/PlayerService;)I
   .catch Ljava/lang/Exception; { :L0 .. :L12 } :L14
   .registers 9
-  .line 1453
+  .line 1441
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 1454
+  .line 1442
     invoke-static { }, Lcom/innioasis/ipp/Queue;->syncKind()V
-  .line 1455
+  .line 1443
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object v1
-  .line 1456
+  .line 1444
     if-eqz v1, :L13
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L1
     goto/16 :L13
   :L1
-  .line 1457
+  .line 1445
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v2
-  .line 1458
+  .line 1446
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->index(Lcom/innioasis/y1/service/PlayerService;)I
     move-result v3
-  .line 1459
+  .line 1447
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Queue;->syncShuffle(II)V
-  .line 1460
+  .line 1448
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v4
-  .line 1461
+  .line 1449
     invoke-static { v3 }, Lcom/innioasis/ipp/Queue;->pushHist(I)V
-  .line 1463
+  .line 1451
     sget-object v5, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     invoke-virtual { v5 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v5
     const/4 v6, 1
     if-nez v5, :L3
-  .line 1464
+  .line 1452
     invoke-static { v1, v0, v3 }, Lcom/innioasis/ipp/Queue;->takeManual(Ljava/util/List;II)I
     move-result v1
-  .line 1465
+  .line 1453
     if-gez v1, :L2
     return v0
   :L2
-  .line 1466
+  .line 1454
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
-  .line 1467
+  .line 1455
     return v6
   :L3
-  .line 1470
+  .line 1458
     nop
-  .line 1471
+  .line 1459
     sget v5, Lcom/innioasis/ipp/Queue;->resume:I
     const/4 v7, -1
     if-ltz v5, :L6
-  .line 1472
+  .line 1460
     nop
-  .line 1473
+  .line 1461
     sput v7, Lcom/innioasis/ipp/Queue;->resume:I
-  .line 1474
+  .line 1462
     if-ltz v5, :L5
     if-lt v5, v2, :L4
     goto :L5
@@ -4555,28 +4524,28 @@
   :L5
     const/4 v3, 0
   :L6
-  .line 1477
+  .line 1465
     if-eqz v4, :L8
-  .line 1478
+  .line 1466
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Queue;->nextShuffled(II)I
     move-result v1
-  .line 1479
+  .line 1467
     if-gez v1, :L7
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->stopAtEnd(Lcom/innioasis/y1/service/PlayerService;)I
     move-result p0
     return p0
   :L7
-  .line 1480
+  .line 1468
     invoke-virtual { p0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
-  .line 1481
+  .line 1469
     return v6
   :L8
-  .line 1484
+  .line 1472
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Queue;->nextSeq(II)I
     move-result v2
-  .line 1485
+  .line 1473
     if-gez v2, :L11
-  .line 1486
+  .line 1474
     invoke-static { }, Lcom/innioasis/ipp/Queue;->repeatAll()Z
     move-result v2
     if-nez v2, :L9
@@ -4584,39 +4553,39 @@
     move-result p0
     return p0
   :L9
-  .line 1488
+  .line 1476
     sget-object v2, Lcom/innioasis/ipp/Queue;->future:Ljava/util/ArrayList;
     invoke-static { p0, v2, v6 }, Lcom/innioasis/ipp/Queue;->restorePass(Lcom/innioasis/y1/service/PlayerService;Ljava/util/ArrayList;Z)Z
     move-result v2
     if-eqz v2, :L10
     return v6
   :L10
-  .line 1489
+  .line 1477
     invoke-static { }, Lcom/innioasis/ipp/Queue;->dropGuests()V
-  .line 1490
+  .line 1478
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
-  .line 1491
+  .line 1479
     invoke-static { v1, v7 }, Lcom/innioasis/ipp/Queue;->nextSeq(II)I
     move-result v2
-  .line 1492
+  .line 1480
     if-gez v2, :L11
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->stopAtEnd(Lcom/innioasis/y1/service/PlayerService;)I
     move-result p0
     return p0
   :L11
-  .line 1494
+  .line 1482
     invoke-virtual { p0, v2 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
   :L12
-  .line 1495
+  .line 1483
     return v6
   :L13
-  .line 1456
+  .line 1444
     return v0
   :L14
-  .line 1496
+  .line 1484
     move-exception p0
-  .line 1497
+  .line 1485
     return v0
 .end method
 
@@ -4834,18 +4803,18 @@
 .method public static upNext()Ljava/util/List;
   .catch Ljava/lang/Exception; { :L0 .. :L19 } :L20
   .registers 10
-  .line 1605
+  .line 1593
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1606
+  .line 1594
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 1608
+  .line 1596
     const/4 v2, 0
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Queue;->svc()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v3
-  .line 1609
+  .line 1597
     if-nez v3, :L1
     new-array v3, v2, [I
     sput-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
@@ -4853,39 +4822,39 @@
     sput v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
     return-object v0
   :L1
-  .line 1610
+  .line 1598
     invoke-static { }, Lcom/innioasis/ipp/Queue;->syncKind()V
-  .line 1611
+  .line 1599
     invoke-static { v3 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object v4
-  .line 1612
+  .line 1600
     if-eqz v4, :L18
     invoke-interface { v4 }, Ljava/util/List;->isEmpty()Z
     move-result v5
     if-eqz v5, :L2
     goto/16 :L18
   :L2
-  .line 1613
+  .line 1601
     invoke-interface { v4 }, Ljava/util/List;->size()I
     move-result v5
-  .line 1614
+  .line 1602
     invoke-static { v3 }, Lcom/innioasis/ipp/Queue;->index(Lcom/innioasis/y1/service/PlayerService;)I
     move-result v3
-  .line 1615
+  .line 1603
     invoke-static { v5, v3 }, Lcom/innioasis/ipp/Queue;->syncShuffle(II)V
-  .line 1617
+  .line 1605
     if-ltz v3, :L3
     if-ge v3, v5, :L3
-  .line 1618
+  .line 1606
     invoke-interface { v4, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v6
     invoke-virtual { v0, v6 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1619
+  .line 1607
     invoke-static { v3 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v6
     invoke-virtual { v1, v6 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L3
-  .line 1622
+  .line 1610
     sget-object v6, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     invoke-virtual { v6 }, Ljava/util/ArrayList;->size()I
     move-result v7
@@ -4897,53 +4866,53 @@
     invoke-virtual { v6 }, Ljava/util/ArrayList;->size()I
     move-result v6
   :L5
-  .line 1623
+  .line 1611
     const/4 v7, 0
   :L6
     if-ge v7, v6, :L7
-  .line 1624
+  .line 1612
     sget-object v9, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     invoke-virtual { v9, v7 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v9
     invoke-virtual { v0, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1625
+  .line 1613
     const/4 v9, -1
     invoke-static { v9 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v9
     invoke-virtual { v1, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1623
+  .line 1611
     add-int/lit8 v7, v7, 1
     goto :L6
   :L7
-  .line 1627
+  .line 1615
     sput v6, Lcom/innioasis/ipp/Queue;->rowManual:I
-  .line 1628
+  .line 1616
     sget-object v6, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     invoke-virtual { v6 }, Ljava/util/ArrayList;->size()I
     move-result v6
     sput v6, Lcom/innioasis/ipp/Queue;->manualTotal:I
-  .line 1631
+  .line 1619
     sget v6, Lcom/innioasis/ipp/Queue;->resume:I
     if-ltz v6, :L8
     goto :L9
   :L8
     move v6, v3
   :L9
-  .line 1632
+  .line 1620
     if-ltz v6, :L10
     if-lt v6, v5, :L11
   :L10
     const/4 v6, 0
   :L11
-  .line 1633
+  .line 1621
     nop
-  .line 1634
+  .line 1622
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v7
     if-eqz v7, :L15
-  .line 1635
+  .line 1623
     invoke-static { v5, v3 }, Lcom/innioasis/ipp/Queue;->ensureCycle(II)V
-  .line 1636
+  .line 1624
     const/4 v6, 0
   :L12
     sget-object v7, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
@@ -4951,13 +4920,13 @@
     move-result v9
     if-ge v6, v9, :L17
     if-lez v8, :L17
-  .line 1637
+  .line 1625
     invoke-virtual { v7, v6 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v7
     check-cast v7, Ljava/lang/Integer;
     invoke-virtual { v7 }, Ljava/lang/Integer;->intValue()I
     move-result v7
-  .line 1638
+  .line 1626
     if-eq v7, v3, :L14
     if-ltz v7, :L14
     if-ge v7, v5, :L14
@@ -4966,46 +4935,46 @@
     if-eqz v9, :L13
     goto :L14
   :L13
-  .line 1639
+  .line 1627
     invoke-interface { v4, v7 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v9
     invoke-virtual { v0, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1640
+  .line 1628
     invoke-static { v7 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v7
     invoke-virtual { v1, v7 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1641
+  .line 1629
     add-int/lit8 v8, v8, -1
   :L14
-  .line 1636
+  .line 1624
     add-int/lit8 v6, v6, 1
     goto :L12
   :L15
-  .line 1644
+  .line 1632
     invoke-static { v5, v6 }, Lcom/innioasis/ipp/Queue;->nextSeq(II)I
     move-result v3
   :L16
     if-ltz v3, :L17
     if-lez v8, :L17
-  .line 1645
+  .line 1633
     invoke-interface { v4, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v6
     invoke-virtual { v0, v6 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1646
+  .line 1634
     invoke-static { v3 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v6
     invoke-virtual { v1, v6 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1647
+  .line 1635
     add-int/lit8 v8, v8, -1
-  .line 1644
+  .line 1632
     invoke-static { v5, v3 }, Lcom/innioasis/ipp/Queue;->nextSeq(II)I
     move-result v3
     goto :L16
   :L17
-  .line 1651
+  .line 1639
     goto :L21
   :L18
-  .line 1612
+  .line 1600
     new-array v3, v2, [I
     sput-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     sput v2, Lcom/innioasis/ipp/Queue;->rowManual:I
@@ -5013,21 +4982,21 @@
   :L19
     return-object v0
   :L20
-  .line 1650
+  .line 1638
     move-exception v3
   :L21
-  .line 1652
+  .line 1640
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v3
     new-array v3, v3, [I
     sput-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
-  .line 1653
+  .line 1641
     nop
   :L22
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v3
     if-ge v2, v3, :L23
-  .line 1654
+  .line 1642
     sget-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     invoke-virtual { v1, v2 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v4
@@ -5035,59 +5004,59 @@
     invoke-virtual { v4 }, Ljava/lang/Integer;->intValue()I
     move-result v4
     aput v4, v3, v2
-  .line 1653
+  .line 1641
     add-int/lit8 v2, v2, 1
     goto :L22
   :L23
-  .line 1656
+  .line 1644
     return-object v0
 .end method
 
 .method private static uuidExtras(Landroid/content/Intent;)Ljava/lang/String;
   .catchall { :L0 .. :L5 } :L7
   .registers 6
-  .line 1187
+  .line 1182
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
   :L0
-  .line 1189
+  .line 1184
     invoke-virtual { p0 }, Landroid/content/Intent;->getExtras()Landroid/os/Bundle;
     move-result-object p0
-  .line 1190
+  .line 1185
     if-nez p0, :L1
     const-string p0, ""
     return-object p0
   :L1
-  .line 1191
+  .line 1186
     invoke-virtual { p0 }, Landroid/os/Bundle;->keySet()Ljava/util/Set;
     move-result-object v1
     invoke-interface { v1 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
     move-result-object v1
   :L2
-  .line 1192
+  .line 1187
     invoke-interface { v1 }, Ljava/util/Iterator;->hasNext()Z
     move-result v2
     if-eqz v2, :L6
-  .line 1193
+  .line 1188
     invoke-interface { v1 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/String;
-  .line 1194
+  .line 1189
     invoke-virtual { p0, v2 }, Landroid/os/Bundle;->get(Ljava/lang/String;)Ljava/lang/Object;
     move-result-object v3
-  .line 1195
+  .line 1190
     instance-of v4, v3, Ljava/util/UUID;
     if-nez v4, :L3
     goto :L2
   :L3
-  .line 1196
+  .line 1191
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->length()I
     move-result v4
     if-lez v4, :L4
     const/16 v4, 10
     invoke-virtual { v0, v4 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L4
-  .line 1197
+  .line 1192
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v2
     const/16 v4, 61
@@ -5097,19 +5066,19 @@
     move-result-object v3
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L5
-  .line 1198
+  .line 1193
     goto :L2
   :L6
-  .line 1201
+  .line 1196
     nop
-  .line 1202
+  .line 1197
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     return-object p0
   :L7
-  .line 1199
+  .line 1194
     move-exception p0
-  .line 1200
+  .line 1195
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     return-object p0

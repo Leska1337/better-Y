@@ -170,7 +170,7 @@
 
 .method static all(Landroid/content/Context;)Ljava/util/Map;
   .registers 1
-  .line 131
+  .line 137
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -256,6 +256,23 @@
     return-object p0
 .end method
 
+.method static file()Landroid/content/SharedPreferences;
+  .registers 1
+  .line 131
+    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v0
+  .line 132
+    if-nez v0, :L0
+    const/4 v0, 0
+    goto :L1
+  :L0
+    invoke-static { v0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
+    move-result-object v0
+  :L1
+    return-object v0
+.end method
+
 .method public static getBool(Landroid/content/Context;Ljava/lang/String;Z)Z
   .registers 3
   .line 118
@@ -268,7 +285,7 @@
 
 .method public static getInt(Landroid/content/Context;Ljava/lang/String;I)I
   .registers 3
-  .line 139
+  .line 145
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences;->getInt(Ljava/lang/String;I)I
@@ -278,7 +295,7 @@
 
 .method public static getString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 3
-  .line 147
+  .line 153
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
@@ -288,7 +305,7 @@
 
 .method public static has(Landroid/content/Context;Ljava/lang/String;)Z
   .registers 2
-  .line 155
+  .line 161
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1 }, Landroid/content/SharedPreferences;->contains(Ljava/lang/String;)Z
@@ -334,7 +351,7 @@
 
 .method public static setBool(Landroid/content/Context;Ljava/lang/String;Z)V
   .registers 3
-  .line 135
+  .line 141
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -342,13 +359,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 136
+  .line 142
     return-void
 .end method
 
 .method public static setInt(Landroid/content/Context;Ljava/lang/String;I)V
   .registers 3
-  .line 143
+  .line 149
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -356,13 +373,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 144
+  .line 150
     return-void
 .end method
 
 .method public static setString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
   .registers 3
-  .line 151
+  .line 157
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -370,13 +387,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 152
+  .line 158
     return-void
 .end method
 
 .method public static trackSortEnabled()Z
   .registers 1
-  .line 160
+  .line 166
     const/4 v0, 1
     return v0
 .end method

@@ -1138,15 +1138,10 @@ public final class Queue {
     /** The stored source has been looked at (or a live one was noted): do not look again. */
     private static boolean srcLoaded;
 
-    private static SharedPreferences prefs() {
-        Context c = Y1Application.Companion.getAppContext();
-        return (c == null) ? null : c.getSharedPreferences("innioasis_plus", Context.MODE_PRIVATE);
-    }
-
     /** {@code PlayerService.saveState()}. {@code commit()}: the process is on its way down. */
     public static void saveSource(PlayerService ps) {
         try {
-            SharedPreferences p = prefs();
+            SharedPreferences p = Prefs.file();
             if (p == null) return;
             SharedPreferences.Editor e = p.edit();
             String sig = (srcIntent == null) ? null : listSig(ps);
@@ -1211,7 +1206,7 @@ public final class Queue {
             String sig = listSig(ps);
             if (sig == null) return;
             srcLoaded = true;
-            SharedPreferences p = prefs();
+            SharedPreferences p = Prefs.file();
             if (p == null) return;
             if (!sig.equals(p.getString(P_SIG, ""))) return;
             String key = p.getString(P_KEY, "");
@@ -1380,13 +1375,6 @@ public final class Queue {
         } catch (Throwable e) {
             return true;
         }
-    }
-
-    /** No-ops, kept only because AlbumsActivity's play call site calls them. */
-    public static void markAlbum() {
-    }
-
-    public static void markAlbum(String albumName) {
     }
 
     /** The file that is playing right now, or null. */

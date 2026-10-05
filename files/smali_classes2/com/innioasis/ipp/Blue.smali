@@ -68,14 +68,6 @@
     return-void
 .end method
 
-.method static synthetic access$400()Landroid/content/SharedPreferences;
-  .registers 1
-  .line 45
-    invoke-static { }, Lcom/innioasis/ipp/Blue;->prefs()Landroid/content/SharedPreferences;
-    move-result-object v0
-    return-object v0
-.end method
-
 .method private static band(Landroid/widget/LinearLayout;Landroid/widget/TextView;Landroid/view/View;)V
   .registers 12
   .line 239
@@ -295,7 +287,7 @@
     return-object v0
   :L0
   .line 55
-    invoke-static { }, Lcom/innioasis/ipp/Blue;->prefs()Landroid/content/SharedPreferences;
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v1
   .line 56
     invoke-virtual { p0 }, Landroid/bluetooth/BluetoothDevice;->getAddress()Ljava/lang/String;
@@ -375,25 +367,6 @@
   .line 234
     const/4 p0, 0
     return-object p0
-.end method
-
-.method private static prefs()Landroid/content/SharedPreferences;
-  .registers 3
-  .line 438
-    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
-    move-result-object v0
-  .line 439
-    if-nez v0, :L0
-    const/4 v0, 0
-    goto :L1
-  :L0
-    const-string v1, "innioasis_plus"
-    const/4 v2, 0
-    invoke-virtual { v0, v1, v2 }, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
-    move-result-object v0
-  :L1
-    return-object v0
 .end method
 
 .method private static rebind(Landroidx/recyclerview/widget/RecyclerView;)V

@@ -369,7 +369,7 @@ public final class Art {
         try {
             String key = Albums.coverKey(albumKey);
             if (key == null) return null;
-            SharedPreferences p = prefs();
+            SharedPreferences p = Prefs.file();
             if (p == null) return null;
             String pick = p.getString(PICK + key, null);
             if (pick == null || !new File(pick).isFile()) return null;
@@ -382,7 +382,7 @@ public final class Art {
     public static boolean hasPick(String albumKey) {
         try {
             String key = Albums.coverKey(albumKey);
-            SharedPreferences p = prefs();
+            SharedPreferences p = Prefs.file();
             return key != null && p != null && p.getString(PICK + key, null) != null;
         } catch (Throwable t) {
             return false;
@@ -408,7 +408,7 @@ public final class Art {
         String key = Albums.keyOf(s);
         if (key == null || s.getPath() == null) return false;
 
-        SharedPreferences p = prefs();
+        SharedPreferences p = Prefs.file();
         if (p == null) return false;
         p.edit().putString(PICK + key, s.getPath()).commit();
         repaint(albums, key, s.getPath());
@@ -422,7 +422,7 @@ public final class Art {
     public static boolean resetThumb(MyBaseAdapter albums) {
         String key = albumKey(albums);
         if (key == null) return false;
-        SharedPreferences p = prefs();
+        SharedPreferences p = Prefs.file();
         if (p == null) return false;
         if (p.getString(PICK + key, null) == null) return false;
         p.edit().remove(PICK + key).commit();
@@ -458,11 +458,6 @@ public final class Art {
             if (c != null) Toast.makeText(c, c.getString(stringId), Toast.LENGTH_SHORT).show();
         } catch (Throwable t) {
         }
-    }
-
-    private static SharedPreferences prefs() {
-        Context c = Y1Application.Companion.getAppContext();
-        return c == null ? null : c.getSharedPreferences("innioasis_plus", 0);
     }
 
     /** Stock's contract: a non-positive size decodes as is. */
