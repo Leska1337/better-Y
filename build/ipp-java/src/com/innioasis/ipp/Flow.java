@@ -136,11 +136,73 @@ public final class Flow {
         }
     }
 
-    /** The album's songs in disc and track order — the order the Albums screen plays them in. */
-    public static List songs(Item it) {
+    /**
+     * The back of the cover: the album's songs in disc and track order — the order the Albums
+     * screen plays them in — numbered as that screen numbers them, with a divider row in front of
+     * each disc or side where that screen shows one. No pinned bar here, so the first disc gets
+     * its divider too.
+     */
+    public static final class Back {
+        public List songs;
+        /** Per row: the number column, or null on a divider. */
+        public String[] nums;
+        /** Per row: the track's title or the divider's label. */
+        public String[] texts;
+        /** Per row: the index into {@code songs}, or -1 on a divider. */
+        public int[] song;
+    }
+
+    /** Off the main thread: reads the disc and track tags of every song not read yet. */
+    public static Back back(Item it) {
         List l = Albums.songsOf(it.key);
+        DiscCache.warm();
+        boolean read = false;
+        for (int i = 0; i < l.size(); i++) {
+            String p = ((Song) l.get(i)).getPath();
+            if (p == null || DiscCache.known(p)) continue;
+            DiscCache.commit(p, DiscCache.read(p, true, false));
+            read = true;
+        }
+        if (read) DiscCache.flush();
         List byTrack = TrackCache.sorted(l);
-        return Albums.byDisc(byTrack != null ? byTrack : l);
+        List s = Albums.byDisc(byTrack != null ? byTrack : l);
+
+        int n = s.size();
+        int[] discs = Disc.albumDiscs(s);
+        int[] tags = null;
+        if (Disc.trackTags()) {
+            tags = new int[n];
+            boolean any = false;
+            for (int i = 0; i < n; i++) {
+                int t = TrackCache.get(((Song) s.get(i)).getPath());
+                tags[i] = t > 0 && t != Integer.MAX_VALUE ? t : 0;
+                if (tags[i] > 0) any = true;
+            }
+            if (!any) tags = null;   // not one tagged song: numbered by position, as on the Albums screen
+        }
+        ArrayList nums = new ArrayList();
+        ArrayList texts = new ArrayList();
+        ArrayList idx = new ArrayList();
+        int start = 0;
+        for (int i = 0; i < n; i++) {
+            if (discs != null && (i == 0 || discs[i] != discs[i - 1])) {
+                start = i;
+                nums.add(null);
+                texts.add(Disc.label(discs[i]));
+                idx.add(Integer.valueOf(-1));
+            }
+            int num = tags != null ? tags[i] : i - start + 1;
+            nums.add(num > 0 ? num + "." : "#");
+            texts.add(title((Song) s.get(i)));
+            idx.add(Integer.valueOf(i));
+        }
+        Back b = new Back();
+        b.songs = s;
+        b.nums = (String[]) nums.toArray(new String[nums.size()]);
+        b.texts = (String[]) texts.toArray(new String[texts.size()]);
+        b.song = new int[idx.size()];
+        for (int i = 0; i < b.song.length; i++) b.song[i] = ((Integer) idx.get(i)).intValue();
+        return b;
     }
 
     /**

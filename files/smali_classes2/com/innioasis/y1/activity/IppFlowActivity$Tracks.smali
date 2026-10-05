@@ -17,7 +17,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;)V
   .registers 3
-  .line 560
+  .line 649
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->it:Lcom/innioasis/ipp/Flow$Item;
@@ -25,37 +25,18 @@
 .end method
 
 .method public run()V
-  .registers 7
-  .line 563
-    iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->it:Lcom/innioasis/ipp/Flow$Item;
-    invoke-static { v0 }, Lcom/innioasis/ipp/Flow;->songs(Lcom/innioasis/ipp/Flow$Item;)Ljava/util/List;
+  .registers 6
+  .line 652
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
+    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v0
-  .line 564
-    invoke-interface { v0 }, Ljava/util/List;->size()I
-    move-result v1
-    new-array v2, v1, [Ljava/lang/String;
-  .line 565
-    const/4 v3, 0
-  :L0
-    if-ge v3, v1, :L1
-    invoke-interface { v0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    new-instance v1, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;
+    iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->it:Lcom/innioasis/ipp/Flow$Item;
+    invoke-static { v3 }, Lcom/innioasis/ipp/Flow;->back(Lcom/innioasis/ipp/Flow$Item;)Lcom/innioasis/ipp/Flow$Back;
     move-result-object v4
-    check-cast v4, Lcom/innioasis/y1/database/Song;
-    invoke-static { v4 }, Lcom/innioasis/ipp/Flow;->title(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
-    move-result-object v4
-    aput-object v4, v2, v3
-    add-int/lit8 v3, v3, 1
-    goto :L0
-  :L1
-  .line 566
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-static { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
-    move-result-object v1
-    new-instance v3, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;
-    iget-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    iget-object v5, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Tracks;->it:Lcom/innioasis/ipp/Flow$Item;
-    invoke-direct { v3, v4, v5, v0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;Ljava/util/List;[Ljava/lang/String;)V
-    invoke-virtual { v1, v3 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 567
+    invoke-direct { v1, v2, v3, v4 }, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;Lcom/innioasis/ipp/Flow$Back;)V
+    invoke-virtual { v0, v1 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+  .line 653
     return-void
 .end method

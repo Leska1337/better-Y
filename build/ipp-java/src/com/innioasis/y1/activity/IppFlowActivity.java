@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
+import com.innioasis.ipp.Lit;
 import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Rows;
@@ -292,6 +293,7 @@ public final class IppFlowActivity extends BaseActivity {
 
     void done(int s) {
         state = s;
+        if (s == 2) panel.restart();
         if (s == 0) {
             card.setVisibility(View.GONE);
             card.setImageBitmap(null);
@@ -310,10 +312,11 @@ public final class IppFlowActivity extends BaseActivity {
      */
     private void play() {
         List songs = panel.songs;
-        if (songs == null || songs.isEmpty()) return;
+        int at = panel.track();
+        if (songs == null || at < 0) return;
         try {
             PlayerService ps = Y1Application.Companion.getPlayerService();
-            if (ps != null) ps.setMusicPlaylist(songs, panel.sel);
+            if (ps != null) ps.setMusicPlaylist(songs, at);
         } catch (Throwable t) {
             return;
         }
@@ -325,8 +328,8 @@ public final class IppFlowActivity extends BaseActivity {
     void toPlayer() {
         panel.setVisibility(View.INVISIBLE);
         Flow.Item it = (Flow.Item) items.get(flipped);
-        Song track = panel.songs != null && panel.sel < panel.songs.size()
-                ? (Song) panel.songs.get(panel.sel) : null;
+        int at = panel.track();
+        Song track = panel.songs != null && at >= 0 ? (Song) panel.songs.get(at) : null;
         Bitmap pic = Flow.trip(track, it.rep);
         if (pic == null) {
             openPlayer();
@@ -404,8 +407,13 @@ public final class IppFlowActivity extends BaseActivity {
         private String title = "";
         private String artist = "";
         List songs;
-        String[] names;
-        int sel;
+        /** Per row: the number column (null on a divider), the title or label, the song or -1. */
+        private String[] nums;
+        private String[] names;
+        private int[] song;
+        /** Where a track's title starts: past the widest number. */
+        private float nameX = 8;
+        private int sel;
         private int first;
 
         /** Carries the menu's row highlight, colour or theme bitmap, for onDraw to paint with. */
@@ -468,19 +476,82 @@ public final class IppFlowActivity extends BaseActivity {
             invalidate();
         }
 
-        void setSongs(List l, String[] n) {
-            songs = l;
-            names = n;
-            invalidate();
+        void setSongs(Flow.Back b) {
+            songs = b.songs;
+            nums = b.nums;
+            names = b.texts;
+            song = b.song;
+            float wide = 0;
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] != null) wide = Math.max(wide, text.measureText(nums[i]));
+            }
+            nameX = 8 + wide + text.measureText(" ");
+            sel = 0;
+            first = 0;
+            if (song.length > 0 && song[0] < 0) sel = 1;   // the cursor never stands on a divider
+            if (sel >= song.length) sel = 0;
+            restart();
+        }
+
+        /** The song under the cursor, as an index into {@link #songs}; -1 when there is none. */
+        int track() {
+            return song == null || sel >= song.length ? -1 : song[sel];
         }
 
         void move(int d) {
             if (names == null || names.length == 0) return;
-            sel = Math.max(0, Math.min(names.length - 1, sel + d));
+            int s = sel;
+            do {
+                s += d;
+            } while (s >= 0 && s < song.length && song[s] < 0);
+            if (s < 0 || s >= song.length) return;
+            sel = s;
             int rows = rows();
-            if (sel < first) first = sel;
+            // a divider right above the cursor comes into view with it
+            int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
+            if (top < first) first = top;
             if (sel >= first + rows) first = sel - rows + 1;
+            restart();
+        }
+
+        // The marquee of the row under the cursor, at the pace of the mod's other marquees (Scroll).
+        private static final int STEP = 2;
+        private static final int TICK = 40;
+        private static final int LEAD = 38;
+        private static final int IDLE = 1000;
+        private static final String GAP = "     ";
+        private int offset;
+        private int lead;
+        private final Tick tick = new Tick(this);
+
+        /** From the head of the line again, after its rest. */
+        void restart() {
+            offset = 0;
+            lead = LEAD;
+            removeCallbacks(tick);
+            postDelayed(tick, TICK);
             invalidate();
+        }
+
+        void tick() {
+            if (!isShown() || names == null || sel >= names.length) return;
+            if (!Lit.screenOn()) {
+                postDelayed(tick, IDLE);
+                return;
+            }
+            String s = names[sel];
+            if (text.measureText(s) <= getWidth() - 8 - nameX) return;
+            if (lead > 0) {
+                lead--;
+            } else {
+                offset += STEP;
+                if (offset >= text.measureText(s + GAP)) {
+                    offset = 0;
+                    lead = LEAD;
+                }
+                invalidate();
+            }
+            postDelayed(tick, TICK);
         }
 
         private int rows() {
@@ -515,10 +586,28 @@ public final class IppFlowActivity extends BaseActivity {
                         c.drawRect(1, top, w - 1, top + ROW, bar);
                     }
                 }
+                String s = names[i];
+                if (nums[i] == null) {
+                    // a disc or side divider: the label in the artist's colour, never under the cursor
+                    c.drawText(TextUtils.ellipsize(s, sub, w - 16, TextUtils.TruncateAt.END).toString(),
+                            8, top + 19, sub);
+                    continue;
+                }
                 text.setColor(on ? fgSel : fg);
-                String s = (i + 1) + ". " + names[i];
-                c.drawText(TextUtils.ellipsize(s, text, w - 16, TextUtils.TruncateAt.END).toString(),
-                        8, top + 19, text);
+                c.drawText(nums[i], nameX - text.measureText(" ") - text.measureText(nums[i]), top + 19, text);
+                float room = w - 8 - nameX;
+                if (on && text.measureText(s) > room) {
+                    // the title under the cursor runs when it does not fit, as a second copy after a gap
+                    float period = text.measureText(s + GAP);
+                    c.save();
+                    c.clipRect(nameX, top, w - 8, top + ROW);
+                    c.drawText(s, nameX - offset, top + 19, text);
+                    c.drawText(s, nameX - offset + period, top + 19, text);
+                    c.restore();
+                    continue;
+                }
+                c.drawText(TextUtils.ellipsize(s, text, room, TextUtils.TruncateAt.END).toString(),
+                        nameX, top + 19, text);
             }
         }
     }
@@ -560,25 +649,21 @@ public final class IppFlowActivity extends BaseActivity {
         Tracks(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
 
         public void run() {
-            List l = Flow.songs(it);
-            String[] n = new String[l.size()];
-            for (int i = 0; i < n.length; i++) n[i] = Flow.title((Song) l.get(i));
-            a.ui.post(new TracksDone(a, it, l, n));
+            a.ui.post(new TracksDone(a, it, Flow.back(it)));
         }
     }
 
     static final class TracksDone implements Runnable {
         private final IppFlowActivity a;
         private final Flow.Item it;
-        private final List l;
-        private final String[] n;
+        private final Flow.Back b;
 
-        TracksDone(IppFlowActivity a, Flow.Item it, List l, String[] n) {
-            this.a = a; this.it = it; this.l = l; this.n = n;
+        TracksDone(IppFlowActivity a, Flow.Item it, Flow.Back b) {
+            this.a = a; this.it = it; this.b = b;
         }
 
         public void run() {
-            if (a.flipped >= 0 && a.items.get(a.flipped) == it) a.panel.setSongs(l, n);
+            if (a.flipped >= 0 && a.items.get(a.flipped) == it) a.panel.setSongs(b);
         }
     }
 
@@ -609,6 +694,14 @@ public final class IppFlowActivity extends BaseActivity {
         ToPlayer(IppFlowActivity a) { this.a = a; }
 
         public void run() { a.toPlayer(); }
+    }
+
+    static final class Tick implements Runnable {
+        private final Panel p;
+
+        Tick(Panel p) { this.p = p; }
+
+        public void run() { p.tick(); }
     }
 
     static final class Highlight implements Runnable {

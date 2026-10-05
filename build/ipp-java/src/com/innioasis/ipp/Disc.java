@@ -385,6 +385,36 @@ public final class Disc {
      */
     static final int SIDE_BASE = 1000;
 
+    /**
+     * For a screen that shows one album on its own (Cover Flow): the disc of every row when the
+     * album gets dividers by the rule {@link #compute} applies, else null. Touches none of this
+     * class's state, which belongs to the list on the Albums or Genres screen.
+     */
+    public static int[] albumDiscs(List songs) {
+        int n = songs == null ? 0 : songs.size();
+        if (n == 0) return null;
+        int[] d = new int[n];
+        HashSet seen = new HashSet();
+        int prev = -1;
+        for (int i = 0; i < n; i++) {
+            d[i] = Albums.discOf(path(songs.get(i)));
+            if (d[i] <= 0) return null;
+            if (d[i] != prev && !seen.add(Integer.valueOf(d[i]))) return null;   // not contiguous
+            prev = d[i];
+        }
+        if (seen.size() == 1 && (d[0] < 2 || d[0] == SIDE_BASE + 1)) return null;
+        return d;
+    }
+
+    /** "Track numbers from metadata inside albums". */
+    public static boolean trackTags() {
+        return tagsWanted();
+    }
+
+    public static String label(int d) {
+        return discLabel(d);
+    }
+
     /** "CD 2" or "Side B" — the only place that tells the two apart. */
     private static String discLabel(int d) {
         if (d < SIDE_BASE) return "CD " + d;
