@@ -30,7 +30,7 @@ index 2c8d26c0..952b0814 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..08faf75d 100644
+index 01b1f730..f39b6855 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -45,7 +45,7 @@ index 01b1f730..08faf75d 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100033
++  versionCode: 10100034
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19735,7 +19735,7 @@ index 803c1e7a..019824c3 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..25dbd4aa 100644
+index 71fe29d0..0a198185 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,578 @@
@@ -20684,7 +20684,7 @@ index 71fe29d0..25dbd4aa 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev33</string>
++    <string name="ipp_version">v1.1.0-dev34</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -66985,6 +66985,34 @@ index e9374192..bf8b378c 100644
 +    :goto_0
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
+index 7bf058bc..23516a4e 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
+@@ -300,6 +300,11 @@
+ 
+     move-result v3
+ 
++    # ipp: better-Y's own folder on the card is skipped as the themes are
++    invoke-static {v3, v13}, Lcom/innioasis/ipp/Scan;->skip(ZLjava/lang/String;)Z
++
++    move-result v3
++
+     if-eqz v3, :cond_1
+ 
+     goto/16 :goto_3
+@@ -642,6 +647,11 @@
+ 
+     move-result v9
+ 
++    # ipp: a row from better-Y's own folder is dropped as a deleted file's is (row only)
++    invoke-static {v9, v4}, Lcom/innioasis/ipp/Scan;->stays(ZLcom/innioasis/y1/database/Song;)Z
++
++    move-result v9
++
+     if-nez v9, :cond_b
+ 
+     sget-object v9, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
 index 09aab2a9..aa0afecf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali

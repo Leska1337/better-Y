@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 2
-  .line 379
+  .line 418
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Tone$Fit;->rv:Landroidx/recyclerview/widget/RecyclerView;
     return-void
@@ -23,22 +23,22 @@
 
 .method public onChildViewAttachedToWindow(Landroid/view/View;)V
   .registers 7
-  .line 383
+  .line 422
     const v0, 2131362459
     invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v0
     check-cast v0, Landroid/widget/TextView;
-  .line 384
+  .line 423
     const v1, 2131362437
     invoke-virtual { p1, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p1
     check-cast p1, Landroid/widget/TextView;
-  .line 385
+  .line 424
     if-eqz v0, :L3
     if-nez p1, :L0
     goto :L3
   :L0
-  .line 386
+  .line 425
     iget-object v1, p0, Lcom/innioasis/ipp/Tone$Fit;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v1 }, Landroidx/recyclerview/widget/RecyclerView;->getWidth()I
     move-result v1
@@ -56,14 +56,14 @@
     iget v1, v1, Landroid/util/DisplayMetrics;->widthPixels:I
     div-int/lit8 v1, v1, 2
   :L2
-  .line 387
+  .line 426
     iget-object v2, p0, Lcom/innioasis/ipp/Tone$Fit;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getResources()Landroid/content/res/Resources;
     move-result-object v2
     invoke-virtual { v2 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v2
     iget v2, v2, Landroid/util/DisplayMetrics;->density:F
-  .line 388
+  .line 427
     invoke-virtual { v0 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
     invoke-virtual { v0 }, Landroid/widget/TextView;->getText()Ljava/lang/CharSequence;
@@ -81,26 +81,26 @@
     mul-float v2, v2, v3
     float-to-int v2, v2
     sub-int/2addr v0, v2
-  .line 390
+  .line 429
     const/4 v2, 1
     invoke-virtual { p1, v2 }, Landroid/widget/TextView;->setSingleLine(Z)V
-  .line 391
+  .line 430
     sget-object v2, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
     invoke-virtual { p1, v2 }, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
-  .line 392
+  .line 431
     div-int/lit8 v1, v1, 3
     invoke-static { v0, v1 }, Ljava/lang/Math;->max(II)I
     move-result v0
     invoke-virtual { p1, v0 }, Landroid/widget/TextView;->setMaxWidth(I)V
-  .line 393
+  .line 432
     return-void
   :L3
-  .line 385
+  .line 424
     return-void
 .end method
 
 .method public onChildViewDetachedFromWindow(Landroid/view/View;)V
   .registers 2
-  .line 396
+  .line 435
     return-void
 .end method

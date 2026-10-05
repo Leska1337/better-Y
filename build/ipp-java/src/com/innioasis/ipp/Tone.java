@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.activity.SettingActivity;
@@ -92,6 +93,7 @@ public final class Tone {
             Lit.watch(app);
             sync(app);
             sound(app);                      // load ahead, or the first press is silent
+            new Thread(new Seed(app), "ipp-tone").start();
         } catch (Throwable t) {
             // a key tone that cannot be set up is a nuisance; a crash in onCreate is not
         }
@@ -272,6 +274,43 @@ public final class Tone {
 
     private static File dir() {
         return new File(Panel.card(), DIR);
+    }
+
+    /** The sound the folder starts with, from the APK's assets. */
+    private static final String SEED = "better-Y.mp3";
+
+    /**
+     * Makes better-Y/key-tone with our sound in it, so there is a place to put one's own. Only
+     * when the FOLDER is missing: a sound the user deleted out of it stays deleted. A card not
+     * mounted yet (or lent to a computer) is left for the next try.
+     */
+    static void seed(Context c) {
+        File root = new File(Constant.ROOT_PATH);
+        File d = dir();
+        if (!root.canWrite() || d.isDirectory() || !d.mkdirs()) return;
+        java.io.InputStream in = null;
+        java.io.OutputStream out = null;
+        File f = new File(d, SEED);
+        try {
+            in = c.getAssets().open(SEED);
+            out = new java.io.FileOutputStream(f);
+            byte[] b = new byte[8192];
+            for (int n; (n = in.read(b)) > 0; ) out.write(b, 0, n);
+        } catch (Throwable t) {
+            f.delete();
+        } finally {
+            try { if (in != null) in.close(); } catch (Throwable t) { }
+            try { if (out != null) out.close(); } catch (Throwable t) { }
+        }
+    }
+
+    /** Named: d8 here crashes on anonymous classes. */
+    static final class Seed implements Runnable {
+        private final Context c;
+        Seed(Context c) { this.c = c; }
+        public void run() {
+            try { seed(c); } catch (Throwable t) { }
+        }
     }
 
     private static boolean eq(String a, String b) {
@@ -504,6 +543,7 @@ public final class Tone {
         if (row == ROW_VOLUME) {
             editVal = volumeIndex(a);
         } else {
+            seed(a);                         // a card that was away at start-up is here now
             options = soundIds();
             editVal = Math.max(0, Arrays.asList(options).indexOf(currentSound(a)));
         }

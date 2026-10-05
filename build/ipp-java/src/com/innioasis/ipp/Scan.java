@@ -73,6 +73,32 @@ public final class Scan {
         return inDb(path) ? MARKER : null;
     }
 
+    /**
+     * Our own folder on the card — key tones, logs, backups — is not music. Asked by the walk
+     * right after stock's {@code pathInThemes}, so the folder is not even listed, as the themes
+     * are not.
+     */
+    public static boolean skip(boolean stock, String path) {
+        return stock || ours(path);
+    }
+
+    /**
+     * Asked by the scan's clean-up in place of the row's {@code File.exists()}: a row from our
+     * folder goes the way a deleted file's does — {@code SongDao.delete}, the row only, the file
+     * stays.
+     */
+    public static boolean stays(boolean exists, Song s) {
+        return exists && (s == null || !ours(s.getPath()));
+    }
+
+    /** Case-blind: the card is FAT, and a folder renamed by hand keeps being ours. */
+    private static boolean ours(String path) {
+        if (path == null) return false;
+        String dir = Panel.card().getPath().toLowerCase();
+        String p = path.toLowerCase();
+        return p.equals(dir) || p.startsWith(dir + "/");
+    }
+
     /** Non-null stands for "this path is already in the library"; nothing reads its fields. */
     private static final Song MARKER = new Song();
 

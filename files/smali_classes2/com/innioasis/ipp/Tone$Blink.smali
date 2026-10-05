@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroid/widget/TextView;)V
   .registers 2
-  .line 538
+  .line 578
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Tone$Blink;->tv:Landroid/widget/TextView;
     return-void
@@ -23,24 +23,24 @@
 
 .method public run()V
   .registers 4
-  .line 540
+  .line 580
     invoke-static { }, Lcom/innioasis/ipp/Tone;->access$400()Lcom/innioasis/y1/activity/SettingActivity;
     move-result-object v0
     if-nez v0, :L0
     return-void
   :L0
-  .line 541
+  .line 581
     iget-object v0, p0, Lcom/innioasis/ipp/Tone$Blink;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getWindowToken()Landroid/os/IBinder;
     move-result-object v0
     if-nez v0, :L1
-  .line 542
+  .line 582
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Tone;->access$402(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/activity/SettingActivity;
-  .line 543
+  .line 583
     return-void
   :L1
-  .line 545
+  .line 585
     iget-object v0, p0, Lcom/innioasis/ipp/Tone$Blink;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getVisibility()I
     move-result v1
@@ -51,11 +51,11 @@
     const/4 v1, 0
   :L3
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 546
+  .line 586
     invoke-static { }, Lcom/innioasis/ipp/Tone;->access$500()Landroid/os/Handler;
     move-result-object v0
     const-wide/16 v1, 400
     invoke-virtual { v0, p0, v1, v2 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 547
+  .line 587
     return-void
 .end method
