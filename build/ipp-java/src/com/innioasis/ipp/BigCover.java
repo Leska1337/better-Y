@@ -15,9 +15,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,8 +101,20 @@ public final class BigCover {
      */
     private static final int LIMIT = 25 * 1024;
 
-    /** key (track path or folder) -> Bitmap. Same-artwork tracks share one entry's Bitmap. */
-    private static final Hashtable mem = new Hashtable();
+    /**
+     * key (track path or folder) -> Bitmap, the most recently used {@link #MEM_MAX} only.
+     * Same-artwork tracks share one entry's Bitmap. Bounded because Cover Flow reads the cover of
+     * every album it passes: unbounded, a few hundred 300px covers filled the heap and the GC then
+     * stopped the app for ~40 ms every few hundred ms. A dropped entry is read back from its JPEG.
+     */
+    private static final Map mem = Collections.synchronizedMap(new Lru());
+    private static final int MEM_MAX = 24;
+
+    private static final class Lru extends LinkedHashMap {
+        Lru() { super(32, 0.75f, true); }
+
+        protected boolean removeEldestEntry(Map.Entry e) { return size() > MEM_MAX; }
+    }
 
     /** key -> key, for "there is no cover here", so a coverless track is not re-read. */
     private static final Hashtable miss = new Hashtable();
@@ -253,6 +267,19 @@ public final class BigCover {
     }
 
     /**
+     * The JPEG this track's cover is cached in, when the per-track note says which one and it is
+     * there; null otherwise. Reads nothing and fills nothing in memory: for Cover Flow, which
+     * decodes it into a buffer of its own rather than keeping a 300px copy per album it passes.
+     */
+    public static File cachedFile(String path) {
+        if (path == null) return null;
+        int n = note(path);
+        String key = n == OWN ? path : n == SHARED ? Albums.trackFolder(path) : null;
+        File f = key == null ? null : file(key);
+        return f != null && f.exists() ? f : null;
+    }
+
+    /**
      * Memory, then the "no cover" answers, then the JPEG file cache.
      *
      * The decode is CAPPED and cropped here, not only when the cover was written: a source that
@@ -337,7 +364,7 @@ public final class BigCover {
      * An object per walk, not three statics: the caching pass is several threads, each taking whole
      * folders at a time, and a representative belongs to a FOLDER rather than to the pass — two
      * workers in two folders must not see each other's. Everything else the
-     * walk touches is already safe for that — {@code mem}/{@code miss} are Hashtables, the notes are
+     * walk touches is already safe for that — {@code mem} is a synchronized map and {@code miss} a Hashtable, the notes are
      * synchronized, and the JPEGs are written under keys no two folders share.
      */
     public static final class Walk {

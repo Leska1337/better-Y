@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.View;
@@ -222,19 +226,8 @@ public final class Flow {
 
     // ---- slides -----------------------------------------------------------------------------
 
-    /** The cover of an album at slide size, or null when it has none. Off the main thread only. */
-    static Bitmap cover(Item it) {
-        try {
-            Bitmap b = BigCover.track(it.rep.getPath());
-            return b == null ? null : Cover.square(b, S);
-        } catch (Throwable t) {
-            return null;
-        }
-    }
-
     /** The cover, or the blank card PictureFlow draws for an album without one. */
-    private static int[] face(Bitmap cover) {
-        int[] px = new int[S * S];
+    private static int[] face(Bitmap cover, int[] px) {
         if (cover != null) {
             cover.getPixels(px, 0, S, 0, 0, S, S);
             return px;
@@ -249,12 +242,15 @@ public final class Flow {
         return px;
     }
 
-    /** Cover over its mirror image, the mirror fading from half opacity to nothing. */
-    static Bitmap slide(Bitmap cover) {
-        int[] px = face(cover);
+    /**
+     * Cover over its mirror image, the mirror fading from half opacity to nothing. Built in the
+     * loader's own two buffers: every pixel written is written on every call, and the frame that
+     * never is stays transparent. Into {@code into} when there is one to reuse.
+     */
+    static Bitmap slide(Bitmap cover, int[] px, int[] out, Bitmap into) {
+        face(cover, px);
         int w = S + 2 * PAD;
         int h = PAD + S + REFL;
-        int[] out = new int[w * h];
         for (int y = 0; y < S; y++) System.arraycopy(px, y * S, out, (PAD + y) * w + PAD, S);
         for (int y = 0; y < REFL; y++) {
             int a = 128 * (REFL - y) / REFL;
@@ -262,7 +258,10 @@ public final class Flow {
             int dst = (PAD + S + y) * w + PAD;
             for (int x = 0; x < S; x++) out[dst + x] = (a << 24) | (px[src + x] & 0xFFFFFF);
         }
-        return Bitmap.createBitmap(out, w, h, Bitmap.Config.ARGB_8888);
+        // mutable, so that it can be refilled once it has left the row
+        if (into == null) into = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        into.setPixels(out, 0, w, 0, 0, w, h);
+        return into;
     }
 
     private static Bitmap mask;
@@ -290,7 +289,13 @@ public final class Flow {
      */
     public static final class Loader implements Runnable {
         public static final int AHEAD = 7;
-        public static final int KEEP = 10;
+        /**
+         * Kept around the target. Wider than what is drawn (SIDE + 1 from pos, and pos trails the
+         * target by up to a few slides on a fast spin), because what falls out is refilled for the
+         * next slide in place: it must not be one the row still draws.
+         */
+        public static final int KEEP = 16;
+        private static final int POOL = 8;
 
         private final List items;
         private final Runnable onSlide;
@@ -303,6 +308,18 @@ public final class Flow {
         private Bitmap blank;
         private boolean readArtist;
         private final Object wake = new Object();
+        // a slide's pixels, reused: fresh arrays would be a third of a megabyte of garbage a slide
+        private final int[] px = new int[S * S];
+        private final int[] out = new int[(S + 2 * PAD) * (PAD + S + REFL)];
+        // and the rest of a slide's making, reused too: a fast spin builds a dozen slides a second,
+        // and fresh bitmaps for each kept the GC stopping the app for ~30 ms three times a second
+        private final ArrayList pool = new ArrayList();
+        private Bitmap decoded;
+        private final Bitmap small = Bitmap.createBitmap(S, S, Bitmap.Config.ARGB_8888);
+        private final Canvas smallCanvas = new Canvas(small);
+        private final Paint filter = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final Rect from = new Rect();
+        private final Rect to = new Rect(0, 0, S, S);
 
         public Loader(List items, Handler ui, Runnable onSlide) {
             this.items = items;
@@ -343,13 +360,14 @@ public final class Flow {
         private void loop() {
             while (!stop) {
                 int t = target;
+                // every round, not only when idle: a long fast run would otherwise keep every slide passed
+                evict(t);
                 int want = -1;
                 for (int d = 0; d <= AHEAD && want < 0; d++) {
                     if (has(t + d)) want = t + d;
                     else if (has(t - d)) want = t - d;
                 }
                 if (want < 0) {
-                    evict(t);
                     synchronized (wake) {
                         if (target == t && !stop) {
                             try { wake.wait(); } catch (InterruptedException e) { return; }
@@ -365,10 +383,10 @@ public final class Flow {
                 Bitmap c = cover(it);
                 Bitmap s;
                 if (c == null) {
-                    if (blank == null) blank = slide(null);
+                    if (blank == null) blank = slide(null, px, out, null);
                     s = blank;
                 } else {
-                    s = slide(c);
+                    s = slide(c, px, out, pool.isEmpty() ? null : (Bitmap) pool.remove(pool.size() - 1));
                 }
                 born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
                 slides.put(Integer.valueOf(want), s);
@@ -385,10 +403,65 @@ public final class Flow {
             for (int i = 0; i < ks.length; i++) {
                 int k = ((Integer) ks[i]).intValue();
                 if (Math.abs(k - t) > KEEP) {
-                    slides.remove(ks[i]);
+                    Object b = slides.remove(ks[i]);
                     born.remove(ks[i]);
+                    if (b != null && b != blank && pool.size() < POOL) pool.add(b);
                 }
             }
+        }
+
+        /**
+         * The album's cover at slide size in {@link #small}, or null when it has none. Decoded
+         * straight from the JPEG the big-cover cache already holds, into one reused buffer when the
+         * size allows; only a cover never cached goes through {@code BigCover.track}, which reads it
+         * and writes it down for good.
+         */
+        private Bitmap cover(Item it) {
+            try {
+                String path = it.rep.getPath();
+                Bitmap src = null;
+                File f = BigCover.cachedFile(path);
+                if (f != null) src = decode(f.getAbsolutePath());
+                if (src == null) src = BigCover.track(path);
+                if (src == null) return null;
+                int w = src.getWidth(), h = src.getHeight();
+                int m = Math.min(w, h);
+                if (m > 2 * S) {
+                    // past 2x one bilinear pass skips pixels: Cover.square halves in steps
+                    Bitmap sq = Cover.square(src, S);
+                    smallCanvas.drawBitmap(sq, 0, 0, null);
+                    return small;
+                }
+                from.set((w - m) / 2, (h - m) / 2, (w - m) / 2 + m, (h - m) / 2 + m);
+                smallCanvas.drawBitmap(src, from, to, filter);
+                return small;
+            } catch (Throwable t) {
+                return null;
+            }
+        }
+
+        private Bitmap decode(String p) {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(p, o);
+            if (o.outWidth <= 0 || o.outHeight <= 0) return null;
+            o.inSampleSize = Art.sample(o.outWidth, o.outHeight, S, S);
+            o.inJustDecodeBounds = false;
+            o.inMutable = true;
+            // API 17 reuses a buffer only of exactly the same size, at no sampling
+            if (o.inSampleSize == 1 && decoded != null
+                    && decoded.getWidth() == o.outWidth && decoded.getHeight() == o.outHeight) {
+                o.inBitmap = decoded;
+            }
+            Bitmap b;
+            try {
+                b = BitmapFactory.decodeFile(p, o);
+            } catch (IllegalArgumentException e) {
+                o.inBitmap = null;
+                b = BitmapFactory.decodeFile(p, o);
+            }
+            if (b != null && o.inSampleSize == 1) decoded = b;
+            return b;
         }
     }
 

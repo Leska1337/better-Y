@@ -6,13 +6,16 @@
   value = {
     Lcom/innioasis/ipp/BigCover$Src;,
     Lcom/innioasis/ipp/BigCover$Warm;,
-    Lcom/innioasis/ipp/BigCover$Walk;
+    Lcom/innioasis/ipp/BigCover$Walk;,
+    Lcom/innioasis/ipp/BigCover$Lru;
   }
 .end annotation
 
 .field private final static LIMIT:I = 25600
 
 .field private final static LOCK:Ljava/lang/Object;
+
+.field private final static MEM_MAX:I = 24
 
 .field private final static NONE:I = 0
 
@@ -32,7 +35,7 @@
 
 .field private final static UNKNOWN:I = -1
 
-.field private final static mem:Ljava/util/Hashtable;
+.field private final static mem:Ljava/util/Map;
 
 .field private final static miss:Ljava/util/Hashtable;
 
@@ -48,19 +51,21 @@
 
 .method static constructor <clinit>()V
   .registers 1
-  .line 103
-    new-instance v0, Ljava/util/Hashtable;
-    invoke-direct { v0 }, Ljava/util/Hashtable;-><init>()V
-    sput-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-  .line 106
+  .line 110
+    new-instance v0, Lcom/innioasis/ipp/BigCover$Lru;
+    invoke-direct { v0 }, Lcom/innioasis/ipp/BigCover$Lru;-><init>()V
+    invoke-static { v0 }, Ljava/util/Collections;->synchronizedMap(Ljava/util/Map;)Ljava/util/Map;
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+  .line 120
     new-instance v0, Ljava/util/Hashtable;
     invoke-direct { v0 }, Ljava/util/Hashtable;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
-  .line 111
+  .line 125
     new-instance v0, Ljava/lang/Object;
     invoke-direct { v0 }, Ljava/lang/Object;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/BigCover;->LOCK:Ljava/lang/Object;
-  .line 516
+  .line 543
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
@@ -69,39 +74,39 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 69
+  .line 71
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
-.method static synthetic access$000()Ljava/util/Hashtable;
+.method static synthetic access$000()Ljava/util/Map;
   .registers 1
-  .line 67
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
+  .line 69
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
     return-object v0
 .end method
 
 .method public static beginCache()V
   .registers 1
-  .line 496
+  .line 523
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/BigCover;->passing:Z
-  .line 497
+  .line 524
     return-void
 .end method
 
 .method private static bytes(Ljava/lang/String;)[B
   .registers 3
-  .line 666
+  .line 693
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->embedded(Ljava/lang/String;)[B
     move-result-object v0
-  .line 667
+  .line 694
     if-eqz v0, :L0
     array-length v1, v0
     if-lez v1, :L0
     return-object v0
   :L0
-  .line 668
+  .line 695
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->external(Ljava/lang/String;)[B
     move-result-object p0
     return-object p0
@@ -110,22 +115,22 @@
 .method public static cache(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;[B)V
   .catchall { :L0 .. :L15 } :L16
   .registers 7
-  .line 409
+  .line 436
     if-eqz p1, :L18
     if-nez p0, :L0
     goto/16 :L18
   :L0
-  .line 411
+  .line 438
     invoke-static { p1 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result v0
     const/4 v1, -1
     if-eq v0, v1, :L1
     return-void
   :L1
-  .line 412
+  .line 439
     invoke-static { p1 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
-  .line 413
+  .line 440
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$100(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
     move-result-object v1
     if-eqz v1, :L2
@@ -136,9 +141,9 @@
     if-nez v1, :L2
     invoke-virtual { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->done()V
   :L2
-  .line 414
+  .line 441
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$102(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
-  .line 416
+  .line 443
     if-eqz p2, :L3
     array-length v1, p2
     if-lez v1, :L3
@@ -147,14 +152,14 @@
     invoke-static { p1 }, Lcom/innioasis/ipp/BigCover;->external(Ljava/lang/String;)[B
     move-result-object p2
   :L4
-  .line 417
+  .line 444
     const/4 v1, 0
     if-eqz p2, :L14
     array-length v2, p2
     if-nez v2, :L5
     goto/16 :L14
   :L5
-  .line 424
+  .line 451
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$200(Lcom/innioasis/ipp/BigCover$Walk;)[B
     move-result-object v2
     const/4 v3, 1
@@ -164,46 +169,46 @@
     invoke-static { v2, p2 }, Ljava/util/Arrays;->equals([B[B)Z
     move-result v2
     if-eqz v2, :L6
-  .line 425
+  .line 452
     invoke-static { p1, v3 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 426
+  .line 453
     return-void
   :L6
-  .line 429
+  .line 456
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$200(Lcom/innioasis/ipp/BigCover$Walk;)[B
     move-result-object v2
     if-nez v2, :L8
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$300(Lcom/innioasis/ipp/BigCover$Walk;)Landroid/graphics/Bitmap;
     move-result-object v2
     if-nez v2, :L8
-  .line 430
+  .line 457
     invoke-static { v0 }, Lcom/innioasis/ipp/BigCover;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v2
-  .line 431
+  .line 458
     if-nez v2, :L7
-  .line 432
+  .line 459
     invoke-static { v0, p2 }, Lcom/innioasis/ipp/BigCover;->storeSrc(Ljava/lang/String;[B)Landroid/graphics/Bitmap;
     move-result-object v0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$302(Lcom/innioasis/ipp/BigCover$Walk;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
-  .line 433
+  .line 460
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/BigCover$Walk;->access$202(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
-  .line 434
+  .line 461
     invoke-static { p1, v3 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 435
+  .line 462
     return-void
   :L7
-  .line 437
+  .line 464
     invoke-static { p0, v2 }, Lcom/innioasis/ipp/BigCover$Walk;->access$302(Lcom/innioasis/ipp/BigCover$Walk;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   :L8
-  .line 442
+  .line 469
     invoke-static { p2 }, Lcom/innioasis/ipp/BigCover;->capped([B)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 443
+  .line 470
     if-nez v0, :L9
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
     return-void
   :L9
-  .line 444
+  .line 471
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$300(Lcom/innioasis/ipp/BigCover$Walk;)Landroid/graphics/Bitmap;
     move-result-object v1
     if-nez v1, :L10
@@ -213,133 +218,174 @@
     move-result-object v1
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/BigCover$Walk;->access$302(Lcom/innioasis/ipp/BigCover$Walk;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   :L10
-  .line 445
+  .line 472
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$300(Lcom/innioasis/ipp/BigCover$Walk;)Landroid/graphics/Bitmap;
     move-result-object v1
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/BigCover;->same(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;)Z
     move-result v1
     if-eqz v1, :L12
-  .line 449
+  .line 476
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover$Walk;->access$200(Lcom/innioasis/ipp/BigCover$Walk;)[B
     move-result-object v0
     if-nez v0, :L11
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/BigCover$Walk;->access$202(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
   :L11
-  .line 450
+  .line 477
     invoke-static { p1, v3 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
     goto :L13
   :L12
-  .line 452
+  .line 479
     new-instance p0, Lcom/innioasis/ipp/BigCover$Src;
     invoke-direct { p0 }, Lcom/innioasis/ipp/BigCover$Src;-><init>()V
-  .line 453
+  .line 480
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
-  .line 454
+  .line 481
     iput-object p2, p0, Lcom/innioasis/ipp/BigCover$Src;->raw:[B
-  .line 455
+  .line 482
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/BigCover;->store(Ljava/lang/String;Lcom/innioasis/ipp/BigCover$Src;)V
-  .line 456
-    sget-object p0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { p0, p1 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 457
+  .line 483
+    sget-object p0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { p0, p1 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 484
     const/4 p0, 2
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
   :L13
-  .line 461
+  .line 488
     goto :L17
   :L14
-  .line 417
+  .line 444
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
   :L15
     return-void
   :L16
-  .line 459
+  .line 486
     move-exception p0
   :L17
-  .line 462
+  .line 489
     return-void
   :L18
-  .line 409
+  .line 436
     return-void
+.end method
+
+.method public static cachedFile(Ljava/lang/String;)Ljava/io/File;
+  .registers 4
+  .line 275
+    const/4 v0, 0
+    if-nez p0, :L0
+    return-object v0
+  :L0
+  .line 276
+    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
+    move-result v1
+  .line 277
+    const/4 v2, 2
+    if-ne v1, v2, :L1
+    goto :L3
+  :L1
+    const/4 v2, 1
+    if-ne v1, v2, :L2
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
+    goto :L3
+  :L2
+    move-object p0, v0
+  :L3
+  .line 278
+    if-nez p0, :L4
+    move-object p0, v0
+    goto :L5
+  :L4
+    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->file(Ljava/lang/String;)Ljava/io/File;
+    move-result-object p0
+  :L5
+  .line 279
+    if-eqz p0, :L6
+    invoke-virtual { p0 }, Ljava/io/File;->exists()Z
+    move-result v1
+    if-eqz v1, :L6
+    move-object v0, p0
+  :L6
+    return-object v0
 .end method
 
 .method private static capped([B)Landroid/graphics/Bitmap;
   .catchall { :L0 .. :L2 } :L4
   .registers 7
-  .line 696
+  .line 723
     const/4 v0, 0
   :L0
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 697
+  .line 724
     const/4 v2, 1
     iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 698
+  .line 725
     array-length v2, p0
     const/4 v3, 0
     invoke-static { p0, v3, v2, v1 }, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  .line 699
+  .line 726
     iget v2, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     if-lez v2, :L3
     iget v2, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     if-gtz v2, :L1
     goto :L3
   :L1
-  .line 700
+  .line 727
     iget v2, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     iget v4, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     const/16 v5, 300
     invoke-static { v2, v4, v5, v5 }, Lcom/innioasis/ipp/Art;->sample(IIII)I
     move-result v2
     iput v2, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 701
+  .line 728
     iput-boolean v3, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 702
+  .line 729
     array-length v2, p0
     invoke-static { p0, v3, v2, v1 }, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object p0
-  .line 703
+  .line 730
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->square(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
     move-result-object p0
   :L2
     return-object p0
   :L3
-  .line 699
+  .line 726
     return-object v0
   :L4
-  .line 704
+  .line 731
     move-exception p0
-  .line 705
+  .line 732
     return-object v0
 .end method
 
 .method public static clear()V
   .catchall { :L0 .. :L5 } :L6
   .registers 4
-  .line 317
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 318
+  .line 344
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v0 }, Ljava/util/Map;->clear()V
+  .line 345
     sget-object v0, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 319
+  .line 346
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteClear()V
   :L0
-  .line 321
+  .line 348
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->dir()Ljava/io/File;
     move-result-object v0
-  .line 322
+  .line 349
     if-nez v0, :L1
     return-void
   :L1
-  .line 323
+  .line 350
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v1
-  .line 324
+  .line 351
     if-nez v1, :L2
     return-void
   :L2
-  .line 325
+  .line 352
     const/4 v2, 0
   :L3
     array-length v3, v1
@@ -349,77 +395,77 @@
     add-int/lit8 v2, v2, 1
     goto :L3
   :L4
-  .line 326
+  .line 353
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
   :L5
-  .line 329
+  .line 356
     goto :L7
   :L6
-  .line 327
+  .line 354
     move-exception v0
   :L7
-  .line 330
+  .line 357
     return-void
 .end method
 
 .method public static clearMiss()V
   .registers 1
-  .line 311
+  .line 338
     sget-object v0, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 312
+  .line 339
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteForgetNone()V
-  .line 313
+  .line 340
     return-void
 .end method
 
 .method private static dir()Ljava/io/File;
   .catchall { :L3 .. :L5 } :L7
   .registers 5
-  .line 822
+  .line 849
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 823
+  .line 850
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 824
+  .line 851
     invoke-virtual { v0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v0
-  .line 825
+  .line 852
     if-nez v0, :L1
     return-object v1
   :L1
-  .line 826
+  .line 853
     new-instance v1, Ljava/io/File;
     const-string v2, "ipp_big"
     invoke-direct { v1, v0, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 827
+  .line 854
     invoke-virtual { v1 }, Ljava/io/File;->exists()Z
     move-result v0
     if-nez v0, :L2
     invoke-virtual { v1 }, Ljava/io/File;->mkdirs()Z
   :L2
-  .line 828
+  .line 855
     sget-boolean v0, Lcom/innioasis/ipp/BigCover;->swept:Z
     if-nez v0, :L8
-  .line 829
+  .line 856
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/BigCover;->swept:Z
   :L3
-  .line 831
+  .line 858
     invoke-virtual { v1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 832
+  .line 859
     if-eqz v0, :L6
-  .line 833
+  .line 860
     const/4 v2, 0
   :L4
     array-length v3, v0
     if-ge v2, v3, :L6
-  .line 834
+  .line 861
     aget-object v3, v0, v2
     invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v3
@@ -430,23 +476,23 @@
     aget-object v3, v0, v2
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
   :L5
-  .line 833
+  .line 860
     add-int/lit8 v2, v2, 1
     goto :L4
   :L6
-  .line 839
+  .line 866
     goto :L8
   :L7
-  .line 837
+  .line 864
     move-exception v0
   :L8
-  .line 841
+  .line 868
     return-object v1
 .end method
 
 .method private static embedded(Ljava/lang/String;)[B
   .registers 1
-  .line 672
+  .line 699
     invoke-static { p0 }, Lcom/innioasis/ipp/Meta;->art(Ljava/lang/String;)[B
     move-result-object p0
     return-object p0
@@ -456,46 +502,46 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 802
+  .line 829
     new-instance v0, Ljava/io/ByteArrayOutputStream;
     const/16 v1, 25600
     invoke-direct { v0, v1 }, Ljava/io/ByteArrayOutputStream;-><init>(I)V
-  .line 803
+  .line 830
     sget-object v1, Landroid/graphics/Bitmap$CompressFormat;->JPEG:Landroid/graphics/Bitmap$CompressFormat;
     invoke-virtual { p0, v1, p1, v0 }, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
-  .line 804
+  .line 831
     invoke-virtual { v0 }, Ljava/io/ByteArrayOutputStream;->toByteArray()[B
     move-result-object p0
   :L1
     return-object p0
   :L2
-  .line 805
+  .line 832
     move-exception p0
-  .line 806
+  .line 833
     const/4 p0, 0
     return-object p0
 .end method
 
 .method public static endCache()V
   .registers 1
-  .line 501
+  .line 528
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/BigCover;->passing:Z
-  .line 502
+  .line 529
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteSave()V
-  .line 503
+  .line 530
     return-void
 .end method
 
 .method private static external(Ljava/lang/String;)[B
   .catchall { :L0 .. :L2 } :L3
   .registers 2
-  .line 467
+  .line 494
     const/4 v0, 0
   :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/Art;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p0
-  .line 468
+  .line 495
     if-nez p0, :L1
     goto :L2
   :L1
@@ -504,23 +550,23 @@
   :L2
     return-object v0
   :L3
-  .line 469
+  .line 496
     move-exception p0
-  .line 470
+  .line 497
     return-object v0
 .end method
 
 .method private static file(Ljava/lang/String;)Ljava/io/File;
   .registers 5
-  .line 816
+  .line 843
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->dir()Ljava/io/File;
     move-result-object v0
-  .line 817
+  .line 844
     if-nez v0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 818
+  .line 845
     new-instance v1, Ljava/io/File;
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
@@ -548,7 +594,7 @@
 
 .method private static fit(Lcom/innioasis/ipp/BigCover$Src;)[B
   .registers 9
-  .line 781
+  .line 808
     iget-object v0, p0, Lcom/innioasis/ipp/BigCover$Src;->raw:[B
     const/16 v1, 25600
     if-eqz v0, :L0
@@ -562,48 +608,48 @@
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Src;->raw:[B
     return-object p0
   :L0
-  .line 783
+  .line 810
     nop
-  .line 784
+  .line 811
     nop
-  .line 785
+  .line 812
     const/16 v0, 76
     const/4 v2, 0
     const/16 v3, 92
     const/16 v4, 76
   :L1
-  .line 786
+  .line 813
     if-gt v4, v3, :L5
-  .line 787
+  .line 814
     add-int v5, v4, v3
     add-int/lit8 v5, v5, 1
     shr-int/lit8 v5, v5, 1
-  .line 788
+  .line 815
     iget-object v6, p0, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
     invoke-static { v6, v5 }, Lcom/innioasis/ipp/BigCover;->encode(Landroid/graphics/Bitmap;I)[B
     move-result-object v6
-  .line 789
+  .line 816
     if-nez v6, :L2
     goto :L5
   :L2
-  .line 790
+  .line 817
     array-length v7, v6
     if-gt v7, v1, :L3
-  .line 791
+  .line 818
     nop
-  .line 792
+  .line 819
     add-int/lit8 v4, v5, 1
     move-object v2, v6
     goto :L4
   :L3
-  .line 794
+  .line 821
     add-int/lit8 v5, v5, -1
     move v3, v5
   :L4
-  .line 796
+  .line 823
     goto :L1
   :L5
-  .line 797
+  .line 824
     if-eqz v2, :L6
     goto :L7
   :L6
@@ -617,39 +663,39 @@
 .method public static forget(Ljava/lang/String;)V
   .catchall { :L1 .. :L2 } :L3
   .registers 2
-  .line 297
+  .line 324
     if-nez p0, :L0
     return-void
   :L0
-  .line 298
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 299
+  .line 325
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v0, p0 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 326
     sget-object v0, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 300
+  .line 327
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->noteForget(Ljava/lang/String;)V
   :L1
-  .line 302
+  .line 329
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p0
-  .line 303
+  .line 330
     if-eqz p0, :L2
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L2
-  .line 306
+  .line 333
     goto :L4
   :L3
-  .line 304
+  .line 331
     move-exception p0
   :L4
-  .line 307
+  .line 334
     return-void
 .end method
 
 .method private static isJpeg([B)Z
   .registers 6
-  .line 812
+  .line 839
     array-length v0, p0
     const/4 v1, 3
     const/4 v2, 0
@@ -674,7 +720,7 @@
 
 .method public static knownNone(Ljava/lang/String;)Z
   .registers 1
-  .line 384
+  .line 411
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result p0
     if-nez p0, :L0
@@ -688,7 +734,7 @@
 
 .method public static needs(Ljava/lang/String;)Z
   .registers 2
-  .line 362
+  .line 389
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result p0
     const/4 v0, -1
@@ -706,19 +752,19 @@
   .registers 4
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
-  .line 579
+  .line 606
     const/4 v1, -1
     if-nez p0, :L0
     monitor-exit v0
     return v1
   :L0
-  .line 580
+  .line 607
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteLoad()V
-  .line 581
+  .line 608
     sget-object v2, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v2, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 582
+  .line 609
     if-nez p0, :L2
   :L1
     goto :L4
@@ -732,7 +778,7 @@
     monitor-exit v0
     return v1
   :L5
-  .line 578
+  .line 605
     move-exception p0
     monitor-exit v0
     goto :L7
@@ -749,37 +795,37 @@
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
   :L0
-  .line 621
+  .line 648
     sget-object v1, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v1 }, Ljava/util/HashMap;->clear()V
-  .line 622
+  .line 649
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/BigCover;->notesLoaded:Z
-  .line 623
+  .line 650
     const/4 v1, 0
     sput-boolean v1, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
   :L1
-  .line 625
+  .line 652
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteFile()Ljava/io/File;
     move-result-object v1
-  .line 626
+  .line 653
     if-eqz v1, :L2
     invoke-virtual { v1 }, Ljava/io/File;->exists()Z
     move-result v2
     if-eqz v2, :L2
     invoke-virtual { v1 }, Ljava/io/File;->delete()Z
   :L2
-  .line 629
+  .line 656
     goto :L4
   :L3
-  .line 627
+  .line 654
     move-exception v1
   :L4
-  .line 630
+  .line 657
     monitor-exit v0
     return-void
   :L5
-  .line 620
+  .line 647
     move-exception v1
     monitor-exit v0
     throw v1
@@ -787,19 +833,19 @@
 
 .method private static noteFile()Ljava/io/File;
   .registers 3
-  .line 522
+  .line 549
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 523
+  .line 550
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 524
+  .line 551
     invoke-virtual { v0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v0
-  .line 527
+  .line 554
     if-nez v0, :L1
     goto :L2
   :L1
@@ -816,9 +862,9 @@
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
   :L0
-  .line 601
+  .line 628
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteLoad()V
-  .line 602
+  .line 629
     sget-object v1, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v1, p0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
@@ -827,11 +873,11 @@
     sput-boolean p0, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteSave()V
   :L1
-  .line 603
+  .line 630
     monitor-exit v0
     return-void
   :L2
-  .line 600
+  .line 627
     move-exception p0
     monitor-exit v0
     throw p0
@@ -844,27 +890,27 @@
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
   :L0
-  .line 607
+  .line 634
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteLoad()V
-  .line 608
+  .line 635
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 609
+  .line 636
     sget-object v2, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v2 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
     move-result-object v2
     invoke-interface { v2 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
     move-result-object v2
   :L1
-  .line 610
+  .line 637
     invoke-interface { v2 }, Ljava/util/Iterator;->hasNext()Z
     move-result v3
     if-eqz v3, :L3
-  .line 611
+  .line 638
     invoke-interface { v2 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Ljava/util/Map$Entry;
-  .line 612
+  .line 639
     invoke-interface { v3 }, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/lang/Integer;
@@ -875,10 +921,10 @@
     move-result-object v3
     invoke-virtual { v1, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L2
-  .line 613
+  .line 640
     goto :L1
   :L3
-  .line 614
+  .line 641
     invoke-virtual { v1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v2
   :L4
@@ -886,7 +932,7 @@
     monitor-exit v0
     return-void
   :L5
-  .line 615
+  .line 642
     const/4 v2, 0
   :L6
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
@@ -899,17 +945,17 @@
     add-int/lit8 v2, v2, 1
     goto :L6
   :L7
-  .line 616
+  .line 643
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
-  .line 617
+  .line 644
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteSave()V
   :L8
-  .line 618
+  .line 645
     monitor-exit v0
     return-void
   :L9
-  .line 606
+  .line 633
     move-exception v1
     monitor-exit v0
     goto :L11
@@ -928,64 +974,64 @@
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
   :L0
-  .line 531
+  .line 558
     sget-boolean v1, Lcom/innioasis/ipp/BigCover;->notesLoaded:Z
   :L1
     if-eqz v1, :L2
     monitor-exit v0
     return-void
   :L2
-  .line 532
+  .line 559
     const/4 v1, 1
   :L3
     sput-boolean v1, Lcom/innioasis/ipp/BigCover;->notesLoaded:Z
   :L4
-  .line 534
+  .line 561
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteFile()Ljava/io/File;
     move-result-object v1
-  .line 535
+  .line 562
     if-eqz v1, :L13
     invoke-virtual { v1 }, Ljava/io/File;->exists()Z
     move-result v2
     if-nez v2, :L5
     goto :L13
   :L5
-  .line 536
+  .line 563
     new-instance v2, Ljava/io/FileInputStream;
     invoke-direct { v2, v1 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
-  .line 537
+  .line 564
     invoke-virtual { v2 }, Ljava/io/FileInputStream;->available()I
     move-result v1
     new-array v1, v1, [B
-  .line 538
+  .line 565
     invoke-virtual { v2, v1 }, Ljava/io/FileInputStream;->read([B)I
-  .line 539
+  .line 566
     invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
-  .line 540
+  .line 567
     new-instance v2, Ljava/lang/String;
     const-string v3, "UTF-8"
     invoke-direct { v2, v1, v3 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
     const-string v1, "\n"
     invoke-virtual { v2, v1 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
     move-result-object v1
-  .line 541
+  .line 568
     const/4 v2, 0
     const/4 v3, 0
   :L6
     array-length v4, v1
     if-ge v3, v4, :L12
-  .line 542
+  .line 569
     aget-object v4, v1, v3
-  .line 543
+  .line 570
     const/16 v5, 9
     invoke-virtual { v4, v5 }, Ljava/lang/String;->indexOf(I)I
     move-result v5
   :L7
-  .line 544
+  .line 571
     if-gtz v5, :L8
     goto :L11
   :L8
-  .line 546
+  .line 573
     sget-object v6, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v4, v2, v5 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object v7
@@ -998,31 +1044,31 @@
     move-result-object v4
     invoke-virtual { v6, v7, v4 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L9
-  .line 549
+  .line 576
     goto :L11
   :L10
-  .line 547
+  .line 574
     move-exception v4
   :L11
-  .line 541
+  .line 568
     add-int/lit8 v3, v3, 1
     goto :L6
   :L12
-  .line 553
+  .line 580
     goto :L15
   :L13
-  .line 535
+  .line 562
     monitor-exit v0
     return-void
   :L14
-  .line 551
+  .line 578
     move-exception v1
   :L15
-  .line 554
+  .line 581
     monitor-exit v0
     return-void
   :L16
-  .line 530
+  .line 557
     move-exception v1
     monitor-exit v0
     goto :L18
@@ -1040,45 +1086,45 @@
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
   :L0
-  .line 557
+  .line 584
     sget-boolean v1, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
   :L1
     if-nez v1, :L2
     monitor-exit v0
     return-void
   :L2
-  .line 559
+  .line 586
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteFile()Ljava/io/File;
     move-result-object v1
   :L3
-  .line 560
+  .line 587
     if-nez v1, :L4
     monitor-exit v0
     return-void
   :L4
-  .line 561
+  .line 588
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 562
+  .line 589
     sget-object v3, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-virtual { v3 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
     move-result-object v3
     invoke-interface { v3 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
     move-result-object v3
   :L5
-  .line 563
+  .line 590
     invoke-interface { v3 }, Ljava/util/Iterator;->hasNext()Z
     move-result v4
     if-eqz v4, :L7
-  .line 564
+  .line 591
     invoke-interface { v3 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/util/Map$Entry;
-  .line 565
+  .line 592
     invoke-interface { v4 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
     move-result-object v5
     check-cast v5, Ljava/lang/String;
-  .line 566
+  .line 593
     if-eqz v5, :L5
     const/16 v6, 9
     invoke-virtual { v5, v6 }, Ljava/lang/String;->indexOf(I)I
@@ -1086,7 +1132,7 @@
     if-ltz v7, :L6
     goto :L5
   :L6
-  .line 567
+  .line 594
     invoke-virtual { v2, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v5
     invoke-virtual { v5, v6 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
@@ -1100,36 +1146,36 @@
     move-result-object v4
     const/16 v5, 10
     invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 568
+  .line 595
     goto :L5
   :L7
-  .line 569
+  .line 596
     new-instance v3, Ljava/io/FileOutputStream;
     invoke-direct { v3, v1 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
-  .line 570
+  .line 597
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v1
     const-string v2, "UTF-8"
     invoke-virtual { v1, v2 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
     move-result-object v1
     invoke-virtual { v3, v1 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 571
+  .line 598
     invoke-virtual { v3 }, Ljava/io/FileOutputStream;->close()V
-  .line 572
+  .line 599
     const/4 v1, 0
     sput-boolean v1, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
   :L8
-  .line 575
+  .line 602
     goto :L10
   :L9
-  .line 573
+  .line 600
     move-exception v1
   :L10
-  .line 576
+  .line 603
     monitor-exit v0
     return-void
   :L11
-  .line 556
+  .line 583
     move-exception v1
     monitor-exit v0
     goto :L13
@@ -1145,20 +1191,20 @@
   .registers 5
     const-class v0, Lcom/innioasis/ipp/BigCover;
     monitor-enter v0
-  .line 592
+  .line 619
     if-nez p0, :L0
     monitor-exit v0
     return-void
   :L0
-  .line 593
+  .line 620
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteLoad()V
-  .line 594
+  .line 621
     sget-object v1, Lcom/innioasis/ipp/BigCover;->notes:Ljava/util/HashMap;
     invoke-static { p1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v2
     invoke-virtual { v1, p0, v2 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 595
+  .line 622
     if-eqz p0, :L2
     check-cast p0, Ljava/lang/Integer;
     invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
@@ -1168,20 +1214,20 @@
     monitor-exit v0
     return-void
   :L2
-  .line 596
+  .line 623
     const/4 p0, 1
   :L3
     sput-boolean p0, Lcom/innioasis/ipp/BigCover;->notesDirty:Z
-  .line 597
+  .line 624
     sget-boolean p0, Lcom/innioasis/ipp/BigCover;->passing:Z
     if-nez p0, :L4
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->noteSave()V
   :L4
-  .line 598
+  .line 625
     monitor-exit v0
     return-void
   :L5
-  .line 591
+  .line 618
     move-exception p0
     monitor-exit v0
     throw p0
@@ -1189,7 +1235,7 @@
 
 .method public static ownArt(Ljava/lang/String;)Z
   .registers 2
-  .line 380
+  .line 407
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result p0
     const/4 v0, 2
@@ -1205,126 +1251,126 @@
 .method public static peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
   .catchall { :L3 .. :L4 } :L5
   .registers 7
-  .line 265
+  .line 292
     const/4 v0, 0
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 266
-    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 293
+    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v1, p0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
-  .line 267
+  .line 294
     if-eqz v1, :L1
     check-cast v1, Landroid/graphics/Bitmap;
     return-object v1
   :L1
-  .line 268
+  .line 295
     sget-object v1, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L2
     return-object v0
   :L2
-  .line 269
+  .line 296
     nop
   :L3
-  .line 271
+  .line 298
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object v1
-  .line 272
+  .line 299
     if-eqz v1, :L4
     invoke-virtual { v1 }, Ljava/io/File;->exists()Z
     move-result v2
     if-eqz v2, :L4
-  .line 273
+  .line 300
     invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object v1
-  .line 274
+  .line 301
     new-instance v2, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v2 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 275
+  .line 302
     const/4 v3, 1
     iput-boolean v3, v2, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 276
+  .line 303
     invoke-static { v1, v2 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  .line 277
+  .line 304
     iget v3, v2, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     if-lez v3, :L4
     iget v3, v2, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     if-lez v3, :L4
-  .line 278
+  .line 305
     iget v3, v2, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     iget v4, v2, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     const/16 v5, 300
     invoke-static { v3, v4, v5, v5 }, Lcom/innioasis/ipp/Art;->sample(IIII)I
     move-result v3
     iput v3, v2, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 279
+  .line 306
     const/4 v3, 0
     iput-boolean v3, v2, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 280
+  .line 307
     invoke-static { v1, v2 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object v1
     invoke-static { v1 }, Lcom/innioasis/ipp/BigCover;->square(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L4
-  .line 285
+  .line 312
     goto :L6
   :L5
-  .line 283
+  .line 310
     move-exception v1
-  .line 284
+  .line 311
     nop
   :L6
-  .line 286
+  .line 313
     if-eqz v0, :L7
-    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v1, p0, v0 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v1, p0, v0 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L7
-  .line 287
+  .line 314
     return-object v0
 .end method
 
 .method public static peekTrack(Ljava/lang/String;)Landroid/graphics/Bitmap;
   .registers 4
-  .line 246
+  .line 260
     const/4 v0, 0
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 247
+  .line 261
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 248
+  .line 262
     if-eqz v1, :L1
     return-object v1
   :L1
-  .line 249
+  .line 263
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result v1
     const/4 v2, 1
     if-eq v1, v2, :L2
     return-object v0
   :L2
-  .line 250
+  .line 264
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/BigCover;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 251
+  .line 265
     if-eqz v0, :L3
-    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v1, p0, v0 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v1, p0, v0 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L3
-  .line 252
+  .line 266
     return-object v0
 .end method
 
 .method public static prefetch(Ljava/util/List;I)V
   .catchall { :L0 .. :L3 } :L4
   .registers 3
-  .line 183
+  .line 197
     if-eqz p0, :L6
     if-ltz p1, :L6
   :L0
@@ -1333,30 +1379,30 @@
     if-lt p1, v0, :L1
     goto :L6
   :L1
-  .line 184
+  .line 198
     invoke-interface { p0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p0
-  .line 185
+  .line 199
     instance-of p1, p0, Lcom/innioasis/y1/database/Song;
     if-nez p1, :L2
     return-void
   :L2
-  .line 186
+  .line 200
     check-cast p0, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->warm(Ljava/lang/String;)V
   :L3
-  .line 189
+  .line 203
     goto :L5
   :L4
-  .line 187
+  .line 201
     move-exception p0
   :L5
-  .line 190
+  .line 204
     return-void
   :L6
-  .line 183
+  .line 197
     return-void
 .end method
 
@@ -1364,11 +1410,11 @@
   .catchall { :L0 .. :L5 } :L6
   .registers 2
   :L0
-  .line 206
+  .line 220
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 207
+  .line 221
     const/4 v1, 0
     if-nez v0, :L1
     move-object v0, v1
@@ -1377,7 +1423,7 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingSong()Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L2
-  .line 208
+  .line 222
     if-nez v0, :L3
     goto :L4
   :L3
@@ -1386,46 +1432,46 @@
   :L4
     invoke-static { v1 }, Lcom/innioasis/ipp/BigCover;->warm(Ljava/lang/String;)V
   :L5
-  .line 211
+  .line 225
     goto :L7
   :L6
-  .line 209
+  .line 223
     move-exception v0
   :L7
-  .line 212
+  .line 226
     return-void
 .end method
 
 .method private static read(Ljava/lang/String;)Lcom/innioasis/ipp/BigCover$Src;
   .registers 3
-  .line 654
+  .line 681
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->bytes(Ljava/lang/String;)[B
     move-result-object p0
-  .line 655
+  .line 682
     const/4 v0, 0
     if-eqz p0, :L2
     array-length v1, p0
     if-nez v1, :L0
     goto :L2
   :L0
-  .line 656
+  .line 683
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->capped([B)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 657
+  .line 684
     if-nez v1, :L1
     return-object v0
   :L1
-  .line 658
+  .line 685
     new-instance v0, Lcom/innioasis/ipp/BigCover$Src;
     invoke-direct { v0 }, Lcom/innioasis/ipp/BigCover$Src;-><init>()V
-  .line 659
+  .line 686
     iput-object v1, v0, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
-  .line 660
+  .line 687
     iput-object p0, v0, Lcom/innioasis/ipp/BigCover$Src;->raw:[B
-  .line 661
+  .line 688
     return-object v0
   :L2
-  .line 655
+  .line 682
     return-object v0
 .end method
 
@@ -1437,10 +1483,10 @@
   .end annotation
   .catchall { :L2 .. :L3 } :L5
   .registers 7
-  .line 676
+  .line 703
     invoke-virtual { p0 }, Ljava/io/File;->length()J
     move-result-wide v0
-  .line 677
+  .line 704
     const-wide/16 v2, 0
     const/4 v4, 0
     cmp-long v5, v0, v2
@@ -1450,56 +1496,56 @@
     if-lez v5, :L0
     goto :L7
   :L0
-  .line 678
+  .line 705
     long-to-int v1, v0
     new-array v0, v1, [B
-  .line 679
+  .line 706
     new-instance v2, Ljava/io/FileInputStream;
     invoke-direct { v2, p0 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
-  .line 681
+  .line 708
     const/4 p0, 0
   :L1
-  .line 682
+  .line 709
     if-ge p0, v1, :L6
-  .line 683
+  .line 710
     sub-int v3, v1, p0
   :L2
     invoke-virtual { v2, v0, p0, v3 }, Ljava/io/FileInputStream;->read([BII)I
     move-result v3
   :L3
-  .line 684
+  .line 711
     if-gez v3, :L4
-  .line 688
+  .line 715
     invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
-  .line 684
+  .line 711
     return-object v4
   :L4
-  .line 685
+  .line 712
     add-int/2addr p0, v3
-  .line 686
+  .line 713
     goto :L1
   :L5
-  .line 688
+  .line 715
     move-exception p0
     invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
-  .line 689
+  .line 716
     throw p0
   :L6
-  .line 688
+  .line 715
     invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
-  .line 689
+  .line 716
     nop
-  .line 690
+  .line 717
     return-object v0
   :L7
-  .line 677
+  .line 704
     return-object v4
 .end method
 
 .method private static same(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;)Z
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 729
+  .line 756
     const/4 v0, 0
     if-eqz p0, :L3
     if-eqz p1, :L3
@@ -1511,48 +1557,48 @@
     const/4 v0, 1
     goto :L3
   :L2
-  .line 730
+  .line 757
     move-exception p0
-  .line 731
+  .line 758
     return v0
   :L3
-  .line 729
+  .line 756
     return v0
 .end method
 
 .method private static square(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   .registers 4
-  .line 711
+  .line 738
     if-nez p0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 712
+  .line 739
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v0
-  .line 713
+  .line 740
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v1
-  .line 714
+  .line 741
     const/16 v2, 300
     if-ne v0, v1, :L1
     if-gt v0, v2, :L1
     return-object p0
   :L1
-  .line 715
+  .line 742
     invoke-static { v0, v1 }, Ljava/lang/Math;->min(II)I
     move-result v0
-  .line 716
+  .line 743
     if-lez v0, :L3
     if-le v0, v2, :L2
     goto :L3
   :L2
     move v2, v0
   :L3
-  .line 717
+  .line 744
     invoke-static { p0, v2 }, Lcom/innioasis/ipp/Cover;->square(Landroid/graphics/Bitmap;I)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 718
+  .line 745
     if-nez v0, :L4
     goto :L5
   :L4
@@ -1564,44 +1610,44 @@
 .method private static store(Ljava/lang/String;Lcom/innioasis/ipp/BigCover$Src;)V
   .catchall { :L0 .. :L3 } :L4
   .registers 3
-  .line 737
+  .line 764
     if-eqz p1, :L6
   :L0
     iget-object v0, p1, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
     if-nez v0, :L1
     goto :L6
   :L1
-  .line 738
+  .line 765
     invoke-static { p1 }, Lcom/innioasis/ipp/BigCover;->fit(Lcom/innioasis/ipp/BigCover$Src;)[B
     move-result-object v0
-  .line 739
+  .line 766
     if-nez v0, :L2
     return-void
   :L2
-  .line 740
+  .line 767
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/BigCover;->write(Ljava/lang/String;[B)Z
     move-result v0
     if-eqz v0, :L3
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
     iget-object p1, p1, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
-    invoke-virtual { v0, p0, p1 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-interface { v0, p0, p1 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L3
-  .line 743
+  .line 770
     goto :L5
   :L4
-  .line 741
+  .line 768
     move-exception p0
   :L5
-  .line 744
+  .line 771
     return-void
   :L6
-  .line 737
+  .line 764
     return-void
 .end method
 
 .method private static storeSrc(Ljava/lang/String;[B)Landroid/graphics/Bitmap;
   .registers 5
-  .line 480
+  .line 507
     array-length v0, p1
     const/16 v1, 25600
     const/4 v2, 0
@@ -1609,31 +1655,31 @@
     invoke-static { p1 }, Lcom/innioasis/ipp/BigCover;->isJpeg([B)Z
     move-result v0
     if-eqz v0, :L0
-  .line 481
+  .line 508
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/BigCover;->write(Ljava/lang/String;[B)Z
-  .line 482
+  .line 509
     return-object v2
   :L0
-  .line 484
+  .line 511
     invoke-static { p1 }, Lcom/innioasis/ipp/BigCover;->capped([B)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 485
+  .line 512
     if-nez v0, :L1
     return-object v2
   :L1
-  .line 486
+  .line 513
     new-instance v1, Lcom/innioasis/ipp/BigCover$Src;
     invoke-direct { v1 }, Lcom/innioasis/ipp/BigCover$Src;-><init>()V
-  .line 487
+  .line 514
     iput-object v0, v1, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
-  .line 488
+  .line 515
     iput-object p1, v1, Lcom/innioasis/ipp/BigCover$Src;->raw:[B
-  .line 489
+  .line 516
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/BigCover;->store(Ljava/lang/String;Lcom/innioasis/ipp/BigCover$Src;)V
-  .line 490
-    sget-object p1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { p1, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 491
+  .line 517
+    sget-object p1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { p1, p0 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 518
     return-object v0
 .end method
 
@@ -1642,48 +1688,48 @@
   .catchall { :L7 .. :L8 } :L9
   .catchall { :L11 .. :L16 } :L15
   .registers 7
-  .line 120
+  .line 134
     const/4 v0, 0
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 121
+  .line 135
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrack(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 122
+  .line 136
     if-eqz v1, :L1
     return-object v1
   :L1
-  .line 123
+  .line 137
     sget-object v1, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
     move-result v2
     if-eqz v2, :L2
     return-object v0
   :L2
-  .line 128
+  .line 142
     sget-object v2, Lcom/innioasis/ipp/BigCover;->LOCK:Ljava/lang/Object;
     monitor-enter v2
   :L3
-  .line 129
+  .line 143
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrack(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v3
-  .line 130
+  .line 144
     if-eqz v3, :L4
     monitor-exit v2
     return-object v3
   :L4
-  .line 131
+  .line 145
     invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L5
     monitor-exit v2
     return-object v0
   :L5
-  .line 133
+  .line 147
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v3
-  .line 134
+  .line 148
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->note(Ljava/lang/String;)I
     move-result v4
     if-nez v4, :L7
@@ -1692,76 +1738,76 @@
   :L6
     return-object v0
   :L7
-  .line 138
+  .line 152
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->read(Ljava/lang/String;)Lcom/innioasis/ipp/BigCover$Src;
     move-result-object v1
   :L8
-  .line 141
+  .line 155
     goto :L10
   :L9
-  .line 139
+  .line 153
     move-exception v1
-  .line 140
+  .line 154
     move-object v1, v0
   :L10
-  .line 142
+  .line 156
     if-nez v1, :L12
   :L11
-  .line 143
+  .line 157
     sget-object v1, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
     invoke-virtual { v1, p0, p0 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 144
+  .line 158
     const/4 v1, 0
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 145
+  .line 159
     monitor-exit v2
     return-object v0
   :L12
-  .line 147
+  .line 161
     iget-object v0, v1, Lcom/innioasis/ipp/BigCover$Src;->bmp:Landroid/graphics/Bitmap;
-  .line 149
+  .line 163
     invoke-static { v3 }, Lcom/innioasis/ipp/BigCover;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v4
-  .line 150
+  .line 164
     const/4 v5, 1
     if-nez v4, :L13
-  .line 152
+  .line 166
     invoke-static { v3, v1 }, Lcom/innioasis/ipp/BigCover;->store(Ljava/lang/String;Lcom/innioasis/ipp/BigCover$Src;)V
-  .line 153
-    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v1, p0, v0 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 154
+  .line 167
+    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v1, p0, v0 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  .line 168
     invoke-static { p0, v5 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 155
+  .line 169
     monitor-exit v2
     return-object v0
   :L13
-  .line 157
+  .line 171
     invoke-static { v4, v0 }, Lcom/innioasis/ipp/BigCover;->same(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;)Z
     move-result v3
     if-eqz v3, :L14
-  .line 158
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v0, p0, v4 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 159
+  .line 172
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v0, p0, v4 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  .line 173
     invoke-static { p0, v5 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 160
+  .line 174
     monitor-exit v2
     return-object v4
   :L14
-  .line 162
+  .line 176
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/BigCover;->store(Ljava/lang/String;Lcom/innioasis/ipp/BigCover$Src;)V
-  .line 163
-    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v1, p0, v0 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 164
+  .line 177
+    sget-object v1, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v1, p0, v0 }, Ljava/util/Map;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  .line 178
     const/4 v1, 2
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/BigCover;->noteSet(Ljava/lang/String;I)V
-  .line 165
+  .line 179
     monitor-exit v2
     return-object v0
   :L15
-  .line 166
+  .line 180
     move-exception p0
     monitor-exit v2
   :L16
@@ -1770,10 +1816,10 @@
 
 .method private static warm(Ljava/lang/String;)V
   .registers 3
-  .line 220
+  .line 234
     if-eqz p0, :L1
-    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Hashtable;
-    invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    sget-object v0, Lcom/innioasis/ipp/BigCover;->mem:Ljava/util/Map;
+    invoke-interface { v0, p0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     if-nez v0, :L1
     sget-object v0, Lcom/innioasis/ipp/BigCover;->miss:Ljava/util/Hashtable;
@@ -1782,16 +1828,16 @@
     if-eqz v0, :L0
     goto :L1
   :L0
-  .line 221
+  .line 235
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/ipp/BigCover$Warm;
     invoke-direct { v1, p0 }, Lcom/innioasis/ipp/BigCover$Warm;-><init>(Ljava/lang/String;)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 222
+  .line 236
     return-void
   :L1
-  .line 220
+  .line 234
     return-void
 .end method
 
@@ -1800,38 +1846,38 @@
   .catchall { :L2 .. :L3 } :L4
   .catchall { :L3 .. :L5 } :L5
   .registers 4
-  .line 749
+  .line 776
     const/4 v0, 0
   :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p0
-  .line 750
+  .line 777
     if-nez p0, :L1
     return v0
   :L1
-  .line 751
+  .line 778
     new-instance v1, Ljava/io/FileOutputStream;
     invoke-direct { v1, p0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L2
-  .line 753
+  .line 780
     invoke-virtual { v1, p1 }, Ljava/io/FileOutputStream;->write([B)V
   :L3
-  .line 755
+  .line 782
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
-  .line 756
+  .line 783
     nop
-  .line 757
+  .line 784
     const/4 p0, 1
     return p0
   :L4
-  .line 755
+  .line 782
     move-exception p0
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
-  .line 756
+  .line 783
     throw p0
   :L5
-  .line 758
+  .line 785
     move-exception p0
-  .line 759
+  .line 786
     return v0
 .end method

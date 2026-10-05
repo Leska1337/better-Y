@@ -13,31 +13,31 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 129
+  .line 133
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Flow$1;)V
   .registers 2
-  .line 129
+  .line 133
     invoke-direct { p0 }, Lcom/innioasis/ipp/Flow$ByName;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 7
-  .line 131
+  .line 135
     check-cast p1, Lcom/innioasis/ipp/Flow$Item;
     iget-object v0, p1, Lcom/innioasis/ipp/Flow$Item;->key:Ljava/lang/String;
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
-  .line 132
+  .line 136
     check-cast p2, Lcom/innioasis/ipp/Flow$Item;
     iget-object v1, p2, Lcom/innioasis/ipp/Flow$Item;->key:Ljava/lang/String;
     invoke-static { v1 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v1
-  .line 133
+  .line 137
     const-string v2, ""
     if-nez v0, :L0
     move-object v0, v2
@@ -45,7 +45,7 @@
     sget-object v3, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v0, v3 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v0
-  .line 134
+  .line 138
     if-nez v1, :L1
     move-object v1, v2
   :L1
@@ -54,7 +54,7 @@
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result v0
-  .line 135
+  .line 139
     if-eqz v0, :L2
     goto :L3
   :L2
