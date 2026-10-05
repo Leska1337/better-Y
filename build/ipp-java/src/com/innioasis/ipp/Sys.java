@@ -18,8 +18,9 @@ import java.lang.reflect.Method;
  *     ({@code screen_brightness}, {@code screen_brightness_mode}, {@code screen_off_timeout}) -
  *     stock reads and writes them exactly there, from {@code BrightnessActivity} and
  *     {@code SettingActivity}.
- *   - **Key tone and Key vibration** are held by MediaTek's AudioProfile service, under the profile
- *     {@code mtk_audioprofile_general}. The {@code ringtone} / {@code vibrator} entries in stock's
+ *   - **Key vibration** is held by MediaTek's AudioProfile service, under the profile
+ *     {@code mtk_audioprofile_general}. Key tone is the launcher's own ({@link Tone}) and is
+ *     carried as its on/off. The {@code ringtone} / {@code vibrator} entries in stock's
  *     own preferences are a MIRROR for the settings list, not the state: {@code clickRingtone}
  *     writes the preference and then calls the service, and {@code updateVibrator} reads the
  *     service back and overwrites the preference with it. So a restore that only put the
@@ -59,7 +60,7 @@ public final class Sys {
         put(s, BRIGHTNESS, sysInt(c, BRIGHTNESS));
         put(s, BRIGHTNESS_MODE, sysInt(c, BRIGHTNESS_MODE));
         put(s, SCREEN_OFF, sysInt(c, SCREEN_OFF));
-        put(s, "key_tone", profileFlag(c, "getSoundEffectEnabled"));
+        put(s, "key_tone", Tone.on(c) ? 1 : 0);
         put(s, "key_vibration", profileFlag(c, "getHapticFeedbackEnabled"));
         s.append("clock=").append(System.currentTimeMillis()).append('\n');
         return s.toString();
@@ -83,7 +84,7 @@ public final class Sys {
                         || SCREEN_OFF.equals(key)) {
                     Settings.System.putInt(c.getContentResolver(), key, Integer.parseInt(value));
                 } else if ("key_tone".equals(key)) {
-                    setProfileFlag(c, "setSoundEffectEnabled", "1".equals(value));
+                    Tone.setOn(c, "1".equals(value));
                 } else if ("key_vibration".equals(key)) {
                     setProfileFlag(c, "setHapticFeedbackEnabled", "1".equals(value));
                 } else if ("clock".equals(key)) {

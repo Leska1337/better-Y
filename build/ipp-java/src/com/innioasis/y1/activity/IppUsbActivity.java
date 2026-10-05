@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.innioasis.ipp.Force;
 import com.innioasis.ipp.Icons;
+import com.innioasis.ipp.Tone;
 import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.utils.WallpaperUtils;
@@ -210,6 +211,7 @@ public final class IppUsbActivity extends Activity {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
+        Tone.key(e);
         if (Force.key(e)) return true;
         if (e.getAction() == KeyEvent.ACTION_DOWN) {
             cleanDown = e.getRepeatCount() == 0;       // a hold is not a press

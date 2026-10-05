@@ -68,6 +68,9 @@ public final class Prefs {
         def("delete_folder", 0);             // stock leaves the folder; taking it is opt-in
         def("keep_awake", 1);
         def("likes", 1);
+        // Settings -> Key tone
+        def(Tone.KEY_ON, 1);                 // stock's own default
+        def(Tone.KEY_VOLUME, Tone.VOLUME_DEFAULT);
         // kb_lang2 is deliberately absent -- see defInt
     }
 
@@ -186,6 +189,19 @@ public final class Prefs {
 
     public static void setInt(Context c, String key, int value) {
         prefs(c).edit().putInt(key, value).apply();
+    }
+
+    public static String getString(Context c, String key, String def) {
+        return prefs(c).getString(key, def);
+    }
+
+    public static void setString(Context c, String key, String value) {
+        prefs(c).edit().putString(key, value).apply();
+    }
+
+    /** Whether the key was ever written — for a migration that must run once. */
+    public static boolean has(Context c, String key) {
+        return prefs(c).contains(key);
     }
 
     /**

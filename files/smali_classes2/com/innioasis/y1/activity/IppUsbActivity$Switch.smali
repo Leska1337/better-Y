@@ -17,13 +17,13 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppUsbActivity;Z)V
   .registers 3
-  .line 304
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 305
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
   .line 306
-    iput-boolean p2, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->on:Z
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 307
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
+  .line 308
+    iput-boolean p2, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->on:Z
+  .line 309
     return-void
 .end method
 
@@ -31,7 +31,7 @@
   .catchall { :L0 .. :L5 } :L6
   .registers 4
   :L0
-  .line 311
+  .line 313
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     new-instance v1, Landroid/content/Intent;
     iget-boolean v2, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->on:Z
@@ -43,7 +43,7 @@
   :L2
     invoke-direct { v1, v2 }, Landroid/content/Intent;-><init>(Ljava/lang/String;)V
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppUsbActivity;->sendBroadcast(Landroid/content/Intent;)V
-  .line 312
+  .line 314
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->on:Z
     if-eqz v1, :L3
@@ -54,17 +54,17 @@
   :L4
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppUsbActivity;->storage(Ljava/lang/String;)Z
   :L5
-  .line 315
+  .line 317
     goto :L7
   :L6
-  .line 313
+  .line 315
     move-exception v0
-  .line 314
+  .line 316
     const-string v1, "ippUsb"
     const-string v2, "switch failed"
     invoke-static { v1, v2, v0 }, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
   :L7
-  .line 316
+  .line 318
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppUsbActivity;->access$000(Lcom/innioasis/y1/activity/IppUsbActivity;)Landroid/os/Handler;
     move-result-object v0
@@ -72,6 +72,6 @@
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppUsbActivity$Switch;->a:Lcom/innioasis/y1/activity/IppUsbActivity;
     invoke-direct { v1, v2 }, Lcom/innioasis/y1/activity/IppUsbActivity$Settle;-><init>(Lcom/innioasis/y1/activity/IppUsbActivity;)V
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 317
+  .line 319
     return-void
 .end method
