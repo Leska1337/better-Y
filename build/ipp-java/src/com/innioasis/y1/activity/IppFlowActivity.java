@@ -1,0 +1,556 @@
+package com.innioasis.y1.activity;
+
+import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Typeface;
+import android.os.Handler;
+import android.text.TextPaint;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.innioasis.ipp.Flow;
+import com.innioasis.ipp.FlowView;
+import com.innioasis.ipp.Prefs;
+import com.innioasis.ipp.Theme;
+import com.innioasis.music.MusicPlayerActivity;
+import com.innioasis.y1.R;
+import com.innioasis.y1.Y1Application;
+import com.innioasis.y1.base.BaseActivity;
+import com.innioasis.y1.database.Song;
+import com.innioasis.y1.databinding.ActivityAboutBinding;
+import com.innioasis.y1.service.PlayerService;
+
+import java.util.List;
+
+/**
+ * Cover Flow: the library's albums as a row of covers ({@link FlowView}) over the theme's
+ * global wallpaper. The wheel moves along the row, centre turns the cover over to its track list, centre
+ * on a track plays the album from it and carries the cover into Now Playing, top turns back and
+ * then leaves.
+ */
+public final class IppFlowActivity extends BaseActivity {
+
+    private static final String KEY_POS = "flow_pos";
+    private static final int PANEL_W = 360;
+    /** The neighbours running off the screen, and the cover travelling to or from the player. */
+    private static final int SPREAD_MS = 200;
+    private static final int MOVE_MS = 260;
+
+    private FlowView flow;
+    private ImageView card;
+    /** The player's own picture, travelling between this screen and the player. */
+    private ImageView trip;
+    private Panel panel;
+    private Flow.Loader loader;
+    private Handler ui;
+    private List items;
+
+    /** 0 the row, 1 turning over, 2 the track list, 3 turning back, 4 at the player, 5 back from it. */
+    private int state;
+    private int flipped = -1;
+
+    @Override
+    public ActivityAboutBinding getViewBinding() {
+        return ActivityAboutBinding.inflate(getLayoutInflater());
+    }
+
+    @Override
+    public void initView() {
+        setStateBarLeftText(getString(R.string.ipp_coverflow));
+        ui = new Handler();
+        ViewGroup root = (ViewGroup) getVb().getRoot();
+        root.removeAllViews();
+        root.setBackgroundDrawable(null);
+        FrameLayout box = new FrameLayout(this);
+        flow = new FlowView(this);
+        box.addView(flow, new FrameLayout.LayoutParams(-1, -1));
+        card = new ImageView(this);
+        card.setVisibility(View.GONE);
+        box.addView(card, new FrameLayout.LayoutParams(Flow.S + 2 * Flow.PAD, Flow.PAD + Flow.S + Flow.REFL));
+        trip = new ImageView(this);
+        trip.setScaleType(ImageView.ScaleType.FIT_START);
+        trip.setVisibility(View.GONE);
+        box.addView(trip, new FrameLayout.LayoutParams(1, 1));
+        panel = new Panel(this);
+        panel.setVisibility(View.INVISIBLE);   // laid out from the start: the flip needs its size
+        box.addView(panel, new FrameLayout.LayoutParams(PANEL_W, -1));
+        root.addView(box, -1, -1);
+        new Thread(new Load(this), "ipp-flow-list").start();
+    }
+
+    void loaded(List l) {
+        if (isFinishing()) return;
+        items = l;
+        if (l.isEmpty()) {
+            Toast.makeText(this, getString(R.string.no_content), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int start = Math.max(0, Math.min(l.size() - 1, Prefs.getInt(this, KEY_POS, 0)));
+        loader = new Flow.Loader(l, ui, new Repaint(this));
+        Thread t = new Thread(loader, "ipp-flow-covers");
+        t.setDaemon(true);
+        t.start();
+        flow.setItems(l, loader, start);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean turn = Flow.takeReturning();
+        if (state == 4) back(turn);
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (loader != null) loader.quit();
+        if (items != null && flow != null) Prefs.setInt(this, KEY_POS, flow.target());
+        super.onDestroy();
+    }
+
+    @Override
+    public void clockwise() {
+        if (state == 0) flow.step(1);
+        else if (state == 2) panel.move(1);
+    }
+
+    @Override
+    public void antiClockwise() {
+        if (state == 0) flow.step(-1);
+        else if (state == 2) panel.move(-1);
+    }
+
+    @Override
+    public void confirm() {
+        if (items == null || items.isEmpty()) return;
+        if (state == 0) flipOver();
+        else if (state == 2) play();
+    }
+
+    @Override
+    public void longConfirm() {
+    }
+
+    @Override
+    public void direction(BaseActivity.Direction d) {
+        if (d == BaseActivity.Direction.TOP) {
+            if (state == 2) flipBack();
+            else if (state == 0) finish();
+        }
+    }
+
+    @Override
+    public void quit() {
+        finish();
+    }
+
+    // ---- turning the cover over ---------------------------------------------------------------
+
+    private void flipOver() {
+        int i = flow.target();
+        Flow.Item it = (Flow.Item) items.get(i);
+        Bitmap s = loader.get(i);
+        state = 1;
+        flipped = i;
+        panel.show(it);
+        new Thread(new Tracks(this, it), "ipp-flow-tracks").start();
+
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) card.getLayoutParams();
+        lp.leftMargin = flow.coverLeft() - Flow.PAD;
+        lp.setMarginStart(flow.coverLeft() - Flow.PAD);
+        lp.topMargin = flow.coverTop() - Flow.PAD;
+        card.setLayoutParams(lp);
+        lp = (FrameLayout.LayoutParams) panel.getLayoutParams();
+        int px = (flow.getWidth() - PANEL_W) / 2;
+        lp.leftMargin = px;
+        lp.setMarginStart(px);
+        panel.setLayoutParams(lp);
+
+        card.setImageBitmap(s);
+        card.setPivotX((Flow.S + 2 * Flow.PAD) / 2f);
+        card.setPivotY((Flow.PAD + Flow.S + Flow.REFL) / 2f);
+        card.setTranslationX(0);
+        card.setTranslationY(0);
+        card.setScaleX(1);
+        card.setScaleY(1);
+        card.setRotationY(0);
+        card.setVisibility(View.VISIBLE);
+        flow.hide(i);
+        shrunk();
+        panel.setRotationY(-90);
+        card.animate().rotationY(90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
+    }
+
+    /** The panel drawn over the cover's own square, which is where its turn starts and ends. */
+    private void shrunk() {
+        int ph = flow.getHeight();
+        panel.setScaleX((float) Flow.S / PANEL_W);
+        panel.setScaleY(ph > 0 ? (float) Flow.S / ph : 1f);
+        panel.setTranslationY(flow.coverTop() + Flow.S / 2f - ph / 2f);
+    }
+
+    void halfOver() {
+        card.setVisibility(View.GONE);
+        panel.setVisibility(View.VISIBLE);
+        panel.animate().rotationY(0).scaleX(1).scaleY(1).translationY(0).setDuration(Flow.FLIP_MS)
+                .withEndAction(new Done(this, 2));
+    }
+
+    private void flipBack() {
+        state = 3;
+        edgeOn(Flow.FLIP_MS, new Half(this, false));
+    }
+
+    /** The track list shrinks onto the cover's square and turns edge-on. */
+    private void edgeOn(int ms, Runnable end) {
+        int ph = flow.getHeight();
+        panel.animate().rotationY(-90).scaleX((float) Flow.S / PANEL_W)
+                .scaleY(ph > 0 ? (float) Flow.S / ph : 1f)
+                .translationY(flow.coverTop() + Flow.S / 2f - ph / 2f)
+                .setDuration(ms).withEndAction(end);
+    }
+
+    /**
+     * Back from the player. Left by the top button, it handed the cover back: the player's picture
+     * starts exactly where the player drew it and returns to the middle while the row closes in
+     * around it. Left any other way, the row is simply put back.
+     */
+    private void back(boolean turn) {
+        panel.animate().cancel();
+        panel.setVisibility(View.INVISIBLE);
+        panel.setRotationY(0);
+        panel.setScaleX(1);
+        panel.setScaleY(1);
+        panel.setTranslationY(0);
+        trip.animate().cancel();
+        if (!turn || trip.getDrawable() == null) {
+            flow.setSpread(0);
+            done(0);
+            return;
+        }
+        state = 5;
+        placeTrip();
+        float[] p = startPose();
+        trip.setTranslationX(0);
+        trip.setTranslationY(0);
+        trip.setScaleX(1);
+        trip.setScaleY(1);
+        trip.setRotationY(Flow.geo(this)[6]);
+        trip.setVisibility(View.VISIBLE);
+        flow.setSpread(1);
+        trip.animate().translationX(p[0]).translationY(p[1]).scaleX(p[2]).scaleY(p[2]).rotationY(0)
+                .setDuration(MOVE_MS).setInterpolator(new DecelerateInterpolator())
+                .withEndAction(new Done(this, 0));
+        spread(1, 0, MOVE_MS, new DecelerateInterpolator());
+    }
+
+    private void spread(float from, float to, int ms, android.animation.TimeInterpolator in) {
+        ObjectAnimator an = ObjectAnimator.ofFloat(flow, "spread", from, to);
+        an.setDuration(ms);
+        an.setInterpolator(in);
+        an.start();
+    }
+
+    void halfBack() {
+        panel.setVisibility(View.INVISIBLE);
+        card.setVisibility(View.VISIBLE);
+        card.animate().rotationY(0).setDuration(Flow.FLIP_MS).withEndAction(new Done(this, 0));
+    }
+
+    void done(int s) {
+        state = s;
+        if (s == 0) {
+            card.setVisibility(View.GONE);
+            card.setImageBitmap(null);
+            trip.setVisibility(View.GONE);
+            trip.setImageBitmap(null);
+            flow.hide(-1);
+            flipped = -1;
+        }
+    }
+
+    /**
+     * Plays the album from the track, then: the neighbours run off both sides of the screen while
+     * the track list turns edge-on and comes round as the cover, travelling onto the spot the
+     * player draws its own. The player then opens with no transition, under a cover already there.
+     */
+    private void play() {
+        List songs = panel.songs;
+        if (songs == null || songs.isEmpty()) return;
+        try {
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            if (ps != null) ps.setMusicPlaylist(songs, panel.sel);
+        } catch (Throwable t) {
+            return;
+        }
+        state = 4;
+        spread(0, 1, SPREAD_MS, new AccelerateInterpolator());
+        edgeOn(Flow.FLIP_MS, new ToPlayer(this));
+    }
+
+    void toPlayer() {
+        panel.setVisibility(View.INVISIBLE);
+        Flow.Item it = (Flow.Item) items.get(flipped);
+        Song track = panel.songs != null && panel.sel < panel.songs.size()
+                ? (Song) panel.songs.get(panel.sel) : null;
+        Bitmap pic = Flow.trip(track, it.rep);
+        if (pic == null) {
+            openPlayer();
+            return;
+        }
+        trip.setImageBitmap(pic);
+        placeTrip();
+        float[] p = startPose();
+        trip.setTranslationX(p[0]);
+        trip.setTranslationY(p[1]);
+        trip.setScaleX(p[2]);
+        trip.setScaleY(p[2]);
+        trip.setRotationY(-90);
+        trip.setVisibility(View.VISIBLE);
+        trip.animate().rotationY(Flow.geo(this)[6]).translationX(0).translationY(0).scaleX(1).scaleY(1)
+                .setDuration(MOVE_MS).setInterpolator(new DecelerateInterpolator())
+                .withEndAction(new Open(this));
+    }
+
+    /** The travelling picture's box: the player's cover view, at its place in the window. */
+    private void placeTrip() {
+        float[] g = Flow.geo(this);
+        int[] at = new int[2];
+        ((View) trip.getParent()).getLocationInWindow(at);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) trip.getLayoutParams();
+        lp.width = Math.round(g[2]);
+        lp.height = Math.round(g[3]);
+        lp.leftMargin = Math.round(g[0]) - at[0];
+        lp.setMarginStart(lp.leftMargin);
+        lp.topMargin = Math.round(g[1]) - at[1];
+        trip.setLayoutParams(lp);
+        trip.setPivotX(g[4]);
+        trip.setPivotY(g[5]);
+        trip.setPadding(Math.round(g[7]), Math.round(g[8]), Math.round(g[9]), Math.round(g[10]));
+    }
+
+    /**
+     * Translation x, y and scale that lay the picture's cover over the centre slide's: the picture
+     * is FIT_START inside the box's padding, the cover inside it framed by 2 px on the left and on top.
+     */
+    private float[] startPose() {
+        float[] g = Flow.geo(this);
+        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) trip.getLayoutParams();
+        float iw = trip.getDrawable().getIntrinsicWidth();
+        float ih = trip.getDrawable().getIntrinsicHeight();
+        float f = Math.min((g[2] - g[7] - g[9]) / iw, (g[3] - g[8] - g[10]) / ih);
+        float side = (iw - 4) * f;
+        float s0 = Flow.S / side;
+        float qx = g[7] + 2 * f, qy = g[8] + 2 * f;
+        float tx = flow.coverLeft() - lp.leftMargin - g[4] - s0 * (qx - g[4]);
+        float ty = flow.coverTop() - lp.topMargin - g[5] - s0 * (qy - g[5]);
+        return new float[] { tx, ty, s0 };
+    }
+
+    void openPlayer() {
+        Intent i = new Intent(this, MusicPlayerActivity.class);
+        i.putExtra(Flow.EXTRA_FLIP, true);
+        startActivity(i);
+        overridePendingTransition(0, 0);
+    }
+
+    // ---- the back of the cover ----------------------------------------------------------------
+
+    /** The album's name and artist over its tracks, a cursor bar on the track under the wheel. */
+    static final class Panel extends View {
+        private static final int HEAD = 54;
+        private static final int ROW = 26;
+
+        private final TextPaint head = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final TextPaint sub = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final TextPaint text = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+        private final Paint bg = new Paint();
+        private final Paint bar = new Paint();
+        private final Paint line = new Paint();
+        private String title = "";
+        private String artist = "";
+        List songs;
+        String[] names;
+        int sel;
+        private int first;
+
+        Panel(Context c) {
+            super(c);
+            head.setColor(0xFFFFFFFF);
+            head.setTextSize(18);
+            head.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+            head.setFakeBoldText(true);
+            sub.setColor(0xFFB8B8B8);
+            sub.setTextSize(15);
+            sub.setTypeface(Typeface.MONOSPACE);
+            text.setColor(0xFFFFFFFF);
+            text.setTextSize(16);
+            text.setTypeface(Typeface.MONOSPACE);
+            bg.setColor(0xFF1C1C1C);
+            line.setColor(0xFF505050);
+            int sc = Theme.menuSelectedColor();
+            bar.setColor(sc != 0 ? sc : 0xFF3B6FD0);
+        }
+
+        void show(Flow.Item it) {
+            title = it.name;
+            artist = it.artist;
+            songs = null;
+            names = null;
+            sel = 0;
+            first = 0;
+            invalidate();
+        }
+
+        void setSongs(List l, String[] n) {
+            songs = l;
+            names = n;
+            invalidate();
+        }
+
+        void move(int d) {
+            if (names == null || names.length == 0) return;
+            sel = Math.max(0, Math.min(names.length - 1, sel + d));
+            int rows = rows();
+            if (sel < first) first = sel;
+            if (sel >= first + rows) first = sel - rows + 1;
+            invalidate();
+        }
+
+        private int rows() {
+            return Math.max(1, (getHeight() - HEAD) / ROW);
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            int w = getWidth(), h = getHeight();
+            c.drawRect(0, 0, w, h, bg);
+            c.drawRect(0, 0, w, 1, line);
+            c.drawRect(0, h - 1, w, h, line);
+            c.drawRect(0, 0, 1, h, line);
+            c.drawRect(w - 1, 0, w, h, line);
+            c.drawText(TextUtils.ellipsize(title, head, w - 16, TextUtils.TruncateAt.END).toString(),
+                    8, 22, head);
+            c.drawText(TextUtils.ellipsize(artist, sub, w - 16, TextUtils.TruncateAt.END).toString(),
+                    8, 43, sub);
+            c.drawRect(6, HEAD - 3, w - 6, HEAD - 2, line);
+            if (names == null) return;
+            int rows = rows();
+            for (int r = 0; r < rows && first + r < names.length; r++) {
+                int i = first + r;
+                int top = HEAD + r * ROW;
+                boolean on = i == sel;
+                if (on) c.drawRect(1, top, w - 1, top + ROW, bar);
+                text.setColor(on ? 0xFF000000 : 0xFFFFFFFF);
+                String s = (i + 1) + ". " + names[i];
+                c.drawText(TextUtils.ellipsize(s, text, w - 16, TextUtils.TruncateAt.END).toString(),
+                        8, top + 19, text);
+            }
+        }
+    }
+
+    // ---- named runnables (d8 here cannot dex anonymous classes) --------------------------------
+
+    static final class Load implements Runnable {
+        private final IppFlowActivity a;
+
+        Load(IppFlowActivity a) { this.a = a; }
+
+        public void run() {
+            List l = Flow.albums();
+            a.ui.post(new Loaded(a, l));
+        }
+    }
+
+    static final class Loaded implements Runnable {
+        private final IppFlowActivity a;
+        private final List l;
+
+        Loaded(IppFlowActivity a, List l) { this.a = a; this.l = l; }
+
+        public void run() { a.loaded(l); }
+    }
+
+    static final class Repaint implements Runnable {
+        private final IppFlowActivity a;
+
+        Repaint(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.flow.invalidate(); }
+    }
+
+    static final class Tracks implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+
+        Tracks(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
+
+        public void run() {
+            List l = Flow.songs(it);
+            String[] n = new String[l.size()];
+            for (int i = 0; i < n.length; i++) n[i] = Flow.title((Song) l.get(i));
+            a.ui.post(new TracksDone(a, it, l, n));
+        }
+    }
+
+    static final class TracksDone implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+        private final List l;
+        private final String[] n;
+
+        TracksDone(IppFlowActivity a, Flow.Item it, List l, String[] n) {
+            this.a = a; this.it = it; this.l = l; this.n = n;
+        }
+
+        public void run() {
+            if (a.flipped >= 0 && a.items.get(a.flipped) == it) a.panel.setSongs(l, n);
+        }
+    }
+
+    static final class Half implements Runnable {
+        private final IppFlowActivity a;
+        private final boolean over;
+
+        Half(IppFlowActivity a, boolean over) { this.a = a; this.over = over; }
+
+        public void run() {
+            if (over) a.halfOver();
+            else a.halfBack();
+        }
+    }
+
+    static final class Done implements Runnable {
+        private final IppFlowActivity a;
+        private final int s;
+
+        Done(IppFlowActivity a, int s) { this.a = a; this.s = s; }
+
+        public void run() { a.done(s); }
+    }
+
+    static final class ToPlayer implements Runnable {
+        private final IppFlowActivity a;
+
+        ToPlayer(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.toPlayer(); }
+    }
+
+    static final class Open implements Runnable {
+        private final IppFlowActivity a;
+
+        Open(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.openPlayer(); }
+    }
+}

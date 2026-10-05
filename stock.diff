@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..952b0814 100644
+index 2c8d26c0..05575e84 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -1,6 +1,7 @@
@@ -18,19 +18,20 @@ index 2c8d26c0..952b0814 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,10 @@
+@@ -64,6 +64,11 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppQueueActivity"/>
++        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppFlowActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppImportActivity"/>
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppUsbActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.LanguageActivity"/>
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f39b6855 100644
+index 01b1f730..2cf52280 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -45,7 +46,7 @@ index 01b1f730..f39b6855 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100034
++  versionCode: 10100042
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -896,10 +897,10 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..1d564a6c 100644
+index 50446006..6aa779a8 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,519 @@
+@@ -1,417 +1,520 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1835,6 +1836,7 @@ index 50446006..1d564a6c 100644
 +    <string name="ipp_tone_sound">Klang</string>
 +    <string name="ipp_tone_default">Standard</string>
 +    <string name="ipp_tone_theme">Design-Klang</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
 index a2f30ff6..7672d71f 100644
@@ -2155,10 +2157,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..4fc760f6 100644
+index 6f5a555d..6d920be3 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,519 @@
+@@ -1,417 +1,520 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3094,12 +3096,13 @@ index 6f5a555d..4fc760f6 100644
 +    <string name="ipp_tone_sound">Sonido</string>
 +    <string name="ipp_tone_default">Predeterminado</string>
 +    <string name="ipp_tone_theme">Sonido del tema</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..c5747126 100644
+index c242cee4..ac125a3c 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,519 @@
+@@ -1,417 +1,520 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4035,12 +4038,13 @@ index c242cee4..c5747126 100644
 +    <string name="ipp_tone_sound">Son</string>
 +    <string name="ipp_tone_default">Par défaut</string>
 +    <string name="ipp_tone_theme">Son du thème</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..b18349fb 100644
+index d82ac6bb..38b9f3e1 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,519 @@
+@@ -1,417 +1,520 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4976,12 +4980,13 @@ index d82ac6bb..b18349fb 100644
 +    <string name="ipp_tone_sound">צליל</string>
 +    <string name="ipp_tone_default">ברירת מחדל</string>
 +    <string name="ipp_tone_theme">צליל ערכת נושא</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..5dfe99e4 100644
+index f71d0cb1..4f05cdc5 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,436 @@
+@@ -1,334 +1,437 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5751,6 +5756,7 @@ index f71d0cb1..5dfe99e4 100644
 +    <string name="ipp_tone_sound">소리</string>
 +    <string name="ipp_tone_default">기본값</string>
 +    <string name="ipp_tone_theme">테마 소리</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
 index d79cf0f6..f925eee4 100644
@@ -6000,10 +6006,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..0210961b 100644
+index 4c84fd2b..04dedd0c 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,188 @@
+@@ -1,86 +1,189 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6277,12 +6283,13 @@ index 4c84fd2b..0210961b 100644
 +    <string name="ipp_tone_sound">Звук</string>
 +    <string name="ipp_tone_default">По умолчанию</string>
 +    <string name="ipp_tone_theme">Звук темы</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..3bd6bb53 100644
+index 5665bdd9..cc2137ea 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,528 @@
+@@ -1,426 +1,529 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7236,6 +7243,7 @@ index 5665bdd9..3bd6bb53 100644
 +    <string name="ipp_tone_sound">声音</string>
 +    <string name="ipp_tone_default">默认</string>
 +    <string name="ipp_tone_theme">主题音效</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
 index ce849b8e..31964bc2 100644
@@ -8544,10 +8552,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..019824c3 100644
+index 803c1e7a..01dacf5a 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5667 @@
+@@ -1,5519 +1,5668 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18652,6 +18660,7 @@ index 803c1e7a..019824c3 100644
 +    <public type="string" name="ipp_tone_sound" id="0x7f11026c" />
 +    <public type="string" name="ipp_tone_default" id="0x7f11026d" />
 +    <public type="string" name="ipp_tone_theme" id="0x7f11026e" />
++    <public type="string" name="ipp_coverflow" id="0x7f11026f" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19735,10 +19744,10 @@ index 803c1e7a..019824c3 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..0a198185 100644
+index 71fe29d0..95880a4a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,578 @@
+@@ -1,473 +1,579 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20684,7 +20693,7 @@ index 71fe29d0..0a198185 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev34</string>
++    <string name="ipp_version">v1.1.0-dev42</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20788,6 +20797,7 @@ index 71fe29d0..0a198185 100644
 +    <string name="ipp_tone_sound">Sound</string>
 +    <string name="ipp_tone_default">Default</string>
 +    <string name="ipp_tone_theme">Theme sound</string>
++    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values/styles.xml b/build/src/res/values/styles.xml
 index fb6efacc..5850e990 100644
@@ -49519,7 +49529,7 @@ index ff3e0fc0..78e07bce 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f6278..8a67f293 100644
+index 132f6278..ca7f2aa7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 @@ -123,7 +123,7 @@
@@ -49531,13 +49541,18 @@ index 132f6278..8a67f293 100644
  
      .line 51
      invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
-@@ -134,9 +134,15 @@
+@@ -134,9 +134,20 @@
  
      move-result v0
  
 +    # ipp: the Album Artists row is opened there; the rows under it are handed back at the
 +    # index this switch knows them by (-1 = ours, the switch does nothing)
 +    invoke-static {p0, v0}, Lcom/innioasis/ipp/AlbumArtists;->musicPick(Landroid/app/Activity;I)I
++
++    move-result v0
++
++    # ipp: the same for the Cover Flow row, the first one
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Flow;->musicPick(Landroid/app/Activity;I)I
 +
 +    move-result v0
 +
@@ -49548,7 +49563,7 @@ index 132f6278..8a67f293 100644
  
      .line 80
      :pswitch_0
-@@ -153,7 +159,7 @@
+@@ -153,7 +164,7 @@
      .line 81
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -49557,7 +49572,7 @@ index 132f6278..8a67f293 100644
  
      .line 74
      :pswitch_1
-@@ -169,7 +175,12 @@
+@@ -169,7 +180,12 @@
  
      const-string v1, "now_path"
  
@@ -49571,7 +49586,7 @@ index 132f6278..8a67f293 100644
  
      .line 75
      invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-@@ -262,9 +273,12 @@
+@@ -262,9 +278,12 @@
      .line 55
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -49584,21 +49599,34 @@ index 132f6278..8a67f293 100644
      :pswitch_data_0
      .packed-switch 0x0
          :pswitch_6
-@@ -489,6 +503,9 @@
+@@ -489,6 +508,12 @@
  
      move-result-object v1
  
 +    # ipp: "Album Artists" right under Artists, while better-Y shows it
 +    invoke-static {v1, p0}, Lcom/innioasis/ipp/AlbumArtists;->musicMenu(Ljava/util/List;Landroid/content/Context;)V
 +
++    # ipp: "Cover Flow" first
++    invoke-static {v1, p0}, Lcom/innioasis/ipp/Flow;->musicMenu(Ljava/util/List;Landroid/content/Context;)V
++
      invoke-virtual {v0, v1}, Lcom/innioasis/music/objects/Constant;->setMainList(Ljava/util/List;)V
  
      .line 30
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-index 943028f8..35f9ff86 100644
+index 943028f8..1e889110 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-@@ -397,6 +397,13 @@
+@@ -251,6 +251,9 @@
+     :cond_6
+     invoke-super {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->initView()V
+ 
++    # ipp: opened from Cover Flow, the top button will hand the cover back to it.
++    invoke-static {p0}, Lcom/innioasis/ipp/Flow;->flipIn(Landroid/app/Activity;)V
++
+     const v0, 0x7f1100e1
+ 
+     .line 36
+@@ -397,6 +400,13 @@
  
      move-result v0
  
@@ -49612,7 +49640,7 @@ index 943028f8..35f9ff86 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicPlayerActivity;->setFromNowPlaying(Z)V
  
      .line 52
-@@ -595,11 +602,35 @@
+@@ -595,11 +605,35 @@
  .end method
  
  .method public longPressMenu()V
@@ -49650,7 +49678,7 @@ index 943028f8..35f9ff86 100644
      return-void
  .end method
  
-@@ -683,11 +714,13 @@
+@@ -683,11 +717,13 @@
  .end method
  
  .method public refreshUI()V
@@ -49665,7 +49693,7 @@ index 943028f8..35f9ff86 100644
      .line 90
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
  
-@@ -748,19 +781,27 @@
+@@ -748,19 +784,27 @@
  
      iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->tvBookname:Landroid/widget/TextView;
  
@@ -49698,7 +49726,7 @@ index 943028f8..35f9ff86 100644
  
      .line 95
      invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -771,19 +812,27 @@
+@@ -771,19 +815,27 @@
  
      iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->tvSongName2:Landroid/widget/TextView;
  
@@ -49731,7 +49759,7 @@ index 943028f8..35f9ff86 100644
  
      .line 96
      invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -804,9 +853,16 @@
+@@ -804,9 +856,16 @@
  
      move-result-object v2
  
@@ -49750,7 +49778,7 @@ index 943028f8..35f9ff86 100644
  
      .line 97
      invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -827,9 +883,9 @@
+@@ -827,9 +886,9 @@
  
      move-result-object v2
  
@@ -49762,7 +49790,7 @@ index 943028f8..35f9ff86 100644
  
      .line 98
      invoke-virtual {p0}, Lcom/innioasis/music/MusicPlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -853,12 +909,13 @@
+@@ -853,12 +912,13 @@
  
      invoke-static {v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
@@ -64868,7 +64896,7 @@ index 6e8fae34..ac85e290 100644
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca002..51071b68 100644
+index 510ca002..e29ad986 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -65206,7 +65234,27 @@ index 510ca002..51071b68 100644
      .line 597
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onPause()V
  
-@@ -2133,6 +2292,8 @@
+@@ -1943,8 +2102,18 @@
+ .end method
+ 
+ .method public pressMenu()V
+-    .locals 0
++    .locals 1
++
++    # ipp: opened from Cover Flow, the player notes where its cover is and leaves at once.
++    invoke-static {p0}, Lcom/innioasis/ipp/Flow;->flipBack(Landroid/app/Activity;)Z
+ 
++    move-result v0
++
++    if-eqz v0, :ipp_flat
++
++    return-void
++
++    :ipp_flat
+     .line 613
+     invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->finish()V
+ 
+@@ -2133,6 +2302,8 @@
      :cond_0
      iput-object p1, p0, Lcom/innioasis/y1/base/BasePlayerActivity;->pathForCover:Ljava/lang/String;
  
