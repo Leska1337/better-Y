@@ -73,8 +73,6 @@ public final class Loop {
         return n < 0 ? 0 : n;
     }
 
-    // ------------------------------------------------------------------ mark-driven menu screens
-
     /**
      * First thing in a menu screen's clockwise/antiClockwise: at an end the cursor is put one PAST
      * it, and the screen's own step carries it onto the other end, so everything after the step
@@ -128,8 +126,6 @@ public final class Loop {
         }
         return null;
     }
-
-    // ------------------------------------------------------------------ ListView lists
 
     /** The Shuffle row a wrap has just given the cursor; see {@link #keep}. */
     private static ShufflePlaylistItemView kept;

@@ -76,7 +76,7 @@ public final class Tone {
 
     private static boolean started;
 
-    // ------------------------------------------------------------------ the state
+    // ---- the state --------------------------------------------------------------------------
 
     /**
      * From {@code BaseActivity.onCreate}; the work is done once. NOT from
@@ -148,7 +148,7 @@ public final class Tone {
         }
     }
 
-    // ------------------------------------------------------------------ playing
+    // ---- playing ----------------------------------------------------------------------------
 
     /** The keys the system clicked on: home, menu, back, the wheel, the side keys, play, centre. */
     private static boolean clicks(int k) {
@@ -339,7 +339,7 @@ public final class Tone {
         return dot > 0 ? id.substring(0, dot) : id;
     }
 
-    // ------------------------------------------------------------------ the Settings section
+    // ---- the Settings section ---------------------------------------------------------------
 
     private static boolean section(SettingActivity a) {
         return a != null && a.getIntent() != null && a.getIntent().getBooleanExtra(EXTRA, false);
@@ -519,7 +519,7 @@ public final class Tone {
         a.ippRefreshRight(a.getString(R.string.setting_clicker));
     }
 
-    // ------------------------------------------------------------------ a value opened by the wheel
+    // ---- a value opened by the wheel --------------------------------------------------------
 
     private static final long BLINK_MS = 400;
     private static final Handler H = new Handler(Looper.getMainLooper());
@@ -603,7 +603,7 @@ public final class Tone {
                 ? a.getString(R.string.ipp_tone_volume) : a.getString(R.string.ipp_tone_sound));
     }
 
-    // ------------------------------------------------------------------ the MTK profile
+    // ---- the MTK profile --------------------------------------------------------------------
 
     /** {@code Context.AUDIOPROFILE_SERVICE} is hidden, so only the service NAME needs reflection. */
     private static Object manager(Context c) {
