@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -255,10 +257,20 @@ public final class IppFlowActivity extends BaseActivity {
             return;
         }
         state = 5;
-        // the album's cover, not the track's own: it lands as the album's slide
+        // it lands as the album's slide, so a track's own cover turns into the album's on the way
         if (flipped >= 0 && flipped < items.size()) {
             Bitmap album = Flow.trip(null, ((Flow.Item) items.get(flipped)).rep);
-            if (album != null) trip.setImageBitmap(album);
+            Drawable was = trip.getDrawable();
+            // only when the two differ: half way through a cross-fade both are see-through, and
+            // a picture faded into itself visibly dims
+            if (album != null && was instanceof BitmapDrawable
+                    && !album.sameAs(((BitmapDrawable) was).getBitmap())) {
+                TransitionDrawable td = new TransitionDrawable(
+                        new Drawable[] { was, new BitmapDrawable(getResources(), album) });
+                td.setCrossFadeEnabled(true);
+                trip.setImageDrawable(td);
+                td.startTransition(MOVE_MS);
+            }
         }
         placeTrip();
         float[] p = startPose();
