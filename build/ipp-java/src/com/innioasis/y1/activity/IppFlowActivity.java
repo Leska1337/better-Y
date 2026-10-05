@@ -421,8 +421,6 @@ public final class IppFlowActivity extends BaseActivity {
         private final Paint bg = new Paint();
         private final Paint bar = new Paint();
         private final Paint line = new Paint();
-        private final Paint headBg = new Paint();
-        private final TextPaint headSub = new TextPaint(Paint.ANTI_ALIAS_FLAG);
         private String title = "";
         private String artist = "";
         List songs;
@@ -447,8 +445,6 @@ public final class IppFlowActivity extends BaseActivity {
             head.setFakeBoldText(true);
             sub.setTextSize(15);
             sub.setTypeface(Typeface.MONOSPACE);
-            headSub.setTextSize(15);
-            headSub.setTypeface(Typeface.MONOSPACE);
             text.setTextSize(16);
             text.setTypeface(Typeface.MONOSPACE);
             hl = new View(c);
@@ -468,11 +464,8 @@ public final class IppFlowActivity extends BaseActivity {
             } catch (Throwable t) {
                 // stock white and black
             }
-            int menu = Photos.menuBg();
-            bg.setColor(menu);
-            headBg.setColor(0xFF000000 | fg);
-            head.setColor(0xFF000000 | menu);
-            headSub.setColor((0xB0 << 24) | (menu & 0xFFFFFF));
+            bg.setColor(Photos.menuBg());
+            head.setColor(fg);
             sub.setColor((0xB0 << 24) | (fg & 0xFFFFFF));
             line.setColor((0x50 << 24) | (fg & 0xFFFFFF));
             int sc = Theme.menuSelectedColor();
@@ -590,12 +583,11 @@ public final class IppFlowActivity extends BaseActivity {
             c.drawRect(0, h - 1, w, h, line);
             c.drawRect(0, 0, 1, h, line);
             c.drawRect(w - 1, 0, w, h, line);
-            // the head in the menu's colours swapped: its text colour as the fill
-            c.drawRect(0, 0, w, HEAD - 2, headBg);
             c.drawText(TextUtils.ellipsize(title, head, w - 16, TextUtils.TruncateAt.END).toString(),
                     8, 22, head);
-            c.drawText(TextUtils.ellipsize(artist, headSub, w - 16, TextUtils.TruncateAt.END).toString(),
-                    8, 43, headSub);
+            c.drawText(TextUtils.ellipsize(artist, sub, w - 16, TextUtils.TruncateAt.END).toString(),
+                    8, 43, sub);
+            c.drawRect(6, HEAD - 3, w - 6, HEAD - 2, line);
             if (names == null) return;
             int rows = rows();
             for (int r = 0; r < rows && first + r < names.length; r++) {
