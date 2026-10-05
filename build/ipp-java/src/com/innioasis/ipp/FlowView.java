@@ -41,6 +41,10 @@ public final class FlowView extends View {
     private static final float VMIN = 2.5f;
     private static final float VMAX = 30f;
 
+    /** A slide fades in over this long once its cover is in hand, instead of popping up. */
+    public static final int FADE_MS = 200;
+    private boolean fading;
+
     private final float offX;
     private final float offY;
 
@@ -65,6 +69,8 @@ public final class FlowView extends View {
     private final TextPaint artist = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     /** The artist line is the name's colour, fainter — as at the head of the track list. */
     private static final int ARTIST_ALPHA = 0xB0;
+    /** The labels' shadow at full opacity; it does not follow the paint's alpha, so it is scaled by hand. */
+    private int shadow;
 
     public FlowView(Context c) {
         super(c);
@@ -74,7 +80,7 @@ public final class FlowView extends View {
         setLayerType(LAYER_TYPE_HARDWARE, null);
         erase.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
         int fg = textColor(c);
-        int shadow = lum(fg) > 128 ? 0xC0000000 : 0x80FFFFFF;
+        shadow = lum(fg) > 128 ? 0xC0000000 : 0x80FFFFFF;
         name.setColor(fg);
         name.setTextSize(20);
         name.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
@@ -97,6 +103,10 @@ public final class FlowView extends View {
         } catch (Throwable t) {
             return Color.WHITE;
         }
+    }
+
+    private static int faded(int c, int a) {
+        return ((c >>> 24) * a / 255) << 24 | (c & 0xFFFFFF);
     }
 
     private static int lum(int p) {
@@ -179,6 +189,7 @@ public final class FlowView extends View {
     @Override
     protected void onDraw(Canvas c) {
         boolean moving = advance();
+        fading = false;
         int n = count();
         if (n > 0 && w > 0) {
             int ci = Math.round(pos);
@@ -192,12 +203,14 @@ public final class FlowView extends View {
             int ta = (int) (255 * (1f - Math.min(1f, spread * 2f)) * labels);
             name.setAlpha(ta);
             artist.setAlpha(ta * ARTIST_ALPHA / 255);
+            name.setShadowLayer(2, 0, 1, faded(shadow, ta));
+            artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
             c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 40, name);
             c.drawText(TextUtils.ellipsize(it.artist, artist, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 14, artist);
         }
-        if (moving) postInvalidateOnAnimation();
+        if (moving || fading) postInvalidateOnAnimation();
     }
 
     private float sAngle, sCx, sCy;
@@ -226,6 +239,12 @@ public final class FlowView extends View {
         if (sAlpha <= 0) return;
         Bitmap b = loader.get(i);
         if (b == null) return;
+        int a = sAlpha;
+        long age = loader.age(i);
+        if (age < FADE_MS) {
+            a = (int) (a * (age < 0 ? 0 : age) / FADE_MS);
+            fading = true;
+        }
         float cos = (float) Math.cos(sAngle), sin = (float) Math.sin(sAngle);
         float half = Flow.S / 2f + Flow.PAD;
         float top = BASE - Flow.S - Flow.PAD;
@@ -247,10 +266,10 @@ public final class FlowView extends View {
         // the reflection is see-through, so what is behind it is cleared first and does not show
         Bitmap mk = Flow.mask();
         if (mk != null) {
-            erase.setAlpha(sAlpha);
+            erase.setAlpha(a);
             c.drawBitmap(mk, m, erase);
         }
-        bmpPaint.setAlpha(sAlpha);
+        bmpPaint.setAlpha(a);
         c.drawBitmap(b, m, bmpPaint);
     }
 

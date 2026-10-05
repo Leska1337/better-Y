@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -233,6 +234,8 @@ public final class Flow {
         private final Runnable onSlide;
         private final Handler ui;
         public final Hashtable slides = new Hashtable();
+        /** When each slide was put in, for the row to fade it in from there. */
+        private final Hashtable born = new Hashtable();
         private volatile int target;
         private volatile boolean stop;
         private Bitmap blank;
@@ -258,6 +261,12 @@ public final class Flow {
         public Bitmap get(int i) {
             Object o = slides.get(Integer.valueOf(i));
             return o == null ? null : (Bitmap) o;
+        }
+
+        /** Ms since slide {@code i} was put in. */
+        public long age(int i) {
+            Object o = born.get(Integer.valueOf(i));
+            return o == null ? Long.MAX_VALUE : SystemClock.uptimeMillis() - ((Long) o).longValue();
         }
 
         public void run() {
@@ -299,6 +308,7 @@ public final class Flow {
                 } else {
                     s = slide(c);
                 }
+                born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
                 slides.put(Integer.valueOf(want), s);
                 ui.post(onSlide);
             }
@@ -312,7 +322,10 @@ public final class Flow {
             Object[] ks = slides.keySet().toArray();
             for (int i = 0; i < ks.length; i++) {
                 int k = ((Integer) ks[i]).intValue();
-                if (Math.abs(k - t) > KEEP) slides.remove(ks[i]);
+                if (Math.abs(k - t) > KEEP) {
+                    slides.remove(ks[i]);
+                    born.remove(ks[i]);
+                }
             }
         }
     }

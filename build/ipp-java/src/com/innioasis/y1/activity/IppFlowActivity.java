@@ -50,6 +50,8 @@ public final class IppFlowActivity extends BaseActivity {
     /** The neighbours running off the screen, and the cover travelling to or from the player. */
     private static final int SPREAD_MS = 200;
     private static final int MOVE_MS = 260;
+    /** What the turn back takes beyond its two halves: the second waits for the first's end action. */
+    private static final int TURN_SLACK_MS = 40;
 
     private FlowView flow;
     private ImageView card;
@@ -107,6 +109,8 @@ public final class IppFlowActivity extends BaseActivity {
         t.setDaemon(true);
         t.start();
         flow.setItems(l, loader, start);
+        flow.setLabels(0);
+        labels(1, FlowView.FADE_MS);
     }
 
     @Override
@@ -195,7 +199,7 @@ public final class IppFlowActivity extends BaseActivity {
         shrunk();
         panel.setRotationY(90);
         card.animate().rotationY(-90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
-        labels(0);
+        labels(0, Flow.FLIP_MS);
     }
 
     /** The panel drawn over the cover's own square, which is where its turn starts and ends. */
@@ -215,7 +219,9 @@ public final class IppFlowActivity extends BaseActivity {
 
     private void flipBack() {
         state = 3;
-        labels(1);
+        // back in only as the cover finishes turning round: both halves of the turn, the frame the
+        // second half waits to start, and slow at first so it does not look done half way
+        labels(1, 2 * Flow.FLIP_MS + TURN_SLACK_MS).setInterpolator(new AccelerateInterpolator(1.5f));
         edgeOn(Flow.FLIP_MS, new Half(this, false));
     }
 
@@ -277,10 +283,11 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     /** The name and artist under the row fade out while the cover turns over, and back in. */
-    private void labels(float to) {
+    private ObjectAnimator labels(float to, int ms) {
         ObjectAnimator an = ObjectAnimator.ofFloat(flow, "labels", flow.getLabels(), to);
-        an.setDuration(Flow.FLIP_MS);
+        an.setDuration(ms);
         an.start();
+        return an;
     }
 
     void done(int s) {
