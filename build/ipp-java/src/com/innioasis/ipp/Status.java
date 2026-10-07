@@ -51,6 +51,7 @@ public final class Status {
      */
     public static void switching() {
         flight = true;
+        Ahead.headPlaying();
     }
 
     /** A song opened from a menu: the player is coming up over this list ({@link #STEP_ASIDE_MS}). */

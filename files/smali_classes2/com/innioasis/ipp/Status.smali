@@ -59,11 +59,11 @@
   .line 46
     const-wide/32 v0, -100000
     sput-wide v0, Lcom/innioasis/ipp/Status;->openedAt:J
-  .line 102
+  .line 103
     new-instance v0, Lcom/innioasis/ipp/Status$Bar;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Status$Bar;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Status;->BAR:Lcom/innioasis/ipp/Status$Bar;
-  .line 119
+  .line 120
     new-instance v0, Lcom/innioasis/ipp/Status$Hide;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Status$Hide;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Status;->HIDE:Lcom/innioasis/ipp/Status$Hide;
@@ -194,16 +194,16 @@
 
 .method public static apply(Ljava/lang/Object;)V
   .registers 2
-  .line 177
+  .line 178
     const/4 v0, 1
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Status;->step(Ljava/lang/Object;Z)V
-  .line 178
+  .line 179
     return-void
 .end method
 
 .method public static changed(Ljava/lang/Object;)V
   .registers 2
-  .line 185
+  .line 186
     sget-boolean v0, Lcom/innioasis/ipp/Status;->stepped:Z
     if-nez v0, :L1
     invoke-static { }, Lcom/innioasis/ipp/Status;->justOpened()Z
@@ -217,22 +217,22 @@
     const/4 v0, 1
   :L2
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Status;->step(Ljava/lang/Object;Z)V
-  .line 186
+  .line 187
     return-void
 .end method
 
 .method public static check(Landroid/view/View;)V
   .registers 2
-  .line 107
+  .line 108
     sget-boolean v0, Lcom/innioasis/ipp/Status;->posted:Z
     if-nez v0, :L2
     if-nez p0, :L0
     goto :L2
   :L0
-  .line 108
+  .line 109
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Status;->posted:Z
-  .line 109
+  .line 110
     sget-object v0, Lcom/innioasis/ipp/Status;->BAR:Lcom/innioasis/ipp/Status$Bar;
     invoke-virtual { p0, v0 }, Landroid/view/View;->post(Ljava/lang/Runnable;)Z
     move-result p0
@@ -240,79 +240,79 @@
     const/4 p0, 0
     sput-boolean p0, Lcom/innioasis/ipp/Status;->posted:Z
   :L1
-  .line 110
+  .line 111
     return-void
   :L2
-  .line 107
+  .line 108
     return-void
 .end method
 
 .method public static defer(II)Z
   .registers 6
-  .line 71
+  .line 72
     sget-boolean v0, Lcom/innioasis/ipp/Status;->firing:Z
     const/4 v1, 0
     if-eqz v0, :L0
     return v1
   :L0
-  .line 72
+  .line 73
     const/4 v0, 3
     if-eq p0, v0, :L1
     if-eqz p0, :L1
-  .line 73
+  .line 74
     sget-object p0, Lcom/innioasis/ipp/Status;->H:Landroid/os/Handler;
     sget-object p1, Lcom/innioasis/ipp/Status;->SETTLE:Lcom/innioasis/ipp/Status$Settle;
     invoke-virtual { p0, p1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 74
-    sput-boolean v1, Lcom/innioasis/ipp/Status;->pending:Z
   .line 75
-    sput-boolean v1, Lcom/innioasis/ipp/Status;->flight:Z
+    sput-boolean v1, Lcom/innioasis/ipp/Status;->pending:Z
   .line 76
+    sput-boolean v1, Lcom/innioasis/ipp/Status;->flight:Z
+  .line 77
     return v1
   :L1
-  .line 78
+  .line 79
     sget-boolean v0, Lcom/innioasis/ipp/Status;->flight:Z
     if-nez v0, :L2
     return v1
   :L2
-  .line 79
+  .line 80
     sget-object v0, Lcom/innioasis/ipp/Status;->H:Landroid/os/Handler;
     sget-object v1, Lcom/innioasis/ipp/Status;->SETTLE:Lcom/innioasis/ipp/Status$Settle;
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 80
-    sput p0, Lcom/innioasis/ipp/Status;->pendingState:I
   .line 81
-    sput p1, Lcom/innioasis/ipp/Status;->pendingFrom:I
+    sput p0, Lcom/innioasis/ipp/Status;->pendingState:I
   .line 82
+    sput p1, Lcom/innioasis/ipp/Status;->pendingFrom:I
+  .line 83
     const/4 p0, 1
     sput-boolean p0, Lcom/innioasis/ipp/Status;->pending:Z
-  .line 83
+  .line 84
     const-wide/16 v2, 1500
     invoke-virtual { v0, v1, v2, v3 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 84
+  .line 85
     return p0
 .end method
 
 .method private static icon(Landroid/app/Activity;I)V
   .registers 3
-  .line 219
+  .line 220
     const v0, 2131362295
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 220
+  .line 221
     if-eqz p0, :L0
     invoke-virtual { p0 }, Landroid/view/View;->getVisibility()I
     move-result v0
     if-eq v0, p1, :L0
     invoke-virtual { p0, p1 }, Landroid/view/View;->setVisibility(I)V
   :L0
-  .line 221
+  .line 222
     return-void
 .end method
 
 .method private static justOpened()Z
   .registers 5
-  .line 63
+  .line 64
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     sget-wide v2, Lcom/innioasis/ipp/Status;->openedAt:J
@@ -330,7 +330,7 @@
 
 .method private static markerVisible(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;)Z
   .registers 9
-  .line 228
+  .line 229
     const/4 v0, 0
     if-eqz p1, :L16
     invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
@@ -338,7 +338,7 @@
     if-eq v1, p1, :L0
     goto/16 :L16
   :L0
-  .line 229
+  .line 230
     invoke-virtual { p0 }, Landroid/widget/ListView;->getVisibility()I
     move-result v1
     if-nez v1, :L15
@@ -347,11 +347,11 @@
     if-nez v1, :L1
     goto :L15
   :L1
-  .line 230
+  .line 231
     sget-object v1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v1 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v1
-  .line 232
+  .line 233
     const/4 v2, 0
     if-nez v1, :L2
     move-object v1, v2
@@ -360,7 +360,7 @@
     invoke-virtual { v1 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingSong()Lcom/innioasis/y1/database/Song;
     move-result-object v1
   :L3
-  .line 233
+  .line 234
     if-nez v1, :L4
     move-object v1, v2
     goto :L5
@@ -368,36 +368,36 @@
     invoke-virtual { v1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v1
   :L5
-  .line 234
+  .line 235
     if-eqz v1, :L14
     invoke-static { v1, p1 }, Lcom/innioasis/ipp/Rows;->playMark(Ljava/lang/String;Ljava/lang/Object;)I
     move-result v3
     if-nez v3, :L6
     goto :L14
   :L6
-  .line 235
+  .line 236
     invoke-virtual { p0 }, Landroid/widget/ListView;->getFirstVisiblePosition()I
     move-result v3
-  .line 236
+  .line 237
     invoke-virtual { p0 }, Landroid/widget/ListView;->getLastVisiblePosition()I
     move-result p0
-  .line 237
+  .line 238
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
     move-result v4
-  .line 238
+  .line 239
     const/4 v5, 1
     if-lt p0, v4, :L7
     add-int/lit8 p0, v4, -1
   :L7
-  .line 239
+  .line 240
     if-gez v3, :L8
     const/4 v3, 0
   :L8
     if-gt v3, p0, :L13
-  .line 240
+  .line 241
     invoke-virtual { p1, v3 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getItem(I)Ljava/lang/Object;
     move-result-object v4
-  .line 241
+  .line 242
     instance-of v6, v4, Lcom/innioasis/y1/database/Song;
     if-eqz v6, :L9
     check-cast v4, Lcom/innioasis/y1/database/Song;
@@ -405,7 +405,7 @@
     move-result-object v4
     goto :L11
   :L9
-  .line 242
+  .line 243
     instance-of v6, v4, Ljava/io/File;
     if-eqz v6, :L10
     check-cast v4, Ljava/io/File;
@@ -415,39 +415,39 @@
   :L10
     move-object v4, v2
   :L11
-  .line 243
+  .line 244
     invoke-virtual { v1, v4 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v4
     if-eqz v4, :L12
     return v5
   :L12
-  .line 239
+  .line 240
     add-int/lit8 v3, v3, 1
     goto :L8
   :L13
-  .line 245
+  .line 246
     return v0
   :L14
-  .line 234
+  .line 235
     return v0
   :L15
-  .line 229
+  .line 230
     return v0
   :L16
-  .line 228
+  .line 229
     return v0
 .end method
 
 .method public static playerOpening()V
   .registers 2
-  .line 58
+  .line 59
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Status;->flight:Z
-  .line 59
+  .line 60
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     sput-wide v0, Lcom/innioasis/ipp/Status;->openedAt:J
-  .line 60
+  .line 61
     return-void
 .end method
 
@@ -455,22 +455,22 @@
   .catchall { :L0 .. :L5 } :L7
   .registers 4
   :L0
-  .line 190
+  .line 191
     instance-of v0, p0, Landroid/app/Activity;
     if-nez v0, :L1
     return-void
   :L1
-  .line 191
+  .line 192
     invoke-static { }, Lcom/innioasis/ipp/Follow;->list()Landroid/widget/ListView;
     move-result-object v0
-  .line 192
+  .line 193
     if-eqz v0, :L6
     invoke-virtual { v0 }, Landroid/widget/ListView;->getContext()Landroid/content/Context;
     move-result-object v1
     if-eq v1, p0, :L2
     goto :L6
   :L2
-  .line 193
+  .line 194
     invoke-static { }, Lcom/innioasis/ipp/Follow;->adapter()Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object v1
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Status;->markerVisible(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;)Z
@@ -478,52 +478,52 @@
     if-nez v0, :L3
     return-void
   :L3
-  .line 194
+  .line 195
     const/4 v0, 1
     if-eqz p1, :L4
-  .line 195
+  .line 196
     sget-object p1, Lcom/innioasis/ipp/Status;->H:Landroid/os/Handler;
     sget-object v1, Lcom/innioasis/ipp/Status;->HIDE:Lcom/innioasis/ipp/Status$Hide;
     invoke-virtual { p1, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 196
+  .line 197
     const/4 p1, 0
     sput-boolean p1, Lcom/innioasis/ipp/Status;->hiding:Z
-  .line 197
-    sput-boolean v0, Lcom/innioasis/ipp/Status;->stepped:Z
   .line 198
+    sput-boolean v0, Lcom/innioasis/ipp/Status;->stepped:Z
+  .line 199
     check-cast p0, Landroid/app/Activity;
     const/16 p1, 8
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Status;->icon(Landroid/app/Activity;I)V
     goto :L5
   :L4
-  .line 199
+  .line 200
     sget-boolean p0, Lcom/innioasis/ipp/Status;->hiding:Z
     if-nez p0, :L5
-  .line 200
-    sput-boolean v0, Lcom/innioasis/ipp/Status;->hiding:Z
   .line 201
+    sput-boolean v0, Lcom/innioasis/ipp/Status;->hiding:Z
+  .line 202
     sget-object p0, Lcom/innioasis/ipp/Status;->H:Landroid/os/Handler;
     sget-object p1, Lcom/innioasis/ipp/Status;->HIDE:Lcom/innioasis/ipp/Status$Hide;
     const-wide/16 v0, 700
     invoke-virtual { p0, p1, v0, v1 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
   :L5
-  .line 204
+  .line 205
     goto :L8
   :L6
-  .line 192
+  .line 193
     return-void
   :L7
-  .line 203
+  .line 204
     move-exception p0
   :L8
-  .line 205
+  .line 206
     return-void
 .end method
 
 .method private static stock()I
   .catchall { :L0 .. :L1 } :L5
   .registers 3
-  .line 210
+  .line 211
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/y1/utils/Static;->INSTANCE:Lcom/innioasis/y1/utils/Static;
@@ -531,7 +531,7 @@
     move-result-object v1
     invoke-virtual { v1 }, Landroidx/lifecycle/LiveData;->getValue()Ljava/lang/Object;
     move-result-object v1
-  .line 211
+  .line 212
     instance-of v2, v1, Ljava/lang/Integer;
     if-eqz v2, :L2
     check-cast v1, Ljava/lang/Integer;
@@ -542,15 +542,15 @@
   :L2
     const/4 v1, 0
   :L3
-  .line 212
+  .line 213
     if-nez v1, :L4
     const/16 v0, 8
   :L4
     return v0
   :L5
-  .line 213
-    move-exception v1
   .line 214
+    move-exception v1
+  .line 215
     return v0
 .end method
 
@@ -560,5 +560,7 @@
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Status;->flight:Z
   .line 54
+    invoke-static { }, Lcom/innioasis/ipp/Ahead;->headPlaying()V
+  .line 55
     return-void
 .end method

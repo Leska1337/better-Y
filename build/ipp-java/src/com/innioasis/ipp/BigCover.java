@@ -123,6 +123,7 @@ public final class BigCover {
             if (playlist == null || pos < 0 || pos >= playlist.size()) return;
             Object o = playlist.get(pos);
             if (!(o instanceof Song)) return;
+            Ahead.head(((Song) o).getPath());
             warm(((Song) o).getPath());
         } catch (Throwable t) {
         }
