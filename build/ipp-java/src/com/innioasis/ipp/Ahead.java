@@ -32,13 +32,15 @@ public final class Ahead {
     /** Lossless files run to tens of megabytes; the start needs the head of the file, not all of it. */
     private static final long CAP = 32L * 1024 * 1024;
 
+    /** What playback needs while the decoder's scan holds the card. */
+    private static final long HEAD = 3L * 1024 * 1024;
     private static final int HEAD_CHUNK = 64 * 1024;
 
     /**
-     * How long a head read runs. Stock waits 200 ms between {@code restartPlay} and handing the
-     * file to the player; a read still going then queues for the card with the player opening it.
+     * The longest a head read runs past {@code restartPlay}. It shares the card with the player
+     * opening the file, so every millisecond here can be one the track starts later.
      */
-    private static final long HEAD_MS = 180;
+    private static final long HEAD_MS = 350;
 
     /** For a song picked in a menu, until {@code restartPlay} arrives and sets the real limit. */
     private static final long PICKED_MS = 600;
@@ -171,11 +173,14 @@ public final class Ahead {
                 boolean down = false;
                 in = new FileInputStream(path);
                 byte[] buf = new byte[HEAD_CHUNK];
-                while (headTurn == mine && SystemClock.uptimeMillis() < headUntil) {
+                long total = 0;
+                while (headTurn == mine && total < HEAD && SystemClock.uptimeMillis() < headUntil) {
                     boolean prepared = ps.getPlayerIsPrepared();
                     if (!prepared) down = true;
                     else if (down) break;
-                    if (in.read(buf) < 0) break;
+                    int n = in.read(buf);
+                    if (n < 0) break;
+                    total += n;
                 }
             } catch (Throwable t) {
             } finally {
