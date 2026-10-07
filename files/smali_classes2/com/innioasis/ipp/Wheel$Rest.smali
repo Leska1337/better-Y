@@ -13,21 +13,21 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 340
+  .line 346
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 342
+  .line 348
     const/4 v0, 0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$402(Z)Z
-  .line 343
+    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$302(Z)Z
+  .line 349
     const/4 v0, 0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$502(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 344
-    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$300()V
-  .line 345
+    invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->access$402(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
+  .line 350
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->paintPanel()V
+  .line 351
     return-void
 .end method

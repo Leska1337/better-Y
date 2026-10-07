@@ -142,6 +142,11 @@ Détermine au bout de combien de secondes, après la dernière rotation de la mo
 Après la dernière ligne d'une liste, la molette revient à la première, et en remontant depuis la première elle passe à la dernière, comme dans le menu principal. S'applique à toutes les listes, menus et galeries.
 Dans une liste de morceaux, la ligne Shuffle fait aussi partie de la boucle.
 
+[menu_style] Style de menu
+* Par défaut
+* Simple
+Simple masque l'aperçu à côté de la liste et étend les lignes sur toute la largeur de l'écran : dans le menu principal, dans les réglages et dans leurs écrans.
+
 [fixed_menu_pad] Marges de menu corrigées
 Corrige les marges du menu principal et des réglages.
 
@@ -172,6 +177,7 @@ Couleur du thème est la couleur du texte des listes du thème.
 * Écouteurs
 * Bluetooth
 * Batterie
+* Pourcentage de batterie
 Choisit les icônes affichées dans la barre d'état.
 
 [[metadata]] Métadonnées

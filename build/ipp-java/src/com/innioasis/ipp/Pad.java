@@ -13,6 +13,7 @@ import com.innioasis.y1.R;
  * The main menu's and Settings' list geometry. "fixed_menu_pad" ON (default): edge to edge, no
  * left margin, down to the bottom. OFF: stock's inset, which some themes' row artwork expects.
  * Inverting the row's wording without renaming the key flips the geometry on every device.
+ * With {@link MenuStyle#simple} the list runs to the right edge as well.
  * One method for both screens, told apart by the list's id — one reference in the full classes.dex.
  */
 public final class Pad {
@@ -59,6 +60,7 @@ public final class Pad {
             int wPx = px(w, d);
             int hPx = px(h, d);
             int mPx = stock ? px(MARGIN, d) : 0;
+            if (MenuStyle.simple(c)) wPx = c.getResources().getDisplayMetrics().widthPixels - mPx;
             if (lp.width == wPx && lp.height == hPx && lp.leftMargin == mPx) return;
             lp.width = wPx;
             lp.height = hPx;

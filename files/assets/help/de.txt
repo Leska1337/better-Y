@@ -142,6 +142,11 @@ Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum 
 Nach der letzten Zeile einer Liste kehrt das Rad zur ersten zurück, und von der ersten aufwärts geht es zur letzten – wie im Hauptmenü. Gilt für alle Listen, Menüs und Galerien.
 In einer Titelliste gehört die Zeile Shuffle mit zum Kreis.
 
+[menu_style] Menüstil
+* Standard
+* Einfach
+Einfach blendet die Vorschau neben der Liste aus und zieht die Zeilen über die ganze Bildschirmbreite — im Hauptmenü, in den Einstellungen und in deren Bildschirmen.
+
 [fixed_menu_pad] Korrigierte Menüränder
 Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
 
@@ -172,6 +177,7 @@ Themenfarbe ist die Farbe des Listentexts des Themes.
 * Kopfhörer
 * Bluetooth
 * Akku
+* Akkuprozent
 Legt fest, welche Symbole die Statusleiste zeigt.
 
 [[metadata]] Metadaten

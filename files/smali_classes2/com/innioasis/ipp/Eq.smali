@@ -768,7 +768,7 @@
 .end method
 
 .method static paint()V
-  .catchall { :L2 .. :L6 } :L8
+  .catchall { :L2 .. :L7 } :L9
   .registers 5
   .line 335
     sget-object v0, Lcom/innioasis/ipp/Eq;->host:Ljava/lang/ref/WeakReference;
@@ -790,61 +790,67 @@
   .line 339
     check-cast v0, Lcom/innioasis/y1/activity/EqActivity;
   .line 340
-    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-    move-result-object v1
-  .line 341
-    instance-of v2, v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;
-    if-nez v2, :L3
+    invoke-static { v0 }, Lcom/innioasis/ipp/MenuStyle;->simple(Landroid/content/Context;)Z
+    move-result v1
+    if-eqz v1, :L3
     return-void
   :L3
+  .line 341
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+    move-result-object v1
   .line 342
+    instance-of v2, v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;
+    if-nez v2, :L4
+    return-void
+  :L4
+  .line 343
     check-cast v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;
-  .line 344
+  .line 345
     invoke-static { }, Lcom/innioasis/y1/activity/EqActivity;->getEqList()Ljava/util/List;
     move-result-object v2
-  .line 345
+  .line 346
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity;->getMark()I
     move-result v0
-  .line 346
-    if-eqz v2, :L7
-    if-ltz v0, :L7
+  .line 347
+    if-eqz v2, :L8
+    if-ltz v0, :L8
     invoke-interface { v2 }, Ljava/util/List;->size()I
     move-result v3
-    if-lt v0, v3, :L4
-    goto :L7
-  :L4
-  .line 347
+    if-lt v0, v3, :L5
+    goto :L8
+  :L5
+  .line 348
     invoke-interface { v2, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
-  .line 348
-    instance-of v2, v0, Lcom/innioasis/y1/activity/EqActivity$EqData;
-    if-nez v2, :L5
-    return-void
-  :L5
   .line 349
+    instance-of v2, v0, Lcom/innioasis/y1/activity/EqActivity$EqData;
+    if-nez v2, :L6
+    return-void
+  :L6
+  .line 350
     check-cast v0, Lcom/innioasis/y1/activity/EqActivity$EqData;
-  .line 351
+  .line 352
     sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     iget-object v3, v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;->image:Landroid/widget/ImageView;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity$EqData;->getIcon()I
     move-result v4
     invoke-virtual { v2, v3, v4 }, Lcom/innioasis/y1/theme/ThemeManager;->commonSetIcon(Landroid/widget/ImageView;I)V
-  .line 352
+  .line 353
     iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;->text:Landroid/widget/TextView;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity$EqData;->getStr()Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v1, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  :L6
-  .line 354
-    goto :L9
   :L7
-  .line 346
-    return-void
-  :L8
-  .line 353
-    move-exception v0
-  :L9
   .line 355
+    goto :L10
+  :L8
+  .line 347
+    return-void
+  :L9
+  .line 354
+    move-exception v0
+  :L10
+  .line 356
     return-void
 .end method
 
@@ -915,7 +921,7 @@
 .method public static stretch(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 363
+  .line 364
     if-eqz p0, :L3
   :L0
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
@@ -926,14 +932,14 @@
   :L1
     goto :L3
   :L2
-  .line 364
+  .line 365
     move-exception p0
     goto :L4
   :L3
-  .line 365
+  .line 366
     nop
   :L4
-  .line 366
+  .line 367
     return-void
 .end method
 

@@ -337,6 +337,7 @@ public final class Eq {
         if (!(o instanceof EqActivity)) return;
         try {
             EqActivity a = (EqActivity) o;
+            if (MenuStyle.simple(a)) return;
             Object b = a.getVb();
             if (!(b instanceof ActivityEqBinding)) return;
             ActivityEqBinding vb = (ActivityEqBinding) b;

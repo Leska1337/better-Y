@@ -8,11 +8,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.innioasis.y1.R;
+import com.innioasis.y1.activity.SettingActivity;
+import com.innioasis.y1.base.BaseActivity;
+import com.innioasis.y1.utils.SharedPreferencesUtils;
+
+import java.util.List;
 
 /**
  * The status bar: "bar_text" colours its title and the battery percentage (0 LIGHT, 1 DARK,
  * 2 THEME — the list text's colour), "bar_icons" is a mask of the icons it shows. The icons
- * themselves stay the theme's: nothing here tints them.
+ * themselves stay the theme's: nothing here tints them. The battery percentage is ticked in the
+ * same picker but stays stock's own "batteryPercentage", so stock shows and hides it itself.
  *
  * A hidden icon is folded to zero width, never GONE: stock sets the visibility of each from
  * several places, and a fold survives all of them.
@@ -30,10 +36,45 @@ public final class TopBar {
     public static final int BLUETOOTH = 4;
     public static final int BATTERY = 8;
 
+    /** The picker's bit for stock's setting; never stored in "bar_icons". */
+    public static final int PERCENT = 16;
+
     public static final int ALL = PLAY | HEADSET | BLUETOOTH | BATTERY;
 
     /** In the order the picker lists them. */
-    public static final int[] ICONS = new int[]{PLAY, HEADSET, BLUETOOTH, BATTERY};
+    public static final int[] ICONS = new int[]{PLAY, HEADSET, BLUETOOTH, BATTERY, PERCENT};
+
+    /** What the picker opens with. */
+    public static int mask(Context c) {
+        int m = Prefs.val(c, KEY_ICONS) & ALL;
+        try {
+            if (SharedPreferencesUtils.INSTANCE.getBatteryPercentage()) m |= PERCENT;
+        } catch (Throwable t) {
+        }
+        return m;
+    }
+
+    /** What the picker was closed with. */
+    public static void save(BaseActivity a, int mask) {
+        Prefs.setInt(a, KEY_ICONS, mask & ALL);
+        try {
+            SharedPreferencesUtils.INSTANCE.setBatteryPercentage((mask & PERCENT) != 0);
+            a.updateBatteryPercentageBase();
+        } catch (Throwable t) {
+        }
+        apply(a);
+    }
+
+    /** End of {@code SettingActivity.setRecyclerData}: the stock row the picker stands in for. */
+    public static void settingsRows(SettingActivity a, List list) {
+        try {
+            String name = a.getString(R.string.setting_battery_percentage);
+            for (int i = list.size() - 1; i >= 0; i--) {
+                if (name.equals(((SettingActivity.SettingItem) list.get(i)).getTitle())) list.remove(i);
+            }
+        } catch (Throwable t) {
+        }
+    }
 
     private static final int DARK = 1;
     private static final int THEME = 2;

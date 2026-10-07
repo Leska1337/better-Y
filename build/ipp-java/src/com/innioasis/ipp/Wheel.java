@@ -270,6 +270,11 @@ public final class Wheel {
      * requests.
      */
     public static boolean panelUpdate(SettingActivity host, String title) {
+        if (MenuStyle.simple(host)) {          // no panel: kept for the day it is shown again
+            panelHost = new WeakReference(host);
+            panelTitle = title;
+            return true;
+        }
         if (!busy || painting) {               // not a wheel move, or our own paint
             painted = title;
             stateShift(host, title);
@@ -310,10 +315,11 @@ public final class Wheel {
     }
 
     /** Paints the Settings panel or the equaliser's preview, outside any layout. */
-    private static void paintPanel() {
+    static void paintPanel() {
         panelAt = SystemClock.uptimeMillis();
         Eq.paint();
         Object h = panelHost == null ? null : panelHost.get();
+        if (h instanceof SettingActivity && MenuStyle.simple((SettingActivity) h)) return;
         String t = panelTitle;
         panelHost = null;
         panelTitle = null;

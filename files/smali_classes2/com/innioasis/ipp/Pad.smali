@@ -22,215 +22,215 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 20
+  .line 21
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public static copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
   .registers 4
-  .line 81
+  .line 83
     new-instance v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->width:I
     iget v2, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->height:I
     invoke-direct { v0, v1, v2 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;-><init>(II)V
-  .line 82
+  .line 84
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftMargin:I
-  .line 83
+  .line 85
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topMargin:I
-  .line 84
+  .line 86
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightMargin:I
-  .line 85
+  .line 87
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomMargin:I
-  .line 86
+  .line 88
     invoke-virtual { p0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->getMarginStart()I
     move-result v1
     invoke-virtual { v0, v1 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->setMarginStart(I)V
-  .line 87
+  .line 89
     invoke-virtual { p0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->getMarginEnd()I
     move-result v1
     invoke-virtual { v0, v1 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->setMarginEnd(I)V
-  .line 88
+  .line 90
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guideBegin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guideBegin:I
-  .line 89
+  .line 91
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guideEnd:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guideEnd:I
-  .line 90
+  .line 92
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guidePercent:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guidePercent:F
-  .line 91
+  .line 93
     iget-boolean v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guidelineUseRtl:Z
     iput-boolean v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->guidelineUseRtl:Z
-  .line 92
+  .line 94
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToLeft:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToLeft:I
-  .line 93
+  .line 95
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToRight:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->leftToRight:I
-  .line 94
+  .line 96
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToLeft:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToLeft:I
-  .line 95
+  .line 97
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToRight:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->rightToRight:I
-  .line 96
+  .line 98
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToTop:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToTop:I
-  .line 97
+  .line 99
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToBottom:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->topToBottom:I
-  .line 98
+  .line 100
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToTop:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToTop:I
-  .line 99
+  .line 101
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToBottom:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->bottomToBottom:I
-  .line 100
+  .line 102
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToBaseline:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToBaseline:I
-  .line 101
+  .line 103
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToTop:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToTop:I
-  .line 102
+  .line 104
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToBottom:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineToBottom:I
-  .line 103
+  .line 105
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleConstraint:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleConstraint:I
-  .line 104
+  .line 106
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleRadius:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleRadius:I
-  .line 105
+  .line 107
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleAngle:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->circleAngle:F
-  .line 106
+  .line 108
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToEnd:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToEnd:I
-  .line 107
+  .line 109
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToStart:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->startToStart:I
-  .line 108
+  .line 110
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToStart:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToStart:I
-  .line 109
+  .line 111
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToEnd:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->endToEnd:I
-  .line 110
+  .line 112
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneLeftMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneLeftMargin:I
-  .line 111
+  .line 113
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneTopMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneTopMargin:I
-  .line 112
+  .line 114
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneRightMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneRightMargin:I
-  .line 113
+  .line 115
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneBottomMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneBottomMargin:I
-  .line 114
+  .line 116
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneStartMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneStartMargin:I
-  .line 115
+  .line 117
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneEndMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneEndMargin:I
-  .line 116
+  .line 118
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneBaselineMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->goneBaselineMargin:I
-  .line 117
+  .line 119
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineMargin:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->baselineMargin:I
-  .line 118
+  .line 120
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalBias:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalBias:F
-  .line 119
+  .line 121
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalBias:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalBias:F
-  .line 120
+  .line 122
     iget-object v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->dimensionRatio:Ljava/lang/String;
     iput-object v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->dimensionRatio:Ljava/lang/String;
-  .line 121
+  .line 123
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalWeight:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalWeight:F
-  .line 122
+  .line 124
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalWeight:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalWeight:F
-  .line 123
+  .line 125
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalChainStyle:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->horizontalChainStyle:I
-  .line 124
+  .line 126
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalChainStyle:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->verticalChainStyle:I
-  .line 125
+  .line 127
     iget-boolean v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constrainedWidth:Z
     iput-boolean v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constrainedWidth:Z
-  .line 126
+  .line 128
     iget-boolean v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constrainedHeight:Z
     iput-boolean v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constrainedHeight:Z
-  .line 127
+  .line 129
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintDefaultWidth:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintDefaultWidth:I
-  .line 128
+  .line 130
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintDefaultHeight:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintDefaultHeight:I
-  .line 129
+  .line 131
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMinWidth:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMinWidth:I
-  .line 130
+  .line 132
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMaxWidth:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMaxWidth:I
-  .line 131
+  .line 133
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMinHeight:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMinHeight:I
-  .line 132
+  .line 134
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMaxHeight:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintMaxHeight:I
-  .line 133
+  .line 135
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintPercentWidth:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintPercentWidth:F
-  .line 134
+  .line 136
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintPercentHeight:F
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->matchConstraintPercentHeight:F
-  .line 135
+  .line 137
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->editorAbsoluteX:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->editorAbsoluteX:I
-  .line 136
+  .line 138
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->editorAbsoluteY:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->editorAbsoluteY:I
-  .line 137
+  .line 139
     iget v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->orientation:I
     iput v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->orientation:I
-  .line 138
+  .line 140
     iget-object v1, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constraintTag:Ljava/lang/String;
     iput-object v1, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->constraintTag:Ljava/lang/String;
-  .line 139
+  .line 141
     iget p0, p0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->wrapBehaviorInParent:I
     iput p0, v0, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->wrapBehaviorInParent:I
-  .line 140
+  .line 142
     invoke-virtual { v0 }, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;->validate()V
-  .line 141
+  .line 143
     return-object v0
 .end method
 
 .method public static list(Landroidx/recyclerview/widget/RecyclerView;)V
-  .catchall { :L0 .. :L13 } :L15
+  .catchall { :L0 .. :L14 } :L16
   .registers 8
-  .line 37
+  .line 38
     if-nez p0, :L0
     return-void
   :L0
-  .line 38
+  .line 39
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getContext()Landroid/content/Context;
     move-result-object v0
-  .line 39
+  .line 40
     if-nez v0, :L1
     return-void
   :L1
-  .line 40
+  .line 41
     const-string v1, "fixed_menu_pad"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v1
@@ -241,101 +241,112 @@
   :L2
     const/4 v1, 0
   :L3
-  .line 42
+  .line 43
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getId()I
     move-result v3
-  .line 45
+  .line 46
     const v4, 2131362308
     const/16 v5, 315
     if-ne v3, v4, :L6
-  .line 46
+  .line 47
     if-eqz v1, :L4
     const/16 v3, 204
     goto :L5
   :L4
     const/16 v3, 213
   :L5
-  .line 47
+  .line 48
     if-eqz v1, :L9
     const/16 v5, 307
     goto :L9
   :L6
-  .line 48
-    const v4, 2131362310
-    if-ne v3, v4, :L14
   .line 49
+    const v4, 2131362310
+    if-ne v3, v4, :L15
+  .line 50
     if-eqz v1, :L7
     const/16 v3, 218
     goto :L8
   :L7
     const/16 v3, 227
   :L8
-  .line 50
+  .line 51
     if-eqz v1, :L9
     const/16 v5, 305
   :L9
-  .line 55
+  .line 56
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v4
-  .line 56
+  .line 57
     instance-of v6, v4, Landroid/view/ViewGroup$MarginLayoutParams;
     if-nez v6, :L10
     return-void
   :L10
-  .line 57
-    check-cast v4, Landroid/view/ViewGroup$MarginLayoutParams;
   .line 58
+    check-cast v4, Landroid/view/ViewGroup$MarginLayoutParams;
+  .line 59
+    invoke-virtual { v0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v6
+    invoke-virtual { v6 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
+    move-result-object v6
+    iget v6, v6, Landroid/util/DisplayMetrics;->density:F
+  .line 60
+    invoke-static { v3, v6 }, Lcom/innioasis/ipp/Pad;->px(IF)I
+    move-result v3
+  .line 61
+    invoke-static { v5, v6 }, Lcom/innioasis/ipp/Pad;->px(IF)I
+    move-result v5
+  .line 62
+    if-eqz v1, :L11
+    const/16 v1, 9
+    invoke-static { v1, v6 }, Lcom/innioasis/ipp/Pad;->px(IF)I
+    move-result v2
+  :L11
+  .line 63
+    invoke-static { v0 }, Lcom/innioasis/ipp/MenuStyle;->simple(Landroid/content/Context;)Z
+    move-result v1
+    if-eqz v1, :L12
     invoke-virtual { v0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v0
-    iget v0, v0, Landroid/util/DisplayMetrics;->density:F
-  .line 59
-    invoke-static { v3, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
-    move-result v3
-  .line 60
-    invoke-static { v5, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
-    move-result v5
-  .line 61
-    if-eqz v1, :L11
-    const/16 v1, 9
-    invoke-static { v1, v0 }, Lcom/innioasis/ipp/Pad;->px(IF)I
-    move-result v2
-  :L11
-  .line 62
-    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
-    if-ne v0, v3, :L12
-    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
-    if-ne v0, v5, :L12
-    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
-    if-ne v0, v2, :L12
-    return-void
+    iget v0, v0, Landroid/util/DisplayMetrics;->widthPixels:I
+    sub-int v3, v0, v2
   :L12
-  .line 63
-    iput v3, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
   .line 64
-    iput v5, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
-  .line 65
-    iput v2, v4, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
-  .line 66
-    invoke-virtual { p0, v4 }, Landroidx/recyclerview/widget/RecyclerView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  :L13
-  .line 68
-    goto :L16
-  :L14
-  .line 52
+    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
+    if-ne v0, v3, :L13
+    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
+    if-ne v0, v5, :L13
+    iget v0, v4, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
+    if-ne v0, v2, :L13
     return-void
-  :L15
+  :L13
+  .line 65
+    iput v3, v4, Landroid/view/ViewGroup$MarginLayoutParams;->width:I
+  .line 66
+    iput v5, v4, Landroid/view/ViewGroup$MarginLayoutParams;->height:I
   .line 67
-    move-exception p0
+    iput v2, v4, Landroid/view/ViewGroup$MarginLayoutParams;->leftMargin:I
+  .line 68
+    invoke-virtual { p0, v4 }, Landroidx/recyclerview/widget/RecyclerView;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
+  :L14
+  .line 70
+    goto :L17
+  :L15
+  .line 53
+    return-void
   :L16
   .line 69
+    move-exception p0
+  :L17
+  .line 71
     return-void
 .end method
 
 .method private static px(IF)I
   .registers 2
-  .line 72
+  .line 74
     int-to-float p0, p0
     mul-float p0, p0, p1
     const/high16 p1, 0x3F000000

@@ -145,6 +145,11 @@ Determines how many seconds after the last scroll of the wheel the selection ret
 Past the last row of a list the wheel comes back to the first one, and up from the first it goes round to the last — as in the main menu. Works in every list, menu and gallery.
 In a song list the Shuffle row is part of the circle.
 
+[menu_style] Menu style
+* Default
+* Simple
+Simple hides the preview beside the list and stretches the rows across the whole screen — in the main menu, in Settings and in the screens inside it.
+
 [fixed_menu_pad] Fixed menu margins
 Fixes margins of the main menu and settings.
 
@@ -175,6 +180,7 @@ Theme color is the colour of the theme's list text.
 * Headphones
 * Bluetooth
 * Battery
+* Battery percentage
 Chooses which icons the status bar shows.
 
 [[metadata]] Metadata

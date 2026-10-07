@@ -34,6 +34,7 @@ import com.innioasis.ipp.HelpDialog;
 import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Loop;
+import com.innioasis.ipp.MenuStyle;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Pick;
@@ -136,6 +137,7 @@ public final class IppActivity extends BaseActivity {
     private TextView[] labels;          // per item (null for headers)
     private TextView[] values;          // per item (null for headers)
     private TextView[] marks;           // the sub-item arrow, where a row has one
+    private android.widget.ImageView[] arrows;   // the theme's arrow, on a row that opens something
     private int[] groupOf;              // per item: index of the header or SUB row it stands under
     private int sel;                    // index into items of the focused selectable+visible row
     private ScrollView scroller;
@@ -230,6 +232,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
+        l.add(new Item(CHOICE, MenuStyle.KEY, 2, null, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
         l.add(new Item(SUB, "status_bar", 0, null, null));
@@ -316,6 +319,7 @@ public final class IppActivity extends BaseActivity {
         labels = new TextView[n];
         values = new TextView[n];
         marks = new TextView[n];
+        arrows = new android.widget.ImageView[n];
         groupOf = new int[n];
 
         int heads = 0;
@@ -344,6 +348,10 @@ public final class IppActivity extends BaseActivity {
                 catRows[c] = v;
                 catLabels[c] = tv;
                 catArrows[c] = (android.widget.ImageView) v.findViewById(R.id.iv_arrow);
+                // where a stock Settings row has it, not where the narrower main menu does
+                ViewGroup.MarginLayoutParams cp = (ViewGroup.MarginLayoutParams) catArrows[c].getLayoutParams();
+                cp.rightMargin = ARROW_END;
+                cp.setMarginEnd(ARROW_END);
                 catList.addView(v);
                 c++;
             } else {
@@ -388,6 +396,17 @@ public final class IppActivity extends BaseActivity {
                 value.setGravity(Gravity.CENTER_VERTICAL);
                 value.setPadding(6, 0, 6, 0);
                 row.addView(value, -2, -2);
+
+                // A row with no value opens something: the arrow of a stock Settings row.
+                if (it.type == SUB || it.type == ACTION) {
+                    android.widget.ImageView arrow = new android.widget.ImageView(this);
+                    arrow.setAdjustViewBounds(true);
+                    arrow.setVisibility(View.INVISIBLE);
+                    LinearLayout.LayoutParams ap = new LinearLayout.LayoutParams(-2, -1);
+                    ap.rightMargin = ARROW_END - row.getPaddingRight();
+                    row.addView(arrow, ap);
+                    arrows[i] = arrow;
+                }
 
                 rowViews[i] = row;
                 labels[i] = label;
@@ -461,6 +480,10 @@ public final class IppActivity extends BaseActivity {
     private static final float TEXT_SP = 22.0f;
     private static final float TEXT_MIN_SP = 14.0f;
 
+    /** The arrow's distance from the screen edge, and the room kept for it beside a label. */
+    private static final int ARROW_END = 5;
+    private static final int ARROW_ROOM = 24;
+
     /** Rows on one screen inside a group. */
     private static final int ROWS = 5;
 
@@ -508,6 +531,7 @@ public final class IppActivity extends BaseActivity {
             if (marks[i] != null) {
                 room -= (int) Math.ceil(marks[i].getPaint().measureText("↴")) + 3;
             }
+            if (arrows[i] != null) room -= ARROW_ROOM;
             if (room <= 0) return false;
             android.text.StaticLayout l = new android.text.StaticLayout(label(it), p, room,
                     android.text.Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
@@ -561,7 +585,7 @@ public final class IppActivity extends BaseActivity {
     /** "Icons": which of the status bar's icons are shown, named by the row's own values. */
     private void pickIcons(Item it) {
         new PickDialog(getActivity(), label(it), getString(R.string.ipp_backup_save),
-                TopBar.ICONS, valuesOf(it), Prefs.val(this, TopBar.KEY_ICONS),
+                TopBar.ICONS, valuesOf(it), TopBar.mask(this),
                 new IconPick(this)).show();
     }
 
@@ -572,8 +596,7 @@ public final class IppActivity extends BaseActivity {
 
         @Override
         public void go(int mask) {
-            Prefs.setInt(a, TopBar.KEY_ICONS, mask);
-            TopBar.apply(a);
+            TopBar.save(a, mask);
         }
     }
 
@@ -659,6 +682,10 @@ public final class IppActivity extends BaseActivity {
         ThemeManager.INSTANCE.itemSetTextColor(labels[i], fg, on);
         ThemeManager.INSTANCE.itemSetTextColor(values[i], fg, on);
         if (marks[i] != null) ThemeManager.INSTANCE.itemSetTextColor(marks[i], fg, on);
+        if (arrows[i] != null) {
+            if (on) ThemeManager.INSTANCE.itemSetRightArrow(arrows[i], R.mipmap.right_arrow);
+            arrows[i].setVisibility(on ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 
     /** One scroll per burst of clicks, not one per click. */
