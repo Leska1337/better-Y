@@ -3,6 +3,8 @@ package com.innioasis.ipp;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
+import android.os.HandlerThread;
 
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
@@ -131,13 +133,16 @@ public final class BigCover {
 
     /**
      * The same head start on every track change ({@code ListWatch}) — the side buttons never go
-     * through {@link #prefetch}. {@code getPlayingSong}, so audiobooks are covered too.
+     * through {@link #prefetch}. {@code getPlayingSong}, so audiobooks are covered too. The track
+     * after it as well: the next press then finds its cover in memory instead of decoding the
+     * JPEG on the main thread.
      */
     public static void prefetchPlaying() {
         try {
             PlayerService s = Y1Application.Companion.getPlayerService();
             Song song = s == null ? null : s.getPlayingSong();
             warm(song == null ? null : song.getPath());
+            warm(Queue.nextPath());
         } catch (Throwable t) {
         }
     }
@@ -145,8 +150,19 @@ public final class BigCover {
     /** Checks {@code mem}, not {@link #peek}: peek decodes, and the callers are on the main thread. */
     private static void warm(String path) {
         if (path == null || mem.get(path) != null || miss.containsKey(path)) return;
-        new Thread(new Warm(path)).start();
+        if (worker == null) {
+            HandlerThread t = new HandlerThread("ipp-cover");
+            t.start();
+            worker = new Handler(t.getLooper());
+        }
+        worker.post(new Warm(path));
     }
+
+    /**
+     * One thread for every read ahead: starting a thread per track costs the main thread more than
+     * the read saves. Ordinary priority — at a background one it stalls with locks held.
+     */
+    private static Handler worker;
 
     static final class Warm implements Runnable {
         private final String path;

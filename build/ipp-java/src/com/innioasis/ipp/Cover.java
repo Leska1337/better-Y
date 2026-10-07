@@ -82,17 +82,31 @@ public final class Cover {
     }
 
     private static WeakReference reflIn;
+    private static int reflGen;
     private static Bitmap reflOut;
+
+    /** The composite that left the screen at the last change; the next cover is drawn into it. */
+    private static Bitmap spare;
+
+    /** A composite someone outside the player keeps: never handed out for redrawing. */
+    private static Bitmap held;
+
+    /** Keep this {@link #reflect} result out of the buffers that get redrawn. */
+    public static synchronized void hold(Bitmap b) {
+        held = b;
+        if (spare == b) spare = null;
+    }
 
     /**
      * Stock's {@code DoReflection}, memoised and with a smaller mirror — stock rebuilt it on every
      * {@code setImageBitmap}, before the first frame. Null = not handled, stock's path runs.
      */
-    public static Bitmap reflect(Bitmap src) {
+    public static synchronized Bitmap reflect(Bitmap src) {
         try {
             if (src == null) return null;
             flatCover();
-            if (reflIn != null && reflOut != null && reflIn.get() == src && !reflOut.isRecycled()) {
+            if (reflIn != null && reflOut != null && reflIn.get() == src
+                    && reflGen == src.getGenerationId() && !reflOut.isRecycled()) {
                 return reflOut;
             }
             int w = src.getWidth();
@@ -101,7 +115,16 @@ public final class Cover {
             int half = h / 2;
             if (half <= 0) return null;
 
-            Bitmap out = Bitmap.createBitmap(w, h + half, Bitmap.Config.ARGB_8888);
+            // Redrawn in place where the size allows: a fresh composite per track is what fills
+            // the heap during a run of track changes.
+            Bitmap out = spare;
+            spare = null;
+            if (out != null && !out.isRecycled() && out.isMutable()
+                    && out.getWidth() == w && out.getHeight() == h + half) {
+                out.eraseColor(0);
+            } else {
+                out = Bitmap.createBitmap(w, h + half, Bitmap.Config.ARGB_8888);
+            }
             Canvas c = new Canvas(out);
             c.drawBitmap(src, 0.0f, 0.0f, null);
 
@@ -121,7 +144,9 @@ public final class Cover {
             g.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
             c.drawRect(0.0f, h, w, h + half, g);
 
+            if (reflOut != held) spare = reflOut;
             reflIn = new WeakReference(src);
+            reflGen = src.getGenerationId();
             reflOut = out;
             return out;
         } catch (Throwable t) {
@@ -360,9 +385,15 @@ public final class Cover {
     }
 
     /**
+     * The framed cover of the track on screen. Never shown itself — only {@link #reflect}'s
+     * composite is — so every cover is drawn into the same one; its generation id tells them apart.
+     */
+    private static Bitmap edge;
+
+    /**
      * A transparent 2px frame, so bilinear filtering fades the tilted cover's slanted edges instead
      * of stair-stepping them. Not on the bottom: a seam would open above the reflection. At display
-     * time only — the JPEG cache has no alpha.
+     * time only — the JPEG cache has no alpha. Drawn into one buffer, {@link #edge}.
      */
     private static Bitmap softEdge(Bitmap src) {
         if (src == null) {
@@ -372,7 +403,14 @@ public final class Cover {
             int w = src.getWidth();
             int hgt = src.getHeight();
             if (w > 0 && hgt > 0) {
-                Bitmap out = Bitmap.createBitmap(w + 4, hgt + 2, Bitmap.Config.ARGB_8888);
+                Bitmap out = edge;
+                if (out != null && !out.isRecycled()
+                        && out.getWidth() == w + 4 && out.getHeight() == hgt + 2) {
+                    out.eraseColor(0);
+                } else {
+                    out = Bitmap.createBitmap(w + 4, hgt + 2, Bitmap.Config.ARGB_8888);
+                    edge = out;
+                }
                 Canvas canvas = new Canvas(out);
                 Paint paint = new Paint();
                 paint.setFilterBitmap(true);
@@ -386,7 +424,7 @@ public final class Cover {
     }
 
     /** The player's cover: a centred 1:1 crop capped at 320px, plus {@link #softEdge}'s frame. */
-    public static Bitmap fitCover(Bitmap src) {
+    public static synchronized Bitmap fitCover(Bitmap src) {
         if (src == null) {
             return null;
         }

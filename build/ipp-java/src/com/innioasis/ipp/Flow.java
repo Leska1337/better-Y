@@ -548,7 +548,9 @@ public final class Flow {
             Bitmap b = track == null ? null : BigCover.peekTrack(track.getPath());
             if (b == null && rep != null) b = BigCover.peekTrack(rep.getPath());
             if (b == null) return null;
-            return Cover.reflect(Cover.fitCover(b));
+            Bitmap out = Cover.reflect(Cover.fitCover(b));
+            Cover.hold(out);            // ours for the whole trip: the player must not redraw it
+            return out;
         } catch (Throwable t) {
             return null;
         }

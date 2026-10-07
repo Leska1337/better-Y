@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..4a0999c4 100644
+index 01b1f730..2dfc9724 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..4a0999c4 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100084
++  versionCode: 10100093
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..857aa23a 100644
+index 71fe29d0..e5f259aa 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..857aa23a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev84</string>
++    <string name="ipp_version">v1.1.0-dev93</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -65004,7 +65004,7 @@ index 19291573..4f5bba4d 100644
  
      .line 429
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
-index 6e8fae34..ac85e290 100644
+index 6e8fae34..ee7c24e1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$1.smali
 @@ -253,60 +253,17 @@
@@ -65071,6 +65071,85 @@ index 6e8fae34..ac85e290 100644
      .line 408
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
+@@ -342,6 +299,12 @@
+     .line 435
+     :cond_4
+     :goto_1
++    # ipp: the blurred copy below goes to player_bg, a view that is never shown -- a Java blur of
++    # the whole cover and ~2 MB of garbage per track for nothing. The cover is on screen; done.
++    sget-object v1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
++
++    return-object v1
++
+     sget-object v4, Lcom/innioasis/y1/utils/Blur;->INSTANCE:Lcom/innioasis/y1/utils/Blur;
+ 
+     const/4 v6, 0x5
+diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali
+index 2e5e2671..c5960679 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali
+@@ -704,6 +704,9 @@
+ 
+     if-eqz v2, :cond_10
+ 
++    # ipp: no usable duration yet -- the field keeps what it shows, stock wrote 00:00
++    goto :goto_7
++
+     check-cast p1, Ljava/lang/CharSequence;
+ 
+     goto :goto_6
+@@ -749,6 +752,9 @@
+ 
+     invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+ 
++    # ipp: the player is not prepared -- the duration keeps what it shows, stock wrote 00:00
++    goto :goto_7
++
+     .line 361
+     iget-object v0, p0, Lcom/innioasis/y1/base/BasePlayerActivity$handler$1;->this$0:Lcom/innioasis/y1/base/BasePlayerActivity;
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$refreshUI$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$refreshUI$1.smali
+index fa154bf6..54d6bab8 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$refreshUI$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$refreshUI$1.smali
+@@ -97,6 +97,9 @@
+ 
+     if-eqz v0, :cond_0
+ 
++    # ipp: no usable duration -- the field keeps what it shows, stock wrote 00:00
++    goto :ipp_kept
++
+     const-string v0, "00:00"
+ 
+     check-cast v0, Ljava/lang/CharSequence;
+@@ -111,6 +114,8 @@
+     :goto_0
+     invoke-virtual {p0, v0}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+ 
++    :ipp_kept
++
+     .line 103
+     sget-object p0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -204,7 +209,17 @@
+     const/4 v3, 0x0
+ 
+     :goto_0
+-    if-eqz v3, :cond_0
++    if-nez v3, :ipp_prepared
++
++    # ipp: stock waits for the player in an empty loop -- one thread per track change, each
++    # burning a whole core until the player is prepared, and the device has one core awake.
++    const-wide/16 v2, 0x14
++
++    invoke-static {v2, v3}, Landroid/os/SystemClock;->sleep(J)V
++
++    goto :cond_0
++
++    :ipp_prepared
+ 
+     .line 99
+     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 index 510ca002..abcf3e40 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
