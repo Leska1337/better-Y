@@ -175,10 +175,19 @@ public final class Scroll {
         last = s;
         reset();
         scrollable();
-        tv.setSingleLine();
+        singleLine();
         running = true;
         tv.setText(s);
         join();
+    }
+
+    /** {@code setSingleLine} has no early-out: it asks for a layout and rebuilds the text every call. */
+    private void singleLine() {
+        if (tv.getMaxLines() == 1
+                && tv.getTransformationMethod() instanceof android.text.method.SingleLineTransformationMethod) {
+            return;
+        }
+        tv.setSingleLine();
     }
 
     private void reset() {

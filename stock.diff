@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..537c0d57 100644
+index 01b1f730..4a0999c4 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..537c0d57 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100073
++  versionCode: 10100084
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f210f34c 100644
+index 71fe29d0..857aa23a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..f210f34c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev73</string>
++    <string name="ipp_version">v1.1.0-dev84</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -38479,7 +38479,7 @@ index 4fcfcfff..83011380 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..f3e47f73 100644
+index 54919080..c88a48b0 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -747,17 +747,13 @@
@@ -38489,14 +38489,14 @@ index 54919080..f3e47f73 100644
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
+-
+-    invoke-interface {v5}, Ljava/util/List;->size()I
+-
+-    move-result v5
 +    # ipp: repeat-off end of the audiobook list. Stock tested "index == size-1", which says
 +    # nothing under a shuffled pass and nothing while the queue still holds entries.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
--    invoke-interface {v5}, Ljava/util/List;->size()I
--
--    move-result v5
--
 -    sub-int/2addr v5, v4
 +    move-result v0
  
@@ -38510,13 +38510,13 @@ index 54919080..f3e47f73 100644
      .line 841
      :cond_c
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
--
--    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
 +    # ipp: repeat-off end-of-list. Stock only tested "index == size-1", which is meaningless
 +    # under shuffle; Queue.endOfList reports the spent shuffle cycle too (and never ends while
 +    # manually queued tracks are still pending).
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
+-    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
+-
 -    invoke-interface {v5}, Ljava/util/List;->size()I
 -
 -    move-result v5
@@ -38638,7 +38638,19 @@ index 54919080..f3e47f73 100644
      .line 591
      invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->stopRepeat()V
  
-@@ -5984,6 +6032,11 @@
+@@ -5451,6 +5499,11 @@
+ 
+     invoke-virtual {p1}, Lcom/innioasis/y1/service/PlayerService$timerForRestartPlay$1;->start()Landroid/os/CountDownTimer;
+ 
++    # ipp: a file already in the cache does not wait the timer out. See Ahead.
++    iget-object p1, p0, Lcom/innioasis/y1/service/PlayerService;->timerForRestartPlay:Lcom/innioasis/y1/service/PlayerService$timerForRestartPlay$1;
++
++    invoke-static {p1}, Lcom/innioasis/ipp/Ahead;->armed(Landroid/os/CountDownTimer;)V
++
+     :goto_0
+     return-void
+ .end method
+@@ -5984,6 +6037,11 @@
  .method public final saveState()V
      .locals 19
  
@@ -38650,7 +38662,7 @@ index 54919080..f3e47f73 100644
      move-object/from16 v12, p0
  
      .line 235
-@@ -6371,6 +6424,16 @@
+@@ -6371,6 +6429,16 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -38667,7 +38679,7 @@ index 54919080..f3e47f73 100644
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
  
-@@ -6581,6 +6644,25 @@
+@@ -6581,6 +6649,25 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -65060,7 +65072,7 @@ index 6e8fae34..ac85e290 100644
      :goto_0
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca002..e29ad986 100644
+index 510ca002..abcf3e40 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -65407,9 +65419,9 @@ index 510ca002..e29ad986 100644
 +
 +    # ipp: opened from Cover Flow, the player notes where its cover is and leaves at once.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Flow;->flipBack(Landroid/app/Activity;)Z
- 
-+    move-result v0
 +
++    move-result v0
+ 
 +    if-eqz v0, :ipp_flat
 +
 +    return-void
@@ -65426,6 +65438,24 @@ index 510ca002..e29ad986 100644
 +
      .line 495
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -2405,11 +2576,17 @@
+ 
+     move-result v2
+ 
++    # ipp: this runs on every key release; an unchanged height must not ask for a layout.
++    iget v3, v1, Landroid/view/ViewGroup$LayoutParams;->height:I
++
++    if-eq v3, v2, :ipp_same_height
++
+     iput v2, v1, Landroid/view/ViewGroup$LayoutParams;->height:I
+ 
+     .line 249
+     invoke-virtual {v0, v1}, Landroidx/constraintlayout/widget/ConstraintLayout;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
+ 
++    :ipp_same_height
+     .line 252
+     invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali
 index c075f005..430c6df5 100644

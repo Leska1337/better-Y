@@ -257,30 +257,30 @@
 
 .method private dead()Z
   .registers 5
-  .line 266
+  .line 275
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getWindowToken()Landroid/os/IBinder;
     move-result-object v0
     const/4 v1, 0
     const/4 v2, 1
     if-eqz v0, :L0
-  .line 267
+  .line 276
     iput-boolean v2, p0, Lcom/innioasis/ipp/Scroll;->seen:Z
-  .line 268
+  .line 277
     return v1
   :L0
-  .line 270
+  .line 279
     iget-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->seen:Z
     if-nez v0, :L1
-  .line 271
+  .line 280
     return v1
   :L1
-  .line 273
+  .line 282
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     const v1, 2131821013
     const/4 v3, 0
     invoke-virtual { v0, v1, v3 }, Landroid/widget/TextView;->setTag(ILjava/lang/Object;)V
-  .line 274
+  .line 283
     return v2
 .end method
 
@@ -309,65 +309,65 @@
 
 .method private join()V
   .registers 7
-  .line 232
+  .line 241
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getContext()Landroid/content/Context;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Lit;->watch(Landroid/content/Context;)V
-  .line 233
+  .line 242
     sget-object v0, Lcom/innioasis/ipp/Scroll;->LIVE:Ljava/util/ArrayList;
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->contains(Ljava/lang/Object;)Z
     move-result v1
     if-nez v1, :L0
-  .line 234
+  .line 243
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L0
-  .line 236
+  .line 245
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->isShown()Z
     move-result v0
     const/4 v1, 1
     if-eqz v0, :L1
-  .line 237
+  .line 246
     const/4 v0, 0
     sput v0, Lcom/innioasis/ipp/Scroll;->phase:I
     goto :L2
   :L1
-  .line 241
+  .line 250
     iput-boolean v1, p0, Lcom/innioasis/ipp/Scroll;->fresh:Z
-  .line 242
+  .line 251
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getWindowToken()Landroid/os/IBinder;
     move-result-object v0
     if-nez v0, :L2
-  .line 243
+  .line 252
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     const-wide/16 v4, 1200
     add-long/2addr v2, v4
     sput-wide v2, Lcom/innioasis/ipp/Scroll;->settleUntil:J
   :L2
-  .line 246
+  .line 255
     sget-object v0, Lcom/innioasis/ipp/Scroll;->clock:Landroid/os/Handler;
     if-nez v0, :L3
-  .line 247
+  .line 256
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v2
     invoke-direct { v0, v2 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     sput-object v0, Lcom/innioasis/ipp/Scroll;->clock:Landroid/os/Handler;
   :L3
-  .line 249
+  .line 258
     sget-object v0, Lcom/innioasis/ipp/Scroll;->clock:Landroid/os/Handler;
     sget-object v2, Lcom/innioasis/ipp/Scroll;->TICKER:Lcom/innioasis/ipp/Scroll$Tick;
     invoke-virtual { v0, v2 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 250
+  .line 259
     sput-boolean v1, Lcom/innioasis/ipp/Scroll;->ticking:Z
-  .line 251
+  .line 260
     sget-object v0, Lcom/innioasis/ipp/Scroll;->clock:Landroid/os/Handler;
     const-wide/16 v3, 40
     invoke-virtual { v0, v2, v3, v4 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 252
+  .line 261
     return-void
 .end method
 
@@ -404,35 +404,35 @@
 
 .method private move(I)V
   .registers 5
-  .line 307
+  .line 316
     nop
-  .line 308
+  .line 317
     const/4 v0, 0
     const/16 v1, 38
     if-le p1, v1, :L0
     iget-boolean v2, p0, Lcom/innioasis/ipp/Scroll;->doubled:Z
     if-eqz v2, :L0
-  .line 309
+  .line 318
     sub-int/2addr p1, v1
     mul-int/lit8 p1, p1, 2
-  .line 310
+  .line 319
     iget v1, p0, Lcom/innioasis/ipp/Scroll;->period:I
     if-ge p1, v1, :L0
-  .line 311
+  .line 320
     goto :L1
   :L0
-  .line 314
+  .line 323
     const/4 p1, 0
   :L1
     iget v1, p0, Lcom/innioasis/ipp/Scroll;->x:I
     if-eq p1, v1, :L2
-  .line 315
+  .line 324
     iput p1, p0, Lcom/innioasis/ipp/Scroll;->x:I
-  .line 316
+  .line 325
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v1, p1, v0 }, Landroid/widget/TextView;->scrollTo(II)V
   :L2
-  .line 318
+  .line 327
     return-void
 .end method
 
@@ -456,61 +456,61 @@
 
 .method private park()V
   .registers 3
-  .line 321
+  .line 330
     iget v0, p0, Lcom/innioasis/ipp/Scroll;->x:I
     if-eqz v0, :L0
-  .line 322
+  .line 331
     const/4 v0, 0
     iput v0, p0, Lcom/innioasis/ipp/Scroll;->x:I
-  .line 323
+  .line 332
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v1, v0, v0 }, Landroid/widget/TextView;->scrollTo(II)V
   :L0
-  .line 325
+  .line 334
     return-void
 .end method
 
 .method private reset()V
   .registers 3
-  .line 185
+  .line 194
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/ipp/Scroll;->shown:Ljava/lang/String;
-  .line 186
+  .line 195
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->doubled:Z
-  .line 187
+  .line 196
     iput-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->measured:Z
-  .line 188
+  .line 197
     iput v0, p0, Lcom/innioasis/ipp/Scroll;->period:I
-  .line 189
+  .line 198
     iget v1, p0, Lcom/innioasis/ipp/Scroll;->x:I
     if-eqz v1, :L0
-  .line 190
+  .line 199
     iput v0, p0, Lcom/innioasis/ipp/Scroll;->x:I
-  .line 191
+  .line 200
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v1, v0, v0 }, Landroid/widget/TextView;->scrollTo(II)V
   :L0
-  .line 193
+  .line 202
     return-void
 .end method
 
 .method private rest()V
   .registers 3
-  .line 214
+  .line 223
     sget-object v0, Lcom/innioasis/ipp/Scroll;->LIVE:Ljava/util/ArrayList;
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(Ljava/lang/Object;)Z
-  .line 215
+  .line 224
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->running:Z
-  .line 216
+  .line 225
     iget-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->doubled:Z
     if-eqz v0, :L1
-  .line 217
+  .line 226
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getText()Ljava/lang/CharSequence;
     move-result-object v0
-  .line 218
+  .line 227
     if-eqz v0, :L0
     invoke-interface { v0 }, Ljava/lang/CharSequence;->toString()Ljava/lang/String;
     move-result-object v0
@@ -518,19 +518,19 @@
     invoke-virtual { v0, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-eqz v0, :L0
-  .line 219
+  .line 228
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->last:Ljava/lang/String;
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   :L0
-  .line 221
+  .line 230
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
   :L1
-  .line 223
+  .line 232
     invoke-direct { p0 }, Lcom/innioasis/ipp/Scroll;->reset()V
-  .line 224
+  .line 233
     return-void
 .end method
 
@@ -607,27 +607,51 @@
 
 .method private scrollable()V
   .registers 3
-  .line 200
+  .line 209
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getEllipsize()Landroid/text/TextUtils$TruncateAt;
     move-result-object v0
     if-eqz v0, :L0
-  .line 201
+  .line 210
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
   :L0
-  .line 203
+  .line 212
     iget-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->hscroll:Z
     if-nez v0, :L1
-  .line 204
+  .line 213
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     const/4 v1, 1
     invoke-virtual { v0, v1 }, Landroid/widget/TextView;->setHorizontallyScrolling(Z)V
-  .line 205
+  .line 214
     iput-boolean v1, p0, Lcom/innioasis/ipp/Scroll;->hscroll:Z
   :L1
-  .line 207
+  .line 216
+    return-void
+.end method
+
+.method private singleLine()V
+  .registers 3
+  .line 186
+    iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
+    invoke-virtual { v0 }, Landroid/widget/TextView;->getMaxLines()I
+    move-result v0
+    const/4 v1, 1
+    if-ne v0, v1, :L0
+    iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
+  .line 187
+    invoke-virtual { v0 }, Landroid/widget/TextView;->getTransformationMethod()Landroid/text/method/TransformationMethod;
+    move-result-object v0
+    instance-of v0, v0, Landroid/text/method/SingleLineTransformationMethod;
+    if-eqz v0, :L0
+  .line 188
+    return-void
+  :L0
+  .line 190
+    iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
+    invoke-virtual { v0 }, Landroid/widget/TextView;->setSingleLine()V
+  .line 191
     return-void
 .end method
 
@@ -674,7 +698,7 @@
 
 .method private wrap()V
   .registers 6
-  .line 283
+  .line 292
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getWidth()I
     move-result v0
@@ -686,35 +710,35 @@
     invoke-virtual { v1 }, Landroid/widget/TextView;->getPaddingRight()I
     move-result v1
     sub-int/2addr v0, v1
-  .line 284
+  .line 293
     if-gtz v0, :L0
-  .line 285
+  .line 294
     return-void
   :L0
-  .line 287
+  .line 296
     const/4 v1, 1
     iput-boolean v1, p0, Lcom/innioasis/ipp/Scroll;->measured:Z
-  .line 288
+  .line 297
     iget-object v2, p0, Lcom/innioasis/ipp/Scroll;->last:Ljava/lang/String;
     if-eqz v2, :L1
     goto :L2
   :L1
     const-string v2, ""
   :L2
-  .line 289
+  .line 298
     iget-object v3, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
-  .line 290
+  .line 299
     invoke-virtual { v3, v2 }, Landroid/graphics/Paint;->measureText(Ljava/lang/String;)F
     move-result v4
     int-to-float v0, v0
     cmpg-float v0, v4, v0
     if-gtz v0, :L3
-  .line 291
+  .line 300
     return-void
   :L3
-  .line 293
+  .line 302
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -724,19 +748,19 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 294
+  .line 303
     invoke-virtual { v3, v0 }, Landroid/graphics/Paint;->measureText(Ljava/lang/String;)F
     move-result v3
     invoke-static { v3 }, Ljava/lang/Math;->round(F)I
     move-result v3
-  .line 295
+  .line 304
     if-ge v3, v1, :L4
-  .line 296
+  .line 305
     return-void
   :L4
-  .line 298
+  .line 307
     invoke-direct { p0 }, Lcom/innioasis/ipp/Scroll;->scrollable()V
-  .line 299
+  .line 308
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v4, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -746,14 +770,14 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     iput-object v0, p0, Lcom/innioasis/ipp/Scroll;->shown:Ljava/lang/String;
-  .line 300
+  .line 309
     iput v3, p0, Lcom/innioasis/ipp/Scroll;->period:I
-  .line 301
+  .line 310
     iput-boolean v1, p0, Lcom/innioasis/ipp/Scroll;->doubled:Z
-  .line 302
+  .line 311
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v1, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 303
+  .line 312
     return-void
 .end method
 
@@ -774,8 +798,7 @@
   .line 177
     invoke-direct { p0 }, Lcom/innioasis/ipp/Scroll;->scrollable()V
   .line 178
-    iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
-    invoke-virtual { v0 }, Landroid/widget/TextView;->setSingleLine()V
+    invoke-direct { p0 }, Lcom/innioasis/ipp/Scroll;->singleLine()V
   .line 179
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->running:Z
@@ -790,26 +813,26 @@
 
 .method public stop()V
   .registers 3
-  .line 255
+  .line 264
     sget-object v0, Lcom/innioasis/ipp/Scroll;->LIVE:Ljava/util/ArrayList;
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(Ljava/lang/Object;)Z
-  .line 256
+  .line 265
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->running:Z
-  .line 257
+  .line 266
     iget-boolean v0, p0, Lcom/innioasis/ipp/Scroll;->doubled:Z
     if-eqz v0, :L0
     iget-object v0, p0, Lcom/innioasis/ipp/Scroll;->last:Ljava/lang/String;
     if-eqz v0, :L0
-  .line 258
+  .line 267
     iget-object v1, p0, Lcom/innioasis/ipp/Scroll;->tv:Landroid/widget/TextView;
     invoke-virtual { v1, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   :L0
-  .line 260
+  .line 269
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/ipp/Scroll;->last:Ljava/lang/String;
-  .line 261
+  .line 270
     invoke-direct { p0 }, Lcom/innioasis/ipp/Scroll;->reset()V
-  .line 262
+  .line 271
     return-void
 .end method
