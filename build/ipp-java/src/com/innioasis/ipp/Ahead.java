@@ -32,12 +32,16 @@ public final class Ahead {
     /** Lossless files run to tens of megabytes; the start needs the head of the file, not all of it. */
     private static final long CAP = 32L * 1024 * 1024;
 
-    /** What playback needs while the decoder's scan holds the card. */
-    private static final long HEAD = 3L * 1024 * 1024;
     private static final int HEAD_CHUNK = 64 * 1024;
 
-    /** A head read that never saw its track start gives up after this. */
-    private static final long HEAD_MS = 1500;
+    /**
+     * How long a head read runs. Stock waits 200 ms between {@code restartPlay} and handing the
+     * file to the player; a read still going then queues for the card with the player opening it.
+     */
+    private static final long HEAD_MS = 180;
+
+    /** For a song picked in a menu, until {@code restartPlay} arrives and sets the real limit. */
+    private static final long PICKED_MS = 600;
 
     private static final Handler MAIN = new Handler(Looper.getMainLooper());
     private static final Pick PICK = new Pick();
@@ -51,8 +55,12 @@ public final class Ahead {
     /** Bumped on every track change; a read that sees another number stops. */
     static volatile int turn;
 
-    /** Bumped on every head read asked for; an older one stops. */
+    /** Bumped on every head read started; an older one stops. */
     static volatile int headTurn;
+
+    /** The file the running head read is on, and when it stops. */
+    static volatile String headPath;
+    static volatile long headUntil;
 
     /** From {@code ListWatch}, on the main thread. Fast skipping keeps pushing this back. */
     public static void onSongChanged() {
@@ -61,29 +69,37 @@ public final class Ahead {
         MAIN.postDelayed(PICK, WAIT_MS);
     }
 
+    /** A song picked in a menu, before the player is even opened. */
+    public static void picked(String path) {
+        head(path, PICKED_MS);
+    }
+
+    /** {@code PlayerService.restartPlay}, for the track the service is on. */
+    public static void headPlaying() {
+        try {
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            Song s = ps == null ? null : ps.getPlayingSong();
+            if (s != null) head(s.getPath(), HEAD_MS);
+        } catch (Throwable t) {
+        }
+    }
+
     /**
-     * A track is about to start: read the head of its file, at once and without pauses. From the
-     * two places that know first — a song picked in a menu and {@code PlayerService.restartPlay}.
+     * A track is about to start: read its file from the top, at once and without pauses, for as
+     * long as there is time. A second call for the file being read only moves the limit.
      */
-    public static void head(String path) {
+    private static void head(String path, long ms) {
         try {
             if (path == null) return;
+            headUntil = SystemClock.uptimeMillis() + ms;
+            if (path.equals(headPath)) return;
+            headPath = path;
             if (headWorker == null) {
                 HandlerThread t = new HandlerThread("ipp-head", Process.THREAD_PRIORITY_DEFAULT);
                 t.start();
                 headWorker = new Handler(t.getLooper());
             }
             headWorker.post(new Head(path, ++headTurn));
-        } catch (Throwable t) {
-        }
-    }
-
-    /** The same for the track the service is on. */
-    public static void headPlaying() {
-        try {
-            PlayerService ps = Y1Application.Companion.getPlayerService();
-            Song s = ps == null ? null : ps.getPlayingSong();
-            if (s != null) head(s.getPath());
         } catch (Throwable t) {
         }
     }
@@ -135,8 +151,8 @@ public final class Ahead {
     }
 
     /**
-     * Stops the moment the player has the track: from there on our read would only be a third
-     * one queueing for the card. "Has it" is the prepared flag coming back up after going down.
+     * Stops at {@link #headUntil}; and, should the player get the track sooner, at the prepared
+     * flag coming back up after going down.
      */
     static final class Head implements Runnable {
         private final String path;
@@ -152,21 +168,18 @@ public final class Ahead {
             try {
                 PlayerService ps = Y1Application.Companion.getPlayerService();
                 if (ps == null) return;
-                long until = SystemClock.uptimeMillis() + HEAD_MS;
                 boolean down = false;
                 in = new FileInputStream(path);
                 byte[] buf = new byte[HEAD_CHUNK];
-                long total = 0;
-                while (headTurn == mine && total < HEAD && SystemClock.uptimeMillis() < until) {
+                while (headTurn == mine && SystemClock.uptimeMillis() < headUntil) {
                     boolean prepared = ps.getPlayerIsPrepared();
                     if (!prepared) down = true;
                     else if (down) break;
-                    int n = in.read(buf);
-                    if (n < 0) break;
-                    total += n;
+                    if (in.read(buf) < 0) break;
                 }
             } catch (Throwable t) {
             } finally {
+                if (headTurn == mine) headPath = null;
                 try { if (in != null) in.close(); } catch (Throwable t) { }
             }
         }

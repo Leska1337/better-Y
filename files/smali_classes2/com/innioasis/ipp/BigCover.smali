@@ -1392,7 +1392,7 @@
     check-cast p1, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p1
-    invoke-static { p1 }, Lcom/innioasis/ipp/Ahead;->head(Ljava/lang/String;)V
+    invoke-static { p1 }, Lcom/innioasis/ipp/Ahead;->picked(Ljava/lang/String;)V
   .line 127
     check-cast p0, Lcom/innioasis/y1/database/Song;
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;

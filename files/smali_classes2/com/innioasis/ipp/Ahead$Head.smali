@@ -17,114 +17,125 @@
 
 .method constructor <init>(Ljava/lang/String;I)V
   .registers 3
-  .line 145
+  .line 161
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 146
+  .line 162
     iput-object p1, p0, Lcom/innioasis/ipp/Ahead$Head;->path:Ljava/lang/String;
-  .line 147
+  .line 163
     iput p2, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
-  .line 148
+  .line 164
     return-void
 .end method
 
 .method public run()V
-  .catchall { :L0 .. :L2 } :L11
-  .catchall { :L3 .. :L7 } :L10
-  .catchall { :L9 .. :L13 } :L14
-  .registers 12
-  .line 151
+  .catchall { :L0 .. :L1 } :L16
+  .catchall { :L4 .. :L5 } :L16
+  .catchall { :L6 .. :L10 } :L15
+  .catchall { :L13 .. :L14 } :L21
+  .catchall { :L19 .. :L20 } :L21
+  .registers 11
+  .line 167
     nop
-  .line 153
+  .line 169
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v1 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v1
-  .line 154
-    if-nez v1, :L1
-  .line 170
-    nop
-  .line 154
-    return-void
   :L1
-  .line 155
-    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
-    move-result-wide v2
-    const-wide/16 v4, 1500
-    add-long/2addr v2, v4
-  .line 156
-    nop
-  .line 157
-    new-instance v4, Ljava/io/FileInputStream;
-    iget-object v5, p0, Lcom/innioasis/ipp/Ahead$Head;->path:Ljava/lang/String;
-    invoke-direct { v4, v5 }, Ljava/io/FileInputStream;-><init>(Ljava/lang/String;)V
+  .line 170
+    if-nez v1, :L3
+  .line 182
+    sget v1, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    iget v2, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
+    if-ne v1, v2, :L2
+    sput-object v0, Lcom/innioasis/ipp/Ahead;->headPath:Ljava/lang/String;
   :L2
-  .line 158
-    const/high16 v0, 0x00010000
+  .line 183
+    nop
+  .line 170
+    return-void
   :L3
-    new-array v0, v0, [B
-  .line 159
-    const/4 v5, 0
-    const-wide/16 v6, 0
-  :L4
-  .line 160
-    sget v8, Lcom/innioasis/ipp/Ahead;->headTurn:I
-    iget v9, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
-    if-ne v8, v9, :L9
-    const-wide/32 v8, 3145728
-    cmp-long v10, v6, v8
-    if-gez v10, :L9
-    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
-    move-result-wide v8
-    cmp-long v10, v8, v2
-    if-gez v10, :L9
-  .line 161
-    invoke-virtual { v1 }, Lcom/innioasis/y1/service/PlayerService;->getPlayerIsPrepared()Z
-    move-result v8
-  .line 162
-    if-nez v8, :L5
-    const/4 v5, 1
-    goto :L6
-  :L5
-  .line 163
-    if-eqz v5, :L6
-    goto :L9
-  :L6
-  .line 164
-    invoke-virtual { v4, v0 }, Ljava/io/FileInputStream;->read([B)I
-    move-result v8
-  :L7
-  .line 165
-    if-gez v8, :L8
-    goto :L9
-  :L8
-  .line 166
-    int-to-long v8, v8
-    add-long/2addr v6, v8
-  .line 167
-    goto :L4
-  :L9
-  .line 170
-    invoke-virtual { v4 }, Ljava/io/FileInputStream;->close()V
-    goto :L15
-  :L10
-  .line 168
-    move-exception v0
-    move-object v0, v4
-    goto :L12
-  :L11
-    move-exception v1
-  :L12
-  .line 170
-    if-eqz v0, :L15
-    invoke-virtual { v0 }, Ljava/io/FileInputStream;->close()V
-  :L13
-    goto :L15
-  :L14
-    move-exception v0
   .line 171
     nop
-  :L15
+  :L4
   .line 172
+    new-instance v2, Ljava/io/FileInputStream;
+    iget-object v3, p0, Lcom/innioasis/ipp/Ahead$Head;->path:Ljava/lang/String;
+    invoke-direct { v2, v3 }, Ljava/io/FileInputStream;-><init>(Ljava/lang/String;)V
+  :L5
+  .line 173
+    const/high16 v3, 0x00010000
+  :L6
+    new-array v3, v3, [B
+    const/4 v4, 0
+  :L7
+  .line 174
+    sget v5, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    iget v6, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
+    if-ne v5, v6, :L12
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v5
+    sget-wide v7, Lcom/innioasis/ipp/Ahead;->headUntil:J
+    cmp-long v9, v5, v7
+    if-gez v9, :L12
+  .line 175
+    invoke-virtual { v1 }, Lcom/innioasis/y1/service/PlayerService;->getPlayerIsPrepared()Z
+    move-result v5
+  .line 176
+    if-nez v5, :L8
+    const/4 v4, 1
+    goto :L9
+  :L8
+  .line 177
+    if-eqz v4, :L9
+    goto :L12
+  :L9
+  .line 178
+    invoke-virtual { v2, v3 }, Ljava/io/FileInputStream;->read([B)I
+    move-result v5
+  :L10
+    if-gez v5, :L11
+    goto :L12
+  :L11
+  .line 179
+    goto :L7
+  :L12
+  .line 182
+    sget v1, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    iget v3, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
+    if-ne v1, v3, :L13
+    sput-object v0, Lcom/innioasis/ipp/Ahead;->headPath:Ljava/lang/String;
+  :L13
+  .line 183
+    invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
+  :L14
+    goto :L22
+  :L15
+  .line 180
+    move-exception v1
+    goto :L17
+  :L16
+    move-exception v1
+    move-object v2, v0
+  :L17
+  .line 182
+    sget v1, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    iget v3, p0, Lcom/innioasis/ipp/Ahead$Head;->mine:I
+    if-ne v1, v3, :L18
+    sput-object v0, Lcom/innioasis/ipp/Ahead;->headPath:Ljava/lang/String;
+  :L18
+  .line 183
+    if-eqz v2, :L22
+  :L19
+    invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
+  :L20
+    goto :L22
+  :L21
+    move-exception v0
+  .line 184
+    nop
+  :L22
+  .line 185
     return-void
 .end method

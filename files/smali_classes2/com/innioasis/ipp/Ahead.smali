@@ -14,11 +14,9 @@
 
 .field private final static CHUNK:I = 131072
 
-.field private final static HEAD:J = 3145728L
-
 .field private final static HEAD_CHUNK:I = 65536
 
-.field private final static HEAD_MS:J = 1500L
+.field private final static HEAD_MS:J = 180L
 
 .field private final static MAIN:Landroid/os/Handler;
 
@@ -26,11 +24,17 @@
 
 .field private final static PICK:Lcom/innioasis/ipp/Ahead$Pick;
 
+.field private final static PICKED_MS:J = 600L
+
 .field private final static WAIT_MS:J = 4000L
 
 .field private static volatile done:Ljava/lang/String;
 
+.field static volatile headPath:Ljava/lang/String;
+
 .field static volatile headTurn:I
+
+.field static volatile headUntil:J
 
 .field private static headWorker:Landroid/os/Handler;
 
@@ -40,13 +44,13 @@
 
 .method static constructor <clinit>()V
   .registers 2
-  .line 42
+  .line 46
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v1
     invoke-direct { v0, v1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     sput-object v0, Lcom/innioasis/ipp/Ahead;->MAIN:Landroid/os/Handler;
-  .line 43
+  .line 47
     new-instance v0, Lcom/innioasis/ipp/Ahead$Pick;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Ahead$Pick;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Ahead;->PICK:Lcom/innioasis/ipp/Ahead$Pick;
@@ -88,58 +92,72 @@
     return-object p0
 .end method
 
-.method public static head(Ljava/lang/String;)V
-  .catchall { :L0 .. :L2 } :L3
-  .registers 4
-  .line 70
+.method private static head(Ljava/lang/String;J)V
+  .catchall { :L0 .. :L3 } :L4
+  .registers 5
+  .line 93
     if-nez p0, :L0
     return-void
   :L0
-  .line 71
-    sget-object v0, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
-    if-nez v0, :L1
-  .line 72
-    new-instance v0, Landroid/os/HandlerThread;
-    const-string v1, "ipp-head"
-    const/4 v2, 0
-    invoke-direct { v0, v1, v2 }, Landroid/os/HandlerThread;-><init>(Ljava/lang/String;I)V
-  .line 73
-    invoke-virtual { v0 }, Landroid/os/HandlerThread;->start()V
-  .line 74
-    new-instance v1, Landroid/os/Handler;
-    invoke-virtual { v0 }, Landroid/os/HandlerThread;->getLooper()Landroid/os/Looper;
-    move-result-object v0
-    invoke-direct { v1, v0 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
-    sput-object v1, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
+  .line 94
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+    add-long/2addr v0, p1
+    sput-wide v0, Lcom/innioasis/ipp/Ahead;->headUntil:J
+  .line 95
+    sget-object p1, Lcom/innioasis/ipp/Ahead;->headPath:Ljava/lang/String;
+    invoke-virtual { p0, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p1
+    if-eqz p1, :L1
+    return-void
   :L1
-  .line 76
-    sget-object v0, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
-    new-instance v1, Lcom/innioasis/ipp/Ahead$Head;
-    sget v2, Lcom/innioasis/ipp/Ahead;->headTurn:I
-    add-int/lit8 v2, v2, 1
-    sput v2, Lcom/innioasis/ipp/Ahead;->headTurn:I
-    invoke-direct { v1, p0, v2 }, Lcom/innioasis/ipp/Ahead$Head;-><init>(Ljava/lang/String;I)V
-    invoke-virtual { v0, v1 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+  .line 96
+    sput-object p0, Lcom/innioasis/ipp/Ahead;->headPath:Ljava/lang/String;
+  .line 97
+    sget-object p1, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
+    if-nez p1, :L2
+  .line 98
+    new-instance p1, Landroid/os/HandlerThread;
+    const-string p2, "ipp-head"
+    const/4 v0, 0
+    invoke-direct { p1, p2, v0 }, Landroid/os/HandlerThread;-><init>(Ljava/lang/String;I)V
+  .line 99
+    invoke-virtual { p1 }, Landroid/os/HandlerThread;->start()V
+  .line 100
+    new-instance p2, Landroid/os/Handler;
+    invoke-virtual { p1 }, Landroid/os/HandlerThread;->getLooper()Landroid/os/Looper;
+    move-result-object p1
+    invoke-direct { p2, p1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
+    sput-object p2, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
   :L2
-  .line 78
-    goto :L4
+  .line 102
+    sget-object p1, Lcom/innioasis/ipp/Ahead;->headWorker:Landroid/os/Handler;
+    new-instance p2, Lcom/innioasis/ipp/Ahead$Head;
+    sget v0, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    add-int/lit8 v0, v0, 1
+    sput v0, Lcom/innioasis/ipp/Ahead;->headTurn:I
+    invoke-direct { p2, p0, v0 }, Lcom/innioasis/ipp/Ahead$Head;-><init>(Ljava/lang/String;I)V
+    invoke-virtual { p1, p2 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
   :L3
-  .line 77
-    move-exception p0
+  .line 104
+    goto :L5
   :L4
-  .line 79
+  .line 103
+    move-exception p0
+  :L5
+  .line 105
     return-void
 .end method
 
 .method public static headPlaying()V
   .catchall { :L0 .. :L3 } :L4
-  .registers 1
+  .registers 3
   :L0
-  .line 84
+  .line 80
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 85
+  .line 81
     if-nez v0, :L1
     const/4 v0, 0
     goto :L2
@@ -147,35 +165,45 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingSong()Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L2
-  .line 86
+  .line 82
     if-eqz v0, :L3
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Ahead;->head(Ljava/lang/String;)V
+    const-wide/16 v1, 180
+    invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Ahead;->head(Ljava/lang/String;J)V
   :L3
-  .line 88
+  .line 84
     goto :L5
   :L4
-  .line 87
+  .line 83
     move-exception v0
   :L5
-  .line 89
+  .line 85
     return-void
 .end method
 
 .method public static onSongChanged()V
   .registers 4
-  .line 59
+  .line 67
     sget v0, Lcom/innioasis/ipp/Ahead;->turn:I
     add-int/lit8 v0, v0, 1
     sput v0, Lcom/innioasis/ipp/Ahead;->turn:I
-  .line 60
+  .line 68
     sget-object v0, Lcom/innioasis/ipp/Ahead;->MAIN:Landroid/os/Handler;
     sget-object v1, Lcom/innioasis/ipp/Ahead;->PICK:Lcom/innioasis/ipp/Ahead$Pick;
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 61
+  .line 69
     const-wide/16 v2, 4000
     invoke-virtual { v0, v1, v2, v3 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 62
+  .line 70
+    return-void
+.end method
+
+.method public static picked(Ljava/lang/String;)V
+  .registers 3
+  .line 74
+    const-wide/16 v0, 600
+    invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Ahead;->head(Ljava/lang/String;J)V
+  .line 75
     return-void
 .end method
