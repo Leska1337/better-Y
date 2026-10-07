@@ -823,7 +823,7 @@
 
 .method public static canRemoveRow(I)Z
   .registers 3
-  .line 1669
+  .line 1692
     const/4 v0, 1
     if-lt p0, v0, :L1
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
@@ -921,30 +921,30 @@
 
 .method private static dropFromPlan(I)V
   .registers 4
-  .line 1674
+  .line 1697
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
     move-result v2
     if-ge v0, v2, :L2
-  .line 1675
+  .line 1698
     invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
     if-ne v2, p0, :L1
-  .line 1676
+  .line 1699
     invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1677
+  .line 1700
     return-void
   :L1
-  .line 1674
+  .line 1697
     add-int/lit8 v0, v0, 1
     goto :L0
   :L2
-  .line 1680
+  .line 1703
     return-void
 .end method
 
@@ -1135,7 +1135,7 @@
 
 .method private static dropPlanThrough(I)V
   .registers 5
-  .line 1717
+  .line 1740
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -1143,32 +1143,32 @@
     invoke-virtual { v2 }, Ljava/util/ArrayList;->size()I
     move-result v3
     if-ge v1, v3, :L4
-  .line 1718
+  .line 1741
     invoke-virtual { v2, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
     if-ne v2, p0, :L3
-  .line 1719
+  .line 1742
     const/4 p0, 0
   :L1
     if-gt p0, v1, :L2
-  .line 1720
+  .line 1743
     sget-object v2, Lcom/innioasis/ipp/Queue;->plan:Ljava/util/ArrayList;
     invoke-virtual { v2, v0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1719
+  .line 1742
     add-int/lit8 p0, p0, 1
     goto :L1
   :L2
-  .line 1722
+  .line 1745
     return-void
   :L3
-  .line 1717
+  .line 1740
     add-int/lit8 v1, v1, 1
     goto :L0
   :L4
-  .line 1725
+  .line 1748
     return-void
 .end method
 
@@ -1783,7 +1783,7 @@
 
 .method public static isManualRow(I)Z
   .registers 3
-  .line 1649
+  .line 1672
     const/4 v0, 1
     if-lt p0, v0, :L0
     sget v1, Lcom/innioasis/ipp/Queue;->rowManual:I
@@ -2151,6 +2151,96 @@
     invoke-static { }, Lcom/innioasis/ipp/Status;->playerOpening()V
   .line 935
     return-void
+.end method
+
+.method public static nextPath()Ljava/lang/String;
+  .catchall { :L0 .. :L3 } :L6
+  .registers 8
+  .line 1652
+    sget-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
+  .line 1653
+    sget v1, Lcom/innioasis/ipp/Queue;->rowManual:I
+    sget v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
+  .line 1655
+    const/4 v3, 0
+  :L0
+    invoke-static { }, Lcom/innioasis/ipp/Queue;->playingPath()Ljava/lang/String;
+    move-result-object v4
+  .line 1656
+    invoke-static { }, Lcom/innioasis/ipp/Queue;->upNext()Ljava/util/List;
+    move-result-object v5
+  .line 1657
+    if-eqz v4, :L5
+    invoke-interface { v5 }, Ljava/util/List;->size()I
+    move-result v6
+    const/4 v7, 2
+    if-ge v6, v7, :L1
+    goto :L5
+  :L1
+  .line 1658
+    const/4 v6, 0
+    invoke-interface { v5, v6 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v6
+    const/4 v7, 1
+    invoke-interface { v5, v7 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v5
+  .line 1659
+    instance-of v7, v6, Lcom/innioasis/y1/database/Song;
+    if-eqz v7, :L4
+    check-cast v6, Lcom/innioasis/y1/database/Song;
+    invoke-virtual { v6 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
+    move-result-object v6
+    invoke-virtual { v4, v6 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v4
+    if-nez v4, :L2
+    goto :L4
+  :L2
+  .line 1660
+    instance-of v4, v5, Lcom/innioasis/y1/database/Song;
+    if-eqz v4, :L3
+    check-cast v5, Lcom/innioasis/y1/database/Song;
+    invoke-virtual { v5 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
+    move-result-object v3
+  :L3
+  .line 1664
+    sput-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
+  .line 1665
+    sput v1, Lcom/innioasis/ipp/Queue;->rowManual:I
+  .line 1666
+    sput v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
+  .line 1660
+    return-object v3
+  :L4
+  .line 1664
+    sput-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
+  .line 1665
+    sput v1, Lcom/innioasis/ipp/Queue;->rowManual:I
+  .line 1666
+    sput v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
+  .line 1659
+    return-object v3
+  :L5
+  .line 1664
+    sput-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
+  .line 1665
+    sput v1, Lcom/innioasis/ipp/Queue;->rowManual:I
+  .line 1666
+    sput v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
+  .line 1657
+    return-object v3
+  :L6
+  .line 1661
+    move-exception v4
+  .line 1662
+    nop
+  .line 1664
+    sput-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
+  .line 1665
+    sput v1, Lcom/innioasis/ipp/Queue;->rowManual:I
+  .line 1666
+    sput v2, Lcom/innioasis/ipp/Queue;->manualTotal:I
+  .line 1662
+    return-object v3
 .end method
 
 .method private static nextSeq(II)I
@@ -2900,101 +2990,101 @@
   .catch Ljava/lang/Exception; { :L0 .. :L10 } :L14
   .registers 6
   :L0
-  .line 1688
+  .line 1711
     invoke-static { }, Lcom/innioasis/ipp/Queue;->svc()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 1689
+  .line 1712
     if-eqz v0, :L13
     if-gez p0, :L1
     goto :L13
   :L1
-  .line 1690
+  .line 1713
     invoke-static { }, Lcom/innioasis/ipp/Queue;->syncKind()V
-  .line 1691
+  .line 1714
     invoke-static { v0 }, Lcom/innioasis/ipp/Queue;->list(Lcom/innioasis/y1/service/PlayerService;)Ljava/util/List;
     move-result-object v1
-  .line 1692
+  .line 1715
     if-eqz v1, :L12
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L2
     goto :L12
   :L2
-  .line 1693
+  .line 1716
     if-nez p0, :L3
     return-void
   :L3
-  .line 1695
+  .line 1718
     invoke-static { v0 }, Lcom/innioasis/ipp/Queue;->index(Lcom/innioasis/y1/service/PlayerService;)I
     move-result v2
-  .line 1696
+  .line 1719
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
     move-result v3
     if-eqz v3, :L5
-  .line 1697
+  .line 1720
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->pushHist(I)V
-  .line 1698
+  .line 1721
     add-int/lit8 p0, p0, -1
     invoke-static { v1, p0, v2 }, Lcom/innioasis/ipp/Queue;->takeManual(Ljava/util/List;II)I
     move-result p0
-  .line 1699
+  .line 1722
     if-gez p0, :L4
     return-void
   :L4
-  .line 1700
+  .line 1723
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
-  .line 1701
+  .line 1724
     goto :L9
   :L5
-  .line 1702
+  .line 1725
     sget-object v3, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     array-length v4, v3
     if-lt p0, v4, :L6
     return-void
   :L6
-  .line 1703
+  .line 1726
     aget p0, v3, p0
-  .line 1704
+  .line 1727
     if-ltz p0, :L11
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
     if-lt p0, v1, :L7
     goto :L11
   :L7
-  .line 1705
+  .line 1728
     invoke-static { v2 }, Lcom/innioasis/ipp/Queue;->pushHist(I)V
-  .line 1706
+  .line 1729
     const/4 v1, -1
     sput v1, Lcom/innioasis/ipp/Queue;->resume:I
-  .line 1707
+  .line 1730
     invoke-static { }, Lcom/innioasis/ipp/Queue;->shuffle()Z
     move-result v1
     if-eqz v1, :L8
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropPlanThrough(I)V
   :L8
-  .line 1708
+  .line 1731
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->setPlayIndex(I)V
   :L9
-  .line 1710
+  .line 1733
     const/4 p0, 0
     invoke-virtual { v0, p0 }, Lcom/innioasis/y1/service/PlayerService;->restartPlay(Z)V
   :L10
-  .line 1712
+  .line 1735
     goto :L15
   :L11
-  .line 1704
+  .line 1727
     return-void
   :L12
-  .line 1692
+  .line 1715
     return-void
   :L13
-  .line 1689
+  .line 1712
     return-void
   :L14
-  .line 1711
+  .line 1734
     move-exception p0
   :L15
-  .line 1713
+  .line 1736
     return-void
 .end method
 
@@ -3563,52 +3653,52 @@
 
 .method public static removeRow(I)V
   .registers 3
-  .line 1654
+  .line 1677
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->isManualRow(I)Z
     move-result v0
     if-eqz v0, :L1
-  .line 1655
+  .line 1678
     sget-object v0, Lcom/innioasis/ipp/Queue;->manual:Ljava/util/ArrayList;
     add-int/lit8 p0, p0, -1
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
-  .line 1656
+  .line 1679
     sget-object v0, Lcom/innioasis/ipp/Queue;->guestIdx:Ljava/util/ArrayList;
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->remove(I)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Ljava/lang/Integer;
     invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
     move-result p0
-  .line 1657
+  .line 1680
     if-ltz p0, :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropGuest(I)V
   :L0
-  .line 1658
+  .line 1681
     return-void
   :L1
-  .line 1660
+  .line 1683
     if-lez p0, :L4
     sget-object v0, Lcom/innioasis/ipp/Queue;->rowIdx:[I
     array-length v1, v0
     if-lt p0, v1, :L2
     goto :L4
   :L2
-  .line 1661
+  .line 1684
     aget p0, v0, p0
-  .line 1662
+  .line 1685
     if-gez p0, :L3
     return-void
   :L3
-  .line 1663
+  .line 1686
     sget-object v0, Lcom/innioasis/ipp/Queue;->skip:Ljava/util/ArrayList;
     invoke-static { p0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1664
+  .line 1687
     invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->dropFromPlan(I)V
-  .line 1665
+  .line 1688
     return-void
   :L4
-  .line 1660
+  .line 1683
     return-void
 .end method
 

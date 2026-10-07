@@ -1644,6 +1644,29 @@ public final class Queue {
         return out;
     }
 
+    /**
+     * The file that plays after the current one, or null at the end of the pass. Leaves the queue
+     * screen's row records as they were.
+     */
+    public static String nextPath() {
+        int[] ri = rowIdx;
+        int rm = rowManual, mt = manualTotal;
+        try {
+            String playing = playingPath();
+            List rows = upNext();
+            if (playing == null || rows.size() < 2) return null;
+            Object first = rows.get(0), next = rows.get(1);
+            if (!(first instanceof Song) || !playing.equals(((Song) first).getPath())) return null;
+            return (next instanceof Song) ? ((Song) next).getPath() : null;
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            rowIdx = ri;
+            rowManual = rm;
+            manualTotal = mt;
+        }
+    }
+
     /** A user-queued row of the last {@link #upNext()}. */
     public static boolean isManualRow(int row) {
         return row >= 1 && row <= rowManual;

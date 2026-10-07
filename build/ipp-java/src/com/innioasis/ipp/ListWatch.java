@@ -40,5 +40,6 @@ public final class ListWatch extends BroadcastReceiver {
         Follow.onSongChanged();
         // The side buttons never go through setMusicPlaylist, where the other prefetch fires.
         BigCover.prefetchPlaying();
+        Ahead.onSongChanged();
     }
 }

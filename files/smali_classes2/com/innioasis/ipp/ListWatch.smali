@@ -58,5 +58,7 @@
   .line 42
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->prefetchPlaying()V
   .line 43
+    invoke-static { }, Lcom/innioasis/ipp/Ahead;->onSongChanged()V
+  .line 44
     return-void
 .end method
