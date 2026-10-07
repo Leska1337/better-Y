@@ -511,6 +511,9 @@ public final class Disc {
         if (o instanceof ListView) paint((ListView) o, null);
     }
 
+    /** The bar's left padding as the layout has it, read before any background replaces it. */
+    private static int barLeft = -1;
+
     private static void paint(ListView lv, String label) {
         try {
             Object parent = lv.getParent();
@@ -527,6 +530,8 @@ public final class Disc {
             if (label.equals(shown) && tv.getVisibility() == View.VISIBLE) return;
             shown = label;
             tv.setText(label);
+            if (barLeft < 0) barLeft = tv.getPaddingLeft();
+            int left = barLeft;
             // the theme's row background, as the strip has
             ThemeManager.INSTANCE.itemSetTextColor(
                     tv, tv.getResources().getColor(R.color.selected_text_color), false);
@@ -534,6 +539,8 @@ public final class Disc {
             Rows.noSize(tv);
             // rows pass UNDER the bar, so it must be opaque: the wallpaper behind it
             Head.backdrop(tv);
+            // a layered background brings a padding of its own, zero, and takes the layout's
+            tv.setPadding(left, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
             tv.setVisibility(View.VISIBLE);
         } catch (Throwable t) {
         }

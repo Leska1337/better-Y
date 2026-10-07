@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..6042f41c 100644
+index 01b1f730..37844080 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..6042f41c 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100066
++  versionCode: 10100068
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -100,7 +100,7 @@ index 7b87d102..378d96df 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" android:layout_marginHorizontal="3.0dip" android:layout_marginVertical="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_albums.xml b/build/src/res/layout/activity_albums.xml
-index a65785d4..9b81552c 100644
+index a65785d4..00417df8 100644
 --- a/build/src/res/layout/activity_albums.xml
 +++ b/build/src/res/layout/activity_albums.xml
 @@ -1,6 +1,26 @@
@@ -134,7 +134,7 @@ index a65785d4..9b81552c 100644
 +         disc that has already scrolled off, so it is the one thing on this screen that stays pinned.
 +         GONE for everything that is not a multi-disc album, and then it collapses to a point at
 +         spv's bottom, so the list keeps the full height. -->
-+    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
++    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:paddingLeft="10.0dip" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_allaudiobooks.xml b/build/src/res/layout/activity_allaudiobooks.xml
 index 83c18457..38192792 100644
@@ -268,7 +268,7 @@ index b2b33afe..dc2bc018 100644
          </LinearLayout>
      </LinearLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
-index a65785d4..8c2b0d57 100644
+index a65785d4..bc1c5bf1 100644
 --- a/build/src/res/layout/activity_genres.xml
 +++ b/build/src/res/layout/activity_genres.xml
 @@ -1,6 +1,20 @@
@@ -292,7 +292,7 @@ index a65785d4..8c2b0d57 100644
 +         Disc.Bar - the same view, the same id and the same geometry as on the Albums screen, so
 +         one class serves both. GONE for anything that is not a multi-disc album, and then it
 +         collapses to a point at spv's bottom and the list keeps the full height. -->
-+    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
++    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:paddingLeft="10.0dip" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_main.xml b/build/src/res/layout/activity_main.xml
 index 08bc3833..80f241b3 100644
@@ -498,7 +498,7 @@ index 21c1e9d8..2ada0cb4 100644
      </androidx.cardview.widget.CardView>
      <androidx.recyclerview.widget.RecyclerView android:id="@id/rv" android:background="#ff0a214b" android:layout_width="fill_parent" android:layout_height="70.0dip" app:layout_constraintBottom_toBottomOf="parent" />
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
-index 4b9d1219..cb731bb9 100644
+index 4b9d1219..1f123ae8 100644
 --- a/build/src/res/layout/item_album.xml
 +++ b/build/src/res/layout/item_album.xml
 @@ -1,8 +1,85 @@
@@ -561,7 +561,7 @@ index 4b9d1219..cb731bb9 100644
 +     Rows.reflat repeats it on the theme's asynchronous applier. -->
 +<RelativeLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 +  xmlns:android="http://schemas.android.com/apk/res/android">
-+    <ImageView android:id="@id/cover" android:layout_width="40.0dip" android:layout_height="60.0dip" android:layout_marginLeft="5.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:src="@drawable/ic_launcher_background" />
++    <ImageView android:id="@id/cover" android:layout_width="40.0dip" android:layout_height="60.0dip" android:layout_marginLeft="10.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:src="@drawable/ic_launcher_background" />
 +    <!-- The arrow comes first in reading order because the labels are measured against it, and a theme
 +         can swap in an arrow of its own (ThemeManager.itemSetRightArrow). wrap_content in both
 +         directions, as before: the album row never stretched it to the row's height.
@@ -733,7 +733,7 @@ index a59668be..63515302 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_main.xml b/build/src/res/layout/item_main.xml
-index 6917d780..bc5b6e37 100644
+index 6917d780..e6bc1233 100644
 --- a/build/src/res/layout/item_main.xml
 +++ b/build/src/res/layout/item_main.xml
 @@ -1,6 +1,19 @@
@@ -753,7 +753,7 @@ index 6917d780..bc5b6e37 100644
 +         40x40 picture at x 5..45 and the label from 55 — here 5 + 40 plus the label's 5dip margin and its 5dip
 +         padding and its 5dip margin, which is what puts a plain row's label under the status bar's title. The row's height (60, the album row's) is set by Mark.mainRow, since every other
 +         row uses this same layout. -->
-+    <ImageView android:id="@id/ipp_row_icon" android:visibility="gone" android:layout_gravity="center_vertical" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginRight="0.0dip" android:adjustViewBounds="true" />
++    <ImageView android:id="@id/ipp_row_icon" android:visibility="gone" android:layout_gravity="center_vertical" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="10.0dip" android:layout_marginRight="0.0dip" android:adjustViewBounds="true" />
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="top" android:id="@id/tv_item" android:padding="@dimen/main_item_padding" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/main_item_margin_left" android:maxLines="1" android:singleLine="true" android:layout_weight="1.0" />
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
@@ -775,7 +775,7 @@ index 9b10f189..2347f02f 100644
      <ImageView android:id="@id/icon" android:layout_width="wrap_content" android:layout_height="24.0dip" app:layout_constraintBottom_toTopOf="@id/content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_chainStyle="packed" />
      <TextView android:textSize="12.0sp" android:textColor="@color/white" android:id="@id/content" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="@id/icon" app:layout_constraintRight_toRightOf="@id/icon" app:layout_constraintTop_toBottomOf="@id/icon" />
 diff --git a/build/src/res/layout/item_player.xml b/build/src/res/layout/item_player.xml
-index dbfa7302..ec41f852 100644
+index dbfa7302..803b2726 100644
 --- a/build/src/res/layout/item_player.xml
 +++ b/build/src/res/layout/item_player.xml
 @@ -1,6 +1,23 @@
@@ -803,8 +803,8 @@ index dbfa7302..ec41f852 100644
 +        tv_prograss      60 wide, 20 from the right edge -->
 +<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="@dimen/main_item_height"
 +  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-+    <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start|center" android:id="@id/ipp_book_index" android:layout_width="34.0dip" android:layout_height="fill_parent" android:layout_marginStart="5.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
-+    <ImageView android:id="@id/ipp_book_mark" android:visibility="gone" android:layout_width="24.0dip" android:layout_height="24.0dip" android:layout_marginStart="5.0dip" android:scaleType="fitCenter" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start|center" android:id="@id/ipp_book_index" android:layout_width="34.0dip" android:layout_height="fill_parent" android:layout_marginStart="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <ImageView android:id="@id/ipp_book_mark" android:visibility="gone" android:layout_width="24.0dip" android:layout_height="24.0dip" android:layout_marginStart="10.0dip" android:scaleType="fitCenter" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="fill_parent" android:maxLines="1" android:singleLine="true" android:layout_marginStart="5.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/ipp_book_index" app:layout_constraintRight_toLeftOf="@id/tv_prograss" app:layout_constraintTop_toTopOf="parent" />
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/tv_prograss" android:layout_width="60.0dip" android:layout_height="fill_parent" android:layout_centerInParent="true" android:layout_marginEnd="20.0dip" android:layout_alignParentEnd="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
@@ -837,10 +837,10 @@ index 132396d1..48a6a3dd 100644
      <ImageView android:id="@id/arrow" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="5.0dip" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b91724..0bf3ae5e 100644
+index 60b91724..d8e6db23 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
-@@ -1,8 +1,54 @@
+@@ -1,8 +1,55 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="wrap_content"
 -  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:test="http://schemas.android.com/apk/res-auto">
@@ -866,10 +866,11 @@ index 60b91724..0bf3ae5e 100644
 +
 +     Geometry is a transcription of what the old layout actually measured (uiautomator dump on the
 +     device; density 160, so 1dp = 1px), not a redesign — the row is 49 and inside it:
-+        tv_song_name   x  40..461   y  0..29
-+        tv_artists     x  40..480   y 29..49
-+        tv_song_index  x   0..40    y  3..28   (40 is its narrowest; see Rows.indexWidth)
-+        ipp_song_mark  x   0..24    y  3..27
++        tv_song_name   x  50..461   y  0..29
++        tv_artists     x  50..480   y 29..49
++        tv_song_index  x  10..50    y  3..28   (40 is its narrowest; see Rows.indexWidth)
++        ipp_song_mark  x  10..34    y  3..27
++     The number, the marker and the disc strip's text start at 10, under the status bar's title.
 +        right_arrow    x 461..477   y  0..49
 +     The disc strip stays a direct child of the root and still ADDS to the row's height, which is the
 +     one place in the app where list rows differ in height (see Disc and Wheel.list). -->
@@ -879,7 +880,7 @@ index 60b91724..0bf3ae5e 100644
 +         every row and VISIBLE with "CD N" on the first row of each disc, so all rows keep the same
 +         height — a strip on some rows only makes ListView's row-count scrolling land the cursor on
 +         a cut-off row. GONE (no space at all) in every list that is not a multi-disc album. -->
-+    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/tv_disc_header" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="16.0dip" test:layout_constraintLeft_toLeftOf="parent" test:layout_constraintRight_toRightOf="parent" test:layout_constraintTop_toTopOf="parent" />
++    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/tv_disc_header" android:paddingLeft="10.0dip" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="16.0dip" test:layout_constraintLeft_toLeftOf="parent" test:layout_constraintRight_toRightOf="parent" test:layout_constraintTop_toTopOf="parent" />
 +    <RelativeLayout android:layout_width="0.0dip" android:layout_height="49.0dip" test:layout_constraintLeft_toLeftOf="parent" test:layout_constraintRight_toRightOf="parent" test:layout_constraintTop_toBottomOf="@id/tv_disc_header">
 +        <!-- The arrow comes first because the title's right edge is measured against it, and a theme's
 +             own arrow (ThemeManager.itemSetRightArrow) can be a different width. Its height is the
@@ -889,13 +890,13 @@ index 60b91724..0bf3ae5e 100644
 +        <!-- ipp: the 40dip is the FLOOR, not the width — Rows.indexWidth widens the column to the
 +             widest number this list can show. It stays EXACTLY-width, never wrap_content: the
 +             title beside it is marqueed (see makeItNormal). -->
-+        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start" android:id="@id/tv_song_index" android:layout_width="40.0dip" android:layout_height="25.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" />
++        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start" android:id="@id/tv_song_index" android:layout_width="40.0dip" android:layout_height="25.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" />
 +        <!-- ipp: the playing marker, in the track number's own column and vertically centred on the
 +             title (NOT on the row: a disc-start row is taller by the strip above, and the strip is
 +             outside this container). Shown instead of the number, GONE otherwise, and tinted to
 +             whatever colour the number has just been given (Icons.menu), so it follows the theme and
 +             the focus highlight. -->
-+        <ImageView android:id="@id/ipp_song_mark" android:visibility="gone" android:layout_width="24.0dip" android:layout_height="24.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:scaleType="fitCenter" />
++        <ImageView android:id="@id/ipp_song_mark" android:visibility="gone" android:layout_width="24.0dip" android:layout_height="24.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" android:scaleType="fitCenter" />
 +        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_song_name" android:layout_width="fill_parent" android:layout_height="29.0dip" android:maxLines="1" android:singleLine="true" android:layout_alignParentTop="true" android:layout_toRightOf="@id/tv_song_index" android:layout_toLeftOf="@id/right_arrow" />
 +        <!-- ipp: one line, ellipsised. Stock declared neither, so a long artist line WRAPPED — the
 +             view is 20 tall and shows only the first line, which breaks at the last space that
@@ -918,7 +919,7 @@ index d451d45f..6da369b8 100644
 +    <TextView android:textSize="19.0sp" android:textColor="#ccffffff" android:ellipsize="end" android:gravity="center" android:id="@id/text" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_video.xml b/build/src/res/layout/item_video.xml
-index f543a231..53f55d83 100644
+index f543a231..2778d8e7 100644
 --- a/build/src/res/layout/item_video.xml
 +++ b/build/src/res/layout/item_video.xml
 @@ -2,15 +2,27 @@
@@ -949,14 +950,14 @@ index f543a231..53f55d83 100644
 +         10, under the status bar's title, as item_main's does. The row is a menu row's 45 and the
 +         arrow is as tall; both names end short of it. -->
 +    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/file_layout" android:layout_width="fill_parent" android:layout_height="45.0dip">
-+        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="5.0dip" android:layout_marginEnd="0.0dip" />
++        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="10.0dip" android:layout_marginEnd="0.0dip" />
 +        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="45.0dip" />
      </LinearLayout>
 -    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
 +    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="45.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </FrameLayout>
 diff --git a/build/src/res/layout/view_shuffle_playlist_item.xml b/build/src/res/layout/view_shuffle_playlist_item.xml
-index 252b9346..bdd3b7d9 100644
+index 252b9346..c468d3de 100644
 --- a/build/src/res/layout/view_shuffle_playlist_item.xml
 +++ b/build/src/res/layout/view_shuffle_playlist_item.xml
 @@ -1,7 +1,12 @@
@@ -969,8 +970,9 @@ index 252b9346..bdd3b7d9 100644
 +     of the list rather than pinned above it (see Head) — and the content follows. -->
 +<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-     <ImageView android:id="@id/img" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="5.0dip" android:src="@mipmap/music_shuffle" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <ImageView android:id="@id/img" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="5.0dip" android:src="@mipmap/music_shuffle" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 -    <TextView android:textSize="22.0sp" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_song_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/random_play_option" android:maxLines="1" android:fontFamily="@font/montserrat_bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/img" app:layout_constraintRight_toLeftOf="@id/right_arrow" app:layout_constraintTop_toTopOf="parent" />
++    <ImageView android:id="@id/img" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="10.0dip" android:src="@mipmap/music_shuffle" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <TextView android:textSize="22.0sp" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_song_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/random_play_option" android:maxLines="1" android:singleLine="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/img" app:layout_constraintRight_toLeftOf="@id/right_arrow" app:layout_constraintTop_toTopOf="parent" />
      <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
@@ -19843,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..e81741ff 100644
+index 71fe29d0..b5598a82 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20792,7 +20794,7 @@ index 71fe29d0..e81741ff 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev66</string>
++    <string name="ipp_version">v1.1.0-dev68</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

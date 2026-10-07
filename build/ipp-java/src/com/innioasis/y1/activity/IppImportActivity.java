@@ -126,7 +126,7 @@ public final class IppImportActivity extends BaseActivity {
             LinearLayout r = new LinearLayout(this);
             r.setOrientation(LinearLayout.HORIZONTAL);
             r.setGravity(Gravity.CENTER_VERTICAL);
-            r.setPadding(5, 0, 5, 0);
+            r.setPadding(10, 0, 5, 0);
 
             ImageView t = new ImageView(this);
             t.setImageBitmap(PickDialog.tick());

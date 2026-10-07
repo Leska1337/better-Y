@@ -327,7 +327,7 @@ public final class IppQueueActivity extends BaseActivity {
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setBaselineAligned(false);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(5, 0, 5, 0);
+            row.setPadding(10, 0, 5, 0);
 
             // the playing row: its cover, else ▶
             Bitmap art = playing ? cover(s) : null;
@@ -715,7 +715,7 @@ public final class IppQueueActivity extends BaseActivity {
         tv.setIncludeFontPadding(false);
         tv.setGravity(Gravity.CENTER_VERTICAL);
         // air above and below, so the wash reads as a band, not a highlight
-        tv.setPadding(5, CAPTION_PAD, 5, CAPTION_PAD);
+        tv.setPadding(10, CAPTION_PAD, 5, CAPTION_PAD);
         tv.setSingleLine(true);
         tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
         tv.setText(text);

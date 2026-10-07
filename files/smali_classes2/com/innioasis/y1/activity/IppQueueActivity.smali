@@ -401,8 +401,9 @@
     const/16 v9, 16
     invoke-virtual { v4, v9 }, Landroid/widget/LinearLayout;->setGravity(I)V
   .line 330
-    const/4 v10, 5
-    invoke-virtual { v4, v10, v2, v10, v2 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
+    const/16 v10, 10
+    const/4 v11, 5
+    invoke-virtual { v4, v10, v2, v11, v2 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
   .line 333
     const/4 v10, 0
     if-eqz v3, :L5
@@ -692,7 +693,7 @@
 .end method
 
 .method private captionView(Ljava/lang/String;)Landroid/widget/TextView;
-  .registers 6
+  .registers 7
   .line 712
     new-instance v0, Landroid/widget/TextView;
     invoke-direct { v0, p0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
@@ -708,9 +709,10 @@
     const/16 v2, 16
     invoke-virtual { v0, v2 }, Landroid/widget/TextView;->setGravity(I)V
   .line 718
-    const/4 v2, 5
-    const/4 v3, 3
-    invoke-virtual { v0, v2, v3, v2, v3 }, Landroid/widget/TextView;->setPadding(IIII)V
+    const/4 v2, 3
+    const/4 v3, 5
+    const/16 v4, 10
+    invoke-virtual { v0, v4, v2, v3, v2 }, Landroid/widget/TextView;->setPadding(IIII)V
   .line 719
     const/4 v2, 1
     invoke-virtual { v0, v2 }, Landroid/widget/TextView;->setSingleLine(Z)V

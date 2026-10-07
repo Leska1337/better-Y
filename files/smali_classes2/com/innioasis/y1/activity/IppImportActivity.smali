@@ -879,8 +879,9 @@
     const/16 v5, 16
     invoke-virtual { v4, v5 }, Landroid/widget/LinearLayout;->setGravity(I)V
   .line 129
-    const/4 v5, 5
-    invoke-virtual { v4, v5, v2, v5, v2 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
+    const/16 v5, 10
+    const/4 v6, 5
+    invoke-virtual { v4, v5, v2, v6, v2 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
   .line 131
     new-instance v5, Landroid/widget/ImageView;
     invoke-direct { v5, p0 }, Landroid/widget/ImageView;-><init>(Landroid/content/Context;)V

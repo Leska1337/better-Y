@@ -16,6 +16,8 @@
 
 .field private static albumAdapter:Ljava/lang/ref/WeakReference;
 
+.field private static barLeft:I
+
 .field private static barLv:Ljava/lang/ref/WeakReference;
 
 .field private static discs:[I
@@ -55,6 +57,9 @@
     new-instance v0, Lcom/innioasis/ipp/Disc$Bar;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Disc$Bar;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Disc;->BAR:Lcom/innioasis/ipp/Disc$Bar;
+  .line 515
+    const/4 v0, -1
+    sput v0, Lcom/innioasis/ipp/Disc;->barLeft:I
     return-void
 .end method
 
@@ -938,45 +943,45 @@
 .end method
 
 .method private static paint(Landroid/widget/ListView;Ljava/lang/String;)V
-  .catchall { :L0 .. :L6 } :L7
-  .registers 4
+  .catchall { :L0 .. :L7 } :L8
+  .registers 6
   :L0
-  .line 516
+  .line 519
     invoke-virtual { p0 }, Landroid/widget/ListView;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 517
+  .line 520
     instance-of v0, p0, Landroid/view/View;
     if-nez v0, :L1
     return-void
   :L1
-  .line 518
+  .line 521
     check-cast p0, Landroid/view/View;
     const v0, 2131362548
     invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 519
+  .line 522
     instance-of v0, p0, Landroid/widget/TextView;
     if-nez v0, :L2
     return-void
   :L2
-  .line 520
-    check-cast p0, Landroid/widget/TextView;
-  .line 522
-    if-nez p1, :L4
   .line 523
+    check-cast p0, Landroid/widget/TextView;
+  .line 525
+    if-nez p1, :L4
+  .line 526
     const/4 p1, 0
     sput-object p1, Lcom/innioasis/ipp/Disc;->shown:Ljava/lang/String;
-  .line 524
+  .line 527
     invoke-virtual { p0 }, Landroid/widget/TextView;->getVisibility()I
     move-result p1
     const/16 v0, 8
     if-eq p1, v0, :L3
     invoke-virtual { p0, v0 }, Landroid/widget/TextView;->setVisibility(I)V
   :L3
-  .line 525
+  .line 528
     return-void
   :L4
-  .line 527
+  .line 530
     sget-object v0, Lcom/innioasis/ipp/Disc;->shown:Ljava/lang/String;
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -986,39 +991,56 @@
     if-nez v0, :L5
     return-void
   :L5
-  .line 528
+  .line 531
     sput-object p1, Lcom/innioasis/ipp/Disc;->shown:Ljava/lang/String;
-  .line 529
-    invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 531
-    sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
   .line 532
-    invoke-virtual { p0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
-    move-result-object v0
-    const v1, 2131100252
-    invoke-virtual { v0, v1 }, Landroid/content/res/Resources;->getColor(I)I
-    move-result v0
-  .line 531
-    const/4 v1, 0
-    invoke-virtual { p1, p0, v0, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
+    invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   .line 533
-    sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    const v0, 2131231044
-    invoke-virtual { p1, p0, v0, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 534
-    invoke-static { p0 }, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
-  .line 536
-    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->backdrop(Landroid/view/View;)V
-  .line 537
-    invoke-virtual { p0, v1 }, Landroid/widget/TextView;->setVisibility(I)V
+    sget p1, Lcom/innioasis/ipp/Disc;->barLeft:I
+    if-gez p1, :L6
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getPaddingLeft()I
+    move-result p1
+    sput p1, Lcom/innioasis/ipp/Disc;->barLeft:I
   :L6
-  .line 539
-    goto :L8
-  :L7
+  .line 534
+    sget p1, Lcom/innioasis/ipp/Disc;->barLeft:I
+  .line 536
+    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+  .line 537
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
+    move-result-object v1
+    const v2, 2131100252
+    invoke-virtual { v1, v2 }, Landroid/content/res/Resources;->getColor(I)I
+    move-result v1
+  .line 536
+    const/4 v2, 0
+    invoke-virtual { v0, p0, v1, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
   .line 538
-    move-exception p0
+    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    const v1, 2131231044
+    invoke-virtual { v0, p0, v1, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
+  .line 539
+    invoke-static { p0 }, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
+  .line 541
+    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->backdrop(Landroid/view/View;)V
+  .line 543
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getPaddingTop()I
+    move-result v0
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getPaddingRight()I
+    move-result v1
+    invoke-virtual { p0 }, Landroid/widget/TextView;->getPaddingBottom()I
+    move-result v3
+    invoke-virtual { p0, p1, v0, v1, v3 }, Landroid/widget/TextView;->setPadding(IIII)V
+  .line 544
+    invoke-virtual { p0, v2 }, Landroid/widget/TextView;->setVisibility(I)V
+  :L7
+  .line 546
+    goto :L9
   :L8
-  .line 540
+  .line 545
+    move-exception p0
+  :L9
+  .line 547
     return-void
 .end method
 
