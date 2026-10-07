@@ -22,8 +22,8 @@ import com.innioasis.y1.base.BaseDialog;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * The category tick list in front of "Cache library" and "Clear cache": "Select all", one row per
- * category with its weight on disk, and the button as the last row; the top button closes. Dressed
+ * A tick list of categories ("Cache library", "Clear cache", the status bar's icons): "Select
+ * all", one row per category, and the button as the last row; the top button closes. Dressed
  * like {@code SubMenuDialog} through ThemeManager's menu and option hooks, so a theme dresses it
  * unawares. The box is a {@link GradientDrawable}: {@code setBackgroundColor} on {@code bg_submenu}
  * would lose its corners.
@@ -31,7 +31,7 @@ import com.innioasis.y1.theme.ThemeManager;
 public final class PickDialog extends BaseDialog {
 
     public static abstract class Go {
-        /** An OR of {@code Pick.COVERS} / {@code TAGS} / {@code SYSTEM}. */
+        /** An OR of the ticked categories. */
         public abstract void go(int mask);
     }
 
@@ -41,6 +41,9 @@ public final class PickDialog extends BaseDialog {
     private final int[] cats;
     private final boolean sizes;
     private final Go go;
+    private final String[] names;     // the rows' own wording; null asks Pick.label
+    private final int start;          // the categories ticked at first; -1 is all of them
+    private final boolean none;       // whether an empty choice is an answer too
 
     /** [0] "Select all", then the categories. */
     private boolean[] on;
@@ -65,6 +68,24 @@ public final class PickDialog extends BaseDialog {
         this.cats = cats;
         this.sizes = sizes;
         this.go = go;
+        this.names = null;
+        this.start = -1;
+        this.none = false;
+    }
+
+    /** A choice that is a SETTING: named rows, ticked as {@code start} says, and none is valid. */
+    public PickDialog(Activity a, String title, String okText, int[] cats, String[] names,
+            int start, Go go) {
+        super(a, R.style.Dialog_Common);
+        this.activity = a;
+        this.title = title;
+        this.okText = okText;
+        this.cats = cats;
+        this.sizes = false;
+        this.go = go;
+        this.names = names;
+        this.start = start;
+        this.none = true;
     }
 
     @Override
@@ -75,7 +96,7 @@ public final class PickDialog extends BaseDialog {
         on = new boolean[n + 1];
         size = new long[n + 1];
         for (int i = 0; i <= n; i++) {
-            on[i] = true;
+            on[i] = i == 0 || start < 0 || (start & cats[i - 1]) != 0;
             size[i] = -1L;
         }
         okRow = n + 1;
@@ -107,7 +128,9 @@ public final class PickDialog extends BaseDialog {
 
         box.addView(row(0, activity.getString(R.string.ipp_pick_all)), -1, -2);
         for (int i = 0; i < n; i++) {
-            box.addView(row(i + 1, activity.getString(Pick.label(cats[i]))), -1, -2);
+            String name = names != null && i < names.length ? names[i]
+                    : activity.getString(Pick.label(cats[i]));
+            box.addView(row(i + 1, name), -1, -2);
         }
 
         LinearLayout buttons = new LinearLayout(activity);
@@ -321,7 +344,7 @@ public final class PickDialog extends BaseDialog {
                 if (on[i + 1]) mask |= cats[i];
             }
             dismiss();
-            if (go != null && mask != 0) go.go(mask);
+            if (go != null && (none || mask != 0)) go.go(mask);
             return;
         }
         toggle(sel);

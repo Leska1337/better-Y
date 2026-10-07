@@ -53,6 +53,7 @@ public final class Help {
         public final boolean group;    // true for a group caption, which owns no setting
         public String label;           // null when no file names it: the string resource stands in
         public String showIf;          // parent row's key, or null — structure, so English only
+        public String parent;          // the section row it stands in, or null — English only
         public String[] values;        // CHOICE value labels, or null
         public String body;            // the description, as written
 
@@ -203,8 +204,9 @@ public final class Help {
     }
 
     /**
-     * {@code [[group]] Caption}, {@code [row] Name} or {@code [row if parent] Name}; {@code * } is a
-     * choice value; the rest is the description. With {@code o} null this is a translation pass,
+     * {@code [[group]] Caption}, {@code [row] Name}, {@code [row if parent] Name} or
+     * {@code [row in section] Name}; {@code * } is a value; the rest is the description. With
+     * {@code o} null this is a translation pass,
      * which only fills rows English declared — a misspelt key is dropped.
      */
     private static void parse(String s, HashMap into, List o) {
@@ -222,16 +224,12 @@ public final class Help {
                 int close = t.indexOf(group ? "]]" : "]");
                 String head = t.substring(group ? 2 : 1, close).trim();
                 String label = t.substring(close + (group ? 2 : 1)).trim();
-                String key = head;
-                String showIf = null;
-                int sp = head.indexOf(" if ");
-                if (sp > 0) {
-                    key = head.substring(0, sp).trim();
-                    showIf = head.substring(sp + 4).trim();
-                }
+                int sp = head.indexOf(' ');
+                String key = sp > 0 ? head.substring(0, sp) : head;
                 if (o != null) {
                     row = new Row(key, group);
-                    row.showIf = (showIf == null || showIf.length() == 0) ? null : showIf;
+                    row.showIf = clause(head, " if ");
+                    row.parent = clause(head, " in ");
                     into.put(key, row);
                     o.add(row);
                 } else {
@@ -248,6 +246,16 @@ public final class Help {
             }
         }
         store(row, body, vals);
+    }
+
+    /** The key after {@code word} in a row's head, or null. */
+    private static String clause(String head, String word) {
+        int at = head.indexOf(word);
+        if (at < 0) return null;
+        String s = head.substring(at + word.length()).trim();
+        int sp = s.indexOf(' ');
+        if (sp > 0) s = s.substring(0, sp);
+        return s.length() == 0 ? null : s;
     }
 
     private static void store(Row row, StringBuilder body, List vals) {

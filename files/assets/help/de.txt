@@ -156,6 +156,24 @@ Alben werden nach ihrem Album-Artist-Tag gruppiert. Ein Album ohne diesen landet
 ---
 Beim ersten Öffnen wird der Tag jedes Albums gelesen, was bei einer großen Bibliothek dauern kann. Danach öffnet sich der Bereich sofort; „{row:cache}“ liest die Tags im Voraus.
 
+[status_bar] Statusleiste
+Einstellungen der Leiste am oberen Bildschirmrand.
+
+[bar_text] Textfarbe der Statusleiste
+* Hell
+* Dunkel
+* Themenfarbe
+Legt die Farbe des Titels und der Akkuanzeige in Prozent in der Statusleiste fest.
+
+Themenfarbe ist die Farbe des Listentexts des Themes.
+
+[bar_icons] Symbole
+* Wiedergabe
+* Kopfhörer
+* Bluetooth
+* Akku
+Legt fest, welche Symbole die Statusleiste zeigt.
+
 [[metadata]] Metadaten
 
 [meta_title] Songtitel aus Metadaten

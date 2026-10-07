@@ -41,6 +41,8 @@ public final class Prefs {
         def(Pad.KEY, 1);
         def(AlbumArtists.KEY, 0);
         def(Loop.KEY, 0);
+        def(TopBar.KEY_TEXT, 0);             // white, as the layout has it
+        def(TopBar.KEY_ICONS, TopBar.ALL);
         // [Metadata]
         def("meta_title", 1);
         def("book_meta_title", 0);           // a chapter's tag is routinely worse than its file name

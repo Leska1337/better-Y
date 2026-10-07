@@ -41,6 +41,7 @@ import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.Tint;
+import com.innioasis.ipp.TopBar;
 import com.innioasis.ipp.TrackCache;
 import com.innioasis.ipp.YearCache;
 import com.innioasis.music.util.Other;
@@ -78,6 +79,7 @@ public final class IppActivity extends BaseActivity {
     private static final int ACTION = 3;   // runs an action on confirm
     // like CHOICE, but over the numbers in choices[], shown as they are
     private static final int NUMBER = 4;
+    private static final int SUB = 5;      // a section: a row that opens rows of its own
 
     private static final int ACCENT = Color.parseColor("#3CFFDE");
 
@@ -111,6 +113,7 @@ public final class IppActivity extends BaseActivity {
         String label;          // from the asset; null shows the key
         String[] values;       // CHOICE: from the asset; null shows the index
         String showIf;         // if non-null, row shown only while that pref is on
+        String parent;         // the SUB row it stands in; null stands in its group
 
         // No default here: it lives once, in Prefs.DEFAULTS, read by this screen and the feature.
         Item(int type, String key, int count, int[] choices, String showIf) {
@@ -120,6 +123,11 @@ public final class IppActivity extends BaseActivity {
             this.choices = choices;
             this.showIf = showIf;
         }
+
+        Item in(String section) {
+            parent = section;
+            return this;
+        }
     }
 
     private List items;                 // List<Item>
@@ -128,12 +136,12 @@ public final class IppActivity extends BaseActivity {
     private TextView[] labels;          // per item (null for headers)
     private TextView[] values;          // per item (null for headers)
     private TextView[] marks;           // the sub-item arrow, where a row has one
-    private int[] groupOf;              // per item: index into items of the header it stands under
+    private int[] groupOf;              // per item: index of the header or SUB row it stands under
     private int sel;                    // index into items of the focused selectable+visible row
     private ScrollView scroller;
     private LinearLayout rowList;       // the rows of every group; only the open group's are shown
 
-    private int group = -1;             // -1 = the list of groups
+    private int group = -1;             // the open header or SUB row; -1 = the list of groups
     private int[] cats;                 // index into items of each header, in order
     private View[] catRows;
     private TextView[] catLabels;
@@ -168,7 +176,8 @@ public final class IppActivity extends BaseActivity {
             used.add(r.key);
             it.label = r.label;
             it.showIf = r.showIf;
-            if (it.type == CHOICE && r.values != null && r.values.length == it.count) {
+            it.parent = r.parent;
+            if ((it.type == CHOICE || it.type == ACTION) && r.values != null && r.values.length == it.count) {
                 it.values = r.values;
             }
             out.add(it);
@@ -223,6 +232,9 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
+        l.add(new Item(SUB, "status_bar", 0, null, null));
+        l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
+        l.add(new Item(ACTION, TopBar.KEY_ICONS, TopBar.ICONS.length, null, null).in("status_bar"));
 
         l.add(new Item(HEADER, "metadata", 0, null, null));
         l.add(new Item(TOGGLE, "meta_title", 0, null, null));
@@ -260,7 +272,7 @@ public final class IppActivity extends BaseActivity {
         return Prefs.on(this, it.key);
     }
 
-    /** A row of the open group, shown and not a caption. */
+    /** A row of the open group or section, shown and not a caption. */
     private boolean selectable(int i) {
         Item it = (Item) items.get(i);
         return it.type != HEADER && groupOf[i] == group && visible(it);
@@ -393,13 +405,26 @@ public final class IppActivity extends BaseActivity {
             }
         }
 
+        // a row named into a section stands under that row, not under the group
+        for (int i = 0; i < n; i++) {
+            Item it = (Item) items.get(i);
+            if (it.type == HEADER || it.parent == null) continue;
+            for (int j = 0; j < n; j++) {
+                Item p = (Item) items.get(j);
+                if (p.type == SUB && it.parent.equals(p.key)) groupOf[i] = j;
+            }
+        }
+
         scroller = new ScrollView(this);
         root.addView(scroller, -1, -1);
-        show(-1);
+        show(-1, -1);
     }
 
-    /** The groups ({@code g == -1}) or one group's rows, its name in the status bar. */
-    private void show(int g) {
+    /**
+     * The groups ({@code g == -1}), or the rows of one group or section with its name in the
+     * status bar. {@code cursor} is the row to stand on; -1 is the first.
+     */
+    private void show(int g, int cursor) {
         group = g;
         scroller.removeAllViews();
         if (g < 0) {
@@ -408,11 +433,28 @@ public final class IppActivity extends BaseActivity {
         } else {
             setStateBarLeftText(label((Item) items.get(g)));
             scroller.addView(rowList, -1, -2);
-            sel = firstSelectable();
+            sel = cursor >= 0 && selectable(cursor) ? cursor : firstSelectable();
             fitRows();
         }
         scroller.scrollTo(0, 0);
         render();
+        // the rows just shown have no place yet; the cursor's is known by the next frame
+        if (g >= 0 && cursor >= 0) {
+            scroller.getViewTreeObserver().addOnPreDrawListener(new Settle(this));
+        }
+    }
+
+    /** Brings the cursor into view in the frame the freshly shown rows are first drawn in. */
+    static final class Settle implements android.view.ViewTreeObserver.OnPreDrawListener {
+        private final IppActivity a;
+
+        Settle(IppActivity a) { this.a = a; }
+
+        public boolean onPreDraw() {
+            a.scroller.getViewTreeObserver().removeOnPreDrawListener(this);
+            a.scrollToSel(false);
+            return true;
+        }
     }
 
     /** item_main's text size, and how far it may shrink. */
@@ -458,7 +500,8 @@ public final class IppActivity extends BaseActivity {
             android.text.TextPaint p = new android.text.TextPaint(labels[i].getPaint());
             p.setTextSize(px);
             float widest = 0;
-            String[] vals = valuesOf(it);
+            // an ACTION's values name what it opens; its value column is empty
+            String[] vals = it.type == ACTION ? new String[0] : valuesOf(it);
             for (int v = 0; v < vals.length; v++) widest = Math.max(widest, p.measureText(vals[v]));
             int room = width - rowViews[i].getPaddingLeft() - rowViews[i].getPaddingRight()
                     - values[i].getPaddingLeft() - values[i].getPaddingRight() - (int) Math.ceil(widest);
@@ -483,8 +526,8 @@ public final class IppActivity extends BaseActivity {
             for (int i = 0; i < s.length; i++) s[i] = String.valueOf(it.choices[i]);
             return s;
         }
-        if (it.type == CHOICE && it.values != null) return it.values;
-        if (it.type == CHOICE) {
+        if (it.count > 0 && it.values != null) return it.values;
+        if (it.count > 0) {
             String[] s = new String[it.count];
             for (int i = 0; i < s.length; i++) s[i] = String.valueOf(i);
             return s;
@@ -499,9 +542,38 @@ public final class IppActivity extends BaseActivity {
         for (int i = 0; i < items.size(); i++) {
             Item it = (Item) items.get(i);
             if (groupOf[i] == g && it.type != HEADER && visible(it)) {
-                show(g);
+                show(g, -1);
                 return;
             }
+        }
+    }
+
+    /** Open the section row {@code s}, unless it has nothing to show. */
+    private void openSub(int s) {
+        for (int i = 0; i < items.size(); i++) {
+            if (groupOf[i] == s && i != s && visible((Item) items.get(i))) {
+                show(s, -1);
+                return;
+            }
+        }
+    }
+
+    /** "Icons": which of the status bar's icons are shown, named by the row's own values. */
+    private void pickIcons(Item it) {
+        new PickDialog(getActivity(), label(it), getString(R.string.ipp_backup_save),
+                TopBar.ICONS, valuesOf(it), Prefs.val(this, TopBar.KEY_ICONS),
+                new IconPick(this)).show();
+    }
+
+    static final class IconPick extends PickDialog.Go {
+        private final IppActivity a;
+
+        IconPick(IppActivity a) { this.a = a; }
+
+        @Override
+        public void go(int mask) {
+            Prefs.setInt(a, TopBar.KEY_ICONS, mask);
+            TopBar.apply(a);
         }
     }
 
@@ -792,9 +864,14 @@ public final class IppActivity extends BaseActivity {
         } else if (it.type == CHOICE) {
             int v = (Prefs.val(this, it.key) + 1) % it.count;
             Prefs.setInt(this, it.key, v);
+            if (TopBar.KEY_TEXT.equals(it.key)) TopBar.apply(this);
             render();
+        } else if (it.type == SUB) {
+            openSub(sel);
         } else if (it.type == ACTION) {
-            if ("scan".equals(it.key)) {
+            if (TopBar.KEY_ICONS.equals(it.key)) {
+                pickIcons(it);
+            } else if ("scan".equals(it.key)) {
                 confirmScan(label(it));
             } else if ("cache".equals(it.key)) {
                 confirmCache();
@@ -1434,9 +1511,13 @@ public final class IppActivity extends BaseActivity {
     @Override
     public void direction(BaseActivity.Direction d) {
         if (d == BaseActivity.Direction.TOP) {
-            // the innermost thing open: the edit, then the group, then the screen
+            // the innermost thing open: the edit, the section, the group, then the screen
             if (editing) { endEdit(false); return; }
-            if (group >= 0) { show(-1); return; }
+            if (group >= 0 && ((Item) items.get(group)).type == SUB) {
+                show(groupOf[group], group);
+                return;
+            }
+            if (group >= 0) { show(-1, -1); return; }
             finish();
         }
     }

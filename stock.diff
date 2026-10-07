@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d3fff131 100644
+index 01b1f730..24670a0e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..d3fff131 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100062
++  versionCode: 10100063
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -166,6 +166,23 @@ index a65785d4..88d40e93 100644
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
 +    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_base.xml b/build/src/res/layout/activity_base.xml
+index dd92a115..d05efa91 100644
+--- a/build/src/res/layout/activity_base.xml
++++ b/build/src/res/layout/activity_base.xml
+@@ -9,8 +9,10 @@
+         <ImageView android:layout_gravity="center_vertical" android:id="@id/play" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_play" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
+         <ImageView android:layout_gravity="center_vertical" android:id="@id/headset" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_headset_1" android:layout_marginEnd="6.0dip" />
+         <ImageView android:layout_gravity="center_vertical" android:id="@id/bluetooth" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_bluetooth_0" android:layout_marginEnd="6.0dip" />
+-        <ImageView android:layout_gravity="center_vertical" android:id="@id/ringtone" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="22.0dip" android:src="@drawable/icon_statusbar_ringtone" android:scaleType="centerCrop" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
+-        <ImageView android:layout_gravity="center_vertical" android:id="@id/vibrator" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="22.0dip" android:src="@drawable/icon_statusbar_vibrate" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
++        <!-- ipp: Key tone and Key vibration are never shown. Zero-sized rather than removed or GONE:
++             the binding requires both views, and stock sets their visibility on every resume. -->
++        <ImageView android:layout_gravity="center_vertical" android:id="@id/ringtone" android:visibility="visible" android:layout_width="0.0dip" android:layout_height="0.0dip" />
++        <ImageView android:layout_gravity="center_vertical" android:id="@id/vibrator" android:visibility="visible" android:layout_width="0.0dip" android:layout_height="0.0dip" />
+         <ImageView android:layout_gravity="center_vertical" android:id="@id/battery" android:layout_width="wrap_content" android:layout_height="25.0dip" android:src="@drawable/icon_statusbar_battery_0" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
+         <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:layout_gravity="center_vertical" android:id="@id/battery_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="70%" android:singleLine="true" android:layout_marginEnd="5.0dip" />
+     </LinearLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
 index 3fff8427..5228f386 100644
 --- a/build/src/res/layout/activity_blutooth.xml
@@ -19744,7 +19761,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..ec1d6281 100644
+index 71fe29d0..a2f2a942 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20693,7 +20710,7 @@ index 71fe29d0..ec1d6281 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev62</string>
++    <string name="ipp_version">v1.1.0-dev63</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -22589,7 +22606,7 @@ index c4b75839..d7701505 100644
      sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..ede94267 100644
+index 060ed6d1..8516acf1 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -22711,7 +22728,7 @@ index 060ed6d1..ede94267 100644
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3463,6 +3519,15 @@
+@@ -3463,9 +3519,21 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -22727,7 +22744,13 @@ index 060ed6d1..ede94267 100644
      .line 345
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->updateBatteryPercentageBase()V
  
-@@ -3602,7 +3667,12 @@
++    # ipp: the status bar's text colour and which of its icons are shown. See TopBar.
++    invoke-static {p0}, Lcom/innioasis/ipp/TopBar;->apply(Ljava/lang/Object;)V
++
+     .line 347
+     sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -3602,7 +3670,12 @@
  
      const-string v2, "save state successful"
  
@@ -22741,7 +22764,7 @@ index 060ed6d1..ede94267 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4192,12 @@
+@@ -4122,6 +4195,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  

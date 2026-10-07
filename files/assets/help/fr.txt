@@ -156,6 +156,24 @@ Les albums sont regroupés par leur tag Album Artist. Un album sans ce tag va au
 ---
 À la première ouverture, le tag de chaque album est lu, ce qui peut prendre du temps sur une grande bibliothèque. Ensuite la section s'ouvre aussitôt ; « {row:cache} » lit les tags à l'avance.
 
+[status_bar] Barre d'état
+Réglages de la barre en haut de l'écran.
+
+[bar_text] Couleur du texte de la barre d'état
+* Clair
+* Sombre
+* Couleur du thème
+Définit la couleur du titre et du pourcentage de batterie dans la barre d'état.
+
+Couleur du thème est la couleur du texte des listes du thème.
+
+[bar_icons] Icônes
+* Lecture
+* Écouteurs
+* Bluetooth
+* Batterie
+Choisit les icônes affichées dans la barre d'état.
+
 [[metadata]] Métadonnées
 
 [meta_title] Titres des morceaux depuis les métadonnées

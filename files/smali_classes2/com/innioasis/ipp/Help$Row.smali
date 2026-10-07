@@ -18,18 +18,20 @@
 
 .field public label:Ljava/lang/String;
 
+.field public parent:Ljava/lang/String;
+
 .field public showIf:Ljava/lang/String;
 
 .field public values:[Ljava/lang/String;
 
 .method constructor <init>(Ljava/lang/String;Z)V
   .registers 3
-  .line 59
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 60
-    iput-object p1, p0, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 61
-    iput-boolean p2, p0, Lcom/innioasis/ipp/Help$Row;->group:Z
+    iput-object p1, p0, Lcom/innioasis/ipp/Help$Row;->key:Ljava/lang/String;
   .line 62
+    iput-boolean p2, p0, Lcom/innioasis/ipp/Help$Row;->group:Z
+  .line 63
     return-void
 .end method

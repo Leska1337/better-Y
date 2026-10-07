@@ -3,6 +3,7 @@
 # [[group]] Caption        a group; where it stands here is where it stands in the menu
 # [row] Name               a row; where it stands here is where it stands in its group
 # [row if parent] Name     a SUB-ITEM: shown only while `parent` is on, and drawn with an arrow
+# [row in section] Name    a row of a SECTION: `section` is a row that opens rows of its own
 # * Value                  one value of a choice row, in order
 # ---                      a forced page break in the description; otherwise pages are measured
 # @img file Caption        a description page that is nothing but this picture (help/img/file)
@@ -157,6 +158,24 @@ Adds "Album Artists" to the Music menu, right below "{app:artists}".
 Albums are grouped by their Album Artist tag. An album without one goes under the first artist of its songs; with no artist at all, under <unknown>. An album always opens whole.
 ---
 The first time the section is opened the tag of every album is read, which can take a while on a large library. After that it opens straight away; "{row:cache}" reads the tags in advance.
+
+[status_bar] Status bar
+Settings of the bar at the top of the screen.
+
+[bar_text in status_bar] Status bar text color
+* Light
+* Dark
+* Theme color
+Sets the colour of the title and the battery percentage in the status bar.
+
+Theme color is the colour of the theme's list text.
+
+[bar_icons in status_bar] Icons
+* Playback
+* Headphones
+* Bluetooth
+* Battery
+Chooses which icons the status bar shows.
 
 [[metadata]] Metadata
 
