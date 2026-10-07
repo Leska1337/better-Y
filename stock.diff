@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..b3c2b477 100644
+index 01b1f730..6042f41c 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..b3c2b477 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100065
++  versionCode: 10100066
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -234,6 +234,39 @@ index cf5ce73a..4c396309 100644
 +    <View android:id="@id/ipp_book_divider" android:background="#ff2a2a2a" android:layout_width="fill_parent" android:layout_height="1.0dip" />
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
+diff --git a/build/src/res/layout/activity_date_one_level.xml b/build/src/res/layout/activity_date_one_level.xml
+index b2b33afe..dc2bc018 100644
+--- a/build/src/res/layout/activity_date_one_level.xml
++++ b/build/src/res/layout/activity_date_one_level.xml
+@@ -3,20 +3,20 @@
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <View android:id="@id/invisible_view" android:layout_width="0.0dip" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="3.0" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" />
+     <LinearLayout android:orientation="vertical" android:id="@id/date_ll" android:layout_width="@dimen/setting_width" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="4.0" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/invisible_view">
+-        <LinearLayout android:orientation="horizontal" android:id="@id/item0" android:layout_width="fill_parent" android:layout_height="40.0dip">
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv0" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/date" android:layout_weight="1.0" />
++        <LinearLayout android:orientation="horizontal" android:id="@id/item0" android:layout_width="fill_parent" android:layout_height="45.0dip">
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv0" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/date" android:layout_weight="1.0" />
+             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv0" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="MM/DD/YY" android:layout_weight="1.0" />
+         </LinearLayout>
+-        <LinearLayout android:orientation="horizontal" android:id="@id/item1" android:layout_width="fill_parent" android:layout_height="40.0dip">
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv1" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time" android:layout_weight="1.0" />
++        <LinearLayout android:orientation="horizontal" android:id="@id/item1" android:layout_width="fill_parent" android:layout_height="45.0dip">
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv1" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time" android:layout_weight="1.0" />
+             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv1" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="HH/MM AM" android:layout_weight="1.2" />
+         </LinearLayout>
+-        <LinearLayout android:orientation="horizontal" android:id="@id/item2" android:layout_width="fill_parent" android:layout_height="40.0dip">
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv2" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_format" android:layout_weight="4.0" />
++        <LinearLayout android:orientation="horizontal" android:id="@id/item2" android:layout_width="fill_parent" android:layout_height="45.0dip">
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv2" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_format" android:layout_weight="4.0" />
+             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/item_rtv2" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Off" android:layout_weight="1.0" />
+         </LinearLayout>
+-        <LinearLayout android:orientation="horizontal" android:id="@id/item3" android:layout_width="fill_parent" android:layout_height="40.0dip">
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv3" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_in_title" android:layout_weight="4.0" />
++        <LinearLayout android:orientation="horizontal" android:id="@id/item3" android:layout_width="fill_parent" android:layout_height="45.0dip">
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv3" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_in_title" android:layout_weight="4.0" />
+             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/item_rtv3" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Off" android:layout_weight="1.0" />
+         </LinearLayout>
+     </LinearLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
 index a65785d4..8c2b0d57 100644
 --- a/build/src/res/layout/activity_genres.xml
@@ -600,6 +633,19 @@ index 47fb6a5a..755be867 100644
 +         ImageView.sCompatAdjustViewBounds), so the stock 48x48 arrow is not blown up. -->
 +    <ImageView android:layout_gravity="center" android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
+diff --git a/build/src/res/layout/item_book_main.xml b/build/src/res/layout/item_book_main.xml
+index 78a5c221..b572eebe 100644
+--- a/build/src/res/layout/item_book_main.xml
++++ b/build/src/res/layout/item_book_main.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:orientation="horizontal" android:id="@id/layout" android:layout_width="fill_parent" android:layout_height="45.0dip"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/tv_item" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" />
++    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/tv_item" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" />
+     <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
+     <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="end|center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="10.0dip" />
+ </LinearLayout>
 diff --git a/build/src/res/layout/item_eq.xml b/build/src/res/layout/item_eq.xml
 index ceb7695d..252a74ff 100644
 --- a/build/src/res/layout/item_eq.xml
@@ -631,6 +677,19 @@ index 3d525b5f..8d102001 100644
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="5.0dip" android:maxLines="1" android:singleLine="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/left_icon" app:layout_constraintRight_toLeftOf="@id/right_arrow" app:layout_constraintTop_toTopOf="parent" />
      <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/item_fm_menu.xml b/build/src/res/layout/item_fm_menu.xml
+index 78a5c221..b572eebe 100644
+--- a/build/src/res/layout/item_fm_menu.xml
++++ b/build/src/res/layout/item_fm_menu.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:orientation="horizontal" android:id="@id/layout" android:layout_width="fill_parent" android:layout_height="45.0dip"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/tv_item" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" />
++    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/tv_item" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" />
+     <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
+     <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="end|center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="10.0dip" />
+ </LinearLayout>
 diff --git a/build/src/res/layout/item_genre.xml b/build/src/res/layout/item_genre.xml
 index 144eedc1..358fd2d8 100644
 --- a/build/src/res/layout/item_genre.xml
@@ -674,7 +733,7 @@ index a59668be..63515302 100644
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_main.xml b/build/src/res/layout/item_main.xml
-index 6917d780..1d6e454f 100644
+index 6917d780..bc5b6e37 100644
 --- a/build/src/res/layout/item_main.xml
 +++ b/build/src/res/layout/item_main.xml
 @@ -1,6 +1,19 @@
@@ -691,10 +750,10 @@ index 6917d780..1d6e454f 100644
 +    <!-- ipp: the icon of a marker row ("Show all albums" in Genres). GONE on every ordinary row —
 +         these rows are recycled, so Mark.mainRow writes both states on every bind. -->
 +    <!-- The marker row is built to match the album list's "Show all songs" row (item_album): a
-+         40x40 picture at x 5..45 and the label from 55 — here 5 + 40 + 5 plus the row's own 5dip
-+         padding. The row's height (60, the album row's) is set by Mark.mainRow, since every other
++         40x40 picture at x 5..45 and the label from 55 — here 5 + 40 plus the label's 5dip margin and its 5dip
++         padding and its 5dip margin, which is what puts a plain row's label under the status bar's title. The row's height (60, the album row's) is set by Mark.mainRow, since every other
 +         row uses this same layout. -->
-+    <ImageView android:id="@id/ipp_row_icon" android:visibility="gone" android:layout_gravity="center_vertical" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginRight="5.0dip" android:adjustViewBounds="true" />
++    <ImageView android:id="@id/ipp_row_icon" android:visibility="gone" android:layout_gravity="center_vertical" android:layout_width="40.0dip" android:layout_height="40.0dip" android:layout_marginLeft="5.0dip" android:layout_marginRight="0.0dip" android:adjustViewBounds="true" />
 +    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:layout_gravity="top" android:id="@id/tv_item" android:padding="@dimen/main_item_padding" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="@dimen/main_item_margin_left" android:maxLines="1" android:singleLine="true" android:layout_weight="1.0" />
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
@@ -764,16 +823,19 @@ index ce45631a..5e5d5bed 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_setting.xml b/build/src/res/layout/item_setting.xml
-index 132396d1..e57e4fd9 100644
+index 132396d1..48a6a3dd 100644
 --- a/build/src/res/layout/item_setting.xml
 +++ b/build/src/res/layout/item_setting.xml
-@@ -1,5 +1,5 @@
+@@ -1,7 +1,7 @@
  <?xml version="1.0" encoding="utf-8"?>
 -<LinearLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="40.0dip"
 +<LinearLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="45.0dip"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-     <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="5.0dip" android:layout_marginEnd="5.0dip" />
+-    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="5.0dip" android:layout_marginEnd="5.0dip" />
++    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="5.0dip" />
      <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="5.0dip" />
+     <ImageView android:id="@id/arrow" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="5.0dip" />
+ </LinearLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
 index 60b91724..0bf3ae5e 100644
 --- a/build/src/res/layout/item_songlist.xml
@@ -856,13 +918,25 @@ index d451d45f..6da369b8 100644
 +    <TextView android:textSize="19.0sp" android:textColor="#ccffffff" android:ellipsize="end" android:gravity="center" android:id="@id/text" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_video.xml b/build/src/res/layout/item_video.xml
-index f543a231..a07336f6 100644
+index f543a231..53f55d83 100644
 --- a/build/src/res/layout/item_video.xml
 +++ b/build/src/res/layout/item_video.xml
-@@ -8,9 +8,19 @@
+@@ -2,15 +2,27 @@
+ <FrameLayout android:orientation="horizontal" android:id="@id/item_video_layout" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+     <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/video_layout" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="72.0dip">
++        <!-- ipp: the name column is weighted and ends short of the arrow, which is drawn over the row. -->
+         <ImageView android:id="@id/video_img" android:layout_width="60.0dip" android:layout_height="60.0dip" android:layout_marginTop="6.0dip" android:layout_marginBottom="6.0dip" android:adjustViewBounds="true" android:layerType="hardware" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" />
+-        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+-            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/video_name" android:layout_width="400.0dip" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:maxLines="1" />
++        <LinearLayout android:orientation="vertical" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginEnd="45.0dip">
++            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/video_name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:maxLines="1" />
              <TextView android:textSize="20.0sp" android:textColor="@color/white" android:id="@id/video_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
          </LinearLayout>
      </LinearLayout>
+-    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/file_layout" android:layout_width="fill_parent" android:layout_height="44.0dip">
+-        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" />
+-        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="400.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_marginEnd="30.0dip" />
 +    <!-- ipp: the name is WEIGHTED (0dip + weight 1) instead of a fixed 400dip. Stock's row is a
 +         `gravity="center"` LinearLayout, so a fixed-width child is CENTRED in it — with the icon
 +         GONE (the Videos menu itself: All video / Playlist / Folders / Search) the 400+30 block sat
@@ -871,15 +945,15 @@ index f543a231..a07336f6 100644
 +         centre. The icon's margins drop 10/10 -> 5/5 to keep the folder rows pixel-identical:
 +         measured on the device, the icon was [5,45] and the name started at 55 (the block also
 +         OVERFLOWED — 60+430 against a 480 screen — so centring shifted it 5px LEFT), and
-+         5 + 40 + 5 + 5 puts them back exactly there. A menu row's name now starts at 5, the same
-+         as item_main's 5dip padding. -->
-     <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/file_layout" android:layout_width="fill_parent" android:layout_height="44.0dip">
--        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" />
--        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="400.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_marginEnd="30.0dip" />
-+        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="5.0dip" android:layout_marginEnd="5.0dip" />
-+        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="5.0dip" android:layout_marginEnd="30.0dip" />
++         5 + 40 + 10 puts them back exactly there. With the icon GONE a menu row's name starts at
++         10, under the status bar's title, as item_main's does. The row is a menu row's 45 and the
++         arrow is as tall; both names end short of it. -->
++    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/file_layout" android:layout_width="fill_parent" android:layout_height="45.0dip">
++        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="5.0dip" android:layout_marginEnd="0.0dip" />
++        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="45.0dip" />
      </LinearLayout>
-     <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
+-    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
++    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="45.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </FrameLayout>
 diff --git a/build/src/res/layout/view_shuffle_playlist_item.xml b/build/src/res/layout/view_shuffle_playlist_item.xml
 index 252b9346..bdd3b7d9 100644
@@ -901,10 +975,18 @@ index 252b9346..bdd3b7d9 100644
      <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/values-480x360/dimens.xml b/build/src/res/values-480x360/dimens.xml
-index 67bb2db9..f9f646a6 100644
+index 67bb2db9..b4b1d4c4 100644
 --- a/build/src/res/values-480x360/dimens.xml
 +++ b/build/src/res/values-480x360/dimens.xml
-@@ -9,7 +9,7 @@
+@@ -2,14 +2,14 @@
+ <resources>
+     <dimen name="main_icon_width">220.0dip</dimen>
+     <dimen name="main_item_height">45.0dip</dimen>
+-    <dimen name="main_item_margin_left">0.0dip</dimen>
++    <dimen name="main_item_margin_left">5.0dip</dimen>
+     <dimen name="main_item_padding">5.0dip</dimen>
+     <dimen name="player_ab_icon_width">50.0dip</dimen>
+     <dimen name="player_ab_repeat_view_height">66.0dip</dimen>
      <dimen name="player_b_question_icon_width">17.0dip</dimen>
      <dimen name="player_cover_bg_wh">225.0dip</dimen>
      <dimen name="player_cover_view_wh">225.0dip</dimen>
@@ -914,7 +996,7 @@ index 67bb2db9..f9f646a6 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..6aa779a8 100644
+index 50446006..e2bfc1b5 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,520 @@
@@ -1852,7 +1934,7 @@ index 50446006..6aa779a8 100644
 +    <string name="ipp_tone_volume">Lautstärke</string>
 +    <string name="ipp_tone_sound">Klang</string>
 +    <string name="ipp_tone_default">Standard</string>
-+    <string name="ipp_tone_theme">Design-Klang</string>
++    <string name="ipp_tone_theme">Design</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
@@ -2174,7 +2256,7 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..6d920be3 100644
+index 6f5a555d..84742859 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
 @@ -1,417 +1,520 @@
@@ -3112,11 +3194,11 @@ index 6f5a555d..6d920be3 100644
 +    <string name="ipp_tone_volume">Volumen</string>
 +    <string name="ipp_tone_sound">Sonido</string>
 +    <string name="ipp_tone_default">Predeterminado</string>
-+    <string name="ipp_tone_theme">Sonido del tema</string>
++    <string name="ipp_tone_theme">Tema</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..ac125a3c 100644
+index c242cee4..a3e1ce1f 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,520 @@
@@ -4054,11 +4136,11 @@ index c242cee4..ac125a3c 100644
 +    <string name="ipp_tone_volume">Volume</string>
 +    <string name="ipp_tone_sound">Son</string>
 +    <string name="ipp_tone_default">Par défaut</string>
-+    <string name="ipp_tone_theme">Son du thème</string>
++    <string name="ipp_tone_theme">Thème</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..38b9f3e1 100644
+index d82ac6bb..5bc1aec8 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
 @@ -1,417 +1,520 @@
@@ -4996,11 +5078,11 @@ index d82ac6bb..38b9f3e1 100644
 +    <string name="ipp_tone_volume">עוצמה</string>
 +    <string name="ipp_tone_sound">צליל</string>
 +    <string name="ipp_tone_default">ברירת מחדל</string>
-+    <string name="ipp_tone_theme">צליל ערכת נושא</string>
++    <string name="ipp_tone_theme">ערכת נושא</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..4f05cdc5 100644
+index f71d0cb1..1e396ab4 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
 @@ -1,334 +1,437 @@
@@ -5772,7 +5854,7 @@ index f71d0cb1..4f05cdc5 100644
 +    <string name="ipp_tone_volume">볼륨</string>
 +    <string name="ipp_tone_sound">소리</string>
 +    <string name="ipp_tone_default">기본값</string>
-+    <string name="ipp_tone_theme">테마 소리</string>
++    <string name="ipp_tone_theme">테마</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
@@ -6023,7 +6105,7 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..04dedd0c 100644
+index 4c84fd2b..06b36677 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
 @@ -1,86 +1,189 @@
@@ -6299,11 +6381,11 @@ index 4c84fd2b..04dedd0c 100644
 +    <string name="ipp_tone_volume">Громкость</string>
 +    <string name="ipp_tone_sound">Звук</string>
 +    <string name="ipp_tone_default">По умолчанию</string>
-+    <string name="ipp_tone_theme">Звук темы</string>
++    <string name="ipp_tone_theme">Тема</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..cc2137ea 100644
+index 5665bdd9..9f8c1294 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
 @@ -1,426 +1,529 @@
@@ -7259,7 +7341,7 @@ index 5665bdd9..cc2137ea 100644
 +    <string name="ipp_tone_volume">音量</string>
 +    <string name="ipp_tone_sound">声音</string>
 +    <string name="ipp_tone_default">默认</string>
-+    <string name="ipp_tone_theme">主题音效</string>
++    <string name="ipp_tone_theme">主题</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
@@ -19761,7 +19843,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..fab3397f 100644
+index 71fe29d0..e81741ff 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20710,7 +20792,7 @@ index 71fe29d0..fab3397f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev65</string>
++    <string name="ipp_version">v1.1.0-dev66</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20813,7 +20895,7 @@ index 71fe29d0..fab3397f 100644
 +    <string name="ipp_tone_volume">Volume</string>
 +    <string name="ipp_tone_sound">Sound</string>
 +    <string name="ipp_tone_default">Default</string>
-+    <string name="ipp_tone_theme">Theme sound</string>
++    <string name="ipp_tone_theme">Theme</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values/styles.xml b/build/src/res/values/styles.xml

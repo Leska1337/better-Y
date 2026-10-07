@@ -419,7 +419,7 @@ public final class Tone {
             int w = rv.getWidth() > 0 ? rv.getWidth() : rv.getResources().getDisplayMetrics().widthPixels / 2;
             float dp = rv.getResources().getDisplayMetrics().density;
             int room = w - (int) Math.ceil(title.getPaint().measureText(String.valueOf(title.getText())))
-                    - (int) (15 * dp);
+                    - (int) (20 * dp);
             value.setSingleLine(true);
             value.setEllipsize(android.text.TextUtils.TruncateAt.END);
             value.setMaxWidth(Math.max(room, w / 3));

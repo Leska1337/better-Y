@@ -361,7 +361,7 @@ public final class IppActivity extends BaseActivity {
                 row.setOrientation(LinearLayout.HORIZONTAL);
                 row.setBaselineAligned(false);
                 row.setGravity(Gravity.CENTER_VERTICAL);
-                row.setPadding(5, 0, 5, 0);
+                row.setPadding(TEXT_START, 0, 5, 0);
 
                 // A sub-item's arrow: "\u21b4" rotated 180\u00b0, pointing back to its row. Rotated
                 // rather than a ready glyph, which theme fonts may lack.
@@ -479,6 +479,9 @@ public final class IppActivity extends BaseActivity {
     /** item_main's text size, and how far it may shrink. */
     private static final float TEXT_SP = 22.0f;
     private static final float TEXT_MIN_SP = 14.0f;
+
+    /** Where a row's text starts: under the status bar's title. */
+    private static final int TEXT_START = 10;
 
     /** The arrow's distance from the screen edge, and the room kept for it beside a label. */
     private static final int ARROW_END = 5;

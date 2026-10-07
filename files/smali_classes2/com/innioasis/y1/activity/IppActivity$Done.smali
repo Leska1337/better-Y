@@ -17,38 +17,38 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;I)V
   .registers 3
-  .line 1510
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1511
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
-  .line 1512
-    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->updated:I
   .line 1513
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 1514
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
+  .line 1515
+    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->updated:I
+  .line 1516
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
   .registers 6
-  .line 1517
+  .line 1520
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->access$800(Lcom/innioasis/y1/activity/IppActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
     move-result-object v0
-  .line 1518
+  .line 1521
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
     const/4 v2, 0
     invoke-static { v1, v2 }, Lcom/innioasis/y1/activity/IppActivity;->access$802(Lcom/innioasis/y1/activity/IppActivity;Lcom/innioasis/y1/utils/LoadingDialog;)Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 1519
+  .line 1522
     if-eqz v0, :L3
   :L0
-  .line 1520
+  .line 1523
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->dismiss()V
   :L1
     goto :L3
   :L2
     move-exception v0
   :L3
-  .line 1522
+  .line 1525
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "update library finished: "
@@ -63,18 +63,18 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 1523
+  .line 1526
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->updated:I
     const/4 v1, 1
     if-nez v0, :L4
-  .line 1524
+  .line 1527
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
     const v2, 2131821051
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
     goto :L5
   :L4
-  .line 1525
+  .line 1528
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
     new-array v3, v1, [Ljava/lang/Object;
     const/4 v4, 0
@@ -85,13 +85,13 @@
     invoke-virtual { v2, v0, v3 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I[Ljava/lang/Object;)Ljava/lang/String;
     move-result-object v0
   :L5
-  .line 1526
+  .line 1529
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$Done;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v2 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v2
     invoke-static { v2, v0, v1 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/widget/Toast;->show()V
-  .line 1527
+  .line 1530
     return-void
 .end method

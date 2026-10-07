@@ -13,7 +13,8 @@ import com.innioasis.y1.R;
  * The main menu's and Settings' list geometry. "fixed_menu_pad" ON (default): edge to edge, no
  * left margin, down to the bottom. OFF: stock's inset, which some themes' row artwork expects.
  * Inverting the row's wording without renaming the key flips the geometry on every device.
- * With {@link MenuStyle#simple} the list runs to the right edge as well.
+ * With {@link MenuStyle#simple} the list runs to the right edge as well. OFF also keeps the rows'
+ * text at stock's inset; ON it stands under the status bar's title, as the layouts have it.
  * One method for both screens, told apart by the list's id — one reference in the full classes.dex.
  */
 public final class Pad {
@@ -41,6 +42,14 @@ public final class Pad {
             boolean stock = !Prefs.on(c, KEY);
 
             int id = rv.getId();
+            if (id == R.id.rc_list || id == R.id.recycler) {
+                if (rv.getTag(R.id.layout) == null) {
+                    rv.setTag(R.id.layout, Boolean.TRUE);
+                    rv.addOnChildAttachStateChangeListener(new Inset());
+                }
+                // the rows already there: the main menu is not rebuilt on return
+                for (int i = 0; i < rv.getChildCount(); i++) inset(rv.getChildAt(i), stock);
+            }
             int w;
             int h;
             if (id == R.id.rc_list) {
@@ -68,6 +77,43 @@ public final class Pad {
             rv.setLayoutParams(lp);
         } catch (Throwable t) {
         }
+    }
+
+    // The label's start margin: stock's, and under the status bar's title (its own 10dip, less
+    // the main menu label's 5dip padding).
+    private static final int STOCK_MAIN = 0;
+    private static final int STOCK_SET = 5;
+    private static final int SHIFT = 5;
+
+    private static void inset(View row, boolean stock) {
+        if (row == null) return;
+        int dip = STOCK_MAIN;
+        View tv = row.findViewById(R.id.tv_item);
+        if (tv == null) {
+            tv = row.findViewById(R.id.title);
+            dip = STOCK_SET;
+        }
+        if (tv == null || !(tv.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tv.getLayoutParams();
+        int m = px(stock ? dip : dip + SHIFT, row.getResources().getDisplayMetrics().density);
+        if (lp.leftMargin == m && lp.getMarginStart() == m) return;
+        // both: the start form overwrites leftMargin on every layout pass
+        lp.leftMargin = m;
+        lp.setMarginStart(m);
+        tv.setLayoutParams(lp);
+    }
+
+    static final class Inset implements RecyclerView.OnChildAttachStateChangeListener {
+        @Override
+        public void onChildViewAttachedToWindow(View row) {
+            try {
+                inset(row, !Prefs.on(row.getContext(), KEY));
+            } catch (Throwable t) {
+            }
+        }
+
+        @Override
+        public void onChildViewDetachedFromWindow(View row) { }
     }
 
     private static int px(int dip, float d) {

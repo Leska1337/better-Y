@@ -77,7 +77,7 @@
     move-result-wide v3
     double-to-int v0, v3
     sub-int v0, v1, v0
-    const/high16 v3, 0x41700000
+    const/high16 v3, 0x41A00000
     mul-float v2, v2, v3
     float-to-int v2, v2
     sub-int/2addr v0, v2
