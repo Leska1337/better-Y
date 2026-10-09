@@ -91,9 +91,13 @@ public final class Flow {
         public final String name;
         public final Song rep;
         public volatile String artist;
+        /** What the row is ordered by. */
+        final String sort;
 
         Item(String key, String name, Song rep) {
             this.key = key;
+            String real = Albums.realName(key);
+            this.sort = real == null ? "" : real.toLowerCase(Locale.ROOT);
             this.name = name;
             this.rep = rep;
             this.artist = artistOf(key, rep, AlbumArtist.get(key));
@@ -113,16 +117,23 @@ public final class Flow {
         Diag.slow("flow songs", t0);
         if (all == null) return out;
         HashMap reps = new HashMap();
+        // one key per album tag and folder, not per song: the songs of a folder share it
+        HashMap keys = new HashMap();
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
             if (s == null || s.getPath() == null) continue;
-            String k = Albums.keyOf(s);
+            String at = s.getAlbum() + '\n' + Albums.trackFolder(s.getPath());
+            String k = (String) keys.get(at);
+            if (k == null) {
+                k = Albums.keyOf(s);
+                keys.put(at, k);
+            }
             Song r = (Song) reps.get(k);
             if (r == null || s.getPath().compareTo(r.getPath()) < 0) reps.put(k, s);
         }
-        Object[] keys = reps.keySet().toArray();
-        for (int i = 0; i < keys.length; i++) {
-            String k = (String) keys[i];
+        Object[] found = reps.keySet().toArray();
+        for (int i = 0; i < found.length; i++) {
+            String k = (String) found[i];
             out.add(new Item(k, Other.INSTANCE.unNamed(Albums.realName(k)), (Song) reps.get(k)));
         }
         Collections.sort(out, BY_NAME);
@@ -134,10 +145,7 @@ public final class Flow {
 
     private static final class ByName implements Comparator {
         public int compare(Object a, Object b) {
-            String x = Albums.realName(((Item) a).key);
-            String y = Albums.realName(((Item) b).key);
-            int c = (x == null ? "" : x).toLowerCase(Locale.ROOT)
-                    .compareTo((y == null ? "" : y).toLowerCase(Locale.ROOT));
+            int c = ((Item) a).sort.compareTo(((Item) b).sort);
             return c != 0 ? c : ((Item) a).key.compareTo(((Item) b).key);
         }
     }
