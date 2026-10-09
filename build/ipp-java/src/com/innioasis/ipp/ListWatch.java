@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.SystemClock;
 import android.widget.BaseAdapter;
 
 import com.innioasis.y1.Y1Application;
@@ -36,10 +37,12 @@ public final class ListWatch extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        long t0 = SystemClock.uptimeMillis();
         Lists.refresh();
         Follow.onSongChanged();
         // The side buttons never go through setMusicPlaylist, where the other prefetch fires.
         BigCover.prefetchPlaying();
         Ahead.onSongChanged();
+        Diag.slow("ListWatch", t0);
     }
 }

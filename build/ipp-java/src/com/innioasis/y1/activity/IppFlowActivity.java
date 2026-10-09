@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
 import com.innioasis.ipp.Lit;
@@ -629,18 +631,23 @@ public final class IppFlowActivity extends BaseActivity {
         Load(IppFlowActivity a) { this.a = a; }
 
         public void run() {
+            long t0 = SystemClock.uptimeMillis();
             List l = Flow.albums();
-            a.ui.post(new Loaded(a, l));
+            a.ui.post(new Loaded(a, l, t0));
         }
     }
 
     static final class Loaded implements Runnable {
         private final IppFlowActivity a;
         private final List l;
+        private final long t0;
 
-        Loaded(IppFlowActivity a, List l) { this.a = a; this.l = l; }
+        Loaded(IppFlowActivity a, List l, long t0) { this.a = a; this.l = l; this.t0 = t0; }
 
-        public void run() { a.loaded(l); }
+        public void run() {
+            a.loaded(l);
+            Diag.slow("flow list shown", t0);
+        }
     }
 
     static final class Repaint implements Runnable {
@@ -658,7 +665,8 @@ public final class IppFlowActivity extends BaseActivity {
         Tracks(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
 
         public void run() {
-            a.ui.post(new TracksDone(a, it, Flow.back(it)));
+            long t0 = SystemClock.uptimeMillis();
+            a.ui.post(new TracksDone(a, it, Flow.back(it), t0));
         }
     }
 
@@ -666,13 +674,15 @@ public final class IppFlowActivity extends BaseActivity {
         private final IppFlowActivity a;
         private final Flow.Item it;
         private final Flow.Back b;
+        private final long t0;
 
-        TracksDone(IppFlowActivity a, Flow.Item it, Flow.Back b) {
-            this.a = a; this.it = it; this.b = b;
+        TracksDone(IppFlowActivity a, Flow.Item it, Flow.Back b, long t0) {
+            this.a = a; this.it = it; this.b = b; this.t0 = t0;
         }
 
         public void run() {
             if (a.flipped >= 0 && a.items.get(a.flipped) == it) a.panel.setSongs(b);
+            Diag.slow("flow tracks shown", t0);
         }
     }
 

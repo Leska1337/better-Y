@@ -3,6 +3,7 @@ package com.innioasis.ipp;
 import android.content.Context;
 import android.os.SystemClock;
 
+import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 import com.innioasis.y1.activity.SettingActivity;
 
@@ -92,7 +93,10 @@ public final class CacheSize {
         if (apps != null) {
             for (int i = 0; i < apps.length; i++) n += dirSize(new File(apps[i], "cache"));
         }
-        if (c != null) n += dirSize(c.getExternalCacheDir());
+        // Spelled out: getExternalCacheDir() is refused to uid system with a logged stack.
+        if (c != null) {
+            n += dirSize(new File(Constant.ROOT_PATH, "Android/data/" + c.getPackageName() + "/cache"));
+        }
         return n;
     }
 

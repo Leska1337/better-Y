@@ -103,6 +103,34 @@ public final class Diag {
         ring(4 /* INFO */, "ipp", message, null);
     }
 
+    /** A step shorter than this leaves no line. */
+    private static final long SLOW_MS = 200L;
+
+    private static String markWhat;
+    private static long markAt;
+
+    /** A line when the step begun at uptime {@code since} ran long; nothing otherwise. */
+    public static void slow(String what, long since) {
+        long ms = SystemClock.uptimeMillis() - since;
+        if (ms >= SLOW_MS) note("slow: " + what + ' ' + ms + " ms");
+    }
+
+    /**
+     * {@link #slow} for a stock call site with no register to keep the time in: {@code mark}
+     * before the step, {@link #lap} after it. Main thread only, and never nested.
+     */
+    public static void mark(String what) {
+        markWhat = what;
+        markAt = SystemClock.uptimeMillis();
+    }
+
+    public static void lap() {
+        String what = markWhat;
+        if (what == null) return;
+        markWhat = null;
+        slow(what, markAt);
+    }
+
     /** Oldest first, in logcat's shape. */
     private static synchronized void ringDump(StringBuilder s) {
         int have = ringN < RING ? ringN : RING;

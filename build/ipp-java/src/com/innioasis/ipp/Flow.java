@@ -108,7 +108,9 @@ public final class Flow {
     /** Every album of the library, A to Z; unknown names sort last by their own prefix. */
     public static List albums() {
         ArrayList out = new ArrayList();
+        long t0 = SystemClock.uptimeMillis();
         List all = Albums.allSongs();
+        Diag.slow("flow songs", t0);
         if (all == null) return out;
         HashMap reps = new HashMap();
         for (int i = 0; i < all.size(); i++) {
@@ -124,6 +126,7 @@ public final class Flow {
             out.add(new Item(k, Other.INSTANCE.unNamed(Albums.realName(k)), (Song) reps.get(k)));
         }
         Collections.sort(out, BY_NAME);
+        Diag.slow("flow albums " + out.size(), t0);
         return out;
     }
 
@@ -157,16 +160,18 @@ public final class Flow {
 
     /** Off the main thread: reads the disc and track tags of every song not read yet. */
     public static Back back(Item it) {
+        long t0 = SystemClock.uptimeMillis();
         List l = Albums.songsOf(it.key);
         DiscCache.warm();
-        boolean read = false;
+        int read = 0;
         for (int i = 0; i < l.size(); i++) {
             String p = ((Song) l.get(i)).getPath();
             if (p == null || DiscCache.known(p)) continue;
             DiscCache.commit(p, DiscCache.read(p, true, false));
-            read = true;
+            read++;
         }
-        if (read) DiscCache.flush();
+        if (read > 0) DiscCache.flush();
+        Diag.slow("flow back, " + read + " of " + l.size() + " read from the card", t0);
         List byTrack = TrackCache.sorted(l);
         List s = Albums.byDisc(byTrack != null ? byTrack : l);
 

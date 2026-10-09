@@ -15,25 +15,28 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 2
-  .line 629
+  .line 631
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Load;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
 .end method
 
 .method public run()V
-  .registers 5
-  .line 632
-    invoke-static { }, Lcom/innioasis/ipp/Flow;->albums()Ljava/util/List;
-    move-result-object v0
-  .line 633
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Load;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-static { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
-    move-result-object v1
-    new-instance v2, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;
-    iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Load;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-direct { v2, v3, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/util/List;)V
-    invoke-virtual { v1, v2 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+  .registers 7
   .line 634
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+  .line 635
+    invoke-static { }, Lcom/innioasis/ipp/Flow;->albums()Ljava/util/List;
+    move-result-object v2
+  .line 636
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Load;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
+    invoke-static { v3 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
+    move-result-object v3
+    new-instance v4, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;
+    iget-object v5, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Load;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
+    invoke-direct { v4, v5, v2, v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/util/List;J)V
+    invoke-virtual { v3, v4 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
+  .line 637
     return-void
 .end method
