@@ -3,6 +3,9 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.music.data.Album;
 import com.innioasis.music.data.Genre;
+import com.innioasis.music.objects.Global;
 import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
@@ -142,18 +146,107 @@ public final class Albums {
         try { return Integer.parseInt(m.group(2)); } catch (Throwable t) { return 0; }
     }
 
-    // The whole library, shared by every album query; dropped by event (invalidate). The TTL only
-    // backstops a write path that forgets to invalidate.
+    // The whole library, shared by every album query; dropped by event (invalidate) and read
+    // again off the main thread, so no screen waits for it. The TTL only backstops a write path
+    // that forgets to invalidate: past it the list is still answered, and checked in the background.
     private static List songCache;
     private static long songCacheAt;
+    /** What the last invalidate dropped: an unchanged library gets this very list back. */
+    private static List songPrev;
+    /** Bumped by every invalidate, so a read that raced a write is not kept. */
+    private static int songGen;
+    private static boolean checkAsked;
+    private static final Object SONGS = new Object();
     private static final long CACHE_TTL_MS = 600000L;
+    private static final long WARM_DELAY_MS = 2000L;
+    private static Handler warmer;
+    private static final Runnable WARM = new Warm();
 
     /** Drop the cached library. Called once per file during a scan, so it must stay trivial. */
     public static void invalidate() {
-        songCache = null;
-        songCacheAt = 0L;
+        synchronized (SONGS) {
+            if (songCache != null) songPrev = songCache;
+            songCache = null;
+            songCacheAt = 0L;
+            songGen++;
+        }
         keyMemo = null;
         Find.clear();       // the Search rows count their songs off this very list
+        warmSoon(WARM_DELAY_MS);
+    }
+
+    /** Restarts the wait: a run of writes ends in one read. */
+    private static void warmSoon(long delay) {
+        try {
+            Handler h;
+            synchronized (SONGS) {
+                if (warmer == null) {
+                    // default priority: the read holds the database, which the main thread asks too
+                    HandlerThread t = new HandlerThread("ipp-library");
+                    t.start();
+                    warmer = new Handler(t.getLooper());
+                }
+                h = warmer;
+            }
+            h.removeCallbacks(WARM);
+            h.postDelayed(WARM, delay);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** One read of the table, kept unless the table was written to meanwhile. */
+    private static List readSongs() {
+        Y1Repository repo = Y1Application.Companion.getY1Repository();
+        if (repo == null) return null;
+        int gen;
+        synchronized (SONGS) { gen = songGen; }
+        long t0 = SystemClock.uptimeMillis();
+        List all = repo.getSongsSync(0);
+        Diag.slow("library read", t0);
+        if (all == null) return null;
+        synchronized (SONGS) {
+            if (gen != songGen) return all;
+            if (songCache != null) return songCache;
+            if (songPrev != null && songPrev.equals(all)) all = songPrev;
+            songPrev = null;
+            songCache = all;
+            songCacheAt = System.currentTimeMillis();
+        }
+        return all;
+    }
+
+    static final class Warm implements Runnable {
+        public void run() {
+            try {
+                if (Global.INSTANCE.getRefreshDatabaseState()) {
+                    warmSoon(WARM_DELAY_MS);
+                    return;
+                }
+                List old = songCache;
+                if (old == null) {
+                    readSongs();
+                    AlbumArtist.warm();
+                    return;
+                }
+                if (System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return;
+                Y1Repository repo = Y1Application.Companion.getY1Repository();
+                if (repo == null) return;
+                int gen;
+                synchronized (SONGS) { gen = songGen; }
+                List fresh = repo.getSongsSync(0);
+                if (fresh == null) return;
+                boolean same = fresh.equals(old);
+                synchronized (SONGS) {
+                    if (gen != songGen) return;
+                    if (same) songCacheAt = System.currentTimeMillis();
+                }
+                // a write nobody reported: everything built off the old list goes with it
+                if (!same) Ipp.libraryChanged();
+            } catch (Throwable t) {
+            } finally {
+                checkAsked = false;
+            }
+        }
     }
 
     // "Cache library": a signature of the library (row count, newest file date) written when a
@@ -214,12 +307,12 @@ public final class Albums {
 
     public static List allSongs() {
         List c = songCache;
-        if (c != null && System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return c;
-        Y1Repository repo = Y1Application.Companion.getY1Repository();
-        if (repo == null) return null;
-        List all = repo.getSongsSync(0);
-        if (all != null) { songCache = all; songCacheAt = System.currentTimeMillis(); }
-        return all;
+        if (c == null) return readSongs();
+        if (!checkAsked && System.currentTimeMillis() - songCacheAt >= CACHE_TTL_MS) {
+            checkAsked = true;
+            warmSoon(0L);
+        }
+        return c;
     }
 
     // The canonical key of the per-album caches. Genres puts PLAIN names in the same adapter, so

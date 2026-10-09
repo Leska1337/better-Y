@@ -62,6 +62,11 @@ public final class AlbumArtist {
         }
     }
 
+    /** Reads the file now, off the main thread, so that no row waits for it. */
+    public static synchronized void warm() {
+        load();
+    }
+
     private static synchronized void save() {
         if (!dirty) return;
         try {
