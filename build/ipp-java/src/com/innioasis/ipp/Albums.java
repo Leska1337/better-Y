@@ -175,21 +175,32 @@ public final class Albums {
         warmSoon(WARM_DELAY_MS);
     }
 
+    private static Handler worker() {
+        synchronized (SONGS) {
+            if (warmer == null) {
+                // default priority: the read holds the database, which the main thread asks too
+                HandlerThread t = new HandlerThread("ipp-library");
+                t.start();
+                warmer = new Handler(t.getLooper());
+            }
+            return warmer;
+        }
+    }
+
     /** Restarts the wait: a run of writes ends in one read. */
     private static void warmSoon(long delay) {
         try {
-            Handler h;
-            synchronized (SONGS) {
-                if (warmer == null) {
-                    // default priority: the read holds the database, which the main thread asks too
-                    HandlerThread t = new HandlerThread("ipp-library");
-                    t.start();
-                    warmer = new Handler(t.getLooper());
-                }
-                h = warmer;
-            }
+            Handler h = worker();
             h.removeCallbacks(WARM);
             h.postDelayed(WARM, delay);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** Background work of the library's own thread, for the caches beside this one. */
+    static void later(Runnable r, long delay) {
+        try {
+            worker().postDelayed(r, delay);
         } catch (Throwable t) {
         }
     }
@@ -226,6 +237,7 @@ public final class Albums {
                 if (old == null) {
                     readSongs();
                     AlbumArtist.warm();
+                    MetaCache.warm();
                     return;
                 }
                 if (System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return;

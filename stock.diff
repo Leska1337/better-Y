@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..32c85c41 100644
+index 01b1f730..d0ec9f1a 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..32c85c41 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100099
++  versionCode: 10100100
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d9f5845e 100644
+index 71fe29d0..b80451b0 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..d9f5845e 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev99</string>
++    <string name="ipp_version">v1.1.0-dev100</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -22904,10 +22904,10 @@ index 060ed6d1..ffe61ad8 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..83011380 100644
+index 4fcfcfff..b2c65b1b 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7927 @@
+@@ -1,7643 +1,7931 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -34447,6 +34447,10 @@ index 4fcfcfff..83011380 100644
 +    invoke-static {v1, v2}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 +
 +    invoke-virtual {v5, v1}, Lcom/innioasis/y1/database/Song;->setPinyinGenre(Ljava/lang/String;)V
++
++    # ipp: the retriever is still open on the file. Take the tags the row has no column for out
++    # of this very open. See MetaCache.
++    invoke-static {v3, v5}, Lcom/innioasis/ipp/Meta;->scanned(Landroid/media/MediaMetadataRetriever;Lcom/innioasis/y1/database/Song;)V
 +
 +    .line 991
 +    sget-object v1, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;

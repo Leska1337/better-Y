@@ -159,6 +159,7 @@ public final class Pick {
             // Cover-file stamps are text bookkeeping, so they belong to this category.
             Art.clearStamps();
             YearCache.clear();
+            MetaCache.clear();
             TrackCache.clear();
             AlbumInfo.clear();
             AlbumArtist.clear();
@@ -233,6 +234,7 @@ public final class Pick {
                         + CacheSize.dirSize(new File(d, "ipp_albums.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_albumartist.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_discs.txt"))
+                        + CacheSize.dirSize(new File(d, "ipp_meta.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_genres.txt"));
             }
             long n = CacheSize.total(c) - size(COVERS) - size(TAGS);

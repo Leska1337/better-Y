@@ -64,10 +64,16 @@ public final class Meta {
     public static Info read(String path, boolean wantArt) {
         Info out = new Info();
         if (path == null) return out;
+        if (!wantArt) {
+            Info kept = MetaCache.get(path);
+            if (kept != null) return kept;
+        }
 
+        boolean opened = false;
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(path);
+            opened = true;
             out.title = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             out.artist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             out.albumArtist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
@@ -85,7 +91,10 @@ public final class Meta {
         } catch (Throwable t) {
         }
 
-        if (oversized(path)) id3(path, out, wantArt);
+        boolean huge = oversized(path);
+        if (huge) id3(path, out, wantArt);
+        // a file that did not open has said nothing about its tags
+        if (opened || huge) MetaCache.put(path, out);
         return out;
     }
 
@@ -127,8 +136,10 @@ public final class Meta {
             String path = song.getPath();
             if (!oversized(path)) return;
 
-            Info i = new Info();
+            Info i = MetaCache.get(path);
+            if (i == null) i = new Info();
             id3(path, i, false);
+            MetaCache.put(path, i);
             HanziToPinyin h = HanziToPinyin.getInstance();
 
             if (i.title != null) {
@@ -148,6 +159,24 @@ public final class Meta {
                 song.setGenre(i.genre);
                 song.setPinyinGenre(h.getString(i.genre));
             }
+        } catch (Throwable t) {
+        }
+    }
+
+    /**
+     * From {@code Y1Repository.fileToSong}, while its retriever is still open on the file: the
+     * tags the Song row has no column for, taken out of the open the scan pays for anyway.
+     */
+    public static void scanned(MediaMetadataRetriever r, Song song) {
+        if (r == null || song == null) return;
+        try {
+            Info i = new Info();
+            i.albumArtist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
+            i.track = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER);
+            i.disc = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER);
+            i.year = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
+            i.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
+            MetaCache.put(song.getPath(), i);
         } catch (Throwable t) {
         }
     }
