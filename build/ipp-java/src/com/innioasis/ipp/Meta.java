@@ -31,6 +31,8 @@ public final class Meta {
         public String year;
         public String date;             // the fuller date, where YEAR is absent
         public byte[] art;              // only when it was asked for
+        /** False when the read failed part way: its nulls then say nothing about the file. */
+        public boolean ok;
     }
 
     /** The platform's 3 MB less a margin: reading a tag it could have read costs only a file open. */
@@ -84,6 +86,7 @@ public final class Meta {
             out.year = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
             out.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
             if (wantArt) out.art = r.getEmbeddedPicture();
+            out.ok = true;
         } catch (Throwable t) {
         }
         try {
@@ -92,7 +95,10 @@ public final class Meta {
         }
 
         boolean huge = oversized(path);
-        if (huge) id3(path, out, wantArt);
+        if (huge) {
+            id3(path, out, wantArt);
+            out.ok = true;
+        }
         // a file that did not open has said nothing about its tags
         if (opened || huge) MetaCache.put(path, out);
         return out;

@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.CRC32;
 
 /**
  * The Now-Playing cover: memory + JPEG cache. Keyed by track PATH — tracks of one folder can
@@ -86,9 +87,12 @@ public final class BigCover {
             Src src;
             try {
                 src = read(path);
+            } catch (OutOfMemoryError e) {
+                return null;
             } catch (Throwable t) {
                 src = null;
             }
+            if (src == UNREAD) return null;
             if (src == null) {
                 miss.put(path, path);
                 noteSet(path, NONE);
@@ -99,11 +103,12 @@ public final class BigCover {
             Bitmap rep = peek(folder);
             if (rep == null) {
                 store(folder, src);
+                sigSet(folder, src.raw);
                 mem.put(path, fresh);
                 noteSet(path, SHARED);
                 return fresh;
             }
-            if (same(rep, fresh)) {
+            if (sigIs(folder, src.raw) || same(rep, fresh)) {
                 mem.put(path, rep);
                 noteSet(path, SHARED);
                 return rep;
@@ -326,10 +331,17 @@ public final class BigCover {
             }
 
             if (w.raw == null && w.rep == null) {
+                File had = file(folder);
+                if (had != null && had.exists() && sigIs(folder, raw)) {
+                    w.raw = raw;
+                    noteSet(path, SHARED);
+                    return;
+                }
                 Bitmap onDisk = peek(folder);
                 if (onDisk == null) {
                     w.rep = storeSrc(folder, raw);
                     w.raw = raw;
+                    sigSet(folder, raw);
                     noteSet(path, SHARED);
                     return;
                 }
@@ -476,7 +488,9 @@ public final class BigCover {
 
     private static synchronized void noteForget(String key) {
         noteLoad();
-        if (notes.remove(key) != null) { notesDirty = true; noteSave(); }
+        boolean had = notes.remove(key) != null;
+        if (notes.remove(SIG + key) != null) had = true;
+        if (had) { notesDirty = true; noteSave(); }
     }
 
     /** {@link #clearMiss} on disk. */
@@ -486,12 +500,41 @@ public final class BigCover {
         Iterator it = notes.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
+            if (((String) e.getKey()).startsWith(SIG)) continue;
             if (((Integer) e.getValue()).intValue() == NONE) drop.add(e.getKey());
         }
         if (drop.isEmpty()) return;
         for (int i = 0; i < drop.size(); i++) notes.remove(drop.get(i));
         notesDirty = true;
         noteSave();
+    }
+
+    // The representative's SOURCE bytes, as a checksum beside the notes. A re-compressed JPEG
+    // never decodes back to its source's pixels, so without it every track compared against a
+    // representative read off the disk gets a file of its own.
+
+    private static final String SIG = "\u0001";
+
+    private static int sig(byte[] raw) {
+        CRC32 c = new CRC32();
+        c.update(raw, 0, raw.length);
+        return (int) c.getValue() ^ raw.length;
+    }
+
+    private static synchronized void sigSet(String folder, byte[] raw) {
+        if (folder == null || raw == null) return;
+        noteLoad();
+        Integer v = Integer.valueOf(sig(raw));
+        if (v.equals(notes.put(SIG + folder, v))) return;
+        notesDirty = true;
+        if (!passing) noteSave();
+    }
+
+    private static synchronized boolean sigIs(String folder, byte[] raw) {
+        if (folder == null || raw == null) return false;
+        noteLoad();
+        Object had = notes.get(SIG + folder);
+        return had != null && ((Integer) had).intValue() == sig(raw);
     }
 
     private static synchronized void noteClear() {
@@ -510,27 +553,23 @@ public final class BigCover {
         byte[] raw;                            // the source file's own bytes, untouched
     }
 
-    /** A track's artwork, keeping the BYTES — they decide whether it needs re-compressing at all. */
+    /** A file that did not read: neither a cover nor "no cover", so nothing is written down. */
+    private static final Src UNREAD = new Src();
+
+    /**
+     * A track's artwork — the tag first, then the external {@code cover.*}/{@code folder.*} —
+     * keeping the BYTES: they decide whether it needs re-compressing at all.
+     */
     private static Src read(String path) {
-        byte[] raw = bytes(path);
-        if (raw == null || raw.length == 0) return null;
+        Meta.Info i = Meta.read(path, true);
+        byte[] raw = i.art != null && i.art.length > 0 ? i.art : external(path);
+        if (raw == null || raw.length == 0) return i.ok ? null : UNREAD;
         Bitmap bmp = capped(raw);
         if (bmp == null) return null;
         Src s = new Src();
         s.bmp = bmp;
         s.raw = raw;
         return s;
-    }
-
-    /** The tag first, then the external {@code cover.*}/{@code folder.*}. */
-    private static byte[] bytes(String path) {
-        byte[] b = embedded(path);
-        if (b != null && b.length > 0) return b;
-        return external(path);
-    }
-
-    private static byte[] embedded(String path) {
-        return Meta.art(path);
     }
 
     private static byte[] readAll(File f) throws IOException {
@@ -562,6 +601,8 @@ public final class BigCover {
             o.inJustDecodeBounds = false;
             Bitmap b = BitmapFactory.decodeByteArray(raw, 0, raw.length, o);
             return square(b);
+        } catch (OutOfMemoryError e) {
+            throw e;                               // not an answer about the picture
         } catch (Throwable t) {
             return null;
         }

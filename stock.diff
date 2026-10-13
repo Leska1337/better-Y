@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d0ec9f1a 100644
+index 01b1f730..0452377d 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..d0ec9f1a 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100100
++  versionCode: 10100101
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b80451b0 100644
+index 71fe29d0..18b213bb 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..b80451b0 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev100</string>
++    <string name="ipp_version">v1.1.0-dev101</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -54110,7 +54110,7 @@ index 3087ba8e..b9ad8091 100644
      iget-object v0, p0, Lcom/innioasis/music/adapter/GenreListAdapter$getView$1;->this$0:Lcom/innioasis/music/adapter/GenreListAdapter;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
-index 754dc7c2..44333f33 100644
+index 754dc7c2..de99f923 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/GenreListAdapter.smali
 @@ -70,19 +70,29 @@
@@ -54160,17 +54160,35 @@ index 754dc7c2..44333f33 100644
      .line 28
      invoke-virtual {v2}, Lcom/innioasis/music/data/Genre;->getInfo()Ljava/lang/String;
  
-@@ -145,6 +161,9 @@
+@@ -145,6 +161,18 @@
  
      invoke-virtual {v0, v3}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
 +    # ipp: mark which genre this info line currently belongs to (see Rows.genreInfo)
 +    invoke-virtual {v0, v2}, Landroid/widget/TextView;->setTag(Ljava/lang/Object;)V
 +
++    # ipp: no counting thread for a row whose line is there or on its way (GenreInfo.warm): stock
++    # starts one on EVERY bind, each walking the whole library twice. Every register the skipped
++    # block sets is assigned again before its next use.
++    invoke-static {v2}, Lcom/innioasis/ipp/GenreInfo;->counted(Lcom/innioasis/music/data/Genre;)Z
++
++    move-result v3
++
++    if-nez v3, :goto_ipp_counted
++
      .line 29
      new-instance v3, Lcom/innioasis/music/adapter/GenreListAdapter$getView$1;
  
-@@ -487,5 +506,10 @@
+@@ -170,6 +198,8 @@
+ 
+     invoke-static/range {v4 .. v11}, Lkotlin/concurrent/ThreadsKt;->thread$default(ZZLjava/lang/ClassLoader;Ljava/lang/String;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Thread;
+ 
++    :goto_ipp_counted
++
+     .line 43
+     invoke-virtual {p0}, Lcom/innioasis/music/adapter/GenreListAdapter;->getNowPosition()I
+ 
+@@ -487,5 +517,10 @@
      .line 70
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/GenreListAdapter;->notifyDataSetChanged()V
  

@@ -1,6 +1,7 @@
 package com.innioasis.ipp;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,8 +75,10 @@ public final class Mark {
     public static boolean artistAlbums(GenresActivity a, String artist) {
         try {
             if (a == null || artist == null || artist.length() == 0) return false;
+            long t0 = SystemClock.uptimeMillis();
             // The same test that built the artist row (Artists.byTag), or the row opens empty.
             List songs = Artists.forMenu(artist, genreObj);
+            Diag.slow("genre artist songs", t0);
             if (songs == null || songs.isEmpty()) return false;
 
             ArrayList names = new ArrayList();
@@ -105,6 +108,7 @@ public final class Mark {
             if (lv == null) return false;
             Other.INSTANCE.gotoAdapter(lv, ad, 0);
             afterFill(ad, lv);
+            Diag.slow("genre artist albums", t0);
             return true;
         } catch (Throwable t) {
             return false;

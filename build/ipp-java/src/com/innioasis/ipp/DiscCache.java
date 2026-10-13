@@ -117,6 +117,8 @@ public final class DiscCache {
         public int disc;              // 0 = no disc tag
         public String track;          // the raw tag, or null for "none"
         public byte[] art;            // the embedded picture, or null
+        /** False when the file did not read: nothing in here is an answer then. */
+        public boolean ok;
     }
 
     /**
@@ -133,12 +135,13 @@ public final class DiscCache {
             out.track = info.track;
         }
         out.art = info.art;
+        out.ok = info.ok;
         return out;
     }
 
     /** Single-threaded by contract. */
     public static void commit(String path, Tags t) {
-        if (path == null || t == null || !t.wanted) return;
+        if (path == null || t == null || !t.wanted || !t.ok) return;
         load();
         TrackCache.put(path, t.track != null ? t.track : NO_TRACK);
         int d = t.disc;

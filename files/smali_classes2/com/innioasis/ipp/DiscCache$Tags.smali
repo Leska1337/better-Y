@@ -14,6 +14,8 @@
 
 .field public disc:I
 
+.field public ok:Z
+
 .field public track:Ljava/lang/String;
 
 .field public wanted:Z

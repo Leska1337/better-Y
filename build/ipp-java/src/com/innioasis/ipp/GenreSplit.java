@@ -34,7 +34,7 @@ public final class GenreSplit {
         return Prefs.on(c, KEY_SPLIT);
     }
 
-    private static String norm(String s) {
+    static String norm(String s) {
         return s == null ? "" : s.trim().toLowerCase(Locale.ROOT);
     }
 
@@ -89,13 +89,34 @@ public final class GenreSplit {
         return false;
     }
 
-    /** Null when no composite tag contributes, so stock's query answers. Off the cached table. */
+    // The last answer of collect(): opening one artist of a genre asks it several times over.
+    private static List memoSongs;
+    private static String memoTarget;
+    private static ArrayList memoOut;
+
+    /**
+     * Null when no composite tag contributes, so stock's query answers. Off the cached table.
+     * The list is shared with the memo: callers read it, never sort or change it.
+     */
     private static ArrayList collect(Genre g) {
         if (g == null || !enabled()) return null;
         String target = norm(g.getName());
         if (target.length() == 0) return null;
         List all = Albums.allSongs();
         if (all == null) return null;
+        synchronized (GenreSplit.class) {
+            if (all == memoSongs && target.equals(memoTarget)) return memoOut;
+        }
+        ArrayList out = scan(all, target);
+        synchronized (GenreSplit.class) {
+            memoSongs = all;
+            memoTarget = target;
+            memoOut = out;
+        }
+        return out;
+    }
+
+    private static ArrayList scan(List all, String target) {
         ArrayList out = new ArrayList();
         boolean fromComposite = false;
         for (int i = 0; i < all.size(); i++) {
@@ -123,8 +144,9 @@ public final class GenreSplit {
     /** {@code getSongsByGenreSync}, in stock's {@code lower(pinyinName)} order. */
     public static List songsIn(Genre g) {
         try {
-            ArrayList out = collect(g);
-            if (out == null) return null;
+            ArrayList had = collect(g);
+            if (had == null) return null;
+            ArrayList out = new ArrayList(had);
             Collections.sort(out, new FileNameCmp());
             return out;
         } catch (Throwable t) {

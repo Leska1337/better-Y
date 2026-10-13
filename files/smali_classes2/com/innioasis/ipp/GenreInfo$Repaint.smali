@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 2
-  .line 106
+  .line 226
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/GenreInfo$Repaint;->adapter:Lcom/innioasis/music/adapter/MyBaseAdapter;
     return-void
@@ -25,7 +25,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 108
+  .line 228
     iget-object v0, p0, Lcom/innioasis/ipp/GenreInfo$Repaint;->adapter:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   :L1
@@ -33,6 +33,6 @@
   :L2
     move-exception v0
   :L3
-  .line 109
+  .line 229
     return-void
 .end method

@@ -46,6 +46,7 @@ public final class MetaCache {
         String[] v = (String[]) map.get(path);
         if (v == null) return null;
         Meta.Info i = new Meta.Info();
+        i.ok = true;
         i.albumArtist = v[0];
         i.track = v[1];
         i.disc = v[2];
@@ -127,8 +128,11 @@ public final class MetaCache {
                 }
                 sb.append('\n');
             }
+            // encoded before the file is opened: opening truncates it, and an OutOfMemoryError
+            // between the two leaves the table empty on disk
+            byte[] bytes = sb.toString().getBytes("UTF-8");
             FileOutputStream o = new FileOutputStream(f);
-            o.write(sb.toString().getBytes("UTF-8"));
+            o.write(bytes);
             o.close();
             Diag.note("tags table: " + rows.length + " songs saved");
         } catch (Throwable t) {

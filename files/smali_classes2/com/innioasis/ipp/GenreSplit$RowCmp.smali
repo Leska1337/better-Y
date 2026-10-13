@@ -19,21 +19,21 @@
 
 .method constructor <init>(IZZ)V
   .registers 4
-  .line 208
+  .line 230
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 209
+  .line 231
     iput p1, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->field:I
-  .line 210
+  .line 232
     iput-boolean p2, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->byName:Z
-  .line 211
+  .line 233
     iput-boolean p3, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->asc:Z
-  .line 212
+  .line 234
     return-void
 .end method
 
 .method private key(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
   .registers 3
-  .line 229
+  .line 251
     iget v0, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->field:I
     if-nez v0, :L0
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinArtist()Ljava/lang/String;
@@ -48,14 +48,14 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 6
-  .line 215
+  .line 237
     check-cast p1, Lcom/innioasis/y1/database/Song;
-  .line 216
+  .line 238
     check-cast p2, Lcom/innioasis/y1/database/Song;
-  .line 218
+  .line 240
     iget-boolean v0, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->byName:Z
     if-eqz v0, :L0
-  .line 219
+  .line 241
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/GenreSplit$RowCmp;->key(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p1
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/GenreSplit$RowCmp;->key(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
@@ -64,13 +64,13 @@
     move-result p1
     goto :L3
   :L0
-  .line 221
+  .line 243
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getFileDate()J
     move-result-wide v0
-  .line 222
+  .line 244
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getFileDate()J
     move-result-wide p1
-  .line 223
+  .line 245
     cmp-long v2, v0, p1
     if-gez v2, :L1
     const/4 p1, -1
@@ -83,7 +83,7 @@
   :L2
     const/4 p1, 0
   :L3
-  .line 225
+  .line 247
     iget-boolean p2, p0, Lcom/innioasis/ipp/GenreSplit$RowCmp;->asc:Z
     if-eqz p2, :L4
     goto :L5

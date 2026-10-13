@@ -12,7 +12,7 @@
 
 .method constructor <init>()V
   .registers 4
-  .line 58
+  .line 59
     const/high16 v0, 0x3F400000
     const/4 v1, 1
     const/16 v2, 32
@@ -22,7 +22,7 @@
 
 .method protected removeEldestEntry(Ljava/util/Map$Entry;)Z
   .registers 3
-  .line 60
+  .line 61
     invoke-virtual { p0 }, Lcom/innioasis/ipp/BigCover$Lru;->size()I
     move-result p1
     const/16 v0, 24

@@ -24,6 +24,8 @@
 
 .field public genre:Ljava/lang/String;
 
+.field public ok:Z
+
 .field public title:Ljava/lang/String;
 
 .field public track:Ljava/lang/String;

@@ -1101,6 +1101,7 @@ public final class IppActivity extends BaseActivity {
         @Override
         public void run() {
             int done = 0;
+            int unread = 0;
             boolean covers = (mask & Pick.COVERS) != 0;
             boolean tags = (mask & Pick.TAGS) != 0;
             try {
@@ -1205,6 +1206,7 @@ public final class IppActivity extends BaseActivity {
                         w[i] = new SongWorker(this, byPath, q, tags, covers);
                     }
                     spread(w);
+                    for (int i = 0; i < w.length; i++) unread += w[i].failed;
                     if (tags) {
                         // Commits on this thread, so no cache needs a lock. TrackCache loaded
                         // FIRST: loaded after the puts, the older file would overwrite them.
@@ -1215,7 +1217,9 @@ public final class IppActivity extends BaseActivity {
                     }
                 }
 
-                Albums.noteCached(a, n, stamp, mask);
+                // a pass that left files unread is not "already cached": the next press finishes it
+                if (unread == 0) Albums.noteCached(a, n, stamp, mask);
+                else Diag.note("cache library: " + unread + " file(s) did not read");
             } catch (Throwable t) {
             } finally {
                 // a pass that died half way still writes down what it learned
@@ -1367,6 +1371,7 @@ public final class IppActivity extends BaseActivity {
         private final boolean covers;
         private final ArrayList paths = new ArrayList();
         private final ArrayList read = new ArrayList();
+        int failed;
 
         SongWorker(CacheTask task, List byPath, Blocks q, boolean tags, boolean covers) {
             this.task = task;
@@ -1384,6 +1389,7 @@ public final class IppActivity extends BaseActivity {
                     try {
                         one(w, (Song) byPath.get(i));
                     } catch (Throwable t) {
+                        failed++;
                     }
                     task.tick();
                 }
@@ -1398,7 +1404,13 @@ public final class IppActivity extends BaseActivity {
             boolean wantArt = covers && BigCover.needs(path);
             if (!wantTags && !wantArt) return;          // nothing left to learn about it
             DiscCache.Tags t = DiscCache.read(path, wantTags, wantArt);
+            if (!t.ok) {
+                failed++;                               // left unknown: read when it is next asked for
+                return;
+            }
             if (wantArt) BigCover.cache(w, path, t.art);
+            // the answer is kept until the commit; a library of pictures does not fit the heap
+            t.art = null;
             if (wantTags) {
                 paths.add(path);
                 read.add(t);
