@@ -286,6 +286,27 @@ public final class Albums {
         return l == null ? null : new ArrayList(l);
     }
 
+    /**
+     * The queried list over the Song objects the cached list already holds: a second set of them
+     * is megabytes of heap, and every collection pauses for as long as the heap is large.
+     */
+    private static List shared(List l) {
+        List all = songCache;
+        if (l == null || all == null) return l;
+        HashMap by = new HashMap(all.size() * 2);
+        for (int i = 0; i < all.size(); i++) {
+            Object o = all.get(i);
+            if (o instanceof Song) by.put(((Song) o).getPath(), o);
+        }
+        ArrayList out = new ArrayList(l.size());
+        for (int i = 0; i < l.size(); i++) {
+            Object o = l.get(i);
+            Object had = (o instanceof Song) ? by.get(((Song) o).getPath()) : null;
+            out.add(had != null ? had : o);
+        }
+        return out;
+    }
+
     private static List songsIn(Y1Repository repo, Y1Repository.SongSortType type) {
         int gen;
         synchronized (SONGS) {
@@ -293,7 +314,7 @@ public final class Albums {
             if (sorted != null && type == sortedType) return sorted;
             gen = songGen;
         }
-        List l = repo.getSongsList(type);
+        List l = shared(repo.getSongsList(type));
         synchronized (SONGS) {
             if (l != null && gen == songGen) {
                 sorted = l;
