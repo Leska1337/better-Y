@@ -452,7 +452,7 @@ public final class Flow {
                 String path = it.rep.getPath();
                 Bitmap src = null;
                 File f = BigCover.cachedFile(path);
-                if (f != null) src = decode(f.getAbsolutePath());
+                if (f != null) src = decode(f);
                 if (src == null) src = BigCover.track(path);
                 if (src == null) return null;
                 int w = src.getWidth(), h = src.getHeight();
@@ -471,10 +471,42 @@ public final class Flow {
             }
         }
 
-        private Bitmap decode(String p) {
-            BitmapFactory.Options o = new BitmapFactory.Options();
+        // the file and the decoder's scratch, reused: a stream per decode is two buffers of garbage a slide
+        private byte[] file = new byte[64 * 1024];
+        private final byte[] scratch = new byte[16 * 1024];
+        private final BitmapFactory.Options opts = new BitmapFactory.Options();
+
+        /** The whole file in {@link #file}; its length, or 0. */
+        private int read(File f) {
+            java.io.FileInputStream in = null;
+            try {
+                long len = f.length();
+                if (len <= 0 || len > 8 * 1024 * 1024) return 0;
+                if (file.length < len) file = new byte[(int) len + 16 * 1024];
+                in = new java.io.FileInputStream(f);
+                int n = 0;
+                while (n < len) {
+                    int r = in.read(file, n, (int) len - n);
+                    if (r < 0) break;
+                    n += r;
+                }
+                return n;
+            } catch (Throwable t) {
+                return 0;
+            } finally {
+                try { if (in != null) in.close(); } catch (Throwable t) { }
+            }
+        }
+
+        private Bitmap decode(File f) {
+            int n = read(f);
+            if (n <= 0) return null;
+            BitmapFactory.Options o = opts;
+            o.inTempStorage = scratch;
+            o.inBitmap = null;
+            o.inSampleSize = 1;
             o.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(p, o);
+            BitmapFactory.decodeByteArray(file, 0, n, o);
             if (o.outWidth <= 0 || o.outHeight <= 0) return null;
             o.inSampleSize = Art.sample(o.outWidth, o.outHeight, S, S);
             o.inJustDecodeBounds = false;
@@ -486,10 +518,10 @@ public final class Flow {
             }
             Bitmap b;
             try {
-                b = BitmapFactory.decodeFile(p, o);
+                b = BitmapFactory.decodeByteArray(file, 0, n, o);
             } catch (IllegalArgumentException e) {
                 o.inBitmap = null;
-                b = BitmapFactory.decodeFile(p, o);
+                b = BitmapFactory.decodeByteArray(file, 0, n, o);
             }
             if (b != null && o.inSampleSize == 1) decoded = b;
             return b;

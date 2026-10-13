@@ -27,6 +27,8 @@
 
 .field private decoded:Landroid/graphics/Bitmap;
 
+.field private file:[B
+
 .field private final filter:Landroid/graphics/Paint;
 
 .field private final from:Landroid/graphics/Rect;
@@ -35,6 +37,8 @@
 
 .field private final onSlide:Ljava/lang/Runnable;
 
+.field private final opts:Landroid/graphics/BitmapFactory$Options;
+
 .field private final out:[I
 
 .field private final pool:Ljava/util/ArrayList;
@@ -42,6 +46,8 @@
 .field private final px:[I
 
 .field private readArtist:Z
+
+.field private final scratch:[B
 
 .field public final slides:Ljava/util/Hashtable;
 
@@ -111,6 +117,18 @@
     const/4 v2, 0
     invoke-direct { v0, v2, v2, v1, v1 }, Landroid/graphics/Rect;-><init>(IIII)V
     iput-object v0, p0, Lcom/innioasis/ipp/Flow$Loader;->to:Landroid/graphics/Rect;
+  .line 475
+    const/high16 v0, 0x00010000
+    new-array v0, v0, [B
+    iput-object v0, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+  .line 476
+    const/16 v0, 16384
+    new-array v0, v0, [B
+    iput-object v0, p0, Lcom/innioasis/ipp/Flow$Loader;->scratch:[B
+  .line 477
+    new-instance v0, Landroid/graphics/BitmapFactory$Options;
+    invoke-direct { v0 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
+    iput-object v0, p0, Lcom/innioasis/ipp/Flow$Loader;->opts:Landroid/graphics/BitmapFactory$Options;
   .line 337
     iput-object p1, p0, Lcom/innioasis/ipp/Flow$Loader;->items:Ljava/util/List;
   .line 338
@@ -137,9 +155,7 @@
     move-result-object v1
   .line 455
     if-eqz v1, :L1
-    invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
-    move-result-object v1
-    invoke-direct { p0, v1 }, Lcom/innioasis/ipp/Flow$Loader;->decode(Ljava/lang/String;)Landroid/graphics/Bitmap;
+    invoke-direct { p0, v1 }, Lcom/innioasis/ipp/Flow$Loader;->decode(Ljava/io/File;)Landroid/graphics/Bitmap;
     move-result-object v1
     goto :L2
   :L1
@@ -205,82 +221,98 @@
     return-object v0
 .end method
 
-.method private decode(Ljava/lang/String;)Landroid/graphics/Bitmap;
-  .catch Ljava/lang/IllegalArgumentException; { :L1 .. :L2 } :L3
-  .registers 8
-  .line 475
-    new-instance v0, Landroid/graphics/BitmapFactory$Options;
-    invoke-direct { v0 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 476
-    const/4 v1, 1
-    iput-boolean v1, v0, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 477
-    invoke-static { p1, v0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  .line 478
-    iget v2, v0, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    const/4 v3, 0
-    if-lez v2, :L6
-    iget v2, v0, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    if-gtz v2, :L0
-    goto :L6
+.method private decode(Ljava/io/File;)Landroid/graphics/Bitmap;
+  .catch Ljava/lang/IllegalArgumentException; { :L2 .. :L3 } :L4
+  .registers 9
+  .line 502
+    invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Flow$Loader;->read(Ljava/io/File;)I
+    move-result p1
+  .line 503
+    const/4 v0, 0
+    if-gtz p1, :L0
+    return-object v0
   :L0
-  .line 479
-    iget v2, v0, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    iget v4, v0, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    const/16 v5, 180
-    invoke-static { v2, v4, v5, v5 }, Lcom/innioasis/ipp/Art;->sample(IIII)I
-    move-result v2
-    iput v2, v0, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 480
-    const/4 v2, 0
-    iput-boolean v2, v0, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 481
-    iput-boolean v1, v0, Landroid/graphics/BitmapFactory$Options;->inMutable:Z
-  .line 483
-    iget v2, v0, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-    if-ne v2, v1, :L1
-    iget-object v2, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
-    if-eqz v2, :L1
-  .line 484
-    invoke-virtual { v2 }, Landroid/graphics/Bitmap;->getWidth()I
-    move-result v2
-    iget v4, v0, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    if-ne v2, v4, :L1
-    iget-object v2, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
-    invoke-virtual { v2 }, Landroid/graphics/Bitmap;->getHeight()I
-    move-result v2
-    iget v4, v0, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    if-ne v2, v4, :L1
-  .line 485
-    iget-object v2, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
-    iput-object v2, v0, Landroid/graphics/BitmapFactory$Options;->inBitmap:Landroid/graphics/Bitmap;
+  .line 504
+    iget-object v1, p0, Lcom/innioasis/ipp/Flow$Loader;->opts:Landroid/graphics/BitmapFactory$Options;
+  .line 505
+    iget-object v2, p0, Lcom/innioasis/ipp/Flow$Loader;->scratch:[B
+    iput-object v2, v1, Landroid/graphics/BitmapFactory$Options;->inTempStorage:[B
+  .line 506
+    iput-object v0, v1, Landroid/graphics/BitmapFactory$Options;->inBitmap:Landroid/graphics/Bitmap;
+  .line 507
+    const/4 v2, 1
+    iput v2, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+  .line 508
+    iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
+  .line 509
+    iget-object v3, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+    const/4 v4, 0
+    invoke-static { v3, v4, p1, v1 }, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+  .line 510
+    iget v3, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    if-lez v3, :L7
+    iget v3, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    if-gtz v3, :L1
+    goto :L7
   :L1
-  .line 489
-    invoke-static { p1, v0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-    move-result-object p1
+  .line 511
+    iget v3, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    iget v5, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    const/16 v6, 180
+    invoke-static { v3, v5, v6, v6 }, Lcom/innioasis/ipp/Art;->sample(IIII)I
+    move-result v3
+    iput v3, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+  .line 512
+    iput-boolean v4, v1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
+  .line 513
+    iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inMutable:Z
+  .line 515
+    iget v3, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+    if-ne v3, v2, :L2
+    iget-object v3, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
+    if-eqz v3, :L2
+  .line 516
+    invoke-virtual { v3 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result v3
+    iget v5, v1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    if-ne v3, v5, :L2
+    iget-object v3, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
+    invoke-virtual { v3 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result v3
+    iget v5, v1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    if-ne v3, v5, :L2
+  .line 517
+    iget-object v3, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
+    iput-object v3, v1, Landroid/graphics/BitmapFactory$Options;->inBitmap:Landroid/graphics/Bitmap;
   :L2
-  .line 493
-    goto :L4
-  :L3
-  .line 490
-    move-exception v2
-  .line 491
-    iput-object v3, v0, Landroid/graphics/BitmapFactory$Options;->inBitmap:Landroid/graphics/Bitmap;
-  .line 492
-    invoke-static { p1, v0 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+  .line 521
+    iget-object v3, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+    invoke-static { v3, v4, p1, v1 }, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object p1
+  :L3
+  .line 525
+    goto :L5
   :L4
-  .line 494
-    if-eqz p1, :L5
-    iget v0, v0, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-    if-ne v0, v1, :L5
-    iput-object p1, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
+  .line 522
+    move-exception v3
+  .line 523
+    iput-object v0, v1, Landroid/graphics/BitmapFactory$Options;->inBitmap:Landroid/graphics/Bitmap;
+  .line 524
+    iget-object v0, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+    invoke-static { v0, v4, p1, v1 }, Landroid/graphics/BitmapFactory;->decodeByteArray([BIILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    move-result-object p1
   :L5
-  .line 495
-    return-object p1
+  .line 526
+    if-eqz p1, :L6
+    iget v0, v1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+    if-ne v0, v2, :L6
+    iput-object p1, p0, Lcom/innioasis/ipp/Flow$Loader;->decoded:Landroid/graphics/Bitmap;
   :L6
-  .line 478
-    return-object v3
+  .line 527
+    return-object p1
+  :L7
+  .line 510
+    return-object v0
 .end method
 
 .method private evict(I)V
@@ -524,6 +556,109 @@
   :L21
   .line 426
     return-void
+.end method
+
+.method private read(Ljava/io/File;)I
+  .catchall { :L0 .. :L3 } :L15
+  .catchall { :L5 .. :L6 } :L8
+  .catchall { :L10 .. :L11 } :L12
+  .catchall { :L17 .. :L18 } :L19
+  .registers 9
+  .line 481
+    nop
+  .line 483
+    const/4 v0, 0
+    const/4 v1, 0
+  :L0
+    invoke-virtual { p1 }, Ljava/io/File;->length()J
+    move-result-wide v2
+  .line 484
+    const-wide/16 v4, 0
+    cmp-long v6, v2, v4
+    if-lez v6, :L14
+    const-wide/32 v4, 8388608
+    cmp-long v6, v2, v4
+    if-lez v6, :L1
+    goto :L14
+  :L1
+  .line 485
+    iget-object v4, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+    array-length v4, v4
+    int-to-long v4, v4
+    cmp-long v6, v4, v2
+    if-gez v6, :L2
+    long-to-int v4, v2
+    add-int/lit16 v4, v4, 16384
+    new-array v4, v4, [B
+    iput-object v4, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+  :L2
+  .line 486
+    new-instance v4, Ljava/io/FileInputStream;
+    invoke-direct { v4, p1 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
+  :L3
+  .line 487
+    const/4 p1, 0
+  :L4
+  .line 488
+    int-to-long v5, p1
+    cmp-long v1, v5, v2
+    if-gez v1, :L9
+  :L5
+  .line 489
+    iget-object v1, p0, Lcom/innioasis/ipp/Flow$Loader;->file:[B
+    long-to-int v5, v2
+    sub-int/2addr v5, p1
+    invoke-virtual { v4, v1, p1, v5 }, Ljava/io/FileInputStream;->read([BII)I
+    move-result v1
+  :L6
+  .line 490
+    if-gez v1, :L7
+    goto :L9
+  :L7
+  .line 491
+    add-int/2addr p1, v1
+  .line 492
+    goto :L4
+  :L8
+  .line 494
+    move-exception p1
+    move-object v1, v4
+    goto :L16
+  :L9
+  .line 493
+    nop
+  :L10
+  .line 497
+    invoke-virtual { v4 }, Ljava/io/FileInputStream;->close()V
+  :L11
+    goto :L13
+  :L12
+    move-exception v0
+  :L13
+  .line 493
+    return p1
+  :L14
+  .line 497
+    nop
+  .line 484
+    return v0
+  :L15
+  .line 494
+    move-exception p1
+  :L16
+  .line 495
+    nop
+  .line 497
+    if-eqz v1, :L20
+  :L17
+    invoke-virtual { v1 }, Ljava/io/FileInputStream;->close()V
+  :L18
+    goto :L20
+  :L19
+    move-exception p1
+  :L20
+  .line 495
+    return v0
 .end method
 
 .method private static room()V
