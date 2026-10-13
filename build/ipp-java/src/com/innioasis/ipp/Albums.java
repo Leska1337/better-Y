@@ -20,7 +20,6 @@ import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
-import com.innioasis.y1.utils.LoadingDialog;
 import com.innioasis.y1.utils.SharedPreferencesUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +33,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 /**
  * Same-named albums in different folders are different albums: the physical album is the
@@ -251,6 +248,7 @@ public final class Albums {
         List all = allSongs();
         if (all == null) return;
         foldersOf(all);
+        Artists.index(all);
         Y1Repository repo = Y1Application.Companion.getY1Repository();
         if (repo == null) return;
         songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
@@ -309,54 +307,12 @@ public final class Albums {
 
     /**
      * Once per launch, from the main menu: with no scan to end in {@link #loadNow}, the list is
-     * read behind a loading dialog of its own, so that the first section opened does not wait.
+     * read on the library thread, so that the first section opened does not wait.
      */
     public static void atStart(Activity a) {
-        try {
-            if (started || a == null) return;
-            started = true;
-            if (songCache != null || Global.INSTANCE.getRefreshDatabaseState()) return;
-            LoadingDialog d = new LoadingDialog(a, a.getString(R.string.loading), "",
-                    R.style.Dialog_Common, new Noop());
-            a.getWindow().getDecorView().post(new Start(a, d));
-        } catch (Throwable t) {
-        }
-    }
-
-    /** The dialog's back-key callback: it is not cancellable. */
-    static final class Noop implements Function0 {
-        public Object invoke() { return Unit.INSTANCE; }
-    }
-
-    /** Shows the dialog, reads on the library thread, takes the dialog down. */
-    static final class Start implements Runnable {
-        private final Activity a;
-        private final LoadingDialog d;
-        private int step;
-
-        Start(Activity a, LoadingDialog d) { this.a = a; this.d = d; }
-
-        public void run() {
-            try {
-                if (step == 0) {
-                    step = 1;
-                    if (songCache != null || a.isFinishing()) return;
-                    d.show();
-                    later(this, 0L);
-                } else if (step == 1) {
-                    step = 2;
-                    loadNow();
-                    a.runOnUiThread(this);
-                } else if (d.isShowing()) {
-                    d.dismiss();
-                }
-            } catch (Throwable t) {
-                if (step == 1) {
-                    step = 2;
-                    a.runOnUiThread(this);
-                }
-            }
-        }
+        if (started) return;
+        started = true;
+        if (songCache == null) warmSoon(0L);
     }
 
     static final class Warm implements Runnable {

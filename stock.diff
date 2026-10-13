@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..bfdebcad 100644
+index 01b1f730..5fb27195 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..bfdebcad 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100114
++  versionCode: 10100116
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..6107e80f 100644
+index 71fe29d0..4872a1b0 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..6107e80f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev114</string>
++    <string name="ipp_version">v1.1.0-dev116</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -61657,7 +61657,7 @@ index 0bfdbeec..0c11ab93 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..ca34497a 100644
+index a9542df1..31f25955 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -61760,7 +61760,7 @@ index a9542df1..ca34497a 100644
 +    # makes init reconfigure USB only when the answer has to change.
 +    invoke-static {}, Lcom/innioasis/ipp/Panel;->adb()V
 +
-+    # ipp: read the song list once per launch behind a loading dialog, unless a scan is running
++    # ipp: read the song list once per launch on the library thread, unless a scan is running
 +    # (that one ends with the same read, Albums.loadNow). Otherwise the first section opened
 +    # after a reboot waits for it.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Albums;->atStart(Landroid/app/Activity;)V

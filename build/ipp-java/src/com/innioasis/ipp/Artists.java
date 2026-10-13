@@ -170,6 +170,8 @@ public final class Artists {
             }
             synchronized (NPARTS) {
                 NPARTS.clear();
+                ixFor = null;
+                ixGen++;
             }
         } catch (Throwable t) {
         }
@@ -359,6 +361,14 @@ public final class Artists {
     /** Whether a part of the tag is this normalised name. The normalised parts are kept per tag. */
     private static boolean inParts(String tag, String target) {
         if (tag == null) return false;
+        String[] ps = normParts(tag);
+        for (int i = 0; i < ps.length; i++) {
+            if (ps[i].equals(target)) return true;
+        }
+        return false;
+    }
+
+    private static String[] normParts(String tag) {
         String[] ps;
         synchronized (NPARTS) { ps = (String[]) NPARTS.get(tag); }
         if (ps == null) {
@@ -367,10 +377,82 @@ public final class Artists {
             for (int i = 0; i < ps.length; i++) ps[i] = norm((String) l.get(i));
             synchronized (NPARTS) { NPARTS.put(tag, ps); }
         }
-        for (int i = 0; i < ps.length; i++) {
-            if (ps[i].equals(target)) return true;
+        return ps;
+    }
+
+    private static List ixFor;
+    private static String[] ixWhole;
+    private static String[][] ixParts;
+    private static int ixGen;
+
+    /** The normalised tag and its parts of every song, by index in the list: built once per list. */
+    static void index(List all) {
+        if (all == null) return;
+        int gen;
+        synchronized (NPARTS) {
+            if (ixFor == all) return;
+            gen = ixGen;
         }
-        return false;
+        int n = all.size();
+        String[] w = new String[n];
+        String[][] p = new String[n][];
+        for (int i = 0; i < n; i++) {
+            Object o = all.get(i);
+            if (!(o instanceof Song)) continue;
+            String tag = ((Song) o).getArtist();
+            if (tag == null) continue;
+            w[i] = norm(tag);
+            p[i] = normParts(tag);
+        }
+        synchronized (NPARTS) {
+            if (gen != ixGen) return;
+            ixFor = all;
+            ixWhole = w;
+            ixParts = p;
+        }
+    }
+
+    /**
+     * What {@link #songs} and then {@link #byTag} answer for no genre, in one pass over the index.
+     * Null when the index is not this list's, and the two are to be asked themselves.
+     */
+    private static List ofArtist(String artist) {
+        List all = Albums.allSongs();
+        String target = norm(artist);
+        if (all == null || target.length() == 0) return null;
+        index(all);
+        String[] w;
+        String[][] p;
+        synchronized (NPARTS) {
+            if (ixFor != all) return null;
+            w = ixWhole;
+            p = ixParts;
+        }
+        boolean split = splitEnabled();
+        ArrayList part = new ArrayList();
+        ArrayList any = new ArrayList();
+        boolean asPart = false;
+        for (int i = 0; i < w.length; i++) {
+            if (w[i] == null) continue;
+            boolean whole = w[i].equals(target);
+            boolean in = false;
+            if (split) {
+                String[] ps = p[i];
+                for (int j = 0; j < ps.length; j++) {
+                    if (ps[j].equals(target)) { in = true; break; }
+                }
+            }
+            if (in) {
+                part.add(all.get(i));
+                if (!whole) asPart = true;
+            }
+            if (whole || in) any.add(all.get(i));
+        }
+        if (asPart) {
+            Collections.sort(part, new SongCmp(Y1Repository.SongSortType.SongName_A_To_Z));
+            return part;
+        }
+        return any;
     }
 
     private static final class NameCmp implements Comparator {
@@ -392,12 +474,16 @@ public final class Artists {
     public static List forMenu(String artist, Genre genre) {
         if (AlbumArtists.is(artist)) return AlbumArtists.songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
         try {
-            List split = (genre != null) ? songsInGenre(artist, genre)
-                                         : songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
-            if (split != null && !split.isEmpty()) return split;
-            if (genre == null) {
-                List cached = byTag(artist, null);
-                if (cached != null && !cached.isEmpty()) return cached;
+            List one = (genre == null) ? ofArtist(artist) : null;
+            if (one != null && !one.isEmpty()) return one;
+            if (one == null) {
+                List split = (genre != null) ? songsInGenre(artist, genre)
+                                             : songs(artist, Y1Repository.SongSortType.SongName_A_To_Z);
+                if (split != null && !split.isEmpty()) return split;
+                if (genre == null) {
+                    List cached = byTag(artist, null);
+                    if (cached != null && !cached.isEmpty()) return cached;
+                }
             }
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             if (repo != null) {
