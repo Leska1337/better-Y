@@ -371,7 +371,9 @@ public final class BigCover {
     private static byte[] external(String path) {
         try {
             File f = Art.file(path);
-            return f == null ? null : readAll(f);
+            if (f == null) return null;
+            Art.stampRead(path);
+            return readAll(f);
         } catch (Throwable t) {
             return null;
         }

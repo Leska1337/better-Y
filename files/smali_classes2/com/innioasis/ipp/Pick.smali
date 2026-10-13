@@ -112,12 +112,12 @@
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->clear()V
   .line 156
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->clear()V
-  :L0
   .line 158
+    invoke-static { }, Lcom/innioasis/ipp/Art;->clearStamps()V
+  :L0
+  .line 160
     and-int/lit8 v0, p0, 2
     if-eqz v0, :L1
-  .line 160
-    invoke-static { }, Lcom/innioasis/ipp/Art;->clearStamps()V
   .line 161
     invoke-static { }, Lcom/innioasis/ipp/YearCache;->clear()V
   .line 162
@@ -410,27 +410,27 @@
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
   .line 228
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
+    move-result-wide v6
+    add-long/2addr v4, v6
+    new-instance p0, Ljava/io/File;
+    const-string v2, "ipp_art.txt"
+    invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+  .line 229
+    invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v0
     add-long/2addr v4, v0
   .line 226
     return-wide v4
   :L4
-  .line 230
+  .line 231
     const/4 v5, 2
     if-ne p0, v5, :L5
-  .line 231
-    new-instance p0, Ljava/io/File;
-    const-string v2, "ipp_art.txt"
-    invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-    invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
-    move-result-wide v4
+  .line 232
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_years.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 232
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
-    move-result-wide v6
-    add-long/2addr v4, v6
+    move-result-wide v4
     new-instance p0, Ljava/io/File;
     const-string v2, "ipp_tracks.txt"
     invoke-direct { p0, v3, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
@@ -473,7 +473,7 @@
     invoke-static { p0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v0
     add-long/2addr v4, v0
-  .line 231
+  .line 232
     return-wide v4
   :L5
   .line 240

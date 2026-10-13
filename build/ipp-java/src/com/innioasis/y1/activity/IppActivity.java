@@ -1047,13 +1047,12 @@ public final class IppActivity extends BaseActivity {
                     if (!f.exists()) continue;                      // gone: the stock scan removes it
 
                     // An external cover changes no song's mtime: Art stamps the cover files per
-                    // folder. A folder seen for the first time is re-read but not counted.
-                    int cover = Art.coverState(s.getPath());
-                    if (cover != Art.COVER_SAME) {
+                    // folder when it reads them.
+                    if (Art.coverChanged(s.getPath())) {
                         CoverCache.forget(Albums.keyOf(s));                  // the list thumbnail
                         BigCover.forget(s.getPath());                        // this track's cover
                         BigCover.forget(Albums.trackFolder(s.getPath()));    // the album's own
-                        if (cover == Art.COVER_CHANGED) updated++;
+                        updated++;
                     }
 
                     if (f.lastModified() == s.getFileDate()

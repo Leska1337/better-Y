@@ -68,7 +68,9 @@ public final class Art {
                 if (b != null) return b;
             }
             File f = file(path);
-            return f == null ? null : decode(f, w, h);
+            if (f == null) return null;
+            stampRead(path);
+            return decode(f, w, h);
         } catch (Throwable t) {
             return null;
         }
@@ -106,6 +108,7 @@ public final class Art {
         try {
             File f = file(path, OWN_THUMB);
             if (f != null) {
+                stampRead(path);
                 Bitmap b = decode(f, size, size);
                 if (b != null) return b;
             }
@@ -208,9 +211,11 @@ public final class Art {
         chain.clear();
     }
 
-    // A replaced cover FILE changes no mtime the library knows, so "Update library" stamps the
-    // cover files per folder (name, mtime, length) in ipp_art.txt; a folder whose stamp changed
-    // has its pictures forgotten. The manual pick lives in the preferences and survives.
+    // A replaced cover FILE changes no mtime the library knows, so a folder's cover files are
+    // stamped (name, mtime, length) in ipp_art.txt at the moment one of them is read into a cache.
+    // A stamp therefore lives exactly as long as the pictures it vouches for: no stamp means
+    // nothing of that folder's files is cached, and "Clear cache" (covers) drops both together.
+    // The manual pick lives in the preferences and survives.
 
     private static final char SEP = '\t';
 
@@ -220,55 +225,63 @@ public final class Art {
     private static final Hashtable seen = new Hashtable();
     private static boolean stampsLoaded;
     private static boolean stampsDirty;
+    private static boolean saveAsked;
+    private static final long SAVE_DELAY_MS = 5000L;
 
-    /** A first-seen folder with a cover counts: re-reading beats a wrong picture. */
-    public static boolean coverChanged(String songPath) {
-        return coverState(songPath) != COVER_SAME;
-    }
-
-    public static final int COVER_SAME = 0;
-    /**
-     * A cover file and no stamp yet: re-read, but NOT counted as a user's change, or "Update
-     * library" reports every freshly scanned song as updated.
-     */
-    public static final int COVER_NEW = 1;
-    /** Replaced or removed since the last pass. */
-    public static final int COVER_CHANGED = 2;
-
-    /** Once per FOLDER per run. */
-    public static int coverState(String songPath) {
+    /** A cover file serving this song's folder is being read into a cache. */
+    public static void stampRead(String songPath) {
         try {
             String dir = Albums.trackFolder(songPath);
-            if (dir == null || dir.length() == 0) return COVER_SAME;
-            Object hit = seen.get(dir);
-            if (hit != null) return ((Integer) hit).intValue();
-
+            if (dir == null || dir.length() == 0) return;
             loadStamps();
+            if (stamps.containsKey(dir)) return;
             String now = stamp(dir);
-            String had = (String) stamps.get(dir);
-            int state;
-            if (now.length() == 0) {
-                // "Nothing" is not written down, or the file outgrows the caches it describes.
-                state = had != null ? COVER_CHANGED : COVER_SAME;
-                if (had != null) {
-                    stamps.remove(dir);
-                    stampsDirty = true;
-                }
-            } else if (had == null) {
-                state = COVER_NEW;
+            if (now.length() == 0) return;
+            boolean ask;
+            synchronized (Art.class) {
                 stamps.put(dir, now);
                 stampsDirty = true;
-            } else {
-                state = now.equals(had) ? COVER_SAME : COVER_CHANGED;
-                if (state != COVER_SAME) {
-                    stamps.put(dir, now);
-                    stampsDirty = true;
+                ask = !saveAsked;
+                saveAsked = true;
+            }
+            if (ask) Albums.later(new Save(), SAVE_DELAY_MS);
+        } catch (Throwable t) {
+        }
+    }
+
+    static final class Save implements Runnable {
+        public void run() { saveStamps(); }
+    }
+
+    /**
+     * The cover files of this song's folder were replaced or removed since they were read. Once
+     * per FOLDER per run. A folder with no stamp has nothing cached, so it has nothing to drop.
+     */
+    public static boolean coverChanged(String songPath) {
+        try {
+            String dir = Albums.trackFolder(songPath);
+            if (dir == null || dir.length() == 0) return false;
+            Object hit = seen.get(dir);
+            if (hit != null) return ((Boolean) hit).booleanValue();
+
+            loadStamps();
+            String had = (String) stamps.get(dir);
+            boolean changed = false;
+            if (had != null) {
+                String now = stamp(dir);
+                changed = !now.equals(had);
+                // dropped, not rewritten: the next read stamps what it reads
+                if (changed) {
+                    synchronized (Art.class) {
+                        stamps.remove(dir);
+                        stampsDirty = true;
+                    }
                 }
             }
-            seen.put(dir, Integer.valueOf(state));
-            return state;
+            seen.put(dir, Boolean.valueOf(changed));
+            return changed;
         } catch (Throwable t) {
-            return COVER_SAME;
+            return false;
         }
     }
 
@@ -318,7 +331,7 @@ public final class Art {
         return d == null ? null : new File(d, "ipp_art.txt");
     }
 
-    private static void loadStamps() {
+    private static synchronized void loadStamps() {
         if (stampsLoaded) return;
         stampsLoaded = true;
         try {
@@ -338,7 +351,8 @@ public final class Art {
         }
     }
 
-    private static void saveStamps() {
+    private static synchronized void saveStamps() {
+        saveAsked = false;
         if (!stampsDirty) return;
         try {
             File f = stampFile();

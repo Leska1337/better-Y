@@ -154,10 +154,10 @@ public final class Pick {
         if ((mask & COVERS) != 0) {
             CoverCache.clear();
             BigCover.clear();
+            // the stamps vouch for the pictures, so they go with them
+            Art.clearStamps();
         }
         if ((mask & TAGS) != 0) {
-            // Cover-file stamps are text bookkeeping, so they belong to this category.
-            Art.clearStamps();
             YearCache.clear();
             MetaCache.clear();
             TrackCache.clear();
@@ -225,11 +225,11 @@ public final class Pick {
             if (cat == COVERS) {
                 return CacheSize.dirSize(new File(d, "ipp_covers"))
                         + CacheSize.dirSize(new File(d, "ipp_big"))
-                        + CacheSize.dirSize(new File(d, "ipp_bigcover.txt"));
+                        + CacheSize.dirSize(new File(d, "ipp_bigcover.txt"))
+                        + CacheSize.dirSize(new File(d, "ipp_art.txt"));
             }
             if (cat == TAGS) {
-                return CacheSize.dirSize(new File(d, "ipp_art.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_years.txt"))
+                return CacheSize.dirSize(new File(d, "ipp_years.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_tracks.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_albums.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_albumartist.txt"))
