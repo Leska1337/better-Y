@@ -127,6 +127,7 @@ public final class AlbumArtists {
     private static List memoAll;           // Albums.allSongs() the model was built from
     private static int memoGen = -1;       // AlbumArtist.gen() it was built with
     private static HashMap keyToNorm;      // album key -> group
+    private static String[] songNorm;      // the group of each song of memoAll, by index
     private static LinkedHashMap names;    // group -> the spelling shown
 
     /**
@@ -140,12 +141,14 @@ public final class AlbumArtists {
 
         // The representative is the lowest path, as the album row takes it.
         HashMap reps = new HashMap();
+        String[] keys = new String[all.size()];
         for (int i = 0; i < all.size(); i++) {
             Object o = all.get(i);
             if (!(o instanceof Song)) continue;
             Song s = (Song) o;
             if (s.getPath() == null) continue;
             String k = Albums.keyOf(s);
+            keys[i] = k;
             Song r = (Song) reps.get(k);
             if (r == null || s.getPath().compareTo(r.getPath()) < 0) reps.put(k, s);
         }
@@ -180,6 +183,11 @@ public final class AlbumArtists {
             }
             shown.put(e.getKey(), best);
         }
+        String[] sn = new String[keys.length];
+        for (int i = 0; i < keys.length; i++) {
+            if (keys[i] != null) sn[i] = (String) k2n.get(keys[i]);
+        }
+        songNorm = sn;
         keyToNorm = k2n;
         names = shown;
         memoAll = all;
@@ -275,12 +283,14 @@ public final class AlbumArtists {
             if (!build()) return out;
             String n = name(row);
             String target = Constant.UNKNOWN.equals(n) ? Constant.UNKNOWN : norm(n);
-            List all = memoAll;
-            HashMap k2n = keyToNorm;
-            for (int i = 0; i < all.size(); i++) {
-                Object o = all.get(i);
-                if (!(o instanceof Song)) continue;
-                if (target.equals(k2n.get(Albums.keyOf((Song) o)))) out.add(o);
+            List all;
+            String[] sn;
+            synchronized (AlbumArtists.class) {
+                all = memoAll;
+                sn = songNorm;
+            }
+            for (int i = 0; i < sn.length && i < all.size(); i++) {
+                if (target.equals(sn[i])) out.add(all.get(i));
             }
             Y1Repository.SongSortType t = type == Y1Repository.SongSortType.Track_Number
                     ? Y1Repository.SongSortType.Album : type;

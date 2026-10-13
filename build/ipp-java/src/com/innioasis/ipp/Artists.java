@@ -67,8 +67,21 @@ public final class Artists {
         return Prefs.on(c, KEY_SPLIT);
     }
 
+    private static final HashMap NORM = new HashMap();
+
+    /** Trimmed and lower-cased; remembered, because a pass over the library asks it per song. */
     private static String norm(String s) {
-        return s == null ? "" : s.trim().toLowerCase(Locale.ROOT);
+        if (s == null) return "";
+        synchronized (NORM) {
+            Object had = NORM.get(s);
+            if (had != null) return (String) had;
+        }
+        String n = s.trim().toLowerCase(Locale.ROOT);
+        synchronized (NORM) {
+            if (NORM.size() >= 8192) NORM.clear();
+            NORM.put(s, n);
+        }
+        return n;
     }
 
     // Parts trimmed and joined by ", ": the user's spacing around commas does not matter.
@@ -154,6 +167,9 @@ public final class Artists {
             exceptions = null;
             synchronized (PARTS) {
                 PARTS.clear();
+            }
+            synchronized (NPARTS) {
+                NPARTS.clear();
             }
         } catch (Throwable t) {
         }
@@ -335,9 +351,24 @@ public final class Artists {
         if (target.length() == 0) return false;
         if (norm(tag).equals(target)) return true;
         if (!splitEnabled()) return false;
-        List ps = parts(tag);
-        for (int i = 0; i < ps.size(); i++) {
-            if (norm((String) ps.get(i)).equals(target)) return true;
+        return inParts(tag, target);
+    }
+
+    private static final HashMap NPARTS = new HashMap();
+
+    /** Whether a part of the tag is this normalised name. The normalised parts are kept per tag. */
+    private static boolean inParts(String tag, String target) {
+        if (tag == null) return false;
+        String[] ps;
+        synchronized (NPARTS) { ps = (String[]) NPARTS.get(tag); }
+        if (ps == null) {
+            List l = parts(tag);
+            ps = new String[l.size()];
+            for (int i = 0; i < ps.length; i++) ps[i] = norm((String) l.get(i));
+            synchronized (NPARTS) { NPARTS.put(tag, ps); }
+        }
+        for (int i = 0; i < ps.length; i++) {
+            if (ps[i].equals(target)) return true;
         }
         return false;
     }
@@ -415,11 +446,7 @@ public final class Artists {
         boolean appearsAsPart = false;
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
-            List ps = parts(s.getArtist());
-            boolean hit = false;
-            for (int j = 0; j < ps.size(); j++) {
-                if (norm((String) ps.get(j)).equals(target)) { hit = true; break; }
-            }
+            boolean hit = inParts(s.getArtist(), target);
             if (hit) {
                 matched.add(s);
                 if (!norm(s.getArtist()).equals(target)) appearsAsPart = true;

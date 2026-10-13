@@ -15,7 +15,7 @@
 
 .method constructor <init>(Z)V
   .registers 2
-  .line 264
+  .line 272
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-boolean p1, p0, Lcom/innioasis/ipp/AlbumArtists$NormCmp;->rev:Z
     return-void
@@ -23,12 +23,12 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 3
-  .line 266
+  .line 274
     check-cast p1, Ljava/lang/String;
     check-cast p2, Ljava/lang/String;
     invoke-virtual { p1, p2 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result p1
-  .line 267
+  .line 275
     iget-boolean p2, p0, Lcom/innioasis/ipp/AlbumArtists$NormCmp;->rev:Z
     if-eqz p2, :L0
     neg-int p1, p1
