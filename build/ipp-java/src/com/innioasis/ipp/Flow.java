@@ -363,10 +363,29 @@ public final class Flow {
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
+                room();
                 loop();
             } finally {
                 if (readArtist) AlbumArtist.flush();
             }
+        }
+
+        private static volatile byte[] reserve;
+        private static boolean roomMade;
+
+        /**
+         * Once per process: one block taken and let go, so that the heap grows in one step and the
+         * first slides land in the room it leaves. A heap just booted has no free run a slide's
+         * size, and grows by one slide at a time with the whole app stopped for each.
+         */
+        private static void room() {
+            if (roomMade) return;
+            roomMade = true;
+            try {
+                reserve = new byte[8 << 20];
+            } catch (Throwable t) {
+            }
+            reserve = null;
         }
 
         private void loop() {

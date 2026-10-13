@@ -43,9 +43,9 @@ import kotlin.jvm.functions.Function0;
 /**
  * [Tools] - "Data backup": the app's data copied to the card and read back, so it survives an
  * Updater flash, which rewrites {@code usrdata}. In the archive: {@code shared_prefs/},
- * {@code files/mmkv/} (the chosen theme), {@code databases/}, {@code files/save_state},
- * {@code cache/ipp_art.txt} (a choice, not a cache) and {@code system.txt} ({@link Sys}). Not the
- * rebuildable caches, and not Bluetooth pairings — another app's data.
+ * {@code files/mmkv/} (the chosen theme), {@code databases/}, {@code files/save_state} and
+ * {@code system.txt} ({@link Sys}). Not the rebuildable caches, and not Bluetooth pairings —
+ * another app's data.
  */
 public final class Backup {
 
@@ -63,7 +63,7 @@ public final class Backup {
     /** Folders taken with everything under them. */
     private static final String[] TREES = {"files/mmkv"};
 
-    private static final String[] FILES = {"files/save_state", "cache/ipp_art.txt"};
+    private static final String[] FILES = {"files/save_state"};
 
     private static final String SYS = "system.txt";
 

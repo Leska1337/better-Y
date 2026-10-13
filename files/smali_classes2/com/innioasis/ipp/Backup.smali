@@ -35,28 +35,26 @@
 .field private static progress:Lcom/innioasis/y1/utils/LoadingDialog;
 
 .method static constructor <clinit>()V
-  .registers 5
+  .registers 4
   .line 61
     const/4 v0, 2
-    new-array v1, v0, [Ljava/lang/String;
-    const-string v2, "shared_prefs"
-    const/4 v3, 0
-    aput-object v2, v1, v3
-    const-string v2, "databases"
-    const/4 v4, 1
-    aput-object v2, v1, v4
-    sput-object v1, Lcom/innioasis/ipp/Backup;->DIRS:[Ljava/lang/String;
-  .line 64
-    new-array v1, v4, [Ljava/lang/String;
-    const-string v2, "files/mmkv"
-    aput-object v2, v1, v3
-    sput-object v1, Lcom/innioasis/ipp/Backup;->TREES:[Ljava/lang/String;
-  .line 66
     new-array v0, v0, [Ljava/lang/String;
-    const-string v1, "files/save_state"
+    const-string v1, "shared_prefs"
+    const/4 v2, 0
+    aput-object v1, v0, v2
+    const-string v1, "databases"
+    const/4 v3, 1
     aput-object v1, v0, v3
-    const-string v1, "cache/ipp_art.txt"
-    aput-object v1, v0, v4
+    sput-object v0, Lcom/innioasis/ipp/Backup;->DIRS:[Ljava/lang/String;
+  .line 64
+    new-array v0, v3, [Ljava/lang/String;
+    const-string v1, "files/mmkv"
+    aput-object v1, v0, v2
+    sput-object v0, Lcom/innioasis/ipp/Backup;->TREES:[Ljava/lang/String;
+  .line 66
+    new-array v0, v3, [Ljava/lang/String;
+    const-string v1, "files/save_state"
+    aput-object v1, v0, v2
     sput-object v0, Lcom/innioasis/ipp/Backup;->FILES:[Ljava/lang/String;
     return-void
 .end method

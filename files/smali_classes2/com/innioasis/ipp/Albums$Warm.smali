@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 229
+  .line 362
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -35,40 +35,40 @@
   .catchall { :L25 .. :L26 } :L24
   .catchall { :L26 .. :L27 } :L27
   .registers 8
-  .line 232
+  .line 365
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
     invoke-virtual { v1 }, Lcom/innioasis/music/objects/Global;->getRefreshDatabaseState()Z
     move-result v1
     if-eqz v1, :L2
-  .line 233
+  .line 366
     const-wide/16 v1, 2000
-    invoke-static { v1, v2 }, Lcom/innioasis/ipp/Albums;->access$000(J)V
+    invoke-static { v1, v2 }, Lcom/innioasis/ipp/Albums;->access$100(J)V
   :L1
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 234
+  .line 367
     return-void
   :L2
-  .line 236
-    invoke-static { }, Lcom/innioasis/ipp/Albums;->access$100()Ljava/util/List;
+  .line 369
+    invoke-static { }, Lcom/innioasis/ipp/Albums;->access$000()Ljava/util/List;
     move-result-object v1
-  .line 237
+  .line 370
     if-nez v1, :L4
-  .line 238
-    invoke-static { }, Lcom/innioasis/ipp/Albums;->access$200()Ljava/util/List;
-  .line 239
+  .line 371
+    invoke-static { }, Lcom/innioasis/ipp/Albums;->access$200()V
+  .line 372
     invoke-static { }, Lcom/innioasis/ipp/AlbumArtist;->warm()V
-  .line 240
+  .line 373
     invoke-static { }, Lcom/innioasis/ipp/MetaCache;->warm()V
   :L3
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 241
+  .line 374
     return-void
   :L4
-  .line 243
+  .line 376
     invoke-static { }, Ljava/lang/System;->currentTimeMillis()J
     move-result-wide v2
     invoke-static { }, Lcom/innioasis/ipp/Albums;->access$300()J
@@ -78,24 +78,24 @@
     const-wide/32 v4, 600000
     cmp-long v6, v2, v4
     if-gez v6, :L6
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 243
+  .line 376
     return-void
   :L6
-  .line 244
+  .line 377
     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v2
   :L7
-  .line 245
+  .line 378
     if-nez v2, :L8
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 245
+  .line 378
     return-void
   :L8
-  .line 247
+  .line 380
     invoke-static { }, Lcom/innioasis/ipp/Albums;->access$400()Ljava/lang/Object;
     move-result-object v3
     monitor-enter v3
@@ -104,74 +104,74 @@
     move-result v4
     monitor-exit v3
   :L10
-  .line 248
+  .line 381
     invoke-virtual { v2, v0 }, Lcom/innioasis/y1/database/Y1Repository;->getSongsSync(I)Ljava/util/List;
     move-result-object v2
   :L11
-  .line 249
+  .line 382
     if-nez v2, :L12
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 249
+  .line 382
     return-void
   :L12
-  .line 250
+  .line 383
     invoke-interface { v2, v1 }, Ljava/util/List;->equals(Ljava/lang/Object;)Z
     move-result v1
-  .line 251
+  .line 384
     invoke-static { }, Lcom/innioasis/ipp/Albums;->access$400()Ljava/lang/Object;
     move-result-object v2
     monitor-enter v2
   :L13
-  .line 252
+  .line 385
     invoke-static { }, Lcom/innioasis/ipp/Albums;->access$500()I
     move-result v3
     if-eq v4, v3, :L15
     monitor-exit v2
   :L14
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 252
+  .line 385
     return-void
   :L15
-  .line 253
+  .line 386
     if-eqz v1, :L17
   :L16
     invoke-static { }, Ljava/lang/System;->currentTimeMillis()J
     move-result-wide v3
     invoke-static { v3, v4 }, Lcom/innioasis/ipp/Albums;->access$302(J)J
   :L17
-  .line 254
+  .line 387
     monitor-exit v2
   :L18
-  .line 256
+  .line 389
     if-nez v1, :L28
   :L19
     invoke-static { }, Lcom/innioasis/ipp/Ipp;->libraryChanged()V
   :L20
     goto :L28
   :L21
-  .line 254
+  .line 387
     move-exception v1
   :L22
     monitor-exit v2
   :L23
     throw v1
   :L24
-  .line 247
+  .line 380
     move-exception v1
   :L25
     monitor-exit v3
   :L26
     throw v1
   :L27
-  .line 257
+  .line 390
     move-exception v1
   :L28
-  .line 259
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->access$602(Z)Z
-  .line 260
+  .line 393
     nop
-  .line 261
+  .line 394
     return-void
 .end method

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..a30c5e64 100644
+index 01b1f730..b433e51d 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..a30c5e64 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100102
++  versionCode: 10100111
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19845,7 +19845,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..80f9849d 100644
+index 71fe29d0..f9dbb09d 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20794,7 @@ index 71fe29d0..80f9849d 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev102</string>
++    <string name="ipp_version">v1.1.0-dev111</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -53076,6 +53076,82 @@ index 51980e1a..b3c1cc1a 100644
      .line 75
      new-instance v0, Lcom/innioasis/music/util/SubMenuDialog;
  
+diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity$switchSortType$1.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity$switchSortType$1.smali
+index c317d94a..ea1ff529 100644
+--- a/build/src/smali_classes2/com/innioasis/music/SongListActivity$switchSortType$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/SongListActivity$switchSortType$1.smali
+@@ -254,6 +254,8 @@
+ 
+     aget p1, v1, p1
+ 
++    # ipp: every branch below asks Albums.songsList instead of Y1Repository.getSongsList: the same
++    # list in the same order, answered from memory when the library is already read.
+     packed-switch p1, :pswitch_data_0
+ 
+     .line 361
+@@ -291,7 +293,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Album:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -316,7 +318,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->SongName_Z_To_A:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -341,7 +343,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->SongName_A_To_Z:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -366,7 +368,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Time_Desc:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -391,7 +393,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Time_Asc:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -407,7 +409,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->FileName_Z_To_A:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
+@@ -423,7 +425,7 @@
+ 
+     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->FileName_A_To_Z:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
+ 
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getSongsList(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->songsList(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
+ 
+     move-result-object p1
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali b/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
 index 2ffd8b91..428b35e9 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SongListActivity.smali
@@ -61581,7 +61657,7 @@ index 0bfdbeec..0c11ab93 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..de3f7ba7 100644
+index a9542df1..ca34497a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -61667,7 +61743,7 @@ index a9542df1..de3f7ba7 100644
  
      .line 279
      invoke-direct {p0}, Lcom/innioasis/y1/activity/MainActivity;->selItem()V
-@@ -1928,6 +1945,19 @@
+@@ -1928,6 +1945,24 @@
  .method public initView()V
      .locals 6
  
@@ -61684,10 +61760,15 @@ index a9542df1..de3f7ba7 100644
 +    # makes init reconfigure USB only when the answer has to change.
 +    invoke-static {}, Lcom/innioasis/ipp/Panel;->adb()V
 +
++    # ipp: read the song list once per launch behind a loading dialog, unless a scan is running
++    # (that one ends with the same read, Albums.loadNow). Otherwise the first section opened
++    # after a reboot waits for it.
++    invoke-static {p0}, Lcom/innioasis/ipp/Albums;->atStart(Landroid/app/Activity;)V
++
      .line 81
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getResources()Landroid/content/res/Resources;
  
-@@ -2069,7 +2099,8 @@
+@@ -2069,7 +2104,8 @@
  
      move-result-object v1
  
@@ -61697,7 +61778,7 @@ index a9542df1..de3f7ba7 100644
  
      invoke-virtual {v1, v3}, Landroid/content/Context;->getString(I)Ljava/lang/String;
  
-@@ -2095,6 +2126,9 @@
+@@ -2095,6 +2131,9 @@
  
      move-result-object v0
  
@@ -61707,7 +61788,7 @@ index a9542df1..de3f7ba7 100644
      if-eqz v0, :cond_1
  
      .line 95
-@@ -2566,6 +2600,18 @@
+@@ -2566,6 +2605,18 @@
      .line 212
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onResume()V
  
@@ -67414,7 +67495,7 @@ index e9374192..bf8b378c 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
-index 7bf058bc..23516a4e 100644
+index 7bf058bc..2e5cb4b6 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
 @@ -300,6 +300,11 @@
@@ -67441,6 +67522,17 @@ index 7bf058bc..23516a4e 100644
      if-nez v9, :cond_b
  
      sget-object v9, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+@@ -807,6 +817,10 @@
+ 
+     .line 723
+     :goto_6
++    # ipp: read the song list back while the scan dialog is still up (it waits for the flag
++    # below), so the first section opened afterwards does not wait for it.
++    invoke-static {}, Lcom/innioasis/ipp/Albums;->loadNow()V
++
+     sget-object v0, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
+ 
+     invoke-virtual {v0, v4}, Lcom/innioasis/music/objects/Global;->setRefreshDatabaseState(Z)V
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
 index 09aab2a9..aa0afecf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali

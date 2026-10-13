@@ -20,6 +20,7 @@ import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
+import com.innioasis.y1.utils.LoadingDialog;
 import com.innioasis.y1.utils.SharedPreferencesUtils;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 /**
  * Same-named albums in different folders are different albums: the physical album is the
@@ -169,6 +172,7 @@ public final class Albums {
             songCache = null;
             songCacheAt = 0L;
             songGen++;
+            sorted = null;
         }
         keyMemo = null;
         Find.clear();       // the Search rows count their songs off this very list
@@ -212,7 +216,9 @@ public final class Albums {
         int gen;
         synchronized (SONGS) { gen = songGen; }
         long t0 = SystemClock.uptimeMillis();
+        Object order = orderNow();
         List all = repo.getSongsSync(0);
+        if (order != orderNow()) order = null;
         Diag.slow("library read", t0);
         if (all == null) return null;
         synchronized (SONGS) {
@@ -220,10 +226,137 @@ public final class Albums {
             if (songCache != null) return songCache;
             if (songPrev != null && songPrev.equals(all)) all = songPrev;
             songPrev = null;
+            songOrder = order;
             songCache = all;
             songCacheAt = System.currentTimeMillis();
         }
         return all;
+    }
+
+    /**
+     * The song list read on the caller's thread, now. From the end of the stock scan, before its
+     * flag drops: the read is then inside the time the scan dialog is up.
+     */
+    public static void loadNow() {
+        try {
+            lists();
+            AlbumArtist.warm();
+            MetaCache.warm();
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The song list and what the first screens build from it: album folders, the All songs order. */
+    private static void lists() {
+        List all = allSongs();
+        if (all == null) return;
+        foldersOf(all);
+        Y1Repository repo = Y1Application.Companion.getY1Repository();
+        if (repo == null) return;
+        songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
+                SharedPreferencesUtils.INSTANCE.getSortAllSong()));
+    }
+
+    /** The order {@code getSongsSync} reads in under the stock settings of this moment, as an All songs sort. */
+    private static Object orderNow() {
+        SharedPreferencesUtils p = SharedPreferencesUtils.INSTANCE;
+        if (p.isSortByName()) {
+            return p.isSortLogic() ? Y1Repository.SongSortType.FileName_A_To_Z
+                    : Y1Repository.SongSortType.FileName_Z_To_A;
+        }
+        return p.isSortLogic() ? Y1Repository.SongSortType.Time_Asc
+                : Y1Repository.SongSortType.Time_Desc;
+    }
+
+    /** The sort {@link #songCache} was read in, or null when it is not known. */
+    private static Object songOrder;
+    /** One All songs list in a sort the cached list is not in; dropped with it. */
+    private static List sorted;
+    private static Object sortedType;
+
+    /**
+     * All songs in the given sort without a query when the list is already in memory. A copy:
+     * the screen's adapter owns what it is handed. Stock stores the sort as it queries, so that
+     * is done here as well.
+     */
+    public static List songsList(Y1Repository repo, Y1Repository.SongSortType type) {
+        List l = songsIn(repo, type);
+        try {
+            SharedPreferencesUtils.INSTANCE.setSortAllSong(type.getType());
+        } catch (Throwable t) {
+        }
+        return l == null ? null : new ArrayList(l);
+    }
+
+    private static List songsIn(Y1Repository repo, Y1Repository.SongSortType type) {
+        int gen;
+        synchronized (SONGS) {
+            if (songCache != null && type == songOrder) return songCache;
+            if (sorted != null && type == sortedType) return sorted;
+            gen = songGen;
+        }
+        List l = repo.getSongsList(type);
+        synchronized (SONGS) {
+            if (l != null && gen == songGen) {
+                sorted = l;
+                sortedType = type;
+            }
+        }
+        return l;
+    }
+
+    private static boolean started;
+
+    /**
+     * Once per launch, from the main menu: with no scan to end in {@link #loadNow}, the list is
+     * read behind a loading dialog of its own, so that the first section opened does not wait.
+     */
+    public static void atStart(Activity a) {
+        try {
+            if (started || a == null) return;
+            started = true;
+            if (songCache != null || Global.INSTANCE.getRefreshDatabaseState()) return;
+            LoadingDialog d = new LoadingDialog(a, a.getString(R.string.loading), "",
+                    R.style.Dialog_Common, new Noop());
+            a.getWindow().getDecorView().post(new Start(a, d));
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The dialog's back-key callback: it is not cancellable. */
+    static final class Noop implements Function0 {
+        public Object invoke() { return Unit.INSTANCE; }
+    }
+
+    /** Shows the dialog, reads on the library thread, takes the dialog down. */
+    static final class Start implements Runnable {
+        private final Activity a;
+        private final LoadingDialog d;
+        private int step;
+
+        Start(Activity a, LoadingDialog d) { this.a = a; this.d = d; }
+
+        public void run() {
+            try {
+                if (step == 0) {
+                    step = 1;
+                    if (songCache != null || a.isFinishing()) return;
+                    d.show();
+                    later(this, 0L);
+                } else if (step == 1) {
+                    step = 2;
+                    loadNow();
+                    a.runOnUiThread(this);
+                } else if (d.isShowing()) {
+                    d.dismiss();
+                }
+            } catch (Throwable t) {
+                if (step == 1) {
+                    step = 2;
+                    a.runOnUiThread(this);
+                }
+            }
+        }
     }
 
     static final class Warm implements Runnable {
@@ -235,7 +368,7 @@ public final class Albums {
                 }
                 List old = songCache;
                 if (old == null) {
-                    readSongs();
+                    lists();
                     AlbumArtist.warm();
                     MetaCache.warm();
                     return;
@@ -338,7 +471,7 @@ public final class Albums {
         if (m == null) {
             List all = allSongs();
             if (all == null) return name;
-            LinkedHashMap byName = foldersByName(all);
+            LinkedHashMap byName = foldersOf(all);
             m = new HashMap();
             Iterator it = byName.entrySet().iterator();
             while (it.hasNext()) {
@@ -354,6 +487,22 @@ public final class Albums {
         }
         Object k = m.get(name);
         return k == null ? name : (String) k;
+    }
+
+    private static List foldersFor;
+    private static LinkedHashMap foldersMemo;
+
+    /** {@link #foldersByName} of the whole library, kept for as long as the list object lives. Read only. */
+    private static LinkedHashMap foldersOf(List all) {
+        synchronized (SONGS) {
+            if (foldersFor == all && foldersMemo != null) return foldersMemo;
+        }
+        LinkedHashMap m = foldersByName(all);
+        synchronized (SONGS) {
+            foldersFor = all;
+            foldersMemo = m;
+        }
+        return m;
     }
 
     private static LinkedHashMap foldersByName(List songs) {
@@ -787,7 +936,7 @@ public final class Albums {
         if (names == null) return names;
         List all = allSongs();
         if (all == null) return names;
-        LinkedHashMap byName = foldersByName(all);
+        LinkedHashMap byName = foldersOf(all);
         ArrayList out = new ArrayList();
         for (int i = 0; i < names.size(); i++) {
             String name = (String) names.get(i);
@@ -806,7 +955,7 @@ public final class Albums {
         if (albums == null) return albums;
         List all = allSongs();
         if (all == null) return albums;
-        LinkedHashMap byName = foldersByName(all);
+        LinkedHashMap byName = foldersOf(all);
         ArrayList out = new ArrayList();
         for (int i = 0; i < albums.size(); i++) {
             Album a = (Album) albums.get(i);
