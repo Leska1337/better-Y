@@ -51,7 +51,7 @@ public final class Diag {
     private static final int CAP = 256 * 1024;
 
     /**
-     * The whole main buffer, in the debug mode. {@link Panel#exec} keeps the HEAD, logcat prints
+     * The whole main buffer. {@link Panel#exec} keeps the HEAD, logcat prints
      * oldest first: this must exceed the ring as text or the newest lines are cut.
      */
     private static final int MAIN_CAP = 1024 * 1024;
@@ -335,9 +335,12 @@ public final class Diag {
                 s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v",
                         "time"}, MAIN_CAP));
             } else {
-                s.append("\n--- logcat -b main -v time (tail 800) ---\n");
+                // While music plays these four are most of the buffer, a line per 23 ms buffer;
+                // without them the buffer reaches minutes back instead of seconds
+                s.append("\n--- logcat -b main -v time (whole buffer, audio output lines left out) ---\n");
                 s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main", "-v",
-                        "time", "-t", "800"}, CAP));
+                        "time", "AudioFlinger:S", "AudioMTKStreamOut:S", "AudioTrack:S",
+                        "AudioMTKPolicyManager:S", "*:V"}, MAIN_CAP));
             }
             s.append("\n--- logcat -b system -v time (tail 300) ---\n");
             s.append(Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "system", "-v",

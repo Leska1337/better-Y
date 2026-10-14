@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -165,6 +166,7 @@ public final class Tone {
      */
     public static void key(KeyEvent e) {
         try {
+            Open.key(e);
             if (e == null || e.getAction() != KeyEvent.ACTION_DOWN || e.getRepeatCount() != 0) return;
             int k = e.getKeyCode();
             if (!clicks(k)) return;
@@ -236,17 +238,39 @@ public final class Tone {
     private static String soundFor = null;
     private static String themeFor = null;
     private static String path;
+    private static boolean missing;      // the setting names a file that was not there
+    private static long triedAt;
+    private static boolean told;
 
-    /** The file the setting names, resolved once per (setting, theme) pair. */
+    /** A named file found missing is looked for again this often: at boot the card may not be up. */
+    private static final long RETRY_MS = 2000L;
+
+    /**
+     * The file the setting names, resolved once per (setting, theme) pair — except a named file
+     * that was missing, which is retried: Default must not stick for the whole session.
+     */
     private static String sound(Context c) {
         String s = Prefs.getString(c, KEY_SOUND, "");
         String theme = ThemeManager.INSTANCE.getThemeName();
-        if (path != null && s.equals(soundFor) && eq(theme, themeFor)) return path;
+        long now = SystemClock.uptimeMillis();
+        if (path != null && s.equals(soundFor) && eq(theme, themeFor)
+                && !(missing && now - triedAt >= RETRY_MS)) {
+            return path;
+        }
         soundFor = s;
         themeFor = theme;
-        path = resolve(s, theme);
-        play(path, 0.0f);                    // nothing heard: it only gets the file loaded
-        pending = 0;
+        triedAt = now;
+        String p = resolve(s, theme);
+        missing = s.length() > 0 && DEFAULT_PATH.equals(p);
+        if (missing && !told) {
+            told = true;
+            Diag.note("key tone: " + (THEME.equals(s) ? "theme's sound" : s) + " not found, Default for now");
+        }
+        if (!p.equals(path)) {
+            path = p;
+            play(path, 0.0f);                // nothing heard: it only gets the file loaded
+            pending = 0;
+        }
         return path;
     }
 
@@ -587,6 +611,7 @@ public final class Tone {
         if (commit) {
             if (editRow == ROW_VOLUME) Prefs.setInt(a, KEY_VOLUME, editVal);
             else Prefs.setString(a, KEY_SOUND, options[editVal]);
+            path = null;                     // the same choice again looks for its file again
         }
         editing = null;
         BaseBindingAdapter ad = adapter(a);

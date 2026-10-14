@@ -536,13 +536,13 @@
 
 .method private static fade(Landroid/view/View;)V
   .registers 3
-  .line 670
+  .line 672
     invoke-virtual { p0 }, Landroid/view/View;->getAlpha()F
     move-result v0
-  .line 671
+  .line 673
     const/4 v1, 0
     invoke-virtual { p0, v1 }, Landroid/view/View;->setAlpha(F)V
-  .line 672
+  .line 674
     invoke-virtual { p0 }, Landroid/view/View;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object p0
     invoke-virtual { p0, v0 }, Landroid/view/ViewPropertyAnimator;->alpha(F)Landroid/view/ViewPropertyAnimator;
@@ -551,27 +551,27 @@
     invoke-virtual { p0, v0, v1 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/view/ViewPropertyAnimator;->withLayer()Landroid/view/ViewPropertyAnimator;
-  .line 673
+  .line 675
     return-void
 .end method
 
 .method private static fadeIn(Landroid/app/Activity;)V
   .catchall { :L0 .. :L6 } :L10
   .registers 9
-  .line 646
+  .line 648
     const v0, 2131361957
   :L0
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 647
+  .line 649
     const v1, 2131361979
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 648
+  .line 650
     const v2, 2131361980
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 649
+  .line 651
     if-eqz v0, :L9
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
@@ -579,124 +579,127 @@
     if-nez v2, :L1
     goto :L9
   :L1
-  .line 650
+  .line 652
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
     check-cast v2, Landroid/view/ViewGroup;
-  .line 651
+  .line 653
     const/4 v3, 0
     const/4 v4, 0
   :L2
     invoke-virtual { v2 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v5
     if-ge v4, v5, :L8
-  .line 652
+  .line 654
     invoke-virtual { v2, v4 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v5
-  .line 653
+  .line 655
     invoke-virtual { v5 }, Landroid/view/View;->getId()I
     move-result v6
-  .line 654
+  .line 656
     const v7, 2131362297
     if-eq v6, v7, :L7
     const v7, 2131362191
     if-ne v6, v7, :L3
     goto :L7
   :L3
-  .line 655
-    if-eq v5, v0, :L4
-  .line 656
-    invoke-static { v5 }, Lcom/innioasis/ipp/Flow;->fade(Landroid/view/View;)V
   .line 657
+    if-eq v5, v0, :L4
+  .line 658
+    invoke-static { v5 }, Lcom/innioasis/ipp/Flow;->fade(Landroid/view/View;)V
+  .line 659
     goto :L7
   :L4
-  .line 659
+  .line 661
     move-object v5, v0
     check-cast v5, Landroid/view/ViewGroup;
-  .line 660
+  .line 662
     const/4 v6, 0
   :L5
     invoke-virtual { v5 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v7
     if-ge v6, v7, :L7
-  .line 661
+  .line 663
     invoke-virtual { v5, v6 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v7
-  .line 662
+  .line 664
     if-eq v7, v1, :L6
     if-eq v7, p0, :L6
     invoke-static { v7 }, Lcom/innioasis/ipp/Flow;->fade(Landroid/view/View;)V
   :L6
-  .line 660
+  .line 662
     add-int/lit8 v6, v6, 1
     goto :L5
   :L7
-  .line 651
+  .line 653
     add-int/lit8 v4, v4, 1
     goto :L2
   :L8
-  .line 666
+  .line 668
     goto :L11
   :L9
-  .line 649
+  .line 651
     return-void
   :L10
-  .line 665
+  .line 667
     move-exception p0
   :L11
-  .line 667
+  .line 669
     return-void
 .end method
 
 .method public static flipBack(Landroid/app/Activity;)Z
   .catchall { :L0 .. :L2 } :L4
   .registers 5
-  .line 682
+  .line 684
     const-string v0, "ipp_flip_back"
     const/4 v1, 0
   :L0
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v2
-  .line 683
+  .line 685
     if-eqz v2, :L3
     invoke-virtual { v2, v0, v1 }, Landroid/content/Intent;->getBooleanExtra(Ljava/lang/String;Z)Z
     move-result v3
     if-nez v3, :L1
     goto :L3
   :L1
-  .line 684
-    invoke-virtual { v2, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
-  .line 685
-    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->measure(Landroid/app/Activity;)V
   .line 686
+    invoke-virtual { v2, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
+  .line 687
+    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->measure(Landroid/app/Activity;)V
+  .line 688
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Flow;->returning:Z
-  .line 687
+  .line 689
     invoke-virtual { p0 }, Landroid/app/Activity;->finish()V
-  .line 688
+  .line 690
     invoke-virtual { p0, v1, v1 }, Landroid/app/Activity;->overridePendingTransition(II)V
   :L2
-  .line 689
+  .line 691
     return v0
   :L3
-  .line 683
+  .line 685
     return v1
   :L4
-  .line 690
+  .line 692
     move-exception p0
-  .line 691
+  .line 693
     return v1
 .end method
 
 .method public static flipIn(Landroid/app/Activity;)V
   .catchall { :L0 .. :L5 } :L7
   .registers 4
-  .line 626
+  .line 625
     const-string v0, "ipp_flip"
+    const-string v1, "base"
+    invoke-static { v1 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
   :L0
+  .line 627
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v1
-  .line 627
+  .line 628
     if-eqz v1, :L6
     const/4 v2, 0
     invoke-virtual { v1, v0, v2 }, Landroid/content/Intent;->getBooleanExtra(Ljava/lang/String;Z)Z
@@ -704,17 +707,17 @@
     if-nez v2, :L1
     goto :L6
   :L1
-  .line 629
-    invoke-virtual { v1, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
   .line 630
+    invoke-virtual { v1, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
+  .line 631
     const-string v0, "ipp_flip_back"
     const/4 v2, 1
     invoke-virtual { v1, v0, v2 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
-  .line 633
+  .line 634
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 634
+  .line 635
     if-nez v0, :L2
     const/4 v0, 0
     goto :L3
@@ -722,7 +725,7 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingMusic()Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L3
-  .line 635
+  .line 636
     if-eqz v0, :L4
     instance-of v1, p0, Lcom/innioasis/y1/base/BasePlayerActivity;
     if-eqz v1, :L4
@@ -732,19 +735,22 @@
     move-result-object v0
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Cover;->instantCover(Lcom/innioasis/y1/base/BasePlayerActivity;Ljava/lang/String;)V
   :L4
-  .line 636
+  .line 637
+    const-string v0, "cover"
+    invoke-static { v0 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
+  .line 638
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->fadeIn(Landroid/app/Activity;)V
   :L5
-  .line 638
+  .line 640
     goto :L8
   :L6
-  .line 627
+  .line 628
     return-void
   :L7
-  .line 637
+  .line 639
     move-exception p0
   :L8
-  .line 639
+  .line 641
     return-void
 .end method
 

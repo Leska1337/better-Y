@@ -622,6 +622,7 @@ public final class Flow {
 
     /** Injected after BasePlayerActivity.initView in MusicPlayerActivity: arms the way back. */
     public static void flipIn(Activity a) {
+        Open.step("base");
         try {
             Intent i = a.getIntent();
             if (i == null || !i.getBooleanExtra(EXTRA_FLIP, false)) return;
@@ -633,6 +634,7 @@ public final class Flow {
             PlayerService ps = Y1Application.Companion.getPlayerService();
             Song s = ps == null ? null : ps.getPlayingMusic();
             if (s != null && a instanceof BasePlayerActivity) Cover.instantCover((BasePlayerActivity) a, s.getPath());
+            Open.step("cover");
             fadeIn(a);
         } catch (Throwable t) {
         }

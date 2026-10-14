@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.SystemClock;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -165,6 +166,8 @@ public final class PlGrid {
             row.setTag(R.id.ipp_pl_cover, item);
             return false;
         }
+        long t0 = SystemClock.uptimeMillis();
+        decodeMs = -1;
         try {
             CardView frame = (CardView) f;
             CardView card = (CardView) row.findViewById(R.id.card);
@@ -206,8 +209,19 @@ public final class PlGrid {
             paint(row, card, img, p, sel, text.getCurrentTextColor());
         } catch (Throwable t) {
         }
+        long ms = SystemClock.uptimeMillis() - t0;
+        if (ms >= TILE_SLOW_MS) {
+            Diag.note("slow: playlist tile " + ms + " ms"
+                    + (decodeMs >= 0 ? ", cover decoded in " + decodeMs : ""));
+        }
         return true;
     }
+
+    /** A tile is rebound on every wheel click that reaches it: a frame is ~16 ms. */
+    private static final long TILE_SLOW_MS = 40L;
+
+    /** The last {@link #bind}'s cover decode, -1 when it came from memory. */
+    private static long decodeMs;
 
     /** {@code ring}: the caption's colour, for the card's 2px edge off the cursor. */
     private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel,
@@ -371,7 +385,9 @@ public final class PlGrid {
         long m = f.lastModified();
         Object[] e = (Object[]) mem.get(id);
         if (e != null && ((Long) e[0]).longValue() == m) return (Bitmap) e[1];
+        long t0 = SystemClock.uptimeMillis();
         Bitmap b = BitmapFactory.decodeFile(f.getPath());
+        decodeMs = SystemClock.uptimeMillis() - t0;
         if (b != null) mem.put(id, new Object[] { Long.valueOf(m), b });
         return b;
     }

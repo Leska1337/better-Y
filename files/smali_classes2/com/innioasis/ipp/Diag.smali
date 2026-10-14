@@ -161,24 +161,24 @@
 
 .method private static anr(Ljava/lang/StringBuilder;)V
   .registers 7
-  .line 542
+  .line 545
     const-string v0, "\n--- /data/anr/traces.txt (tail) ---\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 543
+  .line 546
     new-instance v0, Ljava/io/File;
     const-string v1, "/data/anr/traces.txt"
     invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
-  .line 544
+  .line 547
     invoke-virtual { v0 }, Ljava/io/File;->isFile()Z
     move-result v1
     if-nez v1, :L0
-  .line 545
+  .line 548
     const-string v0, "(none)\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 546
+  .line 549
     return-void
   :L0
-  .line 548
+  .line 551
     const-string v1, "written "
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v1
@@ -187,24 +187,24 @@
     sget-object v4, Ljava/util/Locale;->US:Ljava/util/Locale;
     invoke-direct { v2, v3, v4 }, Ljava/text/SimpleDateFormat;-><init>(Ljava/lang/String;Ljava/util/Locale;)V
     new-instance v3, Ljava/util/Date;
-  .line 549
+  .line 552
     invoke-virtual { v0 }, Ljava/io/File;->lastModified()J
     move-result-wide v4
     invoke-direct { v3, v4, v5 }, Ljava/util/Date;-><init>(J)V
     invoke-virtual { v2, v3 }, Ljava/text/SimpleDateFormat;->format(Ljava/util/Date;)Ljava/lang/String;
     move-result-object v2
-  .line 548
+  .line 551
     invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v1
-  .line 549
+  .line 552
     const/16 v2, 10
     invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 550
+  .line 553
     const/high16 v1, 0x00010000
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Diag;->tail(Ljava/io/File;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 551
+  .line 554
     return-void
 .end method
 
@@ -236,27 +236,27 @@
 
 .method private static crashes(Ljava/lang/StringBuilder;)V
   .registers 11
-  .line 499
+  .line 502
     invoke-static { }, Lcom/innioasis/ipp/Panel;->logs()Ljava/io/File;
     move-result-object v0
     const-string v1, "crash_"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Diag;->newest(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
     move-result-object v0
-  .line 500
+  .line 503
     const-string v1, "\n--- last crash log the app saved before dying ---\n"
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 501
+  .line 504
     const/high16 v1, 0x00010000
     const/16 v2, 10
     const-string v3, "yyyy-MM-dd HH:mm:ss"
     const-string v4, ", "
     if-nez v0, :L0
-  .line 502
+  .line 505
     const-string v0, "(none since the card was last cleared)\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto :L1
   :L0
-  .line 504
+  .line 507
     invoke-virtual { v0 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v5
     invoke-virtual { p0, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -267,45 +267,45 @@
     sget-object v7, Ljava/util/Locale;->US:Ljava/util/Locale;
     invoke-direct { v6, v3, v7 }, Ljava/text/SimpleDateFormat;-><init>(Ljava/lang/String;Ljava/util/Locale;)V
     new-instance v7, Ljava/util/Date;
-  .line 505
+  .line 508
     invoke-virtual { v0 }, Ljava/io/File;->lastModified()J
     move-result-wide v8
     invoke-direct { v7, v8, v9 }, Ljava/util/Date;-><init>(J)V
     invoke-virtual { v6, v7 }, Ljava/text/SimpleDateFormat;->format(Ljava/util/Date;)Ljava/lang/String;
     move-result-object v6
-  .line 504
+  .line 507
     invoke-virtual { v5, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v5
-  .line 506
+  .line 509
     invoke-virtual { v5, v2 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v5
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Diag;->tail(Ljava/io/File;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v5, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L1
-  .line 508
+  .line 511
     const-string v0, "\n--- last xCrash tombstone ---\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 509
+  .line 512
     invoke-static { }, Lcom/innioasis/ipp/Diag;->tombstones()Ljava/io/File;
     move-result-object v0
     const/4 v5, 0
     invoke-static { v0, v5 }, Lcom/innioasis/ipp/Diag;->newest(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
     move-result-object v0
-  .line 510
+  .line 513
     if-nez v0, :L2
-  .line 511
+  .line 514
     const-string v0, "(none)\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto :L4
   :L2
-  .line 513
+  .line 516
     invoke-static { }, Ljava/lang/System;->currentTimeMillis()J
     move-result-wide v5
     invoke-virtual { v0 }, Ljava/io/File;->lastModified()J
     move-result-wide v7
     sub-long/2addr v5, v7
-  .line 514
+  .line 517
     invoke-virtual { v0 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v7
     invoke-virtual { p0, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -316,45 +316,45 @@
     sget-object v8, Ljava/util/Locale;->US:Ljava/util/Locale;
     invoke-direct { v7, v3, v8 }, Ljava/text/SimpleDateFormat;-><init>(Ljava/lang/String;Ljava/util/Locale;)V
     new-instance v3, Ljava/util/Date;
-  .line 515
+  .line 518
     invoke-virtual { v0 }, Ljava/io/File;->lastModified()J
     move-result-wide v8
     invoke-direct { v3, v8, v9 }, Ljava/util/Date;-><init>(J)V
     invoke-virtual { v7, v3 }, Ljava/text/SimpleDateFormat;->format(Ljava/util/Date;)Ljava/lang/String;
     move-result-object v3
-  .line 514
+  .line 517
     invoke-virtual { v4, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
-  .line 515
+  .line 518
     invoke-virtual { v3, v2 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 516
+  .line 519
     const-wide/32 v2, 172800000
     cmp-long v4, v5, v2
     if-lez v4, :L3
-  .line 517
+  .line 520
     const-string v0, "(older than "
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     const-wide/16 v0, 48
     invoke-virtual { p0, v0, v1 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
     move-result-object p0
-  .line 518
+  .line 521
     const-string v0, " h, not included -- ask for the file itself if it matters)\n"
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto :L4
   :L3
-  .line 520
+  .line 523
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Diag;->tail(Ljava/io/File;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L4
-  .line 523
+  .line 526
     return-void
 .end method
 
 .method private static head(Landroid/content/Context;Ljava/lang/StringBuilder;)V
   .registers 6
-  .line 362
+  .line 365
     const-string v0, "better-Y "
     invoke-virtual { p1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -364,7 +364,7 @@
     move-result-object p0
     const/16 v0, 10
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 363
+  .line 366
     const-string p0, "when     "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -374,15 +374,15 @@
     invoke-direct { v1, v2, v3 }, Ljava/text/SimpleDateFormat;-><init>(Ljava/lang/String;Ljava/util/Locale;)V
     new-instance v2, Ljava/util/Date;
     invoke-direct { v2 }, Ljava/util/Date;-><init>()V
-  .line 364
+  .line 367
     invoke-virtual { v1, v2 }, Ljava/text/SimpleDateFormat;->format(Ljava/util/Date;)Ljava/lang/String;
     move-result-object v1
-  .line 363
+  .line 366
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
-  .line 364
+  .line 367
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 365
+  .line 368
     const-string p0, "uptime   "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -392,7 +392,7 @@
     move-result-object p0
     const-string v1, " ms\n"
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 366
+  .line 369
     const-string p0, "device   "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -405,7 +405,7 @@
     sget-object v1, Landroid/os/Build$VERSION;->RELEASE:Ljava/lang/String;
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
-  .line 367
+  .line 370
     const-string v1, " sdk "
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -413,7 +413,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 368
+  .line 371
     const-string p0, "build    "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -426,9 +426,9 @@
     sget-object v1, Landroid/os/Build;->FINGERPRINT:Ljava/lang/String;
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
-  .line 369
+  .line 372
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 370
+  .line 373
     const-string p0, "locale   "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -437,7 +437,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 371
+  .line 374
     const-string p0, "debug    "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -459,7 +459,7 @@
     move-result-object p0
     const-string v1, ")\n"
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 372
+  .line 375
     const-string p0, "usb      "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -468,7 +468,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 373
+  .line 376
     const-string p0, "card     "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -478,7 +478,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 374
+  .line 377
     const-string p0, "internal "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -488,7 +488,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 375
+  .line 378
     const-string p0, "data     "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -498,7 +498,7 @@
     invoke-virtual { p0, p1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 376
+  .line 379
     return-void
 .end method
 
@@ -597,62 +597,62 @@
   .catchall { :L17 .. :L24 } :L25
   .catchall { :L26 .. :L32 } :L33
   .registers 18
-  .line 431
+  .line 434
     move-object/from16 v1, p1
     const-string v0, " (raw tags)\n"
     const-string v2, ")\n"
     const-string v3, "\n--- library ---\n"
     invoke-virtual { v1, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 433
+  .line 436
     const/4 v3, 0
     const/4 v4, 0
     const/16 v5, 10
   :L0
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v6
-  .line 434
+  .line 437
     if-nez v6, :L1
-  .line 435
+  .line 438
     const-string v0, "songs    (unavailable)\n"
     invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto/16 :L9
   :L1
-  .line 437
+  .line 440
     new-instance v7, Ljava/util/HashSet;
     invoke-direct { v7 }, Ljava/util/HashSet;-><init>()V
-  .line 438
+  .line 441
     new-instance v8, Ljava/util/HashSet;
     invoke-direct { v8 }, Ljava/util/HashSet;-><init>()V
-  .line 439
+  .line 442
     new-instance v9, Ljava/util/HashSet;
     invoke-direct { v9 }, Ljava/util/HashSet;-><init>()V
-  .line 440
+  .line 443
     nop
-  .line 441
+  .line 444
     const/4 v10, 0
     const/4 v11, 0
   :L2
     invoke-interface { v6 }, Ljava/util/List;->size()I
     move-result v12
     if-ge v10, v12, :L8
-  .line 442
+  .line 445
     invoke-interface { v6, v10 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v12
     check-cast v12, Lcom/innioasis/y1/database/Song;
-  .line 443
+  .line 446
     if-nez v12, :L3
     goto :L7
   :L3
-  .line 444
+  .line 447
     invoke-virtual { v12 }, Lcom/innioasis/y1/database/Song;->getAlbum()Ljava/lang/String;
     move-result-object v13
-  .line 445
+  .line 448
     invoke-virtual { v12 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
     move-result-object v14
-  .line 446
+  .line 449
     invoke-virtual { v12 }, Lcom/innioasis/y1/database/Song;->getGenre()Ljava/lang/String;
     move-result-object v15
-  .line 447
+  .line 450
     if-eqz v13, :L4
     invoke-virtual { v13 }, Ljava/lang/String;->length()I
     move-result v13
@@ -664,25 +664,25 @@
   :L4
     add-int/lit8 v11, v11, 1
   :L5
-  .line 448
+  .line 451
     if-eqz v14, :L6
     invoke-virtual { v14 }, Ljava/lang/String;->length()I
     move-result v12
     if-lez v12, :L6
     invoke-virtual { v8, v14 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
   :L6
-  .line 449
+  .line 452
     if-eqz v15, :L7
     invoke-virtual { v15 }, Ljava/lang/String;->length()I
     move-result v12
     if-lez v12, :L7
     invoke-virtual { v9, v15 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
   :L7
-  .line 441
+  .line 444
     add-int/lit8 v10, v10, 1
     goto :L2
   :L8
-  .line 451
+  .line 454
     const-string v10, "songs    "
     invoke-virtual { v1, v10 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v10
@@ -691,7 +691,7 @@
     invoke-virtual { v10, v6 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
     move-result-object v6
     invoke-virtual { v6, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 452
+  .line 455
     const-string v6, "albums   "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
@@ -701,7 +701,7 @@
     move-result-object v6
     const-string v7, " (raw tags, before splitting)\n"
     invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 453
+  .line 456
     const-string v6, "artists  "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
@@ -710,7 +710,7 @@
     invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
     move-result-object v6
     invoke-virtual { v6, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 454
+  .line 457
     const-string v6, "genres   "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
@@ -719,7 +719,7 @@
     invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
     move-result-object v6
     invoke-virtual { v6, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 455
+  .line 458
     const-string v0, "no album "
     invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -727,11 +727,11 @@
     move-result-object v0
     invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L9
-  .line 457
+  .line 460
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
-  .line 458
+  .line 461
     if-nez v0, :L10
     move-object v0, v4
     goto :L11
@@ -739,7 +739,7 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->getAllPlaylistSync()Ljava/util/List;
     move-result-object v0
   :L11
-  .line 459
+  .line 462
     const-string v6, "playlists "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
@@ -754,15 +754,15 @@
   :L13
     invoke-virtual { v6, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 460
+  .line 463
     invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L14
-  .line 463
+  .line 466
     goto :L16
   :L15
-  .line 461
+  .line 464
     move-exception v0
-  .line 462
+  .line 465
     const-string v6, "(failed: "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
@@ -770,7 +770,7 @@
     move-result-object v0
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L16
-  .line 466
+  .line 469
     if-nez p0, :L17
     move-object v0, v4
     goto :L18
@@ -778,11 +778,11 @@
     invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v0
   :L18
-  .line 467
+  .line 470
     const-string v6, "cache    covers "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
-  .line 468
+  .line 471
     if-nez v0, :L19
     move-object v7, v4
     goto :L20
@@ -791,17 +791,17 @@
     const-string v8, "ipp_covers"
     invoke-direct { v7, v0, v8 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
   :L20
-  .line 467
+  .line 470
     invoke-static { v7 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v7
     invoke-static { v7, v8 }, Lcom/innioasis/ipp/CacheSize;->format(J)Ljava/lang/String;
     move-result-object v7
     invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 469
+  .line 472
     const-string v6, ", big "
     invoke-virtual { v1, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v6
-  .line 470
+  .line 473
     if-nez v0, :L22
   :L21
     goto :L23
@@ -811,13 +811,13 @@
     invoke-direct { v4, v0, v7 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     goto :L21
   :L23
-  .line 469
+  .line 472
     invoke-static { v4 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v7
     invoke-static { v7, v8 }, Lcom/innioasis/ipp/CacheSize;->format(J)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v6, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 471
+  .line 474
     const-string v0, ", all "
     invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -829,12 +829,12 @@
     move-result-object v0
     invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L24
-  .line 474
+  .line 477
     goto :L26
   :L25
-  .line 472
+  .line 475
     move-exception v0
-  .line 473
+  .line 476
     const-string v4, "cache    (failed: "
     invoke-virtual { v1, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v4
@@ -842,7 +842,7 @@
     move-result-object v0
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L26
-  .line 476
+  .line 479
     const-string v0, "theme    "
     invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -852,29 +852,29 @@
     invoke-virtual { v0, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
     invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 477
+  .line 480
     new-instance v0, Ljava/io/File;
     const-string v4, "/storage/sdcard0"
     const-string v6, "Themes"
     invoke-direct { v0, v4, v6 }, Ljava/io/File;-><init>(Ljava/lang/String;Ljava/lang/String;)V
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 478
+  .line 481
     const-string v4, "installed"
     invoke-virtual { v1, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 479
+  .line 482
     if-nez v0, :L27
-  .line 480
+  .line 483
     const-string v0, " (none)"
     invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto :L31
   :L27
-  .line 482
+  .line 485
     nop
   :L28
     array-length v4, v0
     if-ge v3, v4, :L31
-  .line 483
+  .line 486
     if-nez v3, :L29
     const-string v4, " "
     goto :L30
@@ -887,19 +887,19 @@
     invoke-virtual { v6 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v6
     invoke-virtual { v4, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 482
+  .line 485
     add-int/lit8 v3, v3, 1
     goto :L28
   :L31
-  .line 486
+  .line 489
     invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L32
-  .line 489
+  .line 492
     goto :L34
   :L33
-  .line 487
+  .line 490
     move-exception v0
-  .line 488
+  .line 491
     const-string v3, "theme    (failed: "
     invoke-virtual { v1, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v1
@@ -907,7 +907,7 @@
     move-result-object v0
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L34
-  .line 490
+  .line 493
     return-void
 .end method
 
@@ -925,7 +925,7 @@
 
 .method private static mask(Ljava/lang/String;)Ljava/lang/String;
   .registers 4
-  .line 424
+  .line 427
     if-eqz p0, :L3
     const-string v0, "bt_name:"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
@@ -933,11 +933,11 @@
     if-nez v1, :L0
     goto :L3
   :L0
-  .line 425
+  .line 428
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v1
     add-int/lit8 v1, v1, -5
-  .line 426
+  .line 429
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v0
     if-gt v1, v0, :L1
@@ -957,14 +957,14 @@
   :L2
     return-object p0
   :L3
-  .line 424
+  .line 427
     return-object p0
 .end method
 
 .method private static newest(Ljava/io/File;Ljava/lang/String;)Ljava/io/File;
   .catchall { :L0 .. :L7 } :L9
   .registers 10
-  .line 555
+  .line 558
     const/4 v0, 0
     if-nez p0, :L0
     move-object p0, v0
@@ -973,26 +973,26 @@
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
   :L1
-  .line 556
+  .line 559
     if-nez p0, :L2
     return-object v0
   :L2
-  .line 557
+  .line 560
     nop
-  .line 558
+  .line 561
     const/4 v1, 0
     move-object v2, v0
   :L3
     array-length v3, p0
     if-ge v1, v3, :L8
-  .line 559
+  .line 562
     aget-object v3, p0, v1
     invoke-virtual { v3 }, Ljava/io/File;->isFile()Z
     move-result v3
     if-nez v3, :L4
     goto :L7
   :L4
-  .line 560
+  .line 563
     if-eqz p1, :L5
     aget-object v3, p0, v1
     invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
@@ -1002,7 +1002,7 @@
     if-nez v3, :L5
     goto :L7
   :L5
-  .line 561
+  .line 564
     if-eqz v2, :L6
     aget-object v3, p0, v1
     invoke-virtual { v3 }, Ljava/io/File;->lastModified()J
@@ -1014,16 +1014,16 @@
   :L6
     aget-object v2, p0, v1
   :L7
-  .line 558
+  .line 561
     add-int/lit8 v1, v1, 1
     goto :L3
   :L8
-  .line 563
+  .line 566
     return-object v2
   :L9
-  .line 564
+  .line 567
     move-exception p0
-  .line 565
+  .line 568
     return-object v0
 .end method
 
@@ -1149,22 +1149,21 @@
     invoke-static { }, Lcom/innioasis/ipp/Diag;->on()Z
     move-result v0
   :L1
-    const/high16 v4, 0x00040000
+    const/16 v4, 8
     const/4 v5, 7
-    const-string v6, "-t"
+    const/high16 v6, 0x00100000
     const-string v7, "main"
-    const/16 v8, 8
-    const-string v9, "time"
-    const/4 v10, 5
-    const-string v11, "-v"
-    const/4 v12, 4
-    const/4 v13, 3
-    const-string v14, "-b"
-    const/4 v15, 2
-    const-string v16, "-d"
-    const/16 v17, 1
-    const-string v18, "/system/bin/logcat"
-    const/16 v19, 0
+    const-string v8, "time"
+    const/4 v9, 5
+    const-string v10, "-v"
+    const/4 v11, 4
+    const/4 v12, 3
+    const-string v13, "-b"
+    const/4 v14, 2
+    const-string v15, "-d"
+    const/16 v16, 1
+    const-string v17, "/system/bin/logcat"
+    const/16 v18, 0
     const/4 v1, 6
     if-eqz v0, :L3
   :L2
@@ -1173,111 +1172,122 @@
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   .line 335
     new-array v0, v1, [Ljava/lang/String;
-    aput-object v18, v0, v19
-    aput-object v16, v0, v17
-    aput-object v14, v0, v15
-    aput-object v7, v0, v13
-    aput-object v11, v0, v12
-    aput-object v9, v0, v10
-    const/high16 v7, 0x00100000
-    invoke-static { v0, v7 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
+    aput-object v17, v0, v18
+    aput-object v15, v0, v16
+    aput-object v13, v0, v14
+    aput-object v7, v0, v12
+    aput-object v10, v0, v11
+    aput-object v8, v0, v9
+    invoke-static { v0, v6 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     goto :L4
   :L3
-  .line 338
-    const-string v0, "\n--- logcat -b main -v time (tail 800) ---\n"
+  .line 340
+    const-string v0, "\n--- logcat -b main -v time (whole buffer, audio output lines left out) ---\n"
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 339
-    new-array v0, v8, [Ljava/lang/String;
-    aput-object v18, v0, v19
-    aput-object v16, v0, v17
-    aput-object v14, v0, v15
-    aput-object v7, v0, v13
-    aput-object v11, v0, v12
-    aput-object v9, v0, v10
-    aput-object v6, v0, v1
-    const-string v7, "800"
+  .line 341
+    const/16 v0, 11
+    new-array v0, v0, [Ljava/lang/String;
+    aput-object v17, v0, v18
+    aput-object v15, v0, v16
+    aput-object v13, v0, v14
+    aput-object v7, v0, v12
+    aput-object v10, v0, v11
+    aput-object v8, v0, v9
+    const-string v7, "AudioFlinger:S"
+    aput-object v7, v0, v1
+    const-string v7, "AudioMTKStreamOut:S"
     aput-object v7, v0, v5
-    invoke-static { v0, v4 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
+    const-string v7, "AudioTrack:S"
+    aput-object v7, v0, v4
+    const-string v7, "AudioMTKPolicyManager:S"
+    const/16 v19, 9
+    aput-object v7, v0, v19
+    const-string v7, "*:V"
+    const/16 v19, 10
+    aput-object v7, v0, v19
+    invoke-static { v0, v6 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L4
-  .line 342
+  .line 345
     const-string v0, "\n--- logcat -b system -v time (tail 300) ---\n"
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 343
-    new-array v0, v8, [Ljava/lang/String;
-    aput-object v18, v0, v19
-    aput-object v16, v0, v17
-    aput-object v14, v0, v15
-    const-string v7, "system"
-    aput-object v7, v0, v13
-    aput-object v11, v0, v12
-    aput-object v9, v0, v10
-    aput-object v6, v0, v1
+  .line 346
+    new-array v0, v4, [Ljava/lang/String;
+    aput-object v17, v0, v18
+    aput-object v15, v0, v16
+    aput-object v13, v0, v14
+    const-string v4, "system"
+    aput-object v4, v0, v12
+    aput-object v10, v0, v11
+    aput-object v8, v0, v9
+    const-string v4, "-t"
+    aput-object v4, v0, v1
     const-string v1, "300"
     aput-object v1, v0, v5
-    invoke-static { v0, v4 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
+    const/high16 v1, 0x00040000
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
     move-result-object v0
     invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 346
+  .line 349
     new-instance v1, Ljava/io/FileOutputStream;
     invoke-direct { v1, v2 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L5
-  .line 347
+  .line 350
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     const-string v3, "UTF-8"
     invoke-virtual { v0, v3 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
     move-result-object v0
     invoke-virtual { v1, v0 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 348
+  .line 351
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->flush()V
-  .line 349
+  .line 352
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->getFD()Ljava/io/FileDescriptor;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/io/FileDescriptor;->sync()V
   :L6
-  .line 350
+  .line 353
     nop
   :L7
-  .line 355
+  .line 358
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
   :L8
-  .line 357
+  .line 360
     goto :L10
   :L9
-  .line 356
+  .line 359
     move-exception v0
   :L10
-  .line 350
+  .line 353
     return-object v2
   :L11
-  .line 351
+  .line 354
     move-exception v0
     goto :L13
   :L12
     move-exception v0
     const/4 v1, 0
   :L13
-  .line 352
-    nop
   .line 355
+    nop
+  .line 358
     if-eqz v1, :L17
   :L14
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
   :L15
     goto :L17
   :L16
-  .line 356
+  .line 359
     move-exception v0
     goto :L18
   :L17
-  .line 357
+  .line 360
     nop
   :L18
-  .line 352
+  .line 355
     const/4 v1, 0
     return-object v1
 .end method
@@ -1531,31 +1541,31 @@
 .method private static settings(Landroid/content/Context;Ljava/lang/StringBuilder;)V
   .catchall { :L0 .. :L8 } :L9
   .registers 10
-  .line 395
+  .line 398
     const-string v0, ")\n"
     const-string v1, "\n--- better-Y settings ---\n"
     invoke-virtual { p1, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L0
-  .line 397
+  .line 400
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->all(Landroid/content/Context;)Ljava/util/Map;
     move-result-object p0
-  .line 398
+  .line 401
     if-eqz p0, :L7
     invoke-interface { p0 }, Ljava/util/Map;->isEmpty()Z
     move-result v1
     if-eqz v1, :L1
     goto/16 :L7
   :L1
-  .line 402
+  .line 405
     new-instance v1, Ljava/util/ArrayList;
     invoke-interface { p0 }, Ljava/util/Map;->keySet()Ljava/util/Set;
     move-result-object v2
     invoke-direct { v1, v2 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-  .line 403
+  .line 406
     invoke-static { v1 }, Ljava/util/Collections;->sort(Ljava/util/List;)V
-  .line 404
+  .line 407
     nop
-  .line 405
+  .line 408
     invoke-interface { v1 }, Ljava/util/List;->iterator()Ljava/util/Iterator;
     move-result-object v1
     const/4 v2, 0
@@ -1564,30 +1574,30 @@
     invoke-interface { v1 }, Ljava/util/Iterator;->hasNext()Z
     move-result v4
     if-eqz v4, :L6
-  .line 406
+  .line 409
     invoke-interface { v1 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/lang/String;
-  .line 407
+  .line 410
     if-nez v4, :L3
     goto :L2
   :L3
-  .line 408
+  .line 411
     const-string v5, "like:"
     invoke-virtual { v4, v5 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v5
     if-eqz v5, :L4
-  .line 409
+  .line 412
     add-int/lit8 v3, v3, 1
-  .line 410
+  .line 413
     goto :L2
   :L4
-  .line 412
+  .line 415
     invoke-interface { p0, v4 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v5
     invoke-static { v5 }, Ljava/lang/String;->valueOf(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object v5
-  .line 413
+  .line 416
     invoke-virtual { v5 }, Ljava/lang/String;->length()I
     move-result v6
     const/16 v7, 120
@@ -1604,7 +1614,7 @@
     invoke-virtual { v5 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v5
   :L5
-  .line 414
+  .line 417
     invoke-static { v4 }, Lcom/innioasis/ipp/Diag;->mask(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v4
     invoke-virtual { p1, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -1616,29 +1626,29 @@
     move-result-object v4
     const/16 v5, 10
     invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 415
+  .line 418
     goto :L2
   :L6
-  .line 416
+  .line 419
     const-string p0, "(liked songs: "
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v3 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 419
+  .line 422
     goto :L10
   :L7
-  .line 399
+  .line 402
     const-string p0, "(none)\n"
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L8
-  .line 400
+  .line 403
     return-void
   :L9
-  .line 417
+  .line 420
     move-exception p0
-  .line 418
+  .line 421
     const-string v1, "(failed: "
     invoke-virtual { p1, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p1
@@ -1646,7 +1656,7 @@
     move-result-object p0
     invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L10
-  .line 420
+  .line 423
     return-void
 .end method
 
@@ -1687,10 +1697,10 @@
   .catchall { :L0 .. :L2 } :L3
   .registers 8
   :L0
-  .line 381
+  .line 384
     new-instance v0, Ljava/io/File;
     invoke-direct { v0, p0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
-  .line 382
+  .line 385
     invoke-virtual { v0 }, Ljava/io/File;->isDirectory()Z
     move-result v0
     if-nez v0, :L1
@@ -1705,24 +1715,24 @@
     move-result-object p0
     return-object p0
   :L1
-  .line 383
+  .line 386
     new-instance v0, Landroid/os/StatFs;
     invoke-direct { v0, p0 }, Landroid/os/StatFs;-><init>(Ljava/lang/String;)V
-  .line 384
+  .line 387
     invoke-virtual { v0 }, Landroid/os/StatFs;->getBlockSize()I
     move-result v1
     int-to-long v1, v1
-  .line 385
+  .line 388
     invoke-virtual { v0 }, Landroid/os/StatFs;->getAvailableBlocks()I
     move-result v3
     int-to-long v3, v3
     mul-long v3, v3, v1
-  .line 386
+  .line 389
     invoke-virtual { v0 }, Landroid/os/StatFs;->getBlockCount()I
     move-result v0
     int-to-long v5, v0
     mul-long v1, v1, v5
-  .line 387
+  .line 390
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -1746,9 +1756,9 @@
   :L2
     return-object p0
   :L3
-  .line 388
+  .line 391
     move-exception v0
-  .line 389
+  .line 392
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -1871,19 +1881,19 @@
   .catchall { :L18 .. :L19 } :L20
   .catchall { :L24 .. :L25 } :L26
   .registers 8
-  .line 571
+  .line 574
     nop
-  .line 573
+  .line 576
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/RandomAccessFile;
     const-string v2, "r"
     invoke-direct { v1, p0, v2 }, Ljava/io/RandomAccessFile;-><init>(Ljava/io/File;Ljava/lang/String;)V
   :L1
-  .line 574
+  .line 577
     invoke-virtual { v1 }, Ljava/io/RandomAccessFile;->length()J
     move-result-wide v2
-  .line 575
+  .line 578
     int-to-long p0, p1
     const-wide/16 v4, 0
     cmp-long v0, v2, p0
@@ -1893,37 +1903,37 @@
   :L2
     move-wide p0, v4
   :L3
-  .line 576
+  .line 579
     invoke-virtual { v1, p0, p1 }, Ljava/io/RandomAccessFile;->seek(J)V
-  .line 577
+  .line 580
     sub-long/2addr v2, p0
     long-to-int v0, v2
     new-array v0, v0, [B
-  .line 578
+  .line 581
     invoke-virtual { v1, v0 }, Ljava/io/RandomAccessFile;->readFully([B)V
-  .line 579
+  .line 582
     new-instance v2, Ljava/lang/String;
     const-string v3, "UTF-8"
     invoke-direct { v2, v0, v3 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
-  .line 580
+  .line 583
     invoke-virtual { v2 }, Ljava/lang/String;->length()I
     move-result v0
     if-nez v0, :L8
     const-string p0, "(empty)\n"
   :L4
-  .line 586
+  .line 589
     invoke-virtual { v1 }, Ljava/io/RandomAccessFile;->close()V
   :L5
-  .line 588
+  .line 591
     goto :L7
   :L6
-  .line 587
+  .line 590
     move-exception p1
   :L7
-  .line 580
+  .line 583
     return-object p0
   :L8
-  .line 581
+  .line 584
     cmp-long v0, p0, v4
     if-lez v0, :L10
   :L9
@@ -1942,26 +1952,26 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
   :L10
-  .line 586
+  .line 589
     invoke-virtual { v1 }, Ljava/io/RandomAccessFile;->close()V
   :L11
-  .line 588
+  .line 591
     goto :L13
   :L12
-  .line 587
+  .line 590
     move-exception p0
   :L13
-  .line 581
+  .line 584
     return-object v2
   :L14
-  .line 582
+  .line 585
     move-exception p0
     move-object v0, v1
     goto :L16
   :L15
     move-exception p0
   :L16
-  .line 583
+  .line 586
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "(unreadable: "
@@ -1975,74 +1985,74 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
   :L17
-  .line 586
+  .line 589
     if-eqz v0, :L21
   :L18
     invoke-virtual { v0 }, Ljava/io/RandomAccessFile;->close()V
   :L19
     goto :L21
   :L20
-  .line 587
+  .line 590
     move-exception p1
     goto :L22
   :L21
-  .line 588
+  .line 591
     nop
   :L22
-  .line 583
+  .line 586
     return-object p0
   :L23
-  .line 585
+  .line 588
     move-exception p0
-  .line 586
+  .line 589
     if-eqz v0, :L27
   :L24
     invoke-virtual { v0 }, Ljava/io/RandomAccessFile;->close()V
   :L25
     goto :L27
   :L26
-  .line 587
+  .line 590
     move-exception p1
     goto :L28
   :L27
-  .line 588
+  .line 591
     nop
   :L28
-  .line 589
+  .line 592
     throw p0
 .end method
 
 .method private static toast(Landroid/content/Context;I)V
   .registers 2
-  .line 593
+  .line 596
     if-nez p0, :L0
     return-void
   :L0
-  .line 594
+  .line 597
     invoke-virtual { p0, p1 }, Landroid/content/Context;->getString(I)Ljava/lang/String;
     move-result-object p1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Diag;->toast(Landroid/content/Context;Ljava/lang/String;)V
-  .line 595
+  .line 598
     return-void
 .end method
 
 .method private static toast(Landroid/content/Context;Ljava/lang/String;)V
   .catchall { :L1 .. :L5 } :L6
   .registers 3
-  .line 600
+  .line 603
     if-eqz p0, :L8
     if-nez p1, :L0
     goto :L8
   :L0
-  .line 601
+  .line 604
     const/4 v0, 1
   :L1
     invoke-static { p0, p1, v0 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object p0
-  .line 602
+  .line 605
     invoke-virtual { p0 }, Landroid/widget/Toast;->getView()Landroid/view/View;
     move-result-object p1
-  .line 603
+  .line 606
     if-nez p1, :L2
     const/4 p1, 0
     goto :L3
@@ -2051,27 +2061,27 @@
     invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p1
   :L3
-  .line 604
+  .line 607
     instance-of v0, p1, Landroid/widget/TextView;
     if-eqz v0, :L4
-  .line 605
+  .line 608
     check-cast p1, Landroid/widget/TextView;
     const/16 v0, 17
     invoke-virtual { p1, v0 }, Landroid/widget/TextView;->setGravity(I)V
   :L4
-  .line 607
+  .line 610
     invoke-virtual { p0 }, Landroid/widget/Toast;->show()V
   :L5
-  .line 609
+  .line 612
     goto :L7
   :L6
-  .line 608
+  .line 611
     move-exception p0
   :L7
-  .line 610
+  .line 613
     return-void
   :L8
-  .line 600
+  .line 603
     return-void
 .end method
 
@@ -2080,10 +2090,10 @@
   .catchall { :L5 .. :L7 } :L9
   .registers 4
   :L0
-  .line 528
+  .line 531
     invoke-static { }, Lxcrash/XCrash;->getLogDir()Ljava/lang/String;
     move-result-object v0
-  .line 529
+  .line 532
     if-eqz v0, :L2
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v1
@@ -2093,19 +2103,19 @@
   :L1
     return-object v1
   :L2
-  .line 531
+  .line 534
     goto :L4
   :L3
-  .line 530
+  .line 533
     move-exception v0
   :L4
-  .line 533
+  .line 536
     const/4 v0, 0
   :L5
     sget-object v1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v1 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v1
-  .line 534
+  .line 537
     if-nez v1, :L6
     goto :L8
   :L6
@@ -2119,9 +2129,9 @@
   :L8
     return-object v0
   :L9
-  .line 535
+  .line 538
     move-exception v1
-  .line 536
+  .line 539
     return-object v0
 .end method
 
