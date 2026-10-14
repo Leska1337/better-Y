@@ -151,13 +151,13 @@ xargs -0 "$JAVAC" -source 8 -target 8 -Xlint:-options -encoding UTF-8 \
     -bootclasspath "$ANDROID_JAR" -classpath "$RSTUB_DIR:$STUBS_JAR" \
     -d "$CLS" < "$JAVA_LIST.z"
 
-# 2. d8 (min-api 17). The class files are passed as arguments, as they are on the Windows side.
-#    -x makes xargs FAIL if the list ever outgrows the command-line limit instead of splitting it:
-#    a second d8 run would quietly overwrite classes.dex with half the classes.
+# 2. d8 (min-api 17). The classes go in as ONE jar, as on the Windows side, where listing them
+#    one by one outgrew the command line once the package passed ~600 classes.
 note "d8..."
-find "$CLS" -name '*.class' | sort | tr '\n' '\0' > "$WORK/classes.z"
-xargs -0 -x "$JAVA" -cp "$D8_JAR" com.android.tools.r8.D8 --min-api 17 \
-    --lib "$ANDROID_JAR" --lib "$STUBS_JAR" --output "$DEX" < "$WORK/classes.z"
+JAR_TOOL="$(dirname "$(command -v "$JAVAC")")/jar"
+"$JAR_TOOL" cf "$WORK/classes.jar" -C "$CLS" .
+"$JAVA" -cp "$D8_JAR" com.android.tools.r8.D8 --min-api 17 \
+    --lib "$ANDROID_JAR" --lib "$STUBS_JAR" --output "$DEX" "$WORK/classes.jar"
 
 # 3. baksmali (dex -> smali)
 note "baksmali..."

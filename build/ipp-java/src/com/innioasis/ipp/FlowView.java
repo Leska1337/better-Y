@@ -124,6 +124,15 @@ public final class FlowView extends View {
 
     public int target() { return target; }
 
+    /** The row stands still: the centre slide is where it was aimed. */
+    public boolean resting() { return pos == target; }
+
+    private Runnable onRest;
+    private boolean wasMoving;
+
+    /** Posted each time the row comes to rest after moving. */
+    public void setOnRest(Runnable r) { onRest = r; }
+
     public int count() { return items == null ? 0 : items.size(); }
 
     public void step(int dir) {
@@ -211,6 +220,8 @@ public final class FlowView extends View {
                     cx, h - 14, artist);
         }
         if (moving || fading) postInvalidateOnAnimation();
+        if (wasMoving && !moving && onRest != null) post(onRest);
+        wasMoving = moving;
     }
 
     private float sAngle, sCx, sCy;

@@ -25,6 +25,7 @@ public final class Open {
     private static long keyAt;
     private static Activity screen;
     private static long startAt;
+    private static long fromAt;     // the press that opened the screen, or startAt
     private static long lastAt;
     private static StringBuilder steps;
     private static boolean watching;
@@ -43,7 +44,11 @@ public final class Open {
             lastAt = now;
             watching = false;
             steps = new StringBuilder();
-            if (keyAt > 0 && now - keyAt < KEY_MS) steps.append(", key ").append(now - keyAt);
+            fromAt = now;
+            if (keyAt > 0 && keyAt <= now && now - keyAt < KEY_MS) {
+                fromAt = keyAt;
+                steps.append(", key ").append(now - keyAt);
+            }
         } catch (Throwable t) {
         }
     }
@@ -93,10 +98,9 @@ public final class Open {
                 if (screen != a || steps == null) return;
                 step("draw");
                 long now = SystemClock.uptimeMillis();
-                long from = keyAt > 0 && startAt - keyAt < KEY_MS ? keyAt : startAt;
-                if (now - startAt >= SLOW_MS || now - from >= SLOW_MS + 600L) {
+                if (now - startAt >= SLOW_MS || now - fromAt >= SLOW_MS + 600L) {
                     Diag.note("slow: open " + a.getClass().getSimpleName() + ' '
-                            + (now - from) + " ms" + steps.toString().replaceFirst(", ", ": "));
+                            + (now - fromAt) + " ms" + steps.toString().replaceFirst(", ", ": "));
                 }
                 screen = null;
                 steps = null;

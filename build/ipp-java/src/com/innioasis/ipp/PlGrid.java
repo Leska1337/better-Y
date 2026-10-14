@@ -38,8 +38,9 @@ import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -120,9 +121,12 @@ public final class PlGrid {
             if (grid) {
                 rv.setLayoutManager(new GridLayoutManager(a, 3));
                 Theme.tileGrid(rv);
-                new Thread(new Sweep()).start();
+                prepare(rv);
             } else {
                 rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(a));
+                Wheel.glides(rv, false);
+                Object m = movers.remove(rv);
+                if (m != null) rv.removeItemDecoration((RecyclerView.ItemDecoration) m);
                 rv.setPadding(rv.getPaddingLeft(), 0, rv.getPaddingRight(), rv.getPaddingBottom());
             }
             lastMulti = false;
@@ -139,8 +143,106 @@ public final class PlGrid {
         try {
             rv.setLayoutManager(new GridLayoutManager(rv.getContext(), 3));
             Theme.tileGrid(rv);
-            new Thread(new Sweep()).start();
+            prepare(rv);
         } catch (Throwable t) {
+        }
+    }
+
+    /** Entering the grid: files of deleted playlists go, every cover is decoded ahead. */
+    private static void prepare(RecyclerView rv) {
+        Wheel.glides(rv, true);
+        if (movers.get(rv) == null) {
+            Mover m = new Mover();
+            movers.put(rv, m);
+            rv.addItemDecoration(m);
+        }
+        Decoder.attach(rv);
+        new Thread(new Prepare(rv), "ipp-pl-prepare").start();
+    }
+
+    private static final java.util.WeakHashMap movers = new java.util.WeakHashMap();
+
+    /**
+     * The cursor's frame, drawn under the tiles and travelling from one to the next the way the
+     * grid's rows do (Wheel.Glider): every frame covers a share of the way left, so a fast wheel
+     * gives one continuous movement and a new target changes only what is left. Kept in the
+     * list's content coordinates, so it rides along while the rows scroll.
+     */
+    static final class Mover extends RecyclerView.ItemDecoration {
+        private static final float RATE = 14f;
+        private static final float VMIN = 400f;
+        private static final float VMAX = 6000f;
+
+        private final android.graphics.Paint paint =
+                new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        private final android.graphics.RectF draw = new android.graphics.RectF();
+        private float l, t, r, b, radius;
+        private boolean has;
+        private long last;
+
+        @Override
+        public void onDraw(android.graphics.Canvas c, RecyclerView rv, RecyclerView.State state) {
+            try {
+                Context ctx = rv.getContext();
+                RecyclerView.Adapter a = rv.getAdapter();
+                if (!(a instanceof RVBaseAdapter) || multiMode(ctx) || menuMulti) {
+                    has = false;
+                    return;
+                }
+                int off = rv.computeVerticalScrollOffset();
+                View tile = rv.getLayoutManager() == null ? null
+                        : rv.getLayoutManager().findViewByPosition(((RVBaseAdapter) a).getSelectPosition());
+                View f = tile == null ? null : tile.findViewById(R.id.img_sel);
+                long now = SystemClock.uptimeMillis();
+                boolean moving = false;
+                if (f instanceof CardView) {
+                    // the frame's own box inside the tile, less the padding CardView keeps for
+                    // its shadow on this API
+                    float tl = f.getPaddingLeft(), tt = f.getPaddingTop() + off;
+                    for (View v = f; v != null && v != rv; v = (View) v.getParent()) {
+                        tl += v.getLeft();
+                        tt += v.getTop();
+                        if (!(v.getParent() instanceof View)) break;
+                    }
+                    float tr = tl + f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
+                    float tb = tt + f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
+                    radius = ((CardView) f).getRadius();
+                    if (!has) {
+                        l = tl; t = tt; r = tr; b = tb;
+                        has = true;
+                    } else {
+                        float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
+                        float dx = tl - l, dy = tt - t;
+                        float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                        float k = 1f;
+                        if (dist >= 1f) {
+                            float v = Math.max(VMIN, Math.min(VMAX, dist * RATE));
+                            k = Math.min(1f, v * dt / dist);
+                        }
+                        l += (tl - l) * k;
+                        t += (tt - t) * k;
+                        r += (tr - r) * k;
+                        b += (tb - b) * k;
+                        moving = k < 1f;
+                    }
+                }
+                last = moving ? now : 0;
+                if (!has) return;
+                paint.setColor(Theme.tileFrame());
+                draw.set(l, t - off, r, b - off);
+                c.drawRoundRect(draw, radius, radius, paint);
+                if (moving) rv.postInvalidateOnAnimation();
+            } catch (Throwable e) {
+            }
+        }
+    }
+
+    static final class Prepare implements Runnable {
+        private final WeakReference rv;
+        Prepare(RecyclerView rv) { this.rv = new WeakReference(rv); }
+        public void run() {
+            new Sweep().run();
+            Decoder.all((RecyclerView) rv.get());
         }
     }
 
@@ -167,7 +269,6 @@ public final class PlGrid {
             return false;
         }
         long t0 = SystemClock.uptimeMillis();
-        decodeMs = -1;
         try {
             CardView frame = (CardView) f;
             CardView card = (CardView) row.findViewById(R.id.card);
@@ -179,7 +280,6 @@ public final class PlGrid {
             text.setText(p == null ? "" : p.getName());
             Theme.tileName(text);
             Theme.tileFit(frame, card, text);
-            frame.setCardBackgroundColor(sel ? Theme.tileFrame() : 0);
 
             // the theme gallery's own marks: an empty circle on every tile while the mode is on,
             // filled on the ticked ones; Favorites takes no part in a selection (Playlists.tickBlocked)
@@ -195,6 +295,10 @@ public final class PlGrid {
                 lastMulti = multi;
                 if (ad != null) UI.post(new Rebind(ad));
             }
+            // The cursor's frame is drawn by Mover, travelling between tiles; the tile paints its
+            // own only in the multi-selection, where Rows.blink blinks it.
+            frame.setCardBackgroundColor(sel && multi ? Theme.tileFrame() : 0);
+            if (sel && row.getParent() instanceof View) ((View) row.getParent()).invalidate();
             // stock says "not ticked" for the tile under the cursor: ask the selection
             if (sel && !ticked && ad != null && ad.getMultiSelectIndexes() != null) {
                 ticked = ad.getMultiSelectIndexes().contains(Integer.valueOf(ad.getSelectPosition()));
@@ -210,18 +314,12 @@ public final class PlGrid {
         } catch (Throwable t) {
         }
         long ms = SystemClock.uptimeMillis() - t0;
-        if (ms >= TILE_SLOW_MS) {
-            Diag.note("slow: playlist tile " + ms + " ms"
-                    + (decodeMs >= 0 ? ", cover decoded in " + decodeMs : ""));
-        }
+        if (ms >= TILE_SLOW_MS) Diag.note("slow: playlist tile " + ms + " ms");
         return true;
     }
 
     /** A tile is rebound on every wheel click that reaches it: a frame is ~16 ms. */
     private static final long TILE_SLOW_MS = 40L;
-
-    /** The last {@link #bind}'s cover decode, -1 when it came from memory. */
-    private static long decodeMs;
 
     /** {@code ring}: the caption's colour, for the card's 2px edge off the cursor. */
     private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel,
@@ -235,7 +333,8 @@ public final class PlGrid {
             img.setMaxHeight(Integer.MAX_VALUE);
         }
         card.setCardBackgroundColor(((sel ? Color.BLACK : ring) & 0x00FFFFFF) | EDGE_ALPHA);
-        Bitmap b = p == null ? null : cover(p.getPlaylistId());
+        RecyclerView rv = row.getParent() instanceof RecyclerView ? (RecyclerView) row.getParent() : null;
+        Bitmap b = p == null ? null : cover(p.getPlaylistId(), rv);
         if (b != null) {
             img.setBackgroundColor(0);
             img.clearColorFilter();
@@ -247,6 +346,11 @@ public final class PlGrid {
         // the placeholder's plate is the picture's own background, inside the card's edge
         boolean fav = p != null && Playlists.isFav(p);
         img.setBackgroundColor(menuBg() | 0xFF000000);
+        if (loading) {
+            // the bare plate for the few frames until the decoder repaints: an icon would flash
+            img.setImageDrawable(null);
+            return;
+        }
         ViewGroup.LayoutParams lp = card.getLayoutParams();
         int pad = lp == null ? 0 : lp.width / 4;
         img.setPadding(pad, pad, pad, pad);
@@ -377,19 +481,120 @@ public final class PlGrid {
     }
 
     /** id -> {mtime, bitmap}: a tile is rebound on every wheel click that reaches it. */
-    private static final HashMap mem = new HashMap();
+    private static final Hashtable mem = new Hashtable();
 
-    private static Bitmap cover(UUID id) {
-        File f = jpg(id);
-        if (!f.isFile()) return null;
-        long m = f.lastModified();
+    static long memBytes() {
+        return Diag.bitmapBytes(new ArrayList(mem.values()));
+    }
+
+    /** Set by {@link #cover}: the file is there and its picture is still being decoded. */
+    private static boolean loading;
+
+    /**
+     * From memory only: a cover not decoded yet is queued for {@link Decoder} and the tile shows
+     * its plate meanwhile (a stale picture, if there is one). Decoded on the main thread, a cover
+     * costs 30–60 ms a tile, three per new row.
+     */
+    private static Bitmap cover(UUID id, RecyclerView rv) {
+        loading = false;
+        long m = jpg(id).lastModified();
+        if (m == 0) return null;
         Object[] e = (Object[]) mem.get(id);
         if (e != null && ((Long) e[0]).longValue() == m) return (Bitmap) e[1];
-        long t0 = SystemClock.uptimeMillis();
-        Bitmap b = BitmapFactory.decodeFile(f.getPath());
-        decodeMs = SystemClock.uptimeMillis() - t0;
-        if (b != null) mem.put(id, new Object[] { Long.valueOf(m), b });
-        return b;
+        loading = true;
+        Decoder.want(id, rv, true);
+        return e == null ? null : (Bitmap) e[1];
+    }
+
+    /** One worker decodes the covers: the ones a tile asked for first, then every playlist's. */
+    static final class Decoder implements Runnable {
+        private static final LinkedList queue = new LinkedList();
+        private static boolean running;
+        private static WeakReference view = new WeakReference(null);
+        private static boolean repaintPosted;
+
+        /** The grid to repaint; a tile is bound before it is attached and cannot name it. */
+        static void attach(RecyclerView rv) {
+            synchronized (queue) {
+                view = new WeakReference(rv);
+            }
+        }
+
+        static void want(UUID id, RecyclerView rv, boolean first) {
+            synchronized (queue) {
+                if (rv != null) view = new WeakReference(rv);
+                queue.remove(id);
+                if (first) queue.addFirst(id);
+                else queue.addLast(id);
+                if (running) return;
+                running = true;
+            }
+            Thread t = new Thread(new Decoder(), "ipp-pl-covers");
+            t.setDaemon(true);
+            t.start();
+        }
+
+        /** Every playlist's cover, so scrolling meets them decoded. */
+        static void all(RecyclerView rv) {
+            try {
+                List l = repo().getAllPlaylistSync();
+                if (l == null) return;
+                for (int i = 0; i < l.size(); i++) {
+                    Object o = l.get(i);
+                    if (o instanceof Playlist) want(((Playlist) o).getPlaylistId(), rv, false);
+                }
+            } catch (Throwable t) {
+            }
+        }
+
+        public void run() {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inPreferredConfig = Bitmap.Config.RGB_565;    // a cover is opaque: half the memory
+            while (true) {
+                UUID id;
+                synchronized (queue) {
+                    if (queue.isEmpty()) {
+                        running = false;
+                        return;
+                    }
+                    id = (UUID) queue.removeFirst();
+                }
+                try {
+                    File f = jpg(id);
+                    long m = f.lastModified();
+                    Object[] e = (Object[]) mem.get(id);
+                    if (m == 0 || (e != null && ((Long) e[0]).longValue() == m)) continue;
+                    // a file that does not decode is remembered too, or every bind would queue it
+                    Bitmap b = BitmapFactory.decodeFile(f.getPath(), o);
+                    mem.put(id, new Object[] { Long.valueOf(m), b });
+                    repaint();
+                } catch (Throwable t) {
+                }
+            }
+        }
+
+        /** One repaint for however many covers arrive before it runs. */
+        private static void repaint() {
+            RecyclerView rv;
+            synchronized (queue) {
+                if (repaintPosted) return;
+                rv = (RecyclerView) view.get();
+                if (rv == null) return;
+                repaintPosted = true;
+            }
+            rv.post(new Repainted(rv));
+        }
+
+        static final class Repainted implements Runnable {
+            private final RecyclerView rv;
+            Repainted(RecyclerView rv) { this.rv = rv; }
+            public void run() {
+                synchronized (queue) {
+                    repaintPosted = false;
+                }
+                if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
+            }
+        }
     }
 
     public static boolean hasCover(Object o) {

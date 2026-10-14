@@ -349,6 +349,17 @@ public final class Flow {
             synchronized (wake) { wake.notifyAll(); }
         }
 
+        private volatile boolean held;
+
+        /**
+         * Held while the screen animates: a slide is ~200 KB of allocation, and a collector pause
+         * it sets off stops the animation's frames with every other thread.
+         */
+        public void hold(boolean on) {
+            held = on;
+            if (!on) synchronized (wake) { wake.notifyAll(); }
+        }
+
         public Bitmap get(int i) {
             Object o = slides.get(Integer.valueOf(i));
             return o == null ? null : (Bitmap) o;
@@ -390,6 +401,14 @@ public final class Flow {
 
         private void loop() {
             while (!stop) {
+                if (held) {
+                    synchronized (wake) {
+                        while (held && !stop) {
+                            try { wake.wait(); } catch (InterruptedException e) { return; }
+                        }
+                    }
+                    continue;
+                }
                 int t = target;
                 // every round, not only when idle: a long fast run would otherwise keep every slide passed
                 evict(t);
@@ -608,13 +627,39 @@ public final class Flow {
      * exactly as the player frames and reflects it. Null when the cover is not in hand.
      */
     public static Bitmap trip(Song track, Song rep) {
+        return trip(track, rep, null);
+    }
+
+    /**
+     * {@link #trip} built ahead, its cover read past BigCover's memory; {@code src} gets the
+     * cover and the path it was read for, for {@code BigCover.keep} if this picture flies — the
+     * player then finds the very same bitmap, and with it the same composite.
+     */
+    public static Bitmap tripAhead(Song track, Song rep, Object[] src) {
+        return trip(track, rep, src);
+    }
+
+    private static Bitmap trip(Song track, Song rep, Object[] src) {
         try {
-            Bitmap b = track == null ? null : BigCover.peekTrack(track.getPath());
-            if (b == null && rep != null) b = BigCover.peekTrack(rep.getPath());
+            boolean free = src != null;
+            String at = track == null ? null : track.getPath();
+            Bitmap b = at == null ? null : free ? BigCover.peekTrackFree(at) : BigCover.peekTrack(at);
+            if (b == null && rep != null) {
+                at = rep.getPath();
+                b = free ? BigCover.peekTrackFree(at) : BigCover.peekTrack(at);
+            }
             if (b == null) return null;
-            Bitmap out = Cover.reflect(Cover.fitCover(b));
-            Cover.hold(out);            // ours for the whole trip: the player must not redraw it
-            return out;
+            if (free) {
+                src[0] = b;
+                src[1] = at;
+            }
+            // one step under Cover's lock: built on two threads at once, the first composite
+            // could be handed out for redrawing before it was held
+            synchronized (Cover.class) {
+                Bitmap out = Cover.reflect(Cover.fitCover(b));
+                Cover.hold(out);        // ours for the whole trip: the player must not redraw it
+                return out;
+            }
         } catch (Throwable t) {
             return null;
         }

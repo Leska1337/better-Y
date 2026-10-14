@@ -23,9 +23,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
+import com.innioasis.ipp.Frames;
 import com.innioasis.ipp.Lit;
 import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
@@ -114,8 +116,10 @@ public final class IppFlowActivity extends BaseActivity {
         t.setDaemon(true);
         t.start();
         flow.setItems(l, loader, start);
+        flow.setOnRest(new Rested(this));
         flow.setLabels(0);
         labels(1, FlowView.FADE_MS);
+        armBack();
     }
 
     @Override
@@ -135,22 +139,43 @@ public final class IppFlowActivity extends BaseActivity {
 
     @Override
     public void clockwise() {
-        if (state == 0) flow.step(1);
-        else if (state == 2) panel.move(1);
+        if (state == 0) {
+            flipPending = false;            // turned on: the press was not for this album
+            flow.step(1);
+            armBack();
+        } else if (state == 2) {
+            panel.move(1);
+            armAhead();
+        }
     }
 
     @Override
     public void antiClockwise() {
-        if (state == 0) flow.step(-1);
-        else if (state == 2) panel.move(-1);
+        if (state == 0) {
+            flipPending = false;
+            flow.step(-1);
+            armBack();
+        } else if (state == 2) {
+            panel.move(-1);
+            armAhead();
+        }
     }
 
     @Override
     public void confirm() {
         if (items == null || items.isEmpty()) return;
-        if (state == 0) flipOver();
-        else if (state == 2) play();
+        if (state == 0) {
+            // The row still easing in: the flip waits for it to stand. A flip started on a moving
+            // row cut its last frames short and met the work the row's rest sets off.
+            if (flow.resting()) flipOver();
+            else flipPending = true;
+        } else if (state == 2) {
+            play();
+        }
     }
+
+    /** The centre was pressed while the row moved: flip when it rests (Rested). */
+    boolean flipPending;
 
     @Override
     public void longConfirm() {
@@ -170,13 +195,16 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     private void flipOver() {
+        Frames.start("flip over");
+        long t0 = SystemClock.uptimeMillis();
         int i = flow.target();
         Flow.Item it = (Flow.Item) items.get(i);
         Bitmap s = loader.get(i);
         state = 1;
         flipped = i;
+        hold(true);
         panel.show(it);
-        new Thread(new Tracks(this, it), "ipp-flow-tracks").start();
+        tracks(it);
 
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) card.getLayoutParams();
         lp.leftMargin = flow.coverLeft() - Flow.PAD;
@@ -203,6 +231,7 @@ public final class IppFlowActivity extends BaseActivity {
         panel.setRotationY(90);
         card.animate().rotationY(-90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
         labels(0, Flow.FLIP_MS);
+        Frames.part("setup", t0);
     }
 
     /** The panel drawn over the cover's own square, which is where its turn starts and ends. */
@@ -221,6 +250,8 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     private void flipBack() {
+        Frames.start("flip back");
+        hold(true);
         state = 3;
         // back in only as the cover finishes turning round: both halves of the turn, the frame the
         // second half waits to start, and slow at first so it does not look done half way
@@ -257,6 +288,8 @@ public final class IppFlowActivity extends BaseActivity {
             return;
         }
         state = 5;
+        Frames.start("from player");
+        hold(true);
         // it lands as the album's slide, so a track's own cover turns into the album's on the way
         if (flipped >= 0 && flipped < items.size()) {
             Bitmap album = Flow.trip(null, ((Flow.Item) items.get(flipped)).rep);
@@ -309,8 +342,14 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     void done(int s) {
+        Frames.stop();
+        hold(false);
         state = s;
-        if (s == 2) panel.restart();
+        if (s == 0) armBack();
+        if (s == 2) {
+            panel.restart();
+            armAhead();
+        }
         if (s == 0) {
             card.setVisibility(View.GONE);
             card.setImageBitmap(null);
@@ -331,12 +370,28 @@ public final class IppFlowActivity extends BaseActivity {
         List songs = panel.songs;
         int at = panel.track();
         if (songs == null || at < 0) return;
+        Frames.start("to player");
+        hold(true);
+        // The picture first, before anything moves and before the playlist: the playlist starts a
+        // read of this track's cover that a picture built ahead has just put in memory. When none
+        // is ready, ~90 ms of stillness after the press reads as nothing, inside the flight as a jolt.
+        Song track = (Song) songs.get(at);
+        tripPic = takeAhead(track);
+        if (tripPic == null) {
+            long t1 = SystemClock.uptimeMillis();
+            tripPic = Flow.trip(track, ((Flow.Item) items.get(flipped)).rep);
+            Frames.part("picture", t1);
+        }
+        long t0 = SystemClock.uptimeMillis();
         try {
             PlayerService ps = Y1Application.Companion.getPlayerService();
             if (ps != null) ps.setMusicPlaylist(songs, at);
         } catch (Throwable t) {
+            Frames.stop();
+            hold(false);
             return;
         }
+        Frames.part("playlist", t0);
         state = 4;
         spread(0, 1, SPREAD_MS, new AccelerateInterpolator());
         edgeOn(Flow.FLIP_MS, new ToPlayer(this));
@@ -344,10 +399,8 @@ public final class IppFlowActivity extends BaseActivity {
 
     void toPlayer() {
         panel.setVisibility(View.INVISIBLE);
-        Flow.Item it = (Flow.Item) items.get(flipped);
-        int at = panel.track();
-        Song track = panel.songs != null && at >= 0 ? (Song) panel.songs.get(at) : null;
-        Bitmap pic = Flow.trip(track, it.rep);
+        Bitmap pic = tripPic;
+        tripPic = null;
         if (pic == null) {
             openPlayer();
             return;
@@ -401,7 +454,137 @@ public final class IppFlowActivity extends BaseActivity {
         return new float[] { tx, ty, s0 };
     }
 
+    /** An animation is on screen: the loader holds, and the builds ahead make no pictures. */
+    volatile boolean animating;
+
+    private void hold(boolean on) {
+        animating = on;
+        if (loader != null) loader.hold(on);
+    }
+
+    // The album's track list, built once the row has rested on it (the same DWELL_MS): built on
+    // the press, its 200–700 ms of allocation falls inside the flip, and the collector pauses it
+    // sets off are the flip's lost frames. One build at a time; Flow.back is not meant to run
+    // twice at once.
+    private final BackDwell backDwell = new BackDwell(this);
+    private Flow.Item backFor;
+    private Flow.Back backReady;
+    private Flow.Item backBusy;
+    private Flow.Item backNext;     // flipped while another album's list was being built
+
+    private void armBack() {
+        ui.removeCallbacks(backDwell);
+        ui.postDelayed(backDwell, DWELL_MS);
+    }
+
+    void tracksAhead(Flow.Item it) {
+        if (it == null || it == backFor || backBusy != null) return;
+        startBack(it);
+    }
+
+    private void startBack(Flow.Item it) {
+        backBusy = it;
+        Thread t = new Thread(new Tracks(this, it), "ipp-flow-tracks");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /** The flipped album's list: at once when it is built, else when its build ends. */
+    private void tracks(Flow.Item it) {
+        ui.removeCallbacks(backDwell);
+        if (it == backFor && backReady != null) {
+            ui.post(new TracksDone(this, it, backReady, SystemClock.uptimeMillis()));
+        } else if (backBusy == it) {
+            // backDone hands it over
+        } else if (backBusy != null) {
+            backNext = it;
+        } else {
+            startBack(it);
+        }
+    }
+
+    void backDone(Flow.Item it, Flow.Back b, long t0) {
+        backBusy = null;
+        backFor = it;
+        backReady = b;
+        new TracksDone(this, it, b, t0).run();
+        Flow.Item next = backNext;
+        backNext = null;
+        if (next != null && next != it) startBack(next);
+    }
+
+    /** The cursor rests this long on a track before its picture is built: never under the wheel. */
+    private static final int DWELL_MS = 300;
+
+    private final Dwell dwell = new Dwell(this);
+    private Bitmap aheadPic;
+    private String aheadFor;
+    private String aheadBusy;
+    private Object[] aheadSrc;      // its cover and the path it was read for
+    private Bitmap tripPic;         // taken at the press, flown by toPlayer
+
+    /**
+     * The picture that flies into the player, built in the background once the cursor rests on a
+     * track. Built in the middle of the flight it cost 76–140 ms of the main thread, a frame lost
+     * each time. Cover.fitCover and Cover.reflect are synchronized, and with Cover Flow on top no
+     * player is drawing into their buffers.
+     */
+    private void armAhead() {
+        ui.removeCallbacks(dwell);
+        ui.postDelayed(dwell, DWELL_MS);
+    }
+
+    void ahead() {
+        if (state != 2 || aheadBusy != null || flipped < 0 || flipped >= items.size()) return;
+        int at = panel.track();
+        Song track = panel.songs != null && at >= 0 && at < panel.songs.size()
+                ? (Song) panel.songs.get(at) : null;
+        if (track == null || track.getPath() == null || track.getPath().equals(aheadFor)) return;
+        aheadBusy = track.getPath();
+        Thread t = new Thread(new Ahead(this, track, ((Flow.Item) items.get(flipped)).rep), "ipp-flow-trip");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    void aheadDone(String path, Bitmap b, Object[] src) {
+        aheadBusy = null;
+        aheadFor = b == null ? null : path;
+        aheadPic = b;
+        aheadSrc = src;
+        if (state == 2) armAhead();         // the cursor may have moved on meanwhile
+    }
+
+    /**
+     * The first track's picture from the album's build. Kept unless the cursor is already on
+     * another track of the open album, whose own picture is the one worth having.
+     */
+    void aheadFirst(String path, Bitmap b, Object[] src) {
+        if (b == null || aheadBusy != null) return;
+        if (state == 2) {
+            int at = panel.track();
+            Song cur = panel.songs != null && at >= 0 && at < panel.songs.size()
+                    ? (Song) panel.songs.get(at) : null;
+            if (cur == null || !path.equals(cur.getPath())) return;
+        }
+        aheadFor = path;
+        aheadPic = b;
+        aheadSrc = src;
+    }
+
+    /** The prepared picture when it is this track's; null otherwise. */
+    private Bitmap takeAhead(Song track) {
+        if (track == null || aheadPic == null || !track.getPath().equals(aheadFor)) return null;
+        Bitmap b = aheadPic;
+        Object[] src = aheadSrc;
+        aheadPic = null;
+        aheadFor = null;
+        aheadSrc = null;
+        if (src != null && src[0] instanceof Bitmap) BigCover.keep((String) src[1], (Bitmap) src[0]);
+        return b;
+    }
+
     void openPlayer() {
+        Frames.stop();
         Intent i = new Intent(this, MusicPlayerActivity.class);
         i.putExtra(Flow.EXTRA_FLIP, true);
         startActivity(i);
@@ -487,6 +670,14 @@ public final class IppFlowActivity extends BaseActivity {
             sel = 0;
             first = 0;
             invalidate();
+        }
+
+        /** The song the cursor starts on in {@link #setSongs}: the first row that is not a divider. */
+        static Song firstSong(Flow.Back b) {
+            if (b == null || b.song == null || b.songs == null || b.song.length == 0) return null;
+            int s = b.song[0] < 0 ? 1 : 0;
+            if (s >= b.song.length || b.song[s] < 0 || b.song[s] >= b.songs.size()) return null;
+            return (Song) b.songs.get(b.song[s]);
         }
 
         void setSongs(Flow.Back b) {
@@ -666,7 +857,77 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             long t0 = SystemClock.uptimeMillis();
-            a.ui.post(new TracksDone(a, it, Flow.back(it), t0));
+            Flow.Back b = Flow.back(it);
+            a.ui.post(new BackDone(a, it, b, t0));
+            // And the picture of the track the cursor will stand on first, so that opening an
+            // album and playing straight away finds it ready — only while nothing animates: its
+            // bitmaps are the allocations that set off a stop-everything pause in a flip. A flip
+            // under way leaves it to the track's own wait (armAhead) after the flip.
+            if (a.animating) return;
+            Song first = Panel.firstSong(b);
+            if (first != null && first.getPath() != null) {
+                Object[] src = new Object[2];
+                Bitmap pic = Flow.tripAhead(first, it.rep, src);
+                a.ui.post(new FirstPic(a, first.getPath(), pic, src));
+            }
+            IppFlowActivity.tidy();
+        }
+    }
+
+    static final class FirstPic implements Runnable {
+        private final IppFlowActivity a;
+        private final String path;
+        private final Bitmap b;
+        private final Object[] src;
+
+        FirstPic(IppFlowActivity a, String path, Bitmap b, Object[] src) {
+            this.a = a; this.path = path; this.b = b; this.src = src;
+        }
+
+        public void run() { a.aheadFirst(path, b, src); }
+    }
+
+    static final class BackDone implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+        private final Flow.Back b;
+        private final long t0;
+
+        BackDone(IppFlowActivity a, Flow.Item it, Flow.Back b, long t0) {
+            this.a = a; this.it = it; this.b = b; this.t0 = t0;
+        }
+
+        public void run() { a.backDone(it, b, t0); }
+    }
+
+    static final class Rested implements Runnable {
+        private final IppFlowActivity a;
+
+        Rested(IppFlowActivity a) { this.a = a; }
+
+        public void run() {
+            if (a.state != 0) return;
+            if (a.flipPending) {
+                a.flipPending = false;
+                a.flipOver();
+            } else {
+                a.armBack();
+            }
+        }
+    }
+
+    static final class BackDwell implements Runnable {
+        private final IppFlowActivity a;
+
+        BackDwell(IppFlowActivity a) { this.a = a; }
+
+        public void run() {
+            // not while the row is still easing in: what the build allocates would cost the
+            // collector pauses that eat its last frames; the row's rest arms this again
+            if (!a.flow.resting()) return;
+            if (a.state == 0 && a.items != null && !a.items.isEmpty()) {
+                a.tracksAhead((Flow.Item) a.items.get(a.flow.target()));
+            }
         }
     }
 
@@ -681,7 +942,10 @@ public final class IppFlowActivity extends BaseActivity {
         }
 
         public void run() {
-            if (a.flipped >= 0 && a.items.get(a.flipped) == it) a.panel.setSongs(b);
+            if (a.flipped >= 0 && a.items.get(a.flipped) == it) {
+                a.panel.setSongs(b);
+                if (a.state == 2) a.armAhead();
+            }
             Diag.slow("flow tracks shown", t0);
         }
     }
@@ -705,6 +969,51 @@ public final class IppFlowActivity extends BaseActivity {
         Done(IppFlowActivity a, int s) { this.a = a; this.s = s; }
 
         public void run() { a.done(s); }
+    }
+
+    static final class Dwell implements Runnable {
+        private final IppFlowActivity a;
+
+        Dwell(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.ahead(); }
+    }
+
+    static final class Ahead implements Runnable {
+        private final IppFlowActivity a;
+        private final Song track;
+        private final Song rep;
+
+        Ahead(IppFlowActivity a, Song track, Song rep) { this.a = a; this.track = track; this.rep = rep; }
+
+        public void run() {
+            Object[] src = new Object[2];
+            Bitmap b = Flow.tripAhead(track, rep, src);
+            a.ui.post(new AheadDone(a, track.getPath(), b, src));
+            IppFlowActivity.tidy();
+        }
+    }
+
+    static final class AheadDone implements Runnable {
+        private final IppFlowActivity a;
+        private final String path;
+        private final Bitmap b;
+        private final Object[] src;
+
+        AheadDone(IppFlowActivity a, String path, Bitmap b, Object[] src) {
+            this.a = a; this.path = path; this.b = b; this.src = src;
+        }
+
+        public void run() { a.aheadDone(path, b, src); }
+    }
+
+    /**
+     * After a build ahead, while the screen is still: the garbage it left is collected now, by
+     * the concurrent collector (pauses of a few ms), and not by a stop-everything pause at the
+     * next flip's first allocation.
+     */
+    static void tidy() {
+        System.gc();
     }
 
     static final class ToPlayer implements Runnable {

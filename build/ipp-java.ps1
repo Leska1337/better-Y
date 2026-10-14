@@ -128,10 +128,12 @@ $javaFiles = @($javas.FullName)
 $cp = "$rStubDir;$stubsJar"    # R stub first so its complete R wins over the partial R in app-stubs
 Invoke-Native 'javac' { & $javac -source 8 -target 8 -Xlint:-options -encoding UTF-8 -bootclasspath $android -classpath $cp -d $clsDir @javaFiles }
 
-# 2. d8 (min-api 17)
+# 2. d8 (min-api 17). The classes go in as ONE jar: listed one by one they outgrew Windows'
+#    32K command line ("The filename or extension is too long") once the package passed ~600 classes.
 Write-Host "d8..."
-$classFiles = @(Get-ChildItem $clsDir -Recurse -Filter '*.class' | ForEach-Object { $_.FullName })
-Invoke-Native 'd8' { & java -cp $d8jar com.android.tools.r8.D8 --min-api 17 --lib $android --lib $stubsJar --output $dexDir @classFiles }
+$classesJar = Join-Path $work 'classes.jar'
+Invoke-Native 'jar' { & (Join-Path $jdk 'bin\jar.exe') cf $classesJar -C $clsDir . }
+Invoke-Native 'd8' { & java -cp $d8jar com.android.tools.r8.D8 --min-api 17 --lib $android --lib $stubsJar --output $dexDir $classesJar }
 
 # 3. baksmali (dex -> smali)
 Write-Host "baksmali..."

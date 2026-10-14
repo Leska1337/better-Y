@@ -55,6 +55,14 @@ public final class BigCover {
     private static final Map mem = Collections.synchronizedMap(new Lru());
     private static final int MEM_MAX = 24;
 
+    static long memBytes() {
+        java.util.ArrayList l;
+        synchronized (mem) {
+            l = new java.util.ArrayList(mem.values());
+        }
+        return Diag.bitmapBytes(l);
+    }
+
     private static final class Lru extends LinkedHashMap {
         Lru() { super(32, 0.75f, true); }
 
@@ -208,6 +216,27 @@ public final class BigCover {
      * may be any size — so it matches what {@code read} gives and {@code same()} still works.
      */
     public static Bitmap peek(String key) {
+        return peek(key, true);
+    }
+
+    /**
+     * {@link #peekTrack} that leaves memory as it was: for pictures built ahead in Cover Flow,
+     * where every album the row rested on would otherwise stay in memory and every collector
+     * pause grows with it. {@link #keep} puts the one that is used in.
+     */
+    public static Bitmap peekTrackFree(String path) {
+        if (path == null) return null;
+        Bitmap b = peek(path, false);
+        if (b != null || note(path) != SHARED) return b;
+        return peek(Albums.trackFolder(path), false);
+    }
+
+    /** A cover read by {@link #peekTrackFree}, into memory once it is the one being played. */
+    public static void keep(String path, Bitmap b) {
+        if (path != null && b != null && mem.get(path) == null) mem.put(path, b);
+    }
+
+    private static Bitmap peek(String key, boolean store) {
         if (key == null) return null;
         Object hit = mem.get(key);
         if (hit != null) return (Bitmap) hit;
@@ -229,7 +258,7 @@ public final class BigCover {
         } catch (Throwable t) {
             b = null;
         }
-        if (b != null) mem.put(key, b);
+        if (b != null && store) mem.put(key, b);
         return b;
     }
 

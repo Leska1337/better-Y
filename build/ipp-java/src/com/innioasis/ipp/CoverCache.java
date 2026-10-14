@@ -22,6 +22,10 @@ public final class CoverCache {
     private static final Hashtable miss = new Hashtable();
     private static boolean swept;
 
+    static long memBytes() {
+        return Diag.bitmapBytes(new java.util.ArrayList(mem.values()));
+    }
+
     /**
      * Swept once per run of every file without the current suffix ({@code -50q.jpg}), so changing
      * the suffix retires old encodings by itself.

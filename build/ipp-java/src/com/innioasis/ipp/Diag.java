@@ -101,6 +101,90 @@ public final class Diag {
     /** The mod's own voice in the log: rare decisions worth a line, never per-row chatter. */
     public static void note(String message) {
         ring(4 /* INFO */, "ipp", message, null);
+        if (message != null && message.startsWith("slow:")) {
+            Gc.request();
+            if (message.startsWith("slow: frames")) Heap.once();
+        }
+    }
+
+    /**
+     * A heap dump to better-Y/logs at the first stuttering animation of the run — only while the
+     * empty file better-Y/heap_dump exists (put there by hand over USB). Every thread stops for
+     * the seconds the dump takes, so it is never on by itself.
+     */
+    static final class Heap implements Runnable {
+        private static boolean asked;
+
+        static void once() {
+            synchronized (Heap.class) {
+                if (asked) return;
+                asked = true;
+            }
+            try {
+                if (!new File(Panel.card(), "heap_dump").isFile()) return;
+                Thread t = new Thread(new Heap(), "ipp-diag-heap");
+                t.setDaemon(true);
+                t.start();
+            } catch (Throwable t) {
+            }
+        }
+
+        public void run() {
+            try {
+                File f = new File(Panel.logs(), "heap_" + Panel.stamp() + ".hprof");
+                android.os.Debug.dumpHprofData(f.getPath());
+                note("heap dumped to " + f.getName());
+            } catch (Throwable t) {
+                note("heap dump failed: " + t);
+            }
+        }
+    }
+
+    /**
+     * After a {@code slow:} line, the app's own collector pauses from logcat go into the ring
+     * with it: logcat's buffer turns over in seconds while music plays, so a report taken a
+     * minute later no longer says whether a GC stopped the app at that moment. A process
+     * is started only after a slow step, one at a time.
+     */
+    static final class Gc implements Runnable {
+        private static boolean running;
+        private static String lastLine;     // the newest line already in the ring
+
+        static void request() {
+            synchronized (Gc.class) {
+                if (running) return;
+                running = true;
+            }
+            Thread t = new Thread(new Gc(), "ipp-diag-gc");
+            t.setDaemon(true);
+            t.start();
+        }
+
+        public void run() {
+            try {
+                String out = Panel.exec(new String[]{"/system/bin/logcat", "-d", "-b", "main",
+                        "-v", "time", "dalvikvm:D", "*:S"}, CAP);
+                String mine = "(" + android.os.Process.myPid() + "):";
+                String[] lines = out.split("\n");
+                List keep = new ArrayList();
+                for (int i = lines.length - 1; i >= 0 && keep.size() < 20; i--) {
+                    String l = lines[i].trim();
+                    if (l.equals(lastLine)) break;
+                    // the pauses only: the class verifier's lines share the tag
+                    if (l.replace(" ", "").indexOf(mine) >= 0 && (l.indexOf("GC_") >= 0
+                            || l.indexOf("WAIT_FOR_CONCURRENT_GC") >= 0 || l.indexOf("Grow heap") >= 0)) {
+                        keep.add(0, l);
+                    }
+                }
+                if (!keep.isEmpty()) lastLine = (String) keep.get(keep.size() - 1);
+                for (int i = 0; i < keep.size(); i++) ring(3 /* DEBUG */, "gc", (String) keep.get(i), null);
+            } catch (Throwable t) {
+            } finally {
+                synchronized (Gc.class) {
+                    running = false;
+                }
+            }
+        }
     }
 
     /** A step shorter than this leaves no line. */
@@ -376,6 +460,51 @@ public final class Diag {
         s.append("card     ").append(space(Constant.ROOT_PATH)).append('\n');
         s.append("internal ").append(space(Constant.INTERNAL_PATH)).append('\n');
         s.append("data     ").append(space("/data")).append('\n');
+        memory(s);
+    }
+
+    /**
+     * The heap and what our picture caches hold of it: on API 17 a bitmap's pixels live in the
+     * Dalvik heap, and every collector pause grows with what is live.
+     */
+    private static void memory(StringBuilder s) {
+        try {
+            Runtime r = Runtime.getRuntime();
+            // collected first, so "used" is what is live and not garbage waiting for a pause
+            System.gc();
+            System.runFinalization();
+            System.gc();
+            long used = r.totalMemory() - r.freeMemory();
+            s.append("heap     ").append(mb(used)).append(" live of ").append(mb(r.totalMemory()))
+                    .append(" (max ").append(mb(r.maxMemory())).append(")\n");
+            s.append("pictures big covers ").append(mb(BigCover.memBytes()))
+                    .append(", thumbnails ").append(mb(CoverCache.memBytes()))
+                    .append(", playlist covers ").append(mb(PlGrid.memBytes())).append('\n');
+        } catch (Throwable t) {
+        }
+    }
+
+    private static String mb(long bytes) {
+        return String.format(Locale.US, "%.1f MB", bytes / 1048576f);
+    }
+
+    /** The pixels of the bitmaps among {@code values}, bare or in an {@code Object[]}, each once. */
+    static long bitmapBytes(java.util.Collection values) {
+        long n = 0;
+        java.util.IdentityHashMap seen = new java.util.IdentityHashMap();
+        Iterator it = values.iterator();
+        while (it.hasNext()) {
+            Object o = it.next();
+            if (o instanceof Object[]) {
+                Object[] a = (Object[]) o;
+                for (int i = 0; i < a.length; i++) if (a[i] instanceof android.graphics.Bitmap) o = a[i];
+            }
+            if (o instanceof android.graphics.Bitmap && seen.put(o, o) == null) {
+                android.graphics.Bitmap b = (android.graphics.Bitmap) o;
+                n += (long) b.getRowBytes() * b.getHeight();
+            }
+        }
+        return n;
     }
 
     /** The int overloads: the long ones are API 18. */

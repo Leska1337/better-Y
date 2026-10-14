@@ -485,6 +485,9 @@ public final class Wheel {
         if (first >= 0 && pos >= first && pos <= last) {
             return;                                                  // already fully visible
         }
+        if (glide(rv, l, pos, first, last)) return;
+        Glider.stop();                                               // a glide under way
+        rv.stopScroll();
 
         boolean down = first < 0 || pos > last;
         // the keyboard's letter strip is horizontal: the same arithmetic on the other axis
@@ -507,6 +510,104 @@ public final class Wheel {
             l.scrollToPositionWithOffset(pos, down ? (bottom - top) - h : 0);
         } else {
             rv.scrollToPosition(pos);
+        }
+    }
+
+    /** Grids whose rows slide into view rather than jump: a row of tiles is a big step. */
+    private static final java.util.WeakHashMap gliding = new java.util.WeakHashMap();
+
+    /** The Playlists grid asks for it; every other list keeps the instant scroll. */
+    public static void glides(RecyclerView rv, boolean on) {
+        if (rv == null) return;
+        if (on) gliding.put(rv, Boolean.TRUE);
+        else gliding.remove(rv);
+    }
+
+    /**
+     * Rows past the edge of a gliding grid: the distance to where the cursor's row will be
+     * against the edge, measured from where the rows are NOW, handed to {@link Glider}. Further
+     * than a few rows, the instant scroll.
+     */
+    private static boolean glide(RecyclerView rv, LinearLayoutManager l, int pos, int first, int last) {
+        if (!(l instanceof androidx.recyclerview.widget.GridLayoutManager) || gliding.get(rv) == null
+                || first < 0) {
+            return false;
+        }
+        int span = ((androidx.recyclerview.widget.GridLayoutManager) l).getSpanCount();
+        boolean down = pos > last;
+        View edge = l.findViewByPosition(down ? last : first);
+        if (span <= 0 || edge == null) return false;
+        int rows = down ? pos / span - last / span : first / span - pos / span;
+        if (rows < 1 || rows > GLIDE_ROWS) return false;
+        int step = end(edge, false) - start(edge, false);
+        int d = down ? end(edge, false) + rows * step - (rv.getHeight() - rv.getPaddingBottom())
+                     : start(edge, false) - rows * step - rv.getPaddingTop();
+        Glider.to(rv, d);
+        return true;
+    }
+
+    /** Further behind than this, the list jumps: a glide that far would trail the wheel. */
+    private static final int GLIDE_ROWS = 4;
+
+    /**
+     * Follows the target the way the Cover Flow row does: every frame covers a share of what is
+     * left, so the list runs fast while far behind and eases in as it arrives. A new target only
+     * changes what is left — nothing restarts, so a fast wheel gives one continuous movement
+     * instead of glides cut short and begun again at another speed.
+     */
+    static final class Glider implements android.view.Choreographer.FrameCallback {
+        /** Share of the distance left covered per second; and the floor and ceiling of speed. */
+        private static final float RATE = 14f;
+        private static final float VMIN = 400f;
+        private static final float VMAX = 6000f;
+
+        private static final Glider G = new Glider();
+        private static WeakReference view = new WeakReference(null);
+        private static float left;
+        private static long last;
+        private static boolean running;
+
+        static void to(RecyclerView rv, int d) {
+            if (view.get() != rv) {
+                stop();
+                view = new WeakReference(rv);
+            }
+            rv.stopScroll();
+            left = d;
+            if (!running && d != 0) {
+                running = true;
+                last = 0;
+                android.view.Choreographer.getInstance().postFrameCallback(G);
+            }
+        }
+
+        static void stop() {
+            if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
+            running = false;
+            left = 0;
+        }
+
+        public void doFrame(long nanos) {
+            RecyclerView rv = (RecyclerView) view.get();
+            if (rv == null || rv.getWindowToken() == null || left == 0) {
+                running = false;
+                left = 0;
+                return;
+            }
+            long now = nanos / 1000000L;
+            float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
+            last = now;
+            float a = Math.abs(left);
+            float v = Math.max(VMIN, Math.min(VMAX, a * RATE));
+            int s = Math.round(Math.min(a, Math.max(1f, v * dt)));
+            if (left < 0) s = -s;
+            int was = rv.computeVerticalScrollOffset();
+            rv.scrollBy(0, s);
+            left -= s;
+            // the list's end stops the scroll short: nothing is left to do there
+            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) left = 0;
+            if (left != 0) android.view.Choreographer.getInstance().postFrameCallback(this);
+            else running = false;
         }
     }
 
