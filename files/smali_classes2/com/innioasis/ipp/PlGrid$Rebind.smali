@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;)V
   .registers 2
-  .line 750
+  .line 762
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$Rebind;->a:Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     return-void
@@ -23,9 +23,9 @@
 
 .method public run()V
   .registers 2
-  .line 753
+  .line 765
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Rebind;->a:Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
-  .line 754
+  .line 766
     return-void
 .end method

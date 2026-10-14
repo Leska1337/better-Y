@@ -630,7 +630,7 @@ public final class PlGrid {
             img.setMaxHeight(Integer.MAX_VALUE);
         }
         card.setTag(R.id.ipp_pl_cover, Integer.valueOf(edge(ring)));
-        card.setCardBackgroundColor(sel ? edge(Color.BLACK) : edge(ring));
+        cardColor(card, sel ? edge(Color.BLACK) : edge(ring));
         RecyclerView rv = row.getParent() instanceof RecyclerView ? (RecyclerView) row.getParent() : null;
         Bitmap b = p == null ? null : cover(p.getPlaylistId(), rv);
         if (b != null) {
@@ -638,7 +638,11 @@ public final class PlGrid {
             img.clearColorFilter();
             img.setPadding(0, 0, 0, 0);
             img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            img.setImageBitmap(b);
+            // a rebind with the picture it shows makes no new drawable: a gliding row rebinds them all
+            if (!(img.getDrawable() instanceof BitmapDrawable)
+                    || ((BitmapDrawable) img.getDrawable()).getBitmap() != b) {
+                img.setImageBitmap(b);
+            }
             return;
         }
         // the placeholder's plate is the picture's own background, inside the card's edge
@@ -669,7 +673,15 @@ public final class PlGrid {
         View card = row == null ? null : row.findViewById(R.id.card);
         Object tint = card == null ? null : card.getTag(R.id.ipp_pl_cover);
         if (!(card instanceof CardView) || !(tint instanceof Integer)) return;
-        ((CardView) card).setCardBackgroundColor(on ? edge(Color.BLACK) : ((Integer) tint).intValue());
+        cardColor((CardView) card, on ? edge(Color.BLACK) : ((Integer) tint).intValue());
+    }
+
+    /** The card's colour, set only when it changes: each set is a new ColorStateList and a repaint. */
+    private static void cardColor(CardView card, int c) {
+        Object was = card.getTag(R.id.card);
+        if (was instanceof Integer && ((Integer) was).intValue() == c) return;
+        card.setTag(R.id.card, Integer.valueOf(c));
+        card.setCardBackgroundColor(c);
     }
 
     private static int edge(int c) {
@@ -822,10 +834,19 @@ public final class PlGrid {
         long m = jpg(id).lastModified();
         if (m == 0) return null;
         Object[] e = (Object[]) mem.get(id);
-        if (e != null && ((Long) e[0]).longValue() == m) return (Bitmap) e[1];
+        if (e != null && ((Long) e[0]).longValue() == m) {
+            // decoded before the first tile gave its size: read again, smaller, meanwhile shown
+            if (oversized((Bitmap) e[1])) Decoder.want(id, rv, false);
+            return (Bitmap) e[1];
+        }
         loading = true;
         Decoder.want(id, rv, true);
         return e == null ? null : (Bitmap) e[1];
+    }
+
+    private static boolean oversized(Bitmap b) {
+        int side = Theme.tileCardSide();
+        return b != null && side > 0 && b.getWidth() > side;
     }
 
     /** One worker decodes the covers: the ones a tile asked for first, then every playlist's. */
@@ -878,11 +899,19 @@ public final class PlGrid {
         public void run() {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inPreferredConfig = Bitmap.Config.RGB_565;    // a cover is opaque: half the memory
+            long t0 = SystemClock.uptimeMillis();
+            int read = 0;
+            StringBuilder failed = new StringBuilder();
             while (true) {
                 UUID id;
                 synchronized (queue) {
                     if (queue.isEmpty()) {
                         running = false;
+                        if (read > 0 || failed.length() > 0) {
+                            Diag.note("playlist covers: " + read + " read in "
+                                    + (SystemClock.uptimeMillis() - t0) + " ms"
+                                    + (failed.length() > 0 ? ", did not:" + failed : ""));
+                        }
                         return;
                     }
                     id = (UUID) queue.removeFirst();
@@ -891,12 +920,24 @@ public final class PlGrid {
                     File f = jpg(id);
                     long m = f.lastModified();
                     Object[] e = (Object[]) mem.get(id);
-                    if (m == 0 || (e != null && ((Long) e[0]).longValue() == m)) continue;
+                    if (m == 0 || (e != null && ((Long) e[0]).longValue() == m
+                            && !oversized((Bitmap) e[1]))) continue;
                     // a file that does not decode is remembered too, or every bind would queue it
                     Bitmap b = BitmapFactory.decodeFile(f.getPath(), o);
+                    // at the size the tile shows it: a smaller texture to upload as a row comes in
+                    int side = Theme.tileCardSide();
+                    if (b != null && side > 0 && b.getWidth() > side) {
+                        Bitmap s = Bitmap.createScaledBitmap(b, side,
+                                Math.max(1, b.getHeight() * side / b.getWidth()), true);
+                        if (s != b) b.recycle();
+                        b = s;
+                    }
                     mem.put(id, new Object[] { Long.valueOf(m), b });
+                    if (b != null) read++;
+                    else failed.append(' ').append(id);
                     repaint();
                 } catch (Throwable t) {
+                    failed.append(' ').append(t.getClass().getSimpleName());
                 }
             }
         }
@@ -907,10 +948,15 @@ public final class PlGrid {
             synchronized (queue) {
                 if (repaintPosted) return;
                 rv = (RecyclerView) view.get();
-                if (rv == null) return;
+                if (rv == null) {
+                    Diag.note("playlist covers: no grid to repaint");
+                    return;
+                }
                 repaintPosted = true;
             }
-            rv.post(new Repainted(rv));
+            // the main thread's queue: a view not yet attached keeps a post from another thread in
+            // that thread's own queue, which never runs, and the flag above stays up for good
+            UI.post(new Repainted(rv));
         }
 
         static final class Repainted implements Runnable {
@@ -1003,7 +1049,7 @@ public final class PlGrid {
                 }
                 if (!write(id, b)) return;
                 RecyclerView v = (RecyclerView) rv.get();
-                if (v != null) v.post(new Repaint(v));
+                if (v != null) UI.post(new Repaint(v));
             } catch (Throwable t) {
             }
         }

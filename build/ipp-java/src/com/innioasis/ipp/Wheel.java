@@ -563,7 +563,7 @@ public final class Wheel {
         int step = end(edge, false) - start(edge, false);
         int d = down ? end(edge, false) + rows * step - (rv.getHeight() - rv.getPaddingBottom())
                      : start(edge, false) - rows * step - rv.getPaddingTop();
-        Glider.to(rv, d);
+        Glider.to(rv, d, wrapping ? Math.min(WRAP_MAX_MS, WRAP_MS + WRAP_ROW_MS * rows) : 0);
         return true;
     }
 
@@ -572,6 +572,11 @@ public final class Wheel {
 
     /** The cursor has just gone round the list's end: glided however far that is. */
     private static boolean wrapping;
+
+    /** Round the end the rows ease in over a time growing with the rows passed, not past a cap. */
+    private static final int WRAP_MS = 180;
+    private static final int WRAP_ROW_MS = 45;
+    private static final int WRAP_MAX_MS = 450;
 
     /**
      * Follows the target the way the Cover Flow row does: every frame covers a share of what is
@@ -590,16 +595,23 @@ public final class Wheel {
         private static float left;
         private static long last;
         private static boolean running;
+        /** A timed glide: its length, its distance and when it set out. */
+        private static int easeMs, easeTotal;
+        private static long easeAt;
 
-        static void to(RecyclerView rv, int d) {
+        /** {@code ms} above 0: over that time, easing out, instead of a share of the way per frame. */
+        static void to(RecyclerView rv, int d, int ms) {
             if (view.get() != rv) {
                 stop();
                 view = new WeakReference(rv);
             }
             rv.stopScroll();
             left = d;
+            easeMs = ms;
+            easeTotal = d;
+            easeAt = 0;
             if (wrapping) {
-                Frames.start("grid wrap");
+                Frames.start("grid wrap " + rv.getContext().getClass().getSimpleName(), true);
                 if (!counting) android.os.Debug.startAllocCounting();
                 counting = true;
                 alloc = android.os.Debug.getThreadAllocSize();
@@ -644,17 +656,26 @@ public final class Wheel {
             long now = nanos / 1000000L;
             float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
             last = now;
-            float a = Math.abs(left);
-            float v = Math.max(VMIN, Math.min(VMAX, a * RATE));
-            int s = Math.round(Math.min(a, Math.max(1f, v * dt)));
-            if (left < 0) s = -s;
+            int s;
+            if (easeMs > 0) {
+                if (easeAt == 0) easeAt = now - 16;
+                float t = Math.min(1f, (now - easeAt) / (float) easeMs);
+                float u = 1f - t;
+                s = t >= 1f ? Math.round(left)
+                        : Math.round(easeTotal * (1f - u * u * u)) - Math.round(easeTotal - left);
+            } else {
+                float a = Math.abs(left);
+                float v = Math.max(VMIN, Math.min(VMAX, a * RATE));
+                s = Math.round(Math.min(a, Math.max(1f, v * dt)));
+                if (left < 0) s = -s;
+            }
             int was = rv.computeVerticalScrollOffset();
             long t0 = android.os.SystemClock.uptimeMillis();
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
             // the list's end stops the scroll short: nothing is left to do there
-            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) left = 0;
+            if (Math.abs(left) < 1f || s != 0 && rv.computeVerticalScrollOffset() == was) left = 0;
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {

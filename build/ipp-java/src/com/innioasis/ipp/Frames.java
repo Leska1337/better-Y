@@ -25,9 +25,16 @@ public final class Frames {
     private static int count;
     private static StringBuilder parts;
     private static Tick tick;
+    private static boolean always;
 
     public static void start(String w) {
+        start(w, false);
+    }
+
+    /** {@code always}: the line is written for every run, {@code frames …} when none stuttered. */
+    public static void start(String w, boolean always) {
         try {
+            Frames.always = always;
             if (tick == null) tick = new Tick();
             else Choreographer.getInstance().removeFrameCallback(tick);
             what = w;
@@ -49,9 +56,11 @@ public final class Frames {
         try {
             if (what == null) return;
             Choreographer.getInstance().removeFrameCallback(tick);
-            if (worst >= SLOW_MS) {
-                Diag.note("slow: frames " + what + " worst " + worst + " ms, " + count + " frames in "
-                        + (SystemClock.uptimeMillis() - startAt) + " ms" + parts);
+            if (worst >= SLOW_MS || always) {
+                long ms = SystemClock.uptimeMillis() - startAt;
+                Diag.note((worst >= SLOW_MS ? "slow: frames " : "frames ") + what + " worst " + worst
+                        + " ms, " + count + " frames in " + ms + " ms, mean "
+                        + (count > 0 ? ms / count : 0) + " ms" + parts);
             }
             what = null;
         } catch (Throwable t) {

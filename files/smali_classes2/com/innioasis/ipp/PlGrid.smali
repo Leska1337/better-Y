@@ -75,21 +75,21 @@
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->movers:Ljava/util/WeakHashMap;
-  .line 744
+  .line 756
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v1
     invoke-direct { v0, v1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->UI:Landroid/os/Handler;
-  .line 776
+  .line 788
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->multiFields:Ljava/util/HashMap;
-  .line 806
+  .line 818
     new-instance v0, Ljava/util/Hashtable;
     invoke-direct { v0 }, Ljava/util/Hashtable;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->mem:Ljava/util/Hashtable;
-  .line 973
+  .line 1019
     new-instance v0, Ljava/util/HashSet;
     invoke-direct { v0 }, Ljava/util/HashSet;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->tried:Ljava/util/HashSet;
@@ -117,7 +117,7 @@
     return-object v0
 .end method
 
-.method static synthetic access$1100(Ljava/util/UUID;)Ljava/lang/String;
+.method static synthetic access$1200(Ljava/util/UUID;)Ljava/lang/String;
   .annotation system Ldalvik/annotation/Throws;
     value = {
       Ljava/lang/Exception;
@@ -130,7 +130,7 @@
     return-object p0
 .end method
 
-.method static synthetic access$1200(Ljava/util/UUID;)Ljava/io/File;
+.method static synthetic access$1300(Ljava/util/UUID;)Ljava/io/File;
   .registers 1
   .line 56
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->none(Ljava/util/UUID;)Ljava/io/File;
@@ -191,38 +191,46 @@
     return-object v0
 .end method
 
+.method static synthetic access$900(Landroid/graphics/Bitmap;)Z
+  .registers 1
+  .line 56
+    invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->oversized(Landroid/graphics/Bitmap;)Z
+    move-result p0
+    return p0
+.end method
+
 .method private static adapter(Landroid/content/Context;)Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
   .catchall { :L0 .. :L3 } :L5
   .registers 4
-  .line 762
+  .line 774
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/ipp/PlGrid;->adapterField:Ljava/lang/reflect/Field;
     if-nez v1, :L1
-  .line 763
+  .line 775
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v1
     const-string v2, "adapter$delegate"
     invoke-virtual { v1, v2 }, Ljava/lang/Class;->getDeclaredField(Ljava/lang/String;)Ljava/lang/reflect/Field;
     move-result-object v1
-  .line 764
+  .line 776
     const/4 v2, 1
     invoke-virtual { v1, v2 }, Ljava/lang/reflect/Field;->setAccessible(Z)V
-  .line 765
+  .line 777
     sput-object v1, Lcom/innioasis/ipp/PlGrid;->adapterField:Ljava/lang/reflect/Field;
   :L1
-  .line 767
+  .line 779
     sget-object v1, Lcom/innioasis/ipp/PlGrid;->adapterField:Ljava/lang/reflect/Field;
     invoke-virtual { v1, p0 }, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 768
+  .line 780
     instance-of v1, p0, Lkotlin/Lazy;
     if-eqz v1, :L2
     check-cast p0, Lkotlin/Lazy;
     invoke-interface { p0 }, Lkotlin/Lazy;->getValue()Ljava/lang/Object;
     move-result-object p0
   :L2
-  .line 769
+  .line 781
     instance-of v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     if-eqz v1, :L4
     check-cast p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
@@ -231,9 +239,9 @@
   :L4
     return-object v0
   :L5
-  .line 770
+  .line 782
     move-exception p0
-  .line 771
+  .line 783
     return-object v0
 .end method
 
@@ -479,7 +487,7 @@
 
 .method public static blinkEdge(Landroid/view/View;Z)V
   .registers 4
-  .line 669
+  .line 673
     const/4 v0, 0
     if-nez p0, :L0
     move-object p0, v0
@@ -489,7 +497,7 @@
     invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
   :L1
-  .line 670
+  .line 674
     if-nez p0, :L2
     goto :L3
   :L2
@@ -497,14 +505,14 @@
     invoke-virtual { p0, v0 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object v0
   :L3
-  .line 671
+  .line 675
     instance-of v1, p0, Landroidx/cardview/widget/CardView;
     if-eqz v1, :L7
     instance-of v1, v0, Ljava/lang/Integer;
     if-nez v1, :L4
     goto :L7
   :L4
-  .line 672
+  .line 676
     check-cast p0, Landroidx/cardview/widget/CardView;
     if-eqz p1, :L5
     const/high16 p1, 0xFF000000
@@ -516,11 +524,36 @@
     invoke-virtual { v0 }, Ljava/lang/Integer;->intValue()I
     move-result p1
   :L6
-    invoke-virtual { p0, p1 }, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
-  .line 673
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/PlGrid;->cardColor(Landroidx/cardview/widget/CardView;I)V
+  .line 677
     return-void
   :L7
-  .line 671
+  .line 675
+    return-void
+.end method
+
+.method private static cardColor(Landroidx/cardview/widget/CardView;I)V
+  .registers 5
+  .line 681
+    const v0, 2131361934
+    invoke-virtual { p0, v0 }, Landroidx/cardview/widget/CardView;->getTag(I)Ljava/lang/Object;
+    move-result-object v1
+  .line 682
+    instance-of v2, v1, Ljava/lang/Integer;
+    if-eqz v2, :L0
+    check-cast v1, Ljava/lang/Integer;
+    invoke-virtual { v1 }, Ljava/lang/Integer;->intValue()I
+    move-result v1
+    if-ne v1, p1, :L0
+    return-void
+  :L0
+  .line 683
+    invoke-static { p1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+    move-result-object v1
+    invoke-virtual { p0, v0, v1 }, Landroidx/cardview/widget/CardView;->setTag(ILjava/lang/Object;)V
+  .line 684
+    invoke-virtual { p0, p1 }, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
+  .line 685
     return-void
 .end method
 
@@ -532,7 +565,7 @@
   .end annotation
   .catchall { :L0 .. :L1 } :L2
   .registers 4
-  .line 1068
+  .line 1114
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->db()Landroidx/room/RoomDatabase;
     move-result-object v0
     const/4 v1, 1
@@ -545,72 +578,81 @@
     invoke-virtual { v0, p0, v1 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
     move-result-object p0
   :L0
-  .line 1070
+  .line 1116
     invoke-interface { p0 }, Landroid/database/Cursor;->moveToFirst()Z
     move-result v0
     if-eqz v0, :L1
     invoke-interface { p0, v2 }, Landroid/database/Cursor;->getInt(I)I
     move-result v2
   :L1
-  .line 1072
+  .line 1118
     invoke-interface { p0 }, Landroid/database/Cursor;->close()V
-  .line 1070
+  .line 1116
     return v2
   :L2
-  .line 1072
+  .line 1118
     move-exception v0
     invoke-interface { p0 }, Landroid/database/Cursor;->close()V
-  .line 1073
+  .line 1119
     throw v0
 .end method
 
 .method private static cover(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;)Landroid/graphics/Bitmap;
-  .registers 10
-  .line 821
+  .registers 11
+  .line 833
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/PlGrid;->loading:Z
-  .line 822
+  .line 834
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->jpg(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v1
     invoke-virtual { v1 }, Ljava/io/File;->lastModified()J
     move-result-wide v1
-  .line 823
+  .line 835
     const-wide/16 v3, 0
     const/4 v5, 0
     cmp-long v6, v1, v3
     if-nez v6, :L0
     return-object v5
   :L0
-  .line 824
+  .line 836
     sget-object v3, Lcom/innioasis/ipp/PlGrid;->mem:Ljava/util/Hashtable;
     invoke-virtual { v3, p0 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, [Ljava/lang/Object;
-  .line 825
+  .line 837
     const/4 v4, 1
-    if-eqz v3, :L1
-    aget-object v0, v3, v0
-    check-cast v0, Ljava/lang/Long;
-    invoke-virtual { v0 }, Ljava/lang/Long;->longValue()J
+    if-eqz v3, :L2
+    aget-object v6, v3, v0
+    check-cast v6, Ljava/lang/Long;
+    invoke-virtual { v6 }, Ljava/lang/Long;->longValue()J
     move-result-wide v6
-    cmp-long v0, v6, v1
-    if-nez v0, :L1
+    cmp-long v8, v6, v1
+    if-nez v8, :L2
+  .line 839
+    aget-object v1, v3, v4
+    check-cast v1, Landroid/graphics/Bitmap;
+    invoke-static { v1 }, Lcom/innioasis/ipp/PlGrid;->oversized(Landroid/graphics/Bitmap;)Z
+    move-result v1
+    if-eqz v1, :L1
+    invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/PlGrid$Decoder;->want(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;Z)V
+  :L1
+  .line 840
     aget-object p0, v3, v4
     check-cast p0, Landroid/graphics/Bitmap;
     return-object p0
-  :L1
-  .line 826
-    sput-boolean v4, Lcom/innioasis/ipp/PlGrid;->loading:Z
-  .line 827
-    invoke-static { p0, p1, v4 }, Lcom/innioasis/ipp/PlGrid$Decoder;->want(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;Z)V
-  .line 828
-    if-nez v3, :L2
-    goto :L3
   :L2
+  .line 842
+    sput-boolean v4, Lcom/innioasis/ipp/PlGrid;->loading:Z
+  .line 843
+    invoke-static { p0, p1, v4 }, Lcom/innioasis/ipp/PlGrid$Decoder;->want(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;Z)V
+  .line 844
+    if-nez v3, :L3
+    goto :L4
+  :L3
     aget-object p0, v3, v4
     move-object v5, p0
     check-cast v5, Landroid/graphics/Bitmap;
-  :L3
+  :L4
     return-object v5
 .end method
 
@@ -725,21 +767,21 @@
     }
   .end annotation
   .registers 2
-  .line 1050
+  .line 1096
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->dbField:Ljava/lang/reflect/Field;
     if-nez v0, :L0
-  .line 1051
+  .line 1097
     const-class v0, Lcom/innioasis/y1/database/Y1Repository;
     const-string v1, "database"
     invoke-virtual { v0, v1 }, Ljava/lang/Class;->getDeclaredField(Ljava/lang/String;)Ljava/lang/reflect/Field;
     move-result-object v0
-  .line 1052
+  .line 1098
     const/4 v1, 1
     invoke-virtual { v0, v1 }, Ljava/lang/reflect/Field;->setAccessible(Z)V
-  .line 1053
+  .line 1099
     sput-object v0, Lcom/innioasis/ipp/PlGrid;->dbField:Ljava/lang/reflect/Field;
   :L0
-  .line 1055
+  .line 1101
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->dbField:Ljava/lang/reflect/Field;
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->repo()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v1
@@ -751,7 +793,7 @@
 
 .method static dir()Ljava/io/File;
   .registers 3
-  .line 794
+  .line 806
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
     move-result-object v1
@@ -762,7 +804,7 @@
 
 .method private static edge(I)I
   .registers 2
-  .line 676
+  .line 688
     const v0, 16777215
     and-int/2addr p0, v0
     const/high16 v0, 0x33000000
@@ -774,23 +816,23 @@
   .catchall { :L0 .. :L2 } :L4
   .catchall { :L5 .. :L6 } :L4
   .registers 4
-  .line 976
+  .line 1022
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->tried:Ljava/util/HashSet;
     monitor-enter v0
   :L0
-  .line 977
+  .line 1023
     invoke-virtual { v0, p0 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L1
     monitor-exit v0
     return-void
   :L1
-  .line 978
+  .line 1024
     invoke-virtual { v0, p0 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
-  .line 979
+  .line 1025
     monitor-exit v0
   :L2
-  .line 980
+  .line 1026
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->none(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/io/File;->exists()Z
@@ -798,16 +840,16 @@
     if-eqz v0, :L3
     return-void
   :L3
-  .line 981
+  .line 1027
     new-instance v0, Ljava/lang/Thread;
     new-instance v1, Lcom/innioasis/ipp/PlGrid$First;
     invoke-direct { v1, p0, p1 }, Lcom/innioasis/ipp/PlGrid$First;-><init>(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;)V
     invoke-direct { v0, v1 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 982
+  .line 1028
     return-void
   :L4
-  .line 979
+  .line 1025
     move-exception p0
   :L5
     monitor-exit v0
@@ -823,7 +865,7 @@
   .end annotation
   .catchall { :L0 .. :L1 } :L4
   .registers 4
-  .line 1059
+  .line 1105
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->db()Landroidx/room/RoomDatabase;
     move-result-object v0
     const/4 v1, 1
@@ -836,7 +878,7 @@
     invoke-virtual { v0, p0, v1 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
     move-result-object p0
   :L0
-  .line 1061
+  .line 1107
     invoke-interface { p0 }, Landroid/database/Cursor;->moveToFirst()Z
     move-result v0
     if-eqz v0, :L2
@@ -850,15 +892,15 @@
   :L2
     const/4 v0, 0
   :L3
-  .line 1063
+  .line 1109
     invoke-interface { p0 }, Landroid/database/Cursor;->close()V
-  .line 1061
+  .line 1107
     return-object v0
   :L4
-  .line 1063
+  .line 1109
     move-exception v0
     invoke-interface { p0 }, Landroid/database/Cursor;->close()V
-  .line 1064
+  .line 1110
     throw v0
 .end method
 
@@ -961,27 +1003,27 @@
 .method public static fromPhoto(Landroid/app/Activity;Ljava/lang/String;)V
   .catchall { :L0 .. :L4 } :L6
   .registers 6
-  .line 1201
+  .line 1247
     if-eqz p0, :L8
     if-nez p1, :L0
     goto :L8
   :L0
-  .line 1202
+  .line 1248
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->repo()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->getAllPlaylistSync()Ljava/util/List;
     move-result-object v0
-  .line 1203
+  .line 1249
     if-eqz v0, :L5
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
     if-eqz v1, :L1
     goto :L5
   :L1
-  .line 1204
+  .line 1250
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 1205
+  .line 1251
     const/4 v2, 0
   :L2
     invoke-interface { v0 }, Ljava/util/List;->size()I
@@ -996,7 +1038,7 @@
     add-int/lit8 v2, v2, 1
     goto :L2
   :L3
-  .line 1207
+  .line 1253
     new-instance v2, Lcom/innioasis/music/util/SubMenuDialog;
     new-instance v3, Lcom/innioasis/ipp/PlGrid$PhotoPick;
     invoke-direct { v3, p0, v0, p1 }, Lcom/innioasis/ipp/PlGrid$PhotoPick;-><init>(Landroid/app/Activity;Ljava/util/List;Ljava/lang/String;)V
@@ -1004,25 +1046,25 @@
     invoke-direct { v2, p0, v1, v3, p1 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
     invoke-virtual { v2 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
   :L4
-  .line 1209
+  .line 1255
     goto :L7
   :L5
-  .line 1203
+  .line 1249
     return-void
   :L6
-  .line 1208
+  .line 1254
     move-exception p0
   :L7
-  .line 1210
+  .line 1256
     return-void
   :L8
-  .line 1201
+  .line 1247
     return-void
 .end method
 
 .method public static hasCover(Ljava/lang/Object;)Z
   .registers 2
-  .line 929
+  .line 975
     instance-of v0, p0, Lcom/innioasis/y1/database/Playlist;
     if-eqz v0, :L0
     check-cast p0, Lcom/innioasis/y1/database/Playlist;
@@ -1044,7 +1086,7 @@
 .method public static hidden(Ljava/io/File;)Z
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 726
+  .line 738
     const/4 v0, 0
     if-eqz p0, :L3
   :L0
@@ -1061,18 +1103,18 @@
     const/4 v0, 1
     goto :L3
   :L2
-  .line 727
+  .line 739
     move-exception p0
-  .line 728
+  .line 740
     return v0
   :L3
-  .line 726
+  .line 738
     return v0
 .end method
 
 .method private static jpg(Ljava/util/UUID;)Ljava/io/File;
   .registers 4
-  .line 798
+  .line 810
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->dir()Ljava/io/File;
     move-result-object v1
@@ -1111,23 +1153,23 @@
 .method public static listRow(Landroid/view/View;)V
   .catchall { :L1 .. :L9 } :L10
   .registers 7
-  .line 693
+  .line 705
     if-nez p0, :L0
     return-void
   :L0
-  .line 694
+  .line 706
     const v0, 2131362491
   :L1
     invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 695
+  .line 707
     instance-of v1, v0, Landroid/widget/TextView;
     if-nez v1, :L2
     return-void
   :L2
-  .line 696
+  .line 708
     check-cast v0, Landroid/widget/TextView;
-  .line 698
+  .line 710
     const v1, 2131362561
     invoke-virtual { p0, v1 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object p0
@@ -1136,29 +1178,29 @@
     const/4 v1, 0
     const/4 v2, 0
     if-nez p0, :L4
-  .line 699
+  .line 711
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCompoundDrawables()[Landroid/graphics/drawable/Drawable;
     move-result-object p0
     aget-object p0, p0, v1
     if-eqz p0, :L3
     invoke-virtual { v0, v2, v2, v2, v2 }, Landroid/widget/TextView;->setCompoundDrawables(Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
   :L3
-  .line 700
+  .line 712
     return-void
   :L4
-  .line 702
+  .line 714
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result p0
-  .line 703
+  .line 715
     sget-object v3, Lcom/innioasis/ipp/PlGrid;->heartDrawable:Landroid/graphics/drawable/BitmapDrawable;
     if-eqz v3, :L5
     sget v3, Lcom/innioasis/ipp/PlGrid;->heartColor:I
     if-eq p0, v3, :L8
   :L5
-  .line 704
+  .line 716
     sget-object v3, Lcom/innioasis/ipp/PlGrid;->heart:Landroid/graphics/Bitmap;
     if-nez v3, :L6
-  .line 705
+  .line 717
     invoke-virtual { v0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
     move-result-object v3
     const v4, 2131623988
@@ -1166,58 +1208,58 @@
     move-result-object v3
     sput-object v3, Lcom/innioasis/ipp/PlGrid;->heart:Landroid/graphics/Bitmap;
   :L6
-  .line 707
+  .line 719
     sget-object v3, Lcom/innioasis/ipp/PlGrid;->heart:Landroid/graphics/Bitmap;
     if-nez v3, :L7
     return-void
   :L7
-  .line 708
+  .line 720
     new-instance v3, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getResources()Landroid/content/res/Resources;
     move-result-object v4
     sget-object v5, Lcom/innioasis/ipp/PlGrid;->heart:Landroid/graphics/Bitmap;
     invoke-direct { v3, v4, v5 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
-  .line 709
+  .line 721
     sget-object v4, Landroid/graphics/PorterDuff$Mode;->SRC_IN:Landroid/graphics/PorterDuff$Mode;
     invoke-virtual { v3, p0, v4 }, Landroid/graphics/drawable/BitmapDrawable;->setColorFilter(ILandroid/graphics/PorterDuff$Mode;)V
-  .line 710
+  .line 722
     sput-object v3, Lcom/innioasis/ipp/PlGrid;->heartDrawable:Landroid/graphics/drawable/BitmapDrawable;
-  .line 711
+  .line 723
     sput p0, Lcom/innioasis/ipp/PlGrid;->heartColor:I
   :L8
-  .line 713
+  .line 725
     invoke-virtual { v0 }, Landroid/widget/TextView;->getTextSize()F
     move-result p0
     invoke-static { p0 }, Ljava/lang/Math;->round(F)I
     move-result p0
-  .line 714
+  .line 726
     sget-object v3, Lcom/innioasis/ipp/PlGrid;->heartDrawable:Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { v3, v1, v1, p0, p0 }, Landroid/graphics/drawable/BitmapDrawable;->setBounds(IIII)V
-  .line 715
+  .line 727
     div-int/lit8 p0, p0, 4
     invoke-virtual { v0, p0 }, Landroid/widget/TextView;->setCompoundDrawablePadding(I)V
-  .line 716
+  .line 728
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCompoundDrawables()[Landroid/graphics/drawable/Drawable;
     move-result-object p0
     aget-object p0, p0, v1
     sget-object v1, Lcom/innioasis/ipp/PlGrid;->heartDrawable:Landroid/graphics/drawable/BitmapDrawable;
     if-eq p0, v1, :L9
-  .line 717
+  .line 729
     invoke-virtual { v0, v1, v2, v2, v2 }, Landroid/widget/TextView;->setCompoundDrawables(Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;Landroid/graphics/drawable/Drawable;)V
   :L9
-  .line 720
+  .line 732
     goto :L11
   :L10
-  .line 719
+  .line 731
     move-exception p0
   :L11
-  .line 721
+  .line 733
     return-void
 .end method
 
 .method static memBytes()J
   .registers 2
-  .line 809
+  .line 821
     new-instance v0, Ljava/util/ArrayList;
     sget-object v1, Lcom/innioasis/ipp/PlGrid;->mem:Ljava/util/Hashtable;
     invoke-virtual { v1 }, Ljava/util/Hashtable;->values()Ljava/util/Collection;
@@ -1232,7 +1274,7 @@
   .catchall { :L0 .. :L2 } :L4
   .registers 4
   :L0
-  .line 1103
+  .line 1149
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->on()Z
     move-result v0
     if-eqz v0, :L3
@@ -1240,9 +1282,9 @@
     if-nez v0, :L1
     goto :L3
   :L1
-  .line 1104
+  .line 1150
     check-cast p1, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
-  .line 1105
+  .line 1151
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectItem()Ljava/lang/Object;
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/PlGrid;->hasCover(Ljava/lang/Object;)Z
@@ -1253,26 +1295,26 @@
     move-result-object p1
     invoke-interface { p0, p1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L2
-  .line 1107
+  .line 1153
     goto :L5
   :L3
-  .line 1103
+  .line 1149
     return-void
   :L4
-  .line 1106
+  .line 1152
     move-exception p0
   :L5
-  .line 1108
+  .line 1154
     return-void
 .end method
 
 .method private static menuBg()I
   .registers 1
-  .line 733
+  .line 745
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuBGColor()Ljava/lang/Integer;
     move-result-object v0
-  .line 734
+  .line 746
     if-nez v0, :L0
     const v0, -7564110
     goto :L1
@@ -1287,14 +1329,14 @@
   .catchall { :L1 .. :L2 } :L3
   .catchall { :L6 .. :L10 } :L11
   .registers 6
-  .line 1112
+  .line 1158
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/M3u;->menuPick(Landroid/app/Activity;Ljava/lang/Object;Ljava/lang/String;)Z
     move-result v0
     const/4 v1, 1
     if-eqz v0, :L0
     return v1
   :L0
-  .line 1113
+  .line 1159
     if-eqz p0, :L5
     if-eqz p2, :L5
     const v0, 2131821158
@@ -1304,19 +1346,19 @@
     move-result v0
     if-eqz v0, :L5
   :L1
-  .line 1115
+  .line 1161
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->viewDialog(Landroid/app/Activity;)V
   :L2
-  .line 1117
+  .line 1163
     goto :L4
   :L3
-  .line 1116
+  .line 1162
     move-exception p0
   :L4
-  .line 1118
+  .line 1164
     return v1
   :L5
-  .line 1121
+  .line 1167
     const/4 v0, 0
     if-eqz p0, :L13
     if-eqz p2, :L13
@@ -1329,46 +1371,46 @@
     if-nez p2, :L7
     goto :L13
   :L7
-  .line 1124
+  .line 1170
     instance-of p2, p1, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     if-nez p2, :L8
     return v1
   :L8
-  .line 1125
+  .line 1171
     check-cast p1, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
-  .line 1126
+  .line 1172
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectItem()Ljava/lang/Object;
     move-result-object p2
-  .line 1127
+  .line 1173
     instance-of v2, p2, Lcom/innioasis/y1/database/Playlist;
     if-nez v2, :L9
     return v1
   :L9
-  .line 1128
+  .line 1174
     check-cast p2, Lcom/innioasis/y1/database/Playlist;
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Playlist;->getPlaylistId()Ljava/util/UUID;
     move-result-object p2
     invoke-static { p2 }, Lcom/innioasis/ipp/PlGrid;->reset(Ljava/util/UUID;)V
-  .line 1129
+  .line 1175
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
     move-result p2
     invoke-virtual { p1, p2 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
-  .line 1130
+  .line 1176
     const p1, 2131821139
     invoke-static { p0, p1, v0 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;II)Landroid/widget/Toast;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/widget/Toast;->show()V
   :L10
-  .line 1132
+  .line 1178
     goto :L12
   :L11
-  .line 1131
+  .line 1177
     move-exception p0
   :L12
-  .line 1133
+  .line 1179
     return v1
   :L13
-  .line 1122
+  .line 1168
     return v0
 .end method
 
@@ -1376,45 +1418,45 @@
   .catchall { :L0 .. :L2 } :L3
   .registers 4
   :L0
-  .line 781
+  .line 793
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->multiFields:Ljava/util/HashMap;
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v1
     invoke-virtual { v0, v1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Ljava/lang/reflect/Field;
-  .line 782
+  .line 794
     if-nez v1, :L1
-  .line 783
+  .line 795
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v1
     const-string v2, "isMultiSelect"
     invoke-virtual { v1, v2 }, Ljava/lang/Class;->getDeclaredField(Ljava/lang/String;)Ljava/lang/reflect/Field;
     move-result-object v1
-  .line 784
+  .line 796
     const/4 v2, 1
     invoke-virtual { v1, v2 }, Ljava/lang/reflect/Field;->setAccessible(Z)V
-  .line 785
+  .line 797
     invoke-virtual { p0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
     move-result-object v2
     invoke-virtual { v0, v2, v1 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L1
-  .line 787
+  .line 799
     invoke-virtual { v1, p0 }, Ljava/lang/reflect/Field;->getBoolean(Ljava/lang/Object;)Z
     move-result p0
   :L2
     return p0
   :L3
-  .line 788
+  .line 800
     move-exception p0
-  .line 789
+  .line 801
     const/4 p0, 0
     return p0
 .end method
 
 .method private static none(Ljava/util/UUID;)Ljava/io/File;
   .registers 4
-  .line 802
+  .line 814
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->dir()Ljava/io/File;
     move-result-object v1
@@ -1436,7 +1478,7 @@
   .catchall { :L3 .. :L5 } :L4
   .catchall { :L5 .. :L6 } :L6
   .registers 2
-  .line 1031
+  .line 1077
     if-eqz p0, :L8
   :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/Playlists;->isFav(Ljava/lang/Object;)Z
@@ -1449,46 +1491,46 @@
     if-eqz v0, :L1
     goto :L8
   :L1
-  .line 1032
+  .line 1078
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->count(Ljava/util/UUID;)I
     move-result v0
     if-eqz v0, :L2
     return-void
   :L2
-  .line 1033
+  .line 1079
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->none(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
-  .line 1035
+  .line 1081
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->tried:Ljava/util/HashSet;
     monitor-enter v0
   :L3
-  .line 1036
+  .line 1082
     invoke-virtual { v0, p0 }, Ljava/util/HashSet;->remove(Ljava/lang/Object;)Z
-  .line 1037
+  .line 1083
     monitor-exit v0
-  .line 1039
+  .line 1085
     goto :L7
   :L4
-  .line 1037
+  .line 1083
     move-exception p0
     monitor-exit v0
   :L5
     throw p0
   :L6
-  .line 1038
+  .line 1084
     move-exception p0
   :L7
-  .line 1040
+  .line 1086
     return-void
   :L8
-  .line 1031
+  .line 1077
     return-void
 .end method
 
 .method static noteMenu(Landroid/content/Context;)V
   .registers 1
-  .line 742
+  .line 754
     if-eqz p0, :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->multiMode(Landroid/content/Context;)Z
     move-result p0
@@ -1499,7 +1541,7 @@
     const/4 p0, 0
   :L1
     sput-boolean p0, Lcom/innioasis/ipp/PlGrid;->menuMulti:Z
-  .line 743
+  .line 755
     return-void
 .end method
 
@@ -1524,9 +1566,9 @@
 
 .method private static overEdge(I)I
   .registers 4
-  .line 681
+  .line 693
     nop
-  .line 682
+  .line 694
     invoke-static { p0 }, Landroid/graphics/Color;->red(I)I
     move-result v0
     mul-int/lit16 v0, v0, 204
@@ -1536,14 +1578,33 @@
     move-result v2
     mul-int/lit16 v2, v2, 204
     div-int/2addr v2, v1
-  .line 683
+  .line 695
     invoke-static { p0 }, Landroid/graphics/Color;->blue(I)I
     move-result p0
     mul-int/lit16 p0, p0, 204
     div-int/2addr p0, v1
-  .line 682
+  .line 694
     invoke-static { v1, v0, v2, p0 }, Landroid/graphics/Color;->argb(IIII)I
     move-result p0
+    return p0
+.end method
+
+.method private static oversized(Landroid/graphics/Bitmap;)Z
+  .registers 2
+  .line 848
+    invoke-static { }, Lcom/innioasis/ipp/Theme;->tileCardSide()I
+    move-result v0
+  .line 849
+    if-eqz p0, :L0
+    if-lez v0, :L0
+    invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result p0
+    if-le p0, v0, :L0
+    const/4 p0, 1
+    goto :L1
+  :L0
+    const/4 p0, 0
+  :L1
     return p0
 .end method
 
@@ -1582,7 +1643,7 @@
     invoke-static { p5 }, Lcom/innioasis/ipp/PlGrid;->edge(I)I
     move-result p4
   :L2
-    invoke-virtual { p1, p4 }, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
+    invoke-static { p1, p4 }, Lcom/innioasis/ipp/PlGrid;->cardColor(Landroidx/cardview/widget/CardView;I)V
   .line 634
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p4
@@ -1607,7 +1668,7 @@
     move-result-object p4
   :L6
   .line 636
-    if-eqz p4, :L7
+    if-eqz p4, :L9
   .line 637
     invoke-virtual { p2, v2 }, Landroid/widget/ImageView;->setBackgroundColor(I)V
   .line 638
@@ -1617,82 +1678,96 @@
   .line 640
     sget-object p0, Landroid/widget/ImageView$ScaleType;->CENTER_CROP:Landroid/widget/ImageView$ScaleType;
     invoke-virtual { p2, p0 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
-  .line 641
-    invoke-virtual { p2, p4 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   .line 642
-    return-void
+    invoke-virtual { p2 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
+    move-result-object p0
+    instance-of p0, p0, Landroid/graphics/drawable/BitmapDrawable;
+    if-eqz p0, :L7
+  .line 643
+    invoke-virtual { p2 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
+    move-result-object p0
+    check-cast p0, Landroid/graphics/drawable/BitmapDrawable;
+    invoke-virtual { p0 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
+    move-result-object p0
+    if-eq p0, p4, :L8
   :L7
-  .line 645
-    if-eqz p3, :L8
+  .line 644
+    invoke-virtual { p2, p4 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
+  :L8
+  .line 646
+    return-void
+  :L9
+  .line 649
+    if-eqz p3, :L10
     invoke-static { p3 }, Lcom/innioasis/ipp/Playlists;->isFav(Ljava/lang/Object;)Z
     move-result p4
-    if-eqz p4, :L8
+    if-eqz p4, :L10
     const/4 p4, 1
-    goto :L9
-  :L8
+    goto :L11
+  :L10
     const/4 p4, 0
-  :L9
-  .line 646
+  :L11
+  .line 650
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->menuBg()I
     move-result v1
     or-int/2addr v0, v1
     invoke-virtual { p2, v0 }, Landroid/widget/ImageView;->setBackgroundColor(I)V
-  .line 647
+  .line 651
     sget-boolean v0, Lcom/innioasis/ipp/PlGrid;->loading:Z
-    if-eqz v0, :L10
-  .line 649
+    if-eqz v0, :L12
+  .line 653
     invoke-virtual { p2, p5 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 650
+  .line 654
     return-void
-  :L10
-  .line 652
+  :L12
+  .line 656
     invoke-virtual { p1 }, Landroidx/cardview/widget/CardView;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object p1
-  .line 653
-    if-nez p1, :L11
-    goto :L12
-  :L11
-    iget p1, p1, Landroid/view/ViewGroup$LayoutParams;->width:I
-    div-int/lit8 v2, p1, 4
-  :L12
-  .line 654
-    invoke-virtual { p2, v2, v2, v2, v2 }, Landroid/widget/ImageView;->setPadding(IIII)V
-  .line 655
-    sget-object p1, Landroid/widget/ImageView$ScaleType;->FIT_CENTER:Landroid/widget/ImageView$ScaleType;
-    invoke-virtual { p2, p1 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
-  .line 656
-    if-eqz p4, :L13
-    const p1, 2131623988
+  .line 657
+    if-nez p1, :L13
     goto :L14
   :L13
-    const p1, 2131623994
+    iget p1, p1, Landroid/view/ViewGroup$LayoutParams;->width:I
+    div-int/lit8 v2, p1, 4
   :L14
+  .line 658
+    invoke-virtual { p2, v2, v2, v2, v2 }, Landroid/widget/ImageView;->setPadding(IIII)V
+  .line 659
+    sget-object p1, Landroid/widget/ImageView$ScaleType;->FIT_CENTER:Landroid/widget/ImageView$ScaleType;
+    invoke-virtual { p2, p1 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
+  .line 660
+    if-eqz p4, :L15
+    const p1, 2131623988
+    goto :L16
+  :L15
+    const p1, 2131623994
+  :L16
     invoke-virtual { p2, p1 }, Landroid/widget/ImageView;->setImageResource(I)V
-  .line 657
+  .line 661
     invoke-static { }, Lcom/innioasis/ipp/Icons;->progressColor()I
     move-result p1
-  .line 658
-    if-nez p1, :L15
+  .line 662
+    if-nez p1, :L17
     const/4 p1, -1
-  :L15
+  :L17
     sget-object p5, Landroid/graphics/PorterDuff$Mode;->SRC_IN:Landroid/graphics/PorterDuff$Mode;
     invoke-virtual { p2, p1, p5 }, Landroid/widget/ImageView;->setColorFilter(ILandroid/graphics/PorterDuff$Mode;)V
-  .line 660
-    if-eqz p0, :L16
-    goto :L17
-  :L16
+  .line 664
+    if-eqz p0, :L18
+    goto :L19
+  :L18
     invoke-static { }, Lcom/innioasis/ipp/PlGrid$Decoder;->grid()Landroidx/recyclerview/widget/RecyclerView;
     move-result-object p0
-  :L17
-  .line 661
-    if-eqz p3, :L18
-    if-nez p4, :L18
-    if-eqz p0, :L18
+  :L19
+  .line 665
+    if-eqz p3, :L20
+    if-nez p4, :L20
+    if-eqz p0, :L20
     invoke-virtual { p3 }, Lcom/innioasis/y1/database/Playlist;->getPlaylistId()Ljava/util/UUID;
     move-result-object p1
     invoke-static { p1, p0 }, Lcom/innioasis/ipp/PlGrid;->first(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;)V
-  :L18
-  .line 662
+  :L20
+  .line 666
     return-void
 .end method
 
@@ -1715,7 +1790,7 @@
 
 .method private static repo()Lcom/innioasis/y1/database/Y1Repository;
   .registers 1
-  .line 1043
+  .line 1089
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
@@ -1726,17 +1801,17 @@
   .catchall { :L0 .. :L2 } :L3
   .registers 3
   :L0
-  .line 964
+  .line 1010
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->jpg(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
-  .line 965
+  .line 1011
     sget-object v0, Lcom/innioasis/ipp/PlGrid;->mem:Ljava/util/Hashtable;
     invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 966
+  .line 1012
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->dir()Ljava/io/File;
     move-result-object v0
-  .line 967
+  .line 1013
     invoke-virtual { v0 }, Ljava/io/File;->isDirectory()Z
     move-result v1
     if-nez v1, :L1
@@ -1748,13 +1823,13 @@
     move-result-object p0
     invoke-virtual { p0 }, Ljava/io/File;->createNewFile()Z
   :L2
-  .line 969
+  .line 1015
     goto :L4
   :L3
-  .line 968
+  .line 1014
     move-exception p0
   :L4
-  .line 970
+  .line 1016
     return-void
 .end method
 
@@ -1902,13 +1977,13 @@
 .method public static songPick(Landroid/app/Activity;Ljava/lang/String;)Z
   .catchall { :L0 .. :L5 } :L8
   .registers 6
-  .line 1142
+  .line 1188
     const/4 v0, 1
   :L0
     instance-of v1, p0, Lcom/innioasis/music/PlayListActivity;
     if-eqz v1, :L7
     if-eqz p1, :L7
-  .line 1143
+  .line 1189
     const v1, 2131821136
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
@@ -1917,13 +1992,13 @@
     if-nez p1, :L1
     goto :L7
   :L1
-  .line 1146
+  .line 1192
     move-object p1, p0
     check-cast p1, Lcom/innioasis/music/PlayListActivity;
-  .line 1147
+  .line 1193
     invoke-virtual { p1 }, Lcom/innioasis/music/PlayListActivity;->getAdapter()Lcom/innioasis/music/adapter/SongListAdapter;
     move-result-object v1
-  .line 1148
+  .line 1194
     if-nez v1, :L2
     const/4 v1, 0
     goto :L3
@@ -1933,16 +2008,16 @@
     invoke-virtual { v1, v2 }, Lcom/innioasis/music/adapter/SongListAdapter;->getItem(I)Ljava/lang/Object;
     move-result-object v1
   :L3
-  .line 1149
+  .line 1195
     invoke-virtual { p1 }, Lcom/innioasis/music/PlayListActivity;->getPlaylist()Lcom/innioasis/y1/database/Playlist;
     move-result-object p1
-  .line 1150
+  .line 1196
     instance-of v2, v1, Lcom/innioasis/y1/database/Song;
     if-eqz v2, :L6
     if-nez p1, :L4
     goto :L6
   :L4
-  .line 1151
+  .line 1197
     new-instance v2, Ljava/lang/Thread;
     new-instance v3, Lcom/innioasis/ipp/PlGrid$FromSong;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Playlist;->getPlaylistId()Ljava/util/UUID;
@@ -1954,20 +2029,20 @@
     invoke-direct { v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;)V
     invoke-virtual { v2 }, Ljava/lang/Thread;->start()V
   :L5
-  .line 1153
+  .line 1199
     goto :L9
   :L6
-  .line 1150
+  .line 1196
     return v0
   :L7
-  .line 1144
+  .line 1190
     const/4 p0, 0
     return p0
   :L8
-  .line 1152
+  .line 1198
     move-exception p0
   :L9
-  .line 1154
+  .line 1200
     return v0
 .end method
 
@@ -2016,17 +2091,17 @@
   .catchall { :L7 .. :L11 } :L16
   .catchall { :L19 .. :L20 } :L21
   .registers 9
-  .line 934
+  .line 980
     const/4 v0, 0
     if-eqz p0, :L24
     if-nez p1, :L0
     goto/16 :L24
   :L0
-  .line 935
+  .line 981
     nop
-  .line 936
+  .line 982
     nop
-  .line 938
+  .line 984
     const/4 v1, 0
   :L1
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getWidth()I
@@ -2038,36 +2113,36 @@
     const/16 v3, 200
     invoke-static { v3, v2 }, Ljava/lang/Math;->min(II)I
     move-result v2
-  .line 939
+  .line 985
     invoke-static { p1, v2 }, Lcom/innioasis/ipp/Cover;->square(Landroid/graphics/Bitmap;I)Landroid/graphics/Bitmap;
     move-result-object v2
-  .line 940
+  .line 986
     if-nez v2, :L2
-  .line 956
+  .line 1002
     nop
-  .line 957
+  .line 1003
     nop
-  .line 940
+  .line 986
     return v0
   :L2
-  .line 941
+  .line 987
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->dir()Ljava/io/File;
     move-result-object v3
-  .line 942
+  .line 988
     invoke-virtual { v3 }, Ljava/io/File;->isDirectory()Z
     move-result v4
     if-nez v4, :L3
     invoke-virtual { v3 }, Ljava/io/File;->mkdirs()Z
     move-result v4
     if-nez v4, :L3
-  .line 956
+  .line 1002
     nop
-  .line 957
+  .line 1003
     nop
-  .line 942
+  .line 988
     return v0
   :L3
-  .line 943
+  .line 989
     new-instance v4, Ljava/io/File;
     new-instance v5, Ljava/lang/StringBuilder;
     invoke-direct { v5 }, Ljava/lang/StringBuilder;-><init>()V
@@ -2080,29 +2155,29 @@
     move-result-object v5
     invoke-direct { v4, v3, v5 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
   :L4
-  .line 944
+  .line 990
     new-instance v3, Ljava/io/FileOutputStream;
     invoke-direct { v3, v4 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L5
-  .line 945
+  .line 991
     sget-object v5, Landroid/graphics/Bitmap$CompressFormat;->JPEG:Landroid/graphics/Bitmap$CompressFormat;
     const/16 v6, 85
     invoke-virtual { v2, v5, v6, v3 }, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
     move-result v5
-  .line 946
+  .line 992
     invoke-virtual { v3 }, Ljava/io/FileOutputStream;->close()V
   :L6
-  .line 947
+  .line 993
     nop
-  .line 948
+  .line 994
     if-eq v2, p1, :L8
   :L7
     invoke-virtual { v2 }, Landroid/graphics/Bitmap;->recycle()V
   :L8
-  .line 949
+  .line 995
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->jpg(Ljava/util/UUID;)Ljava/io/File;
     move-result-object p1
-  .line 950
+  .line 996
     if-eqz v5, :L13
     invoke-virtual { p1 }, Ljava/io/File;->exists()Z
     move-result v2
@@ -2116,37 +2191,37 @@
     if-nez p1, :L10
     goto :L13
   :L10
-  .line 951
+  .line 997
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->none(Ljava/util/UUID;)Ljava/io/File;
     move-result-object p0
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L11
-  .line 952
+  .line 998
     nop
-  .line 956
+  .line 1002
     nop
-  .line 957
+  .line 1003
     invoke-virtual { v4 }, Ljava/io/File;->exists()Z
     move-result p0
     if-eqz p0, :L12
     invoke-virtual { v4 }, Ljava/io/File;->delete()Z
   :L12
-  .line 952
+  .line 998
     const/4 p0, 1
     return p0
   :L13
-  .line 956
+  .line 1002
     nop
-  .line 957
+  .line 1003
     invoke-virtual { v4 }, Ljava/io/File;->exists()Z
     move-result p0
     if-eqz p0, :L14
     invoke-virtual { v4 }, Ljava/io/File;->delete()Z
   :L14
-  .line 950
+  .line 996
     return v0
   :L15
-  .line 953
+  .line 999
     move-exception p0
     move-object v1, v3
     goto :L18
@@ -2157,9 +2232,9 @@
     move-exception p0
     move-object v4, v1
   :L18
-  .line 954
+  .line 1000
     nop
-  .line 956
+  .line 1002
     if-eqz v1, :L22
   :L19
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
@@ -2168,16 +2243,16 @@
   :L21
     move-exception p0
   :L22
-  .line 957
+  .line 1003
     if-eqz v4, :L23
     invoke-virtual { v4 }, Ljava/io/File;->exists()Z
     move-result p0
     if-eqz p0, :L23
     invoke-virtual { v4 }, Ljava/io/File;->delete()Z
   :L23
-  .line 954
+  .line 1000
     return v0
   :L24
-  .line 934
+  .line 980
     return v0
 .end method

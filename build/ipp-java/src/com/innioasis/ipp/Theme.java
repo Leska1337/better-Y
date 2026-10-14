@@ -350,6 +350,11 @@ public final class Theme {
         return c == 0 ? TILE_FRAME : c;
     }
 
+    /** The card's side as tileFit last made it, 0 before the first tile: a cover is decoded to it. */
+    public static int tileCardSide() {
+        return fitSide > TILE_INSET ? fitSide - TILE_INSET : 0;
+    }
+
     /** EVEN on purpose: an odd inset is split 3/2 and the cover seems to jump a pixel on focus. */
     private static final int TILE_INSET = 6;
 
