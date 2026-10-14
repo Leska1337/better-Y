@@ -28,6 +28,7 @@ import com.innioasis.music.adapter.rv.RVBaseAdapter;
 import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
+import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.database.Playlist;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
@@ -38,6 +39,7 @@ import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -150,15 +152,45 @@ public final class PlGrid {
 
     /** Entering the grid: files of deleted playlists go, every cover is decoded ahead. */
     private static void prepare(RecyclerView rv) {
+        cursor(rv);
+        Decoder.attach(rv);
+        new Thread(new Prepare(rv), "ipp-pl-prepare").start();
+    }
+
+    /**
+     * A grid of tiles, this one or the theme gallery: rows that glide, the cursor's frame drawn
+     * over the tiles ({@link Mover}) and tiles made ahead into the pool.
+     */
+    public static void cursor(RecyclerView rv) {
+        if (rv == null) return;
         Wheel.glides(rv, true);
         if (movers.get(rv) == null) {
             Mover m = new Mover();
             movers.put(rv, m);
             rv.addItemDecoration(m);
         }
-        Decoder.attach(rv);
-        new Thread(new Prepare(rv), "ipp-pl-prepare").start();
         rv.postDelayed(new Warm(rv), WARM_MS);
+    }
+
+    /** The tile under the cursor: a Playlists adapter keeps it, the theme gallery's screen does. */
+    static int cursorAt(RecyclerView rv) {
+        RecyclerView.Adapter a = rv.getAdapter();
+        if (a instanceof RVBaseAdapter) return ((RVBaseAdapter) a).getSelectPosition();
+        Context c = rv.getContext();
+        return c instanceof BaseActivity ? ((BaseActivity) c).getMark() : -1;
+    }
+
+    /** The theme gallery's frame under the cursor: its own only in the multi-selection. */
+    public static int cursorFrame(View frame) {
+        if (frame == null) return 0;
+        // a tile repainted alone does not redraw the list, and the list is what draws the frame
+        for (View v = frame; v != null; v = v.getParent() instanceof View ? (View) v.getParent() : null) {
+            if (v instanceof RecyclerView) {
+                v.invalidate();
+                break;
+            }
+        }
+        return multiMode(frame.getContext()) ? Theme.tileFrame() : 0;
     }
 
     /** After the grid's first frames, while it stands: first-time tiles are no work of a glide. */
@@ -201,8 +233,8 @@ public final class PlGrid {
         public void run() {
             try {
                 RecyclerView r = (RecyclerView) rv.get();
-                if (r == null || !(r.getAdapter() instanceof RVBaseAdapter) || !Loop.on()) return;
-                int sel = ((RVBaseAdapter) r.getAdapter()).getSelectPosition();
+                if (r == null || r.getAdapter() == null || !Loop.on()) return;
+                int sel = cursorAt(r);
                 int n = r.getAdapter().getItemCount();
                 if ((sel == 0 || sel == n - 1) && Wheel.Glider.left(r) == 0) collect();
             } catch (Throwable t) {
@@ -384,14 +416,15 @@ public final class PlGrid {
                 drawn = SystemClock.uptimeMillis();
                 Context ctx = rv.getContext();
                 RecyclerView.Adapter a = rv.getAdapter();
-                if (!(a instanceof RVBaseAdapter) || multiMode(ctx) || menuMulti) {
+                if (a == null || multiMode(ctx) || a instanceof RVBaseAdapter && menuMulti) {
                     has = false;
                     leg = false;
                     fa = 1f;
                     return;
                 }
+                Theme.tilesAhead(rv);
                 measure(rv);
-                int sel = ((RVBaseAdapter) a).getSelectPosition();
+                int sel = cursorAt(rv);
                 View tile = rv.getLayoutManager() == null ? null
                         : rv.getLayoutManager().findViewByPosition(sel);
                 View f = tile == null ? null : tile.findViewById(R.id.img_sel);
@@ -408,7 +441,8 @@ public final class PlGrid {
                     w = f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
                     h = f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
                     edge = Math.max(1f, cb[0] - fb[0]);
-                    rim = Math.max(0f, ib[0] - cb[0]);
+                    // the copy of the card's edge only where the edge is ours: a theme's card is opaque
+                    rim = card.getTag(R.id.ipp_pl_cover) == null ? 0f : Math.max(0f, ib[0] - cb[0]);
                     radius = ((CardView) f).getRadius();
                     inner = ((CardView) card).getRadius();
                 } else if (has) {
@@ -588,7 +622,7 @@ public final class PlGrid {
     private static void paint(View row, CardView card, ImageView img, Playlist p, boolean sel,
                               int ring) {
         if (img.getTag(R.id.ipp_pl_cover) == null) {
-            // item_theme.xml caps the picture at 100x75 for a theme's 4:3 preview; a cover is
+            // ipp_pl_tile.xml caps the picture at 100x75 for a theme's 4:3 preview; a cover is
             // square and fills the card
             img.setTag(R.id.ipp_pl_cover, Boolean.TRUE);
             img.setAdjustViewBounds(false);
@@ -738,17 +772,19 @@ public final class PlGrid {
         }
     }
 
-    private static Field multiField;
+    /** Per screen class: the grid of Playlists and the theme gallery each keep their own field. */
+    private static final HashMap multiFields = new HashMap();
 
     /** The screen's own {@code isMultiSelect}: private, and its accessor is a synthetic. */
     private static boolean multiMode(Context c) {
         try {
-            if (multiField == null) {
-                Field f = c.getClass().getDeclaredField("isMultiSelect");
+            Field f = (Field) multiFields.get(c.getClass());
+            if (f == null) {
+                f = c.getClass().getDeclaredField("isMultiSelect");
                 f.setAccessible(true);
-                multiField = f;
+                multiFields.put(c.getClass(), f);
             }
-            return multiField.getBoolean(c);
+            return f.getBoolean(c);
         } catch (Throwable t) {
             return false;
         }

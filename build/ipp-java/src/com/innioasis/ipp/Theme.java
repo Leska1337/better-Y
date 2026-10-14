@@ -2,6 +2,7 @@ package com.innioasis.ipp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,6 +19,7 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.R;
+import com.innioasis.y1.activity.theme.ThemeListActivity;
 import com.innioasis.y1.databinding.ItemSettingBinding;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.theme.ThemeManager;
@@ -27,7 +29,10 @@ import com.innioasis.y1.theme.config.MenuConfig;
 
 import java.io.File;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Theme questions and theme-coloured bits of stock screens (tiles, Brightness, the theme gallery).
@@ -320,7 +325,7 @@ public final class Theme {
         }
     }
 
-    /** {@code item_theme.xml}'s colours. */
+    /** {@code ipp_pl_tile.xml}'s colours. */
     private static final int TILE_TEXT = 0xCCFFFFFF;
     private static final int TILE_FRAME = 0xFF36C6FF;
 
@@ -419,11 +424,84 @@ public final class Theme {
         v.setLayoutParams(lp);
     }
 
-    /** Empties a tile rebound for a DIFFERENT theme; the same theme keeps its picture (no flicker). */
-    public static void tileCover(ImageView iv, String path) {
-        if (iv == null) return;
+    /**
+     * A tile rebound for a DIFFERENT theme shows that theme's cover read ahead, or nothing until
+     * Glide's arrives; the same theme keeps its picture. Rows gliding round the list's end rebind
+     * every tile they bring in, and an emptied one blinked. True = the cover came from memory and
+     * the gallery skips Glide.
+     */
+    public static boolean tileCover(ImageView iv, String path) {
+        if (iv == null) return false;
+        Bitmap b = path == null ? null : (Bitmap) covers.get(path);
         Object was = iv.getTag();
-        if (was == null || !was.equals(path)) iv.setImageDrawable(null);
+        if (was == null || !was.equals(path)) {
+            iv.setImageDrawable(b == null ? null : new BitmapDrawable(iv.getResources(), b));
+        } else if (b != null && !(iv.getDrawable() instanceof BitmapDrawable
+                && ((BitmapDrawable) iv.getDrawable()).getBitmap() == b)) {
+            // the same theme with Glide's picture or none yet: from now on ours
+            iv.setImageDrawable(new BitmapDrawable(iv.getResources(), b));
+        }
         iv.setTag(path);
+        return b != null;
+    }
+
+    /** Theme path -> its cover at the size Glide loads it for the gallery. */
+    private static final java.util.Hashtable covers = new java.util.Hashtable();
+    private static final int COVER_W = 80;
+    private static final int COVER_H = 60;
+    private static WeakReference coversFor = new WeakReference(null);
+
+    /**
+     * Once per gallery, from the first frame of the grid that has themes in it (it is filled
+     * from the card, later the first time): every theme's cover read off the main thread.
+     */
+    public static void tilesAhead(RecyclerView rv) {
+        try {
+            RecyclerView.Adapter a = rv == null ? null : rv.getAdapter();
+            if (!(a instanceof com.chad.library.adapter.base.BaseQuickAdapter) || coversFor.get() == a) return;
+            List data = ((com.chad.library.adapter.base.BaseQuickAdapter) a).getData();
+            if (data == null || data.isEmpty()) return;        // not filled yet: the next call
+            coversFor = new WeakReference(a);
+            ArrayList todo = new ArrayList();
+            for (int i = 0; data != null && i < data.size(); i++) {
+                Object o = data.get(i);
+                if (!(o instanceof ThemeListActivity.Item)) continue;
+                ThemeListActivity.Item it = (ThemeListActivity.Item) o;
+                if (it.getPicturePath().trim().length() == 0 || covers.get(it.getPath()) != null) continue;
+                todo.add(new String[] {it.getPath(), it.getPicturePath()});
+            }
+            if (!todo.isEmpty()) new Thread(new Covers(todo), "ipp-theme-covers").start();
+        } catch (Throwable t) {
+        }
+    }
+
+    static final class Covers implements Runnable {
+        private final List todo;
+        Covers(List todo) { this.todo = todo; }
+        public void run() {
+            for (int i = 0; i < todo.size(); i++) {
+                String[] p = (String[]) todo.get(i);
+                try {
+                    BitmapFactory.Options o = new BitmapFactory.Options();
+                    o.inJustDecodeBounds = true;
+                    BitmapFactory.decodeFile(p[1], o);
+                    if (o.outWidth <= 0 || o.outHeight <= 0) continue;
+                    int s = 1;
+                    while (o.outWidth / (s * 2) >= COVER_W && o.outHeight / (s * 2) >= COVER_H) s *= 2;
+                    o = new BitmapFactory.Options();
+                    o.inSampleSize = s;
+                    Bitmap b = BitmapFactory.decodeFile(p[1], o);
+                    if (b == null) continue;
+                    // as Glide sizes it: covering COVER_W x COVER_H, the shape kept
+                    float k = Math.max((float) COVER_W / b.getWidth(), (float) COVER_H / b.getHeight());
+                    int w = Math.max(1, Math.round(b.getWidth() * k));
+                    int h = Math.max(1, Math.round(b.getHeight() * k));
+                    Bitmap c = Bitmap.createScaledBitmap(b, w, h, true);
+                    if (c != b) b.recycle();
+                    covers.put(p[0], c);
+                } catch (Throwable t) {
+                }
+            }
+        }
     }
 }

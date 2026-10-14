@@ -598,9 +598,8 @@ public final class Wheel {
             }
             rv.stopScroll();
             left = d;
-            total = Math.abs(d);
             if (wrapping) {
-                Frames.start("playlists wrap");
+                Frames.start("grid wrap");
                 if (!counting) android.os.Debug.startAllocCounting();
                 counting = true;
                 alloc = android.os.Debug.getThreadAllocSize();
@@ -616,11 +615,7 @@ public final class Wheel {
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
-            total = 0;
         }
-
-        /** The distance of the latest target. */
-        private static float total;
 
         /** What the main thread had allocated when a glide round the list's end set out. */
         private static int alloc;
@@ -638,17 +633,11 @@ public final class Wheel {
             return running && view.get() == rv ? left : 0f;
         }
 
-        /** Share of the latest glide of {@code rv} done, 0 to 1; -1 when there is none to follow. */
-        static float done(RecyclerView rv) {
-            return view.get() != rv || total < 1f ? -1f : 1f - Math.abs(left) / total;
-        }
-
         public void doFrame(long nanos) {
             RecyclerView rv = (RecyclerView) view.get();
             if (rv == null || rv.getWindowToken() == null || left == 0) {
                 running = false;
                 left = 0;
-                total = 0;
                 measured();
                 return;
             }
@@ -664,12 +653,8 @@ public final class Wheel {
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            // the list's end stops the scroll short: nothing is left to do there, and no share
-            // of the way to report
-            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) {
-                if (Math.abs(left) >= 1f) total = 0;
-                left = 0;
-            }
+            // the list's end stops the scroll short: nothing is left to do there
+            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) left = 0;
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {

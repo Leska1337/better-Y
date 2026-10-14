@@ -88,27 +88,27 @@
 
 .method constructor <init>()V
   .registers 3
-  .line 253
+  .line 285
     invoke-direct { p0 }, Landroidx/recyclerview/widget/RecyclerView$ItemDecoration;-><init>()V
-  .line 258
+  .line 290
     new-instance v0, Landroid/graphics/Paint;
     const/4 v1, 1
     invoke-direct { v0, v1 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->paint:Landroid/graphics/Paint;
-  .line 260
+  .line 292
     new-instance v0, Landroid/graphics/RectF;
     invoke-direct { v0 }, Landroid/graphics/RectF;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->draw:Landroid/graphics/RectF;
-  .line 261
+  .line 293
     new-instance v0, Landroid/graphics/Path;
     invoke-direct { v0 }, Landroid/graphics/Path;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
-  .line 267
+  .line 299
     iput v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->span:I
-  .line 269
+  .line 301
     const/high16 v0, 0x3F800000
     iput v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
-  .line 275
+  .line 307
     new-instance v0, Landroid/graphics/Paint;
     invoke-direct { v0 }, Landroid/graphics/Paint;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->fade:Landroid/graphics/Paint;
@@ -117,7 +117,7 @@
 
 .method private static box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
   .registers 6
-  .line 353
+  .line 385
     if-eqz p3, :L0
     invoke-virtual { p0 }, Landroid/view/View;->getPaddingLeft()I
     move-result v0
@@ -136,35 +136,35 @@
   :L3
     add-int/2addr p3, p2
     int-to-float p2, p3
-  .line 354
+  .line 386
     nop
   :L4
     if-eqz p0, :L6
     if-eq p0, p1, :L6
-  .line 355
+  .line 387
     invoke-virtual { p0 }, Landroid/view/View;->getLeft()I
     move-result p3
     int-to-float p3, p3
     add-float/2addr v0, p3
-  .line 356
+  .line 388
     invoke-virtual { p0 }, Landroid/view/View;->getTop()I
     move-result p3
     int-to-float p3, p3
     add-float/2addr p2, p3
-  .line 357
+  .line 389
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p3
     instance-of p3, p3, Landroid/view/View;
     if-nez p3, :L5
     goto :L6
   :L5
-  .line 354
+  .line 386
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p0
     check-cast p0, Landroid/view/View;
     goto :L4
   :L6
-  .line 359
+  .line 391
     const/4 p0, 2
     new-array p0, p0, [F
     aput v0, p0, v1
@@ -175,7 +175,7 @@
 
 .method private frame(Landroid/graphics/Canvas;FFI)V
   .registers 13
-  .line 319
+  .line 351
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
     if-eqz v0, :L0
     iget v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pw:F
@@ -205,7 +205,7 @@
     cmpl-float v0, v0, v1
     if-eqz v0, :L6
   :L0
-  .line 321
+  .line 353
     iget v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->w:F
     float-to-double v0, v0
     invoke-static { v0, v1 }, Ljava/lang/Math;->ceil(D)D
@@ -216,12 +216,12 @@
     invoke-static { v1, v2 }, Ljava/lang/Math;->ceil(D)D
     move-result-wide v1
     double-to-int v1, v1
-  .line 322
+  .line 354
     if-lez v0, :L9
     if-gtz v1, :L1
     goto/16 :L9
   :L1
-  .line 323
+  .line 355
     iget-object v2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
     if-eqz v2, :L3
     invoke-virtual { v2 }, Landroid/graphics/Bitmap;->getWidth()I
@@ -233,29 +233,29 @@
     if-eq v2, v1, :L2
     goto :L3
   :L2
-  .line 326
+  .line 358
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Landroid/graphics/Bitmap;->eraseColor(I)V
     goto :L4
   :L3
-  .line 324
+  .line 356
     sget-object v2, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
     invoke-static { v0, v1, v2 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v0
     iput-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
   :L4
-  .line 328
+  .line 360
     new-instance v0, Landroid/graphics/Canvas;
     iget-object v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
     invoke-direct { v0, v1 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
-  .line 329
+  .line 361
     iget-object v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->draw:Landroid/graphics/RectF;
     iget v2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->w:F
     iget v3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->h:F
     const/4 v7, 0
     invoke-virtual { v1, v7, v7, v2, v3 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 330
+  .line 362
     iget v3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->edge:F
     iget v4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->radius:F
     iget v5, p0, Lcom/innioasis/ipp/PlGrid$Mover;->inner:F
@@ -263,7 +263,7 @@
     move-object v2, v0
     move v6, p4
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/ipp/PlGrid$Mover;->ring(Landroid/graphics/Canvas;FFFI)V
-  .line 331
+  .line 363
     iget v3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->rim:F
     cmpl-float v1, v3, v7
     if-lez v1, :L5
@@ -277,7 +277,7 @@
     move-object v2, v0
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/ipp/PlGrid$Mover;->ring(Landroid/graphics/Canvas;FFFI)V
   :L5
-  .line 332
+  .line 364
     iget v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->w:F
     iput v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pw:F
     iget v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->h:F
@@ -292,7 +292,7 @@
     iget p4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->inner:F
     iput p4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pIn:F
   :L6
-  .line 334
+  .line 366
     iget-object p4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->fade:Landroid/graphics/Paint;
     const/high16 v0, 0x437F0000
     iget v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
@@ -300,7 +300,7 @@
     invoke-static { v1 }, Ljava/lang/Math;->round(F)I
     move-result v0
     invoke-virtual { p4, v0 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 335
+  .line 367
     iget-object p4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pic:Landroid/graphics/Bitmap;
     invoke-static { p2 }, Ljava/lang/Math;->round(F)I
     move-result p2
@@ -318,26 +318,26 @@
     const/4 v0, 0
   :L8
     invoke-virtual { p1, p4, p2, p3, v0 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
-  .line 336
+  .line 368
     return-void
   :L9
-  .line 322
+  .line 354
     return-void
 .end method
 
 .method private static glide(FFF)F
   .registers 6
-  .line 364
+  .line 396
     sub-float v0, p1, p0
     invoke-static { v0 }, Ljava/lang/Math;->abs(F)F
     move-result v1
-  .line 365
+  .line 397
     const/high16 v2, 0x3F800000
     cmpg-float v2, v1, v2
     if-gez v2, :L0
     return p1
   :L0
-  .line 366
+  .line 398
     const/high16 p1, 0x41B00000
     mul-float p1, p1, v1
     const v2, 1169915904
@@ -349,7 +349,7 @@
     mul-float p1, p1, p2
     invoke-static { v1, p1 }, Ljava/lang/Math;->min(FF)F
     move-result p1
-  .line 367
+  .line 399
     const/4 p2, 0
     cmpl-float p2, v0, p2
     if-lez p2, :L1
@@ -363,10 +363,10 @@
 
 .method private measure(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 7
-  .line 283
+  .line 315
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v0
-  .line 284
+  .line 316
     instance-of v1, v0, Landroidx/recyclerview/widget/GridLayoutManager;
     if-eqz v1, :L0
     move-object v1, v0
@@ -378,31 +378,31 @@
     const/4 v1, 1
   :L1
     iput v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->span:I
-  .line 285
+  .line 317
     const/4 v1, 0
   :L2
     if-eqz v0, :L4
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v2
     if-ge v1, v2, :L4
-  .line 286
+  .line 318
     invoke-virtual { p1, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v2
-  .line 287
+  .line 319
     invoke-virtual { p1, v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildLayoutPosition(Landroid/view/View;)I
     move-result v3
-  .line 288
+  .line 320
     const/4 v4, -1
     if-ne v3, v4, :L3
-  .line 285
+  .line 317
     add-int/lit8 v1, v1, 1
     goto :L2
   :L3
-  .line 289
+  .line 321
     invoke-virtual { v2 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object p1
     check-cast p1, Landroid/view/ViewGroup$MarginLayoutParams;
-  .line 290
+  .line 322
     invoke-virtual { v0, v2 }, Landroidx/recyclerview/widget/RecyclerView$LayoutManager;->getDecoratedMeasuredHeight(Landroid/view/View;)I
     move-result v1
     iget v4, p1, Landroid/view/ViewGroup$MarginLayoutParams;->topMargin:I
@@ -410,7 +410,7 @@
     iget v4, p1, Landroid/view/ViewGroup$MarginLayoutParams;->bottomMargin:I
     add-int/2addr v1, v4
     iput v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->pitch:I
-  .line 291
+  .line 323
     iget v4, p0, Lcom/innioasis/ipp/PlGrid$Mover;->span:I
     div-int/2addr v3, v4
     mul-int v3, v3, v1
@@ -420,32 +420,32 @@
     sub-int/2addr v0, p1
     sub-int/2addr v3, v0
     iput v3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
-  .line 292
+  .line 324
     return-void
   :L4
-  .line 294
+  .line 326
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->computeVerticalScrollOffset()I
     move-result p1
     iput p1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
-  .line 295
+  .line 327
     return-void
 .end method
 
 .method private project(Landroidx/recyclerview/widget/RecyclerView;I)[F
   .registers 8
-  .line 299
+  .line 331
     const/4 v0, 0
   :L0
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v1
     if-ge v0, v1, :L4
-  .line 300
+  .line 332
     invoke-virtual { p1, v0 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v1
-  .line 301
+  .line 333
     invoke-virtual { p1, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildLayoutPosition(Landroid/view/View;)I
     move-result v2
-  .line 302
+  .line 334
     const/4 v3, -1
     if-eq v2, v3, :L3
     iget v3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->span:I
@@ -454,20 +454,20 @@
     if-eq v4, v3, :L1
     goto :L3
   :L1
-  .line 303
+  .line 335
     const v3, 2131362091
     invoke-virtual { v1, v3 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 304
+  .line 336
     if-nez v1, :L2
     goto :L3
   :L2
-  .line 305
+  .line 337
     iget v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
     const/4 v3, 1
     invoke-static { v1, p1, v0, v3 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
     move-result-object p1
-  .line 306
+  .line 338
     aget v0, p1, v3
     iget v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->span:I
     div-int/2addr p2, v1
@@ -478,21 +478,21 @@
     int-to-float p2, p2
     add-float/2addr v0, p2
     aput v0, p1, v3
-  .line 307
+  .line 339
     return-object p1
   :L3
-  .line 299
+  .line 331
     add-int/lit8 v0, v0, 1
     goto :L0
   :L4
-  .line 309
+  .line 341
     const/4 p1, 0
     return-object p1
 .end method
 
 .method private rested(Z)Z
   .registers 3
-  .line 342
+  .line 374
     iget-boolean v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->was:Z
     if-eqz v0, :L0
     if-nez p1, :L0
@@ -501,148 +501,150 @@
   :L0
     const/4 v0, 0
   :L1
-  .line 343
+  .line 375
     iput-boolean p1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->was:Z
-  .line 344
+  .line 376
     return v0
 .end method
 
 .method private ring(Landroid/graphics/Canvas;FFFI)V
   .registers 9
-  .line 372
+  .line 404
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
     invoke-virtual { v0 }, Landroid/graphics/Path;->reset()V
-  .line 373
+  .line 405
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
     sget-object v1, Landroid/graphics/Path$FillType;->EVEN_ODD:Landroid/graphics/Path$FillType;
     invoke-virtual { v0, v1 }, Landroid/graphics/Path;->setFillType(Landroid/graphics/Path$FillType;)V
-  .line 374
+  .line 406
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
     iget-object v1, p0, Lcom/innioasis/ipp/PlGrid$Mover;->draw:Landroid/graphics/RectF;
     sget-object v2, Landroid/graphics/Path$Direction;->CW:Landroid/graphics/Path$Direction;
     invoke-virtual { v0, v1, p3, p3, v2 }, Landroid/graphics/Path;->addRoundRect(Landroid/graphics/RectF;FFLandroid/graphics/Path$Direction;)V
-  .line 375
+  .line 407
     iget-object p3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->draw:Landroid/graphics/RectF;
     invoke-virtual { p3, p2, p2 }, Landroid/graphics/RectF;->inset(FF)V
-  .line 376
+  .line 408
     iget-object p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
     iget-object p3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->draw:Landroid/graphics/RectF;
     sget-object v0, Landroid/graphics/Path$Direction;->CW:Landroid/graphics/Path$Direction;
     invoke-virtual { p2, p3, p4, p4, v0 }, Landroid/graphics/Path;->addRoundRect(Landroid/graphics/RectF;FFLandroid/graphics/Path$Direction;)V
-  .line 377
+  .line 409
     iget-object p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->paint:Landroid/graphics/Paint;
     invoke-virtual { p2, p5 }, Landroid/graphics/Paint;->setColor(I)V
-  .line 378
+  .line 410
     iget-object p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->ring:Landroid/graphics/Path;
     iget-object p3, p0, Lcom/innioasis/ipp/PlGrid$Mover;->paint:Landroid/graphics/Paint;
     invoke-virtual { p1, p2, p3 }, Landroid/graphics/Canvas;->drawPath(Landroid/graphics/Path;Landroid/graphics/Paint;)V
-  .line 379
+  .line 411
     return-void
 .end method
 
 .method public onDraw(Landroid/graphics/Canvas;Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$State;)V
-  .catchall { :L0 .. :L33 } :L34
+  .catchall { :L0 .. :L35 } :L36
   .registers 20
-  .line 384
+  .line 416
     move-object/from16 v1, p0
     move-object/from16 v0, p2
   :L0
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     iput-wide v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->drawn:J
-  .line 385
+  .line 417
     invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->getContext()Landroid/content/Context;
     move-result-object v2
-  .line 386
+  .line 418
     invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v3
-  .line 387
-    instance-of v4, v3, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
-    const/high16 v5, 0x3F800000
-    const/4 v6, 0
-    if-eqz v4, :L32
+  .line 419
+    const/high16 v4, 0x3F800000
+    const/4 v5, 0
+    if-eqz v3, :L34
     invoke-static { v2 }, Lcom/innioasis/ipp/PlGrid;->access$300(Landroid/content/Context;)Z
     move-result v2
-    if-nez v2, :L32
+    if-nez v2, :L34
+    instance-of v2, v3, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
+    if-eqz v2, :L1
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$400()Z
     move-result v2
     if-eqz v2, :L1
-    goto/16 :L32
+    goto/16 :L34
   :L1
-  .line 393
+  .line 425
+    invoke-static/range { p2 .. p2 }, Lcom/innioasis/ipp/Theme;->tilesAhead(Landroidx/recyclerview/widget/RecyclerView;)V
+  .line 426
     invoke-direct { v1, v0 }, Lcom/innioasis/ipp/PlGrid$Mover;->measure(Landroidx/recyclerview/widget/RecyclerView;)V
-  .line 394
-    check-cast v3, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
-    invoke-virtual { v3 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
+  .line 427
+    invoke-static/range { p2 .. p2 }, Lcom/innioasis/ipp/PlGrid;->cursorAt(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result v2
-  .line 395
+  .line 428
     invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v3
-    const/4 v4, 0
+    const/4 v6, 0
     if-nez v3, :L2
-    move-object v3, v4
+    move-object v3, v6
     goto :L3
   :L2
-  .line 396
+  .line 429
     invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v3
     invoke-virtual { v3, v2 }, Landroidx/recyclerview/widget/RecyclerView$LayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object v3
   :L3
-  .line 397
+  .line 430
     if-nez v3, :L4
-    move-object v7, v4
+    move-object v7, v6
     goto :L5
   :L4
     const v7, 2131362091
     invoke-virtual { v3, v7 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v7
   :L5
-  .line 398
+  .line 431
     if-nez v3, :L6
-    move-object v8, v4
+    move-object v8, v6
     goto :L7
   :L6
     const v8, 2131361934
     invoke-virtual { v3, v8 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v8
   :L7
-  .line 399
+  .line 432
     if-nez v3, :L8
-    move-object v3, v4
+    move-object v3, v6
     goto :L9
   :L8
     const v9, 2131362087
     invoke-virtual { v3, v9 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v3
   :L9
-  .line 400
+  .line 433
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v9
-  .line 401
+  .line 434
     nop
-  .line 402
+  .line 435
     nop
-  .line 403
+  .line 436
     instance-of v11, v7, Landroidx/cardview/widget/CardView;
     const/4 v12, 0
     const/4 v13, 1
-    if-eqz v11, :L10
+    if-eqz v11, :L12
     instance-of v11, v8, Landroidx/cardview/widget/CardView;
-    if-eqz v11, :L10
-    if-eqz v3, :L10
-  .line 406
-    iget v4, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
-    invoke-static { v7, v0, v4, v13 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
-    move-result-object v4
-  .line 407
+    if-eqz v11, :L12
+    if-eqz v3, :L12
+  .line 439
+    iget v6, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
+    invoke-static { v7, v0, v6, v13 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
+    move-result-object v6
+  .line 440
     iget v11, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
     invoke-static { v8, v0, v11, v13 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
     move-result-object v11
     iget v14, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
-    invoke-static { v3, v0, v14, v6 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
+    invoke-static { v3, v0, v14, v5 }, Lcom/innioasis/ipp/PlGrid$Mover;->box(Landroid/view/View;Landroidx/recyclerview/widget/RecyclerView;IZ)[F
     move-result-object v3
-  .line 408
+  .line 441
     invoke-virtual { v7 }, Landroid/view/View;->getWidth()I
     move-result v14
     invoke-virtual { v7 }, Landroid/view/View;->getPaddingLeft()I
@@ -653,7 +655,7 @@
     sub-int/2addr v14, v15
     int-to-float v14, v14
     iput v14, v1, Lcom/innioasis/ipp/PlGrid$Mover;->w:F
-  .line 409
+  .line 442
     invoke-virtual { v7 }, Landroid/view/View;->getHeight()I
     move-result v14
     invoke-virtual { v7 }, Landroid/view/View;->getPaddingTop()I
@@ -664,85 +666,93 @@
     sub-int/2addr v14, v15
     int-to-float v14, v14
     iput v14, v1, Lcom/innioasis/ipp/PlGrid$Mover;->h:F
-  .line 410
-    aget v14, v11, v6
-    aget v15, v4, v6
+  .line 443
+    aget v14, v11, v5
+    aget v15, v6, v5
     sub-float/2addr v14, v15
-    invoke-static { v5, v14 }, Ljava/lang/Math;->max(FF)F
+    invoke-static { v4, v14 }, Ljava/lang/Math;->max(FF)F
     move-result v14
     iput v14, v1, Lcom/innioasis/ipp/PlGrid$Mover;->edge:F
-  .line 411
-    aget v3, v3, v6
-    aget v11, v11, v6
+  .line 445
+    const v14, 2131362561
+    invoke-virtual { v8, v14 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
+    move-result-object v14
+    if-nez v14, :L10
+    const/4 v3, 0
+    goto :L11
+  :L10
+    aget v3, v3, v5
+    aget v11, v11, v5
     sub-float/2addr v3, v11
     invoke-static { v12, v3 }, Ljava/lang/Math;->max(FF)F
     move-result v3
+  :L11
     iput v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->rim:F
-  .line 412
+  .line 446
     check-cast v7, Landroidx/cardview/widget/CardView;
     invoke-virtual { v7 }, Landroidx/cardview/widget/CardView;->getRadius()F
     move-result v3
     iput v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->radius:F
-  .line 413
+  .line 447
     check-cast v8, Landroidx/cardview/widget/CardView;
     invoke-virtual { v8 }, Landroidx/cardview/widget/CardView;->getRadius()F
     move-result v3
     iput v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->inner:F
-    goto :L11
-  :L10
-  .line 414
-    iget-boolean v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
-    if-eqz v3, :L11
-  .line 416
-    invoke-direct { v1, v0, v2 }, Lcom/innioasis/ipp/PlGrid$Mover;->project(Landroidx/recyclerview/widget/RecyclerView;I)[F
-    move-result-object v4
-    goto :L12
-  :L11
-  .line 414
-    nop
+    goto :L13
   :L12
-  .line 418
-    const-wide/16 v7, 0
-    if-eqz v4, :L13
+  .line 448
     iget-boolean v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
-    if-nez v3, :L13
-  .line 419
-    aget v2, v4, v6
-    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-    aget v2, v4, v13
-    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
-  .line 420
-    iput-boolean v13, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
-    goto/16 :L26
+    if-eqz v3, :L13
+  .line 450
+    invoke-direct { v1, v0, v2 }, Lcom/innioasis/ipp/PlGrid$Mover;->project(Landroidx/recyclerview/widget/RecyclerView;I)[F
+    move-result-object v6
+    goto :L14
   :L13
-  .line 421
-    if-eqz v4, :L26
-  .line 422
+  .line 448
+    nop
+  :L14
+  .line 452
+    const-wide/16 v7, 0
+    if-eqz v6, :L15
+    iget-boolean v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
+    if-nez v3, :L15
+  .line 453
+    aget v2, v6, v5
+    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
+    aget v2, v6, v13
+    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
+  .line 454
+    iput-boolean v13, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
+    goto/16 :L28
+  :L15
+  .line 455
+    if-eqz v6, :L28
+  .line 456
     iget-wide v14, v1, Lcom/innioasis/ipp/PlGrid$Mover;->last:J
     const/high16 v3, 0x447A0000
     cmp-long v11, v14, v7
-    if-nez v11, :L14
+    if-nez v11, :L16
     const v11, 1015222895
-    goto :L15
-  :L14
+    goto :L17
+  :L16
     sub-long v14, v9, v14
     long-to-float v11, v14
     div-float/2addr v11, v3
     const v14, 1028443341
     invoke-static { v14, v11 }, Ljava/lang/Math;->min(FF)F
     move-result v11
-  :L15
-  .line 423
+  :L17
+  .line 457
     invoke-static/range { p2 .. p2 }, Lcom/innioasis/ipp/Wheel$Glider;->left(Landroidx/recyclerview/widget/RecyclerView;)F
     move-result v14
-  .line 424
+  .line 458
     iget-boolean v15, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-    if-nez v15, :L19
-    aget v15, v4, v13
+    if-nez v15, :L21
+    aget v15, v6, v13
     iget v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
     cmpl-float v8, v15, v7
-    if-eqz v8, :L19
-  .line 425
+    if-eqz v8, :L21
+  .line 459
     sub-float/2addr v15, v7
     invoke-static { v15 }, Ljava/lang/Math;->abs(F)F
     move-result v7
@@ -751,57 +761,57 @@
     const/high16 v15, 0x3FC00000
     mul-float v8, v8, v15
     cmpg-float v7, v7, v8
-    if-lez v7, :L17
+    if-lez v7, :L19
     cmpl-float v7, v14, v12
-    if-eqz v7, :L16
-    goto :L17
-  :L16
-  .line 435
-    aget v7, v4, v6
+    if-eqz v7, :L18
+    goto :L19
+  :L18
+  .line 469
+    aget v7, v6, v5
     iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-  .line 436
-    aget v7, v4, v13
+  .line 470
+    aget v7, v6, v13
     iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
-    goto :L18
-  :L17
-  .line 429
+    goto :L20
+  :L19
+  .line 463
     iput-boolean v13, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-  .line 430
+  .line 464
     iget v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
     iget v8, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
     int-to-float v8, v8
     sub-float/2addr v7, v8
     iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->sy:F
-  .line 431
-    iput v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
-  .line 432
-    iput-boolean v6, v1, Lcom/innioasis/ipp/PlGrid$Mover;->placed:Z
-  .line 433
+  .line 465
+    iput v4, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
+  .line 466
+    iput-boolean v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->placed:Z
+  .line 467
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->legPos:I
-  :L18
-  .line 438
-    aget v7, v4, v6
-    iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->lx:F
-  .line 439
-    aget v7, v4, v13
-    iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->ly:F
-  :L19
-  .line 441
-    iget-boolean v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-    if-eqz v7, :L23
-  .line 442
-    iget v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->legPos:I
-    if-ne v2, v7, :L20
-  .line 443
-    aget v2, v4, v6
-    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->lx:F
-  .line 444
-    aget v2, v4, v13
-    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->ly:F
   :L20
-  .line 447
+  .line 472
+    aget v7, v6, v5
+    iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->lx:F
+  .line 473
+    aget v7, v6, v13
+    iput v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->ly:F
+  :L21
+  .line 475
+    iget-boolean v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
+    if-eqz v7, :L25
+  .line 476
+    iget v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->legPos:I
+    if-ne v2, v7, :L22
+  .line 477
+    aget v2, v6, v5
+    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->lx:F
+  .line 478
+    aget v2, v6, v13
+    iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->ly:F
+  :L22
+  .line 481
     iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->placed:Z
-    if-nez v2, :L21
+    if-nez v2, :L23
     invoke-static { v14 }, Ljava/lang/Math;->abs(F)F
     move-result v2
     iget v7, v1, Lcom/innioasis/ipp/PlGrid$Mover;->pitch:I
@@ -809,17 +819,17 @@
     const/high16 v8, 0x40000000
     div-float/2addr v7, v8
     cmpg-float v2, v2, v7
-    if-gez v2, :L21
+    if-gez v2, :L23
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
     cmpl-float v2, v2, v12
-    if-nez v2, :L21
+    if-nez v2, :L23
     iput-boolean v13, v1, Lcom/innioasis/ipp/PlGrid$Mover;->placed:Z
-  :L21
-  .line 448
+  :L23
+  .line 482
     iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->placed:Z
     const/high16 v7, 0x42700000
-    if-nez v2, :L22
-  .line 449
+    if-nez v2, :L24
+  .line 483
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
     mul-float v11, v11, v3
     div-float/2addr v11, v7
@@ -827,94 +837,94 @@
     invoke-static { v12, v2 }, Ljava/lang/Math;->max(FF)F
     move-result v2
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
-  .line 450
+  .line 484
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->sy:F
     iget v3, v1, Lcom/innioasis/ipp/PlGrid$Mover;->off:I
     int-to-float v3, v3
     add-float/2addr v2, v3
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
-    goto :L24
-  :L22
-  .line 452
+    goto :L26
+  :L24
+  .line 486
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->lx:F
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-  .line 453
+  .line 487
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->ly:F
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
-  .line 454
+  .line 488
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
     mul-float v11, v11, v3
     div-float/2addr v11, v7
     add-float/2addr v2, v11
-    invoke-static { v5, v2 }, Ljava/lang/Math;->min(FF)F
+    invoke-static { v4, v2 }, Ljava/lang/Math;->min(FF)F
     move-result v2
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
-  .line 455
-    cmpl-float v2, v2, v5
-    if-ltz v2, :L24
-    iput-boolean v6, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-    goto :L24
-  :L23
-  .line 458
+  .line 489
+    cmpl-float v2, v2, v4
+    if-ltz v2, :L26
+    iput-boolean v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
+    goto :L26
+  :L25
+  .line 492
     iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-    aget v3, v4, v6
+    aget v3, v6, v5
     invoke-static { v2, v3, v11 }, Lcom/innioasis/ipp/PlGrid$Mover;->glide(FFF)F
     move-result v2
     iput v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-  :L24
-  .line 460
-    iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-    if-nez v2, :L25
-    iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
-    aget v3, v4, v6
-    cmpl-float v2, v2, v3
-    if-nez v2, :L25
-    iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
-    aget v3, v4, v13
-    cmpl-float v2, v2, v3
-    if-eqz v2, :L26
-  :L25
-    const/4 v6, 1
   :L26
-  .line 462
-    invoke-direct { v1, v6 }, Lcom/innioasis/ipp/PlGrid$Mover;->rested(Z)Z
-    move-result v2
-    if-eqz v2, :L27
-    invoke-static/range { p2 .. p2 }, Lcom/innioasis/ipp/PlGrid$Tidy;->at(Landroidx/recyclerview/widget/RecyclerView;)V
+  .line 494
+    iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
+    if-nez v2, :L27
+    iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
+    aget v3, v6, v5
+    cmpl-float v2, v2, v3
+    if-nez v2, :L27
+    iget v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->t:F
+    aget v3, v6, v13
+    cmpl-float v2, v2, v3
+    if-eqz v2, :L28
   :L27
-  .line 463
-    if-eqz v6, :L28
-    goto :L29
+    const/4 v5, 1
   :L28
-    const-wide/16 v9, 0
+  .line 496
+    invoke-direct { v1, v5 }, Lcom/innioasis/ipp/PlGrid$Mover;->rested(Z)Z
+    move-result v2
+    if-eqz v2, :L29
+    invoke-static/range { p2 .. p2 }, Lcom/innioasis/ipp/PlGrid$Tidy;->at(Landroidx/recyclerview/widget/RecyclerView;)V
   :L29
-    iput-wide v9, v1, Lcom/innioasis/ipp/PlGrid$Mover;->last:J
-  .line 464
-    iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
-    if-nez v2, :L30
-    return-void
+  .line 497
+    if-eqz v5, :L30
+    goto :L31
   :L30
-  .line 465
-    if-eqz v6, :L31
-    invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->postInvalidateOnAnimation()V
+    const-wide/16 v9, 0
   :L31
-  .line 467
-    goto :L35
-  :L32
-  .line 388
-    iput-boolean v6, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
-  .line 389
-    iput-boolean v6, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
-  .line 390
-    iput v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
-  :L33
-  .line 391
+    iput-wide v9, v1, Lcom/innioasis/ipp/PlGrid$Mover;->last:J
+  .line 498
+    iget-boolean v2, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
+    if-nez v2, :L32
     return-void
+  :L32
+  .line 499
+    if-eqz v5, :L33
+    invoke-virtual/range { p2 .. p2 }, Landroidx/recyclerview/widget/RecyclerView;->postInvalidateOnAnimation()V
+  :L33
+  .line 501
+    goto :L37
   :L34
-  .line 466
-    move-exception v0
+  .line 420
+    iput-boolean v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
+  .line 421
+    iput-boolean v5, v1, Lcom/innioasis/ipp/PlGrid$Mover;->leg:Z
+  .line 422
+    iput v4, v1, Lcom/innioasis/ipp/PlGrid$Mover;->fa:F
   :L35
-  .line 468
+  .line 423
+    return-void
+  :L36
+  .line 500
+    move-exception v0
+  :L37
+  .line 502
     return-void
 .end method
 
@@ -922,7 +932,7 @@
   .catchall { :L0 .. :L2 } :L3
   .registers 9
   :L0
-  .line 473
+  .line 507
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide p2
     iget-wide v0, p0, Lcom/innioasis/ipp/PlGrid$Mover;->drawn:J
@@ -933,7 +943,7 @@
     const-string p2, "tiles drawn"
     invoke-static { p2, v0, v1 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
   :L1
-  .line 474
+  .line 508
     iget-boolean p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->has:Z
     if-eqz p2, :L2
     iget p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->l:F
@@ -945,12 +955,12 @@
     move-result v0
     invoke-direct { p0, p1, p2, p3, v0 }, Lcom/innioasis/ipp/PlGrid$Mover;->frame(Landroid/graphics/Canvas;FFI)V
   :L2
-  .line 476
+  .line 510
     goto :L4
   :L3
-  .line 475
+  .line 509
     move-exception p1
   :L4
-  .line 477
+  .line 511
     return-void
 .end method

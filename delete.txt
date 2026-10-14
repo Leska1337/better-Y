@@ -1,4 +1,5 @@
 res/layout/activity_show_song_list.xml
+res/layout/item_theme.xml
 res/mipmap-xxxhdpi/music_no_repeat.png
 res/mipmap-xxxhdpi/music_no_shuffle.png
 res/mipmap-xxxhdpi/music_repeat_all.png

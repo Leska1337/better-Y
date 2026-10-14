@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- ipp: the Playlists grid's tile. The theme gallery's item_theme with the same ids, its
-     ConstraintLayout replaced by a FrameLayout: a tile is measured every time a row scrolls in,
-     and the solver is the dearest part of that measure. Sizes are set from code (Theme.tileFit). -->
+<!-- ipp: the tile of the Playlists grid and of the theme gallery (ItemThemeBinding). A FrameLayout,
+     not a ConstraintLayout: a tile is measured every time a row scrolls in, and the solver is the
+     dearest part of that measure. The caption has no side margin: a start margin is resolved only
+     at layout, and the name was measured the tile's full width and then stood off centre. Sizes are set from code (Theme.tileFit). -->
 <LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="2.0dip"
   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
     <FrameLayout android:id="@id/layout" android:layout_width="wrap_content" android:layout_height="wrap_content">
