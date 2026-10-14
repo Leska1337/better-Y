@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 2
-  .line 590
+  .line 882
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$Decoder$Repainted;->rv:Landroidx/recyclerview/widget/RecyclerView;
     return-void
@@ -25,18 +25,18 @@
   .catchall { :L0 .. :L1 } :L3
   .catchall { :L4 .. :L5 } :L3
   .registers 3
-  .line 592
-    invoke-static { }, Lcom/innioasis/ipp/PlGrid$Decoder;->access$600()Ljava/util/LinkedList;
+  .line 884
+    invoke-static { }, Lcom/innioasis/ipp/PlGrid$Decoder;->access$900()Ljava/util/LinkedList;
     move-result-object v0
     monitor-enter v0
-  .line 593
+  .line 885
     const/4 v1, 0
   :L0
-    invoke-static { v1 }, Lcom/innioasis/ipp/PlGrid$Decoder;->access$702(Z)Z
-  .line 594
+    invoke-static { v1 }, Lcom/innioasis/ipp/PlGrid$Decoder;->access$1002(Z)Z
+  .line 886
     monitor-exit v0
   :L1
-  .line 595
+  .line 887
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Decoder$Repainted;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v0
@@ -46,10 +46,10 @@
     move-result-object v0
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyDataSetChanged()V
   :L2
-  .line 596
+  .line 888
     return-void
   :L3
-  .line 594
+  .line 886
     move-exception v1
   :L4
     monitor-exit v0

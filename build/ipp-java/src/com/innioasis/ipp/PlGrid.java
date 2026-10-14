@@ -158,80 +158,320 @@ public final class PlGrid {
         }
         Decoder.attach(rv);
         new Thread(new Prepare(rv), "ipp-pl-prepare").start();
+        rv.postDelayed(new Warm(rv), WARM_MS);
+    }
+
+    /** After the grid's first frames, while it stands: first-time tiles are no work of a glide. */
+    private static final long WARM_MS = 400L;
+    /** Rows the glide round the list's end brings in at once, and some. */
+    private static final int WARM_TILES = 12;
+
+    /**
+     * A collection while the grid stands, so the glide round the list's end does not run beside
+     * one: on the cursor resting at either end with loop scrolling on, and once the pool is warm.
+     */
+    static final class Tidy implements Runnable {
+        private static final long REST_MS = 300L;
+        private static final Tidy T = new Tidy();
+        private static WeakReference rv = new WeakReference(null);
+
+        static void at(RecyclerView r) {
+            rv = new WeakReference(r);
+            UI.removeCallbacks(T);
+            UI.postDelayed(T, REST_MS);
+        }
+
+        /** Garbage made since the last collection, under which one is not worth its work. */
+        private static final long WORTH = 1024L * 1024L;
+        private static long seen = -1;
+
+        private static void collect() {
+            if (seen < 0) android.os.Debug.startAllocCounting();
+            long a = android.os.Debug.getGlobalAllocSize();
+            if (a < seen) seen = a;                  // the counters were started over
+            if (seen >= 0 && a - seen < WORTH) return;
+            seen = a;
+            System.gc();
+        }
+
+        static void now() {
+            collect();
+        }
+
+        public void run() {
+            try {
+                RecyclerView r = (RecyclerView) rv.get();
+                if (r == null || !(r.getAdapter() instanceof RVBaseAdapter) || !Loop.on()) return;
+                int sel = ((RVBaseAdapter) r.getAdapter()).getSelectPosition();
+                int n = r.getAdapter().getItemCount();
+                if ((sel == 0 || sel == n - 1) && Wheel.Glider.left(r) == 0) collect();
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    /**
+     * Tiles made ahead into the pool, one per message so no frame carries more than one inflate:
+     * the first glide round the list's end otherwise inflated every row it brought in.
+     */
+    static final class Warm implements Runnable {
+        private final WeakReference rv;
+        Warm(RecyclerView rv) { this.rv = new WeakReference(rv); }
+        public void run() {
+            try {
+                RecyclerView r = (RecyclerView) rv.get();
+                if (r == null || r.getWindowToken() == null || !(r.getLayoutManager() instanceof GridLayoutManager)) {
+                    return;
+                }
+                RecyclerView.Adapter a = r.getAdapter();
+                if (a == null || a.getItemCount() <= r.getChildCount()) return;
+                int type = a.getItemViewType(0);
+                RecyclerView.RecycledViewPool pool = r.getRecycledViewPool();
+                pool.setMaxRecycledViews(type, WARM_TILES);
+                if (pool.getRecycledViewCount(type) >= WARM_TILES) {
+                    Tidy.now();
+                    return;
+                }
+                pool.putRecycledView(a.createViewHolder(r, type));
+                UI.post(this);
+            } catch (Throwable t) {
+            }
+        }
     }
 
     private static final java.util.WeakHashMap movers = new java.util.WeakHashMap();
 
     /**
-     * The cursor's frame, drawn under the tiles and travelling from one to the next the way the
-     * grid's rows do (Wheel.Glider): every frame covers a share of the way left, so a fast wheel
-     * gives one continuous movement and a new target changes only what is left. Kept in the
-     * list's content coordinates, so it rides along while the rows scroll.
+     * The cursor's frame: a ring from the frame's box in to the picture's, the card's dark edge
+     * included, so it stays a frame in motion too. Along a row it travels over the tiles, every
+     * frame covering a share of the way left (Wheel.Glider's law). To another row, the next or
+     * round the list's end, it fades out where it stands and in on its tile as the rows stop,
+     * and takes no new target meanwhile, so a fast wheel's targets switching sides cannot hold it
+     * in the middle; further off it jumps. Kept in the list's content coordinates, so it rides
+     * along while rows scroll.
      */
     static final class Mover extends RecyclerView.ItemDecoration {
-        private static final float RATE = 14f;
-        private static final float VMIN = 400f;
+        private static final float RATE = 22f;
+        private static final float VMIN = 700f;
         private static final float VMAX = 6000f;
 
         private final android.graphics.Paint paint =
                 new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
         private final android.graphics.RectF draw = new android.graphics.RectF();
-        private float l, t, r, b, radius;
-        private boolean has;
+        private final android.graphics.Path ring = new android.graphics.Path();
+        private float l, t, w, h, edge, rim, radius, inner;
+        /** The tile a move to another row ends on. */
+        private float lx, ly;
+        private boolean has, leg;
         private long last;
+        private int off, pitch, span = 1, legPos;
+        /** On the way to another row: the frame's top on screen as it fades, and its opacity. */
+        private float sy, fa = 1f;
+        /** The rows have stopped and the frame is on its tile, fading in. */
+        private boolean placed;
+        /** When the list's draw reached the tiles: what they cost shows in a measured glide. */
+        private long drawn;
+        private static final long FADE_MS = 60L;
+        private final android.graphics.Paint fade = new android.graphics.Paint();
+
+        /**
+         * How far the grid is scrolled, worked out from a laid-out row, and the step of a row.
+         * RecyclerView's own figure is an estimate that shifts as rows come and go near the list's
+         * end, and the frame, which keeps content coordinates, went off its tile and back with it.
+         */
+        private void measure(RecyclerView rv) {
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            span = lm instanceof GridLayoutManager ? ((GridLayoutManager) lm).getSpanCount() : 1;
+            for (int i = 0; lm != null && i < rv.getChildCount(); i++) {
+                View ch = rv.getChildAt(i);
+                int p = rv.getChildLayoutPosition(ch);
+                if (p == RecyclerView.NO_POSITION) continue;
+                ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) ch.getLayoutParams();
+                pitch = lm.getDecoratedMeasuredHeight(ch) + lp.topMargin + lp.bottomMargin;
+                off = (p / span) * pitch - (lm.getDecoratedTop(ch) - lp.topMargin);
+                return;
+            }
+            off = rv.computeVerticalScrollOffset();
+        }
+
+        /** The frame's box of a tile not laid out, from a laid-out one of its column. */
+        private float[] project(RecyclerView rv, int p) {
+            for (int i = 0; i < rv.getChildCount(); i++) {
+                View ch = rv.getChildAt(i);
+                int q = rv.getChildLayoutPosition(ch);
+                if (q == RecyclerView.NO_POSITION || q % span != p % span) continue;
+                View f = ch.findViewById(R.id.img_sel);
+                if (f == null) continue;
+                float[] b = box(f, rv, off, true);
+                b[1] += (p / span - q / span) * pitch;
+                return b;
+            }
+            return null;
+        }
+
+        /**
+         * The frame, and the card's edge as it shows over the frame, as one: drawn over the tiles,
+         * neither the edges under the way nor the one at the target change its colour.
+         */
+        private void frame(android.graphics.Canvas c, float x, float y, int fc) {
+            // Drawn once into a picture: a Path is rasterised again at every new position on
+            // this platform's renderer, which cost the moving frame most of its frame time.
+            if (pic == null || pw != w || ph != h || pe != edge || pr != rim || pc != fc
+                    || pRad != radius || pIn != inner) {
+                int bw = (int) Math.ceil(w), bh = (int) Math.ceil(h);
+                if (bw <= 0 || bh <= 0) return;
+                if (pic == null || pic.getWidth() != bw || pic.getHeight() != bh) {
+                    pic = Bitmap.createBitmap(bw, bh, Bitmap.Config.ARGB_8888);
+                } else {
+                    pic.eraseColor(0);
+                }
+                android.graphics.Canvas pcv = new android.graphics.Canvas(pic);
+                draw.set(0, 0, w, h);
+                ring(pcv, edge, radius, inner, fc);
+                if (rim > 0) ring(pcv, rim, inner, Math.max(0f, inner - rim), overEdge(fc));
+                pw = w; ph = h; pe = edge; pr = rim; pc = fc; pRad = radius; pIn = inner;
+            }
+            fade.setAlpha(Math.round(255 * fa));
+            c.drawBitmap(pic, Math.round(x), Math.round(y), fa < 1f ? fade : null);
+        }
+
+        private boolean was;
+
+        /** True once, on the frame the frame comes to rest. */
+        private boolean rested(boolean moving) {
+            boolean r = was && !moving;
+            was = moving;
+            return r;
+        }
+
+        private Bitmap pic;
+        private float pw, ph, pe, pr, pRad, pIn;
+        private int pc;
+
+        /** Left and top of a view's box, less its padding or not, in the list's content coordinates. */
+        private static float[] box(View f, RecyclerView rv, int off, boolean padded) {
+            float x = padded ? f.getPaddingLeft() : 0, y = (padded ? f.getPaddingTop() : 0) + off;
+            for (View v = f; v != null && v != rv; v = (View) v.getParent()) {
+                x += v.getLeft();
+                y += v.getTop();
+                if (!(v.getParent() instanceof View)) break;
+            }
+            return new float[] {x, y};
+        }
+
+        /** A frame's step nearer its target, by Glider's law. */
+        private static float glide(float at, float to, float dt) {
+            float d = to - at, a = Math.abs(d);
+            if (a < 1f) return to;
+            float s = Math.min(a, Math.max(VMIN, Math.min(VMAX, a * RATE)) * dt);
+            return at + (d > 0 ? s : -s);
+        }
+
+        /** The ring between the box drawn now and the same box inset by {@code by}. */
+        private void ring(android.graphics.Canvas c, float by, float ro, float ri, int color) {
+            ring.reset();
+            ring.setFillType(android.graphics.Path.FillType.EVEN_ODD);
+            ring.addRoundRect(draw, ro, ro, android.graphics.Path.Direction.CW);
+            draw.inset(by, by);
+            ring.addRoundRect(draw, ri, ri, android.graphics.Path.Direction.CW);
+            paint.setColor(color);
+            c.drawPath(ring, paint);
+        }
 
         @Override
         public void onDraw(android.graphics.Canvas c, RecyclerView rv, RecyclerView.State state) {
             try {
+                drawn = SystemClock.uptimeMillis();
                 Context ctx = rv.getContext();
                 RecyclerView.Adapter a = rv.getAdapter();
                 if (!(a instanceof RVBaseAdapter) || multiMode(ctx) || menuMulti) {
                     has = false;
+                    leg = false;
+                    fa = 1f;
                     return;
                 }
-                int off = rv.computeVerticalScrollOffset();
+                measure(rv);
+                int sel = ((RVBaseAdapter) a).getSelectPosition();
                 View tile = rv.getLayoutManager() == null ? null
-                        : rv.getLayoutManager().findViewByPosition(((RVBaseAdapter) a).getSelectPosition());
+                        : rv.getLayoutManager().findViewByPosition(sel);
                 View f = tile == null ? null : tile.findViewById(R.id.img_sel);
+                View card = tile == null ? null : tile.findViewById(R.id.card);
+                View img = tile == null ? null : tile.findViewById(R.id.img);
                 long now = SystemClock.uptimeMillis();
                 boolean moving = false;
-                if (f instanceof CardView) {
-                    // the frame's own box inside the tile, less the padding CardView keeps for
-                    // its shadow on this API
-                    float tl = f.getPaddingLeft(), tt = f.getPaddingTop() + off;
-                    for (View v = f; v != null && v != rv; v = (View) v.getParent()) {
-                        tl += v.getLeft();
-                        tt += v.getTop();
-                        if (!(v.getParent() instanceof View)) break;
-                    }
-                    float tr = tl + f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
-                    float tb = tt + f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
+                float[] fb = null;
+                if (f instanceof CardView && card instanceof CardView && img != null) {
+                    // the frame's and the card's boxes less the padding CardView keeps for its
+                    // shadow on this API; the picture's box as it stands
+                    fb = box(f, rv, off, true);
+                    float[] cb = box(card, rv, off, true), ib = box(img, rv, off, false);
+                    w = f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
+                    h = f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
+                    edge = Math.max(1f, cb[0] - fb[0]);
+                    rim = Math.max(0f, ib[0] - cb[0]);
                     radius = ((CardView) f).getRadius();
-                    if (!has) {
-                        l = tl; t = tt; r = tr; b = tb;
-                        has = true;
-                    } else {
-                        float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
-                        float dx = tl - l, dy = tt - t;
-                        float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                        float k = 1f;
-                        if (dist >= 1f) {
-                            float v = Math.max(VMIN, Math.min(VMAX, dist * RATE));
-                            k = Math.min(1f, v * dt / dist);
-                        }
-                        l += (tl - l) * k;
-                        t += (tt - t) * k;
-                        r += (tr - r) * k;
-                        b += (tb - b) * k;
-                        moving = k < 1f;
-                    }
+                    inner = ((CardView) card).getRadius();
+                } else if (has) {
+                    // round the list's end: the tile is still off screen, the rows glide to it
+                    fb = project(rv, sel);
                 }
+                if (fb != null && !has) {
+                    l = fb[0]; t = fb[1];
+                    has = true;
+                } else if (fb != null) {
+                    float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
+                    float rem = Wheel.Glider.left(rv);
+                    if (!leg && fb[1] != t) {
+                        if (Math.abs(fb[1] - t) <= 1.5f * pitch || rem != 0) {
+                            // To another row, the next or round the list's end, the frame does
+                            // not travel: it fades where it stands on screen while the rows
+                            // glide, and in on its tile once they stop.
+                            leg = true;
+                            sy = t - off;
+                            fa = 1f;
+                            placed = false;
+                            legPos = sel;
+                        } else {
+                            l = fb[0];
+                            t = fb[1];
+                        }
+                        lx = fb[0];
+                        ly = fb[1];
+                    }
+                    if (leg) {
+                        if (sel == legPos) {
+                            lx = fb[0];
+                            ly = fb[1];
+                        }
+                        // in as the rows ease the last half row in, riding along with its tile
+                        if (!placed && Math.abs(rem) < pitch / 2f && fa == 0f) placed = true;
+                        if (!placed) {
+                            fa = Math.max(0f, fa - dt * 1000f / FADE_MS);
+                            t = sy + off;
+                        } else {
+                            l = lx;
+                            t = ly;
+                            fa = Math.min(1f, fa + dt * 1000f / FADE_MS);
+                            if (fa >= 1f) leg = false;
+                        }
+                    } else {
+                        l = glide(l, fb[0], dt);
+                    }
+                    moving = leg || l != fb[0] || t != fb[1];
+                }
+                if (rested(moving)) Tidy.at(rv);
                 last = moving ? now : 0;
                 if (!has) return;
-                paint.setColor(Theme.tileFrame());
-                draw.set(l, t - off, r, b - off);
-                c.drawRoundRect(draw, radius, radius, paint);
                 if (moving) rv.postInvalidateOnAnimation();
+            } catch (Throwable e) {
+            }
+        }
+
+        @Override
+        public void onDrawOver(android.graphics.Canvas c, RecyclerView rv, RecyclerView.State state) {
+            try {
+                if (SystemClock.uptimeMillis() - drawn >= 8) Frames.part("tiles drawn", drawn);
+                if (has) frame(c, l, t - off, Theme.tileFrame());
             } catch (Throwable e) {
             }
         }
@@ -242,7 +482,28 @@ public final class PlGrid {
         Prepare(RecyclerView rv) { this.rv = new WeakReference(rv); }
         public void run() {
             new Sweep().run();
+            firsts((RecyclerView) rv.get());
             Decoder.all((RecyclerView) rv.get());
+        }
+    }
+
+    /** Every playlist with no cover yet gets its first song's, here and now, not when shown. */
+    private static void firsts(RecyclerView rv) {
+        try {
+            List l = repo().getAllPlaylistSync();
+            if (l == null) return;
+            for (int i = 0; i < l.size(); i++) {
+                Object o = l.get(i);
+                if (!(o instanceof Playlist) || Playlists.isFav(o)) continue;
+                UUID id = ((Playlist) o).getPlaylistId();
+                if (id == null || jpg(id).isFile()) continue;
+                synchronized (tried) {
+                    if (tried.contains(id)) continue;
+                    tried.add(id);
+                }
+                if (!none(id).exists()) new First(id, rv).run();
+            }
+        } catch (Throwable t) {
         }
     }
 
@@ -250,7 +511,7 @@ public final class PlGrid {
     public static int layout(ViewGroup parent, int stock) {
         if (parent instanceof RecyclerView
                 && ((RecyclerView) parent).getLayoutManager() instanceof GridLayoutManager) {
-            return R.layout.item_theme;
+            return R.layout.ipp_pl_tile;
         }
         return stock;
     }
@@ -310,10 +571,12 @@ public final class PlGrid {
             } else {
                 tick.setVisibility(View.GONE);
             }
-            paint(row, card, img, p, sel, text.getCurrentTextColor());
+            // off the multi-selection Mover draws the cursor's edge over the card's own
+            paint(row, card, img, p, sel && multi, text.getCurrentTextColor());
         } catch (Throwable t) {
         }
         long ms = SystemClock.uptimeMillis() - t0;
+        if (ms >= 3) Frames.part("tile", t0);
         if (ms >= TILE_SLOW_MS) Diag.note("slow: playlist tile " + ms + " ms");
         return true;
     }
@@ -332,7 +595,8 @@ public final class PlGrid {
             img.setMaxWidth(Integer.MAX_VALUE);
             img.setMaxHeight(Integer.MAX_VALUE);
         }
-        card.setCardBackgroundColor(((sel ? Color.BLACK : ring) & 0x00FFFFFF) | EDGE_ALPHA);
+        card.setTag(R.id.ipp_pl_cover, Integer.valueOf(edge(ring)));
+        card.setCardBackgroundColor(sel ? edge(Color.BLACK) : edge(ring));
         RecyclerView rv = row.getParent() instanceof RecyclerView ? (RecyclerView) row.getParent() : null;
         Bitmap b = p == null ? null : cover(p.getPlaylistId(), rv);
         if (b != null) {
@@ -358,9 +622,31 @@ public final class PlGrid {
         img.setImageResource(fav ? R.mipmap.ipp_heart_on : R.mipmap.ipp_show_all_songs);
         int fg = Icons.progressColor();
         img.setColorFilter(fg == 0 ? Color.WHITE : fg, PorterDuff.Mode.SRC_IN);
-        if (p != null && !fav && row.getParent() instanceof RecyclerView) {
-            first(p.getPlaylistId(), (RecyclerView) row.getParent());
-        }
+        // a tile is bound before it is attached, the first time the grid fills included
+        RecyclerView grid = rv != null ? rv : Decoder.grid();
+        if (p != null && !fav && grid != null) first(p.getPlaylistId(), grid);
+    }
+
+    /**
+     * {@code Rows.blink} on a tile of the multi-selection: the cursor's dark edge is made to sit
+     * on the frame, so with the frame blinked off the tile shows the edge every other tile has.
+     */
+    public static void blinkEdge(View row, boolean on) {
+        View card = row == null ? null : row.findViewById(R.id.card);
+        Object tint = card == null ? null : card.getTag(R.id.ipp_pl_cover);
+        if (!(card instanceof CardView) || !(tint instanceof Integer)) return;
+        ((CardView) card).setCardBackgroundColor(on ? edge(Color.BLACK) : ((Integer) tint).intValue());
+    }
+
+    private static int edge(int c) {
+        return (c & 0x00FFFFFF) | EDGE_ALPHA;
+    }
+
+    /** The cursor's card edge as it shows over the frame: black at EDGE_ALPHA over {@code frame}. */
+    private static int overEdge(int frame) {
+        int k = 255 - (EDGE_ALPHA >>> 24);
+        return Color.argb(255, Color.red(frame) * k / 255, Color.green(frame) * k / 255,
+                Color.blue(frame) * k / 255);
     }
 
     private static Bitmap heart;
@@ -517,6 +803,12 @@ public final class PlGrid {
         static void attach(RecyclerView rv) {
             synchronized (queue) {
                 view = new WeakReference(rv);
+            }
+        }
+
+        static RecyclerView grid() {
+            synchronized (queue) {
+                return (RecyclerView) view.get();
             }
         }
 

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..17420366 100644
+index 01b1f730..cc105462 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..17420366 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100126
++  versionCode: 10100144
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -8653,10 +8653,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..01dacf5a 100644
+index 803c1e7a..c28a34dd 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5668 @@
+@@ -1,5519 +1,5669 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18115,6 +18115,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="layout" name="utils_toast_view" id="0x7f0d00db" />
 +    <public type="layout" name="view_shuffle_playlist_item" id="0x7f0d00dc" />
 +    <public type="layout" name="view_video" id="0x7f0d00dd" />
++    <public type="layout" name="ipp_pl_tile" id="0x7f0d00de" />
 +    <public type="mipmap" name="bg_mask" id="0x7f0e0000" />
 +    <public type="mipmap" name="default_cover" id="0x7f0e0001" />
 +    <public type="mipmap" name="folder" id="0x7f0e0002" />
@@ -19845,7 +19846,7 @@ index 803c1e7a..01dacf5a 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..c3a17e9c 100644
+index 71fe29d0..466b7554 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,579 @@
@@ -20794,7 +20795,7 @@ index 71fe29d0..c3a17e9c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev126</string>
++    <string name="ipp_version">v1.1.0-dev144</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -51574,7 +51575,7 @@ index e8778ff8..86d92054 100644
      iget-object v0, p0, Lcom/innioasis/music/PlaylistsActivity$subMenuDialog$2;->this$0:Lcom/innioasis/music/PlaylistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
-index 66c966fd..4ccf2825 100644
+index 66c966fd..e99806cc 100644
 --- a/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/PlaylistsActivity.smali
 @@ -477,6 +477,17 @@
@@ -51672,21 +51673,22 @@ index 66c966fd..4ccf2825 100644
      .line 321
      move-object v0, p0
  
-@@ -1142,6 +1153,13 @@
+@@ -1142,6 +1153,14 @@
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toPrevious$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
 +    # ipp: the cursor does not stop on the Favorites row while multi-select is on -- there
-+    # is nothing to tick there. isMultiSelect is this class's own field, which is why the test
-+    # lives here and not in the adapter.
++    # is nothing to tick there; going up it goes round to the end when the list loops.
++    # isMultiSelect is this class's own field, which is why the test lives here and not in
++    # the adapter.
 +    iget-boolean v1, p0, Lcom/innioasis/music/PlaylistsActivity;->isMultiSelect:Z
 +
-+    invoke-static {v0, v1}, Lcom/innioasis/ipp/Playlists;->skip(Ljava/lang/Object;Z)V
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Playlists;->skipBack(Ljava/lang/Object;Z)V
 +
      return-void
  .end method
  
-@@ -1225,6 +1243,13 @@
+@@ -1225,6 +1244,13 @@
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->toNext$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;Landroidx/recyclerview/widget/RecyclerView;ZILjava/lang/Object;)V
  
@@ -51700,7 +51702,7 @@ index 66c966fd..4ccf2825 100644
      return-void
  .end method
  
-@@ -1259,6 +1284,13 @@
+@@ -1259,6 +1285,13 @@
  
      invoke-static {v0, v1, v2, v3, v4}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->addOrRemoveMultiSelectIndex$default(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;IZILjava/lang/Object;)V
  
@@ -51714,7 +51716,7 @@ index 66c966fd..4ccf2825 100644
      .line 211
      invoke-direct {p0}, Lcom/innioasis/music/PlaylistsActivity;->getAdapter()Lcom/innioasis/music/PlaylistsActivity$MyAdapter;
  
-@@ -1450,6 +1482,10 @@
+@@ -1450,6 +1483,10 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setAdapter(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
@@ -51725,7 +51727,7 @@ index 66c966fd..4ccf2825 100644
      const/4 v0, 0x0
  
      const/4 v1, 0x0
-@@ -1567,6 +1603,17 @@
+@@ -1567,6 +1604,17 @@
  
      move-result-object v0
  
@@ -51743,7 +51745,7 @@ index 66c966fd..4ccf2825 100644
      invoke-virtual {v0}, Lcom/innioasis/music/util/SubMenuDialog;->show()V
  
      .line 243
-@@ -1621,6 +1668,46 @@
+@@ -1621,6 +1669,46 @@
  
      move-result-object p1
  

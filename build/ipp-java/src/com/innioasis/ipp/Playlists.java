@@ -167,21 +167,51 @@ public final class Playlists {
         }
     }
 
-    /** End of both wheel handlers; pushes DOWN, as {@code Mark.skip}: Favorites is the first row. */
+    /** End of the clockwise handler; pushes DOWN, as {@code Mark.skip}: Favorites is the first row. */
     public static void skip(Object adapter, boolean multi) {
         if (!multi || !(adapter instanceof RVBaseAdapter)) return;
         try {
             RVBaseAdapter a = (RVBaseAdapter) adapter;
             int pos = a.getSelectPosition();
             if (!locked(a.getItemByPosition(pos))) return;
-            int n = a.getItemCount();
-            int to = pos + 1;
-            while (to < n && locked(a.getItemByPosition(to))) to++;
-            if (to >= n) return;
-            a.setSelectPosition(to, true);       // sets the field only
+            moveTo(a, pos, below(a, pos));
+        } catch (Throwable t) {
+        }
+    }
+
+    /** End of the anticlockwise handler: on over Favorites, round to the end when the list loops. */
+    public static void skipBack(Object adapter, boolean multi) {
+        if (!multi || !(adapter instanceof RVBaseAdapter)) return;
+        try {
+            RVBaseAdapter a = (RVBaseAdapter) adapter;
+            int pos = a.getSelectPosition();
+            if (!locked(a.getItemByPosition(pos))) return;
+            int to = pos - 1;
+            while (to >= 0 && locked(a.getItemByPosition(to))) to--;
+            if (to < 0 && Loop.wrap()) {
+                to = a.getItemCount() - 1;
+                while (to > pos && locked(a.getItemByPosition(to))) to--;
+                if (to <= pos) to = -1;
+            }
+            moveTo(a, pos, to >= 0 ? to : below(a, pos));
+        } catch (Throwable t) {
+        }
+    }
+
+    private static int below(RVBaseAdapter a, int pos) {
+        int n = a.getItemCount();
+        int to = pos + 1;
+        while (to < n && locked(a.getItemByPosition(to))) to++;
+        return to < n ? to : -1;
+    }
+
+    /** Through {@code Wheel}, which must know the cursor left the row it last painted. */
+    private static void moveTo(RVBaseAdapter a, int pos, int to) {
+        if (to < 0) return;
+        a.setSelectPosition(to, true);       // sets the field only
+        if (!Wheel.refollow(a, to)) {
             a.notifyItemChanged(pos);
             a.notifyItemChanged(to);
-        } catch (Throwable t) {
         }
     }
 

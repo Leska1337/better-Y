@@ -90,6 +90,7 @@ public final class Rows {
             if (frame instanceof androidx.cardview.widget.CardView) {
                 ((androidx.cardview.widget.CardView) frame).setCardBackgroundColor(
                         on ? Theme.tileFrame() : 0);
+                PlGrid.blinkEdge(row, on);
                 return;
             }
             ThemeManager.INSTANCE.itemSetBackground(row, res, on);

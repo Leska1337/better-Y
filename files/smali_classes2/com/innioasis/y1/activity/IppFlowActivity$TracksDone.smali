@@ -21,20 +21,20 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;Lcom/innioasis/ipp/Flow$Back;J)V
   .registers 6
-  .line 940
+  .line 943
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 941
+  .line 944
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->it:Lcom/innioasis/ipp/Flow$Item;
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->b:Lcom/innioasis/ipp/Flow$Back;
     iput-wide p4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->t0:J
-  .line 942
+  .line 945
     return-void
 .end method
 
 .method public run()V
   .registers 4
-  .line 945
+  .line 948
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$600(Lcom/innioasis/y1/activity/IppFlowActivity;)I
     move-result v0
@@ -49,13 +49,13 @@
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->it:Lcom/innioasis/ipp/Flow$Item;
     if-ne v0, v1, :L0
-  .line 946
+  .line 949
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$700(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->b:Lcom/innioasis/ipp/Flow$Back;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->setSongs(Lcom/innioasis/ipp/Flow$Back;)V
-  .line 947
+  .line 950
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)I
     move-result v0
@@ -64,10 +64,10 @@
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$800(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   :L0
-  .line 949
+  .line 952
     const-string v0, "flow tracks shown"
     iget-wide v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TracksDone;->t0:J
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Diag;->slow(Ljava/lang/String;J)V
-  .line 950
+  .line 953
     return-void
 .end method

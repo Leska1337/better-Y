@@ -397,6 +397,21 @@ public final class Wheel {
         return noFast != null && noFast.get() == a;
     }
 
+    /**
+     * The cursor moved again right after {@link #follow}, by a screen's own rule: the same
+     * repaint and scroll from where follow left it, and a move round the end stays one. False =
+     * not the list follow saw last; the caller repaints.
+     */
+    public static boolean refollow(RecyclerView.Adapter adapter, int pos) {
+        RecyclerView rv = lastRv == null ? null : (RecyclerView) lastRv.get();
+        if (rv == null || lastAdapter == null || lastAdapter.get() != adapter) return false;
+        stickyWrap = wrapping;
+        follow(rv, pos, adapter);
+        return true;
+    }
+
+    private static boolean stickyWrap;
+
     /** {@link #follow} for a caller that KNOWS which row loses the cursor (a jump, a new list). */
     public static void follow(RecyclerView rv, int prev, int pos, RecyclerView.Adapter adapter) {
         if (rv == null) return;
@@ -438,6 +453,12 @@ public final class Wheel {
                 if (prev < 0 || !paint(rv, adapter, prev, n) || !paint(rv, adapter, pos, n)) {
                     adapter.notifyDataSetChanged();
                 }
+                // an unknown row before counts: the first step on entering may well be round the end
+                wrapping = stickyWrap || n > 1 && ((prev == n - 1 || prev < 0) && pos == 0
+                        || (prev == 0 || prev < 0) && pos == n - 1);
+                stickyWrap = false;
+            } else {
+                wrapping = false;
             }
             lastRv = new WeakReference(rv);
             lastAdapter = new WeakReference(adapter);
@@ -538,7 +559,7 @@ public final class Wheel {
         View edge = l.findViewByPosition(down ? last : first);
         if (span <= 0 || edge == null) return false;
         int rows = down ? pos / span - last / span : first / span - pos / span;
-        if (rows < 1 || rows > GLIDE_ROWS) return false;
+        if (rows < 1 || rows > GLIDE_ROWS && !wrapping) return false;
         int step = end(edge, false) - start(edge, false);
         int d = down ? end(edge, false) + rows * step - (rv.getHeight() - rv.getPaddingBottom())
                      : start(edge, false) - rows * step - rv.getPaddingTop();
@@ -548,6 +569,9 @@ public final class Wheel {
 
     /** Further behind than this, the list jumps: a glide that far would trail the wheel. */
     private static final int GLIDE_ROWS = 4;
+
+    /** The cursor has just gone round the list's end: glided however far that is. */
+    private static boolean wrapping;
 
     /**
      * Follows the target the way the Cover Flow row does: every frame covers a share of what is
@@ -574,6 +598,13 @@ public final class Wheel {
             }
             rv.stopScroll();
             left = d;
+            total = Math.abs(d);
+            if (wrapping) {
+                Frames.start("playlists wrap");
+                if (!counting) android.os.Debug.startAllocCounting();
+                counting = true;
+                alloc = android.os.Debug.getThreadAllocSize();
+            }
             if (!running && d != 0) {
                 running = true;
                 last = 0;
@@ -585,6 +616,31 @@ public final class Wheel {
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
+            total = 0;
+        }
+
+        /** The distance of the latest target. */
+        private static float total;
+
+        /** What the main thread had allocated when a glide round the list's end set out. */
+        private static int alloc;
+        private static boolean counting;
+
+        /** The end of a glide: a glide round the end reports its frames and its garbage. */
+        private static void measured() {
+            int kb = (android.os.Debug.getThreadAllocSize() - alloc) / 1024;
+            Frames.part("alloc KB", android.os.SystemClock.uptimeMillis() - kb);
+            Frames.stop();
+        }
+
+        /** The scroll still to come on {@code rv}, in pixels, + down. */
+        static float left(RecyclerView rv) {
+            return running && view.get() == rv ? left : 0f;
+        }
+
+        /** Share of the latest glide of {@code rv} done, 0 to 1; -1 when there is none to follow. */
+        static float done(RecyclerView rv) {
+            return view.get() != rv || total < 1f ? -1f : 1f - Math.abs(left) / total;
         }
 
         public void doFrame(long nanos) {
@@ -592,6 +648,8 @@ public final class Wheel {
             if (rv == null || rv.getWindowToken() == null || left == 0) {
                 running = false;
                 left = 0;
+                total = 0;
+                measured();
                 return;
             }
             long now = nanos / 1000000L;
@@ -602,12 +660,22 @@ public final class Wheel {
             int s = Math.round(Math.min(a, Math.max(1f, v * dt)));
             if (left < 0) s = -s;
             int was = rv.computeVerticalScrollOffset();
+            long t0 = android.os.SystemClock.uptimeMillis();
             rv.scrollBy(0, s);
+            if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            // the list's end stops the scroll short: nothing is left to do there
-            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) left = 0;
-            if (left != 0) android.view.Choreographer.getInstance().postFrameCallback(this);
-            else running = false;
+            // the list's end stops the scroll short: nothing is left to do there, and no share
+            // of the way to report
+            if (Math.abs(left) < 1f || rv.computeVerticalScrollOffset() == was) {
+                if (Math.abs(left) >= 1f) total = 0;
+                left = 0;
+            }
+            if (left != 0) {
+                android.view.Choreographer.getInstance().postFrameCallback(this);
+            } else {
+                running = false;
+                measured();
+            }
         }
     }
 

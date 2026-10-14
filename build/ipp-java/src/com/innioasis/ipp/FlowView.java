@@ -40,6 +40,10 @@ public final class FlowView extends View {
     private static final float RATE = 8f;      // slides per second per slide still to go
     private static final float VMIN = 2.5f;
     private static final float VMAX = 30f;
+    /** The same pair once the centre was pressed on a moving row: it closes in briskly. */
+    private static final float HURRY_RATE = 14f;
+    private static final float HURRY_VMIN = 6f;
+    private boolean hurry;
 
     /** A slide fades in over this long once its cover is in hand, instead of popping up. */
     public static final int FADE_MS = 200;
@@ -127,6 +131,13 @@ public final class FlowView extends View {
     /** The row stands still: the centre slide is where it was aimed. */
     public boolean resting() { return pos == target; }
 
+    /** Speeds the row's remaining approach up; the next step or the arrival ends it. */
+    public void hurry() {
+        if (pos == target) return;
+        hurry = true;
+        postInvalidateOnAnimation();
+    }
+
     private Runnable onRest;
     private boolean wasMoving;
 
@@ -140,6 +151,7 @@ public final class FlowView extends View {
         int t = Math.max(0, Math.min(items.size() - 1, target + dir));
         if (t == target) return;
         target = t;
+        hurry = false;
         loader.aim(t);
         last = 0;
         postInvalidateOnAnimation();
@@ -188,10 +200,12 @@ public final class FlowView extends View {
         last = now;
         float d = target - pos;
         if (d == 0) return false;
-        float v = Math.max(VMIN, Math.min(VMAX, Math.abs(d) * RATE));
+        float v = Math.max(hurry ? HURRY_VMIN : VMIN,
+                Math.min(VMAX, Math.abs(d) * (hurry ? HURRY_RATE : RATE)));
         float s = v * dt;
         if (s >= Math.abs(d)) pos = target;
         else pos += d > 0 ? s : -s;
+        if (pos == target) hurry = false;
         return pos != target;
     }
 

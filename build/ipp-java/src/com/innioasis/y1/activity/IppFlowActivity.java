@@ -165,10 +165,13 @@ public final class IppFlowActivity extends BaseActivity {
     public void confirm() {
         if (items == null || items.isEmpty()) return;
         if (state == 0) {
-            // The row still easing in: the flip waits for it to stand. A flip started on a moving
-            // row cut its last frames short and met the work the row's rest sets off.
+            // The row still easing in: it is hurried in and the flip waits for it to stand. A flip
+            // started on a moving row cut its last frames short and met the work its rest sets off.
             if (flow.resting()) flipOver();
-            else flipPending = true;
+            else {
+                flipPending = true;
+                flow.hurry();
+            }
         } else if (state == 2) {
             play();
         }

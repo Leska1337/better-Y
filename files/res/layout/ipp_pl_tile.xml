@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ipp: the Playlists grid's tile. The theme gallery's item_theme with the same ids, its
+     ConstraintLayout replaced by a FrameLayout: a tile is measured every time a row scrolls in,
+     and the solver is the dearest part of that measure. Sizes are set from code (Theme.tileFit). -->
+<LinearLayout android:gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_margin="2.0dip"
+  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+    <FrameLayout android:id="@id/layout" android:layout_width="wrap_content" android:layout_height="wrap_content">
+        <androidx.cardview.widget.CardView android:id="@id/img_sel" android:layout_width="140.0dip" android:layout_height="140.0dip" app:cardBackgroundColor="#ff36c6ff" />
+        <androidx.cardview.widget.CardView android:id="@id/card" android:layout_gravity="center" android:layout_width="135.0dip" android:layout_height="135.0dip" app:cardBackgroundColor="@color/black" app:cardCornerRadius="5.0dip" app:cardElevation="3.0dip">
+            <ImageView android:layout_gravity="center" android:id="@id/img" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="fitCenter" android:adjustViewBounds="true" android:maxWidth="100.0dip" android:maxHeight="75.0dip" />
+        </androidx.cardview.widget.CardView>
+        <ImageView android:id="@id/img_m_select" android:layout_gravity="bottom|right" android:layout_width="26.0dip" android:layout_height="26.0dip" android:layout_margin="10.0dip" android:src="@drawable/icon_theme_mulselect" />
+    </FrameLayout>
+    <TextView android:textSize="19.0sp" android:textColor="#ccffffff" android:ellipsize="end" android:gravity="center" android:id="@id/text" android:layout_width="fill_parent" android:layout_height="wrap_content" android:singleLine="true" />
+</LinearLayout>
