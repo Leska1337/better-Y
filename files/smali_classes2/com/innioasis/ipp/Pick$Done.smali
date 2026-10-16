@@ -17,33 +17,51 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/SettingActivity;Lcom/innioasis/y1/utils/LoadingDialog;)V
   .registers 3
-  .line 108
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 109
-    iput-object p1, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
-  .line 110
-    iput-object p2, p0, Lcom/innioasis/ipp/Pick$Done;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
   .line 111
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 112
+    iput-object p1, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
+  .line 113
+    iput-object p2, p0, Lcom/innioasis/ipp/Pick$Done;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
+  .line 114
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
-  .registers 2
-  .line 114
+  .catchall { :L3 .. :L4 } :L5
+  .registers 4
+  .line 117
     iget-object v0, p0, Lcom/innioasis/ipp/Pick$Done;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
     if-eqz v0, :L3
   :L0
-  .line 115
+  .line 118
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->dismiss()V
   :L1
     goto :L3
   :L2
     move-exception v0
   :L3
-  .line 117
+  .line 122
+    iget-object v0, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
+    const v1, 2131820575
+    invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
+    move-result-object v1
+    const/4 v2, 0
+    invoke-static { v0, v1, v2 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
+    move-result-object v0
+  .line 123
+    invoke-virtual { v0 }, Landroid/widget/Toast;->show()V
+  :L4
+  .line 125
+    goto :L6
+  :L5
+  .line 124
+    move-exception v0
+  :L6
+  .line 126
     iget-object v0, p0, Lcom/innioasis/ipp/Pick$Done;->a:Lcom/innioasis/y1/activity/SettingActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/CacheSize;->refresh(Lcom/innioasis/y1/activity/SettingActivity;)V
-  .line 118
+  .line 127
     return-void
 .end method

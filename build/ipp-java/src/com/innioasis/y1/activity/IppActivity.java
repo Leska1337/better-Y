@@ -37,6 +37,7 @@ import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.MenuStyle;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
+import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
@@ -1072,7 +1073,7 @@ public final class IppActivity extends BaseActivity {
     /** "Cache library". Writes no database: the worst a mistake here costs is wasted work. */
     private static final class CacheTask implements Runnable {
         private final IppActivity a;
-        /** What the user ticked: {@code Pick.COVERS} and/or {@code Pick.TAGS}. */
+        /** What the user ticked: {@code Pick.COVERS}, {@code Pick.FLOW}, {@code Pick.TAGS}. */
         private final int mask;
 
         // progress, shared with the workers
@@ -1103,6 +1104,7 @@ public final class IppActivity extends BaseActivity {
             int unread = 0;
             boolean covers = (mask & Pick.COVERS) != 0;
             boolean tags = (mask & Pick.TAGS) != 0;
+            boolean flow = (mask & Pick.FLOW) != 0;
             try {
                 Y1Repository repo = Y1Application.Companion.getY1Repository();
                 List songs = repo == null ? null : repo.getSongsSync(0);
@@ -1148,7 +1150,7 @@ public final class IppActivity extends BaseActivity {
                 int m = keys.size();
                 label = a.getString(R.string.ipp_cache_running);
                 // one scale over both halves, or it sits at 100% through the long one
-                total = m + n;
+                total = m + n + (flow ? m : 0);
                 if (total <= 0) total = 1;
                 tickEvery = total / 60;
                 if (tickEvery < 1) tickEvery = 1;
@@ -1213,6 +1215,14 @@ public final class IppActivity extends BaseActivity {
                         for (int i = 0; i < w.length; i++) w[i].commit();
                         DiscCache.flush();
                         TrackCache.sorted(songs);   // saves; finds nothing left to read
+                    }
+                }
+
+                // Cover Flow's covers last: made from the covers the pass above has just cached
+                if (flow) {
+                    for (int i = 0; i < m; i++) {
+                        Flow.cacheSlide(((Song) reps.get(keys.get(i))).getPath());
+                        tick();
                     }
                 }
 

@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 2
-  .line 932
+  .line 899
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
@@ -23,30 +23,30 @@
 
 .method public run()V
   .registers 3
-  .line 935
+  .line 902
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)I
     move-result v0
     if-eqz v0, :L0
     return-void
   :L0
-  .line 936
+  .line 903
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-boolean v0, v0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipPending:Z
     if-eqz v0, :L1
-  .line 937
+  .line 904
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     const/4 v1, 0
     iput-boolean v1, v0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipPending:Z
-  .line 938
+  .line 905
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$300(Lcom/innioasis/y1/activity/IppFlowActivity;)V
     goto :L2
   :L1
-  .line 940
+  .line 907
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$400(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   :L2
-  .line 942
+  .line 909
     return-void
 .end method

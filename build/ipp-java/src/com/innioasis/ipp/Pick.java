@@ -32,19 +32,22 @@ public final class Pick {
     public static final int TAGS = 2;
     /** Stock's clear of every package's cache. Clearing only. */
     public static final int SYSTEM = 4;
+    /** Cover Flow's covers at slide size. Made from the covers, so they go with them. */
+    public static final int FLOW = 8;
 
-    public static final int CACHE_ALL = COVERS | TAGS;
+    public static final int CACHE_ALL = COVERS | TAGS | FLOW;
 
     public static int label(int cat) {
         if (cat == COVERS) return R.string.ipp_pick_covers;
         if (cat == TAGS) return R.string.ipp_pick_tags;
+        if (cat == FLOW) return R.string.ipp_pick_flow;
         return R.string.ipp_pick_system;
     }
 
     /** From {@code SettingActivity.clickClearCache}; stock's body is {@code ippClearCache}. */
     public static void askClear(SettingActivity a) {
         if (a == null) return;
-        int[] cats = new int[]{COVERS, TAGS, SYSTEM};
+        int[] cats = new int[]{COVERS, FLOW, TAGS, SYSTEM};
         new PickDialog(a, a.getString(R.string.add_req_clear_cache),
                 a.getString(R.string.ipp_pick_clear), cats, true, new DoClear(a)).show();
     }
@@ -114,6 +117,12 @@ public final class Pick {
             if (dialog != null) {
                 try { dialog.dismiss(); } catch (Throwable t) { }
             }
+            // the same word stock's own clear ends with
+            try {
+                android.widget.Toast.makeText(a, a.getString(R.string.add_req_clear_finish),
+                        android.widget.Toast.LENGTH_SHORT).show();
+            } catch (Throwable t) {
+            }
             CacheSize.refresh(a);
         }
     }
@@ -156,7 +165,10 @@ public final class Pick {
             BigCover.clear();
             // the stamps vouch for the pictures, so they go with them
             Art.clearStamps();
+            // and with the stamps gone nothing would notice Cover Flow's copies going stale
+            mask |= FLOW;
         }
+        if ((mask & FLOW) != 0) FlowCache.clear();
         if ((mask & TAGS) != 0) {
             YearCache.clear();
             MetaCache.clear();
@@ -228,6 +240,7 @@ public final class Pick {
                         + CacheSize.dirSize(new File(d, "ipp_bigcover.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_art.txt"));
             }
+            if (cat == FLOW) return CacheSize.dirSize(new File(d, "ipp_flow"));
             if (cat == TAGS) {
                 return CacheSize.dirSize(new File(d, "ipp_years.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_tracks.txt"))
@@ -237,7 +250,7 @@ public final class Pick {
                         + CacheSize.dirSize(new File(d, "ipp_meta.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_genres.txt"));
             }
-            long n = CacheSize.total(c) - size(COVERS) - size(TAGS);
+            long n = CacheSize.total(c) - size(COVERS) - size(TAGS) - size(FLOW);
             return n < 0L ? 0L : n;
         } catch (Throwable t) {
             return 0L;
@@ -251,7 +264,7 @@ public final class Pick {
     /** [Tools] → "Cache library". */
     public static void askCache(Activity a, PickDialog.Go go) {
         if (a == null) return;
-        int[] cats = new int[]{COVERS, TAGS};
+        int[] cats = new int[]{COVERS, FLOW, TAGS};
         new PickDialog(a, a.getString(R.string.ipp_cache),
                 a.getString(R.string.ipp_pick_cache), cats, false, go).show();
     }

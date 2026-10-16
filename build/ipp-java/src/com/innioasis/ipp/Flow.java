@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -36,8 +38,8 @@ import java.util.Locale;
  * Cover Flow: its row in the Music menu, the album list behind it, the slides {@link FlowView}
  * draws and the flip into Now Playing.
  *
- * A slide is the cover alone, built off the main thread into a bitmap of one fixed size; its
- * reflection is drawn from the same bitmap at draw time ({@link FlowView}).
+ * A slide is the cover and a small copy of its lower half, built off the main thread into a
+ * bitmap of one fixed size; the reflection is that copy, turned and faded at draw time ({@link FlowView}).
  */
 public final class Flow {
 
@@ -54,15 +56,48 @@ public final class Flow {
      * the slanted edges of the side slides come out as stair steps.
      */
     static final boolean OPAQUE = false;
-    /** The frame inside a slide: {@link #PAD} when it can be transparent, none otherwise. */
+    /**
+     * The frame round the cover inside a slide, on all four sides: {@link #PAD} when it can be
+     * transparent, none otherwise. The bottom one is what softens the seam with the reflection.
+     */
     public static final int F = OPAQUE ? 0 : PAD;
     /** A slide's size: the cover and its frame, no reflection. */
     public static final int SW = S + 2 * F;
-    public static final int SH = F + S;
+    public static final int SH = S + 2 * F;
+    /**
+     * The reflection's own small copy, under the cover in the slide bitmap: the player builds its
+     * mirror at this size (150 across a 304 picture, 75 rows) and stretches it, and the picture
+     * landing from Now Playing is that one shrunk to the slide — same softness, no change on landing.
+     */
+    public static final int MIR_W = 150;
+    public static final int MIR_H = 75;
+    /**
+     * The mirror's rows in the slide bitmap, unturned: the row draws it upside down. Clear rows
+     * between it and the cover's frame: a slanted slide is filtered across its bottom edge, and
+     * mirror pixels right under the frame turn its soft edge into a stair.
+     */
+    public static final int MIR_GAP = 2;
+    public static final Rect MIR = new Rect(0, SH + MIR_GAP, MIR_W, SH + MIR_GAP + MIR_H);
 
     /** The extra that tells the player it was opened by the first half of a flip. */
     public static final String EXTRA_FLIP = "ipp_flip";
-    public static final int FLIP_MS = 90;
+    /**
+     * The two halves of a turn: the cover's, short — it is small and only goes edge-on — and the
+     * track list's, longer, since it travels the farthest and needs the frames. The half reaching
+     * the edge speeds up into it and the other slows out of it, with curves whose speeds meet
+     * there ({@link #CARD_EASE}); otherwise the turn leaps at the edge.
+     */
+    public static final int CARD_MS = 75;
+    public static final int LIST_MS = 190;
+    /** The list's curve factor; steeper puts more of its path into the first frames. */
+    public static final float TURN_EASE = 1.73f;
+    /** The cover's curve factor, from the list's: equal speed at the edge. */
+    public static final float CARD_EASE = TURN_EASE * CARD_MS / LIST_MS;
+    /** The list going edge-on, closed or on a track pressed: short, or the press reads as lag. */
+    public static final int LEAVE_MS = 130;
+    public static final float LEAVE_EASE = 1f;
+    /** The cover's curve coming out of the closed list's edge: equal speed there. */
+    public static final float BACK_EASE = LEAVE_EASE * CARD_MS / LEAVE_MS;
 
     private Flow() {}
 
@@ -249,9 +284,24 @@ public final class Flow {
 
     // ---- slides -----------------------------------------------------------------------------
 
-    /** An empty slide; its frame, never drawn into, stays transparent. */
+    /** An empty slide, room for its mirror under it; its frame, never drawn into, stays transparent. */
     static Bitmap newSlide() {
-        return Bitmap.createBitmap(SW, SH, OPAQUE ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
+        return Bitmap.createBitmap(SW, MIR.bottom,OPAQUE ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
+    }
+
+    private static final Rect MIR_FROM = new Rect(0, F + S - REFL, SW, F + S);
+
+    /** The slide's lower half, frame columns included, shrunk into its {@link #MIR} rows. */
+    static void mirror(Canvas c, Bitmap s, Paint p) {
+        c.setBitmap(s);
+        c.drawBitmap(s, MIR_FROM, MIR, p);
+    }
+
+    /** Filtered, and over whatever a reused slide's mirror held: the frame columns are see-through. */
+    static Paint mirrorPaint() {
+        Paint p = new Paint(Paint.FILTER_BITMAP_FLAG);
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
+        return p;
     }
 
     /** The blank card PictureFlow draws for an album without a cover. */
@@ -266,22 +316,42 @@ public final class Flow {
         }
         Bitmap b = newSlide();
         b.setPixels(px, 0, S, F, F, S, S);
+        mirror(new Canvas(), b, mirrorPaint());
         return b;
     }
 
     private static Bitmap fade;
 
     /**
-     * The reflection's fade as alpha, one column stretched across: half opacity at the cover's
-     * edge to nothing. Drawn DST_IN over a reflection just drawn on ground the slide has cleared.
+     * The reflection's opacity at the cover's edge: the player's own (Cover.reflect), so the
+     * picture landing from Now Playing turns into the slide without a change of light.
+     */
+    public static final int REFL_ALPHA = 0x70;
+
+    /**
+     * The reflection's fade as alpha, one column stretched across: {@link #REFL_ALPHA} at the
+     * cover's edge to nothing. Drawn DST_IN over a reflection just drawn on ground the slide has cleared.
      */
     static Bitmap fade() {
         if (fade == null) {
             int[] px = new int[REFL];
-            for (int r = 0; r < REFL; r++) px[r] = (128 * (r + 1) / REFL) << 24;
+            for (int r = 0; r < REFL; r++) px[r] = (REFL_ALPHA * (2 * r + 1) / (2 * REFL)) << 24;
             fade = Bitmap.createBitmap(px, 1, REFL, Bitmap.Config.ARGB_8888);
         }
         return fade;
+    }
+
+    /** "Cache library": an album's Cover Flow cover, unless it is there already. */
+    public static void cacheSlide(String path) {
+        try {
+            File f = FlowCache.file(path);
+            if (f == null || f.exists()) return;
+            Bitmap src = BigCover.peekTrackFree(path);
+            if (src == null) src = BigCover.track(path);
+            if (src == null) return;
+            FlowCache.write(path, Cover.square(src, S));
+        } catch (Throwable t) {
+        }
     }
 
     // ---- the loader -------------------------------------------------------------------------
@@ -320,6 +390,7 @@ public final class Flow {
         private Bitmap decoded;
         private final Canvas canvas = new Canvas();
         private final Paint filter = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+        private final Paint mirrorPaint = mirrorPaint();
         private final Rect from = new Rect();
         private final Rect to = new Rect(F, F, F + S, F + S);
 
@@ -429,7 +500,9 @@ public final class Flow {
                     readArtist = true;
                 }
                 Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
-                if (!cover(it, s)) {
+                if (cover(it, s)) {
+                    mirror(canvas, s, mirrorPaint);
+                } else {
                     pool.add(s);
                     if (blank == null) blank = blank();
                     s = blank;
@@ -460,14 +533,67 @@ public final class Flow {
         }
 
         /**
-         * The album's cover drawn into slide {@code s}; false when it has none. Decoded straight
-         * from the JPEG the big-cover cache already holds, into one reused buffer when the size
-         * allows; only a cover never cached goes through {@code BigCover.track}, which reads it and
-         * writes it down for good.
+         * The album's cover drawn into slide {@code s}; false when it has none. From Cover Flow's
+         * own cache when it has the cover; otherwise from the big cover's JPEG, into one reused
+         * buffer when the size allows; only a cover never cached goes through
+         * {@code BigCover.track}, which reads it and writes it down for good.
          */
         private boolean cover(Item it, Bitmap s) {
             try {
                 String path = it.rep.getPath();
+                File ff = FlowCache.file(path);
+                if (ff != null && ff.exists()) {
+                    Bitmap fb = decodeSlide(ff);
+                    if (fb != null) {
+                        canvas.setBitmap(s);
+                        canvas.drawBitmap(fb, F, F, null);
+                        return true;
+                    }
+                }
+                if (!slideSize(path, s)) return false;
+                // written from the slide itself: the next visit decodes it straight to size
+                flowCanvas.drawBitmap(s, to, all, null);
+                FlowCache.write(path, flowBuf);
+                return true;
+            } catch (Throwable t) {
+                return false;
+            }
+        }
+
+        // Cover Flow's own cache, read and written through one buffer of its size
+        private final Bitmap flowBuf = Bitmap.createBitmap(S, S, Bitmap.Config.ARGB_8888);
+        private final Canvas flowCanvas = new Canvas(flowBuf);
+        private final Rect all = new Rect(0, 0, S, S);
+
+        /** A FlowCache file into {@link #flowBuf}; null if it is not one. */
+        private Bitmap decodeSlide(File f) {
+            int n = read(f);
+            if (n <= 0) return null;
+            BitmapFactory.Options o = opts;
+            o.inTempStorage = scratch;
+            o.inSampleSize = 1;
+            o.inBitmap = null;
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(file, 0, n, o);
+            if (o.outWidth != S || o.outHeight != S) return null;
+            o.inJustDecodeBounds = false;
+            o.inMutable = true;
+            o.inBitmap = flowBuf;
+            try {
+                Bitmap b = BitmapFactory.decodeByteArray(file, 0, n, o);
+                if (b != flowBuf) how += " new-flow";
+                return b;
+            } catch (IllegalArgumentException e) {
+                return null;
+            } finally {
+                o.inBitmap = null;
+            }
+        }
+
+        /** The cover scaled into slide {@code s} from the big cover; false when it has none. */
+        private boolean slideSize(String path, Bitmap s) {
+            try {
+                how += " no-flow";
                 Bitmap src = null;
                 File f = BigCover.cachedFile(path);
                 if (f != null) src = decode(f);

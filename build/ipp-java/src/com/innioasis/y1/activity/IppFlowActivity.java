@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.innioasis.ipp.BigCover;
+import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
@@ -213,7 +214,7 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     private void flipOver() {
-        Frames.start("flip over");
+        Frames.start("flip over", true);
         long t0 = SystemClock.uptimeMillis();
         int i = flow.target();
         Flow.Item it = (Flow.Item) items.get(i);
@@ -247,8 +248,9 @@ public final class IppFlowActivity extends BaseActivity {
         flow.hide(i);
         shrunk();
         panel.setRotationY(90);
-        card.animate().rotationY(-90).setDuration(Flow.FLIP_MS).withEndAction(new Half(this, true));
-        labels(0, Flow.FLIP_MS);
+        card.animate().rotationY(-90).setDuration(Flow.CARD_MS)
+                .setInterpolator(new AccelerateInterpolator(Flow.CARD_EASE)).withEndAction(new Half(this, true));
+        labels(0, Flow.CARD_MS);
         Frames.part("setup", t0);
     }
 
@@ -263,27 +265,29 @@ public final class IppFlowActivity extends BaseActivity {
     void halfOver() {
         card.setVisibility(View.GONE);
         panel.setVisibility(View.VISIBLE);
-        panel.animate().rotationY(0).scaleX(1).scaleY(1).translationY(0).setDuration(Flow.FLIP_MS)
+        panel.animate().rotationY(0).scaleX(1).scaleY(1).translationY(0).setDuration(Flow.LIST_MS)
+                .setInterpolator(new DecelerateInterpolator(Flow.TURN_EASE))
                 .withEndAction(new Done(this, 2));
     }
 
     private void flipBack() {
-        Frames.start("flip back");
+        Frames.start("flip back", true);
         hold(true);
         state = 3;
         // back in only as the cover finishes turning round: both halves of the turn, the frame the
         // second half waits to start, and slow at first so it does not look done half way
-        labels(1, 2 * Flow.FLIP_MS + TURN_SLACK_MS).setInterpolator(new AccelerateInterpolator(1.5f));
-        edgeOn(Flow.FLIP_MS, new Half(this, false));
+        labels(1, Flow.LEAVE_MS + Flow.CARD_MS + TURN_SLACK_MS).setInterpolator(new AccelerateInterpolator(1.5f));
+        edgeOn(new Half(this, false), Flow.LEAVE_MS, Flow.LEAVE_EASE);
     }
 
     /** The track list shrinks onto the cover's square and turns edge-on. */
-    private void edgeOn(int ms, Runnable end) {
+    private void edgeOn(Runnable end, int ms, float ease) {
         int ph = flow.getHeight();
         panel.animate().rotationY(90).scaleX((float) Flow.S / PANEL_W)
                 .scaleY(ph > 0 ? (float) Flow.S / ph : 1f)
                 .translationY(flow.coverTop() + Flow.S / 2f - ph / 2f)
-                .setDuration(ms).withEndAction(end);
+                .setDuration(ms).setInterpolator(new AccelerateInterpolator(ease))
+                .withEndAction(end);
     }
 
     /**
@@ -299,6 +303,7 @@ public final class IppFlowActivity extends BaseActivity {
         panel.setScaleY(1);
         panel.setTranslationY(0);
         trip.animate().cancel();
+        trip.setAlpha(1f);
         flow.setLabels(1);
         if (!turn || trip.getDrawable() == null) {
             flow.setSpread(0);
@@ -348,7 +353,14 @@ public final class IppFlowActivity extends BaseActivity {
     void halfBack() {
         panel.setVisibility(View.INVISIBLE);
         card.setVisibility(View.VISIBLE);
-        card.animate().rotationY(0).setDuration(Flow.FLIP_MS).withEndAction(new Done(this, 0));
+        card.animate().rotationY(0).setDuration(Flow.CARD_MS)
+                .setInterpolator(new DecelerateInterpolator(Flow.BACK_EASE)).withEndAction(new Done(this, 0));
+    }
+
+    void tripGone() {
+        trip.setVisibility(View.GONE);
+        trip.setImageBitmap(null);
+        trip.setAlpha(1f);
     }
 
     /** The name and artist under the row fade out while the cover turns over, and back in. */
@@ -371,8 +383,9 @@ public final class IppFlowActivity extends BaseActivity {
         if (s == 0) {
             card.setVisibility(View.GONE);
             card.setSlide(null);
-            trip.setVisibility(View.GONE);
-            trip.setImageBitmap(null);
+            // Swapped in one frame: the slide is the landed picture at its size, mirror and all. A
+            // cross-fade between the two shows both half see-through, the reflection dimming.
+            tripGone();
             flow.hide(-1);
             flow.setLabels(1);
             flipped = -1;
@@ -412,7 +425,7 @@ public final class IppFlowActivity extends BaseActivity {
         Frames.part("playlist", t0);
         state = 4;
         spread(0, 1, SPREAD_MS, new AccelerateInterpolator());
-        edgeOn(Flow.FLIP_MS, new ToPlayer(this));
+        edgeOn(new ToPlayer(this), Flow.LEAVE_MS, Flow.LEAVE_EASE);
     }
 
     void toPlayer() {
@@ -423,6 +436,8 @@ public final class IppFlowActivity extends BaseActivity {
             openPlayer();
             return;
         }
+        trip.animate().cancel();
+        trip.setAlpha(1f);
         trip.setImageBitmap(pic);
         placeTrip();
         float[] p = startPose();
@@ -456,7 +471,7 @@ public final class IppFlowActivity extends BaseActivity {
 
     /**
      * Translation x, y and scale that lay the picture's cover over the centre slide's: the picture
-     * is FIT_START inside the box's padding, the cover inside it framed by 2 px on the left and on top.
+     * is FIT_START inside the box's padding, the cover inside it framed by 2 px on the left and on top when tilted.
      */
     private float[] startPose() {
         float[] g = Flow.geo(this);
@@ -464,9 +479,10 @@ public final class IppFlowActivity extends BaseActivity {
         float iw = trip.getDrawable().getIntrinsicWidth();
         float ih = trip.getDrawable().getIntrinsicHeight();
         float f = Math.min((g[2] - g[7] - g[9]) / iw, (g[3] - g[8] - g[10]) / ih);
-        float side = (iw - 4) * f;
+        int fr = Cover.flatCover() ? 0 : 2;     // the frame comes with the tilt only (Cover.fitCover)
+        float side = (iw - 2 * fr) * f;
         float s0 = Flow.S / side;
-        float qx = g[7] + 2 * f, qy = g[8] + 2 * f;
+        float qx = g[7] + fr * f, qy = g[8] + fr * f;
         float tx = flow.coverLeft() - lp.leftMargin - g[4] - s0 * (qx - g[4]);
         float ty = flow.coverTop() - lp.topMargin - g[5] - s0 * (qy - g[5]);
         return new float[] { tx, ty, s0 };
@@ -576,23 +592,6 @@ public final class IppFlowActivity extends BaseActivity {
         if (state == 2) armAhead();         // the cursor may have moved on meanwhile
     }
 
-    /**
-     * The first track's picture from the album's build. Kept unless the cursor is already on
-     * another track of the open album, whose own picture is the one worth having.
-     */
-    void aheadFirst(String path, Bitmap b, Object[] src) {
-        if (b == null || aheadBusy != null) return;
-        if (state == 2) {
-            int at = panel.track();
-            Song cur = panel.songs != null && at >= 0 && at < panel.songs.size()
-                    ? (Song) panel.songs.get(at) : null;
-            if (cur == null || !path.equals(cur.getPath())) return;
-        }
-        aheadFor = path;
-        aheadPic = b;
-        aheadSrc = src;
-    }
-
     /** The prepared picture when it is this track's; null otherwise. */
     private Bitmap takeAhead(Song track) {
         if (track == null || aheadPic == null || !track.getPath().equals(aheadFor)) return null;
@@ -692,14 +691,6 @@ public final class IppFlowActivity extends BaseActivity {
             sel = 0;
             first = 0;
             invalidate();
-        }
-
-        /** The song the cursor starts on in {@link #setSongs}: the first row that is not a divider. */
-        static Song firstSong(Flow.Back b) {
-            if (b == null || b.song == null || b.songs == null || b.song.length == 0) return null;
-            int s = b.song[0] < 0 ? 1 : 0;
-            if (s >= b.song.length || b.song[s] < 0 || b.song[s] >= b.songs.size()) return null;
-            return (Song) b.songs.get(b.song[s]);
         }
 
         void setSongs(Flow.Back b) {
@@ -882,35 +873,11 @@ public final class IppFlowActivity extends BaseActivity {
             FlowView.busyTracks = true;
             Flow.Back b = Flow.back(it);
             FlowView.busyTracks = false;
+            // No picture for the player here: ~1 MB of bitmaps on every rest of the row, and the
+            // collection after it, cost the scrolling row its frames. The open list builds it once
+            // the cursor rests on a track (armAhead).
             a.ui.post(new BackDone(a, it, b, t0));
-            // And the picture of the track the cursor will stand on first, so that opening an
-            // album and playing straight away finds it ready — only while nothing animates: its
-            // bitmaps are the allocations that set off a stop-everything pause in a flip. A flip
-            // under way leaves it to the track's own wait (armAhead) after the flip.
-            if (a.animating) return;
-            Song first = Panel.firstSong(b);
-            if (first != null && first.getPath() != null) {
-                Object[] src = new Object[2];
-                FlowView.busyPic = true;
-                Bitmap pic = Flow.tripAhead(first, it.rep, src);
-                FlowView.busyPic = false;
-                a.ui.post(new FirstPic(a, first.getPath(), pic, src));
-            }
-            IppFlowActivity.tidy();
         }
-    }
-
-    static final class FirstPic implements Runnable {
-        private final IppFlowActivity a;
-        private final String path;
-        private final Bitmap b;
-        private final Object[] src;
-
-        FirstPic(IppFlowActivity a, String path, Bitmap b, Object[] src) {
-            this.a = a; this.path = path; this.b = b; this.src = src;
-        }
-
-        public void run() { a.aheadFirst(path, b, src); }
     }
 
     static final class BackDone implements Runnable {

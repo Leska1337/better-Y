@@ -19,15 +19,15 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/SettingActivity;ILcom/innioasis/y1/utils/LoadingDialog;)V
   .registers 4
-  .line 87
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 88
-    iput-object p1, p0, Lcom/innioasis/ipp/Pick$ClearTask;->a:Lcom/innioasis/y1/activity/SettingActivity;
-  .line 89
-    iput p2, p0, Lcom/innioasis/ipp/Pick$ClearTask;->mask:I
   .line 90
-    iput-object p3, p0, Lcom/innioasis/ipp/Pick$ClearTask;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 91
+    iput-object p1, p0, Lcom/innioasis/ipp/Pick$ClearTask;->a:Lcom/innioasis/y1/activity/SettingActivity;
+  .line 92
+    iput p2, p0, Lcom/innioasis/ipp/Pick$ClearTask;->mask:I
+  .line 93
+    iput-object p3, p0, Lcom/innioasis/ipp/Pick$ClearTask;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
+  .line 94
     return-void
 .end method
 
@@ -36,29 +36,29 @@
   .catchall { :L3 .. :L4 } :L5
   .registers 4
   :L0
-  .line 95
+  .line 98
     iget v0, p0, Lcom/innioasis/ipp/Pick$ClearTask;->mask:I
     invoke-static { v0 }, Lcom/innioasis/ipp/Pick;->clear(I)V
   :L1
-  .line 97
+  .line 100
     goto :L3
   :L2
-  .line 96
+  .line 99
     move-exception v0
   :L3
-  .line 99
+  .line 102
     iget-object v0, p0, Lcom/innioasis/ipp/Pick$ClearTask;->a:Lcom/innioasis/y1/activity/SettingActivity;
     new-instance v1, Lcom/innioasis/ipp/Pick$Done;
     iget-object v2, p0, Lcom/innioasis/ipp/Pick$ClearTask;->dialog:Lcom/innioasis/y1/utils/LoadingDialog;
     invoke-direct { v1, v0, v2 }, Lcom/innioasis/ipp/Pick$Done;-><init>(Lcom/innioasis/y1/activity/SettingActivity;Lcom/innioasis/y1/utils/LoadingDialog;)V
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/SettingActivity;->runOnUiThread(Ljava/lang/Runnable;)V
   :L4
-  .line 101
+  .line 104
     goto :L6
   :L5
-  .line 100
+  .line 103
     move-exception v0
   :L6
-  .line 102
+  .line 105
     return-void
 .end method

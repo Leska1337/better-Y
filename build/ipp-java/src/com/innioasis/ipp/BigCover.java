@@ -262,7 +262,7 @@ public final class BigCover {
         return b;
     }
 
-    /** Drop one key everywhere — memory, miss, note, JPEG ({@code Ipp.songChanged}). */
+    /** Drop one key everywhere — memory, miss, note, JPEG, Cover Flow's copy ({@code Ipp.songChanged}). */
     public static void forget(String key) {
         if (key == null) return;
         mem.remove(key);
@@ -273,6 +273,7 @@ public final class BigCover {
             if (f != null) f.delete();
         } catch (Throwable t) {
         }
+        FlowCache.forget(key);
     }
 
     /** Forget only the "no cover here" answers, keeping the covers we did find. */

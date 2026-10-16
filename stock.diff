@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..650b36ab 100644
+index 01b1f730..257b6b92 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..650b36ab 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100159
++  versionCode: 10100170
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -984,10 +984,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..e2bfc1b5 100644
+index 50446006..bae75470 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,520 @@
+@@ -1,417 +1,521 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1857,6 +1857,7 @@ index 50446006..e2bfc1b5 100644
 +    <string name="ipp_pick_covers">Album-Cover</string>
 +    <string name="ipp_pick_tags">Metadaten (Jahre, Album-Interpreten, Titel- und CD-Nummern, Genres)</string>
 +    <string name="ipp_pick_system">Systemcache</string>
++    <string name="ipp_pick_flow">Cover-Flow-Cover</string>
 +    <string name="ipp_pick_cache">Cachen</string>
 +    <string name="ipp_pick_clear">Löschen</string>
 +    <string name="ipp_del_folder_warn">Der Ordner wird ebenfalls gelöscht, wenn nichts darin übrig bleibt (außer cover.*, folder.*, .lrc und leeren Ordnern - diese werden mitgelöscht).</string>
@@ -2244,10 +2245,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..84742859 100644
+index 6f5a555d..7fdbe756 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,520 @@
+@@ -1,417 +1,521 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3117,6 +3118,7 @@ index 6f5a555d..84742859 100644
 +    <string name="ipp_pick_covers">Portadas de álbum</string>
 +    <string name="ipp_pick_tags">Metadatos (años, artistas del álbum, números de pista y disco, géneros)</string>
 +    <string name="ipp_pick_system">Caché del sistema</string>
++    <string name="ipp_pick_flow">Portadas de Cover Flow</string>
 +    <string name="ipp_pick_cache">Guardar</string>
 +    <string name="ipp_pick_clear">Borrar</string>
 +    <string name="ipp_del_folder_warn">La carpeta también se eliminará si no queda nada en ella (excepto cover.*, folder.*, .lrc y las carpetas vacías - esos también se eliminan).</string>
@@ -3186,10 +3188,10 @@ index 6f5a555d..84742859 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..a3e1ce1f 100644
+index c242cee4..7c4c9bab 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,520 @@
+@@ -1,417 +1,521 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4059,6 +4061,7 @@ index c242cee4..a3e1ce1f 100644
 +    <string name="ipp_pick_covers">Pochettes d’album</string>
 +    <string name="ipp_pick_tags">Métadonnées (années, artistes d’album, numéros de piste et de disque, genres)</string>
 +    <string name="ipp_pick_system">Cache système</string>
++    <string name="ipp_pick_flow">Pochettes de Cover Flow</string>
 +    <string name="ipp_pick_cache">Mettre en cache</string>
 +    <string name="ipp_pick_clear">Effacer</string>
 +    <string name="ipp_del_folder_warn">Le dossier sera aussi supprimé s\'il ne reste rien dedans (sauf cover.*, folder.*, .lrc et les dossiers vides - ceux-ci sont supprimés aussi).</string>
@@ -4128,10 +4131,10 @@ index c242cee4..a3e1ce1f 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..5bc1aec8 100644
+index d82ac6bb..bc24f8d3 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,520 @@
+@@ -1,417 +1,521 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -5001,6 +5004,7 @@ index d82ac6bb..5bc1aec8 100644
 +    <string name="ipp_pick_covers">עטיפות אלבום</string>
 +    <string name="ipp_pick_tags">מטא-נתונים (שנים, אמני אלבום, מספרי רצועה ותקליטור, ז\'אנרים)</string>
 +    <string name="ipp_pick_system">מטמון מערכת</string>
++    <string name="ipp_pick_flow">עטיפות Cover Flow</string>
 +    <string name="ipp_pick_cache">שמור במטמון</string>
 +    <string name="ipp_pick_clear">נקה</string>
 +    <string name="ipp_del_folder_warn">גם התיקייה תימחק אם לא יישאר בה דבר (למעט cover.*, folder.*, .lrc ותיקיות ריקות - גם הם יימחקו).</string>
@@ -5070,10 +5074,10 @@ index d82ac6bb..5bc1aec8 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..1e396ab4 100644
+index f71d0cb1..1ac3fa0b 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,437 @@
+@@ -1,334 +1,438 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5777,6 +5781,7 @@ index f71d0cb1..1e396ab4 100644
 +    <string name="ipp_pick_covers">앨범 커버</string>
 +    <string name="ipp_pick_tags">메타데이터 (연도, 앨범 아티스트, 트랙·디스크 번호, 장르)</string>
 +    <string name="ipp_pick_system">시스템 캐시</string>
++    <string name="ipp_pick_flow">Cover Flow 커버</string>
 +    <string name="ipp_pick_cache">캐시</string>
 +    <string name="ipp_pick_clear">지우기</string>
 +    <string name="ipp_del_folder_warn">폴더에 아무것도 남지 않으면 폴더도 삭제됩니다 (cover.*, folder.*, .lrc와 빈 폴더는 제외 - 이들도 함께 삭제됩니다).</string>
@@ -6093,10 +6098,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..06b36677 100644
+index 4c84fd2b..e9f97d70 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,189 @@
+@@ -1,86 +1,190 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6304,6 +6309,7 @@ index 4c84fd2b..06b36677 100644
 +    <string name="ipp_pick_covers">Обложки альбомов</string>
 +    <string name="ipp_pick_tags">Метаданные (годы, исполнители альбомов, номера треков и дисков, жанры)</string>
 +    <string name="ipp_pick_system">Системный кэш</string>
++    <string name="ipp_pick_flow">Обложки Cover Flow</string>
 +    <string name="ipp_pick_cache">Кэшировать</string>
 +    <string name="ipp_pick_clear">Очистить</string>
 +    <string name="ipp_del_folder_warn">Папка также будет удалена, если в ней ничего не останется (за исключением cover.*, folder.*, .lrc и пустых папок - они также будут удалены).</string>
@@ -6373,10 +6379,10 @@ index 4c84fd2b..06b36677 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..9f8c1294 100644
+index 5665bdd9..021d4d82 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,529 @@
+@@ -1,426 +1,530 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7264,6 +7270,7 @@ index 5665bdd9..9f8c1294 100644
 +    <string name="ipp_pick_covers">专辑封面</string>
 +    <string name="ipp_pick_tags">元数据（年份、专辑艺人、音轨和碟片编号、流派）</string>
 +    <string name="ipp_pick_system">系统缓存</string>
++    <string name="ipp_pick_flow">Cover Flow 封面</string>
 +    <string name="ipp_pick_cache">缓存</string>
 +    <string name="ipp_pick_clear">清除</string>
 +    <string name="ipp_del_folder_warn">如果文件夹中没有其他内容，文件夹也会被删除（cover.*、folder.*、.lrc 和空文件夹除外 - 它们也会一并删除）。</string>
@@ -8639,10 +8646,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..d16bd359 100644
+index 803c1e7a..383122b4 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5668 @@
+@@ -1,5519 +1,5669 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18748,6 +18755,7 @@ index 803c1e7a..d16bd359 100644
 +    <public type="string" name="ipp_tone_default" id="0x7f11026d" />
 +    <public type="string" name="ipp_tone_theme" id="0x7f11026e" />
 +    <public type="string" name="ipp_coverflow" id="0x7f11026f" />
++    <public type="string" name="ipp_pick_flow" id="0x7f110270" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19831,10 +19839,10 @@ index 803c1e7a..d16bd359 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..9bcac72c 100644
+index 71fe29d0..5ebcad74 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,579 @@
+@@ -1,473 +1,580 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20780,7 +20788,7 @@ index 71fe29d0..9bcac72c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev159</string>
++    <string name="ipp_version">v1.1.0-dev170</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20818,6 +20826,7 @@ index 71fe29d0..9bcac72c 100644
 +    <string name="ipp_pick_covers">Album covers</string>
 +    <string name="ipp_pick_tags">Metadata (years, album artists, track and disc numbers, genres)</string>
 +    <string name="ipp_pick_system">System cache</string>
++    <string name="ipp_pick_flow">Cover Flow covers</string>
 +    <string name="ipp_pick_cache">Cache</string>
 +    <string name="ipp_pick_clear">Clear</string>
 +    <string name="ipp_del_folder_warn">The folder will be deleted too if nothing is left in it (except cover.*, folder.*, .lrc and empty folders - those are deleted as well).</string>

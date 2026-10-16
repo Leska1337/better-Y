@@ -361,40 +361,61 @@ public final class FlowView extends View {
         float cos = (float) Math.cos(sAngle), sin = (float) Math.sin(sAngle);
         float off = spread > 0f ? (i < pos ? -spread : spread) * w : 0f;
         float half = Flow.S / 2f + Flow.F;
+        int edge = Flow.F + Flow.S;     // the cover's bottom row in the slide
 
-        // the cover: the whole slide
-        corner(0, -half, BASE - Flow.SH, cos, sin);
-        corner(2, half, BASE - Flow.SH, cos, sin);
+        erase.setAlpha(a);
+
+        // Under the cover's soft bottom edge, the cover's last rows at the reflection's opacity:
+        // the edge blends into what the reflection starts with instead of cutting a step.
+        corner(0, -half, BASE - Flow.F, cos, sin);
+        corner(2, half, BASE - Flow.F, cos, sin);
         corner(4, half, BASE, cos, sin);
         corner(6, -half, BASE, cos, sin);
-        quad(0, Flow.SH, off);
+        quad(edge - Flow.F, edge, off);
         if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
-        bmpPaint.setAlpha(a);
-        if (a < 255) {
-            erase.setAlpha(a);
-            c.drawBitmap(b, m, erase);
-        }
-        c.drawBitmap(b, m, bmpPaint);
+        c.save();
+        c.concat(m);
+        c.drawBitmap(b, seamFrom, seamTo, erase);
+        bmpPaint.setAlpha(a * Flow.REFL_ALPHA / 255);
+        c.drawBitmap(b, seamFrom, seamTo, bmpPaint);
+        c.restore();
 
-        // the reflection: the slide's lower rows turned over under the cover. It is see-through,
-        // so what is behind it is cleared first, then it is drawn opaque and faded in place.
+        // The reflection: the slide's small mirror stretched and turned over under the cover, as the
+        // player's. It is see-through, so what is behind it is cleared first, then drawn and faded.
         corner(0, -half, BASE, cos, sin);
         corner(2, half, BASE, cos, sin);
         corner(4, half, BASE + Flow.REFL, cos, sin);
         corner(6, -half, BASE + Flow.REFL, cos, sin);
-        quad(Flow.SH, Flow.SH - Flow.REFL, off);
+        quad(edge, edge - Flow.REFL, off);
         if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
+        bmpPaint.setAlpha(a);
         c.save();
         c.concat(m);
-        erase.setAlpha(a);
         c.drawBitmap(b, reflFrom, reflTo, erase);
         c.drawBitmap(b, reflFrom, reflTo, bmpPaint);
         c.drawBitmap(Flow.fade(), null, reflTo, fade);
         c.restore();
+
+        // the cover over it: the whole slide, frame and all
+        corner(0, -half, BASE - Flow.S - Flow.F, cos, sin);
+        corner(2, half, BASE - Flow.S - Flow.F, cos, sin);
+        corner(4, half, BASE + Flow.F, cos, sin);
+        corner(6, -half, BASE + Flow.F, cos, sin);
+        quad(0, Flow.SH, off);
+        if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
+        c.save();
+        c.concat(m);
+        if (a < 255) c.drawBitmap(b, slideFrom, slideTo, erase);
+        c.drawBitmap(b, slideFrom, slideTo, bmpPaint);
+        c.restore();
     }
 
-    private final Rect reflFrom = new Rect(0, Flow.SH - Flow.REFL, Flow.SW, Flow.SH);
-    private final RectF reflTo = new RectF(reflFrom);
+    private final Rect slideFrom = new Rect(0, 0, Flow.SW, Flow.SH);
+    private final RectF slideTo = new RectF(slideFrom);
+    private final Rect reflFrom = Flow.MIR;
+    private final Rect seamFrom = new Rect(0, Flow.S, Flow.SW, Flow.F + Flow.S);
+    private final RectF seamTo = new RectF(seamFrom);
+    private final RectF reflTo = new RectF(0, Flow.F + Flow.S - Flow.REFL, Flow.SW, Flow.F + Flow.S);
     private final Paint fade = fadePaint();
 
     private static Paint fadePaint() {
@@ -424,7 +445,10 @@ public final class FlowView extends View {
         private Bitmap b;
         private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private final Paint fade = fadePaint();
-        private final Rect from = new Rect(0, Flow.SH - Flow.REFL, Flow.SW, Flow.SH);
+        private final Rect from = Flow.MIR;
+        private final Rect whole = new Rect(0, 0, Flow.SW, Flow.SH);
+        private final Rect seam = new Rect(0, Flow.S, Flow.SW, Flow.F + Flow.S);
+        private final Paint half = new Paint(Paint.FILTER_BITMAP_FLAG);
         private final RectF to = new RectF();
 
         public Card(Context c) {
@@ -441,8 +465,11 @@ public final class FlowView extends View {
         protected void onDraw(Canvas c) {
             if (b == null) return;
             float x = Flow.PAD - Flow.F, y = Flow.PAD - Flow.F;
-            c.drawBitmap(b, x, y, paint);
             float base = Flow.PAD + Flow.S;
+            // as the row draws it: the seam's underlay, the reflection, then the cover over both
+            to.set(x, base - Flow.F, x + Flow.SW, base);
+            half.setAlpha(Flow.REFL_ALPHA);
+            c.drawBitmap(b, seam, to, half);
             c.save();
             c.translate(0, 2 * base);
             c.scale(1, -1);
@@ -450,6 +477,8 @@ public final class FlowView extends View {
             c.drawBitmap(b, from, to, paint);
             c.drawBitmap(Flow.fade(), null, to, fade);
             c.restore();
+            to.set(x, y, x + Flow.SW, y + Flow.SH);
+            c.drawBitmap(b, whole, to, paint);
         }
     }
 

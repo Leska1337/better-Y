@@ -24,6 +24,8 @@ public final class Frames {
     private static long worst;
     private static int count;
     private static StringBuilder parts;
+    /** Every frame's gap, in order (measurement). */
+    private static StringBuilder gaps;
     private static Tick tick;
     private static boolean always;
 
@@ -43,6 +45,7 @@ public final class Frames {
             worst = 0;
             count = 0;
             parts = new StringBuilder();
+            gaps = new StringBuilder();
             Choreographer.getInstance().postFrameCallback(tick);
         } catch (Throwable t) {
         }
@@ -58,9 +61,11 @@ public final class Frames {
             Choreographer.getInstance().removeFrameCallback(tick);
             if (worst >= SLOW_MS || always) {
                 long ms = SystemClock.uptimeMillis() - startAt;
-                Diag.note((worst >= SLOW_MS ? "slow: frames " : "frames ") + what + " worst " + worst
+                String line = (worst >= SLOW_MS ? "slow: frames " : "frames ") + what + " worst " + worst
                         + " ms, " + count + " frames in " + ms + " ms, mean "
-                        + (count > 0 ? ms / count : 0) + " ms" + parts);
+                        + (count > 0 ? ms / count : 0) + " ms" + parts + "; gaps" + gaps;
+                Diag.note(line);
+                android.util.Log.i("ippflow", line);
             }
             what = null;
         } catch (Throwable t) {
@@ -77,6 +82,7 @@ public final class Frames {
             if (lastNanos != 0) {
                 long gap = (nanos - lastNanos) / 1000000L;
                 if (gap > worst) worst = gap;
+                gaps.append(' ').append(gap);
             }
             lastNanos = nanos;
             count++;
