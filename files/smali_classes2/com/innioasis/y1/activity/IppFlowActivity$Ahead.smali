@@ -19,7 +19,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)V
   .registers 4
-  .line 990
+  .line 1013
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->track:Lcom/innioasis/y1/database/Song;
@@ -29,15 +29,21 @@
 
 .method public run()V
   .registers 7
-  .line 993
+  .line 1016
     const/4 v0, 2
     new-array v0, v0, [Ljava/lang/Object;
-  .line 994
+  .line 1017
+    const/4 v1, 1
+    sput-boolean v1, Lcom/innioasis/ipp/FlowView;->busyPic:Z
+  .line 1018
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->track:Lcom/innioasis/y1/database/Song;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->rep:Lcom/innioasis/y1/database/Song;
     invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Flow;->tripAhead(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 995
+  .line 1019
+    const/4 v2, 0
+    sput-boolean v2, Lcom/innioasis/ipp/FlowView;->busyPic:Z
+  .line 1020
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v2
@@ -48,8 +54,8 @@
     move-result-object v5
     invoke-direct { v3, v4, v5, v1, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/lang/String;Landroid/graphics/Bitmap;[Ljava/lang/Object;)V
     invoke-virtual { v2, v3 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 996
+  .line 1021
     invoke-static { }, Lcom/innioasis/y1/activity/IppFlowActivity;->tidy()V
-  .line 997
+  .line 1022
     return-void
 .end method

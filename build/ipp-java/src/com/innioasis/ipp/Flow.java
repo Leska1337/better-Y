@@ -36,8 +36,8 @@ import java.util.Locale;
  * Cover Flow: its row in the Music menu, the album list behind it, the slides {@link FlowView}
  * draws and the flip into Now Playing.
  *
- * A slide is the cover with its reflection under it in one bitmap, built off the main thread, so
- * drawing one is a single bitmap under a perspective matrix.
+ * A slide is the cover alone, built off the main thread into a bitmap of one fixed size; its
+ * reflection is drawn from the same bitmap at draw time ({@link FlowView}).
  */
 public final class Flow {
 
@@ -46,8 +46,19 @@ public final class Flow {
     /** Reflection rows under the cover: half of it, as the player's own reflection, so the cover
      *  that moves between the two screens does not change length on arrival. */
     public static final int REFL = S / 2;
-    /** Transparent frame left, right and on top: the filtering then softens the slanted edges. */
+    /** The card's transparent frame left, right and on top: the filtering then softens the slanted edges. */
     public static final int PAD = 2;
+
+    /**
+     * Slides in RGB_565 would be half ARGB's weight, but with no alpha there is no soft frame, and
+     * the slanted edges of the side slides come out as stair steps.
+     */
+    static final boolean OPAQUE = false;
+    /** The frame inside a slide: {@link #PAD} when it can be transparent, none otherwise. */
+    public static final int F = OPAQUE ? 0 : PAD;
+    /** A slide's size: the cover and its frame, no reflection. */
+    public static final int SW = S + 2 * F;
+    public static final int SH = F + S;
 
     /** The extra that tells the player it was opened by the first half of a flip. */
     public static final String EXTRA_FLIP = "ipp_flip";
@@ -238,12 +249,14 @@ public final class Flow {
 
     // ---- slides -----------------------------------------------------------------------------
 
-    /** The cover, or the blank card PictureFlow draws for an album without one. */
-    private static int[] face(Bitmap cover, int[] px) {
-        if (cover != null) {
-            cover.getPixels(px, 0, S, 0, 0, S, S);
-            return px;
-        }
+    /** An empty slide; its frame, never drawn into, stays transparent. */
+    static Bitmap newSlide() {
+        return Bitmap.createBitmap(SW, SH, OPAQUE ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
+    }
+
+    /** The blank card PictureFlow draws for an album without a cover. */
+    static Bitmap blank() {
+        int[] px = new int[S * S];
         for (int y = 0; y < S; y++) {
             for (int x = 0; x < S; x++) {
                 int g = 0x30 + (x + y) * 0x30 / (2 * S);
@@ -251,52 +264,31 @@ public final class Flow {
                 px[y * S + x] = 0xFF000000 | (g << 16) | (g << 8) | g;
             }
         }
-        return px;
+        Bitmap b = newSlide();
+        b.setPixels(px, 0, S, F, F, S, S);
+        return b;
     }
+
+    private static Bitmap fade;
 
     /**
-     * Cover over its mirror image, the mirror fading from half opacity to nothing. Built in the
-     * loader's own two buffers: every pixel written is written on every call, and the frame that
-     * never is stays transparent. Into {@code into} when there is one to reuse.
+     * The reflection's fade as alpha, one column stretched across: half opacity at the cover's
+     * edge to nothing. Drawn DST_IN over a reflection just drawn on ground the slide has cleared.
      */
-    static Bitmap slide(Bitmap cover, int[] px, int[] out, Bitmap into) {
-        face(cover, px);
-        int w = S + 2 * PAD;
-        int h = PAD + S + REFL;
-        for (int y = 0; y < S; y++) System.arraycopy(px, y * S, out, (PAD + y) * w + PAD, S);
-        for (int y = 0; y < REFL; y++) {
-            int a = 128 * (REFL - y) / REFL;
-            int src = (S - 1 - y) * S;
-            int dst = (PAD + S + y) * w + PAD;
-            for (int x = 0; x < S; x++) out[dst + x] = (a << 24) | (px[src + x] & 0xFFFFFF);
+    static Bitmap fade() {
+        if (fade == null) {
+            int[] px = new int[REFL];
+            for (int r = 0; r < REFL; r++) px[r] = (128 * (r + 1) / REFL) << 24;
+            fade = Bitmap.createBitmap(px, 1, REFL, Bitmap.Config.ARGB_8888);
         }
-        // mutable, so that it can be refilled once it has left the row
-        if (into == null) into = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        into.setPixels(out, 0, w, 0, 0, w, h);
-        return into;
-    }
-
-    private static Bitmap mask;
-
-    /** A slide's shape, opaque over the cover and its reflection alike: what a slide hides. */
-    static Bitmap mask() {
-        if (mask == null) {
-            int w = S + 2 * PAD;
-            int h = PAD + S + REFL;
-            int[] out = new int[w * h];
-            for (int y = PAD; y < h; y++) {
-                for (int x = PAD; x < PAD + S; x++) out[y * w + x] = 0xFF000000;
-            }
-            mask = Bitmap.createBitmap(out, w, h, Bitmap.Config.ARGB_8888);
-        }
-        return mask;
+        return fade;
     }
 
     // ---- the loader -------------------------------------------------------------------------
 
     /**
      * Builds slides nearest the target first, on one thread, and keeps only a window around it: a
-     * slide is ~220 KB and a library holds hundreds of albums. An album artist not read yet is
+     * slide is ~130 KB and a library holds hundreds of albums. An album artist not read yet is
      * read on the way, and the row repainted.
      */
     public static final class Loader implements Runnable {
@@ -307,7 +299,8 @@ public final class Flow {
          * next slide in place: it must not be one the row still draws.
          */
         public static final int KEEP = 16;
-        private static final int POOL = 8;
+        /** Every slide the window can hold, made before the first: none is allocated while the row moves. */
+        private static final int SLIDES = 2 * KEEP + 2;
 
         private final List items;
         private final Runnable onSlide;
@@ -320,18 +313,15 @@ public final class Flow {
         private Bitmap blank;
         private boolean readArtist;
         private final Object wake = new Object();
-        // a slide's pixels, reused: fresh arrays would be a third of a megabyte of garbage a slide
-        private final int[] px = new int[S * S];
-        private final int[] out = new int[(S + 2 * PAD) * (PAD + S + REFL)];
-        // and the rest of a slide's making, reused too: a fast spin builds a dozen slides a second,
-        // and fresh bitmaps for each kept the GC stopping the app for ~30 ms three times a second
+        // Nothing of a slide's making is allocated per slide: the bitmaps come from the pool, the
+        // decode lands in a reused buffer. A collector pause one allocation sets off stops the
+        // whole app for 60-150 ms at this heap's size, a dropped frame the eye sees.
         private final ArrayList pool = new ArrayList();
         private Bitmap decoded;
-        private final Bitmap small = Bitmap.createBitmap(S, S, Bitmap.Config.ARGB_8888);
-        private final Canvas smallCanvas = new Canvas(small);
-        private final Paint filter = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final Canvas canvas = new Canvas();
+        private final Paint filter = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
         private final Rect from = new Rect();
-        private final Rect to = new Rect(0, 0, S, S);
+        private final Rect to = new Rect(F, F, F + S, F + S);
 
         public Loader(List items, Handler ui, Runnable onSlide) {
             this.items = items;
@@ -350,10 +340,15 @@ public final class Flow {
         }
 
         private volatile boolean held;
+        /** A slide is being made right now, and what of it allocated (measurement). */
+        public volatile boolean busy;
+        public volatile String how = "";
+        public volatile String doneHow = "";
+        public volatile long doneAt;
 
         /**
-         * Held while the screen animates: a slide is ~200 KB of allocation, and a collector pause
-         * it sets off stops the animation's frames with every other thread.
+         * Held while the screen animates: a slide's decode can still allocate (a cover not cached,
+         * or of an odd size), and a collector pause stops the animation with every other thread.
          */
         public void hold(boolean on) {
             held = on;
@@ -375,6 +370,7 @@ public final class Flow {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 room();
+                for (int i = 0; i < SLIDES && !stop; i++) pool.add(newSlide());
                 loop();
             } finally {
                 if (readArtist) AlbumArtist.flush();
@@ -425,21 +421,24 @@ public final class Flow {
                     }
                     continue;
                 }
+                how = pool.isEmpty() ? " new-slide" : "";
+                busy = true;
                 Item it = (Item) items.get(want);
                 if (AlbumArtist.needsRead(it.key)) {
                     it.artist = artistOf(it.key, it.rep, AlbumArtist.read(it.key, it.rep.getPath()));
                     readArtist = true;
                 }
-                Bitmap c = cover(it);
-                Bitmap s;
-                if (c == null) {
-                    if (blank == null) blank = slide(null, px, out, null);
+                Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
+                if (!cover(it, s)) {
+                    pool.add(s);
+                    if (blank == null) blank = blank();
                     s = blank;
-                } else {
-                    s = slide(c, px, out, pool.isEmpty() ? null : (Bitmap) pool.remove(pool.size() - 1));
                 }
                 born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
                 slides.put(Integer.valueOf(want), s);
+                doneHow = how;
+                doneAt = SystemClock.uptimeMillis();
+                busy = false;
                 ui.post(onSlide);
             }
         }
@@ -455,38 +454,44 @@ public final class Flow {
                 if (Math.abs(k - t) > KEEP) {
                     Object b = slides.remove(ks[i]);
                     born.remove(ks[i]);
-                    if (b != null && b != blank && pool.size() < POOL) pool.add(b);
+                    if (b != null && b != blank) pool.add(b);
                 }
             }
         }
 
         /**
-         * The album's cover at slide size in {@link #small}, or null when it has none. Decoded
-         * straight from the JPEG the big-cover cache already holds, into one reused buffer when the
-         * size allows; only a cover never cached goes through {@code BigCover.track}, which reads it
-         * and writes it down for good.
+         * The album's cover drawn into slide {@code s}; false when it has none. Decoded straight
+         * from the JPEG the big-cover cache already holds, into one reused buffer when the size
+         * allows; only a cover never cached goes through {@code BigCover.track}, which reads it and
+         * writes it down for good.
          */
-        private Bitmap cover(Item it) {
+        private boolean cover(Item it, Bitmap s) {
             try {
                 String path = it.rep.getPath();
                 Bitmap src = null;
                 File f = BigCover.cachedFile(path);
                 if (f != null) src = decode(f);
-                if (src == null) src = BigCover.track(path);
-                if (src == null) return null;
+                if (src == null) {
+                    how += " uncached";
+                    src = BigCover.track(path);
+                }
+                if (src == null) return false;
                 int w = src.getWidth(), h = src.getHeight();
                 int m = Math.min(w, h);
+                if (w != 300 || h != 300) how += " " + w + "x" + h;
+                canvas.setBitmap(s);
                 if (m > 2 * S) {
+                    how += " square";
                     // past 2x one bilinear pass skips pixels: Cover.square halves in steps
                     Bitmap sq = Cover.square(src, S);
-                    smallCanvas.drawBitmap(sq, 0, 0, null);
-                    return small;
+                    canvas.drawBitmap(sq, F, F, filter);
+                    return true;
                 }
                 from.set((w - m) / 2, (h - m) / 2, (w - m) / 2 + m, (h - m) / 2 + m);
-                smallCanvas.drawBitmap(src, from, to, filter);
-                return small;
+                canvas.drawBitmap(src, from, to, filter);
+                return true;
             } catch (Throwable t) {
-                return null;
+                return false;
             }
         }
 
@@ -542,6 +547,7 @@ public final class Flow {
                 o.inBitmap = null;
                 b = BitmapFactory.decodeByteArray(file, 0, n, o);
             }
+            if (b != null && b != o.inBitmap) how += " new-decode";
             if (b != null && o.inSampleSize == 1) decoded = b;
             return b;
         }

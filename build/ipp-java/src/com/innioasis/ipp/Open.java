@@ -35,6 +35,11 @@ public final class Open {
         if (e != null) keyAt = e.getEventTime();
     }
 
+    /** When the last key event happened, uptime ms (measurement). */
+    public static long lastKey() {
+        return keyAt;
+    }
+
     /** Top of {@code BaseActivity.onCreate}: nothing of the window may be touched yet. */
     public static void open(Activity a) {
         try {

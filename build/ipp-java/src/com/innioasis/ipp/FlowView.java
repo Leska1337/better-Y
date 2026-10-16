@@ -8,6 +8,8 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.SystemClock;
 import android.text.TextPaint;
@@ -23,9 +25,9 @@ import java.util.List;
  * The Cover Flow row. PictureFlow's geometry (Ariya Hidayat, MIT): side slides turned 70 degrees
  * and pushed back, the centre one flat at its own size, applied continuously in
  * {@code d = i - pos} so a slide is where it is because of pos alone and the animation is only
- * pos moving toward the target. Each slide is one bitmap under a perspective matrix: on this
- * device that costs ~0.4 ms of main thread a frame, against ~11 ms for PictureFlow's own column
- * renderer, and both hold the panel's 36 fps.
+ * pos moving toward the target. Each slide is one bitmap under a perspective matrix, drawn twice:
+ * as the cover and, turned over, as its reflection. On this device the row costs ~0.4 ms of main
+ * thread a frame, against ~11 ms for PictureFlow's own column renderer.
  */
 public final class FlowView extends View {
 
@@ -152,6 +154,13 @@ public final class FlowView extends View {
         if (t == target) return;
         target = t;
         hurry = false;
+        if (!stepPending) {
+            long now = SystemClock.uptimeMillis();
+            long k = Open.lastKey();
+            stepKey = k > 0 && k <= now && now - k < 1000 ? k : now;
+            stepAt = now;
+            stepPending = true;
+        }
         loader.aim(t);
         last = 0;
         postInvalidateOnAnimation();
@@ -209,9 +218,88 @@ public final class FlowView extends View {
         return pos != target;
     }
 
+    // ---- measurement: frames of the row's own animation -------------------------------------
+
+    /** What runs in the background meanwhile, set by the screen (measurement). */
+    public static volatile boolean busyTracks, busyPic, busyGc;
+    private static final long SLOW_FRAME = 40L;
+    private long prevDraw, fStart, fWorst;
+    private boolean prevAnim;
+    private int fFrames, fSlow;
+    // from the wheel's key event to the first frame that moves
+    private long stepKey, stepAt, latMax, latSum;
+    private boolean stepPending;
+    private int fSteps, fLate;
+
+    /** To the app's log and to logcat, beside the collector's own lines. */
+    private static void say(String s) {
+        Diag.note(s);
+        android.util.Log.i("ippflow", s);
+    }
+
+    private String busy() {
+        StringBuilder b = new StringBuilder();
+        if (loader != null) {
+            if (loader.busy) b.append(", slide").append(loader.how);
+            long ago = SystemClock.uptimeMillis() - loader.doneAt;
+            if (loader.doneAt > 0 && ago < 300) b.append(", last slide ").append(ago).append(" ms ago").append(loader.doneHow);
+        }
+        if (busyTracks) b.append(", tracks");
+        if (busyPic) b.append(", picture");
+        if (busyGc) b.append(", gc");
+        return b.toString();
+    }
+
     @Override
     protected void onDraw(Canvas c) {
+        long now = SystemClock.uptimeMillis();
+        if (prevAnim) {
+            long gap = now - prevDraw;
+            fFrames++;
+            if (gap > fWorst) fWorst = gap;
+            if (gap >= SLOW_FRAME) {
+                fSlow++;
+                say("flow frame " + gap + " ms" + busy());
+            }
+        } else {
+            fStart = now;
+            fFrames = 0;
+            fSlow = 0;
+            fWorst = 0;
+            fSteps = 0;
+            fLate = 0;
+            latMax = 0;
+            latSum = 0;
+        }
+        if (stepPending) {
+            stepPending = false;
+            long lat = now - stepKey;
+            fSteps++;
+            latSum += lat;
+            if (lat > latMax) latMax = lat;
+            if (lat >= 60) {
+                fLate++;
+                say("flow step late " + lat + " ms, key to step " + (stepAt - stepKey) + busy());
+            }
+        }
+        prevDraw = now;
+        draw0(c);
+        long end = SystemClock.uptimeMillis();
+        if (end - now >= 15) say("flow draw " + (end - now) + " ms");
+        boolean anim = moving0 || fading;
+        if (prevAnim && !anim) {
+            say("frames flow scroll worst " + fWorst + " ms, " + fFrames + " frames in "
+                    + (now - fStart) + " ms, slow " + fSlow + "; steps " + fSteps + ", key to frame max "
+                    + latMax + " mean " + (fSteps > 0 ? latSum / fSteps : 0) + ", late " + fLate);
+        }
+        prevAnim = anim;
+    }
+
+    private boolean moving0;
+
+    private void draw0(Canvas c) {
         boolean moving = advance();
+        moving0 = moving;
         fading = false;
         int n = count();
         if (n > 0 && w > 0) {
@@ -271,31 +359,98 @@ public final class FlowView extends View {
             fading = true;
         }
         float cos = (float) Math.cos(sAngle), sin = (float) Math.sin(sAngle);
-        float half = Flow.S / 2f + Flow.PAD;
-        float top = BASE - Flow.S - Flow.PAD;
-        float bot = BASE + Flow.REFL;
-        corner(0, -half, top, cos, sin);
-        corner(2, half, top, cos, sin);
-        corner(4, half, bot, cos, sin);
-        corner(6, -half, bot, cos, sin);
-        if (spread > 0f) {
-            float off = (i < pos ? -spread : spread) * w;
-            for (int k = 0; k < 8; k += 2) dst[k] += off;
-        }
-        int bw = b.getWidth(), bh = b.getHeight();
-        src[0] = 0; src[1] = 0;
-        src[2] = bw; src[3] = 0;
-        src[4] = bw; src[5] = bh;
-        src[6] = 0; src[7] = bh;
+        float off = spread > 0f ? (i < pos ? -spread : spread) * w : 0f;
+        float half = Flow.S / 2f + Flow.F;
+
+        // the cover: the whole slide
+        corner(0, -half, BASE - Flow.SH, cos, sin);
+        corner(2, half, BASE - Flow.SH, cos, sin);
+        corner(4, half, BASE, cos, sin);
+        corner(6, -half, BASE, cos, sin);
+        quad(0, Flow.SH, off);
         if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
-        // the reflection is see-through, so what is behind it is cleared first and does not show
-        Bitmap mk = Flow.mask();
-        if (mk != null) {
-            erase.setAlpha(a);
-            c.drawBitmap(mk, m, erase);
-        }
         bmpPaint.setAlpha(a);
+        if (a < 255) {
+            erase.setAlpha(a);
+            c.drawBitmap(b, m, erase);
+        }
         c.drawBitmap(b, m, bmpPaint);
+
+        // the reflection: the slide's lower rows turned over under the cover. It is see-through,
+        // so what is behind it is cleared first, then it is drawn opaque and faded in place.
+        corner(0, -half, BASE, cos, sin);
+        corner(2, half, BASE, cos, sin);
+        corner(4, half, BASE + Flow.REFL, cos, sin);
+        corner(6, -half, BASE + Flow.REFL, cos, sin);
+        quad(Flow.SH, Flow.SH - Flow.REFL, off);
+        if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
+        c.save();
+        c.concat(m);
+        erase.setAlpha(a);
+        c.drawBitmap(b, reflFrom, reflTo, erase);
+        c.drawBitmap(b, reflFrom, reflTo, bmpPaint);
+        c.drawBitmap(Flow.fade(), null, reflTo, fade);
+        c.restore();
+    }
+
+    private final Rect reflFrom = new Rect(0, Flow.SH - Flow.REFL, Flow.SW, Flow.SH);
+    private final RectF reflTo = new RectF(reflFrom);
+    private final Paint fade = fadePaint();
+
+    private static Paint fadePaint() {
+        Paint p = new Paint(Paint.FILTER_BITMAP_FLAG);
+        p.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        return p;
+    }
+
+    /**
+     * Source corners in the slide for the destination corners just set: x across, the rows at
+     * the destination's top edge {@code y0} and at its bottom edge {@code y1}.
+     */
+    private void quad(float y0, float y1, float off) {
+        float sw = Flow.SW;
+        src[0] = 0; src[1] = y0;
+        src[2] = sw; src[3] = y0;
+        src[4] = sw; src[5] = y1;
+        src[6] = 0; src[7] = y1;
+        if (off != 0f) for (int k = 0; k < 8; k += 2) dst[k] += off;
+    }
+
+    /**
+     * The centre slide as the flip turns it: the cover at {@link Flow#PAD} in, its reflection
+     * under it as the row draws one. A layer of its own, so the fade's DST_IN touches nothing else.
+     */
+    public static final class Card extends View {
+        private Bitmap b;
+        private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final Paint fade = fadePaint();
+        private final Rect from = new Rect(0, Flow.SH - Flow.REFL, Flow.SW, Flow.SH);
+        private final RectF to = new RectF();
+
+        public Card(Context c) {
+            super(c);
+            setLayerType(LAYER_TYPE_HARDWARE, null);
+        }
+
+        public void setSlide(Bitmap s) {
+            b = s;
+            invalidate();
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            if (b == null) return;
+            float x = Flow.PAD - Flow.F, y = Flow.PAD - Flow.F;
+            c.drawBitmap(b, x, y, paint);
+            float base = Flow.PAD + Flow.S;
+            c.save();
+            c.translate(0, 2 * base);
+            c.scale(1, -1);
+            to.set(x, base - Flow.REFL, x + Flow.SW, base);
+            c.drawBitmap(b, from, to, paint);
+            c.drawBitmap(Flow.fade(), null, to, fade);
+            c.restore();
+        }
     }
 
     /** Slide point (u across the slide, y the screen row it has at rest) to the screen. */

@@ -18,13 +18,13 @@
 
 .method constructor <init>(Landroid/view/View;Landroid/app/Activity;)V
   .registers 3
-  .line 80
+  .line 85
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 81
+  .line 86
     iput-object p1, p0, Lcom/innioasis/ipp/Open$Drawn;->decor:Landroid/view/View;
-  .line 82
+  .line 87
     iput-object p2, p0, Lcom/innioasis/ipp/Open$Drawn;->a:Landroid/app/Activity;
-  .line 83
+  .line 88
     return-void
 .end method
 
@@ -32,17 +32,17 @@
   .catchall { :L0 .. :L3 } :L4
   .registers 3
   :L0
-  .line 87
+  .line 92
     iget-object v0, p0, Lcom/innioasis/ipp/Open$Drawn;->decor:Landroid/view/View;
     invoke-virtual { v0 }, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
-  .line 88
+  .line 93
     invoke-virtual { v0 }, Landroid/view/ViewTreeObserver;->isAlive()Z
     move-result v1
     if-eqz v1, :L1
     invoke-virtual { v0, p0 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
   :L1
-  .line 89
+  .line 94
     invoke-static { }, Lcom/innioasis/ipp/Open;->access$000()Landroid/app/Activity;
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/ipp/Open$Drawn;->a:Landroid/app/Activity;
@@ -50,17 +50,17 @@
     const-string v0, "layout"
     invoke-static { v0 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
   :L2
-  .line 90
+  .line 95
     iget-object v0, p0, Lcom/innioasis/ipp/Open$Drawn;->decor:Landroid/view/View;
     invoke-virtual { v0, p0 }, Landroid/view/View;->post(Ljava/lang/Runnable;)Z
   :L3
-  .line 92
+  .line 97
     goto :L5
   :L4
-  .line 91
+  .line 96
     move-exception v0
   :L5
-  .line 93
+  .line 98
     const/4 v0, 1
     return v0
 .end method
@@ -69,7 +69,7 @@
   .catchall { :L0 .. :L4 } :L6
   .registers 8
   :L0
-  .line 98
+  .line 103
     invoke-static { }, Lcom/innioasis/ipp/Open;->access$000()Landroid/app/Activity;
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/ipp/Open$Drawn;->a:Landroid/app/Activity;
@@ -79,13 +79,13 @@
     if-nez v0, :L1
     goto :L5
   :L1
-  .line 99
+  .line 104
     const-string v0, "draw"
     invoke-static { v0 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
-  .line 100
+  .line 105
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 101
+  .line 106
     invoke-static { }, Lcom/innioasis/ipp/Open;->access$200()J
     move-result-wide v2
     sub-long v2, v0, v2
@@ -99,7 +99,7 @@
     cmp-long v6, v2, v4
     if-ltz v6, :L3
   :L2
-  .line 102
+  .line 107
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "slow: open "
@@ -115,7 +115,7 @@
     const/16 v3, 32
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v2
-  .line 103
+  .line 108
     invoke-static { }, Lcom/innioasis/ipp/Open;->access$300()J
     move-result-wide v3
     sub-long/2addr v0, v3
@@ -136,24 +136,24 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 102
+  .line 107
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L3
-  .line 105
+  .line 110
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Open;->access$002(Landroid/app/Activity;)Landroid/app/Activity;
-  .line 106
+  .line 111
     invoke-static { v0 }, Lcom/innioasis/ipp/Open;->access$102(Ljava/lang/StringBuilder;)Ljava/lang/StringBuilder;
   :L4
-  .line 108
+  .line 113
     goto :L7
   :L5
-  .line 98
+  .line 103
     return-void
   :L6
-  .line 107
+  .line 112
     move-exception v0
   :L7
-  .line 109
+  .line 114
     return-void
 .end method

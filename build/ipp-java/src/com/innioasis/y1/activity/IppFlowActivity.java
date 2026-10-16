@@ -61,7 +61,7 @@ public final class IppFlowActivity extends BaseActivity {
     private static final int TURN_SLACK_MS = 40;
 
     private FlowView flow;
-    private ImageView card;
+    private FlowView.Card card;
     /** The player's own picture, travelling between this screen and the player. */
     private ImageView trip;
     private Panel panel;
@@ -88,7 +88,7 @@ public final class IppFlowActivity extends BaseActivity {
         FrameLayout box = new FrameLayout(this);
         flow = new FlowView(this);
         box.addView(flow, new FrameLayout.LayoutParams(-1, -1));
-        card = new ImageView(this);
+        card = new FlowView.Card(this);
         card.setVisibility(View.GONE);
         box.addView(card, new FrameLayout.LayoutParams(Flow.S + 2 * Flow.PAD, Flow.PAD + Flow.S + Flow.REFL));
         trip = new ImageView(this);
@@ -110,6 +110,7 @@ public final class IppFlowActivity extends BaseActivity {
             Toast.makeText(this, getString(R.string.no_content), Toast.LENGTH_SHORT).show();
             return;
         }
+        mode(mode);
         int start = Math.max(0, Math.min(l.size() - 1, Prefs.getInt(this, KEY_POS, 0)));
         loader = new Flow.Loader(l, ui, new Repaint(this));
         Thread t = new Thread(loader, "ipp-flow-covers");
@@ -180,8 +181,22 @@ public final class IppFlowActivity extends BaseActivity {
     /** The centre was pressed while the row moved: flip when it rests (Rested). */
     boolean flipPending;
 
+    /** Measurement: long top cycles normal → no System.gc → no build ahead, shown in the status bar. */
+    private static int mode;
+    private static final String[] MODES = { "normal", "nogc", "nodwell" };
+
+    private void mode(int m) {
+        mode = m;
+        noGc = m == 1;
+        noDwell = m == 2;
+        if (noDwell) ui.removeCallbacks(backDwell);
+        setStateBarLeftText(getString(R.string.ipp_coverflow) + " [" + MODES[m] + "]");
+        Diag.note("flow measure: " + MODES[m]);
+    }
+
     @Override
     public void longConfirm() {
+        if (state == 0) mode((mode + 1) % MODES.length);
     }
 
     @Override
@@ -220,7 +235,7 @@ public final class IppFlowActivity extends BaseActivity {
         lp.setMarginStart(px);
         panel.setLayoutParams(lp);
 
-        card.setImageBitmap(s);
+        card.setSlide(s);
         card.setPivotX((Flow.S + 2 * Flow.PAD) / 2f);
         card.setPivotY((Flow.PAD + Flow.S + Flow.REFL) / 2f);
         card.setTranslationX(0);
@@ -355,7 +370,7 @@ public final class IppFlowActivity extends BaseActivity {
         }
         if (s == 0) {
             card.setVisibility(View.GONE);
-            card.setImageBitmap(null);
+            card.setSlide(null);
             trip.setVisibility(View.GONE);
             trip.setImageBitmap(null);
             flow.hide(-1);
@@ -475,8 +490,12 @@ public final class IppFlowActivity extends BaseActivity {
     private Flow.Item backBusy;
     private Flow.Item backNext;     // flipped while another album's list was being built
 
+    /** Measurement switches: no build ahead on the row's rest; no System.gc after a build. */
+    static boolean noDwell, noGc;
+
     private void armBack() {
         ui.removeCallbacks(backDwell);
+        if (noDwell) return;
         ui.postDelayed(backDwell, DWELL_MS);
     }
 
@@ -860,7 +879,9 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             long t0 = SystemClock.uptimeMillis();
+            FlowView.busyTracks = true;
             Flow.Back b = Flow.back(it);
+            FlowView.busyTracks = false;
             a.ui.post(new BackDone(a, it, b, t0));
             // And the picture of the track the cursor will stand on first, so that opening an
             // album and playing straight away finds it ready — only while nothing animates: its
@@ -870,7 +891,9 @@ public final class IppFlowActivity extends BaseActivity {
             Song first = Panel.firstSong(b);
             if (first != null && first.getPath() != null) {
                 Object[] src = new Object[2];
+                FlowView.busyPic = true;
                 Bitmap pic = Flow.tripAhead(first, it.rep, src);
+                FlowView.busyPic = false;
                 a.ui.post(new FirstPic(a, first.getPath(), pic, src));
             }
             IppFlowActivity.tidy();
@@ -991,7 +1014,9 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             Object[] src = new Object[2];
+            FlowView.busyPic = true;
             Bitmap b = Flow.tripAhead(track, rep, src);
+            FlowView.busyPic = false;
             a.ui.post(new AheadDone(a, track.getPath(), b, src));
             IppFlowActivity.tidy();
         }
@@ -1016,7 +1041,10 @@ public final class IppFlowActivity extends BaseActivity {
      * next flip's first allocation.
      */
     static void tidy() {
+        if (noGc) return;
+        FlowView.busyGc = true;
         System.gc();
+        FlowView.busyGc = false;
     }
 
     static final class ToPlayer implements Runnable {

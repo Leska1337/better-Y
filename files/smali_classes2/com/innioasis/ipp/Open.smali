@@ -87,29 +87,36 @@
     return-void
 .end method
 
+.method public static lastKey()J
+  .registers 2
+  .line 40
+    sget-wide v0, Lcom/innioasis/ipp/Open;->keyAt:J
+    return-wide v0
+.end method
+
 .method public static open(Landroid/app/Activity;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 10
   :L0
-  .line 41
+  .line 46
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 42
+  .line 47
     sput-object p0, Lcom/innioasis/ipp/Open;->screen:Landroid/app/Activity;
-  .line 43
+  .line 48
     sput-wide v0, Lcom/innioasis/ipp/Open;->startAt:J
-  .line 44
+  .line 49
     sput-wide v0, Lcom/innioasis/ipp/Open;->lastAt:J
-  .line 45
+  .line 50
     const/4 p0, 0
     sput-boolean p0, Lcom/innioasis/ipp/Open;->watching:Z
-  .line 46
+  .line 51
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
     sput-object p0, Lcom/innioasis/ipp/Open;->steps:Ljava/lang/StringBuilder;
-  .line 47
+  .line 52
     sput-wide v0, Lcom/innioasis/ipp/Open;->fromAt:J
-  .line 48
+  .line 53
     sget-wide v2, Lcom/innioasis/ipp/Open;->keyAt:J
     const-wide/16 v4, 0
     cmp-long v6, v2, v4
@@ -120,9 +127,9 @@
     const-wide/16 v6, 5000
     cmp-long v8, v4, v6
     if-gez v8, :L1
-  .line 49
+  .line 54
     sput-wide v2, Lcom/innioasis/ipp/Open;->fromAt:J
-  .line 50
+  .line 55
     const-string v2, ", key "
     invoke-virtual { p0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
@@ -130,13 +137,13 @@
     sub-long/2addr v0, v2
     invoke-virtual { p0, v0, v1 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
   :L1
-  .line 53
+  .line 58
     goto :L3
   :L2
-  .line 52
+  .line 57
     move-exception p0
   :L3
-  .line 54
+  .line 59
     return-void
 .end method
 
@@ -144,17 +151,17 @@
   .catchall { :L0 .. :L4 } :L6
   .registers 5
   :L0
-  .line 62
+  .line 67
     sget-object v0, Lcom/innioasis/ipp/Open;->steps:Ljava/lang/StringBuilder;
     if-eqz v0, :L5
     sget-object v0, Lcom/innioasis/ipp/Open;->screen:Landroid/app/Activity;
     if-nez v0, :L1
     goto :L5
   :L1
-  .line 63
+  .line 68
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 64
+  .line 69
     sget-object v2, Lcom/innioasis/ipp/Open;->steps:Ljava/lang/StringBuilder;
     const-string v3, ", "
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -167,27 +174,27 @@
     sget-wide v2, Lcom/innioasis/ipp/Open;->lastAt:J
     sub-long v2, v0, v2
     invoke-virtual { p0, v2, v3 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
-  .line 65
+  .line 70
     sput-wide v0, Lcom/innioasis/ipp/Open;->lastAt:J
-  .line 66
+  .line 71
     sget-boolean p0, Lcom/innioasis/ipp/Open;->watching:Z
     if-eqz p0, :L2
     return-void
   :L2
-  .line 67
+  .line 72
     sget-object p0, Lcom/innioasis/ipp/Open;->screen:Landroid/app/Activity;
     invoke-virtual { p0 }, Landroid/app/Activity;->getWindow()Landroid/view/Window;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/view/Window;->peekDecorView()Landroid/view/View;
     move-result-object p0
-  .line 68
+  .line 73
     if-nez p0, :L3
     return-void
   :L3
-  .line 69
+  .line 74
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Open;->watching:Z
-  .line 70
+  .line 75
     invoke-virtual { p0 }, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
     new-instance v1, Lcom/innioasis/ipp/Open$Drawn;
@@ -195,15 +202,15 @@
     invoke-direct { v1, p0, v2 }, Lcom/innioasis/ipp/Open$Drawn;-><init>(Landroid/view/View;Landroid/app/Activity;)V
     invoke-virtual { v0, v1 }, Landroid/view/ViewTreeObserver;->addOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
   :L4
-  .line 72
+  .line 77
     goto :L7
   :L5
-  .line 62
+  .line 67
     return-void
   :L6
-  .line 71
+  .line 76
     move-exception p0
   :L7
-  .line 73
+  .line 78
     return-void
 .end method
