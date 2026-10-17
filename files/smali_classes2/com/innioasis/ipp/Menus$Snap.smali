@@ -10,7 +10,13 @@
   name = "Snap"
 .end annotation
 
+.field entries:Ljava/util/ArrayList;
+
+.field entryIndex:[I
+
 .field full:Ljava/util/ArrayList;
+
+.field group:Ljava/lang/Object;
 
 .field map:[I
 

@@ -91,7 +91,7 @@ Los artistas ocultos se pueden mover al título activando «{row:feat_in_title}�
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] Mover los artistas ocultos al título
+[feat_in_title] Mover los artistas invitados al título
 Mueve los artistas ocultados por «{row:first_artist_only}» al título de la canción, después de un «feat.». Por ejemplo:
 
 «Tree, Shelf Nunny, Lena Kuhn — People»
@@ -146,6 +146,12 @@ En una lista de canciones, la fila Shuffle también forma parte del ciclo.
 * Predeterminado
 * Simple
 Simple oculta la vista previa junto a la lista y extiende las filas a todo el ancho de la pantalla: en el menú principal, en los ajustes y en sus pantallas.
+
+[preview_text] Color del texto en las vistas previas del menú
+* Claro
+* Oscuro
+* Color del tema
+Establece el color del texto en las vistas previas junto a las listas de los ajustes y de sus pantallas, y dentro de «Acerca de». El color del tema es el del texto de las listas del tema.
 
 [fixed_menu_pad] Márgenes de menú corregidos
 Corrige los márgenes del menú principal y de los ajustes.

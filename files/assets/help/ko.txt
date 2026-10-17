@@ -91,7 +91,7 @@
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] 숨긴 아티스트를 제목으로 이동
+[feat_in_title] 피처링 아티스트를 제목으로 이동
 "{row:first_artist_only}" 설정이 숨긴 아티스트를 "feat." 뒤에 붙여 곡 제목으로 옮깁니다. 예를 들어:
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
@@ -146,6 +146,12 @@
 * 기본
 * 단순
 단순은 목록 옆의 미리보기를 숨기고 행을 화면 전체 너비로 늘립니다. 기본 메뉴, 설정, 설정 안의 화면에 적용됩니다.
+
+[preview_text] 메뉴 미리보기 텍스트 색상
+* 밝게
+* 어둡게
+* 테마 색상
+설정과 설정 안의 화면에서 목록 옆 미리보기의 텍스트 색상, 그리고 정보 화면의 텍스트 색상을 정합니다. 테마 색상은 테마의 목록 텍스트 색상입니다.
 
 [fixed_menu_pad] 수정된 메뉴 여백
 기본 메뉴와 설정의 여백을 수정합니다.

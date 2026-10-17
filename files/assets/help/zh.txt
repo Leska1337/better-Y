@@ -91,7 +91,7 @@
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] 将隐藏的艺术家移入标题
+[feat_in_title] 将客座艺术家移入标题
 把“{row:first_artist_only}”隐藏掉的艺术家加在“feat.”之后，移入歌曲标题。例如：
 
 “Tree, Shelf Nunny, Lena Kuhn — People”
@@ -146,6 +146,12 @@
 * 默认
 * 简洁
 简洁会隐藏列表旁的预览，并将各行拉伸至整个屏幕宽度：适用于主菜单、设置及设置内的各个页面。
+
+[preview_text] 菜单预览文字颜色
+* 浅色
+* 深色
+* 主题颜色
+设置设置页及其内部页面中列表旁预览的文字颜色，以及“关于”页面内的文字颜色。主题颜色即主题列表文字的颜色。
 
 [fixed_menu_pad] 修正的菜单边距
 修正主菜单和设置的边距。

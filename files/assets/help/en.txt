@@ -42,7 +42,7 @@ To export, hold the top button on a playlist in the playlists screen and pick "E
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
 
-[[player]] Now playing
+[[player]] Now Playing
 
 [icon_tint] Icon color
 * Light
@@ -94,7 +94,7 @@ Hidden artists can be moved to the title by enabling "{row:feat_in_title}".
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title if first_artist_only] Move hidden artists to the title
+[feat_in_title if first_artist_only] Move featured artists to the title
 Moves the artists hidden by "{row:first_artist_only}" into the song title, after a "feat.". For example:
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
@@ -149,6 +149,12 @@ In a song list the Shuffle row is part of the circle.
 * Default
 * Simple
 Simple hides the preview beside the list and stretches the rows across the whole screen — in the main menu, in Settings and in the screens inside it.
+
+[preview_text] Text color in menu previews
+* Light
+* Dark
+* Theme color
+Sets the colour of the text in the previews beside the lists of Settings and the screens inside it, and inside About. Theme color is the colour of the theme's list text.
 
 [fixed_menu_pad] Fixed menu margins
 Fixes margins of the main menu and settings.

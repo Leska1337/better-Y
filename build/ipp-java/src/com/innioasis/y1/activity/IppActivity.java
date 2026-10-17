@@ -35,6 +35,7 @@ import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.MenuStyle;
+import com.innioasis.ipp.Preview;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Flow;
@@ -234,6 +235,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
         l.add(new Item(CHOICE, MenuStyle.KEY, 2, null, null));
+        l.add(new Item(CHOICE, Preview.KEY, 3, null, null));
         l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
         l.add(new Item(SUB, "status_bar", 0, null, null));
@@ -957,7 +959,7 @@ public final class IppActivity extends BaseActivity {
      */
     void runFullRescan() {
         try {
-            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_scan_running), "",
+            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_scan_running) + "\n0%", "",
                     R.style.Dialog_Common, new Noop());
             progress.show();
         } catch (Throwable t) {
@@ -982,7 +984,7 @@ public final class IppActivity extends BaseActivity {
     void runCacheLibrary(int mask) {
         if (mask == 0) return;
         try {
-            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_cache_running), "",
+            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_cache_running) + "\n0%", "",
                     R.style.Dialog_Common, new Noop());
             progress.show();
         } catch (Throwable t) {
@@ -1043,7 +1045,7 @@ public final class IppActivity extends BaseActivity {
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
-                    if ((i & 15) == 0) a.scanTick(label + "  " + (i * 100 / (n == 0 ? 1 : n)) + "%");
+                    if ((i & 15) == 0) a.scanTick(label + "\n" + (i * 100 / (n == 0 ? 1 : n)) + "%");
                     File f = new File(s.getPath());
                     if (!f.exists()) continue;                      // gone: the stock scan removes it
 
@@ -1095,7 +1097,7 @@ public final class IppActivity extends BaseActivity {
                 v = ++progress;
                 if (v % tickEvery != 0) return;
             }
-            a.scanTick(label + "  " + (v * 100 / total) + "%");
+            a.scanTick(label + "\n" + (v * 100 / total) + "%");
         }
 
         @Override

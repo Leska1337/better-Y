@@ -70,7 +70,13 @@ public final class Menus {
         ArrayList full;      // the menu as the screen last built it
         ArrayList shown;     // what was left on screen, to tell "untouched" from "rebuilt"
         int[] map;           // shown index -> its index in full; null when nothing was dropped
+        Object group;        // the "Add to playlist" entry standing for every playlist entry
+        ArrayList entries;   // those entries, in the screen's order
+        int[] entryIndex;    // each entry's index in full
     }
+
+    /** The playlist chooser opened from a menu: not filtered, it is a list of names. */
+    private static final WeakHashMap CHOOSERS = new WeakHashMap();
 
     /**
      * Top of {@code SubMenuDialog.onStart}, once per {@code show()}. The full menu is put back
@@ -93,7 +99,7 @@ public final class Menus {
 
     private static void filter(Dialog d) {
         try {
-            if (d == null) return;
+            if (d == null || CHOOSERS.containsKey(d)) return;
             View v = d.findViewById(R.id.submenu);
             if (!(v instanceof ListView)) return;
             Object ad = ((ListView) v).getAdapter();
@@ -136,6 +142,7 @@ public final class Menus {
                     }
                 }
             }
+            collapse(host, items, s);
             s.shown = new ArrayList(items);
             a.notifyDataSetChanged();
         } catch (Throwable t) {
@@ -159,6 +166,177 @@ public final class Menus {
             return s.map[shown];
         } catch (Throwable t) {
             return shown;
+        }
+    }
+
+    /**
+     * Of the "Add to <playlist>" entries left on screen only Favorites' stays; under it one "Add to
+     * playlist" stands for the rest, where the first of them stood. Its chooser hands the screen's
+     * callback the real entry and the index it would have had, so no dispatcher can tell.
+     */
+    private static void collapse(Activity host, List items, Snap s) {
+        s.group = null;
+        s.entries = null;
+        s.entryIndex = null;
+        if (host == null) return;
+        ArrayList entries = new ArrayList();
+        ArrayList entryIdx = new ArrayList();
+        ArrayList rest = new ArrayList();
+        ArrayList restIdx = new ArrayList();
+        Object favEntry = null;
+        int favIdx = -1;
+        int at = -1;
+        for (int i = 0; i < items.size(); i++) {
+            Object o = items.get(i);
+            int full = s.map == null ? i : s.map[i];
+            if (isPlaylistEntry(o)) {
+                if (at < 0) at = rest.size();
+                if (isFavEntry(o)) {
+                    favEntry = o;
+                    favIdx = full;
+                } else {
+                    entries.add(o);
+                    entryIdx.add(Integer.valueOf(full));
+                }
+            } else {
+                rest.add(o);
+                restIdx.add(Integer.valueOf(full));
+            }
+        }
+        if (at < 0) return;
+        boolean video = (favEntry != null ? favEntry : entries.get(0)) instanceof SubmenuVideoAdapter.Item;
+        if (!entries.isEmpty()) {
+            Object g = entry(video, host.getString(R.string.ipp_add_to_playlist));
+            rest.add(at, g);
+            restIdx.add(at, Integer.valueOf(-1));
+            s.group = g;
+            s.entries = entries;
+            s.entryIndex = new int[entryIdx.size()];
+            for (int i = 0; i < entryIdx.size(); i++) s.entryIndex[i] = ((Integer) entryIdx.get(i)).intValue();
+        }
+        if (favEntry != null) {
+            rest.add(at, favEntry);
+            restIdx.add(at, Integer.valueOf(favIdx));
+        }
+        items.clear();
+        items.addAll(rest);
+        s.map = new int[restIdx.size()];
+        for (int i = 0; i < restIdx.size(); i++) s.map[i] = ((Integer) restIdx.get(i)).intValue();
+    }
+
+    /** No playlist: it must not count as a playlist entry itself. */
+    private static Object entry(boolean video, String label) {
+        return video ? (Object) new SubmenuVideoAdapter.Item(label, null)
+                : (Object) new SubmenuAdapter.Item(label, null);
+    }
+
+    /** In {@code shortUp}, before the callback: true when the pick was "Add to playlist". */
+    public static boolean group(SubMenuDialog d, int shown, SubMenuDialog.Callback cb) {
+        return ours(d, shown, cb);
+    }
+
+    /** The same in {@code SubMenuVideoDialog.shortUp}. */
+    public static boolean groupVideo(SubMenuVideoDialog d, int shown, SubMenuVideoDialog.Callback cb) {
+        return ours(d, shown, cb);
+    }
+
+    private static boolean ours(Dialog d, int shown, Object cb) {
+        try {
+            Snap s = (Snap) SNAPS.get(d);
+            if (s == null || s.shown == null || shown < 0 || shown >= s.shown.size()) return false;
+            Object o = s.shown.get(shown);
+            if (o == null || o != s.group) return false;
+            Activity host = hostOf(d);
+            if (host == null) return true;
+            Integer[] order = new Integer[s.entries.size()];
+            for (int i = 0; i < order.length; i++) order[i] = Integer.valueOf(i);
+            java.util.Arrays.sort(order, new ByName(s.entries));
+            List names = new ArrayList();
+            int[] pick = new int[order.length];
+            for (int i = 0; i < order.length; i++) {
+                pick[i] = order[i].intValue();
+                names.add(playlistName(s.entries.get(pick[i])));
+            }
+            // the 4th argument is the dialog THEME (ipp-menus-playlists)
+            SubMenuDialog c = new SubMenuDialog(host, names,
+                    new Chosen(d, cb, s.entries, s.entryIndex, pick), R.style.Dialog_Common);
+            CHOOSERS.put(c, Boolean.TRUE);
+            c.show();
+        } catch (Throwable t) {
+        }
+        return true;
+    }
+
+    /** What a pick of the entry itself would have done; the menu closes when the callback says. */
+    private static void dispatch(Dialog parent, Object cb, Object e, int full) {
+        try {
+            boolean close = true;
+            if (cb instanceof SubMenuDialog.Callback && e instanceof SubmenuAdapter.Item) {
+                close = ((SubMenuDialog.Callback) cb).select(full, (SubmenuAdapter.Item) e);
+            } else if (cb instanceof SubMenuVideoDialog.Callback && e instanceof SubmenuVideoAdapter.Item) {
+                close = ((SubMenuVideoDialog.Callback) cb).select(full, (SubmenuVideoAdapter.Item) e);
+            }
+            if (close && parent.isShowing()) parent.dismiss();
+        } catch (Throwable t) {
+        }
+    }
+
+    private static String playlistName(Object o) {
+        try {
+            if (o instanceof SubmenuAdapter.Item) {
+                Playlist p = ((SubmenuAdapter.Item) o).getPlaylist();
+                if (p != null && p.getName() != null) return p.getName();
+            }
+            if (o instanceof SubmenuVideoAdapter.Item) {
+                com.innioasis.y1.database.video.VideoPlaylist p = ((SubmenuVideoAdapter.Item) o).getPlaylist();
+                if (p != null && p.getPlaylistName() != null) return p.getPlaylistName();
+            }
+        } catch (Throwable t) {
+        }
+        String s = label(o);
+        return s == null ? "" : s;
+    }
+
+    static final class ByName implements java.util.Comparator {
+        private final List entries;
+
+        ByName(List entries) {
+            this.entries = entries;
+        }
+
+        public int compare(Object a, Object b) {
+            Object x = entries.get(((Integer) a).intValue());
+            Object y = entries.get(((Integer) b).intValue());
+            return playlistName(x).compareToIgnoreCase(playlistName(y));
+        }
+    }
+
+    private static boolean isFavEntry(Object o) {
+        return o instanceof SubmenuAdapter.Item && Playlists.isFav(((SubmenuAdapter.Item) o).getPlaylist());
+    }
+
+    /** The chooser's pick, handed on by {@link #dispatch}. */
+    static final class Chosen implements SubMenuDialog.Callback {
+        private final Dialog parent;
+        private final Object cb;
+        private final List entries;
+        private final int[] full;
+        private final int[] pick;
+
+        Chosen(Dialog parent, Object cb, List entries, int[] full, int[] pick) {
+            this.parent = parent;
+            this.cb = cb;
+            this.entries = entries;
+            this.full = full;
+            this.pick = pick;
+        }
+
+        public boolean select(int index, SubmenuAdapter.Item item) {
+            if (index >= 0 && index < pick.length) {
+                int k = pick[index];
+                dispatch(parent, cb, entries.get(k), full[k]);
+            }
+            return true;
         }
     }
 

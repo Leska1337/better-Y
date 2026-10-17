@@ -5,22 +5,27 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.ImageView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.R;
 import com.innioasis.y1.activity.DateOneLevelActivity;
+import com.innioasis.y1.activity.DateTwoLevelActivity;
 import com.innioasis.y1.activity.EqActivity;
 import com.innioasis.y1.activity.LanguageActivity;
 import com.innioasis.y1.activity.MainActivity;
 import com.innioasis.y1.activity.SettingActivity;
 import com.innioasis.y1.activity.WallpaperListActivity;
+import com.innioasis.y1.base.BaseActivity;
+import com.innioasis.y1.databinding.ActivitySettingBinding;
+import com.innioasis.y1.theme.ThemeManager;
 
 /**
  * "menu_style" SIMPLE: a screen that draws a preview beside its list loses the preview, and the
  * list takes the whole width — the main menu, Settings and the screens inside it. The preview is
  * hidden and not painted: each painter asks {@link #simple} first. Stock never touches its
- * visibility.
+ * visibility. The style also picks the background of Settings and its screens ({@link #backdrop}).
  */
 public final class MenuStyle {
 
@@ -60,7 +65,49 @@ public final class MenuStyle {
                 hide(a.findViewById(R.id.show_time), s);
                 hide(a.findViewById(R.id.imageView), s);
                 hide(a.findViewById(R.id.show_date), s);
+                dateIcon(a.findViewById(R.id.imageView));
             }
+            backdrop(a, s);
+            Preview.apply(a);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The picture the Settings panel shows for Date & time, the theme's included. */
+    private static void dateIcon(View v) {
+        if (!(v instanceof ImageView) || v.getTag(R.id.imageView) != null) return;
+        v.setTag(R.id.imageView, Boolean.TRUE);
+        ThemeManager.INSTANCE.commonSetIcon((ImageView) v, R.drawable.icon_setting_day);
+    }
+
+    /**
+     * Settings' background — the wallpaper under the theme's settingMask — in Default, the
+     * wallpaper alone in Simple. The screens inside Settings carry it on the base layout's unused
+     * {@code back}; Equalizer, Brightness, About and better-Y never do.
+     */
+    private static void backdrop(Activity a, boolean simple) {
+        try {
+            if (a instanceof SettingActivity) {
+                View back = ((ActivitySettingBinding) ((SettingActivity) a).getVb()).back;
+                back.setVisibility(simple ? View.INVISIBLE : View.VISIBLE);
+                return;
+            }
+            if (!(a instanceof LanguageActivity || a instanceof WallpaperListActivity
+                    || a instanceof DateOneLevelActivity || a instanceof DateTwoLevelActivity)) {
+                return;
+            }
+            ImageView back = ((BaseActivity) a).getBackImageView();
+            if (simple) {
+                back.setVisibility(View.GONE);
+                return;
+            }
+            if (back.getTag(R.id.back) == null) {
+                back.setTag(R.id.back, Boolean.TRUE);
+                // the layout fills it black
+                back.setBackgroundDrawable(null);
+                ThemeManager.INSTANCE.setSettingMask(back);
+            }
+            back.setVisibility(View.VISIBLE);
         } catch (Throwable t) {
         }
     }

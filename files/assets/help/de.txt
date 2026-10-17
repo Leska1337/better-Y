@@ -91,7 +91,7 @@ Ausgeblendete Künstler lassen sich mit „{row:feat_in_title}“ in den Titel v
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] Ausgeblendete Künstler in den Titel verschieben
+[feat_in_title] Gastkünstler in den Titel verschieben
 Verschiebt die von „{row:first_artist_only}“ ausgeblendeten Künstler hinter einem „feat.“ in den Songtitel. Zum Beispiel:
 
 „Tree, Shelf Nunny, Lena Kuhn — People“
@@ -146,6 +146,12 @@ In einer Titelliste gehört die Zeile Shuffle mit zum Kreis.
 * Standard
 * Einfach
 Einfach blendet die Vorschau neben der Liste aus und zieht die Zeilen über die ganze Bildschirmbreite — im Hauptmenü, in den Einstellungen und in deren Bildschirmen.
+
+[preview_text] Textfarbe der Menüvorschau
+* Hell
+* Dunkel
+* Themenfarbe
+Legt die Farbe des Textes in der Vorschau neben den Listen der Einstellungen und ihrer Bildschirme sowie im Bildschirm „Über“ fest. Themenfarbe ist die Farbe des Listentextes des Themas.
 
 [fixed_menu_pad] Korrigierte Menüränder
 Korrigiert die Ränder des Hauptmenüs und der Einstellungen.

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..257b6b92 100644
+index 01b1f730..110d1abe 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..257b6b92 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100170
++  versionCode: 10100173
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -235,38 +235,90 @@ index cf5ce73a..4c396309 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_date_one_level.xml b/build/src/res/layout/activity_date_one_level.xml
-index b2b33afe..dc2bc018 100644
+index b2b33afe..377513d2 100644
 --- a/build/src/res/layout/activity_date_one_level.xml
 +++ b/build/src/res/layout/activity_date_one_level.xml
-@@ -3,20 +3,20 @@
+@@ -1,27 +1,35 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-     <View android:id="@id/invisible_view" android:layout_width="0.0dip" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="3.0" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" />
-     <LinearLayout android:orientation="vertical" android:id="@id/date_ll" android:layout_width="@dimen/setting_width" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="4.0" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/invisible_view">
+-    <View android:id="@id/invisible_view" android:layout_width="0.0dip" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="3.0" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" />
+-    <LinearLayout android:orientation="vertical" android:id="@id/date_ll" android:layout_width="@dimen/setting_width" android:layout_height="fill_parent" app:layout_constraintHorizontal_weight="4.0" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/invisible_view">
 -        <LinearLayout android:orientation="horizontal" android:id="@id/item0" android:layout_width="fill_parent" android:layout_height="40.0dip">
 -            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv0" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/date" android:layout_weight="1.0" />
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv0" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="MM/DD/YY" android:layout_weight="1.0" />
++    <View android:id="@id/invisible_view" android:visibility="gone" android:layout_width="0.0dip" android:layout_height="0.0dip" />
++    <LinearLayout android:orientation="vertical" android:id="@id/date_ll" android:layout_width="227.0dip" android:layout_height="fill_parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent">
 +        <LinearLayout android:orientation="horizontal" android:id="@id/item0" android:layout_width="fill_parent" android:layout_height="45.0dip">
 +            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv0" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/date" android:layout_weight="1.0" />
-             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv0" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="MM/DD/YY" android:layout_weight="1.0" />
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv0" android:paddingRight="5.0dip" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MM/DD/YY" android:maxLines="1" />
          </LinearLayout>
 -        <LinearLayout android:orientation="horizontal" android:id="@id/item1" android:layout_width="fill_parent" android:layout_height="40.0dip">
 -            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv1" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time" android:layout_weight="1.0" />
+-            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv1" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="HH/MM AM" android:layout_weight="1.2" />
 +        <LinearLayout android:orientation="horizontal" android:id="@id/item1" android:layout_width="fill_parent" android:layout_height="45.0dip">
 +            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:layout_gravity="center_vertical" android:id="@id/item_ltv1" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time" android:layout_weight="1.0" />
-             <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv1" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="HH/MM AM" android:layout_weight="1.2" />
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:layout_gravity="center_vertical" android:id="@id/item_rtv1" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="" android:layout_weight="1.2" />
++            <ImageView android:id="@id/arrow" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="5.0dip" />
          </LinearLayout>
 -        <LinearLayout android:orientation="horizontal" android:id="@id/item2" android:layout_width="fill_parent" android:layout_height="40.0dip">
 -            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv2" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_format" android:layout_weight="4.0" />
 +        <LinearLayout android:orientation="horizontal" android:id="@id/item2" android:layout_width="fill_parent" android:layout_height="45.0dip">
-+            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv2" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_format" android:layout_weight="4.0" />
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv2" android:singleLine="true" android:ellipsize="end" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_format" android:layout_weight="4.0" />
              <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/item_rtv2" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Off" android:layout_weight="1.0" />
          </LinearLayout>
 -        <LinearLayout android:orientation="horizontal" android:id="@id/item3" android:layout_width="fill_parent" android:layout_height="40.0dip">
 -            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv3" android:padding="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_in_title" android:layout_weight="4.0" />
 +        <LinearLayout android:orientation="horizontal" android:id="@id/item3" android:layout_width="fill_parent" android:layout_height="45.0dip">
-+            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv3" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_in_title" android:layout_weight="4.0" />
++            <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center_vertical" android:id="@id/item_ltv3" android:singleLine="true" android:ellipsize="end" android:padding="5.0dip" android:layout_marginLeft="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="@string/time_in_title" android:layout_weight="4.0" />
              <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="end|center" android:id="@id/item_rtv3" android:paddingRight="5.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:text="Off" android:layout_weight="1.0" />
          </LinearLayout>
      </LinearLayout>
+-    <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="center" android:id="@id/show_time" android:layout_width="0.0dip" android:layout_height="wrap_content" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <ImageView android:id="@id/imageView" android:layout_width="160.0dip" android:layout_height="150.0dip" android:src="@drawable/icon_setting_day" app:layout_constraintBottom_toTopOf="@id/show_date" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/show_time" />
+-    <TextView android:textSize="45.0sp" android:textColor="@color/white" android:id="@id/show_day" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintBottom_toBottomOf="@id/imageView" app:layout_constraintEnd_toEndOf="@id/imageView" app:layout_constraintStart_toStartOf="@id/imageView" app:layout_constraintTop_toTopOf="@id/imageView" app:layout_constraintVertical_bias="0.7" />
+-    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/show_date" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginBottom="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/date_ll" app:layout_constraintRight_toRightOf="parent" />
++    <!-- ipp: the preview built as the Settings panel is, so it centres its text the same way: 179
++         wide, 22 from the right edge, the time as its caption (13 = the panel's 58 less the status
++         bar this screen starts under), the picture under it and the date under that. -->
++    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent">
++        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="top|center_horizontal" android:id="@id/show_time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="13.0dip" android:minLines="@integer/ipp_title_lines" android:maxLines="2" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
++        <FrameLayout android:id="@id/cl" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dip" app:layout_constraintTop_toBottomOf="@id/show_time">
++            <ImageView android:id="@id/imageView" android:layout_width="fill_parent" android:layout_height="wrap_content" android:adjustViewBounds="true" />
++            <TextView android:textSize="45.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/show_day" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="wrap_content" />
++        </FrameLayout>
++        <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/show_date" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/ipp_state_top" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/cl" />
++    </androidx.constraintlayout.widget.ConstraintLayout>
+ </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_eq.xml b/build/src/res/layout/activity_eq.xml
+index a23161fa..aa312ee4 100644
+--- a/build/src/res/layout/activity_eq.xml
++++ b/build/src/res/layout/activity_eq.xml
+@@ -1,10 +1,17 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="fill_parent"
+-  xmlns:android="http://schemas.android.com/apk/res/android">
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_list" android:layout_width="200.0dip" android:layout_height="fill_parent" />
+-    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent">
+-        <TextView android:textSize="18.0sp" android:textColor="@color/white" android:layout_gravity="center" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:text="@string/setting_eq" />
+-        <ImageView android:layout_gravity="center" android:id="@id/image" android:layout_width="200.0dip" android:layout_height="wrap_content" android:layout_marginTop="20.0dip" android:adjustViewBounds="true" />
+-        <TextView android:textSize="18.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" />
+-    </LinearLayout>
++  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
++    <!-- ipp: the list as wide as Settings' (227), the preview built as the Settings panel is, so
++         it centres its text the same way: 179 wide, 22 from the right edge. This screen starts
++         under the status bar, so the caption's 58 from the screen's top is 13 here. -->
++    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_list" android:layout_width="227.0dip" android:layout_height="fill_parent" />
++    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
++        <androidx.constraintlayout.widget.ConstraintLayout android:layout_gravity="right" android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip">
++            <!-- ipp: the panel's caption, not shown: it only holds the room the Settings panel
++                 gives its title, so the picture stands where it stands there. -->
++            <TextView android:textSize="18.0sp" android:textStyle="bold" android:gravity="top|center_horizontal" android:id="@id/right_title" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="13.0dip" android:minLines="@integer/ipp_title_lines" android:maxLines="2" android:text="@string/setting_eq" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
++            <ImageView android:id="@id/image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dip" android:adjustViewBounds="true" app:layout_constraintTop_toBottomOf="@id/right_title" />
++            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/ipp_state_top" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/image" />
++        </androidx.constraintlayout.widget.ConstraintLayout>
++    </FrameLayout>
+ </LinearLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
 index a65785d4..bc1c5bf1 100644
 --- a/build/src/res/layout/activity_genres.xml
@@ -294,6 +346,21 @@ index a65785d4..bc1c5bf1 100644
 +         collapses to a point at spv's bottom and the list keeps the full height. -->
 +    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:paddingLeft="10.0dip" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toBottomOf="@id/spv" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_language.xml b/build/src/res/layout/activity_language.xml
+index 58481029..78555b24 100644
+--- a/build/src/res/layout/activity_language.xml
++++ b/build/src/res/layout/activity_language.xml
+@@ -1,6 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="180.0dip" android:layout_height="fill_parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/right_icon" />
+-    <ImageView android:layout_gravity="center" android:id="@id/image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:adjustViewBounds="true" />
++    <!-- ipp: the list as wide as Settings' (227); the picture fits the rest and is centred in it,
++         so it stands as far from the list as from the screen's right edge. -->
++    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="fill_parent" />
++    <ImageView android:id="@id/image" android:layout_width="0.0dip" android:layout_height="fill_parent" android:layout_weight="1.0" android:scaleType="fitCenter" />
+ </LinearLayout>
 diff --git a/build/src/res/layout/activity_main.xml b/build/src/res/layout/activity_main.xml
 index 08bc3833..80f241b3 100644
 --- a/build/src/res/layout/activity_main.xml
@@ -454,6 +521,19 @@ index 03493954..e1f6c7b7 100644
          <ImageView android:id="@id/imgFull" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginBottom="10.0dip" android:scaleType="fitCenter" app:layout_constraintBottom_toTopOf="@id/imgIcon" app:layout_constraintTop_toTopOf="parent" />
          <ImageView android:id="@id/imgIcon" android:layout_width="32.0dip" android:layout_height="32.0dip" android:src="@drawable/icon_as_theme_selected" app:layout_constraintBottom_toTopOf="@id/tv" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
          <TextView android:textSize="15.0sp" android:textColor="#cc00fff5" android:id="@id/tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="5.0dip" android:text="@string/theme_as_theme" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
+diff --git a/build/src/res/layout/activity_wallpaper_list.xml b/build/src/res/layout/activity_wallpaper_list.xml
+index cd1cd8c2..fc89192a 100644
+--- a/build/src/res/layout/activity_wallpaper_list.xml
++++ b/build/src/res/layout/activity_wallpaper_list.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="260.0dip" android:layout_height="wrap_content" />
++    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="wrap_content" />
+     <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
+         <ImageView android:id="@id/img" android:layout_width="160.0dip" android:layout_height="120.0dip" android:scaleType="centerCrop" android:maxWidth="160.0dip" android:maxHeight="120.0dip" />
+         <TextView android:textSize="18.0sp" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:text="@string/setting_wallpaper_current" />
 diff --git a/build/src/res/layout/dialog_input_method.xml b/build/src/res/layout/dialog_input_method.xml
 index cfa3f963..63827bf9 100644
 --- a/build/src/res/layout/dialog_input_method.xml
@@ -984,10 +1064,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..bae75470 100644
+index 50446006..3685ba3e 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,521 @@
+@@ -1,417 +1,522 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1848,6 +1928,7 @@ index 50446006..bae75470 100644
 +    <string name="ipp_queue_empty">Warteschlange ist leer</string>
 +    <string name="ipp_queue_remove">Titel aus der Warteschlange entfernen?</string>
 +    <string name="ipp_queue_add">Zur Warteschlange hinzufügen</string>
++    <string name="ipp_add_to_playlist">Zur Liste hinzufügen</string>
 +    <string name="ipp_queue_added">Zur Warteschlange hinzugefügt</string>
 +    <string name="ipp_queue_next_manual">Nächstes in der Warteschlange</string>
 +    <string name="ipp_queue_next_manual_n">Nächstes in der Warteschlange (%1$d von %2$d)</string>
@@ -2245,10 +2326,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..7fdbe756 100644
+index 6f5a555d..fe5d8586 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,521 @@
+@@ -1,417 +1,522 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3109,6 +3190,7 @@ index 6f5a555d..7fdbe756 100644
 +    <string name="ipp_queue_empty">La cola está vacía</string>
 +    <string name="ipp_queue_remove">¿Quitar esta pista de la cola?</string>
 +    <string name="ipp_queue_add">Añadir a la cola</string>
++    <string name="ipp_add_to_playlist">Añadir a la lista</string>
 +    <string name="ipp_queue_added">Añadido a la cola</string>
 +    <string name="ipp_queue_next_manual">Siguiente en la cola</string>
 +    <string name="ipp_queue_next_manual_n">Siguiente en la cola (%1$d de %2$d)</string>
@@ -3188,10 +3270,10 @@ index 6f5a555d..7fdbe756 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..7c4c9bab 100644
+index c242cee4..4d310873 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,521 @@
+@@ -1,417 +1,522 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4052,6 +4134,7 @@ index c242cee4..7c4c9bab 100644
 +    <string name="ipp_queue_empty">La file d\'attente est vide</string>
 +    <string name="ipp_queue_remove">Retirer ce titre de la file d\'attente ?</string>
 +    <string name="ipp_queue_add">Ajouter à la file d\'attente</string>
++    <string name="ipp_add_to_playlist">Ajouter à la liste</string>
 +    <string name="ipp_queue_added">Ajouté à la file d\'attente</string>
 +    <string name="ipp_queue_next_manual">Suivant dans la file</string>
 +    <string name="ipp_queue_next_manual_n">Suivant dans la file (%1$d sur %2$d)</string>
@@ -4131,10 +4214,10 @@ index c242cee4..7c4c9bab 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..bc24f8d3 100644
+index d82ac6bb..1240cb8a 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,521 @@
+@@ -1,417 +1,522 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -4995,6 +5078,7 @@ index d82ac6bb..bc24f8d3 100644
 +    <string name="ipp_queue_empty">התור ריק</string>
 +    <string name="ipp_queue_remove">להסיר את הרצועה מהתור?</string>
 +    <string name="ipp_queue_add">הוספה לתור</string>
++    <string name="ipp_add_to_playlist">הוספה לפלייליסט</string>
 +    <string name="ipp_queue_added">נוסף לתור</string>
 +    <string name="ipp_queue_next_manual">הבא בתור</string>
 +    <string name="ipp_queue_next_manual_n">הבא בתור (%1$d מתוך %2$d)</string>
@@ -5074,10 +5158,10 @@ index d82ac6bb..bc24f8d3 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..1ac3fa0b 100644
+index f71d0cb1..bbe2f5b2 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,438 @@
+@@ -1,334 +1,439 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5772,6 +5856,7 @@ index f71d0cb1..1ac3fa0b 100644
 +    <string name="ipp_queue_empty">대기열이 비어 있습니다</string>
 +    <string name="ipp_queue_remove">이 트랙을 대기열에서 제거할까요?</string>
 +    <string name="ipp_queue_add">대기열에 추가</string>
++    <string name="ipp_add_to_playlist">재생 목록에 추가</string>
 +    <string name="ipp_queue_added">대기열에 추가됨</string>
 +    <string name="ipp_queue_next_manual">대기열의 다음 곡</string>
 +    <string name="ipp_queue_next_manual_n">대기열의 다음 곡 (%1$d / %2$d)</string>
@@ -5851,7 +5936,7 @@ index f71d0cb1..1ac3fa0b 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
-index d79cf0f6..f925eee4 100644
+index d79cf0f6..7b6930fd 100644
 --- a/build/src/res/values-ru-rRU/strings.xml
 +++ b/build/src/res/values-ru-rRU/strings.xml
 @@ -22,20 +22,20 @@
@@ -6077,7 +6162,15 @@ index d79cf0f6..f925eee4 100644
      <string name="theme_default_theme">Тема по умолчанию</string>
      <string name="theme_default_theme_renamed_tips">Тему по умолчанию нельзя переименовать</string>
      <string name="theme_delete_default_theme_tips">Тему по умолчанию нельзя удалить</string>
-@@ -317,8 +317,8 @@
+@@ -310,15 +310,15 @@
+     <string name="theme_theme">Тема</string>
+     <string name="thursday">Четверг</string>
+     <string name="time">Время</string>
+-    <string name="time_format">24-часовой</string>
++    <string name="time_format">24-часовой формат</string>
+     <string name="time_in_title">Время в заголовке</string>
+     <string name="time_minute">Минута</string>
+     <string name="time_new">Новые</string>
      <string name="time_old">Старые</string>
      <string name="time_second">с</string>
      <string name="timing">Таймер</string>
@@ -6098,10 +6191,10 @@ index d79cf0f6..f925eee4 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..e9f97d70 100644
+index 4c84fd2b..1705ce68 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,190 @@
+@@ -1,86 +1,191 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6277,7 +6370,7 @@ index 4c84fd2b..e9f97d70 100644
 +    <string name="ipp_off">Выкл</string>
 +    <string name="ipp_sort_by_track">По номеру трека</string>
 +    <string name="ipp_feat_likes_names">Отображать лайки рядом с названиями песен</string>
-+    <string name="ipp_favorites">Любимые треки</string>
++    <string name="ipp_favorites">Избранное</string>
 +    <string name="ipp_reboot_confirm">Перезагрузить устройство?</string>
 +    <string name="ipp_reboot">Перезагрузить</string>
 +    <string name="ipp_log_confirm">Сохранить диагностический лог на карту?</string>
@@ -6300,6 +6393,7 @@ index 4c84fd2b..e9f97d70 100644
 +    <string name="ipp_queue_empty">Очередь пуста</string>
 +    <string name="ipp_queue_remove">Убрать трек из очереди?</string>
 +    <string name="ipp_queue_add">Добавить в очередь</string>
++    <string name="ipp_add_to_playlist">Добавить в плейлист</string>
 +    <string name="ipp_queue_added">Добавлено в очередь</string>
 +    <string name="ipp_queue_next_manual">Далее в очереди</string>
 +    <string name="ipp_queue_next_manual_n">Далее в очереди (%1$d из %2$d)</string>
@@ -6379,10 +6473,10 @@ index 4c84fd2b..e9f97d70 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..021d4d82 100644
+index 5665bdd9..17c79bba 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,530 @@
+@@ -1,426 +1,531 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7261,6 +7355,7 @@ index 5665bdd9..021d4d82 100644
 +    <string name="ipp_queue_empty">队列为空</string>
 +    <string name="ipp_queue_remove">从队列中移除该曲目？</string>
 +    <string name="ipp_queue_add">添加到队列</string>
++    <string name="ipp_add_to_playlist">添加到播放列表</string>
 +    <string name="ipp_queue_added">已添加到队列</string>
 +    <string name="ipp_queue_next_manual">队列中的下一首</string>
 +    <string name="ipp_queue_next_manual_n">队列中的下一首（%1$d / %2$d）</string>
@@ -8646,10 +8741,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..383122b4 100644
+index 803c1e7a..b587f96e 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5669 @@
+@@ -1,5519 +1,5670 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18756,6 +18851,7 @@ index 803c1e7a..383122b4 100644
 +    <public type="string" name="ipp_tone_theme" id="0x7f11026e" />
 +    <public type="string" name="ipp_coverflow" id="0x7f11026f" />
 +    <public type="string" name="ipp_pick_flow" id="0x7f110270" />
++    <public type="string" name="ipp_add_to_playlist" id="0x7f110271" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19839,10 +19935,10 @@ index 803c1e7a..383122b4 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..5ebcad74 100644
+index 71fe29d0..0b756dac 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,580 @@
+@@ -1,473 +1,581 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20788,7 +20884,7 @@ index 71fe29d0..5ebcad74 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev170</string>
++    <string name="ipp_version">v1.1.0-dev173</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20817,6 +20913,7 @@ index 71fe29d0..5ebcad74 100644
 +    <string name="ipp_queue_empty">Queue is empty</string>
 +    <string name="ipp_queue_remove">Remove this track from the queue?</string>
 +    <string name="ipp_queue_add">Add to queue</string>
++    <string name="ipp_add_to_playlist">Add to playlist</string>
 +    <string name="ipp_queue_added">Added to queue</string>
 +    <string name="ipp_queue_next_manual">Next in queue</string>
 +    <string name="ipp_queue_next_manual_n">Next in queue (%1$d of %2$d)</string>
@@ -55811,7 +55908,7 @@ index 6681baa9..54fa1dec 100644
 +    return-object p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
-index 3f62d183..317e7388 100644
+index 3f62d183..7ed88eb4 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 @@ -662,6 +662,10 @@
@@ -55844,10 +55941,17 @@ index 3f62d183..317e7388 100644
      return-void
  .end method
  
-@@ -921,6 +931,13 @@
+@@ -921,6 +931,20 @@
  
      check-cast v1, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
  
++    # ipp: "Add to playlist" opens the playlist chooser instead of reaching the callback
++    invoke-static {p0, p1, v0}, Lcom/innioasis/ipp/Menus;->group(Lcom/innioasis/music/util/SubMenuDialog;ILcom/innioasis/music/util/SubMenuDialog$Callback;)Z
++
++    move-result v2
++
++    if-nez v2, :cond_8
++
 +    # ipp: the callback is handed the index this entry has in the menu the SCREEN built, not the
 +    # one it has after filtering -- FilesActivity and GenresActivity dispatch by index. The item
 +    # itself is taken above, by the shown index, which is where it really is.
@@ -57657,6 +57761,20 @@ index 08850ebc..4971de11 100644
      iget v1, p0, Lcom/innioasis/y1/activity/BrightnessActivity;->maxBrightness:I
  
      invoke-virtual {v0, v1}, Landroid/widget/ProgressBar;->setMax(I)V
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/DateOneLevelActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/DateOneLevelActivity.smali
+index 63b843e7..5ada51f1 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/DateOneLevelActivity.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/DateOneLevelActivity.smali
+@@ -507,6 +507,9 @@
+     goto/16 :goto_0
+ 
+     :cond_7
++    # ipp: the cursor row's long label scrolls, the Time row carries the arrow. See DateTime.
++    invoke-static {p0}, Lcom/innioasis/ipp/DateTime;->rows(Ljava/lang/Object;)V
++
+     return-void
+ .end method
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
 index a97af096..7665521d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/DateTwoLevelActivity.smali
@@ -63840,7 +63958,7 @@ index dfaa4043..89dec7f5 100644
      :cond_2
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
-index c16ca965..24b1539f 100644
+index c16ca965..34d97a5b 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
 @@ -663,6 +663,10 @@
@@ -63854,10 +63972,17 @@ index c16ca965..24b1539f 100644
      .line 132
      invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;->getAdapter()Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter;
  
-@@ -922,6 +926,12 @@
+@@ -922,6 +926,19 @@
  
      check-cast v1, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
  
++    # ipp: "Add to playlist" opens the playlist chooser instead of reaching the callback
++    invoke-static {p0, p1, v0}, Lcom/innioasis/ipp/Menus;->groupVideo(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;ILcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;)Z
++
++    move-result v2
++
++    if-nez v2, :cond_8
++
 +    # ipp: the callback is handed the index this entry had in the UNFILTERED menu -- both menus of
 +    # this section dispatch by index. After getItem above, which wants the shown one.
 +    invoke-static {p0, p1}, Lcom/innioasis/ipp/Menus;->videoIndex(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;I)I

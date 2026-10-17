@@ -91,7 +91,7 @@ Les artistes masqués peuvent être déplacés dans le titre en activant « {row
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] Déplacer les artistes masqués dans le titre
+[feat_in_title] Déplacer les artistes invités dans le titre
 Déplace les artistes masqués par « {row:first_artist_only} » dans le titre du morceau, après un « feat. ». Par exemple :
 
 « Tree, Shelf Nunny, Lena Kuhn — People »
@@ -146,6 +146,12 @@ Dans une liste de morceaux, la ligne Shuffle fait aussi partie de la boucle.
 * Par défaut
 * Simple
 Simple masque l'aperçu à côté de la liste et étend les lignes sur toute la largeur de l'écran : dans le menu principal, dans les réglages et dans leurs écrans.
+
+[preview_text] Couleur du texte des aperçus du menu
+* Clair
+* Sombre
+* Couleur du thème
+Définit la couleur du texte dans les aperçus à côté des listes des réglages et de leurs écrans, ainsi que dans « À propos ». La couleur du thème est celle du texte des listes du thème.
 
 [fixed_menu_pad] Marges de menu corrigées
 Corrige les marges du menu principal et des réglages.

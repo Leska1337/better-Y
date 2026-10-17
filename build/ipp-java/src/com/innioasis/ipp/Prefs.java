@@ -42,6 +42,7 @@ public final class Prefs {
         def(AlbumArtists.KEY, 0);
         def(Loop.KEY, 0);
         def(MenuStyle.KEY, 0);               // the preview beside the list, as stock draws it
+        def(Preview.KEY, 0);                 // white, as the layouts have it
         def(TopBar.KEY_TEXT, 0);             // white, as the layout has it
         def(TopBar.KEY_ICONS, TopBar.ALL);
         // [Metadata]

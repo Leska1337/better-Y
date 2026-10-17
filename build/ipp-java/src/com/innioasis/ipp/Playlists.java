@@ -94,6 +94,7 @@ public final class Playlists {
 
     private static final String LANG_KEY = "fav_lang";
     private static final String HEART = "❤ ";
+    private static final String OLD_RU = "Любимые треки";
 
     /** Once per app start, from {@code MainActivity.initView}. */
     public static void syncName(Context c) {
@@ -112,8 +113,8 @@ public final class Playlists {
             if (p == null) return;
             String name = c.getString(R.string.ipp_favorites);
             if (name.equals(p.getName())) return;
-            // "❤ name" is an older build's generated name, not a rename.
-            if (!relabel && !(HEART + name).equals(p.getName())) return;
+            // "❤ name" and the Russian "Любимые треки" are names a build generated, not renames.
+            if (!relabel && !(HEART + name).equals(p.getName()) && !OLD_RU.equals(p.getName())) return;
             p.setName(name);
             p.setLowerName(name.toLowerCase());
             repo.updatePlaylist(p);
