@@ -1,13 +1,9 @@
 package com.innioasis.ipp;
 
-import android.content.Context;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 
 /**
@@ -16,16 +12,6 @@ import com.innioasis.y1.database.Song;
  * reads the songs whose file nobody has read yet.
  */
 public final class TrackCache {
-
-    /** Deletes the file the numbers used to be kept in. */
-    public static void clear() {
-        try {
-            Context c = Y1Application.Companion.getAppContext();
-            File dir = c == null ? null : c.getCacheDir();
-            if (dir != null) new File(dir, "ipp_tracks.txt").delete();
-        } catch (Throwable t) {
-        }
-    }
 
     /** Reads every song whose row was never filled, then stores them in one batch. */
     private static void ensure(List songs) {

@@ -62,20 +62,17 @@ public final class Meta {
         Prefs.setInt(c, KEY_READER, READER);
     }
 
-    /** Art only when {@code wantArt}: the one key not free once open. Thread-safe; not the UI thread. */
+    /**
+     * Opens the file: callers ask only for a song whose row was never read, or for its art. Art
+     * only when {@code wantArt}: the one key not free once open. Thread-safe; not the UI thread.
+     */
     public static Info read(String path, boolean wantArt) {
         Info out = new Info();
         if (path == null) return out;
-        if (!wantArt) {
-            Info kept = MetaCache.get(path);
-            if (kept != null) return kept;
-        }
 
-        boolean opened = false;
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(path);
-            opened = true;
             out.title = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
             out.artist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
             out.albumArtist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
@@ -99,8 +96,6 @@ public final class Meta {
             id3(path, out, wantArt);
             out.ok = true;
         }
-        // a file that did not open has said nothing about its tags
-        if (opened || huge) MetaCache.put(path, out);
         return out;
     }
 
@@ -142,10 +137,8 @@ public final class Meta {
             String path = song.getPath();
             if (!oversized(path)) return;
 
-            Info i = MetaCache.get(path);
-            if (i == null) i = new Info();
+            Info i = Schema.info(song);
             id3(path, i, false);
-            MetaCache.put(path, i);
             Schema.fill(song, i);
             HanziToPinyin h = HanziToPinyin.getInstance();
 
@@ -183,7 +176,6 @@ public final class Meta {
             i.disc = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER);
             i.year = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
             i.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
-            MetaCache.put(song.getPath(), i);
             Schema.fill(song, i);
         } catch (Throwable t) {
         }

@@ -1,8 +1,5 @@
 package com.innioasis.ipp;
 
-import android.content.Context;
-
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,16 +16,6 @@ public final class YearCache {
 
     private static List repsFor;
     private static final HashMap reps = new HashMap();   // album key -> path
-
-    /** Deletes the file the years used to be kept in. */
-    public static void clear() {
-        try {
-            Context c = Y1Application.Companion.getAppContext();
-            File dir = c == null ? null : c.getCacheDir();
-            if (dir != null) new File(dir, "ipp_years.txt").delete();
-        } catch (Throwable t) {
-        }
-    }
 
     /** The first run of four digits: "1997-08-12" gives 1997. */
     static String digits4(String s) {
@@ -53,7 +40,8 @@ public final class YearCache {
         return null;
     }
 
-    private static synchronized String repPath(String key) {
+    /** An album's representative: the one {@link #warm} looked up, else the row's {@link AlbumInfo}. */
+    static synchronized String repPath(String key) {
         List l = Albums.loaded();
         if (l != null && l != repsFor) {
             reps.clear();

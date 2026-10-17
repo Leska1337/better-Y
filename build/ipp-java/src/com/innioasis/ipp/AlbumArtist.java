@@ -1,15 +1,10 @@
 package com.innioasis.ipp;
 
-import android.content.Context;
-
-import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 
-import java.io.File;
-
 /**
- * The ALBUM ARTIST tag of an album: its representative's row ({@link Schema}), the path the album
- * row recorded in {@link AlbumInfo}. It is one deliberate value — "Various Artists" is not two
+ * The ALBUM ARTIST tag of an album: its representative's row ({@link Schema}), the song
+ * {@link YearCache#repPath} names. It is one deliberate value — "Various Artists" is not two
  * artists — so it is never split and no setting rewrites it.
  */
 public final class AlbumArtist {
@@ -29,7 +24,7 @@ public final class AlbumArtist {
     /** The tag, "" when the file has none, null when never read. */
     public static String get(String key) {
         if (key == null) return null;
-        return of(Schema.row(AlbumInfo.path(key)));
+        return of(Schema.row(YearCache.repPath(Albums.coverKey(key))));
     }
 
     public static boolean needsRead(String key) {
@@ -56,21 +51,14 @@ public final class AlbumArtist {
         Schema.write();
     }
 
-    /** Deletes the file the tags used to be kept in. */
-    public static void clear() {
-        try {
-            Context c = Y1Application.Companion.getAppContext();
-            File dir = c == null ? null : c.getCacheDir();
-            if (dir != null) new File(dir, "ipp_albumartist.txt").delete();
-        } catch (Throwable t) {
-        }
-    }
-
     /**
      * An album row's artist line: exactly the name it is filed under in Album Artists
-     * ({@link AlbumArtists#of}), so no setting may touch it.
+     * ({@link AlbumArtists#of}), so no setting may touch it. The representative's own artist
+     * before the row's: the row's is not there until its background pass has run.
      */
     public static String line(String key, String tagArtist) {
+        Song rep = key == null ? null : Schema.row(YearCache.repPath(Albums.coverKey(key)));
+        if (rep != null) return AlbumArtists.of(of(rep), rep.getArtist());
         return AlbumArtists.of(get(key), tagArtist);
     }
 }

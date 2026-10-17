@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.content.Context;
 import android.database.Cursor;
 
 import androidx.room.RoomDatabase;
@@ -13,9 +14,12 @@ import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.SongDao;
 import com.innioasis.y1.database.Y1Repository;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The tag columns of the Song table beyond the stock ones, and the database version that has them.
@@ -89,6 +93,87 @@ public final class Schema {
         return v == null ? "" : v.trim();
     }
 
+    /** The row's tags as a reader's answer, for a reader that adds to them ({@code Meta.fixSong}). */
+    static Meta.Info info(Song s) {
+        Meta.Info i = new Meta.Info();
+        i.albumArtist = s.getAlbumArtist();
+        i.track = s.getTrack();
+        i.disc = s.getDisc();
+        i.year = s.getYear();
+        i.ok = true;
+        return i;
+    }
+
+    /** The tag columns' text in UTF-8: what "Clear cache" shows as the metadata's weight. */
+    static long tagBytes() {
+        long n = 0;
+        try {
+            List l = Albums.allSongs();
+            if (l == null) return 0;
+            for (int k = 0; k < l.size(); k++) {
+                Song s = (Song) l.get(k);
+                n += utf8(s.getAlbumArtist()) + utf8(s.getTrack()) + utf8(s.getDisc())
+                        + utf8(s.getYear());
+            }
+        } catch (Throwable t) {
+        }
+        return n;
+    }
+
+    private static int utf8(String v) {
+        if (v == null) return 0;
+        try {
+            return v.getBytes("UTF-8").length;
+        } catch (Throwable t) {
+            return v.length();
+        }
+    }
+
+    /**
+     * "Clear cache": every row back to "never read", so the next "Cache library" or the screens
+     * read the files again. Background thread: it rewrites the whole table.
+     */
+    static void clearTags() {
+        synchronized (Schema.class) {
+            written.clear();
+        }
+        Y1Repository repo = Y1Application.Companion.getY1Repository();
+        if (repo == null) return;
+        SongDao dao = repo.ippSongDao();
+        int n = clearList(dao, Albums.allSongs()) + clearList(dao, repo.getSongsSync(1));
+        if (n > 0) Ipp.libraryChanged();
+    }
+
+    private static int clearList(SongDao dao, List songs) {
+        if (songs == null) return 0;
+        ArrayList out = new ArrayList();
+        int n = 0;
+        for (int k = 0; k < songs.size(); k++) {
+            Song s = (Song) songs.get(k);
+            if (unread(s)) continue;
+            s.setAlbumArtist(null);
+            s.setTrack(null);
+            s.setDisc(null);
+            s.setYear(null);
+            out.add(s);
+            if (out.size() >= BATCH) n += flush(dao, out);
+        }
+        return n + flush(dao, out);
+    }
+
+    /** The files the tags were kept in before the columns; nothing reads them. */
+    private static void dropFiles() {
+        try {
+            Context c = Y1Application.Companion.getAppContext();
+            File dir = c == null ? null : c.getCacheDir();
+            if (dir == null) return;
+            String[] names = { "ipp_tracks.txt", "ipp_discs.txt", "ipp_years.txt",
+                    "ipp_albumartist.txt" };
+            for (int k = 0; k < names.length; k++) new File(dir, names[k]).delete();
+        } catch (Throwable t) {
+        }
+    }
+
     /** Never read: every tag column null. */
     static boolean unread(Song s) {
         return s.getAlbumArtist() == null && s.getTrack() == null && s.getDisc() == null
@@ -98,15 +183,17 @@ public final class Schema {
     private static final int BATCH = 100;
 
     /**
-     * Rows scanned before the columns existed, filled from the tag table without opening a file.
-     * Off the main thread, at the end of a scan or with none running; ends in
-     * {@code Ipp.libraryChanged} when it wrote.
+     * Rows scanned before the columns existed, filled from the old tag table without opening a
+     * file; then the old files go. Off the main thread, at the end of a scan or with none running;
+     * ends in {@code Ipp.libraryChanged} when it wrote. Once the table is gone this costs one pass.
      */
     static void backfill() {
         Y1Repository repo = Y1Application.Companion.getY1Repository();
         if (repo == null) return;
         SongDao dao = repo.ippSongDao();
         int n = fillList(dao, Albums.allSongs()) + fillList(dao, repo.getSongsSync(1));
+        MetaCache.drop();
+        dropFiles();
         if (n > 0) {
             Diag.note("schema: " + n + " row(s) filled from the tag table");
             Ipp.libraryChanged();
@@ -140,10 +227,13 @@ public final class Schema {
     private static List indexed;
     private static HashMap byPath;
     private static final ArrayList staged = new ArrayList();
+    /** path -> row written this run, until a list read after the write carries it by itself. */
+    private static final HashMap written = new HashMap();
 
     /**
      * The library's row of a path, out of the song list in memory. Reads the list only when none
      * was ever loaded; while one is being re-read the previous index answers, its rows unchanged.
+     * A list read before a write is brought up to it here, or its rows would read NULL again.
      */
     static synchronized Song row(String path) {
         if (path == null) return null;
@@ -157,8 +247,31 @@ public final class Schema {
             }
             byPath = m;
             indexed = l;
+            carry();
         }
         return byPath == null ? null : (Song) byPath.get(path);
+    }
+
+    private static void carry() {
+        Iterator it = written.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry) it.next();
+            Song now = (Song) byPath.get(e.getKey());
+            Song w = (Song) e.getValue();
+            if (now == null || now == w || !unread(now)) {
+                if (now != w) it.remove();
+                continue;
+            }
+            copy(w, now);
+        }
+    }
+
+    private static void copy(Song from, Song to) {
+        to.setAlbumArtist(from.getAlbumArtist());
+        to.setTrack(from.getTrack());
+        to.setDisc(from.getDisc());
+        to.setYear(from.getYear());
+        to.setLyrics(from.getLyrics());
     }
 
     /** A file just read, into its row in memory; {@link #write} stores what was staged. */
@@ -178,7 +291,11 @@ public final class Schema {
         return gen;
     }
 
-    /** One batch for everything staged, then {@code Ipp.libraryChanged}. Not the UI thread for a big pass. */
+    /**
+     * One batch for everything staged. No {@code Ipp.libraryChanged}: the rows written are the
+     * list's own objects, already filled in place, and a reset per album row re-read the whole
+     * library on every thread at once. Not the UI thread for a big pass.
+     */
     static void write() {
         Song[] rows;
         synchronized (staged) {
@@ -188,12 +305,17 @@ public final class Schema {
         }
         synchronized (Schema.class) {
             gen++;
+            for (int k = 0; k < rows.length; k++) {
+                String p = rows[k].getPath();
+                written.put(p, rows[k]);
+                Song now = byPath == null ? null : (Song) byPath.get(p);
+                if (now != null && now != rows[k] && unread(now)) copy(rows[k], now);
+            }
         }
         try {
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             if (repo == null) return;
             repo.ippSongDao().insert(rows);
-            Ipp.libraryChanged();
         } catch (Throwable t) {
             Diag.note("schema: " + rows.length + " row(s) not written: " + t);
         }

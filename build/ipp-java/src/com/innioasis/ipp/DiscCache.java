@@ -1,11 +1,6 @@
 package com.innioasis.ipp;
 
-import android.content.Context;
-
-import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
-
-import java.io.File;
 
 /**
  * The DISC NUMBER tag of a track, out of its row ({@link Schema}), for albums not split into CD
@@ -92,15 +87,5 @@ public final class DiscCache {
 
     public static void flush() {
         Schema.write();
-    }
-
-    /** Deletes the file the numbers used to be kept in. */
-    public static void clear() {
-        try {
-            Context c = Y1Application.Companion.getAppContext();
-            File dir = c == null ? null : c.getCacheDir();
-            if (dir != null) new File(dir, "ipp_discs.txt").delete();
-        } catch (Throwable t) {
-        }
     }
 }

@@ -170,12 +170,8 @@ public final class Pick {
         }
         if ((mask & FLOW) != 0) FlowCache.clear();
         if ((mask & TAGS) != 0) {
-            YearCache.clear();
-            MetaCache.clear();
-            TrackCache.clear();
+            Schema.clearTags();
             AlbumInfo.clear();
-            AlbumArtist.clear();
-            DiscCache.clear();
             GenreInfo.clear();
         }
         // "Already cached" is answered from a signature stored outside the caches.
@@ -241,20 +237,18 @@ public final class Pick {
                         + CacheSize.dirSize(new File(d, "ipp_art.txt"));
             }
             if (cat == FLOW) return CacheSize.dirSize(new File(d, "ipp_flow"));
-            if (cat == TAGS) {
-                return CacheSize.dirSize(new File(d, "ipp_years.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_tracks.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_albums.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_albumartist.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_discs.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_meta.txt"))
-                        + CacheSize.dirSize(new File(d, "ipp_genres.txt"));
-            }
-            long n = CacheSize.total(c) - size(COVERS) - size(TAGS) - size(FLOW);
+            // the tags themselves are columns of the database, not files of the cache directory
+            if (cat == TAGS) return tagFiles(d) + Schema.tagBytes();
+            long n = CacheSize.total(c) - size(COVERS) - tagFiles(d) - size(FLOW);
             return n < 0L ? 0L : n;
         } catch (Throwable t) {
             return 0L;
         }
+    }
+
+    private static long tagFiles(File d) {
+        return CacheSize.dirSize(new File(d, "ipp_albums.txt"))
+                + CacheSize.dirSize(new File(d, "ipp_genres.txt"));
     }
 
     public static String sizeText(long n) {

@@ -238,7 +238,6 @@ public final class Albums {
         try {
             Scan.done();
             lists();
-            MetaCache.warm();
             Schema.backfill();
         } catch (Throwable t) {
         }
@@ -347,7 +346,6 @@ public final class Albums {
                 List old = songCache;
                 if (old == null) {
                     lists();
-                    MetaCache.warm();
                     Schema.backfill();
                     return;
                 }
