@@ -488,6 +488,34 @@ public final class Menus {
         }
     }
 
+    /** Stock's strip: delete, multi-select, select all, rename, set as. */
+    private static final int[] PHOTO_FULL = {0, 3, 4};
+
+    /** Shown strips standing for the stock one, and each one's stock indexes. */
+    private static final WeakHashMap PHOTO_MAPS = new WeakHashMap();
+
+    /**
+     * An open picture: multi-select and select all are dropped (stock greys them and skips them).
+     * The dialog then runs with isFull off, and {@link #photoIndex} gives its dispatch the stock index.
+     */
+    public static List photosFull(List subs, boolean full) {
+        try {
+            if (!full || subs == null || subs.size() != 5) return subs;
+            ArrayList out = new ArrayList();
+            for (int i = 0; i < PHOTO_FULL.length; i++) out.add(subs.get(PHOTO_FULL[i]));
+            PHOTO_MAPS.put(out, PHOTO_FULL);
+            return out;
+        } catch (Throwable t) {
+            return subs;
+        }
+    }
+
+    /** {@code PhotosDialog.onKeyUp}: the shown entry as the stock index its callback expects. */
+    public static int photoIndex(List subs, int shown) {
+        int[] m = subs == null ? null : (int[]) PHOTO_MAPS.get(subs);
+        return m == null || shown < 0 || shown >= m.length ? shown : m[shown];
+    }
+
     /**
      * The dialog's context is a theme wrapper around the Activity; the top Activity is the
      * fallback, and right — a dialog does not pause the screen under it.

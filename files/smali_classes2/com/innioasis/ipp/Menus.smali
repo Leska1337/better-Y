@@ -14,10 +14,14 @@
 
 .field private final static MULTI:[I
 
+.field private final static PHOTO_FULL:[I
+
+.field private final static PHOTO_MAPS:Ljava/util/WeakHashMap;
+
 .field private final static SNAPS:Ljava/util/WeakHashMap;
 
 .method static constructor <clinit>()V
-  .registers 1
+  .registers 3
   .line 50
     const/16 v0, 13
     new-array v0, v0, [I
@@ -31,6 +35,17 @@
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Menus;->CHOOSERS:Ljava/util/WeakHashMap;
+  .line 492
+    const/4 v0, 3
+    const/4 v1, 4
+    const/4 v2, 0
+    filled-new-array { v2, v0, v1 }, [I
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_FULL:[I
+  .line 495
+    new-instance v0, Ljava/util/WeakHashMap;
+    invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
+    sput-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_MAPS:Ljava/util/WeakHashMap;
     return-void
   :L0
   .array-data 4
@@ -566,48 +581,48 @@
   .catchall { :L7 .. :L8 } :L9
   .registers 2
   :L0
-  .line 497
+  .line 525
     invoke-virtual { p0 }, Landroid/app/Dialog;->getOwnerActivity()Landroid/app/Activity;
     move-result-object v0
-  .line 498
+  .line 526
     if-eqz v0, :L1
     return-object v0
   :L1
-  .line 499
+  .line 527
     invoke-virtual { p0 }, Landroid/app/Dialog;->getContext()Landroid/content/Context;
     move-result-object p0
   :L2
-  .line 500
+  .line 528
     instance-of v0, p0, Landroid/content/ContextWrapper;
     if-eqz v0, :L5
-  .line 501
+  .line 529
     instance-of v0, p0, Landroid/app/Activity;
     if-eqz v0, :L3
     check-cast p0, Landroid/app/Activity;
     return-object p0
   :L3
-  .line 502
+  .line 530
     check-cast p0, Landroid/content/ContextWrapper;
     invoke-virtual { p0 }, Landroid/content/ContextWrapper;->getBaseContext()Landroid/content/Context;
     move-result-object p0
   :L4
     goto :L2
   :L5
-  .line 505
+  .line 533
     goto :L7
   :L6
-  .line 504
+  .line 532
     move-exception p0
   :L7
-  .line 507
+  .line 535
     invoke-static { }, Lcom/blankj/utilcode/util/ActivityUtils;->getTopActivity()Landroid/app/Activity;
     move-result-object p0
   :L8
     return-object p0
   :L9
-  .line 508
+  .line 536
     move-exception p0
-  .line 509
+  .line 537
     const/4 p0, 0
     return-object p0
 .end method
@@ -941,6 +956,30 @@
     return v0
 .end method
 
+.method public static photoIndex(Ljava/util/List;I)I
+  .registers 3
+  .line 515
+    if-nez p0, :L0
+    const/4 p0, 0
+    goto :L1
+  :L0
+    sget-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_MAPS:Ljava/util/WeakHashMap;
+    invoke-virtual { v0, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object p0
+    check-cast p0, [I
+  :L1
+  .line 516
+    if-eqz p0, :L3
+    if-ltz p1, :L3
+    array-length v0, p0
+    if-lt p1, v0, :L2
+    goto :L3
+  :L2
+    aget p1, p0, p1
+  :L3
+    return p1
+.end method
+
 .method public static photos(Ljava/util/List;Ljava/util/List;I)Ljava/util/List;
   .catchall { :L0 .. :L5 } :L7
   .registers 5
@@ -997,6 +1036,51 @@
     return-object p0
   :L8
   .line 480
+    return-object p0
+.end method
+
+.method public static photosFull(Ljava/util/List;Z)Ljava/util/List;
+  .catchall { :L0 .. :L4 } :L5
+  .registers 5
+  .line 503
+    if-eqz p1, :L6
+    if-eqz p0, :L6
+  :L0
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result p1
+    const/4 v0, 5
+    if-eq p1, v0, :L1
+    goto :L6
+  :L1
+  .line 504
+    new-instance p1, Ljava/util/ArrayList;
+    invoke-direct { p1 }, Ljava/util/ArrayList;-><init>()V
+  .line 505
+    const/4 v0, 0
+  :L2
+    sget-object v1, Lcom/innioasis/ipp/Menus;->PHOTO_FULL:[I
+    array-length v2, v1
+    if-ge v0, v2, :L3
+    aget v1, v1, v0
+    invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v1
+    invoke-virtual { p1, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+    add-int/lit8 v0, v0, 1
+    goto :L2
+  :L3
+  .line 506
+    sget-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_MAPS:Ljava/util/WeakHashMap;
+    invoke-virtual { v0, p1, v1 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  :L4
+  .line 507
+    return-object p1
+  :L5
+  .line 508
+    move-exception p1
+  .line 509
+    return-object p0
+  :L6
+  .line 503
     return-object p0
 .end method
 
