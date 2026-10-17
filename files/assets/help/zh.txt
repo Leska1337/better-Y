@@ -113,7 +113,7 @@
 开启此设置时变为
 “Tree — People (feat. Shelf Nunny, Lena Kuhn)”
 
-标题中已经提到其中某位时，不会添加任何内容。
+标题中已经提到其中某位时，或艺术家一行显示“Various”或“Various Artists”时（“{row:various_artist}”已关闭），不会添加任何内容。
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

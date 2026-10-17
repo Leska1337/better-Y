@@ -116,7 +116,7 @@ with this setting Off becomes
 with this setting On becomes
 "Tree — People (feat. Shelf Nunny, Lena Kuhn)"
 
-Nothing is added when the title already names one of them.
+Nothing is added when the title already names one of them, or when the artist line shows "Various" or "Various Artists" ("{row:various_artist}" is Off).
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

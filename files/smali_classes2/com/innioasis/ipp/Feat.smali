@@ -148,13 +148,13 @@
 .method public static title(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
   .registers 9
   .line 77
-    if-eqz p0, :L12
-    if-eqz p1, :L12
+    if-eqz p0, :L13
+    if-eqz p1, :L13
     const-string v0, "feat_in_title"
     invoke-static { v0 }, Lcom/innioasis/ipp/Feat;->pref(Ljava/lang/String;)Z
     move-result v0
     if-nez v0, :L0
-    goto/16 :L12
+    goto/16 :L13
   :L0
   .line 78
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
@@ -163,94 +163,100 @@
     invoke-static { v0, p1 }, Lcom/innioasis/ipp/Feat;->shown(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p1
   .line 80
-    if-eqz p1, :L11
-    if-eqz v0, :L11
+    if-eqz p1, :L12
+    if-eqz v0, :L12
     const-string v1, "\uffe6\uffe6\uffe6\uffe6<unknown>"
     invoke-virtual { v1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L1
-    goto/16 :L11
+    goto/16 :L12
   :L1
-  .line 81
-    invoke-static { v0 }, Lcom/innioasis/ipp/Artists;->parts(Ljava/lang/String;)Ljava/util/List;
-    move-result-object v0
   .line 82
-    invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
+    invoke-static { p1 }, Lcom/innioasis/ipp/Feat;->various(Ljava/lang/String;)Z
     move-result v1
     if-eqz v1, :L2
     return-object p0
   :L2
+  .line 83
+    invoke-static { v0 }, Lcom/innioasis/ipp/Artists;->parts(Ljava/lang/String;)Ljava/util/List;
+    move-result-object v0
   .line 84
+    invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
+    move-result v1
+    if-eqz v1, :L3
+    return-object p0
+  :L3
+  .line 86
     sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p0, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v1
-  .line 85
+  .line 87
     sget-object v2, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p1, v2 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p1
-  .line 86
+  .line 88
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 87
+  .line 89
     const/4 v3, 0
-  :L3
+  :L4
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v4
-    if-ge v3, v4, :L9
-  .line 88
+    if-ge v3, v4, :L10
+  .line 90
     invoke-interface { v0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/lang/String;
-  .line 89
-    if-eqz v4, :L8
+  .line 91
+    if-eqz v4, :L9
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v5
     invoke-virtual { v5 }, Ljava/lang/String;->length()I
     move-result v5
-    if-nez v5, :L4
-    goto :L8
-  :L4
-  .line 90
+    if-nez v5, :L5
+    goto :L9
+  :L5
+  .line 92
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v5
     sget-object v6, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v5, v6 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v5
-  .line 91
+  .line 93
     invoke-virtual { p1, v5 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v6
-    if-ltz v6, :L5
-    goto :L8
-  :L5
-  .line 92
+    if-ltz v6, :L6
+    goto :L9
+  :L6
+  .line 94
     invoke-virtual { v1, v5 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v5
-    if-ltz v5, :L6
+    if-ltz v5, :L7
     return-object p0
-  :L6
-  .line 93
+  :L7
+  .line 95
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->length()I
     move-result v5
-    if-lez v5, :L7
+    if-lez v5, :L8
     const-string v5, ", "
     invoke-virtual { v2, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  :L7
-  .line 94
+  :L8
+  .line 96
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v4
     invoke-virtual { v2, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  :L8
-  .line 87
-    add-int/lit8 v3, v3, 1
-    goto :L3
   :L9
-  .line 96
+  .line 89
+    add-int/lit8 v3, v3, 1
+    goto :L4
+  :L10
+  .line 98
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->length()I
     move-result p1
-    if-nez p1, :L10
+    if-nez p1, :L11
     return-object p0
-  :L10
-  .line 97
+  :L11
+  .line 99
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -268,10 +274,10 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     return-object p0
-  :L11
+  :L12
   .line 80
     return-object p0
-  :L12
+  :L13
   .line 77
     return-object p0
 .end method

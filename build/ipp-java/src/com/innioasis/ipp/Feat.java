@@ -78,6 +78,8 @@ public final class Feat {
         String rawArtist = s.getArtist();
         String line = shown(rawArtist, s);
         if (line == null || rawArtist == null || Constant.UNKNOWN.equals(rawArtist)) return title;
+        // With "Various Artists" left in the line, every artist of the song would go to the title.
+        if (various(line)) return title;
         List ps = Artists.parts(rawArtist);
         if (ps.isEmpty()) return title;
 

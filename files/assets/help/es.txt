@@ -113,7 +113,7 @@ con este ajuste desactivado se convierte en
 con este ajuste activado se convierte en
 «Tree — People (feat. Shelf Nunny, Lena Kuhn)»
 
-No se añade nada si el título ya nombra a alguno de ellos.
+No se añade nada si el título ya nombra a alguno de ellos o si la línea del artista muestra «Various» o «Various Artists» («{row:various_artist}» desactivado).
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
