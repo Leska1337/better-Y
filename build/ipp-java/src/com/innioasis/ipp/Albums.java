@@ -236,6 +236,7 @@ public final class Albums {
      */
     public static void loadNow() {
         try {
+            Scan.done();
             lists();
             AlbumArtist.warm();
             MetaCache.warm();

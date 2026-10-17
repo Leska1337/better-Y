@@ -72,6 +72,14 @@ public final class Scan {
         return p.contains(Constant.INSTANCE.normalizeAudioBookPath(path));
     }
 
+    /**
+     * The scan's end (from {@code Albums.loadNow}): the set is let go, ~0.7 MB of paths kept for
+     * nothing — the next scan reads it again anyway, and a missing set only means reading it.
+     */
+    static synchronized void done() {
+        paths = null;
+    }
+
     private static synchronized HashSet table() {
         long now = SystemClock.uptimeMillis();
         HashSet p = paths;
