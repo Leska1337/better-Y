@@ -41,12 +41,7 @@ public final class Ipp {
         try {
             String album = Albums.keyOf(song);
             CoverCache.forget(album);
-            AlbumArtist.forget(album);
             String path = song.getPath();
-            // Always together: DiscCache records that the file was read, so dropping only one
-            // means the other is never read again.
-            DiscCache.forget(path);
-            TrackCache.forget(path);
             // The folder's stand-in cover may be this very track's picture.
             BigCover.forget(path);
             BigCover.forget(Albums.trackFolder(path));

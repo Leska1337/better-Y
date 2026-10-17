@@ -25,22 +25,18 @@
   .line 60
     const-string v0, ""
   :L0
-    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->keyOf(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
-    move-result-object v1
-    invoke-static { v1 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
+    invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getAlbumArtist()Ljava/lang/String;
     move-result-object v1
   .line 61
     if-nez v1, :L1
-  .line 62
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/MetaCache;->get(Ljava/lang/String;)Lcom/innioasis/ipp/Meta$Info;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
     move-result-object p0
-  .line 63
-    if-eqz p0, :L1
-    iget-object v1, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->of(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
+    move-result-object v1
   :L1
-  .line 65
+  .line 62
     if-nez v1, :L2
     goto :L3
   :L2
@@ -49,9 +45,9 @@
   :L3
     return-object v0
   :L4
-  .line 66
+  .line 63
     move-exception p0
-  .line 67
+  .line 64
     return-object v0
 .end method
 
@@ -70,22 +66,22 @@
 
 .method private static first(Ljava/lang/String;)Ljava/lang/String;
   .registers 4
-  .line 77
+  .line 74
     if-nez p0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 78
+  .line 75
     invoke-static { p0 }, Lcom/innioasis/ipp/Artists;->parts(Ljava/lang/String;)Ljava/util/List;
     move-result-object v0
-  .line 79
+  .line 76
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v1
     const/4 v2, 2
     if-ge v1, v2, :L1
     return-object p0
   :L1
-  .line 80
+  .line 77
     const/4 p0, 0
     invoke-interface { v0, p0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p0
@@ -181,7 +177,7 @@
 
 .method public static title(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
   .registers 9
-  .line 88
+  .line 85
     if-eqz p0, :L15
     if-eqz p1, :L15
     const-string v0, "player_album_artist"
@@ -198,13 +194,13 @@
     if-nez v0, :L2
     goto/16 :L15
   :L2
-  .line 89
+  .line 86
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
     move-result-object v0
-  .line 90
+  .line 87
     invoke-static { v0, p1 }, Lcom/innioasis/ipp/Feat;->shown(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p1
-  .line 91
+  .line 88
     if-eqz p1, :L14
     if-eqz v0, :L14
     const-string v1, "\uffe6\uffe6\uffe6\uffe6<unknown>"
@@ -213,43 +209,43 @@
     if-eqz v1, :L3
     goto/16 :L14
   :L3
-  .line 93
+  .line 90
     invoke-static { p1 }, Lcom/innioasis/ipp/Feat;->various(Ljava/lang/String;)Z
     move-result v1
     if-eqz v1, :L4
     return-object p0
   :L4
-  .line 94
+  .line 91
     invoke-static { v0 }, Lcom/innioasis/ipp/Artists;->parts(Ljava/lang/String;)Ljava/util/List;
     move-result-object v0
-  .line 95
+  .line 92
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
     if-eqz v1, :L5
     return-object p0
   :L5
-  .line 97
+  .line 94
     sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p0, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v1
-  .line 98
+  .line 95
     sget-object v2, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p1, v2 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p1
-  .line 99
+  .line 96
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 100
+  .line 97
     const/4 v3, 0
   :L6
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v4
     if-ge v3, v4, :L12
-  .line 101
+  .line 98
     invoke-interface { v0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Ljava/lang/String;
-  .line 102
+  .line 99
     if-eqz v4, :L11
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v5
@@ -258,47 +254,47 @@
     if-nez v5, :L7
     goto :L11
   :L7
-  .line 103
+  .line 100
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v5
     sget-object v6, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v5, v6 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v5
-  .line 104
+  .line 101
     invoke-virtual { p1, v5 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v6
     if-ltz v6, :L8
     goto :L11
   :L8
-  .line 105
+  .line 102
     invoke-virtual { v1, v5 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v5
     if-ltz v5, :L9
     return-object p0
   :L9
-  .line 106
+  .line 103
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->length()I
     move-result v5
     if-lez v5, :L10
     const-string v5, ", "
     invoke-virtual { v2, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L10
-  .line 107
+  .line 104
     invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v4
     invoke-virtual { v2, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L11
-  .line 100
+  .line 97
     add-int/lit8 v3, v3, 1
     goto :L6
   :L12
-  .line 109
+  .line 106
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->length()I
     move-result p1
     if-nez p1, :L13
     return-object p0
   :L13
-  .line 110
+  .line 107
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { p1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -317,22 +313,22 @@
     move-result-object p0
     return-object p0
   :L14
-  .line 91
+  .line 88
     return-object p0
   :L15
-  .line 88
+  .line 85
     return-object p0
 .end method
 
 .method private static various(Ljava/lang/String;)Z
   .registers 2
-  .line 72
+  .line 69
     invoke-virtual { p0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object p0
     sget-object v0, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { p0, v0 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p0
-  .line 73
+  .line 70
     const-string v0, "various"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0

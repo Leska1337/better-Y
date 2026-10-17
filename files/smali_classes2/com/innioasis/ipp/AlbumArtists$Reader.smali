@@ -13,19 +13,19 @@
 
 .field private next:I
 
-.field private final out:[Ljava/lang/String;
+.field private final out:[Lcom/innioasis/ipp/Meta$Info;
 
 .field private final paths:Ljava/util/List;
 
-.method constructor <init>(Ljava/util/List;[Ljava/lang/String;)V
+.method constructor <init>(Ljava/util/List;[Lcom/innioasis/ipp/Meta$Info;)V
   .registers 3
-  .line 235
+  .line 234
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 236
+  .line 235
     iput-object p1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
+  .line 236
+    iput-object p2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Lcom/innioasis/ipp/Meta$Info;
   .line 237
-    iput-object p2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Ljava/lang/String;
-  .line 238
     return-void
 .end method
 
@@ -34,7 +34,7 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 241
+  .line 240
     iget v0, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->next:I
     iget-object v1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
@@ -51,7 +51,7 @@
     monitor-exit p0
     return v0
   :L4
-  .line 241
+  .line 240
     move-exception v0
     monitor-exit p0
     throw v0
@@ -60,16 +60,15 @@
 .method public run()V
   .catchall { :L1 .. :L2 } :L3
   .registers 5
-  .line 246
+  .line 245
     nop
   :L0
     invoke-direct { p0 }, Lcom/innioasis/ipp/AlbumArtists$Reader;->take()I
     move-result v0
     if-ltz v0, :L5
-  .line 247
-    const-string v1, ""
   :L1
-  .line 249
+  .line 247
+    iget-object v1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Lcom/innioasis/ipp/Meta$Info;
     iget-object v2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v2, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
@@ -77,24 +76,16 @@
     const/4 v3, 0
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
     move-result-object v2
-    iget-object v2, v2, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-  .line 250
-    if-eqz v2, :L2
-    invoke-virtual { v2 }, Ljava/lang/String;->trim()Ljava/lang/String;
-    move-result-object v1
+    aput-object v2, v1, v0
   :L2
-  .line 252
     goto :L4
   :L3
-  .line 251
-    move-exception v2
+  .line 248
+    move-exception v0
   :L4
-  .line 253
-    iget-object v2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Ljava/lang/String;
-    aput-object v1, v2, v0
-  .line 254
+  .line 249
     goto :L0
   :L5
-  .line 255
+  .line 251
     return-void
 .end method

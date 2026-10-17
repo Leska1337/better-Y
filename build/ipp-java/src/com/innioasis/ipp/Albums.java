@@ -238,7 +238,6 @@ public final class Albums {
         try {
             Scan.done();
             lists();
-            AlbumArtist.warm();
             MetaCache.warm();
             Schema.backfill();
         } catch (Throwable t) {
@@ -348,7 +347,6 @@ public final class Albums {
                 List old = songCache;
                 if (old == null) {
                     lists();
-                    AlbumArtist.warm();
                     MetaCache.warm();
                     Schema.backfill();
                     return;
@@ -428,6 +426,11 @@ public final class Albums {
         Context c = Y1Application.Companion.getAppContext();
         if (c == null) return;
         Prefs.setInt(c, CACHE_M, Prefs.getInt(c, CACHE_M, 0) & ~mask);
+    }
+
+    /** The list in memory, or null; never reads. */
+    static List loaded() {
+        return songCache;
     }
 
     public static List allSongs() {

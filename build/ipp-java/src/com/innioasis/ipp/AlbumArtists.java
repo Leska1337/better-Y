@@ -160,7 +160,8 @@ public final class AlbumArtists {
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
             String key = (String) e.getKey();
-            String v = of(AlbumArtist.get(key), ((Song) e.getValue()).getArtist());
+            Song rep = (Song) e.getValue();
+            String v = of(AlbumArtist.of(rep), rep.getArtist());
             String n = Constant.UNKNOWN.equals(v) ? Constant.UNKNOWN : norm(v);
             k2n.put(key, n);
             HashMap c = (HashMap) counts.get(n);
@@ -197,20 +198,18 @@ public final class AlbumArtists {
 
     /** On a few threads; committed here, on one. */
     private static void readMissing(HashMap reps) {
-        ArrayList keys = new ArrayList();
         ArrayList paths = new ArrayList();
         Iterator it = reps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry e = (Map.Entry) it.next();
-            String k = (String) e.getKey();
-            if (!AlbumArtist.needsRead(k)) continue;
-            keys.add(k);
-            paths.add(((Song) e.getValue()).getPath());
+            Song rep = (Song) e.getValue();
+            if (AlbumArtist.of(rep) != null) continue;
+            paths.add(rep.getPath());
         }
-        if (keys.isEmpty()) return;
-        String[] out = new String[keys.size()];
+        if (paths.isEmpty()) return;
+        Meta.Info[] out = new Meta.Info[paths.size()];
         Reader job = new Reader(paths, out);
-        int n = Math.min(3, Math.max(1, keys.size() / 8));
+        int n = Math.min(3, Math.max(1, paths.size() / 8));
         Thread[] ts = new Thread[n - 1];
         for (int i = 0; i < ts.length; i++) {
             ts[i] = new Thread(job, "ipp-albumartist");
@@ -221,18 +220,18 @@ public final class AlbumArtists {
             try { ts[i].join(); } catch (InterruptedException ie) { /* take what was read */ }
         }
         for (int i = 0; i < out.length; i++) {
-            if (out[i] != null) AlbumArtist.put((String) keys.get(i), out[i]);
+            Schema.stage((String) paths.get(i), out[i]);
         }
-        AlbumArtist.flush();
+        Schema.write();
     }
 
     /** Workers share one cursor; each slot is written by the one thread that took it. */
     private static final class Reader implements Runnable {
         private final List paths;
-        private final String[] out;
+        private final Meta.Info[] out;
         private int next;
 
-        Reader(List paths, String[] out) {
+        Reader(List paths, Meta.Info[] out) {
             this.paths = paths;
             this.out = out;
         }
@@ -244,13 +243,10 @@ public final class AlbumArtists {
         public void run() {
             int i;
             while ((i = take()) >= 0) {
-                String v = "";
                 try {
-                    String s = Meta.read((String) paths.get(i), false).albumArtist;
-                    if (s != null) v = s.trim();
+                    out[i] = Meta.read((String) paths.get(i), false);
                 } catch (Throwable t) {
                 }
-                out[i] = v;
             }
         }
     }

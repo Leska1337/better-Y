@@ -3,36 +3,29 @@ package com.innioasis.ipp;
 import android.content.Context;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 
 /**
- * An album's year, read from ONE of its songs and kept in {@code ipp_years.txt}. {@code ""} means
- * "read, no year" — without it every untagged album is opened again on every pass.
+ * An album's year: the year column of ONE of its songs ({@link Schema}). {@code ""} means "read,
+ * no year", null "never read". The song is the one {@link AlbumInfo} recorded for the row, else
+ * the one {@link #warm} looked up, remembered in memory against the song list it was found in.
  */
 public final class YearCache {
 
-    private static boolean dirty;
-    private static boolean loaded;
-    private static final HashMap map = new HashMap();
+    private static List repsFor;
+    private static final HashMap reps = new HashMap();   // album key -> path
 
+    /** Deletes the file the years used to be kept in. */
     public static void clear() {
-        map.clear();
-        loaded = false;
-        dirty = false;
         try {
-            File f = file();
-            if (f != null) {
-                f.delete();
-            }
+            Context c = Y1Application.Companion.getAppContext();
+            File dir = c == null ? null : c.getCacheDir();
+            if (dir != null) new File(dir, "ipp_years.txt").delete();
         } catch (Throwable t) {
         }
     }
@@ -60,16 +53,18 @@ public final class YearCache {
         return null;
     }
 
-    private static File file() {
-        Context c = Y1Application.Companion.getAppContext();
-        if (c == null) {
-            return null;
+    private static synchronized String repPath(String key) {
+        List l = Albums.loaded();
+        if (l != null && l != repsFor) {
+            reps.clear();
+            repsFor = l;
         }
-        File dir = c.getCacheDir();
-        if (dir == null) {
-            return null;
-        }
-        return new File(dir, "ipp_years.txt");
+        String p = (String) reps.get(key);
+        return p != null ? p : AlbumInfo.path(key);
+    }
+
+    private static synchronized void noteRep(String key, String path) {
+        reps.put(key, path);
     }
 
     /** "" for "read, no year", null for "never looked at". The key is canonicalised. */
@@ -78,126 +73,45 @@ public final class YearCache {
         if (album == null) {
             return null;
         }
-        load();
-        return (String) map.get(album);
+        Song s = Schema.row(repPath(album));
+        return s == null ? null : s.getYear();
     }
 
-    private static void load() {
-        if (loaded) {
-            return;
-        }
-        loaded = true;
-        try {
-            File f = file();
-            if (f == null || !f.exists()) {
-                return;
-            }
-            FileInputStream in = new FileInputStream(f);
-            byte[] b = new byte[in.available()];
-            in.read(b);
-            in.close();
-            String[] lines = new String(b).split("\n");
-            for (int i = 0; i < lines.length; i++) {
-                String line = lines[i];
-                int tab = line.indexOf('\t');
-                if (tab < 0) {
-                    continue;
-                }
-                map.put(line.substring(0, tab), line.substring(tab + 1));
-            }
-        } catch (Throwable t) {
-        }
-    }
-
-    private static void save() {
-        if (!dirty) {
-            return;
-        }
-        try {
-            File f = file();
-            if (f == null) {
-                return;
-            }
-            StringBuilder sb = new StringBuilder();
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry) it.next();
-                sb.append((String) e.getKey());
-                sb.append('\t');
-                sb.append((String) e.getValue());
-                sb.append('\n');
-            }
-            FileOutputStream out = new FileOutputStream(f);
-            out.write(sb.toString().getBytes());
-            out.close();
-            dirty = false;
-        } catch (Throwable t) {
-        }
-    }
-
-    /**
-     * Tags the caller already read ("Cache library"). YEAR, else DATE, as {@link #warm} does.
-     * Does not write the file — the caller's pass ends in {@link #warm}.
-     */
-    public static void put(String album, String year, String date) {
-        album = Albums.coverKey(album);
-        if (album == null) {
-            return;
-        }
-        load();
-        String y = digits4(year);
-        if (y == null) {
-            y = digits4(date);
-        }
-        if (y == null) {
-            y = "";
-        }
-        map.put(album, y);
-        dirty = true;
-    }
-
-    /** Reads every album not cached yet, then writes the file once. */
+    /** Reads every album whose song was never read, then stores them in one batch. */
     public static void warm(List names) {
         if (names == null) {
             return;
         }
-        load();
         try {
             Y1Repository repo = Y1Application.Companion.getY1Repository();
             int n = names.size();
             for (int i = 0; i < n; i++) {
-                String album = (String) names.get(i);
-                if (album == null) {
+                String album = Albums.coverKey((String) names.get(i));
+                if (album == null || Albums.isAllSongs(album)) {
                     continue;
                 }
-                if (Albums.isAllSongs(album)) {
+                if (get(album) != null) {
                     continue;
                 }
-                if (map.containsKey(album)) {
-                    continue;
-                }
-                List songs = repo.getSongsByAlbum(album, Y1Repository.SongSortType.FileName_A_To_Z);
-                if (songs == null || songs.isEmpty()) {
-                    continue;
-                }
-                String path = ((Song) songs.get(0)).getPath();
+                String path = repPath(album);
                 if (path == null) {
-                    continue;
+                    List songs = repo.getSongsByAlbum(album, Y1Repository.SongSortType.FileName_A_To_Z);
+                    if (songs == null || songs.isEmpty()) {
+                        continue;
+                    }
+                    path = ((Song) songs.get(0)).getPath();
+                    if (path == null) {
+                        continue;
+                    }
+                    noteRep(album, path);
                 }
-                String year = "";
-                Meta.Info info = Meta.read(path, false);
-                String y = digits4(info.year);
-                if (y == null) {
-                    y = digits4(info.date);
+                Song row = Schema.row(path);
+                if (row != null && Schema.unread(row)) {
+                    Schema.stage(path, Meta.read(path, false));
                 }
-                if (y != null) {
-                    year = y;
-                }
-                map.put(album, year);
-                dirty = true;
             }
-            save();
         } catch (Throwable t) {
         }
+        Schema.write();
     }
 }

@@ -504,7 +504,6 @@ public final class Genres {
                 Disc.setGenreAdapters(null, null);
                 return;
             }
-            TrackCache.warmIfWanted();
             Disc.setGenreAdapters(a.getAdapter3_2(), a.getAdapter4());
         } catch (Throwable t) {
         }

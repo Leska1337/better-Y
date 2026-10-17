@@ -15,7 +15,7 @@
 
 .method constructor <init>(I)V
   .registers 2
-  .line 840
+  .line 839
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput p1, p0, Lcom/innioasis/ipp/Genres$SongCmp;->code:I
     return-void
@@ -23,11 +23,11 @@
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 5
-  .line 842
+  .line 841
     check-cast p1, Lcom/innioasis/y1/database/Song;
-  .line 843
+  .line 842
     check-cast p2, Lcom/innioasis/y1/database/Song;
-  .line 844
+  .line 843
     iget v0, p0, Lcom/innioasis/ipp/Genres$SongCmp;->code:I
     const/4 v1, 4
     if-ne v0, v1, :L0
@@ -39,7 +39,7 @@
     move-result p1
     return p1
   :L0
-  .line 845
+  .line 844
     const/4 v1, 5
     if-ne v0, v1, :L1
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getFileDate()J
@@ -51,7 +51,7 @@
     neg-int p1, p1
     return p1
   :L1
-  .line 846
+  .line 845
     if-nez v0, :L2
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinSongName()Ljava/lang/String;
     move-result-object p1
@@ -61,7 +61,7 @@
     move-result p1
     return p1
   :L2
-  .line 847
+  .line 846
     const/4 v1, 1
     if-ne v0, v1, :L3
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinSongName()Ljava/lang/String;
@@ -73,7 +73,7 @@
     neg-int p1, p1
     return p1
   :L3
-  .line 848
+  .line 847
     const/4 v1, 7
     if-ne v0, v1, :L4
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinAlbum()Ljava/lang/String;
@@ -84,7 +84,7 @@
     move-result p1
     return p1
   :L4
-  .line 849
+  .line 848
     const/4 v1, 3
     if-ne v0, v1, :L5
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
@@ -96,7 +96,7 @@
     neg-int p1, p1
     return p1
   :L5
-  .line 850
+  .line 849
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object p1
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;

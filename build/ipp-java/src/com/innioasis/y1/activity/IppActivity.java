@@ -1167,8 +1167,8 @@ public final class IppActivity extends BaseActivity {
                 tickEvery = total / 60;
                 if (tickEvery < 1) tickEvery = 1;
 
-                // Albums. What each needs is decided HERE, so workers never touch the caches' lazy
-                // loading; their answers are committed below, on this thread.
+                // Albums: the thumbnails. What each needs is decided HERE, so workers never touch
+                // the caches' lazy loading.
                 ArrayList jobs = new ArrayList();
                 for (int i = 0; i < m; i++) {
                     String key = (String) keys.get(i);
@@ -1181,8 +1181,6 @@ public final class IppActivity extends BaseActivity {
                     AlbumJob j = new AlbumJob();
                     j.key = key;
                     j.path = path;
-                    j.artist = tags && AlbumArtist.needsRead(key);
-                    j.year = tags && YearCache.get(key) == null;
                     j.thumb = covers && CoverCache.peek(key) == null;
                     j.art = j.thumb && Art.thumbFromTags(key, path);
                     jobs.add(j);
@@ -1192,15 +1190,6 @@ public final class IppActivity extends BaseActivity {
                 AlbumWorker[] aw = new AlbumWorker[workers()];
                 for (int i = 0; i < aw.length; i++) aw[i] = new AlbumWorker(this, jobs, aq);
                 spread(aw);
-                for (int i = 0; i < jobs.size(); i++) {
-                    AlbumJob j = (AlbumJob) jobs.get(i);
-                    if (j.artist) AlbumArtist.put(j.key, j.gotArtist);
-                    if (j.year) YearCache.put(j.key, j.gotYear, j.gotDate);
-                }
-                if (tags) {
-                    AlbumArtist.flush();
-                    YearCache.warm(keys);           // finds nothing to read; writes the file out
-                }
 
                 // Songs, the expensive half. A metadata read costs the file OPEN, so everything a
                 // song gives — disc, track number, artwork — comes from ONE (DiscCache.read). In
@@ -1211,8 +1200,6 @@ public final class IppActivity extends BaseActivity {
                         Collections.sort(byPath, new ByPath());
                     } catch (Throwable t) {
                     }
-                    // loaded before the workers: a lazy load racing them could corrupt the table
-                    DiscCache.warm();
                     Blocks q = Blocks.folders(byPath);
                     SongWorker[] w = new SongWorker[workers()];
                     for (int i = 0; i < w.length; i++) {
@@ -1221,12 +1208,8 @@ public final class IppActivity extends BaseActivity {
                     spread(w);
                     for (int i = 0; i < w.length; i++) unread += w[i].failed;
                     if (tags) {
-                        // Commits on this thread, so no cache needs a lock. TrackCache loaded
-                        // FIRST: loaded after the puts, the older file would overwrite them.
-                        TrackCache.sorted(new ArrayList());
                         for (int i = 0; i < w.length; i++) w[i].commit();
                         DiscCache.flush();
-                        TrackCache.sorted(songs);   // saves; finds nothing left to read
                     }
                 }
 
@@ -1348,13 +1331,8 @@ public final class IppActivity extends BaseActivity {
     static final class AlbumJob {
         String key;
         String path;
-        boolean artist;      // read the ALBUM ARTIST tag
-        boolean year;        // read the year
         boolean thumb;       // build the 50px thumbnail
         boolean art;         // ... and it has to come out of the tags, not a cover file
-        String gotArtist;
-        String gotYear;
-        String gotDate;
     }
 
     /** Opens one album's representative and builds its thumbnail; writes no cache but the covers'. */
@@ -1447,13 +1425,13 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * Everything an ALBUM needs — album artist, year, thumbnail — from ONE {@code setDataSource}
-     * on its representative, and only what the ticked categories need. The thumbnail's priority is
-     * untouched: a pinned song or a cover file still wins.
+     * An album's thumbnail, its embedded picture from ONE {@code setDataSource} on the
+     * representative; its tags come from the song half. The thumbnail's priority is untouched: a
+     * pinned song or a cover file still wins.
      */
     private static void album(AlbumJob j) {
         if (j == null || j.path == null) return;
-        if (!j.artist && !j.year && !j.art) {
+        if (!j.art) {
             // the thumbnail may still come from a cover file: no metadata read
             if (j.thumb) CoverCache.get(j.key, j.path);
             return;
@@ -1463,12 +1441,7 @@ public final class IppActivity extends BaseActivity {
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(j.path);
-            if (j.artist) j.gotArtist = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
-            if (j.year) {
-                j.gotYear = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
-                j.gotDate = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
-            }
-            if (j.art) art = r.getEmbeddedPicture();
+            art = r.getEmbeddedPicture();
         } catch (Throwable t) {
         }
         try { r.release(); } catch (Throwable t) { }

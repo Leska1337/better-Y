@@ -8,184 +8,97 @@
   }
 .end annotation
 
-.field private final static NO_TRACK:Ljava/lang/String; = "2147483647"
-
-.field private final static SEP:C = '\t'
-
-.field private final static VER:Ljava/lang/String; = "#v2"
-
-.field private static dirty:Z
-
-.field private static loaded:Z
-
-.field private final static map:Ljava/util/HashMap;
-
-.method static constructor <clinit>()V
-  .registers 1
-  .line 23
-    new-instance v0, Ljava/util/HashMap;
-    invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
-    sput-object v0, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    return-void
-.end method
-
 .method private constructor <init>()V
   .registers 1
-  .line 21
+  .line 17
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public static clear()V
-  .catchall { :L0 .. :L1 } :L2
-  .registers 2
-  .line 197
-    sget-object v0, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v0 }, Ljava/util/HashMap;->clear()V
-  .line 198
-    const/4 v0, 0
-    sput-boolean v0, Lcom/innioasis/ipp/DiscCache;->loaded:Z
-  .line 199
-    sput-boolean v0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
+  .catchall { :L0 .. :L3 } :L4
+  .registers 3
   :L0
-  .line 201
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->file()Ljava/io/File;
+  .line 100
+    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 202
-    if-eqz v0, :L1
-    invoke-virtual { v0 }, Ljava/io/File;->exists()Z
-    move-result v1
-    if-eqz v1, :L1
-    invoke-virtual { v0 }, Ljava/io/File;->delete()Z
+  .line 101
+    if-nez v0, :L1
+    const/4 v0, 0
+    goto :L2
   :L1
-  .line 204
-    goto :L3
+    invoke-virtual { v0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
+    move-result-object v0
   :L2
-  .line 203
-    move-exception v0
+  .line 102
+    if-eqz v0, :L3
+    new-instance v1, Ljava/io/File;
+    const-string v2, "ipp_discs.txt"
+    invoke-direct { v1, v0, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+    invoke-virtual { v1 }, Ljava/io/File;->delete()Z
   :L3
-  .line 205
+  .line 104
+    goto :L5
+  :L4
+  .line 103
+    move-exception v0
+  :L5
+  .line 105
     return-void
 .end method
 
 .method public static commit(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
   .registers 3
-  .line 144
-    if-eqz p0, :L4
-    if-eqz p1, :L4
+  .line 61
+    if-eqz p0, :L1
+    if-eqz p1, :L1
     iget-boolean v0, p1, Lcom/innioasis/ipp/DiscCache$Tags;->wanted:Z
-    if-eqz v0, :L4
+    if-eqz v0, :L1
     iget-boolean v0, p1, Lcom/innioasis/ipp/DiscCache$Tags;->ok:Z
     if-nez v0, :L0
-    goto :L4
+    goto :L1
   :L0
-  .line 145
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->load()V
-  .line 146
-    iget-object v0, p1, Lcom/innioasis/ipp/DiscCache$Tags;->track:Ljava/lang/String;
-    if-eqz v0, :L1
-    iget-object v0, p1, Lcom/innioasis/ipp/DiscCache$Tags;->track:Ljava/lang/String;
-    goto :L2
-  :L1
-    const-string v0, "2147483647"
-  :L2
-    invoke-static { p0, v0 }, Lcom/innioasis/ipp/TrackCache;->put(Ljava/lang/String;Ljava/lang/String;)V
-  .line 147
-    iget v0, p1, Lcom/innioasis/ipp/DiscCache$Tags;->disc:I
-  .line 148
-    if-nez v0, :L3
-    iget-object p1, p1, Lcom/innioasis/ipp/DiscCache$Tags;->track:Ljava/lang/String;
-    invoke-static { p1 }, Lcom/innioasis/ipp/DiscCache;->sideOf(Ljava/lang/String;)I
-    move-result v0
-  :L3
-  .line 149
-    sget-object p1, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-static { v0 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
-    move-result-object v0
-    invoke-virtual { p1, p0, v0 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 150
-    const/4 p0, 1
-    sput-boolean p0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
-  .line 151
+  .line 62
+    iget-object p1, p1, Lcom/innioasis/ipp/DiscCache$Tags;->info:Lcom/innioasis/ipp/Meta$Info;
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Schema;->stage(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;)V
+  .line 63
     return-void
-  :L4
-  .line 144
-    return-void
-.end method
-
-.method private static file()Ljava/io/File;
-  .registers 3
-  .line 36
-    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
-    move-result-object v0
-  .line 37
-    const/4 v1, 0
-    if-nez v0, :L0
-    return-object v1
-  :L0
-  .line 38
-    invoke-virtual { v0 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
-    move-result-object v0
-  .line 39
-    if-nez v0, :L1
-    goto :L2
   :L1
-    new-instance v1, Ljava/io/File;
-    const-string v2, "ipp_discs.txt"
-    invoke-direct { v1, v0, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  :L2
-    return-object v1
+  .line 61
+    return-void
 .end method
 
 .method public static flush()V
   .registers 0
-  .line 187
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->save()V
-  .line 188
-    return-void
-.end method
-
-.method public static forget(Ljava/lang/String;)V
-  .registers 2
-  .line 191
-    if-nez p0, :L0
-    return-void
-  :L0
-  .line 192
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->load()V
-  .line 193
-    sget-object v0, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v0, p0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object p0
-    if-eqz p0, :L1
-    const/4 p0, 1
-    sput-boolean p0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->save()V
-  :L1
-  .line 194
+  .line 94
+    invoke-static { }, Lcom/innioasis/ipp/Schema;->write()V
+  .line 95
     return-void
 .end method
 
 .method public static get(Ljava/lang/String;)I
-  .registers 3
-  .line 101
-    const/4 v0, 0
-    if-nez p0, :L0
-    return v0
-  :L0
-  .line 102
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->load()V
-  .line 103
-    sget-object v1, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v1, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+  .registers 2
+  .line 28
+    invoke-static { p0 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
     move-result-object p0
-  .line 104
-    if-nez p0, :L1
+  .line 29
+    if-nez p0, :L0
+    const/4 p0, 0
+    return p0
+  :L0
+  .line 30
+    invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getDisc()Ljava/lang/String;
+    move-result-object v0
+    invoke-static { v0 }, Lcom/innioasis/ipp/DiscCache;->parse(Ljava/lang/String;)I
+    move-result v0
+  .line 31
+    if-lez v0, :L1
     goto :L2
   :L1
-    check-cast p0, Ljava/lang/Integer;
-    invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
+    invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getTrack()Ljava/lang/String;
+    move-result-object p0
+    invoke-static { p0 }, Lcom/innioasis/ipp/DiscCache;->sideOf(Ljava/lang/String;)I
     move-result v0
   :L2
     return v0
@@ -193,157 +106,41 @@
 
 .method public static known(Ljava/lang/String;)Z
   .registers 2
-  .line 94
-    if-nez p0, :L0
-    const/4 p0, 1
-    return p0
-  :L0
-  .line 95
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->load()V
-  .line 96
-    sget-object v0, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v0, p0 }, Ljava/util/HashMap;->containsKey(Ljava/lang/Object;)Z
-    move-result p0
-    return p0
-.end method
-
-.method private static load()V
-  .catchall { :L1 .. :L7 } :L16
-  .catchall { :L9 .. :L11 } :L12
-  .registers 8
-  .line 43
-    sget-boolean v0, Lcom/innioasis/ipp/DiscCache;->loaded:Z
-    if-eqz v0, :L0
-    return-void
-  :L0
-  .line 44
+  .line 21
     const/4 v0, 1
-    sput-boolean v0, Lcom/innioasis/ipp/DiscCache;->loaded:Z
+    if-nez p0, :L0
+    return v0
+  :L0
+  .line 22
+    invoke-static { p0 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
+    move-result-object p0
+  .line 23
+    if-eqz p0, :L2
+    invoke-static { p0 }, Lcom/innioasis/ipp/Schema;->unread(Lcom/innioasis/y1/database/Song;)Z
+    move-result p0
+    if-nez p0, :L1
+    goto :L2
   :L1
-  .line 46
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->file()Ljava/io/File;
-    move-result-object v1
-  .line 47
-    if-eqz v1, :L15
-    invoke-virtual { v1 }, Ljava/io/File;->exists()Z
-    move-result v2
-    if-nez v2, :L2
-    goto/16 :L15
-  :L2
-  .line 48
-    new-instance v2, Ljava/io/FileInputStream;
-    invoke-direct { v2, v1 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
-  .line 49
-    invoke-virtual { v2 }, Ljava/io/FileInputStream;->available()I
-    move-result v1
-    new-array v1, v1, [B
-  .line 50
-    invoke-virtual { v2, v1 }, Ljava/io/FileInputStream;->read([B)I
-  .line 51
-    invoke-virtual { v2 }, Ljava/io/FileInputStream;->close()V
-  .line 52
-    new-instance v2, Ljava/lang/String;
-    const-string v3, "UTF-8"
-    invoke-direct { v2, v1, v3 }, Ljava/lang/String;-><init>([BLjava/lang/String;)V
-    const-string v1, "\n"
-    invoke-virtual { v2, v1 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
-    move-result-object v1
-  .line 53
-    array-length v2, v1
-    const/4 v3, 0
-    if-lez v2, :L3
-    const-string v2, "#v2"
-    aget-object v4, v1, v3
-    invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
-    move-result-object v4
-    invoke-virtual { v2, v4 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v2
-    if-eqz v2, :L3
-    const/4 v2, 1
-    goto :L4
-  :L3
-    const/4 v2, 0
-  :L4
-  .line 54
-    if-nez v2, :L5
-    sput-boolean v0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
-  :L5
-  .line 55
     const/4 v0, 0
-  :L6
-    array-length v4, v1
-    if-ge v0, v4, :L14
-  .line 56
-    aget-object v4, v1, v0
-  .line 57
-    const/16 v5, 9
-    invoke-virtual { v4, v5 }, Ljava/lang/String;->indexOf(I)I
-    move-result v5
-  :L7
-  .line 58
-    if-gtz v5, :L8
-    goto :L13
-  :L8
-  .line 60
-    add-int/lit8 v6, v5, 1
-  :L9
-    invoke-virtual { v4, v6 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
-    move-result-object v6
-    invoke-virtual { v6 }, Ljava/lang/String;->trim()Ljava/lang/String;
-    move-result-object v6
-    invoke-static { v6 }, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
-    move-result v6
-  .line 61
-    if-nez v2, :L10
-    if-nez v6, :L10
-    goto :L13
-  :L10
-  .line 62
-    sget-object v7, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v4, v3, v5 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
-    move-result-object v4
-    invoke-static { v6 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
-    move-result-object v5
-    invoke-virtual { v7, v4, v5 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  :L11
-  .line 64
-    goto :L13
-  :L12
-  .line 63
-    move-exception v4
-  :L13
-  .line 55
-    add-int/lit8 v0, v0, 1
-    goto :L6
-  :L14
-  .line 67
-    goto :L17
-  :L15
-  .line 47
-    return-void
-  :L16
-  .line 66
-    move-exception v0
-  :L17
-  .line 68
-    return-void
+  :L2
+    return v0
 .end method
 
 .method private static parse(Ljava/lang/String;)I
   .registers 7
-  .line 174
+  .line 81
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 175
+  .line 82
     nop
-  .line 176
+  .line 83
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v1
     const/4 v2, 0
   :L1
-  .line 177
+  .line 84
     const/16 v3, 57
     const/16 v4, 48
     if-ge v2, v1, :L3
@@ -357,10 +154,10 @@
     add-int/lit8 v2, v2, 1
     goto :L1
   :L3
-  .line 178
+  .line 85
     nop
   :L4
-  .line 179
+  .line 86
     if-ge v2, v1, :L5
     invoke-virtual { p0, v2 }, Ljava/lang/String;->charAt(I)C
     move-result v5
@@ -368,151 +165,51 @@
     invoke-virtual { p0, v2 }, Ljava/lang/String;->charAt(I)C
     move-result v5
     if-gt v5, v3, :L5
-  .line 180
+  .line 87
     mul-int/lit8 v0, v0, 10
     invoke-virtual { p0, v2 }, Ljava/lang/String;->charAt(I)C
     move-result v5
     sub-int/2addr v5, v4
     add-int/2addr v0, v5
-  .line 181
+  .line 88
     add-int/lit8 v2, v2, 1
     goto :L4
   :L5
-  .line 183
+  .line 90
     return v0
 .end method
 
 .method public static read(Ljava/lang/String;ZZ)Lcom/innioasis/ipp/DiscCache$Tags;
   .registers 4
-  .line 129
+  .line 49
     new-instance v0, Lcom/innioasis/ipp/DiscCache$Tags;
     invoke-direct { v0 }, Lcom/innioasis/ipp/DiscCache$Tags;-><init>()V
-  .line 130
+  .line 50
     iput-boolean p1, v0, Lcom/innioasis/ipp/DiscCache$Tags;->wanted:Z
-  .line 131
+  .line 51
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 132
+  .line 52
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
     move-result-object p0
-  .line 133
+  .line 53
     if-eqz p1, :L1
-  .line 134
-    iget-object p1, p0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
-    invoke-static { p1 }, Lcom/innioasis/ipp/DiscCache;->parse(Ljava/lang/String;)I
-    move-result p1
-    iput p1, v0, Lcom/innioasis/ipp/DiscCache$Tags;->disc:I
-  .line 135
-    iget-object p1, p0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
-    iput-object p1, v0, Lcom/innioasis/ipp/DiscCache$Tags;->track:Ljava/lang/String;
+    iput-object p0, v0, Lcom/innioasis/ipp/DiscCache$Tags;->info:Lcom/innioasis/ipp/Meta$Info;
   :L1
-  .line 137
+  .line 54
     iget-object p1, p0, Lcom/innioasis/ipp/Meta$Info;->art:[B
     iput-object p1, v0, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
-  .line 138
+  .line 55
     iget-boolean p0, p0, Lcom/innioasis/ipp/Meta$Info;->ok:Z
     iput-boolean p0, v0, Lcom/innioasis/ipp/DiscCache$Tags;->ok:Z
-  .line 139
+  .line 56
     return-object v0
-.end method
-
-.method private static save()V
-  .catchall { :L0 .. :L5 } :L6
-  .registers 8
-  .line 71
-    sget-boolean v0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
-    if-nez v0, :L0
-    return-void
-  :L0
-  .line 73
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->file()Ljava/io/File;
-    move-result-object v0
-  .line 74
-    if-nez v0, :L1
-    return-void
-  :L1
-  .line 75
-    new-instance v1, Ljava/lang/StringBuilder;
-    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 76
-    const-string v2, "#v2"
-    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v2
-    const/16 v3, 10
-    invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 77
-    sget-object v2, Lcom/innioasis/ipp/DiscCache;->map:Ljava/util/HashMap;
-    invoke-virtual { v2 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
-    move-result-object v2
-    invoke-interface { v2 }, Ljava/util/Set;->iterator()Ljava/util/Iterator;
-    move-result-object v2
-  :L2
-  .line 78
-    invoke-interface { v2 }, Ljava/util/Iterator;->hasNext()Z
-    move-result v4
-    if-eqz v4, :L4
-  .line 79
-    invoke-interface { v2 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
-    move-result-object v4
-    check-cast v4, Ljava/util/Map$Entry;
-  .line 80
-    invoke-interface { v4 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
-    move-result-object v5
-    check-cast v5, Ljava/lang/String;
-  .line 81
-    if-eqz v5, :L2
-    const/16 v6, 9
-    invoke-virtual { v5, v6 }, Ljava/lang/String;->indexOf(I)I
-    move-result v7
-    if-ltz v7, :L3
-    goto :L2
-  :L3
-  .line 82
-    invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v5
-    invoke-virtual { v5, v6 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-    move-result-object v5
-    invoke-interface { v4 }, Ljava/util/Map$Entry;->getValue()Ljava/lang/Object;
-    move-result-object v4
-    check-cast v4, Ljava/lang/Integer;
-    invoke-virtual { v4 }, Ljava/lang/Integer;->intValue()I
-    move-result v4
-    invoke-virtual { v5, v4 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-    move-result-object v4
-    invoke-virtual { v4, v3 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  .line 83
-    goto :L2
-  :L4
-  .line 84
-    new-instance v2, Ljava/io/FileOutputStream;
-    invoke-direct { v2, v0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
-  .line 85
-    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v0
-    const-string v1, "UTF-8"
-    invoke-virtual { v0, v1 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
-    move-result-object v0
-    invoke-virtual { v2, v0 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 86
-    invoke-virtual { v2 }, Ljava/io/FileOutputStream;->close()V
-  .line 87
-    const/4 v0, 0
-    sput-boolean v0, Lcom/innioasis/ipp/DiscCache;->dirty:Z
-  :L5
-  .line 89
-    goto :L7
-  :L6
-  .line 88
-    move-exception v0
-  :L7
-  .line 90
-    return-void
 .end method
 
 .method private static sideOf(Ljava/lang/String;)I
   .registers 6
-  .line 158
+  .line 70
     const/4 v0, 0
     if-eqz p0, :L6
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
@@ -521,10 +218,10 @@
     if-ge v1, v2, :L0
     goto :L6
   :L0
-  .line 159
+  .line 71
     invoke-virtual { p0, v0 }, Ljava/lang/String;->charAt(I)C
     move-result v1
-  .line 160
+  .line 72
     const/16 v2, 97
     if-lt v1, v2, :L1
     const/16 v2, 122
@@ -532,44 +229,36 @@
     add-int/lit8 v1, v1, -32
     int-to-char v1, v1
   :L1
-  .line 161
+  .line 73
     const/16 v2, 65
     if-lt v1, v2, :L5
     const/16 v3, 90
     if-le v1, v3, :L2
     goto :L5
   :L2
-  .line 162
+  .line 74
     const/4 v3, 1
     invoke-virtual { p0, v3 }, Ljava/lang/String;->charAt(I)C
     move-result p0
-  .line 163
+  .line 75
     const/16 v4, 48
     if-lt p0, v4, :L4
     const/16 v4, 57
     if-le p0, v4, :L3
     goto :L4
   :L3
-  .line 164
+  .line 76
     sub-int/2addr v1, v2
     add-int/2addr v1, v3
     add-int/lit16 v1, v1, 1000
     return v1
   :L4
-  .line 163
+  .line 75
     return v0
   :L5
-  .line 161
+  .line 73
     return v0
   :L6
-  .line 158
+  .line 70
     return v0
-.end method
-
-.method public static warm()V
-  .registers 0
-  .line 169
-    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->load()V
-  .line 170
-    return-void
 .end method

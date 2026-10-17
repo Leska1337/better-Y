@@ -151,7 +151,6 @@ public final class Disc {
         if (!singleAlbum || !tagsWanted()) return null;
         int n = songs.size();
         if (n == 0) return null;
-        DiscCache.warm();
         int[] out = new int[n];
         ArrayList missing = null;
         for (int i = 0; i < n; i++) {

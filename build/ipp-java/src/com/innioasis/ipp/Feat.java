@@ -54,14 +54,11 @@ public final class Feat {
         return Artists.display(first(raw));
     }
 
-    /** From the caches only — the player must not open the file for it. "" when unknown. */
+    /** The song's own row — the player must not open the file for it. "" when unknown. */
     private static String albumArtist(Song s) {
         try {
-            String aa = AlbumArtist.get(Albums.keyOf(s));
-            if (aa == null) {
-                Meta.Info i = MetaCache.get(s.getPath());
-                if (i != null) aa = i.albumArtist;
-            }
+            String aa = s.getAlbumArtist();
+            if (aa == null) aa = AlbumArtist.of(Schema.row(s.getPath()));
             return aa == null ? "" : aa.trim();
         } catch (Throwable t) {
             return "";

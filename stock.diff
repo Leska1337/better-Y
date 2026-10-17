@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..5088a870 100644
+index 01b1f730..809cbc9b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..5088a870 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100202
++  versionCode: 10100203
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19966,7 +19966,7 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..65073b7a 100644
+index 71fe29d0..9f0b331f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20915,7 +20915,7 @@ index 71fe29d0..65073b7a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev202</string>
++    <string name="ipp_version">v1.1.0-dev203</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -40536,7 +40536,7 @@ index 9115da99..c5c0d24b 100644
      .end packed-switch
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
-index c3dbcf78..ba2d0125 100644
+index c3dbcf78..f93f426c 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity.smali
 @@ -318,6 +318,14 @@
@@ -40776,22 +40776,17 @@ index c3dbcf78..ba2d0125 100644
  
      .line 561
      invoke-direct {p0}, Lcom/innioasis/music/AlbumsActivity;->getSongAdapter()Lcom/innioasis/music/adapter/SongListAdapter;
-@@ -1222,6 +1362,14 @@
+@@ -1222,6 +1362,9 @@
  
      move-result-object v1
  
 +    # ipp: mark this song adapter as the album view (only it may show CD dividers)
 +    invoke-static {v1}, Lcom/innioasis/ipp/Disc;->setAlbumAdapter(Ljava/lang/Object;)V
 +
-+    # ipp: this is the only screen that shows track numbers, so its own creation is where
-+    # the numbers are read off disk -- a row bind must not touch a file. No-op while the setting
-+    # is off, and after the first call.
-+    invoke-static {}, Lcom/innioasis/ipp/TrackCache;->warmIfWanted()V
-+
      check-cast v1, Lcom/innioasis/music/adapter/MyBaseAdapter;
  
      invoke-virtual {v0, v1}, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->bind(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
-@@ -1229,9 +1377,9 @@
+@@ -1229,9 +1372,9 @@
      .line 53
      sget-object v0, Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;->Companion:Lcom/innioasis/y1/database/Y1Repository$SortAlbumType$Companion;
  
@@ -40804,7 +40799,7 @@ index c3dbcf78..ba2d0125 100644
  
      move-result v1
  
-@@ -1241,6 +1389,52 @@
+@@ -1241,6 +1384,52 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/music/AlbumsActivity;->getAlbumListBySort(Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;)V
  
@@ -40857,7 +40852,7 @@ index c3dbcf78..ba2d0125 100644
      return-void
  .end method
  
-@@ -1274,6 +1468,25 @@
+@@ -1274,6 +1463,25 @@
  .method public longConfirm()V
      .locals 3
  
@@ -40883,7 +40878,7 @@ index c3dbcf78..ba2d0125 100644
      .line 532
      invoke-virtual {p0}, Lcom/innioasis/music/AlbumsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
-@@ -1300,6 +1513,54 @@
+@@ -1300,6 +1508,54 @@
  
      if-eqz v0, :cond_0
  
@@ -40938,7 +40933,7 @@ index c3dbcf78..ba2d0125 100644
      .line 534
      invoke-direct {p0}, Lcom/innioasis/music/AlbumsActivity;->getAdapter()Lcom/innioasis/music/adapter/AlbumListAdapter;
  
-@@ -1378,6 +1639,17 @@
+@@ -1378,6 +1634,17 @@
  
      move-result-object v0
  
@@ -40956,7 +40951,7 @@ index c3dbcf78..ba2d0125 100644
      invoke-virtual {v0}, Lcom/innioasis/music/util/SubMenuDialog;->show()V
  
      :cond_1
-@@ -1436,7 +1708,7 @@
+@@ -1436,7 +1703,7 @@
  .method public final showArtistsSortDialog()V
      .locals 10
  
@@ -40965,7 +40960,7 @@ index c3dbcf78..ba2d0125 100644
  
      new-array v0, v0, [Ljava/lang/String;
  
-@@ -1461,6 +1733,26 @@
+@@ -1461,6 +1728,26 @@
  
      aput-object v1, v0, v2
  

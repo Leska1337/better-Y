@@ -216,7 +216,6 @@ public final class Flow {
     public static Back back(Item it) {
         long t0 = SystemClock.uptimeMillis();
         List l = Albums.songsOf(it.key);
-        DiscCache.warm();
         int read = 0;
         for (int i = 0; i < l.size(); i++) {
             String p = ((Song) l.get(i)).getPath();

@@ -12,25 +12,15 @@
 
 .field art:Z
 
-.field artist:Z
-
-.field gotArtist:Ljava/lang/String;
-
-.field gotDate:Ljava/lang/String;
-
-.field gotYear:Ljava/lang/String;
-
 .field key:Ljava/lang/String;
 
 .field path:Ljava/lang/String;
 
 .field thumb:Z
 
-.field year:Z
-
 .method constructor <init>()V
   .registers 1
-  .line 1348
+  .line 1331
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method

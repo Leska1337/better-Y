@@ -137,6 +137,68 @@ public final class Schema {
         return n;
     }
 
+    private static List indexed;
+    private static HashMap byPath;
+    private static final ArrayList staged = new ArrayList();
+
+    /**
+     * The library's row of a path, out of the song list in memory. Reads the list only when none
+     * was ever loaded; while one is being re-read the previous index answers, its rows unchanged.
+     */
+    static synchronized Song row(String path) {
+        if (path == null) return null;
+        List l = Albums.loaded();
+        if (l == null && byPath == null) l = Albums.allSongs();
+        if (l != null && l != indexed) {
+            HashMap m = new HashMap(l.size() * 2);
+            for (int k = 0; k < l.size(); k++) {
+                Song s = (Song) l.get(k);
+                if (s.getPath() != null) m.put(s.getPath(), s);
+            }
+            byPath = m;
+            indexed = l;
+        }
+        return byPath == null ? null : (Song) byPath.get(path);
+    }
+
+    /** A file just read, into its row in memory; {@link #write} stores what was staged. */
+    static void stage(String path, Meta.Info i) {
+        if (i == null || !i.ok) return;
+        Song s = row(path);
+        if (s == null) return;
+        fill(s, i);
+        synchronized (staged) {
+            staged.add(s);
+        }
+    }
+
+    private static int gen;
+
+    static synchronized int gen() {
+        return gen;
+    }
+
+    /** One batch for everything staged, then {@code Ipp.libraryChanged}. Not the UI thread for a big pass. */
+    static void write() {
+        Song[] rows;
+        synchronized (staged) {
+            if (staged.isEmpty()) return;
+            rows = (Song[]) staged.toArray(new Song[staged.size()]);
+            staged.clear();
+        }
+        synchronized (Schema.class) {
+            gen++;
+        }
+        try {
+            Y1Repository repo = Y1Application.Companion.getY1Repository();
+            if (repo == null) return;
+            repo.ippSongDao().insert(rows);
+            Ipp.libraryChanged();
+        } catch (Throwable t) {
+            Diag.note("schema: " + rows.length + " row(s) not written: " + t);
+        }
+    }
+
     /** Per row, beside the stock read; a query that did not select a column leaves it unset. */
     public static void read(Cursor c, Song s) {
         int i = c.getColumnIndex("albumArtist");
