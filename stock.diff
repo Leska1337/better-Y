@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..4064bcb9 100644
+index 01b1f730..94507cfe 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..4064bcb9 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100193
++  versionCode: 10100195
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19966,7 +19966,7 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..9d59bacb 100644
+index 71fe29d0..f6ed1737 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20915,7 +20915,7 @@ index 71fe29d0..9d59bacb 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev193</string>
++    <string name="ipp_version">v1.1.0-dev195</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23056,10 +23056,10 @@ index 060ed6d1..c67c3385 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..b2c65b1b 100644
+index 4fcfcfff..2e1eb9e1 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7931 @@
+@@ -1,7643 +1,7936 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -31081,6 +31081,11 @@ index 4fcfcfff..b2c65b1b 100644
 +    aput-object v2, v1, v3
 +
 +    invoke-virtual {p1, v1}, Landroidx/room/RoomDatabase$Builder;->addMigrations([Landroidx/room/migration/Migration;)Landroidx/room/RoomDatabase$Builder;
++
++    move-result-object p1
++
++    # ipp: 6 -> 7, the tag columns of Song
++    invoke-static {p1}, Lcom/innioasis/ipp/Schema;->migrations(Landroidx/room/RoomDatabase$Builder;)Landroidx/room/RoomDatabase$Builder;
 +
 +    move-result-object p1
 +
@@ -65979,6 +65984,828 @@ index 510ca002..abcf3e40 100644
 +    :ipp_same_height
      .line 252
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Song.smali b/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
+index 368ecb72..9a0be5b0 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
+@@ -141,6 +141,17 @@
+ 
+ .field private songName:Ljava/lang/String;
+ 
++# ipp: tag columns outside the data-class constructor (com.innioasis.ipp.Schema)
++.field private albumArtist:Ljava/lang/String;
++
++.field private track:Ljava/lang/String;
++
++.field private disc:Ljava/lang/String;
++
++.field private year:Ljava/lang/String;
++
++.field private lyrics:I
++
+ 
+ # direct methods
+ .method public constructor <init>()V
+@@ -1343,6 +1354,68 @@
+     return v2
+ 
+     :cond_10
++    # ipp: the tag columns count too, or a re-read tag keeps the old list in Albums
++    iget-object v1, p0, Lcom/innioasis/y1/database/Song;->albumArtist:Ljava/lang/String;
++
++    iget-object v3, p1, Lcom/innioasis/y1/database/Song;->albumArtist:Ljava/lang/String;
++
++    invoke-static {v1, v3}, Lkotlin/jvm/internal/Intrinsics;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-nez v1, :ipp_eq_1
++
++    return v2
++
++    :ipp_eq_1
++    iget-object v1, p0, Lcom/innioasis/y1/database/Song;->track:Ljava/lang/String;
++
++    iget-object v3, p1, Lcom/innioasis/y1/database/Song;->track:Ljava/lang/String;
++
++    invoke-static {v1, v3}, Lkotlin/jvm/internal/Intrinsics;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-nez v1, :ipp_eq_2
++
++    return v2
++
++    :ipp_eq_2
++    iget-object v1, p0, Lcom/innioasis/y1/database/Song;->disc:Ljava/lang/String;
++
++    iget-object v3, p1, Lcom/innioasis/y1/database/Song;->disc:Ljava/lang/String;
++
++    invoke-static {v1, v3}, Lkotlin/jvm/internal/Intrinsics;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-nez v1, :ipp_eq_3
++
++    return v2
++
++    :ipp_eq_3
++    iget-object v1, p0, Lcom/innioasis/y1/database/Song;->year:Ljava/lang/String;
++
++    iget-object v3, p1, Lcom/innioasis/y1/database/Song;->year:Ljava/lang/String;
++
++    invoke-static {v1, v3}, Lkotlin/jvm/internal/Intrinsics;->areEqual(Ljava/lang/Object;Ljava/lang/Object;)Z
++
++    move-result v1
++
++    if-nez v1, :ipp_eq_4
++
++    return v2
++
++    :ipp_eq_4
++    iget v1, p0, Lcom/innioasis/y1/database/Song;->lyrics:I
++
++    iget v3, p1, Lcom/innioasis/y1/database/Song;->lyrics:I
++
++    if-eq v1, v3, :ipp_eq_5
++
++    return v2
++
++    :ipp_eq_5
+     iget-object v1, p0, Lcom/innioasis/y1/database/Song;->lowerName:Ljava/lang/String;
+ 
+     iget-object v3, p1, Lcom/innioasis/y1/database/Song;->lowerName:Ljava/lang/String;
+@@ -1902,6 +1975,87 @@
+     return-void
+ .end method
+ 
++# ipp: accessors of the tag columns
++.method public final getAlbumArtist()Ljava/lang/String;
++    .locals 1
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->albumArtist:Ljava/lang/String;
++
++    return-object v0
++.end method
++
++.method public final setAlbumArtist(Ljava/lang/String;)V
++    .locals 0
++
++    iput-object p1, p0, Lcom/innioasis/y1/database/Song;->albumArtist:Ljava/lang/String;
++
++    return-void
++.end method
++
++.method public final getTrack()Ljava/lang/String;
++    .locals 1
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->track:Ljava/lang/String;
++
++    return-object v0
++.end method
++
++.method public final setTrack(Ljava/lang/String;)V
++    .locals 0
++
++    iput-object p1, p0, Lcom/innioasis/y1/database/Song;->track:Ljava/lang/String;
++
++    return-void
++.end method
++
++.method public final getDisc()Ljava/lang/String;
++    .locals 1
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->disc:Ljava/lang/String;
++
++    return-object v0
++.end method
++
++.method public final setDisc(Ljava/lang/String;)V
++    .locals 0
++
++    iput-object p1, p0, Lcom/innioasis/y1/database/Song;->disc:Ljava/lang/String;
++
++    return-void
++.end method
++
++.method public final getYear()Ljava/lang/String;
++    .locals 1
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->year:Ljava/lang/String;
++
++    return-object v0
++.end method
++
++.method public final setYear(Ljava/lang/String;)V
++    .locals 0
++
++    iput-object p1, p0, Lcom/innioasis/y1/database/Song;->year:Ljava/lang/String;
++
++    return-void
++.end method
++
++.method public final getLyrics()I
++    .locals 1
++
++    iget v0, p0, Lcom/innioasis/y1/database/Song;->lyrics:I
++
++    return v0
++.end method
++
++.method public final setLyrics(I)V
++    .locals 0
++
++    iput p1, p0, Lcom/innioasis/y1/database/Song;->lyrics:I
++
++    return-void
++.end method
++
+ .method public toString()Ljava/lang/String;
+     .locals 2
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$1.smali
+index db93f4ae..8038baa9 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$1.smali
+@@ -63,6 +63,9 @@
+         }
+     .end annotation
+ 
++    # ipp: binds 18..22, the tag columns
++    invoke-static {p1, p2}, Lcom/innioasis/ipp/Schema;->bind(Landroidx/sqlite/db/SupportSQLiteStatement;Lcom/innioasis/y1/database/Song;)V
++
+     .line 42
+     invoke-virtual {p2}, Lcom/innioasis/y1/database/Song;->getSongId()Ljava/lang/String;
+ 
+@@ -441,7 +444,7 @@
+ .method public createQuery()Ljava/lang/String;
+     .locals 1
+ 
+-    const-string v0, "INSERT OR REPLACE INTO `Song` (`songId`,`name`,`pinyinName`,`songName`,`pinyinSongName`,`artist`,`pinyinArtist`,`album`,`pinyinAlbum`,`genre`,`pinyinGenre`,`path`,`isAudiobook`,`date`,`fileDate`,`lowerName`,`lowAlbum`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
++    const-string v0, "INSERT OR REPLACE INTO `Song` (`songId`,`name`,`pinyinName`,`songName`,`pinyinSongName`,`artist`,`pinyinArtist`,`album`,`pinyinAlbum`,`genre`,`pinyinGenre`,`path`,`isAudiobook`,`date`,`fileDate`,`lowerName`,`lowAlbum`,`albumArtist`,`track`,`disc`,`year`,`lyrics`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+ 
+     return-object v0
+ .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$11.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$11.smali
+index 8df67e70..45b6ee7e 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$11.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$11.smali
+@@ -586,6 +586,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1126
+     invoke-interface {v1, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$12.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$12.smali
+index 75930ede..90b04569 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$12.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$12.smali
+@@ -586,6 +586,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1263
+     invoke-interface {v1, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$13.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$13.smali
+index 42375590..3029c376 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$13.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$13.smali
+@@ -586,6 +586,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1400
+     invoke-interface {v1, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$14.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$14.smali
+index 1eae7b32..115fd3bc 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$14.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl$14.smali
+@@ -586,6 +586,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1537
+     invoke-interface {v1, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl.smali b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl.smali
+index 8870f0c0..ea89687b 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/SongDao_Impl.smali
+@@ -3741,6 +3741,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4471
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -4336,6 +4339,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5011
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -4931,6 +4937,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4741
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -5526,6 +5535,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4336
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -6121,6 +6133,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4606
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -6716,6 +6731,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4876
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -7300,6 +7318,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6616
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -7884,6 +7905,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6483
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -8443,6 +8467,9 @@
+     move-object/from16 v19, v4
+ 
+     invoke-direct/range {v19 .. v38}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
++
++    # ipp: the tag columns
++    invoke-static {v3, v4}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
+     :try_end_1
+     .catchall {:try_start_1 .. :try_end_1} :catchall_0
+ 
+@@ -8974,6 +9001,9 @@
+     move-object/from16 v19, v4
+ 
+     invoke-direct/range {v19 .. v38}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
++
++    # ipp: the tag columns
++    invoke-static {v3, v4}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
+     :try_end_1
+     .catchall {:try_start_1 .. :try_end_1} :catchall_0
+ 
+@@ -9723,6 +9753,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2573
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -10318,6 +10351,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3645
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -10913,6 +10949,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3510
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -11516,6 +11555,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4201
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -12119,6 +12161,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 4062
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -12722,6 +12767,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3923
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -13325,6 +13373,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3784
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -13920,6 +13971,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3375
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -14515,6 +14569,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3240
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -15118,6 +15175,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7305
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -15721,6 +15781,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7166
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -16324,6 +16387,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7027
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -16927,6 +16993,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6888
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -17522,6 +17591,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5944
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -18117,6 +18189,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6079
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -18712,6 +18787,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6350
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -19296,6 +19374,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6749
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -19891,6 +19972,9 @@
+ 
+     invoke-direct/range {v20 .. v39}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 6214
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -20475,6 +20559,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7438
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -21059,6 +21146,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 8369
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -21634,6 +21724,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2315
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -22209,6 +22302,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2444
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -22793,6 +22889,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 3105
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -23377,6 +23476,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2972
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -23961,6 +24063,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2839
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -24545,6 +24650,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2706
+     invoke-interface {v2, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -25007,6 +25115,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7837
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -25457,6 +25568,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 8103
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -25907,6 +26021,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 8236
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -26357,6 +26474,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 7970
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -26807,6 +26927,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5277
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -27257,6 +27380,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5809
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -27707,6 +27833,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5543
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -28157,6 +28286,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5144
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -28607,6 +28739,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5676
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -29057,6 +29192,9 @@
+ 
+     invoke-direct/range {v8 .. v27}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 5410
+     invoke-interface {v0, v7}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_0
+@@ -29620,6 +29758,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2057
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -30195,6 +30336,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 2186
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -30831,6 +30975,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1928
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -31388,6 +31535,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1799
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+@@ -31963,6 +32113,9 @@
+ 
+     invoke-direct/range {v21 .. v40}, Lcom/innioasis/y1/database/Song;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IJJLjava/lang/String;Ljava/lang/String;)V
+ 
++    # ipp: the tag columns
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Schema;->read(Landroid/database/Cursor;Lcom/innioasis/y1/database/Song;)V
++
+     .line 1672
+     invoke-interface {v3, v0}, Ljava/util/List;->add(Ljava/lang/Object;)Z
+     :try_end_1
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl$1.smali
+index b38b3a6f..9aaef33c 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl$1.smali
+@@ -53,7 +53,7 @@
+         }
+     .end annotation
+ 
+-    const-string v0, "CREATE TABLE IF NOT EXISTS `Song` (`songId` TEXT NOT NULL, `name` TEXT NOT NULL, `pinyinName` TEXT NOT NULL, `songName` TEXT NOT NULL, `pinyinSongName` TEXT NOT NULL, `artist` TEXT NOT NULL, `pinyinArtist` TEXT NOT NULL, `album` TEXT NOT NULL, `pinyinAlbum` TEXT NOT NULL, `genre` TEXT NOT NULL, `pinyinGenre` TEXT NOT NULL, `path` TEXT NOT NULL, `isAudiobook` INTEGER NOT NULL, `date` INTEGER NOT NULL, `fileDate` INTEGER NOT NULL, `lowerName` TEXT NOT NULL, `lowAlbum` TEXT NOT NULL, PRIMARY KEY(`songId`))"
++    const-string v0, "CREATE TABLE IF NOT EXISTS `Song` (`songId` TEXT NOT NULL, `name` TEXT NOT NULL, `pinyinName` TEXT NOT NULL, `songName` TEXT NOT NULL, `pinyinSongName` TEXT NOT NULL, `artist` TEXT NOT NULL, `pinyinArtist` TEXT NOT NULL, `album` TEXT NOT NULL, `pinyinAlbum` TEXT NOT NULL, `genre` TEXT NOT NULL, `pinyinGenre` TEXT NOT NULL, `path` TEXT NOT NULL, `isAudiobook` INTEGER NOT NULL, `date` INTEGER NOT NULL, `fileDate` INTEGER NOT NULL, `lowerName` TEXT NOT NULL, `lowAlbum` TEXT NOT NULL, `albumArtist` TEXT, `track` TEXT, `disc` TEXT, `year` TEXT, `lyrics` INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(`songId`))"
+ 
+     .line 56
+     invoke-interface {p1, v0}, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
+@@ -108,7 +108,7 @@
+     .line 66
+     invoke-interface {p1, v0}, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
+ 
+-    const-string v0, "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \'5f9335b9bdce4dbc620632b5a57160e3\')"
++    const-string v0, "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \'a7c3e2f04b9d4e1a8c6f5b2d9e0a1c37\')"
+ 
+     .line 67
+     invoke-interface {p1, v0}, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
+@@ -692,6 +692,9 @@
+ 
+     invoke-virtual {v1, v7, v2}, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+ 
++    # ipp: the tag columns
++    invoke-static {v1}, Lcom/innioasis/ipp/Schema;->columns(Ljava/util/HashMap;)V
++
+     .line 137
+     new-instance v2, Ljava/util/HashSet;
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
+index 69411183..73876eb2 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
+@@ -383,11 +383,11 @@
+ 
+     new-instance v1, Lcom/innioasis/y1/database/Y1Database_Impl$1;
+ 
+-    const/4 v2, 0x6
++    const/4 v2, 0x7
+ 
+     invoke-direct {v1, p0, v2}, Lcom/innioasis/y1/database/Y1Database_Impl$1;-><init>(Lcom/innioasis/y1/database/Y1Database_Impl;I)V
+ 
+-    const-string v2, "5f9335b9bdce4dbc620632b5a57160e3"
++    const-string v2, "a7c3e2f04b9d4e1a8c6f5b2d9e0a1c37"
+ 
+     const-string v3, "cbece47df1cd63a3783d352c9f16b868"
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$SongSortType.smali
 index c075f005..430c6df5 100644
