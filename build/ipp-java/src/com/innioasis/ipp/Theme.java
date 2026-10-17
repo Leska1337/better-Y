@@ -256,11 +256,16 @@ public final class Theme {
     public static void focusCard(CardView card) {
         if (card == null) return;
         try {
-            TextView probe = new TextView(card.getContext());
-            ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
-            card.setCardBackgroundColor(probe.getCurrentTextColor());
+            card.setCardBackgroundColor(focusColor(card.getContext()));
         } catch (Throwable t) {
         }
+    }
+
+    /** The colour a focused row's text takes: the focus frame of the Photos and wallpaper tiles. */
+    static int focusColor(android.content.Context c) {
+        TextView probe = new TextView(c);
+        ThemeManager.INSTANCE.itemSetTextColor(probe, ACCENT, true);
+        return probe.getCurrentTextColor();
     }
 
     /** An {@code item_setting.xml} row as stock Settings paints it; {@code sel} as its background. */

@@ -16,37 +16,37 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;I)V
   .registers 3
-  .line 1005
-    invoke-direct { p0 }, Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;-><init>()V
-  .line 1006
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
   .line 1007
-    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->action:I
+    invoke-direct { p0 }, Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;-><init>()V
   .line 1008
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
+  .line 1009
+    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->action:I
+  .line 1010
     return-void
 .end method
 
 .method public cancel()V
   .registers 1
-  .line 1021
+  .line 1023
     return-void
 .end method
 
 .method public confirm()V
   .registers 3
-  .line 1012
+  .line 1014
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->action:I
     const/4 v1, 2
     if-ne v0, v1, :L0
-  .line 1013
+  .line 1015
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->save(Landroid/app/Activity;)V
     goto :L1
   :L0
-  .line 1015
+  .line 1017
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Confirm;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity;->runFullRescan()V
   :L1
-  .line 1017
+  .line 1019
     return-void
 .end method

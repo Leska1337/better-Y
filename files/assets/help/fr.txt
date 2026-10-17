@@ -142,6 +142,9 @@ Détermine au bout de combien de secondes, après la dernière rotation de la mo
 Après la dernière ligne d'une liste, la molette revient à la première, et en remontant depuis la première elle passe à la dernière, comme dans le menu principal. S'applique à toutes les listes, menus et galeries.
 Dans une liste de morceaux, la ligne Shuffle fait aussi partie de la boucle.
 
+[animations] Activer les animations
+Dans les grilles de vignettes (Playlists, Themes et Photos), les rangées glissent à l'écran et le cadre du curseur se déplace d'une vignette à l'autre. Désactivé, les deux sautent aussitôt.
+
 [menu_style] Style de menu
 * Par défaut
 * Simple

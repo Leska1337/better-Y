@@ -142,6 +142,9 @@ Determina cuántos segundos después del último giro de la rueda la selección 
 Tras la última fila de una lista, la rueda vuelve a la primera, y hacia arriba desde la primera pasa a la última, como en el menú principal. Funciona en todas las listas, menús y galerías.
 En una lista de canciones, la fila Shuffle también forma parte del ciclo.
 
+[animations] Activar animaciones
+En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran deslizándose y el marco del cursor se desplaza de un mosaico a otro. Desactivado, ambos saltan al instante.
+
 [menu_style] Estilo de menú
 * Predeterminado
 * Simple

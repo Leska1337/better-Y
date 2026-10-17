@@ -61,6 +61,7 @@ public final class Menus {
             R.string.video_remove,
             R.string.ipp_queue_add,
             R.string.ipp_m3u_export,
+            R.string.ipp_reset_pl_cover,
     };
 
     /** Per dialog: they are lazy singletons reused on every press. */

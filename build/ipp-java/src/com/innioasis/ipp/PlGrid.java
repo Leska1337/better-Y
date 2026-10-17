@@ -100,7 +100,11 @@ public final class PlGrid {
 
         public boolean select(int index, SubmenuAdapter.Item item) {
             String s = item == null ? null : item.getString();
+            // the long press ticked the row it was on: invisible on a tile, a second cursor in the list
+            RVBaseAdapter ad = adapter(a);
+            if (ad != null && ad.getMultiSelectIndexes() != null) ad.getMultiSelectIndexes().clear();
             setView(a, a.getString(R.string.ipp_pl_grid).equals(s));
+            if (ad != null) ad.notifyDataSetChanged();
             return true;
         }
     }
@@ -162,14 +166,47 @@ public final class PlGrid {
      * over the tiles ({@link Mover}) and tiles made ahead into the pool.
      */
     public static void cursor(RecyclerView rv) {
-        if (rv == null) return;
+        cursor(rv, false);
+    }
+
+    /** {@code PhotosActivity.initView}: the same for the Photos grid, whose tile is its own. */
+    public static void photos(RecyclerView rv) {
+        cursor(rv, true);
+    }
+
+    /** "Enable animations" off: the tiles paint the cursor themselves and the rows jump, as stock. */
+    private static void cursor(RecyclerView rv, boolean photos) {
+        if (rv == null || !Anim.on()) return;
         Wheel.glides(rv, true);
         if (movers.get(rv) == null) {
-            Mover m = new Mover();
+            Mover m = new Mover(photos);
             movers.put(rv, m);
             rv.addItemDecoration(m);
         }
         rv.postDelayed(new Warm(rv), WARM_MS);
+    }
+
+    /** The Photos tile's frame in place of {@code Theme.focusCard}: Mover's while it draws one. */
+    public static void photoFocus(CardView card) {
+        if (card == null) return;
+        if (!Anim.on() || multiMode(card.getContext())) {
+            Theme.focusCard(card);
+            return;
+        }
+        card.setCardBackgroundColor(0);
+        // a tile repainted alone does not redraw the list, and the list is what draws the frame
+        for (View v = card; v != null; v = v.getParent() instanceof View ? (View) v.getParent() : null) {
+            if (v instanceof RecyclerView) {
+                v.invalidate();
+                break;
+            }
+        }
+    }
+
+    /** Wheel, before the rows glide to {@code pos}: wait while the frame ends its way along a row. */
+    static boolean holds(RecyclerView rv, int pos) {
+        Object m = movers.get(rv);
+        return m != null && ((Mover) m).along(pos);
     }
 
     /** The tile under the cursor: a Playlists adapter keeps it, the theme gallery's screen does. */
@@ -190,7 +227,7 @@ public final class PlGrid {
                 break;
             }
         }
-        return multiMode(frame.getContext()) ? Theme.tileFrame() : 0;
+        return multiMode(frame.getContext()) || !Anim.on() ? Theme.tileFrame() : 0;
     }
 
     /** After the grid's first frames, while it stands: first-time tiles are no work of a glide. */
@@ -294,6 +331,9 @@ public final class PlGrid {
         private float l, t, w, h, edge, rim, radius, inner;
         /** The tile a move to another row ends on. */
         private float lx, ly;
+        /** Where the way along the current row ends, and that tile. */
+        private float tx;
+        private int txPos;
         private boolean has, leg;
         private long last;
         private int off, pitch, span = 1, legPos;
@@ -326,15 +366,74 @@ public final class PlGrid {
             off = rv.computeVerticalScrollOffset();
         }
 
+        /** The Photos grid: its own tile, its own frame colour, and a new list snaps the frame. */
+        private final boolean photos;
+        private int focus;
+        private RecyclerView.Adapter watched;
+
+        Mover(boolean photos) {
+            this.photos = photos;
+        }
+
+        /** A folder entered or left fills the same list anew: the frame starts on its tile. */
+        private void watch(RecyclerView.Adapter a) {
+            if (watched == a) return;
+            watched = a;
+            a.registerAdapterDataObserver(new Snap(this));
+        }
+
+        void snap() {
+            has = false;
+            leg = false;
+            fa = 1f;
+        }
+
+        /** Photos' frame is 2px round the picture, inside the card's shadow padding. */
+        private static final float PHOTO_RING = 2f;
+
+        /**
+         * The frame's left and top for a tile, in content coordinates, its size, edges and radii
+         * set on the way; null when the tile is not one this frame knows.
+         */
+        private float[] shape(View tile, RecyclerView rv) {
+            View f = tile.findViewById(R.id.img_sel);
+            View card = tile.findViewById(R.id.card);
+            View img = tile.findViewById(R.id.img);
+            if (!(card instanceof CardView) || img == null) return null;
+            if (photos) {
+                float r = PHOTO_RING * tile.getResources().getDisplayMetrics().density;
+                float[] ib = box(img, rv, off, false);
+                w = img.getWidth() + 2 * r;
+                h = img.getHeight() + 2 * r;
+                edge = r;
+                rim = 0f;
+                radius = ((CardView) card).getRadius();
+                inner = 0f;
+                return new float[] {ib[0] - r, ib[1] - r};
+            }
+            if (!(f instanceof CardView)) return null;
+            // the frame's and the card's boxes less the padding CardView keeps for its shadow on
+            // this API; the picture's box as it stands
+            float[] fb = box(f, rv, off, true);
+            float[] cb = box(card, rv, off, true), ib = box(img, rv, off, false);
+            w = f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
+            h = f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
+            edge = Math.max(1f, cb[0] - fb[0]);
+            // the copy of the card's edge only where the edge is ours: a theme's card is opaque
+            rim = card.getTag(R.id.ipp_pl_cover) == null ? 0f : Math.max(0f, ib[0] - cb[0]);
+            radius = ((CardView) f).getRadius();
+            inner = ((CardView) card).getRadius();
+            return fb;
+        }
+
         /** The frame's box of a tile not laid out, from a laid-out one of its column. */
         private float[] project(RecyclerView rv, int p) {
             for (int i = 0; i < rv.getChildCount(); i++) {
                 View ch = rv.getChildAt(i);
                 int q = rv.getChildLayoutPosition(ch);
                 if (q == RecyclerView.NO_POSITION || q % span != p % span) continue;
-                View f = ch.findViewById(R.id.img_sel);
-                if (f == null) continue;
-                float[] b = box(f, rv, off, true);
+                float[] b = shape(ch, rv);
+                if (b == null) continue;
                 b[1] += (p / span - q / span) * pitch;
                 return b;
             }
@@ -374,6 +473,11 @@ public final class PlGrid {
             boolean r = was && !moving;
             was = moving;
             return r;
+        }
+
+        /** Wheel asks before the rows go to {@code pos}: the frame is still on its way along a row. */
+        boolean along(int pos) {
+            return has && !leg && span > 0 && Math.abs(l - tx) >= 1f && pos / span != txPos / span;
         }
 
         private Bitmap pic;
@@ -417,6 +521,7 @@ public final class PlGrid {
                 Context ctx = rv.getContext();
                 RecyclerView.Adapter a = rv.getAdapter();
                 if (a == null || multiMode(ctx) || a instanceof RVBaseAdapter && menuMulti) {
+                    if (Wheel.held(rv)) Wheel.releaseSoon(rv);
                     has = false;
                     leg = false;
                     fa = 1f;
@@ -425,38 +530,31 @@ public final class PlGrid {
                 Theme.tilesAhead(rv);
                 measure(rv);
                 int sel = cursorAt(rv);
+                if (photos) watch(a);
                 View tile = rv.getLayoutManager() == null ? null
                         : rv.getLayoutManager().findViewByPosition(sel);
-                View f = tile == null ? null : tile.findViewById(R.id.img_sel);
-                View card = tile == null ? null : tile.findViewById(R.id.card);
-                View img = tile == null ? null : tile.findViewById(R.id.img);
                 long now = SystemClock.uptimeMillis();
                 boolean moving = false;
-                float[] fb = null;
-                if (f instanceof CardView && card instanceof CardView && img != null) {
-                    // the frame's and the card's boxes less the padding CardView keeps for its
-                    // shadow on this API; the picture's box as it stands
-                    fb = box(f, rv, off, true);
-                    float[] cb = box(card, rv, off, true), ib = box(img, rv, off, false);
-                    w = f.getWidth() - f.getPaddingLeft() - f.getPaddingRight();
-                    h = f.getHeight() - f.getPaddingTop() - f.getPaddingBottom();
-                    edge = Math.max(1f, cb[0] - fb[0]);
-                    // the copy of the card's edge only where the edge is ours: a theme's card is opaque
-                    rim = card.getTag(R.id.ipp_pl_cover) == null ? 0f : Math.max(0f, ib[0] - cb[0]);
-                    radius = ((CardView) f).getRadius();
-                    inner = ((CardView) card).getRadius();
-                } else if (has) {
+                float[] fb = tile == null ? null : shape(tile, rv);
+                if (fb == null && has) {
                     // round the list's end: the tile is still off screen, the rows glide to it
                     fb = project(rv, sel);
                 }
                 if (fb != null && !has) {
                     l = fb[0]; t = fb[1];
+                    tx = l;
+                    txPos = sel;
                     has = true;
                 } else if (fb != null) {
                     float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
                     float rem = Wheel.Glider.left(rv);
-                    if (!leg && fb[1] != t) {
-                        if (Math.abs(fb[1] - t) <= 1.5f * pitch || rem != 0) {
+                    boolean held = Wheel.held(rv);
+                    // to another row while still on the way along this one: the way is ended
+                    // first, and the rows wait for it (Wheel.held)
+                    boolean finish = !leg && fb[1] != t && Math.abs(l - tx) >= 1f;
+                    if (!leg && fb[1] != t && !finish) {
+                        if (held) Wheel.releaseSoon(rv);
+                        if (Math.abs(fb[1] - t) <= 1.5f * pitch || rem != 0 || held) {
                             // To another row, the next or round the list's end, the frame does
                             // not travel: it fades where it stands on screen while the rows
                             // glide, and in on its tile once they stop.
@@ -485,11 +583,17 @@ public final class PlGrid {
                         } else {
                             l = lx;
                             t = ly;
+                            tx = l;
+                            txPos = sel;
                             fa = Math.min(1f, fa + dt * 1000f / FADE_MS);
                             if (fa >= 1f) leg = false;
                         }
+                    } else if (finish) {
+                        l = glide(l, tx, dt);
                     } else {
                         l = glide(l, fb[0], dt);
+                        tx = fb[0];
+                        txPos = sel;
                     }
                     moving = leg || l != fb[0] || t != fb[1];
                 }
@@ -505,9 +609,33 @@ public final class PlGrid {
         public void onDrawOver(android.graphics.Canvas c, RecyclerView rv, RecyclerView.State state) {
             try {
                 if (SystemClock.uptimeMillis() - drawn >= 8) Frames.part("tiles drawn", drawn);
-                if (has) frame(c, l, t - off, Theme.tileFrame());
+                if (!has) return;
+                if (photos && focus == 0) focus = Theme.focusColor(rv.getContext());
+                frame(c, l, t - off, photos ? focus : Theme.tileFrame());
             } catch (Throwable e) {
             }
+        }
+    }
+
+    /** A list filled anew under a Photos frame: it starts on its tile, not travels there. */
+    static final class Snap extends RecyclerView.AdapterDataObserver {
+        private final Mover m;
+
+        Snap(Mover m) { this.m = m; }
+
+        @Override
+        public void onChanged() {
+            m.snap();
+        }
+
+        @Override
+        public void onItemRangeInserted(int start, int count) {
+            m.snap();
+        }
+
+        @Override
+        public void onItemRangeRemoved(int start, int count) {
+            m.snap();
         }
     }
 
@@ -524,6 +652,7 @@ public final class PlGrid {
     /** Every playlist with no cover yet gets its first song's, here and now, not when shown. */
     private static void firsts(RecyclerView rv) {
         try {
+            if (!on()) return;
             List l = repo().getAllPlaylistSync();
             if (l == null) return;
             for (int i = 0; i < l.size(); i++) {
@@ -592,7 +721,8 @@ public final class PlGrid {
             }
             // The cursor's frame is drawn by Mover, travelling between tiles; the tile paints its
             // own only in the multi-selection, where Rows.blink blinks it.
-            frame.setCardBackgroundColor(sel && multi ? Theme.tileFrame() : 0);
+            boolean own = multi || !Anim.on();
+            frame.setCardBackgroundColor(sel && own ? Theme.tileFrame() : 0);
             if (sel && row.getParent() instanceof View) ((View) row.getParent()).invalidate();
             // stock says "not ticked" for the tile under the cursor: ask the selection
             if (sel && !ticked && ad != null && ad.getMultiSelectIndexes() != null) {
@@ -606,7 +736,7 @@ public final class PlGrid {
                 tick.setVisibility(View.GONE);
             }
             // off the multi-selection Mover draws the cursor's edge over the card's own
-            paint(row, card, img, p, sel && multi, text.getCurrentTextColor());
+            paint(row, card, img, p, sel && own, text.getCurrentTextColor());
         } catch (Throwable t) {
         }
         long ms = SystemClock.uptimeMillis() - t0;
@@ -870,6 +1000,7 @@ public final class PlGrid {
         }
 
         static void want(UUID id, RecyclerView rv, boolean first) {
+            if (!on()) return;                       // the list shows no covers
             synchronized (queue) {
                 if (rv != null) view = new WeakReference(rv);
                 queue.remove(id);
@@ -905,7 +1036,8 @@ public final class PlGrid {
             while (true) {
                 UUID id;
                 synchronized (queue) {
-                    if (queue.isEmpty()) {
+                    if (queue.isEmpty() || !on()) {
+                        queue.clear();
                         running = false;
                         if (read > 0 || failed.length() > 0) {
                             Diag.note("playlist covers: " + read + " read in "
@@ -969,6 +1101,11 @@ public final class PlGrid {
                 if (rv.getAdapter() != null) rv.getAdapter().notifyDataSetChanged();
             }
         }
+    }
+
+    /** A cover written from another screen: decoded now, so the grid underneath shows it on return. */
+    private static void fresh(UUID id) {
+        if (on() && Decoder.grid() != null) Decoder.want(id, null, true);
     }
 
     public static boolean hasCover(Object o) {
@@ -1143,14 +1280,34 @@ public final class PlGrid {
         }
     }
 
-    /** The Playlists screen's menu: "Reset cover" on a tile that has one of its own. */
+    /** The Playlists screen's menu: "Reset cover" when a tile it is about has a cover. */
     public static void menu(List l, Object adapter, Context c) {
         try {
             if (!on() || !(adapter instanceof RVBaseAdapter)) return;
-            RVBaseAdapter a = (RVBaseAdapter) adapter;
-            if (hasCover(a.getSelectItem())) l.add(c.getString(R.string.ipp_reset_pl_cover));
+            List ps = targets((RVBaseAdapter) adapter);
+            for (int i = 0; i < ps.size(); i++) {
+                if (hasCover(ps.get(i))) {
+                    l.add(c.getString(R.string.ipp_reset_pl_cover));
+                    return;
+                }
+            }
         } catch (Throwable t) {
         }
+    }
+
+    /** The ticked tiles when there are several (the menu's own rule, Menus), else the cursor's. */
+    private static List targets(RVBaseAdapter a) {
+        List out = new ArrayList();
+        List ticks = a.getMultiSelectIndexes();
+        if (ticks != null && ticks.size() > 1) {
+            for (int i = 0; i < ticks.size(); i++) {
+                Object o = a.getItemByPosition(((Integer) ticks.get(i)).intValue());
+                if (o != null) out.add(o);
+            }
+        } else if (a.getSelectItem() != null) {
+            out.add(a.getSelectItem());
+        }
+        return out;
     }
 
     /** The screen's one ipp dispatch, in front of stock's {@code select}; M3u's too. */
@@ -1169,11 +1326,17 @@ public final class PlGrid {
             }
             if (!(adapter instanceof RVBaseAdapter)) return true;
             RVBaseAdapter ad = (RVBaseAdapter) adapter;
-            Object o = ad.getSelectItem();
-            if (!(o instanceof Playlist)) return true;
-            reset(((Playlist) o).getPlaylistId());
-            ad.notifyItemChanged(ad.getSelectPosition());
-            Toast.makeText(a, R.string.ipp_pl_cover_reset, Toast.LENGTH_SHORT).show();
+            List ps = targets(ad);
+            boolean any = false;
+            for (int i = 0; i < ps.size(); i++) {
+                Object o = ps.get(i);
+                if (!hasCover(o)) continue;
+                reset(((Playlist) o).getPlaylistId());
+                any = true;
+            }
+            if (ad.getMultiSelectIndexes() != null) ad.getMultiSelectIndexes().clear();
+            ad.notifyDataSetChanged();
+            if (any) Toast.makeText(a, R.string.ipp_pl_cover_reset, Toast.LENGTH_SHORT).show();
         } catch (Throwable t) {
         }
         return true;
@@ -1220,6 +1383,7 @@ public final class PlGrid {
             } catch (Throwable t) {
             }
             if (ok) {
+                fresh(id);
                 a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_set));
             } else if (b == null) {
                 a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_none));
@@ -1301,7 +1465,10 @@ public final class PlGrid {
                 if (b != null) b.recycle();
             } catch (Throwable t) {
             }
-            if (ok) a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_set));
+            if (ok) {
+                fresh(id);
+                a.runOnUiThread(new Say(a, R.string.ipp_pl_cover_set));
+            }
         }
     }
 }

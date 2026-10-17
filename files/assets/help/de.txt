@@ -142,6 +142,9 @@ Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum 
 Nach der letzten Zeile einer Liste kehrt das Rad zur ersten zurück, und von der ersten aufwärts geht es zur letzten – wie im Hauptmenü. Gilt für alle Listen, Menüs und Galerien.
 In einer Titelliste gehört die Zeile Shuffle mit zum Kreis.
 
+[animations] Animationen aktivieren
+In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins Bild, und der Rahmen des Cursors wandert von Kachel zu Kachel. Ausgeschaltet springt beides sofort.
+
 [menu_style] Menüstil
 * Standard
 * Einfach

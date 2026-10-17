@@ -41,6 +41,7 @@ public final class Prefs {
         def(Pad.KEY, 1);
         def(AlbumArtists.KEY, 0);
         def(Loop.KEY, 0);
+        def(Anim.KEY, 1);
         def(MenuStyle.KEY, 0);               // the preview beside the list, as stock draws it
         def(Preview.KEY, 0);                 // white, as the layouts have it
         def(TopBar.KEY_TEXT, 0);             // white, as the layout has it

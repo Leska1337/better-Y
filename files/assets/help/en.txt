@@ -145,6 +145,9 @@ Determines how many seconds after the last scroll of the wheel the selection ret
 Past the last row of a list the wheel comes back to the first one, and up from the first it goes round to the last — as in the main menu. Works in every list, menu and gallery.
 In a song list the Shuffle row is part of the circle.
 
+[animations] Enable animations
+In the tile grids — Playlists, Themes and Photos — the rows glide into view and the cursor's frame travels from tile to tile. Off, both move at once.
+
 [menu_style] Menu style
 * Default
 * Simple

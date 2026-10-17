@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..02b16afe 100644
+index 01b1f730..fec5e07b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..02b16afe 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100177
++  versionCode: 10100179
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19963,7 +19963,7 @@ index 803c1e7a..b587f96e 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..4e871236 100644
+index 71fe29d0..eb751606 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20912,7 +20912,7 @@ index 71fe29d0..4e871236 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev177</string>
++    <string name="ipp_version">v1.1.0-dev179</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -62014,7 +62014,7 @@ index a9542df1..31f25955 100644
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
-index f2075450..9b2da894 100644
+index f2075450..bbc40c9c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 @@ -104,14 +104,30 @@
@@ -62049,17 +62049,18 @@ index f2075450..9b2da894 100644
      .line 67
      iget-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity$adapter$2$1;->this$0:Lcom/innioasis/y1/activity/PhotosActivity;
  
-@@ -136,6 +152,9 @@
+@@ -136,6 +152,10 @@
  
      invoke-virtual {p3, v0}, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
  
-+    # ipp: the focus frame in the colour a focused row's text takes.
-+    invoke-static {p3}, Lcom/innioasis/ipp/Theme;->focusCard(Landroidx/cardview/widget/CardView;)V
++    # ipp: the focus frame in the colour a focused row's text takes -- or none, while the grid's
++    # travelling frame (PlGrid.Mover) draws it.
++    invoke-static {p3}, Lcom/innioasis/ipp/PlGrid;->photoFocus(Landroidx/cardview/widget/CardView;)V
 +
      .line 69
      iget-object p3, p1, Lcom/innioasis/y1/databinding/ItemPhotosBinding;->imgSel:Landroid/widget/ImageView;
  
-@@ -240,6 +259,9 @@
+@@ -240,6 +260,9 @@
  
      invoke-virtual {p1, p2}, Landroid/widget/ImageView;->setImageResource(I)V
  
@@ -62098,7 +62099,7 @@ index 1a9012fb..c73c85fc 100644
      .line 687
      iget-object p1, p0, Lcom/innioasis/y1/activity/PhotosActivity$shortTop$2$1;->this$0:Lcom/innioasis/y1/activity/PhotosActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..0150b3a1 100644
+index 0688aa89..4c36d7d4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 @@ -1105,6 +1105,25 @@
@@ -62297,6 +62298,16 @@ index 0688aa89..0150b3a1 100644
 +
      .line 620
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -3403,6 +3451,9 @@
+ 
+     invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
+ 
++    # ipp: rows that glide and a cursor frame that travels, as in the other tile grids
++    invoke-static {v0}, Lcom/innioasis/ipp/PlGrid;->photos(Landroidx/recyclerview/widget/RecyclerView;)V
++
+     .line 224
+     iget-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->nowPath:Ljava/lang/String;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 index e34359a1..c96b4ab1 100644
@@ -69086,7 +69097,7 @@ index 0e9f1efd..ff9e4d31 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-index a813f690..912b17b2 100644
+index a813f690..03f89a1f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 @@ -468,6 +468,21 @@
@@ -69150,7 +69161,7 @@ index a813f690..912b17b2 100644
  
      const-string v0, "event"
  
-@@ -878,6 +900,33 @@
+@@ -878,6 +900,40 @@
  
      if-eqz p1, :cond_17
  
@@ -69178,13 +69189,20 @@ index a813f690..912b17b2 100644
 +
 +    invoke-static {p1, p2}, Lcom/innioasis/ipp/PlGrid;->fromPhoto(Landroid/app/Activity;Ljava/lang/String;)V
 +
++    # ipp: and the long press's tick goes, as after a wallpaper (afterSetWallpaper)
++    iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->afterSetWallpaper:Lkotlin/jvm/functions/Function0;
++
++    if-eqz p1, :cond_17
++
++    invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
++
 +    goto/16 :goto_5
 +
 +    :cond_ipp_notcover
      .line 103
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
  
-@@ -991,11 +1040,14 @@
+@@ -991,11 +1047,14 @@
      if-eqz p1, :cond_a
  
      .line 120
@@ -69201,7 +69219,7 @@ index a813f690..912b17b2 100644
  
      .line 121
      :cond_9
-@@ -1005,6 +1057,9 @@
+@@ -1005,6 +1064,9 @@
  
      .line 124
      :cond_a
@@ -69211,7 +69229,7 @@ index a813f690..912b17b2 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      sub-int/2addr p1, v1
-@@ -1013,6 +1068,30 @@
+@@ -1013,6 +1075,30 @@
  
      if-gez p1, :cond_b
  
@@ -69242,7 +69260,7 @@ index a813f690..912b17b2 100644
      .line 125
      iput v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
-@@ -1035,11 +1114,22 @@
+@@ -1035,11 +1121,22 @@
  
      .line 131
      :cond_d
@@ -69267,7 +69285,7 @@ index a813f690..912b17b2 100644
  
      goto :goto_5
  
-@@ -1081,20 +1171,31 @@
+@@ -1081,20 +1178,31 @@
      if-eqz p1, :cond_12
  
      .line 136
@@ -69276,7 +69294,8 @@ index a813f690..912b17b2 100644
  
 -    if-nez p1, :cond_11
 +    invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
-+
+ 
+-    iput v1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
 +    move-result-object p2
 +
 +    iget-object p2, p2, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->setWallpaper:Landroidx/cardview/widget/CardView;
@@ -69284,8 +69303,7 @@ index a813f690..912b17b2 100644
 +    invoke-static {p2, p1}, Lcom/innioasis/ipp/Photos;->popupNext(Landroidx/cardview/widget/CardView;I)I
 +
 +    move-result p1
- 
--    iput v1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
++
 +    iput p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
  
      .line 137
@@ -69302,7 +69320,7 @@ index a813f690..912b17b2 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      add-int/2addr p1, v1
-@@ -1110,6 +1211,20 @@
+@@ -1110,6 +1218,20 @@
  
      if-lt p1, p2, :cond_13
  
@@ -69323,7 +69341,7 @@ index a813f690..912b17b2 100644
      iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->subs:Ljava/util/List;
  
      invoke-interface {p1}, Ljava/util/List;->size()I
-@@ -1155,11 +1270,20 @@
+@@ -1155,11 +1277,20 @@
  
      .line 151
      :cond_16
@@ -69346,7 +69364,7 @@ index a813f690..912b17b2 100644
  
      :cond_17
      :goto_5
-@@ -1213,3 +1337,16 @@
+@@ -1213,3 +1344,16 @@
  
      return-void
  .end method

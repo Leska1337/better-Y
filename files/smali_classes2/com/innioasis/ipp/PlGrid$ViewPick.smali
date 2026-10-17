@@ -22,7 +22,7 @@
 .end method
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
-  .registers 4
+  .registers 5
   .line 102
     if-nez p2, :L0
     const/4 p1, 0
@@ -31,15 +31,32 @@
     invoke-virtual { p2 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p1
   :L1
-  .line 103
-    iget-object p2, p0, Lcom/innioasis/ipp/PlGrid$ViewPick;->a:Landroid/app/Activity;
-    const v0, 2131821160
-    invoke-virtual { p2, v0 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
-    move-result-object v0
-    invoke-virtual { v0, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result p1
-    invoke-static { p2, p1 }, Lcom/innioasis/ipp/PlGrid;->access$000(Landroid/app/Activity;Z)V
   .line 104
+    iget-object p2, p0, Lcom/innioasis/ipp/PlGrid$ViewPick;->a:Landroid/app/Activity;
+    invoke-static { p2 }, Lcom/innioasis/ipp/PlGrid;->access$000(Landroid/content/Context;)Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
+    move-result-object p2
+  .line 105
+    if-eqz p2, :L2
+    invoke-virtual { p2 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
+    move-result-object v0
+    if-eqz v0, :L2
+    invoke-virtual { p2 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
+    move-result-object v0
+    invoke-interface { v0 }, Ljava/util/List;->clear()V
+  :L2
+  .line 106
+    iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$ViewPick;->a:Landroid/app/Activity;
+    const v1, 2131821160
+    invoke-virtual { v0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v1
+    invoke-virtual { v1, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p1
+    invoke-static { v0, p1 }, Lcom/innioasis/ipp/PlGrid;->access$100(Landroid/app/Activity;Z)V
+  .line 107
+    if-eqz p2, :L3
+    invoke-virtual { p2 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyDataSetChanged()V
+  :L3
+  .line 108
     const/4 p1, 1
     return p1
 .end method

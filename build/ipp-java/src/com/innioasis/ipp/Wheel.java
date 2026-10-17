@@ -506,6 +506,10 @@ public final class Wheel {
         if (first >= 0 && pos >= first && pos <= last) {
             return;                                                  // already fully visible
         }
+        if (!releasing && gliding.get(rv) != null && PlGrid.holds(rv, pos)) {
+            hold(rv);
+            return;
+        }
         if (glide(rv, l, pos, first, last)) return;
         Glider.stop();                                               // a glide under way
         rv.stopScroll();
@@ -531,6 +535,55 @@ public final class Wheel {
             l.scrollToPositionWithOffset(pos, down ? (bottom - top) - h : 0);
         } else {
             rv.scrollToPosition(pos);
+        }
+    }
+
+    /**
+     * A grid's rows waiting for the cursor's frame to end its way along a row (PlGrid.holds);
+     * the frame lets them go, and a timer does if it never does.
+     */
+    private static WeakReference heldRv;
+    private static boolean heldWrap;
+    private static boolean releasing;
+    private static final long HOLD_MAX_MS = 500L;
+    private static final android.os.Handler UI = new android.os.Handler(android.os.Looper.getMainLooper());
+    private static final Release RELEASE = new Release();
+
+    private static void hold(RecyclerView rv) {
+        heldWrap = held(rv) && heldWrap || wrapping;
+        heldRv = new WeakReference(rv);
+        UI.removeCallbacks(RELEASE);
+        UI.postDelayed(RELEASE, HOLD_MAX_MS);
+    }
+
+    static boolean held(RecyclerView rv) {
+        return rv != null && heldRv != null && heldRv.get() == rv;
+    }
+
+    /** Posted: the frame asks from inside the list's draw, where a scroll must not run. */
+    static void releaseSoon(RecyclerView rv) {
+        if (!held(rv)) return;
+        UI.removeCallbacks(RELEASE);
+        UI.post(RELEASE);
+    }
+
+    static final class Release implements Runnable {
+        public void run() {
+            RecyclerView rv = heldRv == null ? null : (RecyclerView) heldRv.get();
+            heldRv = null;
+            boolean w = wrapping;
+            try {
+                if (rv == null || rv.getAdapter() == null || rv.getWindowToken() == null) return;
+                wrapping = heldWrap;
+                // the timer's release too: the frame may still be on its way, the rows go anyway
+                releasing = true;
+                scrollTo(rv, PlGrid.cursorAt(rv));
+            } catch (Throwable t) {
+            } finally {
+                releasing = false;
+                heldWrap = false;
+                wrapping = w;
+            }
         }
     }
 
