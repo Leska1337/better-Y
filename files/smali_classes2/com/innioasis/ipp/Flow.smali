@@ -518,36 +518,85 @@
 .end method
 
 .method static blank()Landroid/graphics/Bitmap;
-  .registers 9
-  .line 309
-    const/16 v0, 32400
-    new-array v2, v0, [I
+  .catchall { :L0 .. :L1 } :L3
+  .registers 10
   .line 310
     const/4 v0, 0
-    const/4 v1, 0
   :L0
-    const/16 v3, 180
-    if-ge v1, v3, :L5
+    new-instance v1, Landroid/graphics/BitmapFactory$Options;
+    invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
   .line 311
-    const/4 v4, 0
-  :L1
-    if-ge v4, v3, :L4
+    iput-boolean v0, v1, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
   .line 312
+    sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v2
+    invoke-virtual { v2 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v2
+    const v3, 2131231142
+    invoke-static { v2, v3, v1 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    move-result-object v1
+  .line 314
+    if-eqz v1, :L2
+  .line 315
+    invoke-static { }, Lcom/innioasis/ipp/Flow;->newSlide()Landroid/graphics/Bitmap;
+    move-result-object v2
+  .line 316
+    new-instance v3, Landroid/graphics/Canvas;
+    invoke-direct { v3, v2 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+  .line 317
+    new-instance v4, Landroid/graphics/Rect;
+    const/16 v5, 182
+    const/4 v6, 2
+    invoke-direct { v4, v6, v6, v5, v5 }, Landroid/graphics/Rect;-><init>(IIII)V
+    new-instance v5, Landroid/graphics/Paint;
+    invoke-direct { v5, v6 }, Landroid/graphics/Paint;-><init>(I)V
+    const/4 v6, 0
+    invoke-virtual { v3, v1, v6, v4, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
+  .line 318
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->recycle()V
+  .line 319
+    invoke-static { }, Lcom/innioasis/ipp/Flow;->mirrorPaint()Landroid/graphics/Paint;
+    move-result-object v1
+    invoke-static { v3, v2, v1 }, Lcom/innioasis/ipp/Flow;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;Landroid/graphics/Paint;)V
+  :L1
+  .line 320
+    return-object v2
+  :L2
+  .line 323
+    goto :L4
+  :L3
+  .line 322
+    move-exception v1
+  :L4
+  .line 325
+    const/16 v1, 32400
+    new-array v3, v1, [I
+  .line 326
+    const/4 v1, 0
+  :L5
+    const/16 v2, 180
+    if-ge v1, v2, :L10
+  .line 327
+    const/4 v4, 0
+  :L6
+    if-ge v4, v2, :L9
+  .line 328
     add-int v5, v4, v1
     mul-int/lit8 v5, v5, 48
     div-int/lit16 v5, v5, 360
     add-int/lit8 v5, v5, 48
-  .line 313
+  .line 329
     const/4 v6, 3
-    if-lt v4, v6, :L2
-    if-lt v1, v6, :L2
+    if-lt v4, v6, :L7
+    if-lt v1, v6, :L7
     const/16 v6, 177
-    if-ge v4, v6, :L2
-    if-lt v1, v6, :L3
-  :L2
+    if-ge v4, v6, :L7
+    if-lt v1, v6, :L8
+  :L7
     const/16 v5, 96
-  :L3
-  .line 314
+  :L8
+  .line 330
     mul-int/lit16 v6, v1, 180
     add-int/2addr v6, v4
     shl-int/lit8 v7, v5, 16
@@ -556,34 +605,34 @@
     shl-int/lit8 v8, v5, 8
     or-int/2addr v7, v8
     or-int/2addr v5, v7
-    aput v5, v2, v6
-  .line 311
+    aput v5, v3, v6
+  .line 327
     add-int/lit8 v4, v4, 1
-    goto :L1
-  :L4
-  .line 310
+    goto :L6
+  :L9
+  .line 326
     add-int/lit8 v1, v1, 1
-    goto :L0
-  :L5
-  .line 317
+    goto :L5
+  :L10
+  .line 333
     invoke-static { }, Lcom/innioasis/ipp/Flow;->newSlide()Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 318
-    const/4 v3, 0
-    const/16 v4, 180
-    const/4 v5, 2
+  .line 334
+    const/4 v4, 0
+    const/16 v5, 180
     const/4 v6, 2
-    const/16 v7, 180
+    const/4 v7, 2
     const/16 v8, 180
-    move-object v1, v0
-    invoke-virtual/range { v1 .. v8 }, Landroid/graphics/Bitmap;->setPixels([IIIIIII)V
-  .line 319
+    const/16 v9, 180
+    move-object v2, v0
+    invoke-virtual/range { v2 .. v9 }, Landroid/graphics/Bitmap;->setPixels([IIIIIII)V
+  .line 335
     new-instance v1, Landroid/graphics/Canvas;
     invoke-direct { v1 }, Landroid/graphics/Canvas;-><init>()V
     invoke-static { }, Lcom/innioasis/ipp/Flow;->mirrorPaint()Landroid/graphics/Paint;
     move-result-object v2
     invoke-static { v1, v0, v2 }, Lcom/innioasis/ipp/Flow;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;Landroid/graphics/Paint;)V
-  .line 320
+  .line 336
     return-object v0
 .end method
 
@@ -591,56 +640,56 @@
   .catchall { :L0 .. :L4 } :L6
   .registers 3
   :L0
-  .line 347
+  .line 363
     invoke-static { p0 }, Lcom/innioasis/ipp/FlowCache;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object v0
-  .line 348
+  .line 364
     if-eqz v0, :L5
     invoke-virtual { v0 }, Ljava/io/File;->exists()Z
     move-result v0
     if-eqz v0, :L1
     goto :L5
   :L1
-  .line 349
+  .line 365
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrackFree(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 350
+  .line 366
     if-nez v0, :L2
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->track(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L2
-  .line 351
+  .line 367
     if-nez v0, :L3
     return-void
   :L3
-  .line 352
+  .line 368
     const/16 v1, 180
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Cover;->square(Landroid/graphics/Bitmap;I)Landroid/graphics/Bitmap;
     move-result-object v0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/FlowCache;->write(Ljava/lang/String;Landroid/graphics/Bitmap;)V
   :L4
-  .line 354
+  .line 370
     goto :L7
   :L5
-  .line 348
+  .line 364
     return-void
   :L6
-  .line 353
+  .line 369
     move-exception p0
   :L7
-  .line 355
+  .line 371
     return-void
 .end method
 
 .method static fade()Landroid/graphics/Bitmap;
   .registers 5
-  .line 336
+  .line 352
     sget-object v0, Lcom/innioasis/ipp/Flow;->fade:Landroid/graphics/Bitmap;
     if-nez v0, :L2
-  .line 337
+  .line 353
     const/16 v0, 90
     new-array v1, v0, [I
-  .line 338
+  .line 354
     const/4 v2, 0
   :L0
     const/4 v3, 1
@@ -654,26 +703,26 @@
     add-int/lit8 v2, v2, 1
     goto :L0
   :L1
-  .line 339
+  .line 355
     sget-object v2, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
     invoke-static { v1, v3, v0, v2 }, Landroid/graphics/Bitmap;->createBitmap([IIILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v0
     sput-object v0, Lcom/innioasis/ipp/Flow;->fade:Landroid/graphics/Bitmap;
   :L2
-  .line 341
+  .line 357
     sget-object v0, Lcom/innioasis/ipp/Flow;->fade:Landroid/graphics/Bitmap;
     return-object v0
 .end method
 
 .method private static fade(Landroid/view/View;)V
   .registers 3
-  .line 849
+  .line 868
     invoke-virtual { p0 }, Landroid/view/View;->getAlpha()F
     move-result v0
-  .line 850
+  .line 869
     const/4 v1, 0
     invoke-virtual { p0, v1 }, Landroid/view/View;->setAlpha(F)V
-  .line 851
+  .line 870
     invoke-virtual { p0 }, Landroid/view/View;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object p0
     invoke-virtual { p0, v0 }, Landroid/view/ViewPropertyAnimator;->alpha(F)Landroid/view/ViewPropertyAnimator;
@@ -682,27 +731,27 @@
     invoke-virtual { p0, v0, v1 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/view/ViewPropertyAnimator;->withLayer()Landroid/view/ViewPropertyAnimator;
-  .line 852
+  .line 871
     return-void
 .end method
 
 .method private static fadeIn(Landroid/app/Activity;)V
   .catchall { :L0 .. :L6 } :L10
   .registers 9
-  .line 825
+  .line 844
     const v0, 2131361957
   :L0
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 826
+  .line 845
     const v1, 2131361979
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 827
+  .line 846
     const v2, 2131361980
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 828
+  .line 847
     if-eqz v0, :L9
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
@@ -710,127 +759,127 @@
     if-nez v2, :L1
     goto :L9
   :L1
-  .line 829
+  .line 848
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
     check-cast v2, Landroid/view/ViewGroup;
-  .line 830
+  .line 849
     const/4 v3, 0
     const/4 v4, 0
   :L2
     invoke-virtual { v2 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v5
     if-ge v4, v5, :L8
-  .line 831
+  .line 850
     invoke-virtual { v2, v4 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v5
-  .line 832
+  .line 851
     invoke-virtual { v5 }, Landroid/view/View;->getId()I
     move-result v6
-  .line 833
+  .line 852
     const v7, 2131362297
     if-eq v6, v7, :L7
     const v7, 2131362191
     if-ne v6, v7, :L3
     goto :L7
   :L3
-  .line 834
+  .line 853
     if-eq v5, v0, :L4
-  .line 835
+  .line 854
     invoke-static { v5 }, Lcom/innioasis/ipp/Flow;->fade(Landroid/view/View;)V
-  .line 836
+  .line 855
     goto :L7
   :L4
-  .line 838
+  .line 857
     move-object v5, v0
     check-cast v5, Landroid/view/ViewGroup;
-  .line 839
+  .line 858
     const/4 v6, 0
   :L5
     invoke-virtual { v5 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v7
     if-ge v6, v7, :L7
-  .line 840
+  .line 859
     invoke-virtual { v5, v6 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v7
-  .line 841
+  .line 860
     if-eq v7, v1, :L6
     if-eq v7, p0, :L6
     invoke-static { v7 }, Lcom/innioasis/ipp/Flow;->fade(Landroid/view/View;)V
   :L6
-  .line 839
+  .line 858
     add-int/lit8 v6, v6, 1
     goto :L5
   :L7
-  .line 830
+  .line 849
     add-int/lit8 v4, v4, 1
     goto :L2
   :L8
-  .line 845
+  .line 864
     goto :L11
   :L9
-  .line 828
+  .line 847
     return-void
   :L10
-  .line 844
+  .line 863
     move-exception p0
   :L11
-  .line 846
+  .line 865
     return-void
 .end method
 
 .method public static flipBack(Landroid/app/Activity;)Z
   .catchall { :L0 .. :L2 } :L4
   .registers 5
-  .line 861
+  .line 880
     const-string v0, "ipp_flip_back"
     const/4 v1, 0
   :L0
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v2
-  .line 862
+  .line 881
     if-eqz v2, :L3
     invoke-virtual { v2, v0, v1 }, Landroid/content/Intent;->getBooleanExtra(Ljava/lang/String;Z)Z
     move-result v3
     if-nez v3, :L1
     goto :L3
   :L1
-  .line 863
+  .line 882
     invoke-virtual { v2, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
-  .line 864
+  .line 883
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->measure(Landroid/app/Activity;)V
-  .line 865
+  .line 884
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Flow;->returning:Z
-  .line 866
+  .line 885
     invoke-virtual { p0 }, Landroid/app/Activity;->finish()V
-  .line 867
+  .line 886
     invoke-virtual { p0, v1, v1 }, Landroid/app/Activity;->overridePendingTransition(II)V
   :L2
-  .line 868
+  .line 887
     return v0
   :L3
-  .line 862
+  .line 881
     return v1
   :L4
-  .line 869
+  .line 888
     move-exception p0
-  .line 870
+  .line 889
     return v1
 .end method
 
 .method public static flipIn(Landroid/app/Activity;)V
   .catchall { :L0 .. :L5 } :L7
   .registers 4
-  .line 802
+  .line 821
     const-string v0, "ipp_flip"
     const-string v1, "base"
     invoke-static { v1 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
   :L0
-  .line 804
+  .line 823
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v1
-  .line 805
+  .line 824
     if-eqz v1, :L6
     const/4 v2, 0
     invoke-virtual { v1, v0, v2 }, Landroid/content/Intent;->getBooleanExtra(Ljava/lang/String;Z)Z
@@ -838,17 +887,17 @@
     if-nez v2, :L1
     goto :L6
   :L1
-  .line 807
+  .line 826
     invoke-virtual { v1, v0 }, Landroid/content/Intent;->removeExtra(Ljava/lang/String;)V
-  .line 808
+  .line 827
     const-string v0, "ipp_flip_back"
     const/4 v2, 1
     invoke-virtual { v1, v0, v2 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
-  .line 811
+  .line 830
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 812
+  .line 831
     if-nez v0, :L2
     const/4 v0, 0
     goto :L3
@@ -856,7 +905,7 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingMusic()Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L3
-  .line 813
+  .line 832
     if-eqz v0, :L4
     instance-of v1, p0, Lcom/innioasis/y1/base/BasePlayerActivity;
     if-eqz v1, :L4
@@ -866,43 +915,43 @@
     move-result-object v0
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Cover;->instantCover(Lcom/innioasis/y1/base/BasePlayerActivity;Ljava/lang/String;)V
   :L4
-  .line 814
+  .line 833
     const-string v0, "cover"
     invoke-static { v0 }, Lcom/innioasis/ipp/Open;->step(Ljava/lang/String;)V
-  .line 815
+  .line 834
     invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->fadeIn(Landroid/app/Activity;)V
   :L5
-  .line 817
+  .line 836
     goto :L8
   :L6
-  .line 805
+  .line 824
     return-void
   :L7
-  .line 816
+  .line 835
     move-exception p0
   :L8
-  .line 818
+  .line 837
     return-void
 .end method
 
 .method public static geo(Landroid/content/Context;)[F
   .catchall { :L3 .. :L9 } :L11
   .registers 6
-  .line 715
+  .line 731
     invoke-static { }, Lcom/innioasis/ipp/Cover;->flatCover()Z
     move-result v0
-  .line 716
+  .line 732
     if-eqz v0, :L0
     sget-object v1, Lcom/innioasis/ipp/Flow;->geoFlat:[F
     goto :L1
   :L0
     sget-object v1, Lcom/innioasis/ipp/Flow;->geoTilt:[F
   :L1
-  .line 717
+  .line 733
     if-eqz v1, :L2
     return-object v1
   :L2
-  .line 719
+  .line 735
     const/16 v1, 11
   :L3
     new-instance v2, Ljava/lang/StringBuilder;
@@ -923,18 +972,18 @@
     const/4 v3, 0
     invoke-static { p0, v2, v3 }, Lcom/innioasis/ipp/Prefs;->getString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 720
+  .line 736
     if-eqz p0, :L10
-  .line 721
+  .line 737
     const-string v2, ","
     invoke-virtual { p0, v2 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
     move-result-object p0
-  .line 722
+  .line 738
     array-length v2, p0
     if-ne v2, v1, :L10
-  .line 723
+  .line 739
     new-array v2, v1, [F
-  .line 724
+  .line 740
     const/4 v3, 0
   :L6
     if-ge v3, v1, :L7
@@ -945,34 +994,34 @@
     add-int/lit8 v3, v3, 1
     goto :L6
   :L7
-  .line 725
+  .line 741
     if-eqz v0, :L8
     sput-object v2, Lcom/innioasis/ipp/Flow;->geoFlat:[F
     goto :L9
   :L8
-  .line 726
+  .line 742
     sput-object v2, Lcom/innioasis/ipp/Flow;->geoTilt:[F
   :L9
-  .line 727
+  .line 743
     return-object v2
   :L10
-  .line 731
+  .line 747
     goto :L12
   :L11
-  .line 730
+  .line 746
     move-exception p0
   :L12
-  .line 732
+  .line 748
     if-eqz v0, :L13
     new-array p0, v1, [F
     fill-array-data p0, :L15
     goto :L14
   :L13
-  .line 733
+  .line 749
     new-array p0, v1, [F
     fill-array-data p0, :L16
   :L14
-  .line 732
+  .line 748
     return-object p0
   :L15
   .array-data 4
@@ -1006,11 +1055,11 @@
 
 .method private static measure(Landroid/app/Activity;)V
   .registers 9
-  .line 737
+  .line 753
     const v0, 2131361979
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 738
+  .line 754
     if-eqz v0, :L0
     invoke-virtual { v0 }, Landroid/view/View;->getVisibility()I
     move-result v1
@@ -1020,7 +1069,7 @@
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
   :L1
-  .line 739
+  .line 755
     if-eqz v0, :L10
     invoke-virtual { v0 }, Landroid/view/View;->getVisibility()I
     move-result v1
@@ -1030,15 +1079,15 @@
     if-gtz v1, :L2
     goto/16 :L10
   :L2
-  .line 741
+  .line 757
     const/4 v1, 2
     new-array v2, v1, [I
-  .line 742
+  .line 758
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v3
     check-cast v3, Landroid/view/View;
     invoke-virtual { v3, v2 }, Landroid/view/View;->getLocationInWindow([I)V
-  .line 743
+  .line 759
     const/16 v3, 11
     new-array v4, v3, [F
     const/4 v5, 0
@@ -1064,7 +1113,7 @@
     int-to-float v1, v1
     const/4 v2, 3
     aput v1, v4, v2
-  .line 744
+  .line 760
     invoke-virtual { v0 }, Landroid/view/View;->getPivotX()F
     move-result v1
     const/4 v2, 4
@@ -1077,7 +1126,7 @@
     invoke-virtual { v0 }, Landroid/view/View;->getRotationY()F
     move-result v2
     aput v2, v4, v1
-  .line 745
+  .line 761
     invoke-virtual { v0 }, Landroid/view/View;->getPaddingLeft()I
     move-result v1
     int-to-float v1, v1
@@ -1098,37 +1147,37 @@
     int-to-float v0, v0
     const/16 v1, 10
     aput v0, v4, v1
-  .line 746
+  .line 762
     invoke-static { }, Lcom/innioasis/ipp/Cover;->flatCover()Z
     move-result v0
-  .line 747
+  .line 763
     if-eqz v0, :L3
     sput-object v4, Lcom/innioasis/ipp/Flow;->geoFlat:[F
     goto :L4
   :L3
-  .line 748
+  .line 764
     sput-object v4, Lcom/innioasis/ipp/Flow;->geoTilt:[F
   :L4
-  .line 749
+  .line 765
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 750
+  .line 766
     nop
   :L5
     if-ge v5, v3, :L7
-  .line 751
+  .line 767
     if-lez v5, :L6
     const/16 v2, 44
     invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
   :L6
-  .line 752
+  .line 768
     aget v2, v4, v5
     invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(F)Ljava/lang/StringBuilder;
-  .line 750
+  .line 766
     add-int/lit8 v5, v5, 1
     goto :L5
   :L7
-  .line 754
+  .line 770
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "flow_geo_"
@@ -1147,10 +1196,10 @@
     invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v1
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Prefs;->setString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
-  .line 755
+  .line 771
     return-void
   :L10
-  .line 739
+  .line 755
     return-void
 .end method
 
@@ -1271,12 +1320,12 @@
 
 .method public static takeReturning()Z
   .registers 2
-  .line 708
+  .line 724
     sget-boolean v0, Lcom/innioasis/ipp/Flow;->returning:Z
-  .line 709
+  .line 725
     const/4 v1, 0
     sput-boolean v1, Lcom/innioasis/ipp/Flow;->returning:Z
-  .line 710
+  .line 726
     return v0
 .end method
 
@@ -1333,7 +1382,7 @@
 
 .method public static trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
   .registers 3
-  .line 762
+  .line 778
     const/4 v0, 0
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
     move-result-object p0
@@ -1341,11 +1390,11 @@
 .end method
 
 .method private static trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
-  .catchall { :L2 .. :L12 } :L15
-  .catchall { :L12 .. :L14 } :L13
-  .catchall { :L14 .. :L15 } :L15
+  .catchall { :L2 .. :L14 } :L17
+  .catchall { :L14 .. :L16 } :L15
+  .catchall { :L16 .. :L17 } :L17
   .registers 8
-  .line 776
+  .line 792
     const/4 v0, 1
     const/4 v1, 0
     if-eqz p2, :L0
@@ -1354,7 +1403,7 @@
   :L0
     const/4 v2, 0
   :L1
-  .line 777
+  .line 793
     const/4 v3, 0
     if-nez p0, :L2
     move-object p0, v3
@@ -1363,77 +1412,94 @@
     invoke-virtual { p0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
   :L3
-  .line 778
-    if-nez p0, :L4
-    move-object v4, v3
-    goto :L6
+  .line 795
+    if-eqz p0, :L4
+    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->knownNone(Ljava/lang/String;)Z
+    move-result v4
+    if-eqz v4, :L4
+    invoke-static { }, Lcom/innioasis/ipp/Cover;->blankCover()Landroid/graphics/Bitmap;
+    move-result-object p0
+    return-object p0
   :L4
-    if-eqz v2, :L5
+  .line 796
+    if-nez p0, :L5
+    move-object v4, v3
+    goto :L7
+  :L5
+    if-eqz v2, :L6
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrackFree(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v4
-    goto :L6
-  :L5
+    goto :L7
+  :L6
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrack(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v4
-  :L6
-  .line 779
-    if-nez v4, :L9
-    if-eqz p1, :L9
-  .line 780
+  :L7
+  .line 797
+    if-nez v4, :L11
+    if-eqz p1, :L11
+  .line 798
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object p0
-  .line 781
-    if-eqz v2, :L7
+  .line 799
+    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->knownNone(Ljava/lang/String;)Z
+    move-result p1
+    if-eqz p1, :L8
+    invoke-static { }, Lcom/innioasis/ipp/Cover;->blankCover()Landroid/graphics/Bitmap;
+    move-result-object p0
+    return-object p0
+  :L8
+  .line 800
+    if-eqz v2, :L9
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrackFree(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object p1
-    goto :L8
-  :L7
+    goto :L10
+  :L9
     invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->peekTrack(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object p1
-  :L8
-    move-object v4, p1
-  :L9
-  .line 783
-    if-nez v4, :L10
-    return-object v3
   :L10
-  .line 784
-    if-eqz v2, :L11
-  .line 785
-    aput-object v4, p2, v1
-  .line 786
-    aput-object p0, p2, v0
+    move-object v4, p1
   :L11
-  .line 790
+  .line 802
+    if-nez v4, :L12
+    return-object v3
+  :L12
+  .line 803
+    if-eqz v2, :L13
+  .line 804
+    aput-object v4, p2, v1
+  .line 805
+    aput-object p0, p2, v0
+  :L13
+  .line 809
     const-class p0, Lcom/innioasis/ipp/Cover;
     monitor-enter p0
-  :L12
-  .line 791
+  :L14
+  .line 810
     invoke-static { v4 }, Lcom/innioasis/ipp/Cover;->fitCover(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/Cover;->reflect(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
     move-result-object p1
-  .line 792
+  .line 811
     invoke-static { p1 }, Lcom/innioasis/ipp/Cover;->hold(Landroid/graphics/Bitmap;)V
-  .line 793
+  .line 812
     monitor-exit p0
     return-object p1
-  :L13
-  .line 794
+  :L15
+  .line 813
     move-exception p1
     monitor-exit p0
-  :L14
+  :L16
     throw p1
-  :L15
-  .line 795
+  :L17
+  .line 814
     move-exception p0
-  .line 796
+  .line 815
     return-object v3
 .end method
 
 .method public static tripAhead(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
   .registers 3
-  .line 771
+  .line 787
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
     move-result-object p0
     return-object p0

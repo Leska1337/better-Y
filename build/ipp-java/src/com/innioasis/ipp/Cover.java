@@ -1,6 +1,7 @@
 package com.innioasis.ipp;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.LinearGradient;
 import android.graphics.Matrix;
@@ -9,9 +10,11 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
+import android.graphics.drawable.BitmapDrawable;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.base.BasePlayerActivity;
 import com.innioasis.y1.databinding.ActivityMusicPlayerBinding;
@@ -127,22 +130,7 @@ public final class Cover {
             }
             Canvas c = new Canvas(out);
             c.drawBitmap(src, 0.0f, 0.0f, null);
-
-            float k = (w > REFL_W) ? ((float) REFL_W / (float) w) : 1.0f;
-            Matrix m = new Matrix();
-            m.preScale(k, -k);
-            Bitmap mir = Bitmap.createBitmap(src, 0, half, w, half, m, true);
-            Paint p = new Paint();
-            p.setFilterBitmap(true);
-            p.setAntiAlias(true);
-            c.drawBitmap(mir, null, new Rect(0, h, w, h + half), p);
-
-            // stock's fade
-            Paint g = new Paint();
-            g.setShader(new LinearGradient(0.0f, h, 0.0f, h + half, 0x70FFFFFF, 0x00FFFFFF,
-                    Shader.TileMode.CLAMP));
-            g.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-            c.drawRect(0.0f, h, w, h + half, g);
+            mirror(c, src, w, h);
 
             if (reflOut != held) spare = reflOut;
             reflIn = new WeakReference(src);
@@ -152,6 +140,26 @@ public final class Cover {
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    /** The faded mirror of {@code src}'s lower half, under it on {@code c}. */
+    private static void mirror(Canvas c, Bitmap src, int w, int h) {
+        int half = h / 2;
+        float k = (w > REFL_W) ? ((float) REFL_W / (float) w) : 1.0f;
+        Matrix m = new Matrix();
+        m.preScale(k, -k);
+        Bitmap mir = Bitmap.createBitmap(src, 0, half, w, half, m, true);
+        Paint p = new Paint();
+        p.setFilterBitmap(true);
+        p.setAntiAlias(true);
+        c.drawBitmap(mir, null, new Rect(0, h, w, h + half), p);
+
+        // stock's fade
+        Paint g = new Paint();
+        g.setShader(new LinearGradient(0.0f, h, 0.0f, h + half, 0x70FFFFFF, 0x00FFFFFF,
+                Shader.TileMode.CLAMP));
+        g.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+        c.drawRect(0.0f, h, w, h + half, g);
     }
 
     public static void tilt(BasePlayerActivity a) {
@@ -166,17 +174,28 @@ public final class Cover {
                     (ViewGroup.MarginLayoutParams) v.getLayoutParams();
             if (lp == null) return;
             capture(lp);
+            shape(vb, v, lp, leftOf(lp));
+        } catch (Throwable t) {
+        }
+    }
 
-            // The placeholder (cover_bg2) is never tilted; its box is blank()'s. FIT_START in both
-            // looks: the layout's centerCrop crops as soon as the box changes, and it does below.
+    /**
+     * The cover's box, padding and tilt on {@code v}: {@code cover_bg} itself, or the placeholder
+     * put exactly where a cover stands ({@code left} is the cover's). FIT_START in both looks: the
+     * layout's centerCrop crops as soon as the box changes, and it does below.
+     */
+    private static void shape(ActivityMusicPlayerBinding vb, ReflectImageView v,
+                              ViewGroup.MarginLayoutParams lp, int left) {
+        try {
+            if (boxW <= 0 || boxH <= 0) return;
             boolean flat = flatCover();
-            int side = boxW - inset(vb, boxW, leftOf(lp));      // the width the cover is DRAWN at
+            int side = boxW - inset(vb, boxW, left);      // the width the cover is DRAWN at
             v.setScaleType(ImageView.ScaleType.FIT_START);
 
             if (flat) {
                 v.setRotationY(0.0f);
                 v.setPadding(0, 0, boxW - side, 0);
-                box(v, lp, boxW, boxH, topFor(vb, lp, side), leftOf(lp));
+                box(v, lp, boxW, boxH, topFor(vb, lp, side), left);
                 return;
             }
             v.setPadding(0, 0, 0, 0);
@@ -192,7 +211,7 @@ public final class Cover {
             // the height and changes nothing.
             int w = tiltWidth(v, side);
             int nh = Math.round((float) w * boxH / boxW);
-            box(v, lp, w, nh, topFor(vb, lp, w), leftOf(lp));
+            box(v, lp, w, nh, topFor(vb, lp, w), left);
             if (nh > 0) v.setPivotY(nh / 3.0f);   // stock's rule, new height
         } catch (Throwable t) {
         }
@@ -317,7 +336,8 @@ public final class Cover {
     }
 
     /**
-     * {@code cover_bg2}, the no-artwork placeholder, in exactly the box a flat cover gets. From
+     * {@code cover_bg2}, the no-artwork placeholder, shown as a cover is: same box, same tilt or
+     * none as "Tilt the cover" says, same frame and reflection. From
      * {@link #instantCover}, once per track before anything knows whether there is a cover — the
      * one place sure to run; stock shows the placeholder later with nothing of ours in between.
      */
@@ -333,16 +353,51 @@ public final class Cover {
                     (ViewGroup.MarginLayoutParams) vb.coverBg.getLayoutParams();
             if (lp == null || cp == null) return;
             capture(cp);                        // runs before tilt on the coverless path
-            if (boxW <= 0 || boxH <= 0) return;
-
-            int left = leftOf(cp);
-            int side = boxW - inset(vb, boxW, left);      // the width a cover is drawn at
-            v.setScaleType(ImageView.ScaleType.FIT_START);
-            v.setPadding(0, 0, 0, 0);
-            box(v, lp, side, Math.round((float) side * boxH / boxW),
-                    topFor(vb, lp, side), left);
+            Bitmap pic = blankCover();
+            android.graphics.drawable.Drawable d = v.getDrawable();
+            if (pic != null && !(d instanceof BitmapDrawable && ((BitmapDrawable) d).getBitmap() == pic)) {
+                // past setImageBitmap: that one reflects again, through the cover's own buffers
+                v.setImageDrawable(new BitmapDrawable(a.getResources(), pic));
+            }
+            shape(vb, v, lp, leftOf(cp));
         } catch (Throwable t) {
         }
+    }
+
+    private static Bitmap blankPic;
+    private static int blankLook = -1;
+
+    /** The placeholder as a cover is shown, framed for the look and reflected; also what Cover Flow flies. One per look. */
+    public static synchronized Bitmap blankCover() {
+        boolean flat = flatCover();
+        int now = flat ? 0 : 1;
+        if (blankPic != null && blankLook == now && !blankPic.isRecycled()) return blankPic;
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap src = BitmapFactory.decodeResource(
+                Y1Application.Companion.getAppContext().getResources(), R.drawable.bg_player_cover_view, o);
+        if (src == null) return null;
+        int w = src.getWidth();
+        int h = src.getHeight();
+        int side = w <= h ? w : h;
+        int f = flat ? 0 : 2;               // softEdge's frame: left, right and top
+        Bitmap framed = Bitmap.createBitmap(side + 2 * f, side + f, Bitmap.Config.ARGB_8888);
+        Paint p = new Paint(Paint.FILTER_BITMAP_FLAG);
+        int x = (w - side) / 2;
+        int y = (h - side) / 2;
+        new Canvas(framed).drawBitmap(src, new Rect(x, y, x + side, y + side),
+                new Rect(f, f, f + side, f + side), p);
+        src.recycle();
+        int fw = framed.getWidth();
+        int fh = framed.getHeight();
+        Bitmap out = Bitmap.createBitmap(fw, fh + fh / 2, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(out);
+        c.drawBitmap(framed, 0, 0, null);
+        mirror(c, framed, fw, fh);
+        framed.recycle();
+        blankPic = out;
+        blankLook = now;
+        return out;
     }
 
     /**

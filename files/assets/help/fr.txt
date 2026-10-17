@@ -59,6 +59,13 @@ Définit la couleur des lignes de texte et des repères de temps du lecteur.
 * Couleur du thème
 Définit la couleur des paroles dans le lecteur.
 
+[box_tint] Couleur des cadres
+* Clair
+* Sombre
+* Couleur du thème
+* Désactivé
+Définit la couleur des cadres derrière les lignes de texte et les boutons dans le lecteur.
+
 [cover_tilt] Incliner la pochette
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

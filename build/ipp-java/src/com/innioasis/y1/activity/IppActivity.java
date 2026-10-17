@@ -222,6 +222,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(CHOICE, "icon_tint", 3, null, null));
         l.add(new Item(CHOICE, Tint.KEY_TEXT, 3, null, null));
         l.add(new Item(CHOICE, Tint.KEY_LYRICS, 3, null, null));
+        l.add(new Item(CHOICE, Tint.KEY_BOX, 4, null, null));
         l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
         l.add(new Item(CHOICE, "top_hold", 3, null, null));
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));

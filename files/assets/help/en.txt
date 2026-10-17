@@ -62,6 +62,13 @@ Sets the colour of the text lines and the time marks in the player.
 * Theme color
 Sets the colour of the lyrics in the player.
 
+[box_tint] Text boxes color
+* Light
+* Dark
+* Theme color
+* Off
+Sets the colour of the boxes behind the text lines and the buttons in the player.
+
 [cover_tilt] Tilt the cover
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

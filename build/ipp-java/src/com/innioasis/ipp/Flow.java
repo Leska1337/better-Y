@@ -304,8 +304,24 @@ public final class Flow {
         return p;
     }
 
-    /** The blank card PictureFlow draws for an album without a cover. */
+    /** The card for an album without a cover: {@code ipp_flow_blank}, drawn at S whatever its size. */
     static Bitmap blank() {
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inScaled = false;
+            Bitmap src = BitmapFactory.decodeResource(Y1Application.Companion.getAppContext().getResources(),
+                    R.drawable.ipp_flow_blank, o);
+            if (src != null) {
+                Bitmap b = newSlide();
+                Canvas c = new Canvas(b);
+                c.drawBitmap(src, null, new Rect(F, F, F + S, F + S), new Paint(Paint.FILTER_BITMAP_FLAG));
+                src.recycle();
+                mirror(c, b, mirrorPaint());
+                return b;
+            }
+        } catch (Throwable t) {
+        }
+        // PictureFlow's own grey card
         int[] px = new int[S * S];
         for (int y = 0; y < S; y++) {
             for (int x = 0; x < S; x++) {
@@ -775,9 +791,12 @@ public final class Flow {
         try {
             boolean free = src != null;
             String at = track == null ? null : track.getPath();
+            // a track known to have no artwork shows the placeholder, not its album's cover
+            if (at != null && BigCover.knownNone(at)) return Cover.blankCover();
             Bitmap b = at == null ? null : free ? BigCover.peekTrackFree(at) : BigCover.peekTrack(at);
             if (b == null && rep != null) {
                 at = rep.getPath();
+                if (BigCover.knownNone(at)) return Cover.blankCover();
                 b = free ? BigCover.peekTrackFree(at) : BigCover.peekTrack(at);
             }
             if (b == null) return null;

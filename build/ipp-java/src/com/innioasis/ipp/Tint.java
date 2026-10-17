@@ -11,7 +11,8 @@ import me.wcy.lrcview.LrcView;
 
 /**
  * The colour of the player's text: "text_tint" for the information lines and time marks,
- * "lyrics_tint" for the lyrics window. Values as "Icon color": 0 LIGHT (white, stock), 1 DARK,
+ * "lyrics_tint" for the lyrics window, "box_tint" for the boxes behind the lines and the
+ * buttons. Values as "Icon color": 0 LIGHT (white, stock), 1 DARK,
  * 2 THEME (the timeline's colour, then the list text's, then a last resort — 0 is invisible).
  * Unsung lyric lines are the sung colour at half alpha.
  *
@@ -26,8 +27,12 @@ public final class Tint {
 
     public static final String KEY_LYRICS = "lyrics_tint";
 
+    public static final String KEY_BOX = "box_tint";
+
     private static final int DARK = 1;
     private static final int THEME = 2;
+    /** "box_tint" only: no boxes at all. */
+    private static final int BOX_OFF = 3;
 
     private static final int WHITE = 0xFFFFFFFF;
     private static final int BLACK = 0xFF121212;
@@ -36,6 +41,9 @@ public final class Tint {
     private static final int ACCENT = 0xFF3CFFDE;
 
     private static final int HALF = 0x80;
+
+    /** The layout's {@code #1affffff}. */
+    private static final int BOX_ALPHA = 0x1A;
 
     private static final int NO_COLOR = 0;
 
@@ -52,6 +60,12 @@ public final class Tint {
             paint(a, R.id.tv_play_all, text);
             // The heading above the lyrics follows the information lines, not the lyrics.
             paint(a, R.id.tv_song_name2, text);
+            int box = Prefs.val(a, KEY_BOX) == BOX_OFF ? 0 : box(color(a, KEY_BOX, WHITE));
+            back(a, R.id.tv_bookname, box);
+            back(a, R.id.tv_bookplayer, box);
+            back(a, R.id.tv_album, box);
+            back(a, R.id.tv_index_of_songs, box);
+            back(a, R.id.layout_status_icon, box);
             lyrics(a);
         } catch (Throwable t) {
         }
@@ -65,6 +79,17 @@ public final class Tint {
         // Also the colour of the "no lyrics" label.
         lrc.setCurrentColor(c);
         lrc.setNormalColor(Color.argb(HALF, Color.red(c), Color.green(c), Color.blue(c)));
+    }
+
+    /** The colour at the layout's own opacity: the box only shades what is under it. */
+    private static int box(int c) {
+        return (BOX_ALPHA << 24) | (c & 0xFFFFFF);
+    }
+
+    /** Over the layout's ColorDrawable, which this recolours rather than replaces: no layout pass. */
+    private static void back(Activity a, int id, int color) {
+        View v = a.findViewById(id);
+        if (v != null) v.setBackgroundColor(color);
     }
 
     private static void paint(Activity a, int id, int color) {

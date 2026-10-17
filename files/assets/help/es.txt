@@ -59,6 +59,13 @@ Establece el color de las líneas de texto y de las marcas de tiempo del reprodu
 * Color del tema
 Establece el color de la letra de la canción en el reproductor.
 
+[box_tint] Color de los recuadros
+* Claro
+* Oscuro
+* Color del tema
+* Desactivado
+Establece el color de los recuadros detrás de las líneas de texto y los botones en el reproductor.
+
 [cover_tilt] Inclinar la carátula
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

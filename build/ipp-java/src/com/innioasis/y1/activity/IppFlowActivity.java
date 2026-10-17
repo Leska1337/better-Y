@@ -313,6 +313,14 @@ public final class IppFlowActivity extends BaseActivity {
         state = 5;
         Frames.start("from player");
         hold(true);
+        // it leaves with what the player shows now: the track may have changed since the way in
+        try {
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            Song now = ps == null ? null : ps.getPlayingMusic();
+            Bitmap shown = now == null ? null : Flow.trip(now, null);
+            if (shown != null) trip.setImageBitmap(shown);
+        } catch (Throwable t) {
+        }
         // it lands as the album's slide, so a track's own cover turns into the album's on the way
         if (flipped >= 0 && flipped < items.size()) {
             Bitmap album = Flow.trip(null, ((Flow.Item) items.get(flipped)).rep);

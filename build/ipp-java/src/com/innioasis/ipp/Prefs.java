@@ -27,6 +27,7 @@ public final class Prefs {
         def("icon_tint", 0);                 // Icons.LIGHT, private there
         def(Tint.KEY_TEXT, 0);               // white, as the layout had it
         def(Tint.KEY_LYRICS, 0);
+        def(Tint.KEY_BOX, 0);                // white, as the layout had it
         def(Cover.KEY_TILT, 1);              // the stock, iPod-like look
         def("top_hold", 1);                  // Queue
         def("book_top_hold", 1);             // Queue

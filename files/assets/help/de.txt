@@ -59,6 +59,13 @@ Legt die Farbe der Textzeilen und der Zeitangaben im Player fest.
 * Themenfarbe
 Legt die Farbe des Songtexts im Player fest.
 
+[box_tint] Farbe der Textfelder
+* Hell
+* Dunkel
+* Themenfarbe
+* Aus
+Legt die Farbe der Felder hinter den Textzeilen und den Tasten im Player fest.
+
 [cover_tilt] Cover neigen
 @img cover_tilt_on.png {On}
 @img cover_tilt_off.png {Off}

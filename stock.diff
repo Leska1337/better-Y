@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..894a1d03 100644
+index 01b1f730..13ba0340 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..894a1d03 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100181
++  versionCode: 10100186
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -8771,10 +8771,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..b587f96e 100644
+index 803c1e7a..1f667f54 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5670 @@
+@@ -1,5519 +1,5671 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -17175,6 +17175,7 @@ index 803c1e7a..b587f96e 100644
 +    <public type="drawable" name="utils_toast_bg" id="0x7f0801a3" />
 +    <public type="drawable" name="volume_seekbar" id="0x7f0801a4" />
 +    <public type="drawable" name="plus_logo" id="0x7f0801a5" />
++    <public type="drawable" name="ipp_flow_blank" id="0x7f0801a6" />
 +    <public type="font" name="montserrat_bold" id="0x7f090000" />
 +    <public type="id" name="ALT" id="0x7f0a0000" />
 +    <public type="id" name="BOTTOM_END" id="0x7f0a0001" />
@@ -19965,7 +19966,7 @@ index 803c1e7a..b587f96e 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..eaa31fb6 100644
+index 71fe29d0..487fdc51 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20914,7 +20915,7 @@ index 71fe29d0..eaa31fb6 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev181</string>
++    <string name="ipp_version">v1.1.0-dev186</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
