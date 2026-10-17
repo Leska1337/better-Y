@@ -22,39 +22,39 @@
 
 .method constructor <init>(Landroid/content/Context;IF)V
   .registers 5
-  .line 302
+  .line 354
     invoke-direct { p0, p1 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
-  .line 296
+  .line 348
     new-instance p1, Landroid/graphics/Paint;
     const/4 v0, 1
     invoke-direct { p1, v0 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object p1, p0, Lcom/innioasis/ipp/Blue$Spin;->paint:Landroid/graphics/Paint;
-  .line 297
+  .line 349
     new-instance v0, Landroid/graphics/RectF;
     invoke-direct { v0 }, Landroid/graphics/RectF;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Blue$Spin;->box:Landroid/graphics/RectF;
-  .line 303
+  .line 355
     iput p2, p0, Lcom/innioasis/ipp/Blue$Spin;->rgb:I
-  .line 304
+  .line 356
     iput p3, p0, Lcom/innioasis/ipp/Blue$Spin;->ring:F
-  .line 305
+  .line 357
     sget-object p2, Landroid/graphics/Paint$Style;->STROKE:Landroid/graphics/Paint$Style;
     invoke-virtual { p1, p2 }, Landroid/graphics/Paint;->setStyle(Landroid/graphics/Paint$Style;)V
-  .line 306
+  .line 358
     invoke-virtual { p1, p3 }, Landroid/graphics/Paint;->setStrokeWidth(F)V
-  .line 307
+  .line 359
     sget-object p2, Landroid/graphics/Paint$Cap;->ROUND:Landroid/graphics/Paint$Cap;
     invoke-virtual { p1, p2 }, Landroid/graphics/Paint;->setStrokeCap(Landroid/graphics/Paint$Cap;)V
-  .line 308
+  .line 360
     return-void
 .end method
 
 .method protected onDraw(Landroid/graphics/Canvas;)V
   .registers 13
-  .line 321
+  .line 373
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->save()I
     move-result v0
-  .line 322
+  .line 374
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Blue$Spin;->getWidth()I
     move-result v1
     int-to-float v1, v1
@@ -67,7 +67,7 @@
     const/high16 v2, 0xBF800000
     const/high16 v4, 0x3F800000
     invoke-virtual { p1, v2, v4, v1, v3 }, Landroid/graphics/Canvas;->scale(FFFF)V
-  .line 323
+  .line 375
     iget-object v6, p0, Lcom/innioasis/ipp/Blue$Spin;->box:Landroid/graphics/RectF;
     const/4 v7, 0
     const/high16 v8, 0x43960000
@@ -75,26 +75,26 @@
     iget-object v10, p0, Lcom/innioasis/ipp/Blue$Spin;->paint:Landroid/graphics/Paint;
     move-object v5, p1
     invoke-virtual/range { v5 .. v10 }, Landroid/graphics/Canvas;->drawArc(Landroid/graphics/RectF;FFZLandroid/graphics/Paint;)V
-  .line 324
+  .line 376
     invoke-virtual { p1, v0 }, Landroid/graphics/Canvas;->restoreToCount(I)V
-  .line 325
+  .line 377
     return-void
 .end method
 
 .method protected onSizeChanged(IIII)V
   .registers 8
-  .line 311
+  .line 363
     iget p3, p0, Lcom/innioasis/ipp/Blue$Spin;->ring:F
     const/high16 p4, 0x40000000
     div-float/2addr p3, p4
-  .line 312
+  .line 364
     iget-object v0, p0, Lcom/innioasis/ipp/Blue$Spin;->box:Landroid/graphics/RectF;
     int-to-float p1, p1
     sub-float v1, p1, p3
     int-to-float p2, p2
     sub-float v2, p2, p3
     invoke-virtual { v0, p3, p3, v1, v2 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 315
+  .line 367
     iget-object p3, p0, Lcom/innioasis/ipp/Blue$Spin;->paint:Landroid/graphics/Paint;
     new-instance v0, Landroid/graphics/SweepGradient;
     div-float/2addr p1, p4
@@ -109,7 +109,7 @@
     fill-array-data v1, :L0
     invoke-direct { v0, p1, p2, p4, v1 }, Landroid/graphics/SweepGradient;-><init>(FF[I[F)V
     invoke-virtual { p3, v0 }, Landroid/graphics/Paint;->setShader(Landroid/graphics/Shader;)Landroid/graphics/Shader;
-  .line 317
+  .line 369
     return-void
   :L0
   .array-data 4

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..dfc2530e 100644
+index 01b1f730..894a1d03 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..dfc2530e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100180
++  versionCode: 10100181
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -197,7 +197,7 @@ index dd92a115..d05efa91 100644
          <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:layout_gravity="center_vertical" android:id="@id/battery_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="70%" android:singleLine="true" android:layout_marginEnd="5.0dip" />
      </LinearLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
-index 3fff8427..5228f386 100644
+index 3fff8427..32bbd5af 100644
 --- a/build/src/res/layout/activity_blutooth.xml
 +++ b/build/src/res/layout/activity_blutooth.xml
 @@ -1,16 +1,25 @@
@@ -205,12 +205,14 @@ index 3fff8427..5228f386 100644
  <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android">
 -    <LinearLayout android:orientation="horizontal" android:id="@id/layout_title" android:background="@drawable/item_selected_no_arrow" android:padding="10.0dip" android:layout_width="fill_parent" android:layout_height="75.0dip">
+-        <TextView android:textSize="24.0sp" android:textColor="@color/white" android:id="@id/tv_title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bluetooth" android:layout_weight="1.0" />
+-        <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
 +    <!-- ipp: gravity=center_vertical. "Bluetooth" is wrap_content with no layout_gravity of its
 +         own, so in a horizontal LinearLayout it sat against the TOP of the 75dip row while the
 +         On/Off label beside it (layout_gravity="center") was centred. -->
 +    <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/layout_title" android:background="@drawable/item_selected_no_arrow" android:padding="10.0dip" android:layout_width="fill_parent" android:layout_height="75.0dip">
-         <TextView android:textSize="24.0sp" android:textColor="@color/white" android:id="@id/tv_title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bluetooth" android:layout_weight="1.0" />
-         <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
++        <TextView android:textStyle="bold" android:includeFontPadding="false" android:textSize="24.0sp" android:textColor="@color/white" android:id="@id/tv_title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/bluetooth" android:layout_weight="1.0" />
++        <TextView android:textStyle="bold" android:includeFontPadding="false" android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="20.0dip" />
      </LinearLayout>
 -    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/loading" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/bl_loading" />
 +    <!-- ipp: the "Searching..." line at no height. Stock shows and hides it as the discovery
@@ -704,7 +706,7 @@ index 4b9d1219..1f123ae8 100644
 +    </LinearLayout>
 +</RelativeLayout>
 diff --git a/build/src/res/layout/item_blutooth.xml b/build/src/res/layout/item_blutooth.xml
-index 7bfa38ba..5aaa58de 100644
+index 7bfa38ba..e1fd92df 100644
 --- a/build/src/res/layout/item_blutooth.xml
 +++ b/build/src/res/layout/item_blutooth.xml
 @@ -1,6 +1,12 @@
@@ -718,8 +720,8 @@ index 7bfa38ba..5aaa58de 100644
 -    <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginStart="20.0dip" />
 -    <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 +    <LinearLayout android:gravity="center" android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_weight="1.0" android:paddingStart="20.0dip" android:paddingEnd="15.0dip">
-+        <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" />
-+        <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" />
++        <TextView android:textStyle="bold" android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/tv_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" />
++        <TextView android:textStyle="bold" android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/tv_state" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 +    </LinearLayout>
 +    <View android:layout_width="fill_parent" android:layout_height="1.0px" />
  </LinearLayout>
@@ -19963,7 +19965,7 @@ index 803c1e7a..b587f96e 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..4f1fdfd4 100644
+index 71fe29d0..eaa31fb6 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20912,7 +20914,7 @@ index 71fe29d0..4f1fdfd4 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev180</string>
++    <string name="ipp_version">v1.1.0-dev181</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

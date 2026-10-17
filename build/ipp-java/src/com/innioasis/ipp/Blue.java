@@ -220,10 +220,60 @@ public final class Blue {
             LinearLayout col = (LinearLayout) mine.getParent();
             band(col, mine, null);
             // The other caption has no id: it is the column's one remaining TextView.
-            band(col, plain(col), spinner(a));
+            View top = band(col, plain(col), spinner(a));
+            // with no paired device the two bands touch: the first one's bottom rule is enough
+            RecyclerView.Adapter ad = vb.recyclerMyDevice.getAdapter();
+            if (top != null && ad != null) {
+                Touch w = new Touch(ad, top);
+                ad.registerAdapterDataObserver(w);
+                w.onChanged();
+            }
+            capCentre(vb.tvTitle);
+            capCentre(vb.tvState);
             searching(a);
         } catch (Throwable t) {
         }
+    }
+
+    /** The "Other devices" band's top rule, there only while paired devices stand above it. */
+    static final class Touch extends RecyclerView.AdapterDataObserver {
+        private final RecyclerView.Adapter ad;
+        private final View rule;
+
+        Touch(RecyclerView.Adapter ad, View rule) {
+            this.ad = ad;
+            this.rule = rule;
+        }
+
+        @Override
+        public void onChanged() {
+            rule.setVisibility(ad.getItemCount() > 0 ? View.VISIBLE : View.GONE);
+        }
+
+        @Override
+        public void onItemRangeInserted(int start, int count) {
+            onChanged();
+        }
+
+        @Override
+        public void onItemRangeRemoved(int start, int count) {
+            onChanged();
+        }
+    }
+
+    /**
+     * The On/Off row's two labels centred on their capitals rather than their boxes: of
+     * different sizes, the boxes centred put the words at different heights.
+     */
+    private static void capCentre(TextView tv) {
+        if (tv == null) return;
+        Paint p = tv.getPaint();
+        Paint.FontMetrics fm = p.getFontMetrics();
+        android.graphics.Rect r = new android.graphics.Rect();
+        p.getTextBounds("H", 0, 1, r);
+        float glyph = -fm.ascent + (r.top + r.bottom) / 2.0f;
+        float box = (fm.descent - fm.ascent) / 2.0f;
+        tv.setTranslationY(Math.round(box - glyph));
     }
 
     private static TextView plain(LinearLayout col) {
@@ -234,11 +284,11 @@ public final class Blue {
         return null;
     }
 
-    /** The caption moved into a band, with {@code tail} beside it. */
-    private static void band(LinearLayout col, TextView cap, View tail) {
-        if (col == null || cap == null) return;
+    /** The caption moved into a band, with {@code tail} beside it; answers the band's top rule. */
+    private static View band(LinearLayout col, TextView cap, View tail) {
+        if (col == null || cap == null) return null;
         int at = col.indexOfChild(cap);
-        if (at < 0) return;
+        if (at < 0) return null;
         col.removeViewAt(at);
 
         Context c = col.getContext();
@@ -267,12 +317,14 @@ public final class Blue {
         int rgb = itemRgb(c);
         LinearLayout box = new LinearLayout(c);
         box.setOrientation(LinearLayout.VERTICAL);
-        box.addView(rule(c, rgb, IppActivity.RULE_ALPHA), new LinearLayout.LayoutParams(-1, RULE_H));
+        View top = rule(c, rgb, IppActivity.RULE_ALPHA);
+        box.addView(top, new LinearLayout.LayoutParams(-1, RULE_H));
         box.addView(line, new LinearLayout.LayoutParams(-1, -2));
         box.addView(rule(c, rgb, IppActivity.RULE_ALPHA), new LinearLayout.LayoutParams(-1, RULE_H));
         box.setBackgroundColor(washRgb(c) | IppActivity.bandAlpha());
         // No margin: a gap between theme-painted rows is a line of wallpaper.
         col.addView(box, at, new LinearLayout.LayoutParams(-1, -2));
+        return top;
     }
 
     /** The search circle, at the end of the "Other devices" caption. */
