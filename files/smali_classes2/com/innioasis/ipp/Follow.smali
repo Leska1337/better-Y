@@ -41,6 +41,8 @@
 
 .field private static pendingForce:Z
 
+.field private static pendingScreen:Ljava/lang/ref/WeakReference;
+
 .field private static pendingUntil:J
 
 .field private static watching:Lcom/innioasis/ipp/Follow$Land;
@@ -134,9 +136,33 @@
     return-wide p0
 .end method
 
+.method private static activityOf(Landroid/content/Context;)Landroid/app/Activity;
+  .registers 2
+  .line 482
+    nop
+  :L0
+    instance-of v0, p0, Landroid/content/ContextWrapper;
+    if-eqz v0, :L2
+  .line 483
+    instance-of v0, p0, Landroid/app/Activity;
+    if-eqz v0, :L1
+    check-cast p0, Landroid/app/Activity;
+    return-object p0
+  :L1
+  .line 484
+    check-cast p0, Landroid/content/ContextWrapper;
+    invoke-virtual { p0 }, Landroid/content/ContextWrapper;->getBaseContext()Landroid/content/Context;
+    move-result-object p0
+    goto :L0
+  :L2
+  .line 486
+    const/4 p0, 0
+    return-object p0
+.end method
+
 .method static adapter()Lcom/innioasis/music/adapter/MyBaseAdapter;
   .registers 3
-  .line 598
+  .line 612
     sget-object v0, Lcom/innioasis/ipp/Follow;->adapterRef:Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     if-nez v0, :L0
@@ -146,7 +172,7 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 599
+  .line 613
     instance-of v2, v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-eqz v2, :L2
     move-object v1, v0
@@ -187,45 +213,54 @@
 
 .method public static armPending()V
   .registers 2
-  .line 452
+  .line 455
     const/4 v0, 1
     const/4 v1, 0
-    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;)V
-  .line 453
+    invoke-static { v0, v1, v1 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;Landroid/app/Activity;)V
+  .line 456
     return-void
 .end method
 
-.method private static armPending(ZLjava/lang/Object;)V
-  .registers 9
-  .line 469
+.method private static armPending(ZLjava/lang/Object;Landroid/app/Activity;)V
+  .registers 10
+  .line 472
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 470
+  .line 473
     if-nez p0, :L0
     sget-wide v2, Lcom/innioasis/ipp/Follow;->pendingUntil:J
     const-wide/16 v4, 0
     cmp-long v6, v2, v4
     if-eqz v6, :L0
     cmp-long v4, v0, v2
-    if-lez v4, :L3
+    if-lez v4, :L5
   :L0
-  .line 471
+  .line 474
     sput-boolean p0, Lcom/innioasis/ipp/Follow;->pendingForce:Z
-  .line 472
-    if-nez p1, :L1
+  .line 475
     const/4 p0, 0
+    if-nez p1, :L1
+    move-object v2, p0
     goto :L2
   :L1
-    new-instance p0, Ljava/lang/ref/WeakReference;
-    invoke-direct { p0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+    new-instance v2, Ljava/lang/ref/WeakReference;
+    invoke-direct { v2, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
   :L2
-    sput-object p0, Lcom/innioasis/ipp/Follow;->pendingFor:Ljava/lang/ref/WeakReference;
+    sput-object v2, Lcom/innioasis/ipp/Follow;->pendingFor:Ljava/lang/ref/WeakReference;
+  .line 476
+    if-nez p2, :L3
+    goto :L4
   :L3
-  .line 474
+    new-instance p0, Ljava/lang/ref/WeakReference;
+    invoke-direct { p0, p2 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+  :L4
+    sput-object p0, Lcom/innioasis/ipp/Follow;->pendingScreen:Ljava/lang/ref/WeakReference;
+  :L5
+  .line 478
     const-wide/16 p0, 5000
     add-long/2addr v0, p0
     sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
-  .line 475
+  .line 479
     return-void
 .end method
 
@@ -296,11 +331,11 @@
 
 .method private static enabled()Z
   .registers 2
-  .line 584
+  .line 598
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 585
+  .line 599
     const-string v1, "follow_playing"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v0
@@ -309,40 +344,40 @@
 
 .method private static findList(Landroid/view/View;)Landroid/widget/ListView;
   .registers 4
-  .line 523
+  .line 537
     instance-of v0, p0, Landroid/widget/ListView;
     if-eqz v0, :L0
     check-cast p0, Landroid/widget/ListView;
     return-object p0
   :L0
-  .line 524
+  .line 538
     instance-of v0, p0, Landroid/view/ViewGroup;
     const/4 v1, 0
     if-nez v0, :L1
     return-object v1
   :L1
-  .line 525
+  .line 539
     check-cast p0, Landroid/view/ViewGroup;
-  .line 526
+  .line 540
     const/4 v0, 0
   :L2
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v2
     if-ge v0, v2, :L4
-  .line 527
+  .line 541
     invoke-virtual { p0, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Follow;->findList(Landroid/view/View;)Landroid/widget/ListView;
     move-result-object v2
-  .line 528
+  .line 542
     if-eqz v2, :L3
     return-object v2
   :L3
-  .line 526
+  .line 540
     add-int/lit8 v0, v0, 1
     goto :L2
   :L4
-  .line 530
+  .line 544
     return-object v1
 .end method
 
@@ -494,16 +529,16 @@
 
 .method private static indexOf(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
   .registers 5
-  .line 575
+  .line 589
     const/4 v0, 0
   :L0
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
     move-result v1
     if-ge v0, v1, :L3
-  .line 576
+  .line 590
     invoke-virtual { p0, v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getItem(I)Ljava/lang/Object;
     move-result-object v1
-  .line 577
+  .line 591
     instance-of v2, v1, Lcom/innioasis/y1/database/Song;
     if-eqz v2, :L1
     move-object v2, v1
@@ -515,7 +550,7 @@
     if-eqz v2, :L1
     return v0
   :L1
-  .line 578
+  .line 592
     instance-of v2, v1, Ljava/io/File;
     if-eqz v2, :L2
     check-cast v1, Ljava/io/File;
@@ -526,11 +561,11 @@
     if-eqz v1, :L2
     return v0
   :L2
-  .line 575
+  .line 589
     add-int/lit8 v0, v0, 1
     goto :L0
   :L3
-  .line 580
+  .line 594
     const/4 p0, -1
     return p0
 .end method
@@ -577,39 +612,39 @@
   .catchall { :L0 .. :L3 } :L4
   .registers 2
   :L0
-  .line 563
+  .line 577
     invoke-virtual { p0 }, Landroid/widget/ListView;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 564
+  .line 578
     instance-of v0, p0, Landroid/view/View;
     if-nez v0, :L1
     return-void
   :L1
-  .line 565
+  .line 579
     check-cast p0, Landroid/view/View;
     const v0, 2131362396
     invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 566
+  .line 580
     instance-of v0, p0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
     if-nez v0, :L2
     return-void
   :L2
-  .line 567
+  .line 581
     check-cast p0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-  .line 568
+  .line 582
     invoke-virtual { p0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->isSelect()Z
     move-result v0
     if-eqz v0, :L3
     invoke-virtual { p0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->onClockwise()V
   :L3
-  .line 570
+  .line 584
     goto :L5
   :L4
-  .line 569
+  .line 583
     move-exception p0
   :L5
-  .line 571
+  .line 585
     return-void
 .end method
 
@@ -632,7 +667,7 @@
 
 .method static list()Landroid/widget/ListView;
   .registers 3
-  .line 603
+  .line 617
     sget-object v0, Lcom/innioasis/ipp/Follow;->listRef:Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     if-nez v0, :L0
@@ -642,7 +677,7 @@
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 604
+  .line 618
     instance-of v2, v0, Landroid/widget/ListView;
     if-eqz v2, :L2
     move-object v1, v0
@@ -826,19 +861,19 @@
 
 .method private static playingPath()Ljava/lang/String;
   .registers 2
-  .line 589
+  .line 603
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 590
+  .line 604
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 592
+  .line 606
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->getPlayingSong()Lcom/innioasis/y1/database/Song;
     move-result-object v0
-  .line 593
+  .line 607
     if-nez v0, :L1
     goto :L2
   :L1
@@ -850,33 +885,34 @@
 
 .method public static rebuilt(Ljava/lang/Object;)V
   .catchall { :L0 .. :L2 } :L3
-  .registers 2
+  .registers 3
   :L0
-  .line 461
+  .line 464
     invoke-static { p0 }, Lcom/innioasis/ipp/Follow;->free(Ljava/lang/Object;)V
-  .line 462
+  .line 465
     invoke-static { }, Lcom/innioasis/ipp/Follow;->enabled()Z
     move-result v0
     if-nez v0, :L1
     return-void
   :L1
-  .line 463
+  .line 466
     const/4 v0, 0
-    invoke-static { v0, p0 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;)V
+    const/4 v1, 0
+    invoke-static { v0, p0, v1 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;Landroid/app/Activity;)V
   :L2
-  .line 465
+  .line 468
     goto :L4
   :L3
-  .line 464
+  .line 467
     move-exception p0
   :L4
-  .line 466
+  .line 469
     return-void
 .end method
 
 .method public static resumed(Ljava/lang/Object;)V
   .catchall { :L0 .. :L6 } :L7
-  .registers 3
+  .registers 4
   .line 423
     sget-boolean v0, Lcom/innioasis/ipp/Follow;->fromPlayer:Z
   .line 424
@@ -904,39 +940,39 @@
   :L2
   .line 430
     invoke-virtual { p0 }, Landroid/app/Activity;->getWindow()Landroid/view/Window;
-    move-result-object p0
-    invoke-virtual { p0 }, Landroid/view/Window;->getDecorView()Landroid/view/View;
-    move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/Follow;->findList(Landroid/view/View;)Landroid/widget/ListView;
-    move-result-object p0
+    move-result-object v1
+    invoke-virtual { v1 }, Landroid/view/Window;->getDecorView()Landroid/view/View;
+    move-result-object v1
+    invoke-static { v1 }, Lcom/innioasis/ipp/Follow;->findList(Landroid/view/View;)Landroid/widget/ListView;
+    move-result-object v1
   .line 431
-    if-nez p0, :L3
+    if-nez v1, :L3
     return-void
   :L3
   .line 433
-    const/4 v1, 0
-    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;)V
+    const/4 v2, 0
+    invoke-static { v0, v2, p0 }, Lcom/innioasis/ipp/Follow;->armPending(ZLjava/lang/Object;Landroid/app/Activity;)V
   .line 434
-    invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
-    move-result-object v0
+    invoke-virtual { v1 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
+    move-result-object p0
   .line 435
-    instance-of v1, v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-    if-nez v1, :L4
+    instance-of v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
+    if-nez v0, :L4
     return-void
   :L4
   .line 436
-    invoke-static { v0 }, Lcom/innioasis/ipp/Follow;->free(Ljava/lang/Object;)V
+    invoke-static { p0 }, Lcom/innioasis/ipp/Follow;->free(Ljava/lang/Object;)V
   .line 437
-    invoke-static { v0 }, Lcom/innioasis/ipp/Queue;->atSource(Ljava/lang/Object;)Z
-    move-result v1
-    if-nez v1, :L5
+    invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->atSource(Ljava/lang/Object;)Z
+    move-result v0
+    if-nez v0, :L5
     return-void
   :L5
   .line 438
-    new-instance v1, Lcom/innioasis/ipp/Follow$Jump;
-    check-cast v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-    invoke-direct { v1, v0, p0 }, Lcom/innioasis/ipp/Follow$Jump;-><init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
-    invoke-virtual { p0, v1 }, Landroid/widget/ListView;->post(Ljava/lang/Runnable;)Z
+    new-instance v0, Lcom/innioasis/ipp/Follow$Jump;
+    check-cast p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
+    invoke-direct { v0, p0, v1 }, Lcom/innioasis/ipp/Follow$Jump;-><init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
+    invoke-virtual { v1, v0 }, Landroid/widget/ListView;->post(Ljava/lang/Runnable;)Z
   :L6
   .line 440
     goto :L8
@@ -1094,9 +1130,9 @@
 .end method
 
 .method private static tryPending(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
-  .catchall { :L0 .. :L7 } :L9
+  .catchall { :L0 .. :L8 } :L10
   .registers 9
-  .line 479
+  .line 491
     const-wide/16 v0, 0
   :L0
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
@@ -1107,7 +1143,7 @@
     sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
     return-void
   :L1
-  .line 480
+  .line 492
     sget-boolean v2, Lcom/innioasis/ipp/Follow;->pendingForce:Z
     if-nez v2, :L2
     invoke-static { }, Lcom/innioasis/ipp/Follow;->enabled()Z
@@ -1116,7 +1152,7 @@
     sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
     return-void
   :L2
-  .line 481
+  .line 493
     sget-object v2, Lcom/innioasis/ipp/Follow;->pendingFor:Ljava/lang/ref/WeakReference;
     if-eqz v2, :L3
     invoke-virtual { v2 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
@@ -1124,48 +1160,64 @@
     if-eq v2, p0, :L3
     return-void
   :L3
-  .line 482
-    invoke-static { p0 }, Lcom/innioasis/ipp/Follow;->busy(Ljava/lang/Object;)Z
-    move-result v2
+  .line 494
+    sget-object v2, Lcom/innioasis/ipp/Follow;->pendingScreen:Ljava/lang/ref/WeakReference;
     if-eqz v2, :L4
+    invoke-virtual { v2 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
+    move-result-object v2
+    invoke-virtual { p1 }, Landroid/widget/ListView;->getContext()Landroid/content/Context;
+    move-result-object v3
+    invoke-static { v3 }, Lcom/innioasis/ipp/Follow;->activityOf(Landroid/content/Context;)Landroid/app/Activity;
+    move-result-object v3
+    if-eq v2, v3, :L4
+  .line 495
+    invoke-static { }, Lcom/innioasis/ipp/Follow;->enabled()Z
+    move-result v2
+    if-nez v2, :L4
     return-void
   :L4
-  .line 483
-    invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->atSource(Ljava/lang/Object;)Z
+  .line 496
+    invoke-static { p0 }, Lcom/innioasis/ipp/Follow;->busy(Ljava/lang/Object;)Z
     move-result v2
-    if-nez v2, :L5
+    if-eqz v2, :L5
     return-void
   :L5
-  .line 484
+  .line 497
+    invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->atSource(Ljava/lang/Object;)Z
+    move-result v2
+    if-nez v2, :L6
+    return-void
+  :L6
+  .line 498
     invoke-static { }, Lcom/innioasis/ipp/Follow;->playingPath()Ljava/lang/String;
     move-result-object v2
-  .line 485
-    if-eqz v2, :L8
+  .line 499
+    if-eqz v2, :L9
     invoke-static { p0, v2 }, Lcom/innioasis/ipp/Follow;->indexOf(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
     move-result v2
-    if-gez v2, :L6
-    goto :L8
-  :L6
-  .line 486
+    if-gez v2, :L7
+    goto :L9
+  :L7
+  .line 500
     sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
-  .line 488
+  .line 502
     invoke-virtual { p1 }, Landroid/widget/ListView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v2
     new-instance v3, Lcom/innioasis/ipp/Follow$PreJump;
     invoke-direct { v3, p0, p1 }, Lcom/innioasis/ipp/Follow$PreJump;-><init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
     invoke-virtual { v2, v3 }, Landroid/view/ViewTreeObserver;->addOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  :L7
-  .line 491
-    goto :L10
   :L8
-  .line 485
-    return-void
+  .line 505
+    goto :L11
   :L9
-  .line 489
-    move-exception p0
-  .line 490
-    sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
+  .line 499
+    return-void
   :L10
-  .line 492
+  .line 503
+    move-exception p0
+  .line 504
+    sput-wide v0, Lcom/innioasis/ipp/Follow;->pendingUntil:J
+  :L11
+  .line 506
     return-void
 .end method

@@ -17,13 +17,13 @@
 
 .method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
   .registers 3
-  .line 498
+  .line 512
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 499
+  .line 513
     iput-object p1, p0, Lcom/innioasis/ipp/Follow$PreJump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 500
+  .line 514
     iput-object p2, p0, Lcom/innioasis/ipp/Follow$PreJump;->lv:Landroid/widget/ListView;
-  .line 501
+  .line 515
     return-void
 .end method
 
@@ -32,48 +32,48 @@
   .catchall { :L4 .. :L7 } :L8
   .registers 5
   :L0
-  .line 506
+  .line 520
     iget-object v0, p0, Lcom/innioasis/ipp/Follow$PreJump;->lv:Landroid/widget/ListView;
     invoke-virtual { v0 }, Landroid/widget/ListView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
     invoke-virtual { v0, p0 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
   :L1
-  .line 508
+  .line 522
     goto :L3
   :L2
-  .line 507
+  .line 521
     move-exception v0
   :L3
-  .line 510
+  .line 524
     const/4 v0, 1
   :L4
     invoke-static { }, Lcom/innioasis/ipp/Follow;->access$300()Ljava/lang/String;
     move-result-object v1
-  .line 511
+  .line 525
     if-nez v1, :L5
     return v0
   :L5
-  .line 512
+  .line 526
     iget-object v2, p0, Lcom/innioasis/ipp/Follow$PreJump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v2, v1 }, Lcom/innioasis/ipp/Follow;->access$400(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
     move-result v1
-  .line 513
+  .line 527
     if-gez v1, :L6
     return v0
   :L6
-  .line 514
+  .line 528
     iget-object v2, p0, Lcom/innioasis/ipp/Follow$PreJump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     iget-object v3, p0, Lcom/innioasis/ipp/Follow$PreJump;->lv:Landroid/widget/ListView;
     invoke-static { v2, v3, v1 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;I)V
   :L7
-  .line 517
+  .line 531
     nop
-  .line 518
+  .line 532
     const/4 v0, 0
     return v0
   :L8
-  .line 515
+  .line 529
     move-exception v1
-  .line 516
+  .line 530
     return v0
 .end method

@@ -85,21 +85,26 @@ Die gewählte Funktion wird im Hörbuchplayer geöffnet, wenn die obere Taste ge
 
 Der Satz der interaktiven Schaltflächen ändert sich mit dieser Auswahl.
 
-[first_artist_only] Nur den ersten Künstler anzeigen
-Blendet alles nach dem ersten Komma im Künstler-Tag aus, sodass nur der erste Künstler bleibt. Zum Beispiel:
+[player_album_artist] Albumkünstler statt Künstler anzeigen
+Zeigt in der Künstlerzeile des Players den Albumkünstler (Album Artist) statt der Künstler des Songs. Hat ein Album keinen Album Artist, wird der erste Künstler des Songs gezeigt. Zum Beispiel auf einem Album von „Tree“:
 
 „Tree, Shelf Nunny, Lena Kuhn — People“
 wird zu
 „Tree — People“
 
 Gilt nur für die Künstlerzeile im Player.
-
-Ausgeblendete Künstler lassen sich mit „{row:feat_in_title}“ in den Titel verschieben.
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
+[various_artist] „Various Artists“ durch einen Künstler ersetzen
+Ist der Album Artist „Various“ oder „Various Artists“, wird stattdessen der erste Künstler des Songs gezeigt. Zum Beispiel auf einer Compilation:
+
+„Various Artists — People“
+wird zu
+„Tree — People“
+
 [feat_in_title] Gastkünstler in den Titel verschieben
-Verschiebt die von „{row:first_artist_only}“ ausgeblendeten Künstler hinter einem „feat.“ in den Songtitel. Zum Beispiel:
+Verschiebt die Künstler des Songs, die die Künstlerzeile nicht zeigt, hinter einem „feat.“ in den Songtitel. Zum Beispiel auf einem Album von „Tree“:
 
 „Tree, Shelf Nunny, Lena Kuhn — People“
 wird mit dieser Einstellung Aus zu
@@ -108,7 +113,7 @@ wird mit dieser Einstellung Aus zu
 mit dieser Einstellung An zu
 „Tree — People (feat. Shelf Nunny, Lena Kuhn)“
 
-Gilt nur für die Künstlerzeile im Player.
+Nichts wird angehängt, wenn der Titel einen von ihnen schon nennt.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

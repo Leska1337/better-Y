@@ -31,8 +31,9 @@ public final class Prefs {
         def(Cover.KEY_TILT, 1);              // the stock, iPod-like look
         def("top_hold", 1);                  // Queue
         def("book_top_hold", 1);             // Queue
-        def("first_artist_only", 0);
-        def("feat_in_title", 0);
+        def(Feat.KEY, 0);
+        def(Feat.KEY_VARIOUS, 0);
+        def(Feat.KEY_FEAT, 0);
         def(Ipp.KEY_LINE_SCROLL, 0);         // the title runs on its own; the two lines under it are asked for
         // [Menu]
         def("alpha_scroll", 1);

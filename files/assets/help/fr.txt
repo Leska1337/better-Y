@@ -85,21 +85,26 @@ La fonction choisie est celle qui s'ouvre dans le lecteur de livres audio lorsqu
 
 Le jeu de boutons interactifs change selon ce choix.
 
-[first_artist_only] N'afficher que le premier artiste
-Masque tout ce qui suit la première virgule dans le tag d'artiste et ne garde que le premier. Par exemple :
+[player_album_artist] Afficher l'artiste de l'album au lieu des artistes
+Affiche dans la ligne de l'artiste du lecteur l'artiste de l'album (Album Artist) au lieu des artistes du morceau. Si l'album n'a pas d'Album Artist, le premier artiste du morceau est affiché. Par exemple, sur un album de « Tree » :
 
 « Tree, Shelf Nunny, Lena Kuhn — People »
 devient
 « Tree — People »
 
-Ne s'applique qu'à la ligne d'artiste du lecteur.
-
-Les artistes masqués peuvent être déplacés dans le titre en activant « {row:feat_in_title} ».
+Ne s'applique qu'à la ligne de l'artiste du lecteur.
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
+[various_artist] Remplacer « Various Artists » par un artiste
+Si l'Album Artist est « Various » ou « Various Artists », le premier artiste du morceau est affiché à sa place. Par exemple, sur une compilation :
+
+« Various Artists — People »
+devient
+« Tree — People »
+
 [feat_in_title] Déplacer les artistes invités dans le titre
-Déplace les artistes masqués par « {row:first_artist_only} » dans le titre du morceau, après un « feat. ». Par exemple :
+Déplace les artistes du morceau que la ligne de l'artiste n'affiche pas dans le titre du morceau, après un « feat. ». Par exemple, sur un album de « Tree » :
 
 « Tree, Shelf Nunny, Lena Kuhn — People »
 avec ce réglage désactivé devient
@@ -108,7 +113,7 @@ avec ce réglage désactivé devient
 avec ce réglage activé devient
 « Tree — People (feat. Shelf Nunny, Lena Kuhn) »
 
-Ne s'applique qu'à la ligne d'artiste du lecteur.
+Rien n'est ajouté si le titre nomme déjà l'un d'eux.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

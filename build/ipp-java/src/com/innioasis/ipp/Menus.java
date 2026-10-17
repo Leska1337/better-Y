@@ -4,10 +4,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Paint;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -88,6 +93,7 @@ public final class Menus {
         // nothing to filter.
         Follow.hold(true);
         filter(d);
+        fit(d);
     }
 
     /**
@@ -96,6 +102,87 @@ public final class Menus {
      */
     public static void onShowVideo(SubMenuVideoDialog d) {
         filter(d);
+        fit(d);
+    }
+
+    /**
+     * The menu widens to its longest entry, never narrower than stock's {@code submenu_width} and
+     * never wider than the screen; it grows leftwards (the window is pinned top-right). Measured
+     * at the first pre-draw with a bound row's own paint, i.e. the theme's font, and that frame
+     * is cancelled so the narrow window is never drawn.
+     */
+    private static void fit(Dialog d) {
+        try {
+            Window w = d.getWindow();
+            View v = d.findViewById(R.id.submenu);
+            if (w == null || !(v instanceof ListView)) return;
+            int base = (int) d.getContext().getResources().getDimension(R.dimen.submenu_width);
+            WindowManager.LayoutParams p = w.getAttributes();
+            if (p.width != base) {
+                p.width = base;
+                w.setAttributes(p);
+            }
+            v.getViewTreeObserver().addOnPreDrawListener(new Fit(w, (ListView) v, base));
+        } catch (Throwable t) {
+        }
+    }
+
+    private static final class Fit implements ViewTreeObserver.OnPreDrawListener {
+        private final Window w;
+        private final ListView lv;
+        private final int base;
+        private int passes;
+
+        Fit(Window w, ListView lv, int base) {
+            this.w = w;
+            this.lv = lv;
+            this.base = base;
+        }
+
+        @Override
+        public boolean onPreDraw() {
+            try {
+                TextView tv = lv.getChildCount() == 0 ? null : firstText(lv.getChildAt(0));
+                if (tv == null || tv.getWidth() == 0) {
+                    if (++passes < 5) return true;
+                    lv.getViewTreeObserver().removeOnPreDrawListener(this);
+                    return true;
+                }
+                lv.getViewTreeObserver().removeOnPreDrawListener(this);
+                Object ad = lv.getAdapter();
+                if (!(ad instanceof MyBaseAdapter)) return true;
+                List items = ((MyBaseAdapter) ad).getItemList();
+                if (items == null) return true;
+                Paint paint = tv.getPaint();
+                float widest = 0;
+                for (int i = 0; i < items.size(); i++) {
+                    String s = label(items.get(i));
+                    if (s != null) widest = Math.max(widest, paint.measureText(s));
+                }
+                int room = tv.getWidth() - tv.getTotalPaddingLeft() - tv.getTotalPaddingRight();
+                if (widest <= room) return true;
+                int screen = lv.getResources().getDisplayMetrics().widthPixels;
+                int want = Math.min(screen, base + (int) Math.ceil(widest - room) + 1);
+                WindowManager.LayoutParams p = w.getAttributes();
+                if (p.width == want) return true;
+                p.width = want;
+                w.setAttributes(p);
+                return false;
+            } catch (Throwable t) {
+                return true;
+            }
+        }
+    }
+
+    private static TextView firstText(View v) {
+        if (v instanceof TextView) return (TextView) v;
+        if (!(v instanceof ViewGroup)) return null;
+        ViewGroup g = (ViewGroup) v;
+        for (int i = 0; i < g.getChildCount(); i++) {
+            TextView t = firstText(g.getChildAt(i));
+            if (t != null) return t;
+        }
+        return null;
     }
 
     private static void filter(Dialog d) {

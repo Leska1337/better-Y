@@ -4,6 +4,7 @@
 
 .annotation system Ldalvik/annotation/MemberClasses;
   value = {
+    Lcom/innioasis/ipp/Menus$Fit;,
     Lcom/innioasis/ipp/Menus$Snap;,
     Lcom/innioasis/ipp/Menus$ByName;,
     Lcom/innioasis/ipp/Menus$Chosen;
@@ -22,27 +23,27 @@
 
 .method static constructor <clinit>()V
   .registers 3
-  .line 50
+  .line 55
     const/16 v0, 13
     new-array v0, v0, [I
     fill-array-data v0, :L0
     sput-object v0, Lcom/innioasis/ipp/Menus;->MULTI:[I
-  .line 68
+  .line 73
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Menus;->SNAPS:Ljava/util/WeakHashMap;
-  .line 80
+  .line 85
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Menus;->CHOOSERS:Ljava/util/WeakHashMap;
-  .line 492
+  .line 579
     const/4 v0, 3
     const/4 v1, 4
     const/4 v2, 0
     filled-new-array { v2, v0, v1 }, [I
     move-result-object v0
     sput-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_FULL:[I
-  .line 495
+  .line 582
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_MAPS:Ljava/util/WeakHashMap;
@@ -67,96 +68,112 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 43
+  .line 48
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 44
+  .line 49
     return-void
+.end method
+
+.method static synthetic access$000(Landroid/view/View;)Landroid/widget/TextView;
+  .registers 1
+  .line 46
+    invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->firstText(Landroid/view/View;)Landroid/widget/TextView;
+    move-result-object p0
+    return-object p0
 .end method
 
 .method static synthetic access$100(Ljava/lang/Object;)Ljava/lang/String;
   .registers 1
-  .line 41
+  .line 46
+    invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->label(Ljava/lang/Object;)Ljava/lang/String;
+    move-result-object p0
+    return-object p0
+.end method
+
+.method static synthetic access$300(Ljava/lang/Object;)Ljava/lang/String;
+  .registers 1
+  .line 46
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->playlistName(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p0
     return-object p0
 .end method
 
-.method static synthetic access$200(Landroid/app/Dialog;Ljava/lang/Object;Ljava/lang/Object;I)V
+.method static synthetic access$400(Landroid/app/Dialog;Ljava/lang/Object;Ljava/lang/Object;I)V
   .registers 4
-  .line 41
+  .line 46
     invoke-static { p0, p1, p2, p3 }, Lcom/innioasis/ipp/Menus;->dispatch(Landroid/app/Dialog;Ljava/lang/Object;Ljava/lang/Object;I)V
     return-void
 .end method
 
 .method private static browseTicks(Ljava/util/List;)I
   .registers 5
-  .line 461
+  .line 548
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 462
+  .line 549
     nop
-  .line 463
+  .line 550
     const/4 v1, 0
   :L1
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v0, v2, :L3
-  .line 464
+  .line 551
     invoke-interface { p0, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
-  .line 465
+  .line 552
     instance-of v3, v2, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;
     if-eqz v3, :L2
     check-cast v2, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;
-  .line 466
+  .line 553
     invoke-virtual { v2 }, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;->isMultiSelect()Z
     move-result v2
     if-eqz v2, :L2
-  .line 467
+  .line 554
     add-int/lit8 v1, v1, 1
   :L2
-  .line 463
+  .line 550
     add-int/lit8 v0, v0, 1
     goto :L1
   :L3
-  .line 470
+  .line 557
     return v1
 .end method
 
 .method private static collapse(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/ipp/Menus$Snap;)V
   .registers 16
-  .line 179
+  .line 266
     const/4 v0, 0
     iput-object v0, p2, Lcom/innioasis/ipp/Menus$Snap;->group:Ljava/lang/Object;
-  .line 180
+  .line 267
     iput-object v0, p2, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
-  .line 181
+  .line 268
     iput-object v0, p2, Lcom/innioasis/ipp/Menus$Snap;->entryIndex:[I
-  .line 182
+  .line 269
     if-nez p0, :L0
     return-void
   :L0
-  .line 183
+  .line 270
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 184
+  .line 271
     new-instance v2, Ljava/util/ArrayList;
     invoke-direct { v2 }, Ljava/util/ArrayList;-><init>()V
-  .line 185
+  .line 272
     new-instance v3, Ljava/util/ArrayList;
     invoke-direct { v3 }, Ljava/util/ArrayList;-><init>()V
-  .line 186
+  .line 273
     new-instance v4, Ljava/util/ArrayList;
     invoke-direct { v4 }, Ljava/util/ArrayList;-><init>()V
-  .line 187
+  .line 274
     nop
-  .line 188
+  .line 275
     nop
-  .line 189
+  .line 276
     nop
-  .line 190
+  .line 277
     const/4 v5, -1
     const/4 v6, 0
     const/4 v7, 0
@@ -166,10 +183,10 @@
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v10
     if-ge v7, v10, :L8
-  .line 191
+  .line 278
     invoke-interface { p1, v7 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v10
-  .line 192
+  .line 279
     iget-object v11, p2, Lcom/innioasis/ipp/Menus$Snap;->map:[I
     if-nez v11, :L2
     move v11, v7
@@ -178,50 +195,50 @@
     iget-object v11, p2, Lcom/innioasis/ipp/Menus$Snap;->map:[I
     aget v11, v11, v7
   :L3
-  .line 193
+  .line 280
     invoke-static { v10 }, Lcom/innioasis/ipp/Menus;->isPlaylistEntry(Ljava/lang/Object;)Z
     move-result v12
     if-eqz v12, :L6
-  .line 194
+  .line 281
     if-gez v8, :L4
     invoke-virtual { v3 }, Ljava/util/ArrayList;->size()I
     move-result v8
   :L4
-  .line 195
+  .line 282
     invoke-static { v10 }, Lcom/innioasis/ipp/Menus;->isFavEntry(Ljava/lang/Object;)Z
     move-result v12
     if-eqz v12, :L5
-  .line 196
+  .line 283
     nop
-  .line 197
+  .line 284
     move-object v0, v10
     move v9, v11
     goto :L7
   :L5
-  .line 199
+  .line 286
     invoke-virtual { v1, v10 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 200
+  .line 287
     invoke-static { v11 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v10
     invoke-virtual { v2, v10 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L7
   :L6
-  .line 203
+  .line 290
     invoke-virtual { v3, v10 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 204
+  .line 291
     invoke-static { v11 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v10
     invoke-virtual { v4, v10 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L7
-  .line 190
+  .line 277
     add-int/lit8 v7, v7, 1
     goto :L1
   :L8
-  .line 207
+  .line 294
     if-gez v8, :L9
     return-void
   :L9
-  .line 208
+  .line 295
     if-eqz v0, :L10
     move-object v7, v0
     goto :L11
@@ -230,32 +247,32 @@
     move-result-object v7
   :L11
     instance-of v7, v7, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
-  .line 209
+  .line 296
     invoke-virtual { v1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v10
     if-nez v10, :L13
-  .line 210
+  .line 297
     const v10, 2131821169
     invoke-virtual { p0, v10 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object p0
     invoke-static { v7, p0 }, Lcom/innioasis/ipp/Menus;->entry(ZLjava/lang/String;)Ljava/lang/Object;
     move-result-object p0
-  .line 211
+  .line 298
     invoke-virtual { v3, v8, p0 }, Ljava/util/ArrayList;->add(ILjava/lang/Object;)V
-  .line 212
+  .line 299
     invoke-static { v5 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v5
     invoke-virtual { v4, v8, v5 }, Ljava/util/ArrayList;->add(ILjava/lang/Object;)V
-  .line 213
+  .line 300
     iput-object p0, p2, Lcom/innioasis/ipp/Menus$Snap;->group:Ljava/lang/Object;
-  .line 214
+  .line 301
     iput-object v1, p2, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
-  .line 215
+  .line 302
     invoke-virtual { v2 }, Ljava/util/ArrayList;->size()I
     move-result p0
     new-array p0, p0, [I
     iput-object p0, p2, Lcom/innioasis/ipp/Menus$Snap;->entryIndex:[I
-  .line 216
+  .line 303
     const/4 p0, 0
   :L12
     invoke-virtual { v2 }, Ljava/util/ArrayList;->size()I
@@ -271,25 +288,25 @@
     add-int/lit8 p0, p0, 1
     goto :L12
   :L13
-  .line 218
+  .line 305
     if-eqz v0, :L14
-  .line 219
+  .line 306
     invoke-virtual { v3, v8, v0 }, Ljava/util/ArrayList;->add(ILjava/lang/Object;)V
-  .line 220
+  .line 307
     invoke-static { v9 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object p0
     invoke-virtual { v4, v8, p0 }, Ljava/util/ArrayList;->add(ILjava/lang/Object;)V
   :L14
-  .line 222
+  .line 309
     invoke-interface { p1 }, Ljava/util/List;->clear()V
-  .line 223
+  .line 310
     invoke-interface { p1, v3 }, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
-  .line 224
+  .line 311
     invoke-virtual { v4 }, Ljava/util/ArrayList;->size()I
     move-result p0
     new-array p0, p0, [I
     iput-object p0, p2, Lcom/innioasis/ipp/Menus$Snap;->map:[I
-  .line 225
+  .line 312
     nop
   :L15
     invoke-virtual { v4 }, Ljava/util/ArrayList;->size()I
@@ -305,41 +322,41 @@
     add-int/lit8 v6, v6, 1
     goto :L15
   :L16
-  .line 226
+  .line 313
     return-void
 .end method
 
 .method private static dispatch(Landroid/app/Dialog;Ljava/lang/Object;Ljava/lang/Object;I)V
   .catchall { :L0 .. :L4 } :L5
   .registers 5
-  .line 274
+  .line 361
     nop
   :L0
-  .line 275
+  .line 362
     instance-of v0, p1, Lcom/innioasis/music/util/SubMenuDialog$Callback;
     if-eqz v0, :L1
     instance-of v0, p2, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     if-eqz v0, :L1
-  .line 276
+  .line 363
     check-cast p1, Lcom/innioasis/music/util/SubMenuDialog$Callback;
     check-cast p2, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     invoke-interface { p1, p3, p2 }, Lcom/innioasis/music/util/SubMenuDialog$Callback;->select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
     move-result p1
     goto :L3
   :L1
-  .line 277
+  .line 364
     instance-of v0, p1, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;
     if-eqz v0, :L2
     instance-of v0, p2, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     if-eqz v0, :L2
-  .line 278
+  .line 365
     check-cast p1, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;
     check-cast p2, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     invoke-interface { p1, p3, p2 }, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;->select(ILcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;)Z
     move-result p1
     goto :L3
   :L2
-  .line 280
+  .line 367
     const/4 p1, 1
   :L3
     if-eqz p1, :L4
@@ -348,37 +365,37 @@
     if-eqz p1, :L4
     invoke-virtual { p0 }, Landroid/app/Dialog;->dismiss()V
   :L4
-  .line 282
+  .line 369
     goto :L6
   :L5
-  .line 281
+  .line 368
     move-exception p0
   :L6
-  .line 283
+  .line 370
     return-void
 .end method
 
 .method private static entry(ZLjava/lang/String;)Ljava/lang/Object;
   .registers 3
-  .line 230
+  .line 317
     const/4 v0, 0
     if-eqz p0, :L0
     new-instance p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     invoke-direct { p0, p1, v0 }, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;-><init>(Ljava/lang/String;Lcom/innioasis/y1/database/video/VideoPlaylist;)V
     goto :L1
   :L0
-  .line 231
+  .line 318
     new-instance p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     invoke-direct { p0, p1, v0 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;-><init>(Ljava/lang/String;Lcom/innioasis/y1/database/Playlist;)V
   :L1
-  .line 230
+  .line 317
     return-object p0
 .end method
 
 .method private static filter(Landroid/app/Dialog;)V
   .catchall { :L0 .. :L15 } :L17
   .registers 12
-  .line 103
+  .line 190
     if-eqz p0, :L19
   :L0
     sget-object v0, Lcom/innioasis/ipp/Menus;->CHOOSERS:Ljava/util/WeakHashMap;
@@ -387,71 +404,71 @@
     if-eqz v0, :L1
     goto/16 :L19
   :L1
-  .line 104
+  .line 191
     const v0, 2131362413
     invoke-virtual { p0, v0 }, Landroid/app/Dialog;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 105
+  .line 192
     instance-of v1, v0, Landroid/widget/ListView;
     if-nez v1, :L2
     return-void
   :L2
-  .line 106
+  .line 193
     check-cast v0, Landroid/widget/ListView;
     invoke-virtual { v0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
     move-result-object v0
-  .line 107
+  .line 194
     instance-of v1, v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v1, :L3
     return-void
   :L3
-  .line 108
+  .line 195
     check-cast v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 109
+  .line 196
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getItemList()Ljava/util/List;
     move-result-object v1
-  .line 110
+  .line 197
     if-eqz v1, :L16
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
     if-eqz v2, :L4
     goto/16 :L16
   :L4
-  .line 112
+  .line 199
     sget-object v2, Lcom/innioasis/ipp/Menus;->SNAPS:Ljava/util/WeakHashMap;
     invoke-virtual { v2, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Lcom/innioasis/ipp/Menus$Snap;
-  .line 113
+  .line 200
     const/4 v4, 0
     if-eqz v3, :L5
     iget-object v5, v3, Lcom/innioasis/ipp/Menus$Snap;->shown:Ljava/util/ArrayList;
     invoke-static { v1, v5 }, Lcom/innioasis/ipp/Menus;->same(Ljava/util/List;Ljava/util/List;)Z
     move-result v5
     if-eqz v5, :L5
-  .line 114
+  .line 201
     invoke-interface { v1 }, Ljava/util/List;->clear()V
-  .line 115
+  .line 202
     iget-object v2, v3, Lcom/innioasis/ipp/Menus$Snap;->full:Ljava/util/ArrayList;
     invoke-interface { v1, v2 }, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
     goto :L6
   :L5
-  .line 117
+  .line 204
     new-instance v3, Lcom/innioasis/ipp/Menus$Snap;
     invoke-direct { v3, v4 }, Lcom/innioasis/ipp/Menus$Snap;-><init>(Lcom/innioasis/ipp/Menus$1;)V
-  .line 118
+  .line 205
     new-instance v5, Ljava/util/ArrayList;
     invoke-direct { v5, v1 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
     iput-object v5, v3, Lcom/innioasis/ipp/Menus$Snap;->full:Ljava/util/ArrayList;
-  .line 119
+  .line 206
     invoke-virtual { v2, p0, v3 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L6
-  .line 121
+  .line 208
     iput-object v4, v3, Lcom/innioasis/ipp/Menus$Snap;->map:[I
-  .line 123
+  .line 210
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->hostOf(Landroid/app/Dialog;)Landroid/app/Activity;
     move-result-object p0
-  .line 124
+  .line 211
     const/4 v2, 0
     if-eqz p0, :L7
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->ticks(Landroid/app/Activity;)I
@@ -462,44 +479,44 @@
   :L7
     const/4 v5, 0
   :L8
-  .line 125
+  .line 212
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->selfPlaylist(Landroid/app/Activity;)Ljava/util/UUID;
     move-result-object v4
-  .line 126
+  .line 213
     if-nez v5, :L9
     if-eqz v4, :L14
   :L9
-  .line 127
+  .line 214
     new-instance v6, Ljava/util/ArrayList;
     invoke-direct { v6 }, Ljava/util/ArrayList;-><init>()V
-  .line 128
+  .line 215
     new-instance v7, Ljava/util/ArrayList;
     invoke-direct { v7 }, Ljava/util/ArrayList;-><init>()V
-  .line 129
+  .line 216
     const/4 v8, 0
   :L10
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v9
     if-ge v8, v9, :L12
-  .line 130
+  .line 217
     invoke-interface { v1, v8 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v9
-  .line 131
+  .line 218
     invoke-static { p0, v9, v5, v4 }, Lcom/innioasis/ipp/Menus;->keeps(Landroid/app/Activity;Ljava/lang/Object;ZLjava/util/UUID;)Z
     move-result v10
     if-eqz v10, :L11
-  .line 132
+  .line 219
     invoke-virtual { v6, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 133
+  .line 220
     invoke-static { v8 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v9
     invoke-virtual { v7, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L11
-  .line 129
+  .line 216
     add-int/lit8 v8, v8, 1
     goto :L10
   :L12
-  .line 137
+  .line 224
     invoke-virtual { v6 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v4
     if-nez v4, :L14
@@ -508,22 +525,22 @@
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v5
     if-ge v4, v5, :L14
-  .line 138
+  .line 225
     invoke-interface { v1 }, Ljava/util/List;->clear()V
-  .line 139
+  .line 226
     invoke-interface { v1, v6 }, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
-  .line 140
+  .line 227
     invoke-virtual { v7 }, Ljava/util/ArrayList;->size()I
     move-result v4
     new-array v4, v4, [I
     iput-object v4, v3, Lcom/innioasis/ipp/Menus$Snap;->map:[I
-  .line 141
+  .line 228
     nop
   :L13
     invoke-virtual { v7 }, Ljava/util/ArrayList;->size()I
     move-result v4
     if-ge v2, v4, :L14
-  .line 142
+  .line 229
     iget-object v4, v3, Lcom/innioasis/ipp/Menus$Snap;->map:[I
     invoke-virtual { v7, v2 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v5
@@ -531,38 +548,135 @@
     invoke-virtual { v5 }, Ljava/lang/Integer;->intValue()I
     move-result v5
     aput v5, v4, v2
-  .line 141
+  .line 228
     add-int/lit8 v2, v2, 1
     goto :L13
   :L14
-  .line 146
+  .line 233
     invoke-static { p0, v1, v3 }, Lcom/innioasis/ipp/Menus;->collapse(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/ipp/Menus$Snap;)V
-  .line 147
+  .line 234
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0, v1 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
     iput-object p0, v3, Lcom/innioasis/ipp/Menus$Snap;->shown:Ljava/util/ArrayList;
-  .line 148
+  .line 235
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   :L15
-  .line 150
+  .line 237
     goto :L18
   :L16
-  .line 110
+  .line 197
     return-void
   :L17
-  .line 149
+  .line 236
     move-exception p0
   :L18
-  .line 151
+  .line 238
     return-void
   :L19
-  .line 103
+  .line 190
+    return-void
+.end method
+
+.method private static firstText(Landroid/view/View;)Landroid/widget/TextView;
+  .registers 4
+  .line 178
+    instance-of v0, p0, Landroid/widget/TextView;
+    if-eqz v0, :L0
+    check-cast p0, Landroid/widget/TextView;
+    return-object p0
+  :L0
+  .line 179
+    instance-of v0, p0, Landroid/view/ViewGroup;
+    const/4 v1, 0
+    if-nez v0, :L1
+    return-object v1
+  :L1
+  .line 180
+    check-cast p0, Landroid/view/ViewGroup;
+  .line 181
+    const/4 v0, 0
+  :L2
+    invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
+    move-result v2
+    if-ge v0, v2, :L4
+  .line 182
+    invoke-virtual { p0, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
+    move-result-object v2
+    invoke-static { v2 }, Lcom/innioasis/ipp/Menus;->firstText(Landroid/view/View;)Landroid/widget/TextView;
+    move-result-object v2
+  .line 183
+    if-eqz v2, :L3
+    return-object v2
+  :L3
+  .line 181
+    add-int/lit8 v0, v0, 1
+    goto :L2
+  :L4
+  .line 185
+    return-object v1
+.end method
+
+.method private static fit(Landroid/app/Dialog;)V
+  .catchall { :L0 .. :L3 } :L5
+  .registers 5
+  :L0
+  .line 116
+    invoke-virtual { p0 }, Landroid/app/Dialog;->getWindow()Landroid/view/Window;
+    move-result-object v0
+  .line 117
+    const v1, 2131362413
+    invoke-virtual { p0, v1 }, Landroid/app/Dialog;->findViewById(I)Landroid/view/View;
+    move-result-object v1
+  .line 118
+    if-eqz v0, :L4
+    instance-of v2, v1, Landroid/widget/ListView;
+    if-nez v2, :L1
+    goto :L4
+  :L1
+  .line 119
+    invoke-virtual { p0 }, Landroid/app/Dialog;->getContext()Landroid/content/Context;
+    move-result-object p0
+    invoke-virtual { p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object p0
+    const v2, 2131165784
+    invoke-virtual { p0, v2 }, Landroid/content/res/Resources;->getDimension(I)F
+    move-result p0
+    float-to-int p0, p0
+  .line 120
+    invoke-virtual { v0 }, Landroid/view/Window;->getAttributes()Landroid/view/WindowManager$LayoutParams;
+    move-result-object v2
+  .line 121
+    iget v3, v2, Landroid/view/WindowManager$LayoutParams;->width:I
+    if-eq v3, p0, :L2
+  .line 122
+    iput p0, v2, Landroid/view/WindowManager$LayoutParams;->width:I
+  .line 123
+    invoke-virtual { v0, v2 }, Landroid/view/Window;->setAttributes(Landroid/view/WindowManager$LayoutParams;)V
+  :L2
+  .line 125
+    invoke-virtual { v1 }, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
+    move-result-object v2
+    new-instance v3, Lcom/innioasis/ipp/Menus$Fit;
+    check-cast v1, Landroid/widget/ListView;
+    invoke-direct { v3, v0, v1, p0 }, Lcom/innioasis/ipp/Menus$Fit;-><init>(Landroid/view/Window;Landroid/widget/ListView;I)V
+    invoke-virtual { v2, v3 }, Landroid/view/ViewTreeObserver;->addOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
+  :L3
+  .line 127
+    goto :L6
+  :L4
+  .line 118
+    return-void
+  :L5
+  .line 126
+    move-exception p0
+  :L6
+  .line 128
     return-void
 .end method
 
 .method public static group(Lcom/innioasis/music/util/SubMenuDialog;ILcom/innioasis/music/util/SubMenuDialog$Callback;)Z
   .registers 3
-  .line 236
+  .line 323
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Menus;->ours(Landroid/app/Dialog;ILjava/lang/Object;)Z
     move-result p0
     return p0
@@ -570,7 +684,7 @@
 
 .method public static groupVideo(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;ILcom/innioasis/y1/activity/video/SubMenuVideoDialog$Callback;)Z
   .registers 3
-  .line 241
+  .line 328
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Menus;->ours(Landroid/app/Dialog;ILjava/lang/Object;)Z
     move-result p0
     return p0
@@ -581,55 +695,55 @@
   .catchall { :L7 .. :L8 } :L9
   .registers 2
   :L0
-  .line 525
+  .line 612
     invoke-virtual { p0 }, Landroid/app/Dialog;->getOwnerActivity()Landroid/app/Activity;
     move-result-object v0
-  .line 526
+  .line 613
     if-eqz v0, :L1
     return-object v0
   :L1
-  .line 527
+  .line 614
     invoke-virtual { p0 }, Landroid/app/Dialog;->getContext()Landroid/content/Context;
     move-result-object p0
   :L2
-  .line 528
+  .line 615
     instance-of v0, p0, Landroid/content/ContextWrapper;
     if-eqz v0, :L5
-  .line 529
+  .line 616
     instance-of v0, p0, Landroid/app/Activity;
     if-eqz v0, :L3
     check-cast p0, Landroid/app/Activity;
     return-object p0
   :L3
-  .line 530
+  .line 617
     check-cast p0, Landroid/content/ContextWrapper;
     invoke-virtual { p0 }, Landroid/content/ContextWrapper;->getBaseContext()Landroid/content/Context;
     move-result-object p0
   :L4
     goto :L2
   :L5
-  .line 533
+  .line 620
     goto :L7
   :L6
-  .line 532
+  .line 619
     move-exception p0
   :L7
-  .line 535
+  .line 622
     invoke-static { }, Lcom/blankj/utilcode/util/ActivityUtils;->getTopActivity()Landroid/app/Activity;
     move-result-object p0
   :L8
     return-object p0
   :L9
-  .line 536
+  .line 623
     move-exception p0
-  .line 537
+  .line 624
     const/4 p0, 0
     return-object p0
 .end method
 
 .method public static index(Lcom/innioasis/music/util/SubMenuDialog;I)I
   .registers 2
-  .line 155
+  .line 242
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Menus;->mapped(Landroid/app/Dialog;I)I
     move-result p0
     return p0
@@ -637,7 +751,7 @@
 
 .method private static isFavEntry(Ljava/lang/Object;)Z
   .registers 2
-  .line 316
+  .line 403
     instance-of v0, p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     if-eqz v0, :L0
     check-cast p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
@@ -656,7 +770,7 @@
 
 .method private static isPlaylistEntry(Ljava/lang/Object;)Z
   .registers 4
-  .line 376
+  .line 463
     instance-of v0, p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     const/4 v1, 1
     const/4 v2, 0
@@ -671,10 +785,10 @@
   :L1
     return v1
   :L2
-  .line 377
+  .line 464
     instance-of v0, p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     if-eqz v0, :L5
-  .line 378
+  .line 465
     check-cast p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;->getPlaylist()Lcom/innioasis/y1/database/video/VideoPlaylist;
     move-result-object p0
@@ -685,22 +799,22 @@
   :L4
     return v1
   :L5
-  .line 380
+  .line 467
     return v2
 .end method
 
 .method private static keeps(Landroid/app/Activity;Ljava/lang/Object;ZLjava/util/UUID;)Z
   .registers 7
-  .line 349
+  .line 436
     invoke-static { p1 }, Lcom/innioasis/ipp/Menus;->isPlaylistEntry(Ljava/lang/Object;)Z
     move-result v0
     const/4 v1, 0
     const/4 v2, 1
     if-eqz v0, :L2
-  .line 350
+  .line 437
     invoke-static { p1 }, Lcom/innioasis/ipp/Menus;->playlistId(Ljava/lang/Object;)Ljava/util/UUID;
     move-result-object p0
-  .line 351
+  .line 438
     if-eqz p3, :L0
     if-eqz p0, :L0
     invoke-virtual { p3, p0 }, Ljava/util/UUID;->equals(Ljava/lang/Object;)Z
@@ -711,40 +825,40 @@
   :L1
     return v1
   :L2
-  .line 353
+  .line 440
     invoke-static { p1 }, Lcom/innioasis/ipp/Menus;->label(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p1
-  .line 354
+  .line 441
     if-eqz p3, :L3
     if-eqz p1, :L3
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->on()Z
     move-result p3
     if-nez p3, :L3
-  .line 355
+  .line 442
     const p3, 2131821136
     invoke-virtual { p0, p3 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object p3
     invoke-virtual { p1, p3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p3
     if-eqz p3, :L3
-  .line 356
+  .line 443
     return v1
   :L3
-  .line 358
+  .line 445
     if-nez p2, :L4
     return v2
   :L4
-  .line 359
+  .line 446
     if-nez p1, :L5
     return v2
   :L5
-  .line 360
+  .line 447
     const/4 p2, 0
   :L6
     sget-object p3, Lcom/innioasis/ipp/Menus;->MULTI:[I
     array-length v0, p3
     if-ge p2, v0, :L8
-  .line 361
+  .line 448
     aget p3, p3, p2
     invoke-virtual { p0, p3 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object p3
@@ -753,17 +867,17 @@
     if-eqz p3, :L7
     return v2
   :L7
-  .line 360
+  .line 447
     add-int/lit8 p2, p2, 1
     goto :L6
   :L8
-  .line 363
+  .line 450
     return v1
 .end method
 
 .method private static label(Ljava/lang/Object;)Ljava/lang/String;
   .registers 2
-  .line 369
+  .line 456
     instance-of v0, p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     if-eqz v0, :L0
     check-cast p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
@@ -771,7 +885,7 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 370
+  .line 457
     instance-of v0, p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     if-eqz v0, :L1
     check-cast p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
@@ -779,7 +893,7 @@
     move-result-object p0
     return-object p0
   :L1
-  .line 371
+  .line 458
     const/4 p0, 0
     return-object p0
 .end method
@@ -788,12 +902,12 @@
   .catchall { :L0 .. :L2 } :L4
   .registers 3
   :L0
-  .line 165
+  .line 252
     sget-object v0, Lcom/innioasis/ipp/Menus;->SNAPS:Ljava/util/WeakHashMap;
     invoke-virtual { v0, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Lcom/innioasis/ipp/Menus$Snap;
-  .line 166
+  .line 253
     if-eqz p0, :L3
     iget-object v0, p0, Lcom/innioasis/ipp/Menus$Snap;->map:[I
     if-eqz v0, :L3
@@ -803,51 +917,55 @@
     if-lt p1, v0, :L1
     goto :L3
   :L1
-  .line 167
+  .line 254
     iget-object p0, p0, Lcom/innioasis/ipp/Menus$Snap;->map:[I
     aget p0, p0, p1
   :L2
     return p0
   :L3
-  .line 166
+  .line 253
     return p1
   :L4
-  .line 168
+  .line 255
     move-exception p0
-  .line 169
+  .line 256
     return p1
 .end method
 
 .method public static onShow(Lcom/innioasis/music/util/SubMenuDialog;)V
   .registers 2
-  .line 89
+  .line 94
     const/4 v0, 1
     invoke-static { v0 }, Lcom/innioasis/ipp/Follow;->hold(Z)V
-  .line 90
+  .line 95
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->filter(Landroid/app/Dialog;)V
-  .line 91
+  .line 96
+    invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->fit(Landroid/app/Dialog;)V
+  .line 97
     return-void
 .end method
 
 .method public static onShowVideo(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;)V
   .registers 1
-  .line 98
+  .line 104
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->filter(Landroid/app/Dialog;)V
-  .line 99
+  .line 105
+    invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->fit(Landroid/app/Dialog;)V
+  .line 106
     return-void
 .end method
 
 .method private static ours(Landroid/app/Dialog;ILjava/lang/Object;)Z
   .catchall { :L0 .. :L8 } :L11
   .registers 15
-  .line 246
+  .line 333
     const/4 v0, 1
   :L0
     sget-object v1, Lcom/innioasis/ipp/Menus;->SNAPS:Ljava/util/WeakHashMap;
     invoke-virtual { v1, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/Menus$Snap;
-  .line 247
+  .line 334
     const/4 v2, 0
     if-eqz v1, :L10
     iget-object v3, v1, Lcom/innioasis/ipp/Menus$Snap;->shown:Ljava/util/ArrayList;
@@ -859,29 +977,29 @@
     if-lt p1, v3, :L1
     goto/16 :L10
   :L1
-  .line 248
+  .line 335
     iget-object v3, v1, Lcom/innioasis/ipp/Menus$Snap;->shown:Ljava/util/ArrayList;
     invoke-virtual { v3, p1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object p1
-  .line 249
+  .line 336
     if-eqz p1, :L9
     iget-object v3, v1, Lcom/innioasis/ipp/Menus$Snap;->group:Ljava/lang/Object;
     if-eq p1, v3, :L2
     goto :L9
   :L2
-  .line 250
+  .line 337
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->hostOf(Landroid/app/Dialog;)Landroid/app/Activity;
     move-result-object p1
-  .line 251
+  .line 338
     if-nez p1, :L3
     return v0
   :L3
-  .line 252
+  .line 339
     iget-object v3, v1, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
     invoke-virtual { v3 }, Ljava/util/ArrayList;->size()I
     move-result v3
     new-array v4, v3, [Ljava/lang/Integer;
-  .line 253
+  .line 340
     const/4 v5, 0
   :L4
     if-ge v5, v3, :L5
@@ -891,26 +1009,26 @@
     add-int/lit8 v5, v5, 1
     goto :L4
   :L5
-  .line 254
+  .line 341
     new-instance v5, Lcom/innioasis/ipp/Menus$ByName;
     iget-object v6, v1, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
     invoke-direct { v5, v6 }, Lcom/innioasis/ipp/Menus$ByName;-><init>(Ljava/util/List;)V
     invoke-static { v4, v5 }, Ljava/util/Arrays;->sort([Ljava/lang/Object;Ljava/util/Comparator;)V
-  .line 255
+  .line 342
     new-instance v5, Ljava/util/ArrayList;
     invoke-direct { v5 }, Ljava/util/ArrayList;-><init>()V
-  .line 256
+  .line 343
     new-array v11, v3, [I
-  .line 257
+  .line 344
     nop
   :L6
     if-ge v2, v3, :L7
-  .line 258
+  .line 345
     aget-object v6, v4, v2
     invoke-virtual { v6 }, Ljava/lang/Integer;->intValue()I
     move-result v6
     aput v6, v11, v2
-  .line 259
+  .line 346
     iget-object v6, v1, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
     aget v7, v11, v2
     invoke-virtual { v6, v7 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
@@ -918,11 +1036,11 @@
     invoke-static { v6 }, Lcom/innioasis/ipp/Menus;->playlistName(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object v6
     invoke-interface { v5, v6 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 257
+  .line 344
     add-int/lit8 v2, v2, 1
     goto :L6
   :L7
-  .line 262
+  .line 349
     new-instance v2, Lcom/innioasis/music/util/SubMenuDialog;
     new-instance v3, Lcom/innioasis/ipp/Menus$Chosen;
     iget-object v9, v1, Lcom/innioasis/ipp/Menus$Snap;->entries:Ljava/util/ArrayList;
@@ -933,32 +1051,32 @@
     invoke-direct/range { v6 .. v11 }, Lcom/innioasis/ipp/Menus$Chosen;-><init>(Landroid/app/Dialog;Ljava/lang/Object;Ljava/util/List;[I[I)V
     const p0, 2131886360
     invoke-direct { v2, p1, v5, v3, p0 }, Lcom/innioasis/music/util/SubMenuDialog;-><init>(Landroid/app/Activity;Ljava/util/List;Lcom/innioasis/music/util/SubMenuDialog$Callback;I)V
-  .line 264
+  .line 351
     sget-object p0, Lcom/innioasis/ipp/Menus;->CHOOSERS:Ljava/util/WeakHashMap;
     sget-object p1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
     invoke-virtual { p0, v2, p1 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 265
+  .line 352
     invoke-virtual { v2 }, Lcom/innioasis/music/util/SubMenuDialog;->show()V
   :L8
-  .line 267
+  .line 354
     goto :L12
   :L9
-  .line 249
+  .line 336
     return v2
   :L10
-  .line 247
+  .line 334
     return v2
   :L11
-  .line 266
+  .line 353
     move-exception p0
   :L12
-  .line 268
+  .line 355
     return v0
 .end method
 
 .method public static photoIndex(Ljava/util/List;I)I
   .registers 3
-  .line 515
+  .line 602
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -968,7 +1086,7 @@
     move-result-object p0
     check-cast p0, [I
   :L1
-  .line 516
+  .line 603
     if-eqz p0, :L3
     if-ltz p1, :L3
     array-length v0, p0
@@ -983,7 +1101,7 @@
 .method public static photos(Ljava/util/List;Ljava/util/List;I)Ljava/util/List;
   .catchall { :L0 .. :L5 } :L7
   .registers 5
-  .line 480
+  .line 567
     if-eqz p0, :L8
   :L0
     invoke-interface { p0 }, Ljava/util/List;->size()I
@@ -992,7 +1110,7 @@
     if-ge v0, v1, :L1
     goto :L8
   :L1
-  .line 481
+  .line 568
     if-eqz p1, :L6
     if-ltz p2, :L6
     invoke-interface { p1 }, Ljava/util/List;->size()I
@@ -1000,22 +1118,22 @@
     if-lt p2, v0, :L2
     goto :L6
   :L2
-  .line 482
+  .line 569
     invoke-interface { p1, p2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
-  .line 483
+  .line 570
     instance-of p2, p1, Lcom/innioasis/y1/activity/PhotosActivity$Item;
     if-nez p2, :L3
     return-object p0
   :L3
-  .line 484
+  .line 571
     check-cast p1, Lcom/innioasis/y1/activity/PhotosActivity$Item;
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/PhotosActivity$Item;->isDirectory()Z
     move-result p1
     if-nez p1, :L4
     return-object p0
   :L4
-  .line 485
+  .line 572
     new-instance p1, Ljava/util/ArrayList;
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result p2
@@ -1027,22 +1145,22 @@
   :L5
     return-object p1
   :L6
-  .line 481
+  .line 568
     return-object p0
   :L7
-  .line 486
+  .line 573
     move-exception p1
-  .line 487
+  .line 574
     return-object p0
   :L8
-  .line 480
+  .line 567
     return-object p0
 .end method
 
 .method public static photosFull(Ljava/util/List;Z)Ljava/util/List;
   .catchall { :L0 .. :L4 } :L5
   .registers 5
-  .line 503
+  .line 590
     if-eqz p1, :L6
     if-eqz p0, :L6
   :L0
@@ -1052,10 +1170,10 @@
     if-eq p1, v0, :L1
     goto :L6
   :L1
-  .line 504
+  .line 591
     new-instance p1, Ljava/util/ArrayList;
     invoke-direct { p1 }, Ljava/util/ArrayList;-><init>()V
-  .line 505
+  .line 592
     const/4 v0, 0
   :L2
     sget-object v1, Lcom/innioasis/ipp/Menus;->PHOTO_FULL:[I
@@ -1068,35 +1186,35 @@
     add-int/lit8 v0, v0, 1
     goto :L2
   :L3
-  .line 506
+  .line 593
     sget-object v0, Lcom/innioasis/ipp/Menus;->PHOTO_MAPS:Ljava/util/WeakHashMap;
     invoke-virtual { v0, p1, v1 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L4
-  .line 507
+  .line 594
     return-object p1
   :L5
-  .line 508
+  .line 595
     move-exception p1
-  .line 509
+  .line 596
     return-object p0
   :L6
-  .line 503
+  .line 590
     return-object p0
 .end method
 
 .method private static playlistId(Ljava/lang/Object;)Ljava/util/UUID;
   .registers 3
-  .line 385
+  .line 472
     instance-of v0, p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     const/4 v1, 0
     if-nez v0, :L0
     return-object v1
   :L0
-  .line 386
+  .line 473
     check-cast p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getPlaylist()Lcom/innioasis/y1/database/Playlist;
     move-result-object p0
-  .line 387
+  .line 474
     if-nez p0, :L1
     goto :L2
   :L1
@@ -1110,15 +1228,15 @@
   .catchall { :L0 .. :L2 } :L4
   .registers 3
   :L0
-  .line 287
+  .line 374
     instance-of v0, p0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     if-eqz v0, :L1
-  .line 288
+  .line 375
     move-object v0, p0
     check-cast v0, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getPlaylist()Lcom/innioasis/y1/database/Playlist;
     move-result-object v0
-  .line 289
+  .line 376
     if-eqz v0, :L1
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Playlist;->getName()Ljava/lang/String;
     move-result-object v1
@@ -1127,15 +1245,15 @@
     move-result-object p0
     return-object p0
   :L1
-  .line 291
+  .line 378
     instance-of v0, p0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     if-eqz v0, :L3
-  .line 292
+  .line 379
     move-object v0, p0
     check-cast v0, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;->getPlaylist()Lcom/innioasis/y1/database/video/VideoPlaylist;
     move-result-object v0
-  .line 293
+  .line 380
     if-eqz v0, :L3
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/video/VideoPlaylist;->getPlaylistName()Ljava/lang/String;
     move-result-object v1
@@ -1145,16 +1263,16 @@
   :L2
     return-object p0
   :L3
-  .line 296
+  .line 383
     goto :L5
   :L4
-  .line 295
+  .line 382
     move-exception v0
   :L5
-  .line 297
+  .line 384
     invoke-static { p0 }, Lcom/innioasis/ipp/Menus;->label(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p0
-  .line 298
+  .line 385
     if-nez p0, :L6
     const-string p0, ""
   :L6
@@ -1163,7 +1281,7 @@
 
 .method private static same(Ljava/util/List;Ljava/util/List;)Z
   .registers 6
-  .line 403
+  .line 490
     const/4 v0, 0
     if-eqz p1, :L4
     invoke-interface { p0 }, Ljava/util/List;->size()I
@@ -1173,13 +1291,13 @@
     if-eq v1, v2, :L0
     goto :L4
   :L0
-  .line 404
+  .line 491
     const/4 v1, 0
   :L1
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L3
-  .line 405
+  .line 492
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     invoke-interface { p1, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
@@ -1187,33 +1305,33 @@
     if-eq v2, v3, :L2
     return v0
   :L2
-  .line 404
+  .line 491
     add-int/lit8 v1, v1, 1
     goto :L1
   :L3
-  .line 407
+  .line 494
     const/4 p0, 1
     return p0
   :L4
-  .line 403
+  .line 490
     return v0
 .end method
 
 .method private static selfPlaylist(Landroid/app/Activity;)Ljava/util/UUID;
   .catchall { :L0 .. :L3 } :L4
   .registers 3
-  .line 393
+  .line 480
     const/4 v0, 0
   :L0
     instance-of v1, p0, Lcom/innioasis/music/PlayListActivity;
     if-nez v1, :L1
     return-object v0
   :L1
-  .line 394
+  .line 481
     check-cast p0, Lcom/innioasis/music/PlayListActivity;
     invoke-virtual { p0 }, Lcom/innioasis/music/PlayListActivity;->getPlaylist()Lcom/innioasis/y1/database/Playlist;
     move-result-object p0
-  .line 395
+  .line 482
     if-nez p0, :L2
     goto :L3
   :L2
@@ -1222,16 +1340,16 @@
   :L3
     return-object v0
   :L4
-  .line 396
+  .line 483
     move-exception p0
-  .line 397
+  .line 484
     return-object v0
 .end method
 
 .method private static ticks(Landroid/app/Activity;)I
   .catchall { :L0 .. :L2 } :L3
   .registers 3
-  .line 413
+  .line 500
     const/4 v0, 0
     if-eqz p0, :L4
   :L0
@@ -1240,7 +1358,7 @@
     if-nez v1, :L1
     goto :L4
   :L1
-  .line 414
+  .line 501
     invoke-virtual { p0 }, Landroid/app/Activity;->getWindow()Landroid/view/Window;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/view/Window;->getDecorView()Landroid/view/View;
@@ -1250,37 +1368,37 @@
   :L2
     return p0
   :L3
-  .line 415
+  .line 502
     move-exception p0
-  .line 416
+  .line 503
     return v0
   :L4
-  .line 413
+  .line 500
     return v0
 .end method
 
 .method private static ticksIn(Landroid/view/View;)I
   .registers 4
-  .line 421
+  .line 508
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 422
+  .line 509
     instance-of v1, p0, Landroid/widget/AbsListView;
     if-eqz v1, :L4
-  .line 423
+  .line 510
     check-cast p0, Landroid/widget/AbsListView;
     invoke-virtual { p0 }, Landroid/widget/AbsListView;->getAdapter()Landroid/widget/Adapter;
     move-result-object p0
-  .line 424
+  .line 511
     instance-of v1, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-eqz v1, :L3
-  .line 425
+  .line 512
     check-cast p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object p0
-  .line 426
+  .line 513
     if-nez p0, :L1
     goto :L2
   :L1
@@ -1289,24 +1407,24 @@
   :L2
     return v0
   :L3
-  .line 428
+  .line 515
     return v0
   :L4
-  .line 430
+  .line 517
     instance-of v1, p0, Landroidx/recyclerview/widget/RecyclerView;
     if-eqz v1, :L12
-  .line 431
+  .line 518
     check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object p0
-  .line 432
+  .line 519
     instance-of v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     if-eqz v1, :L7
-  .line 433
+  .line 520
     check-cast p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
     move-result-object p0
-  .line 434
+  .line 521
     if-nez p0, :L5
     goto :L6
   :L5
@@ -1315,15 +1433,15 @@
   :L6
     return v0
   :L7
-  .line 436
+  .line 523
     instance-of v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
     if-eqz v1, :L10
-  .line 437
+  .line 524
     check-cast p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
-  .line 438
+  .line 525
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
     move-result-object p0
-  .line 439
+  .line 526
     if-nez p0, :L8
     goto :L9
   :L8
@@ -1332,10 +1450,10 @@
   :L9
     return v0
   :L10
-  .line 442
+  .line 529
     instance-of v1, p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     if-eqz v1, :L11
-  .line 443
+  .line 530
     check-cast p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object p0
@@ -1343,45 +1461,45 @@
     move-result p0
     return p0
   :L11
-  .line 445
+  .line 532
     return v0
   :L12
-  .line 447
+  .line 534
     instance-of v1, p0, Landroid/view/ViewGroup;
     if-eqz v1, :L16
-  .line 448
+  .line 535
     check-cast p0, Landroid/view/ViewGroup;
-  .line 449
+  .line 536
     nop
-  .line 450
+  .line 537
     const/4 v1, 0
   :L13
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v2
     if-ge v0, v2, :L15
-  .line 451
+  .line 538
     invoke-virtual { p0, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Menus;->ticksIn(Landroid/view/View;)I
     move-result v2
-  .line 452
+  .line 539
     if-le v2, v1, :L14
     move v1, v2
   :L14
-  .line 450
+  .line 537
     add-int/lit8 v0, v0, 1
     goto :L13
   :L15
-  .line 454
+  .line 541
     return v1
   :L16
-  .line 456
+  .line 543
     return v0
 .end method
 
 .method public static videoIndex(Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;I)I
   .registers 2
-  .line 160
+  .line 247
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Menus;->mapped(Landroid/app/Dialog;I)I
     move-result p0
     return p0

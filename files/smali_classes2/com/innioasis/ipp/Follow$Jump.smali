@@ -17,13 +17,13 @@
 
 .method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
   .registers 3
-  .line 537
+  .line 551
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 538
+  .line 552
     iput-object p1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 539
+  .line 553
     iput-object p2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/widget/ListView;
-  .line 540
+  .line 554
     return-void
 .end method
 
@@ -31,42 +31,42 @@
   .catchall { :L0 .. :L4 } :L5
   .registers 4
   :L0
-  .line 545
+  .line 559
     invoke-static { }, Lcom/innioasis/ipp/Follow;->access$300()Ljava/lang/String;
     move-result-object v0
-  .line 546
+  .line 560
     if-nez v0, :L1
     return-void
   :L1
-  .line 547
+  .line 561
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Follow;->access$400(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
     move-result v0
-  .line 548
+  .line 562
     if-gez v0, :L2
     return-void
   :L2
-  .line 549
+  .line 563
     const-wide/16 v1, 0
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Follow;->access$502(J)J
-  .line 550
+  .line 564
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v1
     if-ne v0, v1, :L3
     return-void
   :L3
-  .line 551
+  .line 565
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     iget-object v2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/widget/ListView;
     invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;I)V
   :L4
-  .line 553
+  .line 567
     goto :L6
   :L5
-  .line 552
+  .line 566
     move-exception v0
   :L6
-  .line 554
+  .line 568
     return-void
 .end method

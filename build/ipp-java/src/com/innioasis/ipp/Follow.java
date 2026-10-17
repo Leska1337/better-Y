@@ -430,7 +430,7 @@ public final class Follow {
             ListView lv = findList(act.getWindow().getDecorView());
             if (lv == null) return;
             // Armed BEFORE the adapter check: a new screen has no adapter at onResume yet.
-            armPending(player, null);
+            armPending(player, null, act);
             Object ad = lv.getAdapter();
             if (!(ad instanceof MyBaseAdapter)) return;
             free(ad);
@@ -447,9 +447,12 @@ public final class Follow {
     private static long pendingUntil;
     private static boolean pendingForce;
     private static WeakReference pendingFor;   // the adapter it is about, or null = whichever comes
+    // The screen it is about, or null. Leaving the player lands only on the screen under it — the
+    // next section opened from there is not "just left the player" and keeps its first row.
+    private static WeakReference pendingScreen;
 
     public static void armPending() {
-        armPending(true, null);
+        armPending(true, null, null);
     }
 
     /**
@@ -460,18 +463,27 @@ public final class Follow {
         try {
             free(a);
             if (!enabled()) return;
-            armPending(false, a);
+            armPending(false, a, null);
         } catch (Throwable t) {
         }
     }
 
-    private static void armPending(boolean force, Object a) {
+    private static void armPending(boolean force, Object a, Activity screen) {
         long now = android.os.SystemClock.uptimeMillis();
         if (force || pendingUntil == 0 || now > pendingUntil) {
             pendingForce = force;
             pendingFor = (a == null) ? null : new WeakReference(a);
+            pendingScreen = (screen == null) ? null : new WeakReference(screen);
         }
         pendingUntil = now + PENDING_MS;
+    }
+
+    private static Activity activityOf(Context c) {
+        while (c instanceof android.content.ContextWrapper) {
+            if (c instanceof Activity) return (Activity) c;
+            c = ((android.content.ContextWrapper) c).getBaseContext();
+        }
+        return null;
     }
 
     private static void tryPending(MyBaseAdapter a, ListView lv) {
@@ -479,6 +491,8 @@ public final class Follow {
             if (android.os.SystemClock.uptimeMillis() > pendingUntil) { pendingUntil = 0; return; }
             if (!pendingForce && !enabled()) { pendingUntil = 0; return; }
             if (pendingFor != null && pendingFor.get() != a) return;
+            if (pendingScreen != null && pendingScreen.get() != activityOf(lv.getContext())
+                    && !enabled()) return;
             if (busy(a)) return;
             if (!Queue.atSource(a)) return;
             String p = playingPath();

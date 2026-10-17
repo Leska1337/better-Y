@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..13ba0340 100644
+index 01b1f730..86cfc236 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..13ba0340 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100186
++  versionCode: 10100187
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19966,7 +19966,7 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..487fdc51 100644
+index 71fe29d0..09d80591 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20915,7 +20915,7 @@ index 71fe29d0..487fdc51 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev186</string>
++    <string name="ipp_version">v1.1.0-dev187</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -49980,7 +49980,7 @@ index 132f6278..ca7f2aa7 100644
  
      .line 30
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
-index 943028f8..cba10148 100644
+index 943028f8..827303d2 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 @@ -251,6 +251,9 @@
@@ -50120,7 +50120,7 @@ index 943028f8..cba10148 100644
 -    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 +    move-result-object v3
 +
-+    invoke-static {v2, v3}, Lcom/innioasis/ipp/Feat;->title(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Feat;->title(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
 +
 +    move-result-object v2
 +
@@ -50153,7 +50153,7 @@ index 943028f8..cba10148 100644
 -    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 +    move-result-object v3
 +
-+    invoke-static {v2, v3}, Lcom/innioasis/ipp/Feat;->title(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Feat;->title(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
 +
 +    move-result-object v2
 +
@@ -50166,7 +50166,7 @@ index 943028f8..cba10148 100644
      move-result-object v2
  
 -    check-cast v2, Ljava/lang/CharSequence;
-+    invoke-static {v2}, Lcom/innioasis/ipp/Feat;->artist(Ljava/lang/String;)Ljava/lang/String;
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/Feat;->artist(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
  
 -    invoke-virtual {v1, v2}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
 +    move-result-object v2

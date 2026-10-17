@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.innioasis.ipp.AlbumArtist;
 import com.innioasis.ipp.Anim;
 import com.innioasis.ipp.AlbumArtists;
+import com.innioasis.ipp.Feat;
 import com.innioasis.ipp.AlbumInfo;
 import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
@@ -226,8 +227,9 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
         l.add(new Item(CHOICE, "top_hold", 3, null, null));
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));
-        l.add(new Item(TOGGLE, "first_artist_only", 0, null, null));
-        l.add(new Item(TOGGLE, "feat_in_title", 0, null, "first_artist_only"));
+        l.add(new Item(TOGGLE, Feat.KEY, 0, null, null));
+        l.add(new Item(TOGGLE, Feat.KEY_VARIOUS, 0, null, Feat.KEY));
+        l.add(new Item(TOGGLE, Feat.KEY_FEAT, 0, null, Feat.KEY));
         l.add(new Item(CHOICE, Ipp.KEY_LINE_SCROLL, 4, null, null));
 
         l.add(new Item(HEADER, "menu", 0, null, null));

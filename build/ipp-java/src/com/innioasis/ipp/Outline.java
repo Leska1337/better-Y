@@ -32,15 +32,16 @@ public class Outline extends TextView {
     }
 
     /**
-     * 0 turns the outline off. The edge glyphs' stroke needs room on two counts, and each alone
-     * leaves it cut: the parent clips the view to its bounds (so it is padded), and TextView clips
-     * its drawing to the INSIDE of its padding, widening that only by the shadow's radius (so a
-     * transparent shadow as wide as the padding).
+     * Colour 0 turns the outline off but keeps its room, so the text stands where it does with
+     * one. The edge glyphs' stroke needs room on two counts, and each alone leaves it cut: the
+     * parent clips the view to its bounds (so it is padded), and TextView clips its drawing to the
+     * INSIDE of its padding, widening that only by the shadow's radius (so a transparent shadow as
+     * wide as the padding).
      */
     public void setOutline(int color, float px) {
         if (stroke == color && width == px) return;
-        int was = stroke == 0 ? 0 : room(width);
-        int pad = color == 0 ? 0 : room(px);
+        int was = width <= 0 ? 0 : room(width);
+        int pad = px <= 0 ? 0 : room(px);
         stroke = color;
         width = px;
         if (pad != was) {

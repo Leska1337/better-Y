@@ -85,30 +85,35 @@
 
 交互按钮的组合会随此选择而变化。
 
-[first_artist_only] 仅显示第一位艺术家
-隐藏艺术家标签中第一个逗号之后的全部内容，只保留第一位艺术家。例如：
+[player_album_artist] 显示专辑艺术家而非艺术家
+在播放器的艺术家一行中显示专辑艺术家（Album Artist），而不是歌曲自己的艺术家。专辑没有 Album Artist 时，显示歌曲的第一位艺术家。例如，在“Tree”的专辑中：
 
 “Tree, Shelf Nunny, Lena Kuhn — People”
 变为
 “Tree — People”
 
-仅在播放器的艺术家一行中生效。
-
-被隐藏的艺术家可以通过开启“{row:feat_in_title}”移入标题。
+仅作用于播放器中的艺术家一行。
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] 将客座艺术家移入标题
-把“{row:first_artist_only}”隐藏掉的艺术家加在“feat.”之后，移入歌曲标题。例如：
+[various_artist] 将“Various Artists”替换为艺术家
+当 Album Artist 为“Various”或“Various Artists”时，改为显示歌曲的第一位艺术家。例如，在合辑中：
 
-“Tree, Shelf Nunny, Lena Kuhn — People”
-该设置关闭时变为
+“Various Artists — People”
+变为
 “Tree — People”
 
-开启时变为
+[feat_in_title] 将客座艺术家移入标题
+把艺术家一行中没有显示的歌曲艺术家加在“feat.”之后，移入歌曲标题。例如，在“Tree”的专辑中：
+
+“Tree, Shelf Nunny, Lena Kuhn — People”
+关闭此设置时变为
+“Tree — People”
+
+开启此设置时变为
 “Tree — People (feat. Shelf Nunny, Lena Kuhn)”
 
-仅在播放器的艺术家一行中生效。
+标题中已经提到其中某位时，不会添加任何内容。
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

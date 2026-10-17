@@ -61,7 +61,7 @@ public final class Preview {
                 text(a, R.id.info_state_tv1, fg);
                 text(a, R.id.info_state_tv2, fg);
                 if (MenuStyle.simple(a)) version(a.findViewById(R.id.info_state_tv1));
-                int o = outline(a);
+                int o = outline(a, fg);
                 edge(a.findViewById(R.id.info_state_tv1), o);
                 edge(a.findViewById(R.id.info_state_tv2), o);
             } else if (a instanceof EqActivity) {
@@ -74,7 +74,7 @@ public final class Preview {
                 if (tv != null && tv.getParent() instanceof ViewGroup) {
                     ViewGroup g = (ViewGroup) tv.getParent();
                     all(g, fg);
-                    int o = outline(a);
+                    int o = outline(a, fg);
                     for (int i = 0; i < g.getChildCount(); i++) edge(g.getChildAt(i), o);
                 }
             } else if (a instanceof DateOneLevelActivity) {
@@ -94,14 +94,18 @@ public final class Preview {
         }
     }
 
-    /** Light under Dark, Dark under Light, the theme's focused text under its list text. */
-    private static int outline(Context c) {
+    /**
+     * Light under Dark, Dark under Light, the theme's focused text under its list text — none (0)
+     * when the theme gives both the same colour, which would only draw the text bolder.
+     */
+    private static int outline(Context c, int fg) {
         int v = Prefs.val(c, KEY);
         if (v == DARK) return WHITE;
         if (v == THEME) {
             int t = Icons.themeSelColor();
-            if (t != 0) return t | 0xFF000000;
-            return c.getResources().getColor(R.color.selected_text_color);
+            int o = t != 0 ? (t | 0xFF000000)
+                    : c.getResources().getColor(R.color.selected_text_color);
+            return ((o ^ fg) & 0xFFFFFF) == 0 ? 0 : o;
         }
         return BLACK;
     }

@@ -279,7 +279,7 @@ public final class Flow {
         } else {
             t = Other.INSTANCE.unNamed(t);
         }
-        return Feat.title(t, s.getArtist());
+        return Feat.title(t, s);
     }
 
     // ---- slides -----------------------------------------------------------------------------

@@ -85,30 +85,38 @@
 
 이 선택에 따라 인터랙티브 버튼의 구성이 달라집니다.
 
-[first_artist_only] 첫 번째 아티스트만 표시
-아티스트 태그에서 첫 쉼표 뒤의 내용을 모두 숨기고 첫 번째 아티스트만 남깁니다. 예를 들어:
+[player_album_artist] 아티스트 대신 앨범 아티스트 표시
+플레이어의 아티스트 줄에 곡의 아티스트 대신 앨범 아티스트(Album Artist)를 표시합니다. 앨범에 Album Artist가 없으면 곡의 첫 번째 아티스트가 표시됩니다. 예를 들어 "Tree"의 앨범에서:
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
-이것은 다음과 같이 바뀝니다:
+는
 "Tree — People"
+이 됩니다.
 
-플레이어의 아티스트 줄에서만 적용됩니다.
-
-숨겨진 아티스트는 "{row:feat_in_title}" 설정을 켜서 제목으로 옮길 수 있습니다.
+플레이어의 아티스트 줄에서만 작동합니다.
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
+[various_artist] "Various Artists"를 아티스트로 대체
+Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번째 아티스트를 표시합니다. 예를 들어 컴필레이션에서:
+
+"Various Artists — People"
+는
+"Tree — People"
+이 됩니다.
+
 [feat_in_title] 피처링 아티스트를 제목으로 이동
-"{row:first_artist_only}" 설정이 숨긴 아티스트를 "feat." 뒤에 붙여 곡 제목으로 옮깁니다. 예를 들어:
+아티스트 줄에 표시되지 않는 곡의 아티스트를 "feat." 뒤에 붙여 곡 제목으로 옮깁니다. 예를 들어 "Tree"의 앨범에서:
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
-이 설정이 꺼져 있으면
+는 이 설정이 꺼져 있으면
 "Tree — People"
 
 켜져 있으면
 "Tree — People (feat. Shelf Nunny, Lena Kuhn)"
+이 됩니다.
 
-플레이어의 아티스트 줄에서만 적용됩니다.
+제목에 이미 그중 한 명이 있으면 아무것도 추가하지 않습니다.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 

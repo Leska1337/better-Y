@@ -85,30 +85,35 @@ La función seleccionada es la que se abre en el reproductor de audiolibros al m
 
 El conjunto de botones interactivos cambia según esta elección.
 
-[first_artist_only] Mostrar solo el primer artista
-Oculta todo lo que va después de la primera coma en la etiqueta del artista y deja solo el primero. Por ejemplo:
+[player_album_artist] Mostrar artistas del álbum en vez de artistas
+Muestra en la línea del artista del reproductor el artista del álbum (Album Artist) en lugar de los artistas de la canción. Si el álbum no tiene Album Artist, se muestra el primer artista de la canción. Por ejemplo, en un álbum de «Tree»:
 
 «Tree, Shelf Nunny, Lena Kuhn — People»
-pasa a ser
+se convierte en
 «Tree — People»
 
 Solo funciona en la línea del artista del reproductor.
-
-Los artistas ocultos se pueden mover al título activando «{row:feat_in_title}».
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
-[feat_in_title] Mover los artistas invitados al título
-Mueve los artistas ocultados por «{row:first_artist_only}» al título de la canción, después de un «feat.». Por ejemplo:
+[various_artist] Reemplazar «Various Artists» por un artista
+Si el Album Artist es «Various» o «Various Artists», se muestra en su lugar el primer artista de la canción. Por ejemplo, en un recopilatorio:
 
-«Tree, Shelf Nunny, Lena Kuhn — People»
-con esta opción desactivada pasa a ser
+«Various Artists — People»
+se convierte en
 «Tree — People»
 
-con esta opción activada pasa a ser
+[feat_in_title] Mover los artistas invitados al título
+Mueve los artistas de la canción que la línea del artista no muestra al título de la canción, después de un «feat.». Por ejemplo, en un álbum de «Tree»:
+
+«Tree, Shelf Nunny, Lena Kuhn — People»
+con este ajuste desactivado se convierte en
+«Tree — People»
+
+con este ajuste activado se convierte en
 «Tree — People (feat. Shelf Nunny, Lena Kuhn)»
 
-Solo funciona en la línea del artista del reproductor.
+No se añade nada si el título ya nombra a alguno de ellos.
 @img first_artist_only_on.png {On} + {Off}
 @img feat_in_title_on.png {On} + {On}
 
