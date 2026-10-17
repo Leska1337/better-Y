@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..94507cfe 100644
+index 01b1f730..5088a870 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..94507cfe 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100195
++  versionCode: 10100202
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19966,7 +19966,7 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f6ed1737 100644
+index 71fe29d0..65073b7a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20915,7 +20915,7 @@ index 71fe29d0..f6ed1737 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev195</string>
++    <string name="ipp_version">v1.1.0-dev202</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23056,10 +23056,10 @@ index 060ed6d1..c67c3385 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..2e1eb9e1 100644
+index 4fcfcfff..91725a1e 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7936 @@
+@@ -1,7643 +1,7946 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -38376,6 +38376,16 @@ index 4fcfcfff..2e1eb9e1 100644
 +
 +    :cond_0
 +    return-void
++.end method
++
++# ipp helper: the Song DAO for Java (the field is private, its accessor synthetic). A write
++# through it must be followed by Ipp.libraryChanged().
++.method public final ippSongDao()Lcom/innioasis/y1/database/SongDao;
++    .locals 1
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Y1Repository;->songDao:Lcom/innioasis/y1/database/SongDao;
++
++    return-object v0
 +.end method
 +
 +# ipp helper: re-read a file's metadata and REPLACE its Song row in place. Unlike

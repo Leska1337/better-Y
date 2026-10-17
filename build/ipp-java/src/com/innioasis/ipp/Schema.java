@@ -8,9 +8,14 @@ import androidx.room.util.TableInfo;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteStatement;
 
+import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
+import com.innioasis.y1.database.SongDao;
+import com.innioasis.y1.database.Y1Repository;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * The tag columns of the Song table beyond the stock ones, and the database version that has them.
@@ -64,6 +69,72 @@ public final class Schema {
     private static void text(SupportSQLiteStatement st, int i, String v) {
         if (v == null) st.bindNull(i);
         else st.bindString(i, v);
+    }
+
+    /**
+     * A file's tags into its row. {@code ""} is "read, no such tag"; null stays "never read", so a
+     * reader can tell an untagged song from one whose file nobody has opened. The year is the first
+     * four digits of YEAR, else of the full date.
+     */
+    public static void fill(Song s, Meta.Info i) {
+        s.setAlbumArtist(seen(i.albumArtist));
+        s.setTrack(seen(i.track));
+        s.setDisc(seen(i.disc));
+        String y = YearCache.digits4(i.year);
+        if (y == null) y = YearCache.digits4(i.date);
+        s.setYear(seen(y));
+    }
+
+    private static String seen(String v) {
+        return v == null ? "" : v.trim();
+    }
+
+    /** Never read: every tag column null. */
+    static boolean unread(Song s) {
+        return s.getAlbumArtist() == null && s.getTrack() == null && s.getDisc() == null
+                && s.getYear() == null;
+    }
+
+    private static final int BATCH = 100;
+
+    /**
+     * Rows scanned before the columns existed, filled from the tag table without opening a file.
+     * Off the main thread, at the end of a scan or with none running; ends in
+     * {@code Ipp.libraryChanged} when it wrote.
+     */
+    static void backfill() {
+        Y1Repository repo = Y1Application.Companion.getY1Repository();
+        if (repo == null) return;
+        SongDao dao = repo.ippSongDao();
+        int n = fillList(dao, Albums.allSongs()) + fillList(dao, repo.getSongsSync(1));
+        if (n > 0) {
+            Diag.note("schema: " + n + " row(s) filled from the tag table");
+            Ipp.libraryChanged();
+        }
+    }
+
+    private static int fillList(SongDao dao, List songs) {
+        if (songs == null) return 0;
+        ArrayList out = new ArrayList();
+        int n = 0;
+        for (int k = 0; k < songs.size(); k++) {
+            Song s = (Song) songs.get(k);
+            if (!unread(s)) continue;
+            Meta.Info i = MetaCache.get(s.getPath());
+            if (i == null) continue;
+            fill(s, i);
+            out.add(s);
+            if (out.size() >= BATCH) n += flush(dao, out);
+        }
+        return n + flush(dao, out);
+    }
+
+    private static int flush(SongDao dao, ArrayList out) {
+        int n = out.size();
+        if (n == 0) return 0;
+        dao.insert((Song[]) out.toArray(new Song[n]));
+        out.clear();
+        return n;
     }
 
     /** Per row, beside the stock read; a query that did not select a column leaves it unset. */

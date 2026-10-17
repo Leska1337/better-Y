@@ -146,6 +146,7 @@ public final class Meta {
             if (i == null) i = new Info();
             id3(path, i, false);
             MetaCache.put(path, i);
+            Schema.fill(song, i);
             HanziToPinyin h = HanziToPinyin.getInstance();
 
             if (i.title != null) {
@@ -183,6 +184,7 @@ public final class Meta {
             i.year = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
             i.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
             MetaCache.put(song.getPath(), i);
+            Schema.fill(song, i);
         } catch (Throwable t) {
         }
     }

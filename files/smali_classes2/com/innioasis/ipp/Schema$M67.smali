@@ -12,7 +12,7 @@
 
 .method constructor <init>()V
   .registers 3
-  .line 30
+  .line 35
     const/4 v0, 6
     const/4 v1, 7
     invoke-direct { p0, v0, v1 }, Landroidx/room/migration/Migration;-><init>(II)V
@@ -21,21 +21,21 @@
 
 .method public migrate(Landroidx/sqlite/db/SupportSQLiteDatabase;)V
   .registers 3
-  .line 34
+  .line 39
     const-string v0, "ALTER TABLE `Song` ADD COLUMN `albumArtist` TEXT"
     invoke-interface { p1, v0 }, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
-  .line 35
+  .line 40
     const-string v0, "ALTER TABLE `Song` ADD COLUMN `track` TEXT"
     invoke-interface { p1, v0 }, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
-  .line 36
+  .line 41
     const-string v0, "ALTER TABLE `Song` ADD COLUMN `disc` TEXT"
     invoke-interface { p1, v0 }, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
-  .line 37
+  .line 42
     const-string v0, "ALTER TABLE `Song` ADD COLUMN `year` TEXT"
     invoke-interface { p1, v0 }, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
-  .line 38
+  .line 43
     const-string v0, "ALTER TABLE `Song` ADD COLUMN `lyrics` INTEGER NOT NULL DEFAULT 0"
     invoke-interface { p1, v0 }, Landroidx/sqlite/db/SupportSQLiteDatabase;->execSQL(Ljava/lang/String;)V
-  .line 39
+  .line 44
     return-void
 .end method

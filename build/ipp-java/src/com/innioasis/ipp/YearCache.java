@@ -38,7 +38,7 @@ public final class YearCache {
     }
 
     /** The first run of four digits: "1997-08-12" gives 1997. */
-    private static String digits4(String s) {
+    static String digits4(String s) {
         if (s == null) {
             return null;
         }

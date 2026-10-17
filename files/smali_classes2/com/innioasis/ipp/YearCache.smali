@@ -54,7 +54,7 @@
     return-void
 .end method
 
-.method private static digits4(Ljava/lang/String;)Ljava/lang/String;
+.method static digits4(Ljava/lang/String;)Ljava/lang/String;
   .registers 10
   .line 42
     const/4 v0, 0

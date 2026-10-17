@@ -240,6 +240,7 @@ public final class Albums {
             lists();
             AlbumArtist.warm();
             MetaCache.warm();
+            Schema.backfill();
         } catch (Throwable t) {
         }
     }
@@ -349,6 +350,7 @@ public final class Albums {
                     lists();
                     AlbumArtist.warm();
                     MetaCache.warm();
+                    Schema.backfill();
                     return;
                 }
                 if (System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return;
