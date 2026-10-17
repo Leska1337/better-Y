@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.y1.R;
 import com.innioasis.y1.activity.DateOneLevelActivity;
-import com.innioasis.y1.activity.DateTwoLevelActivity;
 import com.innioasis.y1.activity.EqActivity;
 import com.innioasis.y1.activity.LanguageActivity;
 import com.innioasis.y1.activity.MainActivity;
@@ -83,7 +82,7 @@ public final class MenuStyle {
     /**
      * Settings' background — the wallpaper under the theme's settingMask — in Default, the
      * wallpaper alone in Simple. The screens inside Settings carry it on the base layout's unused
-     * {@code back}; Equalizer, Brightness, About and better-Y never do.
+     * {@code back}; Brightness, About, the date and time editor and better-Y never do.
      */
     private static void backdrop(Activity a, boolean simple) {
         try {
@@ -93,7 +92,7 @@ public final class MenuStyle {
                 return;
             }
             if (!(a instanceof LanguageActivity || a instanceof WallpaperListActivity
-                    || a instanceof DateOneLevelActivity || a instanceof DateTwoLevelActivity)) {
+                    || a instanceof DateOneLevelActivity || a instanceof EqActivity)) {
                 return;
             }
             ImageView back = ((BaseActivity) a).getBackImageView();

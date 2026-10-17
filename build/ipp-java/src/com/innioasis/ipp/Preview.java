@@ -60,6 +60,10 @@ public final class Preview {
             } else if (a instanceof AboutActivity) {
                 text(a, R.id.info_state_tv1, fg);
                 text(a, R.id.info_state_tv2, fg);
+                if (MenuStyle.simple(a)) version(a.findViewById(R.id.info_state_tv1));
+                int o = outline(a);
+                edge(a.findViewById(R.id.info_state_tv1), o);
+                edge(a.findViewById(R.id.info_state_tv2), o);
             } else if (a instanceof EqActivity) {
                 text(a, R.id.text, fg);
             } else if (a instanceof WallpaperListActivity) {
@@ -67,7 +71,12 @@ public final class Preview {
                 if (img != null && img.getParent() instanceof ViewGroup) all((ViewGroup) img.getParent(), fg);
             } else if (a instanceof BrightnessActivity) {
                 View tv = a.findViewById(R.id.brightness_tv);
-                if (tv != null && tv.getParent() instanceof ViewGroup) all((ViewGroup) tv.getParent(), fg);
+                if (tv != null && tv.getParent() instanceof ViewGroup) {
+                    ViewGroup g = (ViewGroup) tv.getParent();
+                    all(g, fg);
+                    int o = outline(a);
+                    for (int i = 0; i < g.getChildCount(); i++) edge(g.getChildAt(i), o);
+                }
             } else if (a instanceof DateOneLevelActivity) {
                 text(a, R.id.show_time, fg);
                 text(a, R.id.show_date, fg);
@@ -83,6 +92,40 @@ public final class Preview {
             }
         } catch (Throwable t) {
         }
+    }
+
+    /** Light under Dark, Dark under Light, the theme's focused text under its list text. */
+    private static int outline(Context c) {
+        int v = Prefs.val(c, KEY);
+        if (v == DARK) return WHITE;
+        if (v == THEME) {
+            int t = Icons.themeSelColor();
+            if (t != 0) return t | 0xFF000000;
+            return c.getResources().getColor(R.color.selected_text_color);
+        }
+        return BLACK;
+    }
+
+    private static final float OUTLINE_DP = 2.5f;
+
+    private static void edge(View v, int color) {
+        if (!(v instanceof Outline)) return;
+        ((Outline) v).setOutline(color, OUTLINE_DP * v.getResources().getDisplayMetrics().density);
+    }
+
+    /**
+     * Simple has no Settings panel, the one place that names the build: About gets a line for it
+     * under Available. Once — onResume comes back to the same text.
+     */
+    private static void version(View v) {
+        if (!(v instanceof TextView)) return;
+        TextView tv = (TextView) v;
+        Context c = tv.getContext();
+        String line = c.getString(R.string.ipp_brand) + ": " + c.getString(R.string.ipp_version);
+        CharSequence cur = tv.getText();
+        String s = cur == null ? "" : cur.toString();
+        if (s.endsWith(line)) return;
+        tv.setText(s.length() == 0 ? line : s + "\n" + line);
     }
 
     private static void text(Activity a, int id, int color) {

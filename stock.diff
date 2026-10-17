@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..110d1abe 100644
+index 01b1f730..02b16afe 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..110d1abe 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100173
++  versionCode: 10100177
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -98,6 +98,19 @@ index 7b87d102..378d96df 100644
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="10.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="10.0dip" android:layout_marginHorizontal="3.0dip" android:layout_marginVertical="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/content" android:background="@android:color/transparent" android:layout_width="21.0dip" android:layout_height="32.0dip" android:layout_marginLeft="3.0dip" android:layout_marginTop="3.0dip" android:layout_marginRight="3.0dip" android:layout_marginBottom="3.0dip" android:layout_marginHorizontal="3.0dip" android:layout_marginVertical="3.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_about.xml b/build/src/res/layout/activity_about.xml
+index 031c1794..ff86ecc8 100644
+--- a/build/src/res/layout/activity_about.xml
++++ b/build/src/res/layout/activity_about.xml
+@@ -2,6 +2,6 @@
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <com.innioasis.y1.utils.AboutView android:id="@id/bzt_view" android:layout_width="140.0dip" android:layout_height="140.0dip" android:layout_marginTop="60.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <TextView android:textColor="@color/white" android:gravity="left" android:id="@id/info_state_tv1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_marginRight="10.0dip" app:layout_constraintHorizontal_chainStyle="packed" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/info_state_tv2" app:layout_constraintTop_toBottomOf="@id/bzt_view" />
+-    <TextView android:textColor="@color/white" android:gravity="left" android:id="@id/info_state_tv2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" app:layout_constraintLeft_toRightOf="@id/info_state_tv1" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="@id/info_state_tv1" />
++    <com.innioasis.ipp.Outline android:textColor="@color/white" android:gravity="left" android:id="@id/info_state_tv1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:layout_marginRight="10.0dip" app:layout_constraintHorizontal_chainStyle="packed" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toLeftOf="@id/info_state_tv2" app:layout_constraintTop_toBottomOf="@id/bzt_view" />
++    <com.innioasis.ipp.Outline android:textColor="@color/white" android:gravity="left" android:id="@id/info_state_tv2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" app:layout_constraintLeft_toRightOf="@id/info_state_tv1" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="@id/info_state_tv1" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_albums.xml b/build/src/res/layout/activity_albums.xml
 index a65785d4..00417df8 100644
@@ -234,6 +247,21 @@ index cf5ce73a..4c396309 100644
 +    <View android:id="@id/ipp_book_divider" android:background="#ff2a2a2a" android:layout_width="fill_parent" android:layout_height="1.0dip" />
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
+diff --git a/build/src/res/layout/activity_brightness.xml b/build/src/res/layout/activity_brightness.xml
+index 3d953db5..65d23eeb 100644
+--- a/build/src/res/layout/activity_brightness.xml
++++ b/build/src/res/layout/activity_brightness.xml
+@@ -1,8 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="35.0dip" android:text="@string/page_brightness" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.Outline android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="35.0dip" android:text="@string/page_brightness" app:layout_constraintTop_toTopOf="parent" />
+     <View android:background="#65ffffff" android:layout_width="0.0dip" android:layout_height="5.0dip" app:layout_constraintBottom_toBottomOf="@id/brightness_pb" app:layout_constraintLeft_toLeftOf="@id/brightness_pb" app:layout_constraintRight_toRightOf="@id/brightness_pb" app:layout_constraintTop_toTopOf="@id/brightness_pb" />
+     <ProgressBar android:id="@id/brightness_pb" android:layout_width="fill_parent" android:layout_height="10.0dip" android:max="100" android:progressDrawable="@drawable/brightness_bg" android:layout_marginStart="10.0dip" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" style="@style/Widget.AppCompat.ProgressBar.Horizontal" />
+-    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/brightness_tv" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="35.0dip" app:layout_constraintBottom_toBottomOf="parent" />
++    <com.innioasis.ipp.Outline android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/brightness_tv" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="35.0dip" app:layout_constraintBottom_toBottomOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_date_one_level.xml b/build/src/res/layout/activity_date_one_level.xml
 index b2b33afe..377513d2 100644
 --- a/build/src/res/layout/activity_date_one_level.xml
@@ -19935,7 +19963,7 @@ index 803c1e7a..b587f96e 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..0b756dac 100644
+index 71fe29d0..4e871236 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20884,7 +20912,7 @@ index 71fe29d0..0b756dac 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev173</string>
++    <string name="ipp_version">v1.1.0-dev177</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
