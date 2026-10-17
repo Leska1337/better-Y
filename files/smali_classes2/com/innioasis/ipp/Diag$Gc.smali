@@ -17,7 +17,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 149
+  .line 153
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -26,36 +26,36 @@
   .catchall { :L0 .. :L2 } :L3
   .catchall { :L4 .. :L5 } :L3
   .registers 4
-  .line 154
+  .line 158
     const-class v0, Lcom/innioasis/ipp/Diag$Gc;
     monitor-enter v0
   :L0
-  .line 155
+  .line 159
     sget-boolean v1, Lcom/innioasis/ipp/Diag$Gc;->running:Z
     if-eqz v1, :L1
     monitor-exit v0
     return-void
   :L1
-  .line 156
+  .line 160
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Diag$Gc;->running:Z
-  .line 157
+  .line 161
     monitor-exit v0
   :L2
-  .line 158
+  .line 162
     new-instance v0, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/ipp/Diag$Gc;
     invoke-direct { v2 }, Lcom/innioasis/ipp/Diag$Gc;-><init>()V
     const-string v3, "ipp-diag-gc"
     invoke-direct { v0, v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 159
+  .line 163
     invoke-virtual { v0, v1 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 160
+  .line 164
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
-  .line 161
+  .line 165
     return-void
   :L3
-  .line 157
+  .line 161
     move-exception v1
   :L4
     monitor-exit v0
@@ -68,7 +68,7 @@
   .catchall { :L10 .. :L12 } :L11
   .catchall { :L14 .. :L17 } :L16
   .registers 11
-  .line 165
+  .line 169
     const/16 v0, 8
     const/4 v1, 0
   :L0
@@ -99,7 +99,7 @@
     const/high16 v2, 0x00040000
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Panel;->exec([Ljava/lang/String;I)Ljava/lang/String;
     move-result-object v0
-  .line 167
+  .line 171
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v5, "("
@@ -114,14 +114,14 @@
     move-result-object v2
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
-  .line 168
+  .line 172
     const-string v5, "\n"
     invoke-virtual { v0, v5 }, Ljava/lang/String;->split(Ljava/lang/String;)[Ljava/lang/String;
     move-result-object v0
-  .line 169
+  .line 173
     new-instance v5, Ljava/util/ArrayList;
     invoke-direct { v5 }, Ljava/util/ArrayList;-><init>()V
-  .line 170
+  .line 174
     array-length v6, v0
     sub-int/2addr v6, v3
   :L1
@@ -130,18 +130,18 @@
     move-result v7
     const/16 v8, 20
     if-ge v7, v8, :L5
-  .line 171
+  .line 175
     aget-object v7, v0, v6
     invoke-virtual { v7 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v7
-  .line 172
+  .line 176
     sget-object v8, Lcom/innioasis/ipp/Diag$Gc;->lastLine:Ljava/lang/String;
     invoke-virtual { v7, v8 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v8
     if-eqz v8, :L2
     goto :L5
   :L2
-  .line 174
+  .line 178
     const-string v8, " "
     const-string v9, ""
     invoke-virtual { v7, v8, v9 }, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
@@ -154,7 +154,7 @@
     move-result v8
     if-gez v8, :L3
     const-string v8, "WAIT_FOR_CONCURRENT_GC"
-  .line 175
+  .line 179
     invoke-virtual { v7, v8 }, Ljava/lang/String;->indexOf(Ljava/lang/String;)I
     move-result v8
     if-gez v8, :L3
@@ -163,14 +163,14 @@
     move-result v8
     if-ltz v8, :L4
   :L3
-  .line 176
+  .line 180
     invoke-interface { v5, v1, v7 }, Ljava/util/List;->add(ILjava/lang/Object;)V
   :L4
-  .line 170
+  .line 174
     add-int/lit8 v6, v6, -1
     goto :L1
   :L5
-  .line 179
+  .line 183
     invoke-interface { v5 }, Ljava/util/List;->isEmpty()Z
     move-result v0
     if-nez v0, :L6
@@ -182,7 +182,7 @@
     check-cast v0, Ljava/lang/String;
     sput-object v0, Lcom/innioasis/ipp/Diag$Gc;->lastLine:Ljava/lang/String;
   :L6
-  .line 180
+  .line 184
     const/4 v0, 0
   :L7
     invoke-interface { v5 }, Ljava/util/List;->size()I
@@ -198,13 +198,13 @@
     add-int/lit8 v0, v0, 1
     goto :L7
   :L9
-  .line 183
+  .line 187
     const-class v0, Lcom/innioasis/ipp/Diag$Gc;
     monitor-enter v0
   :L10
-  .line 184
+  .line 188
     sput-boolean v1, Lcom/innioasis/ipp/Diag$Gc;->running:Z
-  .line 185
+  .line 189
     monitor-exit v0
     goto :L15
   :L11
@@ -213,23 +213,23 @@
   :L12
     throw v1
   :L13
-  .line 181
+  .line 185
     move-exception v0
-  .line 183
+  .line 187
     const-class v0, Lcom/innioasis/ipp/Diag$Gc;
     monitor-enter v0
   :L14
-  .line 184
+  .line 188
     sput-boolean v1, Lcom/innioasis/ipp/Diag$Gc;->running:Z
-  .line 185
+  .line 189
     monitor-exit v0
   :L15
-  .line 186
+  .line 190
     nop
-  .line 187
+  .line 191
     return-void
   :L16
-  .line 185
+  .line 189
     move-exception v1
     monitor-exit v0
   :L17

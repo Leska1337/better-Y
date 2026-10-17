@@ -108,12 +108,16 @@ public final class Diag {
     }
 
     /**
-     * A heap dump to better-Y/logs at the first stuttering animation of the run — only while the
-     * empty file better-Y/heap_dump exists (put there by hand over USB). Every thread stops for
-     * the seconds the dump takes, so it is never on by itself.
+     * A heap dump to better-Y/logs at the first stuttering animation of the run and with every
+     * "Save diagnostic log" — only while the empty file better-Y/heap_dump exists (put there by
+     * hand over USB). Every thread stops for the seconds the dump takes, so it is never on by itself.
      */
     static final class Heap implements Runnable {
         private static boolean asked;
+
+        static boolean flagged() {
+            return new File(Panel.card(), "heap_dump").isFile();
+        }
 
         static void once() {
             synchronized (Heap.class) {
@@ -121,7 +125,7 @@ public final class Diag {
                 asked = true;
             }
             try {
-                if (!new File(Panel.card(), "heap_dump").isFile()) return;
+                if (!flagged()) return;
                 Thread t = new Thread(new Heap(), "ipp-diag-heap");
                 t.setDaemon(true);
                 t.start();
@@ -372,6 +376,10 @@ public final class Diag {
 
         public void run() {
             File f = null;
+            try {
+                if (Heap.flagged()) new Heap().run();
+            } catch (Throwable t) {
+            }
             try {
                 f = report(a);
             } catch (Throwable t) {

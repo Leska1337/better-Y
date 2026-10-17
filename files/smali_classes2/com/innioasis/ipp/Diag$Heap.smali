@@ -20,59 +20,67 @@
     return-void
 .end method
 
+.method static flagged()Z
+  .registers 3
+  .line 119
+    new-instance v0, Ljava/io/File;
+    invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
+    move-result-object v1
+    const-string v2, "heap_dump"
+    invoke-direct { v0, v1, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+    invoke-virtual { v0 }, Ljava/io/File;->isFile()Z
+    move-result v0
+    return v0
+.end method
+
 .method static once()V
   .catchall { :L0 .. :L2 } :L7
   .catchall { :L2 .. :L4 } :L5
   .catchall { :L8 .. :L9 } :L7
   .registers 4
-  .line 119
+  .line 123
     const-class v0, Lcom/innioasis/ipp/Diag$Heap;
     monitor-enter v0
   :L0
-  .line 120
+  .line 124
     sget-boolean v1, Lcom/innioasis/ipp/Diag$Heap;->asked:Z
     if-eqz v1, :L1
     monitor-exit v0
     return-void
   :L1
-  .line 121
+  .line 125
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Diag$Heap;->asked:Z
-  .line 122
+  .line 126
     monitor-exit v0
   :L2
-  .line 124
-    new-instance v0, Ljava/io/File;
-    invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
-    move-result-object v2
-    const-string v3, "heap_dump"
-    invoke-direct { v0, v2, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-    invoke-virtual { v0 }, Ljava/io/File;->isFile()Z
+  .line 128
+    invoke-static { }, Lcom/innioasis/ipp/Diag$Heap;->flagged()Z
     move-result v0
     if-nez v0, :L3
     return-void
   :L3
-  .line 125
+  .line 129
     new-instance v0, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/ipp/Diag$Heap;
     invoke-direct { v2 }, Lcom/innioasis/ipp/Diag$Heap;-><init>()V
     const-string v3, "ipp-diag-heap"
     invoke-direct { v0, v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 126
+  .line 130
     invoke-virtual { v0, v1 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 127
+  .line 131
     invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
   :L4
-  .line 129
+  .line 133
     goto :L6
   :L5
-  .line 128
+  .line 132
     move-exception v0
   :L6
-  .line 130
+  .line 134
     return-void
   :L7
-  .line 122
+  .line 126
     move-exception v1
   :L8
     monitor-exit v0
@@ -84,7 +92,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 134
+  .line 138
     new-instance v0, Ljava/io/File;
     invoke-static { }, Lcom/innioasis/ipp/Panel;->logs()Ljava/io/File;
     move-result-object v1
@@ -103,11 +111,11 @@
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
     invoke-direct { v0, v1, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 135
+  .line 139
     invoke-virtual { v0 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v1
     invoke-static { v1 }, Landroid/os/Debug;->dumpHprofData(Ljava/lang/String;)V
-  .line 136
+  .line 140
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "heap dumped to "
@@ -121,12 +129,12 @@
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L1
-  .line 139
+  .line 143
     goto :L3
   :L2
-  .line 137
+  .line 141
     move-exception v0
-  .line 138
+  .line 142
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "heap dump failed: "
@@ -138,6 +146,6 @@
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L3
-  .line 140
+  .line 144
     return-void
 .end method
