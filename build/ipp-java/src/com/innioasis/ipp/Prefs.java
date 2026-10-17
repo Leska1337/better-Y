@@ -31,6 +31,8 @@ public final class Prefs {
         def(Cover.KEY_TILT, 1);              // the stock, iPod-like look
         def("top_hold", 1);                  // Queue
         def("book_top_hold", 1);             // Queue
+        def(Feat.KEY_FIRST, 0);
+        def(Feat.KEY_FIRST_FEAT, 0);
         def(Feat.KEY, 0);
         def(Feat.KEY_VARIOUS, 0);
         def(Feat.KEY_FEAT, 0);

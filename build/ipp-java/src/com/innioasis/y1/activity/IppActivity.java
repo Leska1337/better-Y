@@ -227,6 +227,8 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
         l.add(new Item(CHOICE, "top_hold", 3, null, null));
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));
+        l.add(new Item(TOGGLE, Feat.KEY_FIRST, 0, null, null));
+        l.add(new Item(TOGGLE, Feat.KEY_FIRST_FEAT, 0, null, Feat.KEY_FIRST));
         l.add(new Item(TOGGLE, Feat.KEY, 0, null, null));
         l.add(new Item(TOGGLE, Feat.KEY_VARIOUS, 0, null, Feat.KEY));
         l.add(new Item(TOGGLE, Feat.KEY_FEAT, 0, null, Feat.KEY));
@@ -896,6 +898,9 @@ public final class IppActivity extends BaseActivity {
             if ("likes".equals(it.key) && Prefs.on(this, it.key)) Fav.ensure(this);
             // the genre subtitles are cached counts the split changes
             if (GenreSplit.KEY_SPLIT.equals(it.key)) GenreInfo.clear();
+            // the two artist-line modes exclude each other; both rows stay on screen
+            String rival = Feat.rival(it.key);
+            if (rival != null && Prefs.on(this, it.key)) Prefs.setBool(this, rival, false);
             render();
         } else if (it.type == NUMBER) {
             startEdit(it);

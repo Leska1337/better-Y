@@ -9,16 +9,26 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * The artist line of Now Playing, display only. "player_album_artist" shows the album artist by
- * the rule of Album Artists ({@link AlbumArtists#of}: the tag as written, else the track's first
- * artist); "various_artist" puts the track's first artist in place of "Various (Artists)"; and
- * "feat_in_title" appends the track's other artists to the title as " (feat. B, C)".
+ * The artist line of Now Playing, display only, in one of two modes that exclude each other.
+ * "first_artist_only" cuts it to the track's first artist. "player_album_artist" shows the album
+ * artist by the rule of Album Artists ({@link AlbumArtists#of}: the tag as written, else the
+ * track's first artist), with "various_artist" putting the first artist in place of "Various
+ * (Artists)". Each mode's sub-row appends the artists the line leaves out to the title.
  */
 public final class Feat {
 
+    public static final String KEY_FIRST = "first_artist_only";
+    public static final String KEY_FIRST_FEAT = "feat_in_title";
     public static final String KEY = "player_album_artist";
     public static final String KEY_VARIOUS = "various_artist";
-    public static final String KEY_FEAT = "feat_in_title";
+    public static final String KEY_FEAT = "aa_feat_in_title";
+
+    /** The mode a toggle switches off when it is turned on, or null. */
+    public static String rival(String key) {
+        if (KEY_FIRST.equals(key)) return KEY;
+        if (KEY.equals(key)) return KEY_FIRST;
+        return null;
+    }
 
     private static boolean pref(String key) {
         Context c = Y1Application.Companion.getAppContext();
@@ -33,11 +43,12 @@ public final class Feat {
     }
 
     /**
-     * Null when the setting is off. The album artist is never rewritten; only the first-artist
-     * fallback goes through {@link Artists#display}.
+     * Null when neither mode is on. The album artist is never rewritten; only the first artist
+     * goes through {@link Artists#display}.
      */
     private static String shown(String raw, Song s) {
-        if (s == null || !pref(KEY)) return null;
+        if (s == null) return null;
+        if (!pref(KEY)) return pref(KEY_FIRST) ? Artists.display(first(raw)) : null;
         String aa = albumArtist(s);
         if (aa.length() > 0 && !(pref(KEY_VARIOUS) && various(aa))) return aa;
         return Artists.display(first(raw));
@@ -74,7 +85,7 @@ public final class Feat {
      * one of them — files often carry the featuring in both tags, and a second copy is worse.
      */
     public static String title(String title, Song s) {
-        if (title == null || s == null || !pref(KEY_FEAT)) return title;
+        if (title == null || s == null || !pref(pref(KEY) ? KEY_FEAT : KEY_FIRST_FEAT)) return title;
         String rawArtist = s.getArtist();
         String line = shown(rawArtist, s);
         if (line == null || rawArtist == null || Constant.UNKNOWN.equals(rawArtist)) return title;

@@ -85,6 +85,35 @@
 
 מערך הכפתורים האינטראקטיביים משתנה בהתאם לבחירה הזו.
 
+[first_artist_only] הצגת האמן הראשון בלבד
+מסתיר את כל מה שבא אחרי הפסיק הראשון בתג האמן, ומשאיר רק את הראשון. לדוגמה:
+
+"Tree, Shelf Nunny, Lena Kuhn — People"
+הופך ל-
+"Tree — People"
+
+פועל רק בשורת האמן בנגן.
+
+אפשר להעביר את האמנים המוסתרים אל שם השיר על ידי הפעלת "{row:feat_in_title}".
+
+הפעלתו מכבה את "{row:player_album_artist}".
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title] העברת אמנים מוסתרים לשם השיר
+מעביר את האמנים שהוסתרו על ידי "{row:first_artist_only}" אל שם השיר, אחרי "feat.". לדוגמה:
+
+"Tree, Shelf Nunny, Lena Kuhn — People"
+כשההגדרה כבויה הופך ל-
+"Tree — People"
+
+כשההגדרה דלוקה הופך ל-
+"Tree — People (feat. Shelf Nunny, Lena Kuhn)"
+
+פועל רק בשורת האמן בנגן.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
 [player_album_artist] הצגת אמן האלבום במקום האמנים
 מציג בשורת האמן בנגן את אמן האלבום (Album Artist) במקום האמנים של השיר. אם לאלבום אין Album Artist, מוצג האמן הראשון של השיר. לדוגמה, באלבום של "Tree":
 
@@ -93,6 +122,8 @@
 "Tree — People"
 
 פועל רק בשורת האמן בנגן.
+
+הפעלתו מכבה את "{row:first_artist_only}".
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
@@ -103,7 +134,7 @@
 הופך ל-
 "Tree — People"
 
-[feat_in_title] העברת אמנים אורחים לשם השיר
+[aa_feat_in_title] העברת אמנים אורחים לשם השיר
 מעביר את אמני השיר שאינם מוצגים בשורת האמן אל שם השיר, אחרי "feat.". לדוגמה, באלבום של "Tree":
 
 "Tree, Shelf Nunny, Lena Kuhn — People"

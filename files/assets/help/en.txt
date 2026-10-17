@@ -88,6 +88,35 @@ The selected function is the one that opens in the audiobook player when the top
 
 The set of interactive buttons changes with this choice.
 
+[first_artist_only] Show only the first artist
+Hides everything after the first comma in the artist tag, leaving only the first artist. For example:
+ 
+"Tree, Shelf Nunny, Lena Kuhn — People" 
+becomes
+"Tree — People"
+
+Works only in the artist line of the player.
+
+Hidden artists can be moved to the title by enabling "{row:feat_in_title}".
+
+Turning it on turns "{row:player_album_artist}" off.
+@img first_artist_only_off.png {Off}
+@img first_artist_only_on.png {On}
+
+[feat_in_title if first_artist_only] Move hidden artists to the title
+Moves the artists hidden by "{row:first_artist_only}" into the song title, after a "feat.". For example:
+
+"Tree, Shelf Nunny, Lena Kuhn — People"
+with this setting Off becomes
+"Tree — People"
+
+with this setting On becomes
+"Tree — People (feat. Shelf Nunny, Lena Kuhn)"
+
+Works only in the artist line of the player.
+@img first_artist_only_on.png {On} + {Off}
+@img feat_in_title_on.png {On} + {On}
+
 [player_album_artist] Show Album Artists instead of Artists
 Shows the album's Album Artist in the artist line of the player instead of the song's own artists. An album without an Album Artist shows the first artist of the song. For example, on an album by "Tree":
 
@@ -96,6 +125,8 @@ becomes
 "Tree — People"
 
 Works only in the artist line of the player.
+
+Turning it on turns "{row:first_artist_only}" off.
 @img first_artist_only_off.png {Off}
 @img first_artist_only_on.png {On}
 
@@ -106,7 +137,7 @@ When the Album Artist is "Various" or "Various Artists", shows the first artist 
 becomes
 "Tree — People"
 
-[feat_in_title if player_album_artist] Move featured artists to the title
+[aa_feat_in_title if player_album_artist] Move featured artists to the title
 Moves the song's artists that the artist line does not show into the song title, after a "feat.". For example, on an album by "Tree":
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
