@@ -456,25 +456,47 @@ public final class Flow {
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
-                room();
-                for (int i = 0; i < SLIDES && !stop; i++) pool.add(newSlide());
+                synchronized (SPARE) {
+                    while (!SPARE.isEmpty() && pool.size() < SLIDES) {
+                        pool.add(SPARE.remove(SPARE.size() - 1));
+                    }
+                }
+                if (pool.size() < SLIDES) room();
+                while (pool.size() < SLIDES && !stop) pool.add(newSlide());
                 loop();
             } finally {
                 if (readArtist) AlbumArtist.flush();
+                giveBack();
+            }
+        }
+
+        /**
+         * The pool outlives the screen. Made again on every entry it cost two collector pauses per
+         * slide — about four seconds — whenever the heap had no free run a slide's size, and
+         * letting go of a reserve block does not keep one: the next collection trims the heap
+         * straight back. 34 slides, about 6.5 MB, held for the life of the process.
+         */
+        private static final ArrayList SPARE = new ArrayList();
+
+        private void giveBack() {
+            synchronized (SPARE) {
+                ArrayList all = new ArrayList(pool);
+                Object[] vs = slides.values().toArray();
+                for (int i = 0; i < vs.length; i++) if (vs[i] != blank) all.add(vs[i]);
+                for (int i = 0; i < all.size() && SPARE.size() < SLIDES; i++) {
+                    if (!SPARE.contains(all.get(i))) SPARE.add(all.get(i));
+                }
             }
         }
 
         private static volatile byte[] reserve;
-        private static boolean roomMade;
 
         /**
-         * Once per process: one block taken and let go, so that the heap grows in one step and the
-         * first slides land in the room it leaves. A heap just booted has no free run a slide's
-         * size, and grows by one slide at a time with the whole app stopped for each.
+         * Before the pool is first made: one block taken and let go, so that the heap grows in one
+         * step and the slides land in the room it leaves instead of growing it one slide at a time
+         * with the whole app stopped for each.
          */
         private static void room() {
-            if (roomMade) return;
-            roomMade = true;
             try {
                 reserve = new byte[8 << 20];
             } catch (Throwable t) {
