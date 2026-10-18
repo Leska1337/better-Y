@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroid/content/Context;)V
   .registers 2
-  .line 328
+  .line 331
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Tone$Seed;->c:Landroid/content/Context;
     return-void
@@ -25,7 +25,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 330
+  .line 333
     iget-object v0, p0, Lcom/innioasis/ipp/Tone$Seed;->c:Landroid/content/Context;
     invoke-static { v0 }, Lcom/innioasis/ipp/Tone;->seed(Landroid/content/Context;)V
   :L1
@@ -33,6 +33,6 @@
   :L2
     move-exception v0
   :L3
-  .line 331
+  .line 334
     return-void
 .end method

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..1bf2c86a 100644
+index 01b1f730..15905b61 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..1bf2c86a 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100208
++  versionCode: 10100209
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19966,7 +19966,7 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..29758ee4 100644
+index 71fe29d0..e6701d37 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,581 @@
@@ -20915,7 +20915,7 @@ index 71fe29d0..29758ee4 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev208</string>
++    <string name="ipp_version">v1.1.0-dev209</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -22852,7 +22852,7 @@ index c4b75839..1a37e9cb 100644
      sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..c67c3385 100644
+index 060ed6d1..70bb975c 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -22968,7 +22968,7 @@ index 060ed6d1..c67c3385 100644
      const/4 v0, 0x1
  
      .line 112
-@@ -2806,6 +2856,15 @@
+@@ -2806,6 +2856,18 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -22981,10 +22981,13 @@ index 060ed6d1..c67c3385 100644
 +    # the same once-per-process hook, for the same reason.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Usb;->boot(Landroid/content/Context;)V
 +
++    # ipp: the Y2 sends the wheel and prev/next as other key codes -- KeyMap follows (Press).
++    invoke-static {}, Lcom/innioasis/ipp/Press;->layout()V
++
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3078,9 +3137,18 @@
+@@ -3078,9 +3140,18 @@
      .line 146
      invoke-virtual {p0, p1, v0}, Lcom/innioasis/y1/base/BaseActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
  
@@ -23003,7 +23006,7 @@ index 060ed6d1..c67c3385 100644
      .line 153
      invoke-direct {p0}, Lcom/innioasis/y1/base/BaseActivity;->setObserve()V
  
-@@ -3463,9 +3531,24 @@
+@@ -3463,9 +3534,24 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -23028,7 +23031,7 @@ index 060ed6d1..c67c3385 100644
      .line 347
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -3602,7 +3685,12 @@
+@@ -3602,7 +3688,12 @@
  
      const-string v2, "save state successful"
  
@@ -23042,7 +23045,7 @@ index 060ed6d1..c67c3385 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4210,12 @@
+@@ -4122,6 +4213,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  

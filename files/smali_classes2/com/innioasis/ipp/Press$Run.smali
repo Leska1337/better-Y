@@ -15,19 +15,19 @@
 
 .method constructor <init>(Lcom/innioasis/y1/base/BaseActivity;)V
   .registers 2
-  .line 113
+  .line 132
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 114
+  .line 133
     iput-object p1, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
-  .line 115
+  .line 134
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 119
+  .line 138
     invoke-static { p0 }, Lcom/innioasis/ipp/Press;->clearPending(Ljava/lang/Runnable;)V
-  .line 120
+  .line 139
     iget-object v0, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
     if-eqz v0, :L2
     invoke-virtual { v0 }, Lcom/innioasis/y1/base/BaseActivity;->isFinishing()Z
@@ -35,25 +35,25 @@
     if-eqz v0, :L0
     goto :L2
   :L0
-  .line 124
+  .line 143
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
     move-result-object v0
-  .line 125
+  .line 144
     if-eqz v0, :L1
-  .line 126
+  .line 145
     const/4 v1, 0
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/service/PlayerService;->muteOrNoMuteMusic(Z)V
-  .line 127
+  .line 146
     invoke-virtual { v0 }, Lcom/innioasis/y1/service/PlayerService;->playOrPause()V
   :L1
-  .line 129
+  .line 148
     iget-object v0, p0, Lcom/innioasis/ipp/Press$Run;->a:Lcom/innioasis/y1/base/BaseActivity;
     sget-object v1, Lcom/innioasis/y1/base/BaseActivity$Direction;->BOTTOM:Lcom/innioasis/y1/base/BaseActivity$Direction;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/base/BaseActivity;->direction(Lcom/innioasis/y1/base/BaseActivity$Direction;)V
-  .line 130
+  .line 149
     return-void
   :L2
-  .line 121
+  .line 140
     return-void
 .end method

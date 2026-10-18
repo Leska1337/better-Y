@@ -2,8 +2,10 @@ package com.innioasis.ipp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import java.util.List;
@@ -26,6 +28,23 @@ public final class Press {
 
     /** A first bottom press's play/pause, waiting to see whether a second arrives. */
     private static Runnable pending;
+
+    /**
+     * The Y2's kernel sends the wheel as DPAD_UP/DOWN and prev/next as DPAD_LEFT/RIGHT, where the Y1
+     * sends DPAD_LEFT/RIGHT and MEDIA_PREVIOUS/NEXT; the keylayouts are the same on both. Everything
+     * reads the codes from {@code KeyMap}, so moving them there is the whole switch.
+     */
+    public static void layout() {
+        String hw = Build.HARDWARE;
+        if (!"Y2".equals(Build.MODEL) && (hw == null || hw.indexOf("6582") < 0)) {
+            return;
+        }
+        KeyMap k = KeyMap.INSTANCE;
+        k.setKEY_UP(KeyEvent.KEYCODE_DPAD_UP);
+        k.setKEY_DOWN(KeyEvent.KEYCODE_DPAD_DOWN);
+        k.setKEY_LEFT(KeyEvent.KEYCODE_DPAD_LEFT);
+        k.setKEY_RIGHT(KeyEvent.KEYCODE_DPAD_RIGHT);
+    }
 
     public static void clearPending(Runnable r) {
         if (pending == r) {
