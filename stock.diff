@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..15905b61 100644
+index 01b1f730..856bb7d4 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..15905b61 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100209
++  versionCode: 10100210
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -1094,10 +1094,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..3685ba3e 100644
+index 50446006..248d8dc8 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,522 @@
+@@ -1,417 +1,525 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -1947,6 +1947,9 @@ index 50446006..3685ba3e 100644
 +    <string name="ipp_backup_none">Keine Backups auf der Karte</string>
 +    <string name="ipp_backup_saving">Daten werden gespeichert…</string>
 +    <string name="ipp_backup_done">Backup gespeichert: %1$s</string>
++    <string name="ipp_theme_save">Speichern</string>
++    <string name="ipp_theme_saved">Konfiguration gespeichert: %1$s</string>
++    <string name="ipp_theme_save_failed">Konfiguration nicht gespeichert</string>
 +    <string name="ipp_backup_fail">Backup konnte nicht gespeichert werden</string>
 +    <string name="ipp_backup_confirm">Aktuelle Einstellungen, Wiedergabelisten, Lesezeichen und Lesefortschritt durch dieses Backup ersetzen? Der Player wird neu gestartet.</string>
 +    <string name="ipp_backup_restoring">Daten werden wiederhergestellt…</string>
@@ -2356,10 +2359,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..fe5d8586 100644
+index 6f5a555d..b1ca8147 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,522 @@
+@@ -1,417 +1,525 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3209,6 +3212,9 @@ index 6f5a555d..fe5d8586 100644
 +    <string name="ipp_backup_none">No hay copias en la tarjeta</string>
 +    <string name="ipp_backup_saving">Guardando los datos…</string>
 +    <string name="ipp_backup_done">Copia guardada: %1$s</string>
++    <string name="ipp_theme_save">Guardar conf.</string>
++    <string name="ipp_theme_saved">Configuración guardada: %1$s</string>
++    <string name="ipp_theme_save_failed">No se pudo guardar la configuración</string>
 +    <string name="ipp_backup_fail">No se pudo guardar la copia</string>
 +    <string name="ipp_backup_confirm">¿Reemplazar los ajustes, las listas de reproducción, los marcadores y el progreso de lectura actuales por esta copia? El reproductor se reiniciará.</string>
 +    <string name="ipp_backup_restoring">Restaurando los datos…</string>
@@ -3300,10 +3306,10 @@ index 6f5a555d..fe5d8586 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..4d310873 100644
+index c242cee4..175f9772 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,522 @@
+@@ -1,417 +1,525 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4153,6 +4159,9 @@ index c242cee4..4d310873 100644
 +    <string name="ipp_backup_none">Aucune sauvegarde sur la carte</string>
 +    <string name="ipp_backup_saving">Enregistrement des données…</string>
 +    <string name="ipp_backup_done">Sauvegarde enregistrée : %1$s</string>
++    <string name="ipp_theme_save">Enreg. config</string>
++    <string name="ipp_theme_saved">Configuration enregistrée : %1$s</string>
++    <string name="ipp_theme_save_failed">Échec de l\'enregistrement de la configuration</string>
 +    <string name="ipp_backup_fail">Impossible d\'enregistrer la sauvegarde</string>
 +    <string name="ipp_backup_confirm">Remplacer les réglages, les listes de lecture, les signets et la progression de lecture actuels par cette sauvegarde ? Le lecteur redémarrera.</string>
 +    <string name="ipp_backup_restoring">Restauration des données…</string>
@@ -4244,10 +4253,10 @@ index c242cee4..4d310873 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..1240cb8a 100644
+index d82ac6bb..5ce08666 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,522 @@
+@@ -1,417 +1,525 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -5097,6 +5106,9 @@ index d82ac6bb..1240cb8a 100644
 +    <string name="ipp_backup_none">אין גיבויים בכרטיס</string>
 +    <string name="ipp_backup_saving">שומר נתונים…</string>
 +    <string name="ipp_backup_done">הגיבוי נשמר: %1$s</string>
++    <string name="ipp_theme_save">שמור הגדרות</string>
++    <string name="ipp_theme_saved">ההגדרות נשמרו: %1$s</string>
++    <string name="ipp_theme_save_failed">שמירת ההגדרות נכשלה</string>
 +    <string name="ipp_backup_fail">לא ניתן לשמור את הגיבוי</string>
 +    <string name="ipp_backup_confirm">להחליף את ההגדרות, הפלייליסטים, הסימניות והתקדמות הקריאה הנוכחיים בגיבוי הזה? הנגן יופעל מחדש.</string>
 +    <string name="ipp_backup_restoring">משחזר נתונים…</string>
@@ -5188,10 +5200,10 @@ index d82ac6bb..1240cb8a 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..bbe2f5b2 100644
+index f71d0cb1..0fc9e599 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,439 @@
+@@ -1,334 +1,442 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -5875,6 +5887,9 @@ index f71d0cb1..bbe2f5b2 100644
 +    <string name="ipp_backup_none">카드에 백업이 없습니다</string>
 +    <string name="ipp_backup_saving">데이터 저장 중…</string>
 +    <string name="ipp_backup_done">백업 저장됨: %1$s</string>
++    <string name="ipp_theme_save">설정 저장</string>
++    <string name="ipp_theme_saved">설정 저장됨: %1$s</string>
++    <string name="ipp_theme_save_failed">설정을 저장할 수 없음</string>
 +    <string name="ipp_backup_fail">백업을 저장할 수 없습니다</string>
 +    <string name="ipp_backup_confirm">현재 설정, 재생 목록, 북마크, 독서 진행 상황을 이 백업으로 바꿀까요? 플레이어가 재시작됩니다.</string>
 +    <string name="ipp_backup_restoring">데이터 복원 중…</string>
@@ -6221,10 +6236,10 @@ index d79cf0f6..7b6930fd 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..1705ce68 100644
+index 4c84fd2b..8ca09664 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,191 @@
+@@ -1,86 +1,194 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6412,6 +6427,9 @@ index 4c84fd2b..1705ce68 100644
 +    <string name="ipp_backup_none">На карте нет резервных копий</string>
 +    <string name="ipp_backup_saving">Сохранение данных…</string>
 +    <string name="ipp_backup_done">Резервная копия сохранена: %1$s</string>
++    <string name="ipp_theme_save">Сохр. настр.</string>
++    <string name="ipp_theme_saved">Настройки сохранены: %1$s</string>
++    <string name="ipp_theme_save_failed">Не удалось сохранить настройки</string>
 +    <string name="ipp_backup_fail">Не удалось сохранить резервную копию</string>
 +    <string name="ipp_backup_confirm">Заменить текущие настройки, плейлисты, закладки и прогресс чтения этой резервной копией? Плеер перезапустится.</string>
 +    <string name="ipp_backup_restoring">Восстановление данных…</string>
@@ -6503,10 +6521,10 @@ index 4c84fd2b..1705ce68 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..17c79bba 100644
+index 5665bdd9..66088bce 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,531 @@
+@@ -1,426 +1,534 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7374,6 +7392,9 @@ index 5665bdd9..17c79bba 100644
 +    <string name="ipp_backup_none">存储卡中没有备份</string>
 +    <string name="ipp_backup_saving">正在保存数据…</string>
 +    <string name="ipp_backup_done">备份已保存：%1$s</string>
++    <string name="ipp_theme_save">保存配置</string>
++    <string name="ipp_theme_saved">配置已保存：%1$s</string>
++    <string name="ipp_theme_save_failed">无法保存配置</string>
 +    <string name="ipp_backup_fail">无法保存备份</string>
 +    <string name="ipp_backup_confirm">用此备份替换当前的设置、播放列表、书签和阅读进度？播放器将重新启动。</string>
 +    <string name="ipp_backup_restoring">正在恢复数据…</string>
@@ -8771,10 +8792,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..1f667f54 100644
+index 803c1e7a..c8b17776 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5671 @@
+@@ -1,5519 +1,5674 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18883,6 +18904,9 @@ index 803c1e7a..1f667f54 100644
 +    <public type="string" name="ipp_coverflow" id="0x7f11026f" />
 +    <public type="string" name="ipp_pick_flow" id="0x7f110270" />
 +    <public type="string" name="ipp_add_to_playlist" id="0x7f110271" />
++    <public type="string" name="ipp_theme_save" id="0x7f110272" />
++    <public type="string" name="ipp_theme_saved" id="0x7f110273" />
++    <public type="string" name="ipp_theme_save_failed" id="0x7f110274" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -19966,10 +19990,10 @@ index 803c1e7a..1f667f54 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..e6701d37 100644
+index 71fe29d0..ac28e226 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,581 @@
+@@ -1,473 +1,584 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -20915,7 +20939,7 @@ index 71fe29d0..e6701d37 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev209</string>
++    <string name="ipp_version">v1.1.0-dev210</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -20933,6 +20957,9 @@ index 71fe29d0..e6701d37 100644
 +    <string name="ipp_backup_none">No backups on the card</string>
 +    <string name="ipp_backup_saving">Saving data…</string>
 +    <string name="ipp_backup_done">Backup saved: %1$s</string>
++    <string name="ipp_theme_save">Save config</string>
++    <string name="ipp_theme_saved">Config saved: %1$s</string>
++    <string name="ipp_theme_save_failed">Could not save config</string>
 +    <string name="ipp_backup_fail">Could not save the backup</string>
 +    <string name="ipp_backup_confirm">Replace the current settings, playlists, bookmarks and reading progress with this backup? The player will restart.</string>
 +    <string name="ipp_backup_restoring">Restoring data…</string>
@@ -63342,6 +63369,54 @@ index 981585c3..e963309e 100644
  
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1.smali
+index 894a68c5..5169447b 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1.smali
+@@ -169,7 +169,8 @@
+     .line 594
+     iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$longTop$1;->this$0:Lcom/innioasis/y1/activity/theme/ThemeListActivity;
+ 
+-    invoke-static {v0, p1}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->access$setTheme(Lcom/innioasis/y1/activity/theme/ThemeListActivity;Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;)V
++    # ipp: "Save config" in place of "As Theme"; the theme is applied from the full-screen preview
++    invoke-static {v0, p1}, Lcom/innioasis/ipp/ThemeCfg;->save(Landroid/content/Context;Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;)V
+ 
+     goto/16 :goto_3
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1.smali
+index 72015684..d2db335b 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1.smali
+@@ -101,6 +101,15 @@
+ 
+     invoke-virtual {v0, v2}, Lcom/innioasis/y1/utils/WallpaperUtils;->setUserIsSetGlobalWallpaper(Z)V
+ 
++    # ipp: the theme's own look settings (or Global), before the name changes
++    iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1;->$item:Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
++
++    invoke-virtual {v0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
++
++    move-result-object v0
++
++    invoke-static {v0}, Lcom/innioasis/ipp/ThemeCfg;->switchTo(Ljava/lang/String;)V
++
+     .line 782
+     iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$setTheme$1$1;->$item:Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$subs$2.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$subs$2.smali
+index 7b491376..1c72cb30 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$subs$2.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$subs$2.smali
+@@ -206,7 +206,8 @@
+     .line 147
+     iget-object v2, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$subs$2;->this$0:Lcom/innioasis/y1/activity/theme/ThemeListActivity;
+ 
+-    const v3, 0x7f1101b3
++    # ipp: ipp_theme_save, the item that took "As Theme"'s place
++    const v3, 0x7f110272
+ 
+     invoke-virtual {v2, v3}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getString(I)Ljava/lang/String;
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 index 5e61f77d..d9199ac0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
