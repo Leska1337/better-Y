@@ -84,6 +84,8 @@ public final class Loop {
             int n = count(a);
             if (n <= 1) return;
             int m = a.getMark();
+            // not round while the rows still glide to this end under a travelling bar
+            if (Bar.holds(firstList(a.getVb().getRoot()), dir)) return;
             if (dir > 0 && m >= n - 1 && wrap()) a.setMark(-1);
             else if (dir < 0 && m <= 0 && wrap()) a.setMark(n);
         } catch (Throwable t) {

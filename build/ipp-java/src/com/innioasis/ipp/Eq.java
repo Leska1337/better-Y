@@ -47,8 +47,17 @@ public final class Eq {
     /** The preset in use, cursor elsewhere: the timeline's colour. */
     public static void active(TextView tv) {
         if (tv == null) return;
+        tv.setTextColor(activeColor());
+    }
+
+    private static int activeColor() {
         int c = Icons.progressColor();
-        tv.setTextColor(c != 0 ? c : ACTIVE);
+        return c != 0 ? c : ACTIVE;
+    }
+
+    /** A preset row's colour off the cursor, for the travelling Bar: the active one's, or {@code plain}. */
+    static int rowColor(int pos, int plain) {
+        return pos == EqSPUtils.INSTANCE.getEqualizerInt() ? activeColor() : plain;
     }
 
     /** Also underlined: a theme's timeline colour may equal its text colour. Every bind (recycled). */

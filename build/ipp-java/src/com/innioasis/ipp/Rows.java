@@ -525,6 +525,8 @@ public final class Rows {
             // 0 is "NO background", and must never be compared against Flat.res, which is also 0
             // for a THEME BITMAP: the row kept its selection (cost a build).
             if (resid == 0) {
+                // a row under a travelling Bar is blank already, and must stay wrapped
+                if (cur instanceof Flat && ((Flat) cur).res == BLANK) return;
                 if (cur != null) v.setBackgroundResource(0);
                 return;
             }
@@ -541,6 +543,9 @@ public final class Rows {
         } catch (Throwable t) {
         }
     }
+
+    /** {@link Flat#res} of a row a {@link Bar} paints: the wrapper holds nothing. */
+    static final int BLANK = -1;
 
     /** Same idea for an ImageView fed a theme bitmap (the row's right arrow). */
     public static void img(ImageView iv, Bitmap b) {

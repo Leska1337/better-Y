@@ -18,40 +18,40 @@
 
 .method constructor <init>(Landroid/graphics/drawable/Drawable;)V
   .registers 2
-  .line 567
+  .line 572
     invoke-direct { p0 }, Landroid/graphics/drawable/Drawable;-><init>()V
-  .line 568
+  .line 573
     iput-object p1, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
-  .line 569
+  .line 574
     return-void
 .end method
 
 .method public draw(Landroid/graphics/Canvas;)V
   .registers 3
-  .line 592
+  .line 597
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     invoke-virtual { v0, p1 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
-  .line 593
+  .line 598
     return-void
 .end method
 
 .method public getIntrinsicHeight()I
   .registers 2
-  .line 616
+  .line 621
     const/4 v0, -1
     return v0
 .end method
 
 .method public getIntrinsicWidth()I
   .registers 2
-  .line 612
+  .line 617
     const/4 v0, -1
     return v0
 .end method
 
 .method public getOpacity()I
   .registers 2
-  .line 608
+  .line 613
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     invoke-virtual { v0 }, Landroid/graphics/drawable/Drawable;->getOpacity()I
     move-result v0
@@ -60,7 +60,7 @@
 
 .method holds(Landroid/graphics/Bitmap;)Z
   .registers 4
-  .line 572
+  .line 577
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     instance-of v1, v0, Landroid/graphics/drawable/BitmapDrawable;
     if-eqz v1, :L0
@@ -78,26 +78,26 @@
 
 .method inset(I)V
   .registers 3
-  .line 585
+  .line 590
     iget v0, p0, Lcom/innioasis/ipp/Rows$Flat;->top:I
     if-ne p1, v0, :L0
     return-void
   :L0
-  .line 586
+  .line 591
     iput p1, p0, Lcom/innioasis/ipp/Rows$Flat;->top:I
-  .line 587
+  .line 592
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Rows$Flat;->getBounds()Landroid/graphics/Rect;
     move-result-object p1
     invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/Rows$Flat;->onBoundsChange(Landroid/graphics/Rect;)V
-  .line 588
+  .line 593
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Rows$Flat;->invalidateSelf()V
-  .line 589
+  .line 594
     return-void
 .end method
 
 .method protected onBoundsChange(Landroid/graphics/Rect;)V
   .registers 6
-  .line 596
+  .line 601
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     iget v1, p1, Landroid/graphics/Rect;->left:I
     iget v2, p1, Landroid/graphics/Rect;->top:I
@@ -106,40 +106,40 @@
     iget v3, p1, Landroid/graphics/Rect;->right:I
     iget p1, p1, Landroid/graphics/Rect;->bottom:I
     invoke-virtual { v0, v1, v2, v3, p1 }, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
-  .line 597
+  .line 602
     return-void
 .end method
 
 .method public setAlpha(I)V
   .registers 3
-  .line 600
+  .line 605
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     invoke-virtual { v0, p1 }, Landroid/graphics/drawable/Drawable;->setAlpha(I)V
-  .line 601
+  .line 606
     return-void
 .end method
 
 .method public setColorFilter(Landroid/graphics/ColorFilter;)V
   .registers 3
-  .line 604
+  .line 609
     iget-object v0, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
     invoke-virtual { v0, p1 }, Landroid/graphics/drawable/Drawable;->setColorFilter(Landroid/graphics/ColorFilter;)V
-  .line 605
+  .line 610
     return-void
 .end method
 
 .method swap(Landroid/graphics/drawable/Drawable;I)V
   .registers 3
-  .line 577
+  .line 582
     iput-object p1, p0, Lcom/innioasis/ipp/Rows$Flat;->d:Landroid/graphics/drawable/Drawable;
-  .line 578
+  .line 583
     iput p2, p0, Lcom/innioasis/ipp/Rows$Flat;->res:I
-  .line 579
+  .line 584
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Rows$Flat;->getBounds()Landroid/graphics/Rect;
     move-result-object p1
     invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/Rows$Flat;->onBoundsChange(Landroid/graphics/Rect;)V
-  .line 580
+  .line 585
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Rows$Flat;->invalidateSelf()V
-  .line 581
+  .line 586
     return-void
 .end method

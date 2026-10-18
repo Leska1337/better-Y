@@ -68,6 +68,7 @@ public final class MenuStyle {
             }
             backdrop(a, s);
             Preview.apply(a);
+            Bar.apply(a);
         } catch (Throwable t) {
         }
     }

@@ -19,13 +19,60 @@ import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.theme.ThemeManager;
 
 /**
- * The travelling highlight of a menu list (the main menu): the list paints every row's background
- * itself and draws the selected one as a bar that slides from row to row, kept inside the list's
- * edges while the rows glide under it. On a jump of more than a row (round the list's end) the
- * rows and the bar move at once, in the same frame. Only with "Enable animations"; off, the rows
- * paint themselves as stock does.
+ * The travelling highlight of the menu lists (main menu, Settings, Language, Wallpaper,
+ * Equalizer): the list paints every row's background itself and draws the selected one as a bar
+ * that slides from row to row, kept inside the list's edges while the rows glide under it. On a
+ * jump (round the list's end) the rows and the bar move at once, in the same frame. Only with
+ * "Enable animations"; off, the rows paint themselves as stock does.
  */
-public final class Bar extends RecyclerView.ItemDecoration implements Choreographer.FrameCallback {
+public final class Bar extends RecyclerView.ItemDecoration
+        implements Choreographer.FrameCallback, RecyclerView.OnChildAttachStateChangeListener {
+
+    /** What one screen's rows are made of, and the colours stock gives them. */
+    static final class Spec {
+        final int list, selRes, rowRes, selColor, rowColor, arrow;
+        final int[] texts;
+
+        Spec(int list, int selRes, int rowRes, int selColor, int rowColor, int[] texts, int arrow) {
+            this.list = list;
+            this.selRes = selRes;
+            this.rowRes = rowRes;
+            this.selColor = selColor;
+            this.rowColor = rowColor;
+            this.texts = texts;
+            this.arrow = arrow;
+        }
+    }
+
+    /** Stock's cursor colour on the Settings family of rows, and its plain white. */
+    private static final int ACCENT = 0xFF3CFFDE;
+    private static final int WHITE = 0xFFFFFFFF;
+
+    private static Spec spec(BaseActivity a) {
+        if (a instanceof com.innioasis.y1.activity.MainActivity) {
+            return new Spec(R.id.rc_list, R.drawable.item_setting_sel, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white), new int[] {R.id.tv_item}, R.id.iv_arrow);
+        }
+        if (a instanceof com.innioasis.y1.activity.SettingActivity) {
+            return new Spec(R.id.recycler, R.drawable.item_setting_sel, 0, ACCENT, WHITE,
+                    new int[] {R.id.title, R.id.text}, R.id.arrow);
+        }
+        if (a instanceof com.innioasis.y1.activity.LanguageActivity) {
+            return new Spec(R.id.recycler, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white), new int[] {R.id.tv_item}, R.id.iv_arrow);
+        }
+        if (a instanceof com.innioasis.y1.activity.WallpaperListActivity) {
+            return new Spec(R.id.recycler, R.drawable.item_selected_no_arrow, 0, ACCENT, WHITE,
+                    new int[] {R.id.title, R.id.text}, R.id.arrow);
+        }
+        if (a instanceof com.innioasis.y1.activity.EqActivity) {
+            return new Spec(R.id.recycler_list, R.drawable.item_selected_no_arrow, 0, ACCENT, WHITE,
+                    new int[] {R.id.text}, 0);
+        }
+        return null;
+    }
 
     /** Share of the distance covered per second, and the floor and ceiling of speed: Mover's law. */
     private static final float RATE = 22f;
@@ -38,8 +85,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
 
     private final WeakReference rv;
     private final WeakReference activity;
-    private final int selRes;
-    private final int rowRes;
+    private final Spec spec;
     private final View selProbe;
     private final View rowProbe;
     private final int selText;
@@ -51,44 +97,49 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     private long last;
     private boolean running;
 
-    private Bar(RecyclerView rv, BaseActivity a, int selRes, int rowRes, int selColor, int rowColor) {
+    private Bar(RecyclerView rv, BaseActivity a, Spec spec) {
         this.rv = new WeakReference(rv);
         this.activity = new WeakReference(a);
-        this.selRes = selRes;
-        this.rowRes = rowRes;
+        this.spec = spec;
         Context c = rv.getContext().getApplicationContext();
         selProbe = new View(c);
         rowProbe = new View(c);
-        ThemeManager.INSTANCE.itemSetBackground(selProbe, selRes, true);
-        ThemeManager.INSTANCE.itemSetBackground(rowProbe, rowRes, false);
+        ThemeManager.INSTANCE.itemSetBackground(selProbe, spec.selRes, true);
+        ThemeManager.INSTANCE.itemSetBackground(rowProbe, spec.rowRes, false);
         // read back: the theme answers with its own colour, not the one asked for
         TextView t = new TextView(c);
-        ThemeManager.INSTANCE.itemSetTextColor(t, c.getResources().getColor(selColor), true);
+        ThemeManager.INSTANCE.itemSetTextColor(t, spec.selColor, true);
         selText = t.getCurrentTextColor();
-        ThemeManager.INSTANCE.itemSetTextColor(t, c.getResources().getColor(rowColor), false);
+        ThemeManager.INSTANCE.itemSetTextColor(t, spec.rowColor, false);
         rowText = t.getCurrentTextColor();
     }
 
-    /** The main menu: after its list is set up and on every return to it. */
-    public static void main(RecyclerView rv) {
-        attach(rv, R.drawable.item_setting_sel, R.drawable.item_no_selected,
-                R.color.selected_text_color, R.color.white);
-    }
-
-    private static void attach(RecyclerView rv, int selRes, int rowRes, int selColor, int rowColor) {
+    /**
+     * End of {@code BaseActivity.onResume} (through MenuStyle.apply): on before the first frame,
+     * and "Enable animations" may have changed in the better-Y menu while the screen was covered.
+     */
+    public static void apply(android.app.Activity act) {
         try {
-            if (rv == null || !(rv.getContext() instanceof BaseActivity)) return;
+            if (!(act instanceof BaseActivity)) return;
+            BaseActivity a = (BaseActivity) act;
+            Spec s = spec(a);
+            if (s == null) return;
+            View v = act.findViewById(s.list);
+            if (!(v instanceof RecyclerView)) return;
+            RecyclerView rv = (RecyclerView) v;
             Bar b = (Bar) BARS.get(rv);
             boolean on = Anim.on();
             if (on == (b != null)) return;
             if (on) {
-                b = new Bar(rv, (BaseActivity) rv.getContext(), selRes, rowRes, selColor, rowColor);
+                b = new Bar(rv, a, s);
                 BARS.put(rv, b);
                 rv.addItemDecoration(b);
+                rv.addOnChildAttachStateChangeListener(b);
                 rv.getViewTreeObserver().addOnPreDrawListener(b.tinter);
             } else {
                 BARS.remove(rv);
                 rv.removeItemDecoration(b);
+                rv.removeOnChildAttachStateChangeListener(b);
                 rv.getViewTreeObserver().removeOnPreDrawListener(b.tinter);
                 b.stop();
             }
@@ -99,21 +150,60 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     }
 
     /**
-     * End of a row's bind, handed the row's arrow: under a bar the row keeps no background and no
-     * arrow of its own — the list draws both — and its text colour is the bar's to decide.
+     * End of every {@code BaseBindingAdapter} bind: a bound row of a bar's list loses its
+     * background, cursor arrow and text colours to the list.
      */
-    public static void row(View arrow) {
+    public static void bound(androidx.viewbinding.ViewBinding vb) {
         try {
-            if (arrow == null) return;
-            ViewParent p = arrow.getParent();
-            if (!(p instanceof View)) return;
-            View row = (View) p;
-            Bar b = of(row);
+            View row = vb == null ? null : vb.getRoot();
+            Bar b = row == null ? null : of(row);
             if (b == null) return;
-            if (row.getBackground() != null) row.setBackgroundDrawable(null);
-            arrow.setVisibility(View.INVISIBLE);
-            b.tint(row, row.getHeight());
+            b.clean(row);
+            // The bar is the LIST's drawing: a row repainted redraws only the row. Where nothing
+            // else moves the list (the Equalizer's ten rows) the bar stood where it was.
+            RecyclerView r = (RecyclerView) b.rv.get();
+            if (r != null) r.invalidate();
         } catch (Throwable t) {
+        }
+    }
+
+    /** A row entering the list mid-glide was bound before it had a parent: taken in here. */
+    public void onChildViewAttachedToWindow(View row) {
+        try {
+            clean(row);
+        } catch (Throwable t) {
+        }
+    }
+
+    public void onChildViewDetachedFromWindow(View row) {
+    }
+
+    private void clean(View row) {
+        ROWS.put(row, new WeakReference(this));
+        blank(row);
+        if (spec.arrow != 0) {
+            View arrow = row.findViewById(spec.arrow);
+            if (arrow != null && arrow.getVisibility() == View.VISIBLE) arrow.setVisibility(View.INVISIBLE);
+        }
+        tint(row, row.getHeight());
+    }
+
+    private static final Drawable EMPTY = new android.graphics.drawable.ColorDrawable(0);
+
+    /**
+     * The row's background emptied INSIDE a {@code Rows.Flat}, once wrapped: swapping a wrapper's
+     * content asks no layout, while setting or clearing a background re-lays out the whole window
+     * (Settings with its panel) on every click.
+     */
+    private static void blank(View row) {
+        Drawable d = row.getBackground();
+        if (d instanceof Rows.Flat) {
+            Rows.Flat f = (Rows.Flat) d;
+            if (f.res != Rows.BLANK) f.swap(EMPTY, Rows.BLANK);
+        } else {
+            Rows.Flat f = new Rows.Flat(EMPTY);
+            f.res = Rows.BLANK;
+            row.setBackgroundDrawable(f);
         }
     }
 
@@ -122,7 +212,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
         try {
             if (v == null) return false;
             if (of(v) != null) {
-                v.setBackgroundDrawable(null);
+                blank(v);
                 return true;
             }
             java.util.Iterator it = BARS.values().iterator();
@@ -139,10 +229,23 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
         return false;
     }
 
+    /**
+     * The bar a row belongs to. By its parent — and by memory, for a list rebuilding in place
+     * (a preset picked): its rows are re-bound DETACHED, parent null, and kept the old colour.
+     */
     private static Bar of(View row) {
         ViewParent p = row.getParent();
-        return p instanceof RecyclerView ? (Bar) BARS.get(p) : null;
+        Bar b = p instanceof RecyclerView ? (Bar) BARS.get(p) : null;
+        if (b != null) {
+            ROWS.put(row, new WeakReference(b));
+            return b;
+        }
+        Object w = ROWS.get(row);
+        b = w == null ? null : (Bar) ((WeakReference) w).get();
+        return b != null && BARS.containsValue(b) ? b : null;
     }
+
+    private static final WeakHashMap ROWS = new WeakHashMap();
 
     /**
      * True = swallow the wheel's step. While a jump is still being laid out, any step. And on an
@@ -222,7 +325,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
             t = v.getTop() + v.getTranslationY();
         } else {
             View first = r.getChildCount() > 0 ? r.getChildAt(0) : null;
-            int fp = first == null ? 0 : r.getChildAdapterPosition(first);
+            int fp = first == null ? 0 : r.getChildLayoutPosition(first);
             t = cursor() < fp ? top : bottom;
         }
         return Math.max(top, Math.min(bottom, t));
@@ -231,20 +334,34 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     /**
      * The text colour, selected only where the bar stands. A sliding bar claims the row it covers
      * three quarters of; a bar at rest (at an edge, the rows gliding under it) claims the cursor's
-     * row at once.
+     * row at once. Off the bar a row has the plain colour — the Equalizer's active preset its own,
+     * asked of {@link Eq} rather than remembered from a bind, which a list rebuilding in place
+     * does not always run where it can be seen.
      */
     private void tint(View row, int h) {
-        View tv = row.findViewById(R.id.tv_item);
         RecyclerView r = (RecyclerView) rv.get();
-        if (!(tv instanceof TextView) || h <= 0 || r == null) return;
+        if (h <= 0 || r == null) return;
+        int pos = r.getChildLayoutPosition(row);
         boolean on = false;
         if (!snap && !Float.isNaN(y)) {
-            if (Math.abs(target(r, h) - y) < 0.5f) on = r.getChildAdapterPosition(row) == cursor();
+            if (Math.abs(target(r, h) - y) < 0.5f) on = pos == cursor();
             else on = Math.abs(row.getTop() + row.getTranslationY() - y) <= h / 4f;
         }
-        int want = on ? selText : rowText;
-        TextView t = (TextView) tv;
-        if (t.getCurrentTextColor() != want) t.setTextColor(want);
+        int off = activity.get() instanceof com.innioasis.y1.activity.EqActivity ? Eq.rowColor(pos, rowText) : rowText;
+        for (int i = 0; i < spec.texts.length; i++) {
+            View tv = row.findViewById(spec.texts[i]);
+            if (!(tv instanceof TextView)) continue;
+            int want = on ? selText : off;
+            TextView t = (TextView) tv;
+            if (t.getCurrentTextColor() != want) t.setTextColor(want);
+        }
+    }
+
+    /** The bar's height: the cursor row's — the Equalizer's rows differ by a pixel. */
+    private int height(RecyclerView r) {
+        View v = cursorRow(r);
+        if (v == null && r.getChildCount() > 0) v = r.getChildAt(0);
+        return v == null ? 0 : v.getHeight();
     }
 
     private final Tinter tinter = new Tinter(this);
@@ -266,7 +383,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
                 RecyclerView r = b == null ? null : (RecyclerView) b.rv.get();
                 if (r == null || r.getChildCount() == 0) return true;
                 b.observe();
-                int h = r.getChildAt(0).getHeight();
+                int h = b.height(r);
                 b.settle(r, h);
                 for (int i = 0; i < r.getChildCount(); i++) b.tint(r.getChildAt(i), h);
             } catch (Throwable t) {
@@ -285,7 +402,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
             View any = r.getChildAt(0);
             int left = any.getLeft();
             int right = any.getRight();
-            int h = any.getHeight();
+            int h = height(r);
             boolean laid = settle(r, h);
             float goal = target(r, h);
             if (rowBg != null) {
@@ -315,8 +432,10 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     private void drawArrow(Canvas c, RecyclerView r, int top) {
         View row = cursorRow(r);
         if (row == null) return;
-        View arrow = row.findViewById(R.id.iv_arrow);
-        if (arrow == null || arrow.getWidth() == 0) return;
+        if (spec.arrow == 0) return;
+        View arrow = row.findViewById(spec.arrow);
+        // a GONE arrow keeps the width of its last layout
+        if (arrow == null || arrow.getVisibility() == View.GONE || arrow.getWidth() == 0) return;
         c.save();
         c.translate(row.getLeft() + arrow.getLeft(), top + arrow.getTop());
         arrow.draw(c);
@@ -345,7 +464,7 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
         float dt = last == 0 ? 0.016f : Math.min(0.05f, (now - last) / 1000f);
         last = now;
         observe();
-        int h = r.getChildAt(0).getHeight();
+        int h = height(r);
         if (!snap && settle(r, h)) {
             float goal = target(r, h);
             float d = goal - y;
