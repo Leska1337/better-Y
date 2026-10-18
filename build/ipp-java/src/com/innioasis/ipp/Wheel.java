@@ -491,8 +491,9 @@ public final class Wheel {
     }
 
     /**
-     * Bring the row on screen INSTANTLY — an animation costs frames per click and leaves the list
-     * chasing a target the wheel has left. Against the edge of the direction of travel.
+     * Bring the row on screen against the edge of the direction of travel: by {@link Glider} while
+     * animations are on, else at once. Never a smooth scroll restarted per click — the list would
+     * chase a target the wheel has left.
      */
     private static void scrollTo(RecyclerView rv, int pos) {
         RecyclerView.LayoutManager lm = rv.getLayoutManager();
@@ -501,6 +502,9 @@ public final class Wheel {
             return;
         }
         LinearLayoutManager l = (LinearLayoutManager) lm;
+        // a jump under a travelling bar: the rows wait until the bar has faded out
+        if (!releasing && Bar.defer(rv, pos)) return;
+        if (!jumping && retarget(rv, l, pos)) return;
         int first = l.findFirstCompletelyVisibleItemPosition();
         int last = l.findLastCompletelyVisibleItemPosition();
         if (first >= 0 && pos >= first && pos <= last) {
@@ -510,7 +514,7 @@ public final class Wheel {
             hold(rv);
             return;
         }
-        if (glide(rv, l, pos, first, last)) return;
+        if (!jumping && glide(rv, l, pos, first, last)) return;
         Glider.stop();                                               // a glide under way
         rv.stopScroll();
 
@@ -537,6 +541,25 @@ public final class Wheel {
             rv.scrollToPosition(pos);
         }
     }
+
+    /**
+     * The scroll a {@link Bar} deferred, once it has faded out — at once: a glide here is time
+     * with neither bar nor colour on screen.
+     */
+    static void jumpNow(RecyclerView rv, int pos) {
+        try {
+            if (rv == null || rv.getWindowToken() == null) return;
+            releasing = true;
+            jumping = true;
+            scrollTo(rv, pos);
+        } catch (Throwable t) {
+        } finally {
+            releasing = false;
+            jumping = false;
+        }
+    }
+
+    private static boolean jumping;
 
     /**
      * A grid's rows waiting for the cursor's frame to end its way along a row (PlGrid.holds);
@@ -590,7 +613,7 @@ public final class Wheel {
     /** Grids whose rows slide into view rather than jump: a row of tiles is a big step. */
     private static final java.util.WeakHashMap gliding = new java.util.WeakHashMap();
 
-    /** The Playlists grid asks for it; every other list keeps the instant scroll. */
+    /** A grid asks for it (PlGrid), a list does with its travelling {@link Bar}. */
     public static void glides(RecyclerView rv, boolean on) {
         if (rv == null) return;
         if (on) gliding.put(rv, Boolean.TRUE);
@@ -603,10 +626,8 @@ public final class Wheel {
      * than a few rows, the instant scroll.
      */
     private static boolean glide(RecyclerView rv, LinearLayoutManager l, int pos, int first, int last) {
-        if (!(l instanceof androidx.recyclerview.widget.GridLayoutManager) || gliding.get(rv) == null
-                || first < 0) {
-            return false;
-        }
+        if (!(l instanceof androidx.recyclerview.widget.GridLayoutManager)) return glideList(rv, l, pos, first, last);
+        if (gliding.get(rv) == null || first < 0) return false;
         int span = ((androidx.recyclerview.widget.GridLayoutManager) l).getSpanCount();
         boolean down = pos > last;
         View edge = l.findViewByPosition(down ? last : first);
@@ -620,8 +641,78 @@ public final class Wheel {
         return true;
     }
 
+    /**
+     * A list that asked for it ({@link #glides}, the lists with a travelling {@link Bar}) glides as
+     * the grids do, a row being one row of their arithmetic. A row not laid out yet is estimated,
+     * and the glide re-aims at it exactly once it is ({@link Glider#aim}).
+     */
+    private static boolean glideList(RecyclerView rv, LinearLayoutManager l, int pos, int first, int last) {
+        if (first < 0 || l.getOrientation() != LinearLayoutManager.VERTICAL || gliding.get(rv) == null) {
+            return false;
+        }
+        boolean down = pos > last;
+        int top = rv.getPaddingTop();
+        int bottom = rv.getHeight() - rv.getPaddingBottom();
+        View v = l.findViewByPosition(pos);
+        int rows = down ? pos - last : first - pos;
+        if (rows < 1 || rows > (wrapping ? WRAP_LIST_ROWS : GLIDE_ROWS)) return false;
+        int d, step;
+        if (v != null) {
+            step = end(v, false) - start(v, false);
+            d = down ? end(v, false) - bottom : start(v, false) - top;
+        } else {
+            View edge = l.findViewByPosition(down ? last : first);
+            if (edge == null) return false;
+            step = end(edge, false) - start(edge, false);
+            d = down ? end(edge, false) + rows * step - bottom : start(edge, false) - rows * step - top;
+        }
+        if (d == 0) return true;
+        listGlide(rv, d, wrapping ? Math.min(WRAP_MAX_MS, WRAP_MS + WRAP_ROW_MS * rows) : 0, pos, down, step);
+        return true;
+    }
+
+    /**
+     * A list's glide trails the cursor by half a row at most: what is beyond goes at once. Behind
+     * by more, a fast wheel kept the rows pressed against one edge and they sprang back when it
+     * stopped, and the bar stood over a row that was not the cursor's.
+     */
+    private static void listGlide(RecyclerView rv, int d, int ms, int pos, boolean down, int h) {
+        int lead = h / 2;
+        if (ms == 0 && lead > 0 && Math.abs(d) > lead) {
+            int ex = d > 0 ? d - lead : d + lead;
+            Glider.stop();
+            rv.scrollBy(0, ex);
+            d -= ex;
+        }
+        Glider.to(rv, d, ms);
+        Glider.list();
+        Glider.aim(pos, down);
+    }
+
+    /**
+     * While a glide is under way, "is the row on screen" is asked of where the rows WILL stand: a
+     * row on screen now may be carried off by what is left of the glide (the wheel turned back).
+     */
+    private static boolean retarget(RecyclerView rv, LinearLayoutManager l, int pos) {
+        float left = Glider.left(rv);
+        if (left == 0 || l instanceof androidx.recyclerview.widget.GridLayoutManager) return false;
+        View v = l.findViewByPosition(pos);
+        if (v == null) return false;
+        int top = rv.getPaddingTop();
+        int bottom = rv.getHeight() - rv.getPaddingBottom();
+        int s = Math.round(left);
+        int vt = start(v, false) - s;
+        int vb = end(v, false) - s;
+        int extra = vb > bottom ? vb - bottom : vt < top ? vt - top : 0;
+        if (extra != 0) listGlide(rv, s + extra, 0, pos, extra > 0, vb - vt);
+        return true;
+    }
+
     /** Further behind than this, the list jumps: a glide that far would trail the wheel. */
     private static final int GLIDE_ROWS = 4;
+
+    /** A list round its end glides only this far; a long one binds every row it passes. */
+    private static final int WRAP_LIST_ROWS = 15;
 
     /** The cursor has just gone round the list's end: glided however far that is. */
     private static boolean wrapping;
@@ -642,6 +733,14 @@ public final class Wheel {
         private static final float RATE = 14f;
         private static final float VMIN = 400f;
         private static final float VMAX = 6000f;
+        /** A list's rate: one row is a short way, and the bar over it already moves at 22/s. */
+        private static final float LIST_RATE = 24f;
+        private static float rate = RATE;
+
+        /** This glide is a list's ({@link #to} sets the grids' rate back). */
+        static void list() {
+            rate = LIST_RATE;
+        }
 
         private static final Glider G = new Glider();
         private static WeakReference view = new WeakReference(null);
@@ -660,11 +759,13 @@ public final class Wheel {
             }
             rv.stopScroll();
             left = d;
+            rate = RATE;
+            aimPos = -1;
             easeMs = ms;
             easeTotal = d;
             easeAt = 0;
             if (wrapping) {
-                Frames.start("grid wrap " + rv.getContext().getClass().getSimpleName(), true);
+                Frames.start("glide wrap " + rv.getContext().getClass().getSimpleName(), true);
                 if (!counting) android.os.Debug.startAllocCounting();
                 counting = true;
                 alloc = android.os.Debug.getThreadAllocSize();
@@ -680,6 +781,29 @@ public final class Wheel {
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
+            aimPos = -1;
+        }
+
+        /** The row the glide brings to an edge; while it is off screen the distance is a guess. */
+        private static int aimPos = -1;
+        private static boolean aimDown;
+
+        static void aim(int pos, boolean down) {
+            aimPos = pos;
+            aimDown = down;
+        }
+
+        /** The guess replaced by the row's own edge once the row is laid out. */
+        private static void reaim(RecyclerView rv) {
+            if (aimPos < 0) return;
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            View v = lm instanceof LinearLayoutManager ? ((LinearLayoutManager) lm).findViewByPosition(aimPos) : null;
+            if (v == null) return;
+            int exact = aimDown ? end(v, false) - (rv.getHeight() - rv.getPaddingBottom())
+                                : start(v, false) - rv.getPaddingTop();
+            if (easeMs > 0) easeTotal += Math.round(exact - left);
+            left = exact;
+            aimPos = -1;
         }
 
         /** What the main thread had allocated when a glide round the list's end set out. */
@@ -700,6 +824,7 @@ public final class Wheel {
 
         public void doFrame(long nanos) {
             RecyclerView rv = (RecyclerView) view.get();
+            if (rv != null) reaim(rv);
             if (rv == null || rv.getWindowToken() == null || left == 0) {
                 running = false;
                 left = 0;
@@ -718,17 +843,21 @@ public final class Wheel {
                         : Math.round(easeTotal * (1f - u * u * u)) - Math.round(easeTotal - left);
             } else {
                 float a = Math.abs(left);
-                float v = Math.max(VMIN, Math.min(VMAX, a * RATE));
+                float v = Math.max(VMIN, Math.min(VMAX, a * rate));
                 s = Math.round(Math.min(a, Math.max(1f, v * dt)));
                 if (left < 0) s = -s;
             }
-            int was = rv.computeVerticalScrollOffset();
+            // The list's end is told by a row that did not move — not by computeVerticalScrollOffset,
+            // an estimate that can come out unchanged in the frame a row enters and another leaves,
+            // which stopped the glide short of the last row.
+            View anchor = rv.getChildCount() > 0 ? rv.getChildAt(rv.getChildCount() / 2) : null;
+            int was = anchor == null ? 0 : anchor.getTop();
             long t0 = android.os.SystemClock.uptimeMillis();
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            // the list's end stops the scroll short: nothing is left to do there
-            if (Math.abs(left) < 1f || s != 0 && rv.computeVerticalScrollOffset() == was) left = 0;
+            boolean stuck = s != 0 && anchor != null && anchor.getParent() == rv && anchor.getTop() == was;
+            if (Math.abs(left) < 1f || stuck) left = 0;
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {

@@ -5,9 +5,9 @@ import android.content.Context;
 import com.innioasis.y1.Y1Application;
 
 /**
- * "Enable animations": the one switch every animation of ours answers to — the gliding rows and
- * the travelling cursor frame of the tile grids (Playlists, Themes, Photos). Off, they move at once,
- * as stock does.
+ * "Enable animations": the one switch every animation of ours answers to — the gliding rows and the
+ * travelling cursor of the tile grids (Playlists, Themes, Photos) and of the main menu ({@link Bar}).
+ * Off, they move at once, as stock does.
  */
 public final class Anim {
 

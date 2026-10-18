@@ -472,6 +472,7 @@ public final class Rows {
             if (row == null) return;
             // the one place that hears "a theme bitmap has landed"
             Theme.landed(row);
+            if (Bar.landed(row)) return;
             // not rows: flat() on the strip would inset its own background away
             int id = row.getId();
             if (id == R.id.ipp_disc_bar || id == R.id.tv_disc_header) { noSize(row); return; }

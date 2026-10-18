@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..8f1dc6b9 100644
+index 01b1f730..01a3902f 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..8f1dc6b9 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100211
++  versionCode: 10100224
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19990,7 +19990,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d24dd896 100644
+index 71fe29d0..d8bb87b0 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20939,7 +20939,7 @@ index 71fe29d0..d24dd896 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev211</string>
++    <string name="ipp_version">v1.1.0-dev224</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -61905,21 +61905,37 @@ index 0bfdbeec..0c11ab93 100644
 +
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
+index 3c10a113..4796e069 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
+@@ -259,5 +259,8 @@
+     invoke-virtual {p2, p1}, Lcom/innioasis/music/util/Other;->hideV(Landroid/view/View;)V
+ 
+     :goto_0
++    # ipp: under the travelling bar the row keeps no background or arrow of its own (p1 = the arrow)
++    invoke-static {p1}, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
++
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..31f25955 100644
+index a9542df1..88734d01 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-@@ -253,6 +253,9 @@
+@@ -253,6 +253,12 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
 +    # ipp: stock list geometry back when "Stock menu margins" is on (does nothing otherwise).
 +    invoke-static {v0}, Lcom/innioasis/ipp/Pad;->list(Landroidx/recyclerview/widget/RecyclerView;)V
 +
++    # ipp: the travelling highlight, with "Enable animations"
++    invoke-static {v0}, Lcom/innioasis/ipp/Bar;->main(Landroidx/recyclerview/widget/RecyclerView;)V
++
      .line 463
      iget-object v0, p0, Lcom/innioasis/y1/activity/MainActivity;->adapter:Lcom/innioasis/y1/base/BaseBindingAdapter;
  
-@@ -444,6 +447,17 @@
+@@ -444,6 +450,17 @@
  .method private final selItem()V
      .locals 4
  
@@ -61937,16 +61953,37 @@ index a9542df1..31f25955 100644
      .line 470
      iget-object v0, p0, Lcom/innioasis/y1/activity/MainActivity;->adapter:Lcom/innioasis/y1/base/BaseBindingAdapter;
  
-@@ -1261,7 +1275,7 @@
+@@ -1261,7 +1278,28 @@
  
  # virtual methods
  .method public antiClockwise()V
 -    .locals 2
 +    .locals 3
++
++    # ipp: no step while the bar is out after a jump, no wrap while the rows glide to an end
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
++
++    move-result-object v0
++
++    check-cast v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;
++
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;->rcList:Landroidx/recyclerview/widget/RecyclerView;
++
++    const/4 v1, -0x1
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Bar;->holds(Landroidx/recyclerview/widget/RecyclerView;I)Z
++
++    move-result v0
++
++    if-eqz v0, :ipp_step
++
++    return-void
++
++    :ipp_step
  
      .line 284
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getMark()I
-@@ -1320,8 +1334,11 @@
+@@ -1320,8 +1358,11 @@
      move-object v1, v0
  
      :goto_1
@@ -61960,7 +61997,7 @@ index a9542df1..31f25955 100644
      .line 290
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
-@@ -1333,9 +1350,9 @@
+@@ -1333,9 +1374,9 @@
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getMark()I
  
@@ -61972,7 +62009,35 @@ index a9542df1..31f25955 100644
  
      .line 291
      invoke-direct {p0}, Lcom/innioasis/y1/activity/MainActivity;->selItem()V
-@@ -1405,8 +1422,8 @@
+@@ -1346,6 +1387,27 @@
+ .method public clockwise()V
+     .locals 3
+ 
++    # ipp: no step while the bar is out after a jump, no wrap while the rows glide to an end
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
++
++    move-result-object v0
++
++    check-cast v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;
++
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;->rcList:Landroidx/recyclerview/widget/RecyclerView;
++
++    const/4 v1, 0x1
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Bar;->holds(Landroidx/recyclerview/widget/RecyclerView;I)Z
++
++    move-result v0
++
++    if-eqz v0, :ipp_step
++
++    return-void
++
++    :ipp_step
++
+     .line 272
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getMark()I
+ 
+@@ -1405,8 +1467,8 @@
      move-object v2, v0
  
      :goto_1
@@ -61983,7 +62048,7 @@ index a9542df1..31f25955 100644
      .line 278
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
-@@ -1420,7 +1437,7 @@
+@@ -1420,7 +1482,7 @@
  
      move-result v1
  
@@ -61992,7 +62057,7 @@ index a9542df1..31f25955 100644
  
      .line 279
      invoke-direct {p0}, Lcom/innioasis/y1/activity/MainActivity;->selItem()V
-@@ -1928,6 +1945,24 @@
+@@ -1928,6 +1990,24 @@
  .method public initView()V
      .locals 6
  
@@ -62017,7 +62082,7 @@ index a9542df1..31f25955 100644
      .line 81
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getResources()Landroid/content/res/Resources;
  
-@@ -2069,7 +2104,8 @@
+@@ -2069,7 +2149,8 @@
  
      move-result-object v1
  
@@ -62027,7 +62092,7 @@ index a9542df1..31f25955 100644
  
      invoke-virtual {v1, v3}, Landroid/content/Context;->getString(I)Ljava/lang/String;
  
-@@ -2095,6 +2131,9 @@
+@@ -2095,6 +2176,9 @@
  
      move-result-object v0
  
@@ -62037,7 +62102,7 @@ index a9542df1..31f25955 100644
      if-eqz v0, :cond_1
  
      .line 95
-@@ -2566,6 +2605,18 @@
+@@ -2566,6 +2650,21 @@
      .line 212
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onResume()V
  
@@ -62052,6 +62117,9 @@ index a9542df1..31f25955 100644
 +    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;->rcList:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    invoke-static {v0}, Lcom/innioasis/ipp/Pad;->list(Landroidx/recyclerview/widget/RecyclerView;)V
++
++    # ipp: "Enable animations" may have changed in the better-Y menu
++    invoke-static {v0}, Lcom/innioasis/ipp/Bar;->main(Landroidx/recyclerview/widget/RecyclerView;)V
 +
      .line 213
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
