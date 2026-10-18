@@ -502,8 +502,8 @@ public final class Wheel {
             return;
         }
         LinearLayoutManager l = (LinearLayoutManager) lm;
-        // a jump under a travelling bar: the rows wait until the bar has faded out
-        if (!releasing && Bar.defer(rv, pos)) return;
+        // round the end under a travelling bar: rows and bar move together, at once
+        if (!releasing && wrapping && Bar.defer(rv, pos)) return;
         if (!jumping && retarget(rv, l, pos)) return;
         int first = l.findFirstCompletelyVisibleItemPosition();
         int last = l.findLastCompletelyVisibleItemPosition();
@@ -549,6 +549,7 @@ public final class Wheel {
     static void jumpNow(RecyclerView rv, int pos) {
         try {
             if (rv == null || rv.getWindowToken() == null) return;
+            Glider.stop();
             releasing = true;
             jumping = true;
             scrollTo(rv, pos);
@@ -793,6 +794,21 @@ public final class Wheel {
             aimDown = down;
         }
 
+        /**
+         * The list's end in the direction of travel, told by the edge row itself — not by
+         * computeVerticalScrollOffset, an estimate that can come out unchanged in the frame a row
+         * enters and another leaves, which stopped glides short of the last row.
+         */
+        private static boolean atEnd(RecyclerView rv, boolean down) {
+            RecyclerView.Adapter a = rv.getAdapter();
+            int n = rv.getChildCount();
+            if (a == null || n == 0) return true;
+            View v = rv.getChildAt(down ? n - 1 : 0);
+            int p = rv.getChildAdapterPosition(v);
+            if (down) return p == a.getItemCount() - 1 && end(v, false) <= rv.getHeight() - rv.getPaddingBottom();
+            return p == 0 && start(v, false) >= rv.getPaddingTop();
+        }
+
         /** The guess replaced by the row's own edge once the row is laid out. */
         private static void reaim(RecyclerView rv) {
             if (aimPos < 0) return;
@@ -847,17 +863,11 @@ public final class Wheel {
                 s = Math.round(Math.min(a, Math.max(1f, v * dt)));
                 if (left < 0) s = -s;
             }
-            // The list's end is told by a row that did not move — not by computeVerticalScrollOffset,
-            // an estimate that can come out unchanged in the frame a row enters and another leaves,
-            // which stopped the glide short of the last row.
-            View anchor = rv.getChildCount() > 0 ? rv.getChildAt(rv.getChildCount() / 2) : null;
-            int was = anchor == null ? 0 : anchor.getTop();
             long t0 = android.os.SystemClock.uptimeMillis();
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            boolean stuck = s != 0 && anchor != null && anchor.getParent() == rv && anchor.getTop() == was;
-            if (Math.abs(left) < 1f || stuck) left = 0;
+            if (Math.abs(left) < 1f || atEnd(rv, left > 0)) left = 0;
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {

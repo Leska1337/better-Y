@@ -15,27 +15,27 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/Bar;)V
   .registers 3
-  .line 255
+  .line 259
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 256
+  .line 260
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Bar$Tinter;->bar:Ljava/lang/ref/WeakReference;
-  .line 257
+  .line 261
     return-void
 .end method
 
 .method public onPreDraw()Z
   .catchall { :L0 .. :L5 } :L8
   .registers 7
-  .line 261
+  .line 265
     const/4 v0, 1
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/Bar$Tinter;->bar:Ljava/lang/ref/WeakReference;
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/Bar;
-  .line 262
+  .line 266
     if-nez v1, :L1
     const/4 v2, 0
     goto :L2
@@ -46,24 +46,24 @@
     move-result-object v2
     check-cast v2, Landroidx/recyclerview/widget/RecyclerView;
   :L2
-  .line 263
+  .line 267
     if-eqz v2, :L7
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v3
     if-nez v3, :L3
     goto :L7
   :L3
-  .line 264
+  .line 268
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$100(Lcom/innioasis/ipp/Bar;)V
-  .line 265
+  .line 269
     const/4 v3, 0
     invoke-virtual { v2, v3 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v4
     invoke-virtual { v4 }, Landroid/view/View;->getHeight()I
     move-result v4
-  .line 266
+  .line 270
     invoke-static { v1, v2, v4 }, Lcom/innioasis/ipp/Bar;->access$200(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;I)Z
-  .line 267
+  .line 271
     nop
   :L4
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
@@ -76,15 +76,15 @@
     add-int/lit8 v3, v3, 1
     goto :L4
   :L6
-  .line 269
+  .line 273
     goto :L9
   :L7
-  .line 263
+  .line 267
     return v0
   :L8
-  .line 268
+  .line 272
     move-exception v1
   :L9
-  .line 270
+  .line 274
     return v0
 .end method

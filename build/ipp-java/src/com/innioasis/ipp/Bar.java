@@ -31,6 +31,8 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     private static final float RATE = 22f;
     private static final float VMIN = 700f;
     private static final float VMAX = 6000f;
+    /** Rows the cursor may move between two frames and still be glided to. */
+    private static final int JUMP = 4;
 
     private static final WeakHashMap BARS = new WeakHashMap();
 
@@ -167,10 +169,13 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
         return a == null ? -1 : a.getMark();
     }
 
-    /** A step of more than one row is a jump: the bar does not fly over the rows. */
+    /**
+     * A cursor moved further than the rows ever glide (a list rebuilt, a return) is stood on, not
+     * flown to. Two wheel steps between frames are NOT that: they cut the glide short.
+     */
     private void observe() {
         int pos = cursor();
-        if (lastPos >= 0 && Math.abs(pos - lastPos) > 1) snap = true;
+        if (lastPos >= 0 && Math.abs(pos - lastPos) > JUMP) snap = true;
         lastPos = pos;
     }
 
@@ -195,7 +200,6 @@ public final class Bar extends RecyclerView.ItemDecoration implements Choreograp
     static boolean defer(RecyclerView r, int pos) {
         Bar b = r == null ? null : (Bar) BARS.get(r);
         if (b == null) return false;
-        if (b.lastPos < 0 || Math.abs(pos - b.lastPos) <= 1) return false;
         b.lastPos = pos;
         b.snap = true;
         Wheel.jumpNow(r, pos);
