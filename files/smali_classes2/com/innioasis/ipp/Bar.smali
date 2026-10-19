@@ -117,12 +117,12 @@
   .line 145
     const-wide v0, 9223372036854775806L
     iput-wide v0, p0, Lcom/innioasis/ipp/Bar;->headKey:J
-  .line 518
+  .line 536
     new-instance v0, Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Bar;->adapter:Ljava/lang/ref/WeakReference;
-  .line 741
+  .line 759
     new-instance v0, Lcom/innioasis/ipp/Bar$Tinter;
     invoke-direct { v0, p0 }, Lcom/innioasis/ipp/Bar$Tinter;-><init>(Lcom/innioasis/ipp/Bar;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Bar;->tinter:Lcom/innioasis/ipp/Bar$Tinter;
@@ -589,7 +589,7 @@
 
 .method private claims(Landroidx/recyclerview/widget/RecyclerView;IFZ)Z
   .registers 7
-  .line 606
+  .line 624
     iget-boolean v0, p0, Lcom/innioasis/ipp/Bar;->snap:Z
     const/4 v1, 0
     if-nez v0, :L3
@@ -605,7 +605,7 @@
     if-eqz v0, :L0
     goto :L3
   :L0
-  .line 607
+  .line 625
     invoke-direct { p0, p1, p2 }, Lcom/innioasis/ipp/Bar;->target(Landroidx/recyclerview/widget/RecyclerView;I)F
     move-result p1
     iget v0, p0, Lcom/innioasis/ipp/Bar;->y:F
@@ -617,7 +617,7 @@
     if-gez p1, :L1
     return p4
   :L1
-  .line 608
+  .line 626
     iget p1, p0, Lcom/innioasis/ipp/Bar;->y:F
     sub-float/2addr p3, p1
     invoke-static { p3 }, Ljava/lang/Math;->abs(F)F
@@ -631,7 +631,7 @@
   :L2
     return v1
   :L3
-  .line 606
+  .line 624
     return v1
 .end method
 
@@ -706,17 +706,17 @@
 
 .method private cursor()I
   .registers 4
-  .line 439
+  .line 457
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-boolean v0, v0, Lcom/innioasis/ipp/Bar$Spec;->byAdapter:Z
     const/4 v1, -1
     if-eqz v0, :L4
-  .line 440
+  .line 458
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 441
+  .line 459
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
@@ -724,33 +724,33 @@
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v0
   :L1
-  .line 442
+  .line 460
     instance-of v2, v0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     if-eqz v2, :L2
-  .line 443
+  .line 461
     check-cast v0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
     move-result v0
     return v0
   :L2
-  .line 445
+  .line 463
     instance-of v2, v0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
     if-eqz v2, :L3
-  .line 446
+  .line 464
     check-cast v0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getSelectPosition()I
     move-result v0
     return v0
   :L3
-  .line 448
+  .line 466
     return v1
   :L4
-  .line 450
+  .line 468
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->activity:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/base/BaseActivity;
-  .line 451
+  .line 469
     if-nez v0, :L5
     goto :L6
   :L5
@@ -762,10 +762,10 @@
 
 .method private cursorRow(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
   .registers 3
-  .line 551
+  .line 569
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object p1
-  .line 552
+  .line 570
     instance-of v0, p1, Landroidx/recyclerview/widget/LinearLayoutManager;
     if-eqz v0, :L0
     check-cast p1, Landroidx/recyclerview/widget/LinearLayoutManager;
@@ -813,7 +813,7 @@
 
 .method static defer(Landroidx/recyclerview/widget/RecyclerView;I)Z
   .registers 4
-  .line 541
+  .line 559
     if-nez p0, :L0
     const/4 v0, 0
     goto :L1
@@ -823,51 +823,51 @@
     move-result-object v0
     check-cast v0, Lcom/innioasis/ipp/Bar;
   :L1
-  .line 542
+  .line 560
     if-eqz v0, :L3
     invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->live(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v1
     if-nez v1, :L2
     goto :L3
   :L2
-  .line 543
+  .line 561
     iput p1, v0, Lcom/innioasis/ipp/Bar;->lastPos:I
-  .line 544
+  .line 562
     const/4 v1, 1
     iput-boolean v1, v0, Lcom/innioasis/ipp/Bar;->snap:Z
-  .line 545
+  .line 563
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Wheel;->jumpNow(Landroidx/recyclerview/widget/RecyclerView;I)V
-  .line 546
+  .line 564
     invoke-direct { v0 }, Lcom/innioasis/ipp/Bar;->start()V
-  .line 547
+  .line 565
     return v1
   :L3
-  .line 542
+  .line 560
     const/4 p0, 0
     return p0
 .end method
 
 .method private drawArrow(Landroid/graphics/Canvas;Landroidx/recyclerview/widget/RecyclerView;I)V
   .registers 9
-  .line 828
+  .line 846
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Bar;->cursorRow(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
     move-result-object p2
-  .line 829
+  .line 847
     if-nez p2, :L0
     return-void
   :L0
-  .line 830
+  .line 848
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget v0, v0, Lcom/innioasis/ipp/Bar$Spec;->arrow:I
     if-nez v0, :L1
     return-void
   :L1
-  .line 831
+  .line 849
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget v0, v0, Lcom/innioasis/ipp/Bar$Spec;->arrow:I
     invoke-virtual { p2, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 833
+  .line 851
     if-eqz v0, :L7
     invoke-virtual { v0 }, Landroid/view/View;->getVisibility()I
     move-result v1
@@ -878,27 +878,27 @@
     if-nez v1, :L2
     goto :L7
   :L2
-  .line 835
+  .line 853
     nop
-  .line 836
+  .line 854
     const/4 v1, 0
     move-object v3, v0
     const/4 v2, 0
   :L3
     if-eqz v3, :L6
     if-eq v3, p2, :L6
-  .line 837
+  .line 855
     invoke-virtual { v3 }, Landroid/view/View;->getLeft()I
     move-result v4
     add-int/2addr v1, v4
-  .line 838
+  .line 856
     invoke-virtual { v3 }, Landroid/view/View;->getTop()I
     move-result v4
     add-int/2addr v2, v4
-  .line 839
+  .line 857
     invoke-virtual { v3 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v3
-  .line 840
+  .line 858
     instance-of v4, v3, Landroid/view/View;
     if-eqz v4, :L4
     check-cast v3, Landroid/view/View;
@@ -906,12 +906,12 @@
   :L4
     const/4 v3, 0
   :L5
-  .line 841
+  .line 859
     goto :L3
   :L6
-  .line 842
+  .line 860
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->save()I
-  .line 843
+  .line 861
     invoke-virtual { p2 }, Landroid/view/View;->getLeft()I
     move-result p2
     add-int/2addr p2, v1
@@ -919,68 +919,68 @@
     add-int/2addr p3, v2
     int-to-float p3, p3
     invoke-virtual { p1, p2, p3 }, Landroid/graphics/Canvas;->translate(FF)V
-  .line 844
+  .line 862
     invoke-virtual { v0, p1 }, Landroid/view/View;->draw(Landroid/graphics/Canvas;)V
-  .line 845
+  .line 863
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->restore()V
-  .line 846
+  .line 864
     return-void
   :L7
-  .line 833
+  .line 851
     return-void
 .end method
 
 .method private dressHead()V
   .registers 5
-  .line 630
+  .line 648
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->head:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/view/View;
-  .line 631
+  .line 649
     if-nez v0, :L0
     return-void
   :L0
-  .line 632
+  .line 650
     invoke-virtual { v0 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v1
-  .line 633
+  .line 651
     instance-of v2, v1, Lcom/innioasis/ipp/Rows$Flat;
     const/4 v3, -1
     if-eqz v2, :L2
-  .line 634
+  .line 652
     check-cast v1, Lcom/innioasis/ipp/Rows$Flat;
-  .line 635
+  .line 653
     invoke-virtual { v1 }, Lcom/innioasis/ipp/Rows$Flat;->inner()Landroid/graphics/drawable/Drawable;
     move-result-object v0
     iget-object v2, p0, Lcom/innioasis/ipp/Bar;->headPaint:Lcom/innioasis/ipp/Bar$HeadPaint;
     if-eq v0, v2, :L1
     invoke-virtual { v1, v2, v3 }, Lcom/innioasis/ipp/Rows$Flat;->swap(Landroid/graphics/drawable/Drawable;I)V
   :L1
-  .line 636
+  .line 654
     goto :L3
   :L2
-  .line 637
+  .line 655
     new-instance v1, Lcom/innioasis/ipp/Rows$Flat;
     iget-object v2, p0, Lcom/innioasis/ipp/Bar;->headPaint:Lcom/innioasis/ipp/Bar$HeadPaint;
     invoke-direct { v1, v2 }, Lcom/innioasis/ipp/Rows$Flat;-><init>(Landroid/graphics/drawable/Drawable;)V
-  .line 638
+  .line 656
     iput v3, v1, Lcom/innioasis/ipp/Rows$Flat;->res:I
-  .line 639
+  .line 657
     invoke-virtual { v0, v1 }, Landroid/view/View;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
   :L3
-  .line 641
+  .line 659
     return-void
 .end method
 
 .method private dressed()Z
   .registers 3
-  .line 644
+  .line 662
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->head:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/view/View;
-  .line 645
+  .line 663
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
@@ -988,7 +988,7 @@
     invoke-virtual { v0 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v0
   :L1
-  .line 646
+  .line 664
     instance-of v1, v0, Lcom/innioasis/ipp/Rows$Flat;
     if-eqz v1, :L2
     check-cast v0, Lcom/innioasis/ipp/Rows$Flat;
@@ -1006,42 +1006,42 @@
 
 .method private static followText(Landroid/view/View;Ljava/lang/Object;I)V
   .registers 4
-  .line 721
+  .line 739
     instance-of v0, p1, Lcom/innioasis/music/PlaylistsActivity;
     if-eqz v0, :L0
-  .line 722
+  .line 740
     invoke-static { p0 }, Lcom/innioasis/ipp/PlGrid;->listRow(Landroid/view/View;)V
     goto :L1
   :L0
-  .line 723
+  .line 741
     instance-of p1, p1, Lcom/innioasis/y1/activity/video/VideoListActivity;
     if-eqz p1, :L1
-  .line 724
+  .line 742
     const p1, 2131362040
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 726
+  .line 744
     instance-of p1, p0, Landroid/widget/ImageView;
     if-eqz p1, :L1
     check-cast p0, Landroid/widget/ImageView;
     invoke-virtual { p0 }, Landroid/widget/ImageView;->getColorFilter()Landroid/graphics/ColorFilter;
     move-result-object p1
     if-eqz p1, :L1
-  .line 727
+  .line 745
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
   :L1
-  .line 730
+  .line 748
     return-void
 .end method
 
 .method private head()Landroid/view/View;
   .registers 3
-  .line 462
+  .line 480
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->head:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/view/View;
-  .line 463
+  .line 481
     if-eqz v0, :L0
     invoke-virtual { v0 }, Landroid/view/View;->isShown()Z
     move-result v1
@@ -1055,7 +1055,7 @@
 
 .method private static headTop(Landroidx/recyclerview/widget/RecyclerView;Landroid/view/View;)I
   .registers 4
-  .line 472
+  .line 490
     invoke-virtual { p1 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v0
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getParent()Landroid/view/ViewParent;
@@ -1068,16 +1068,16 @@
     sub-int/2addr p1, p0
     return p1
   :L0
-  .line 473
+  .line 491
     const/4 v0, 2
     new-array v1, v0, [I
-  .line 474
+  .line 492
     new-array v0, v0, [I
-  .line 475
+  .line 493
     invoke-virtual { p1, v1 }, Landroid/view/View;->getLocationInWindow([I)V
-  .line 476
+  .line 494
     invoke-virtual { p0, v0 }, Landroidx/recyclerview/widget/RecyclerView;->getLocationInWindow([I)V
-  .line 477
+  .line 495
     const/4 p0, 1
     aget p1, v1, p0
     aget p0, v0, p0
@@ -1087,7 +1087,7 @@
 
 .method private height(Landroidx/recyclerview/widget/RecyclerView;)I
   .registers 5
-  .line 734
+  .line 752
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->onHead()Z
     move-result v0
     if-eqz v0, :L0
@@ -1097,16 +1097,16 @@
   :L0
     const/4 v0, 0
   :L1
-  .line 735
+  .line 753
     if-eqz v0, :L2
     invoke-virtual { v0 }, Landroid/view/View;->getHeight()I
     move-result p1
     return p1
   :L2
-  .line 736
+  .line 754
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Bar;->cursorRow(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
     move-result-object v0
-  .line 737
+  .line 755
     const/4 v1, 0
     if-nez v0, :L3
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
@@ -1115,7 +1115,7 @@
     invoke-virtual { p1, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v0
   :L3
-  .line 738
+  .line 756
     if-nez v0, :L4
     goto :L5
   :L4
@@ -1383,12 +1383,12 @@
 
 .method private observe()V
   .registers 4
-  .line 504
+  .line 522
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 505
+  .line 523
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
@@ -1396,29 +1396,29 @@
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v0
   :L1
-  .line 506
+  .line 524
     iget-object v1, p0, Lcom/innioasis/ipp/Bar;->adapter:Ljava/lang/ref/WeakReference;
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
     if-eq v1, v0, :L2
-  .line 508
+  .line 526
     new-instance v1, Ljava/lang/ref/WeakReference;
     invoke-direct { v1, v0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v1, p0, Lcom/innioasis/ipp/Bar;->adapter:Ljava/lang/ref/WeakReference;
-  .line 509
+  .line 527
     const/high16 v0, 0x7FC00000
     iput v0, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 510
+  .line 528
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Bar;->snap:Z
-  .line 511
+  .line 529
     const/4 v0, -1
     iput v0, p0, Lcom/innioasis/ipp/Bar;->lastPos:I
   :L2
-  .line 513
+  .line 531
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v0
-  .line 514
+  .line 532
     iget v1, p0, Lcom/innioasis/ipp/Bar;->lastPos:I
     if-ltz v1, :L3
     sub-int v1, v0, v1
@@ -1429,9 +1429,9 @@
     const/4 v1, 1
     iput-boolean v1, p0, Lcom/innioasis/ipp/Bar;->snap:Z
   :L3
-  .line 515
+  .line 533
     iput v0, p0, Lcom/innioasis/ipp/Bar;->lastPos:I
-  .line 516
+  .line 534
     return-void
 .end method
 
@@ -1489,7 +1489,7 @@
 
 .method private onHead()Z
   .registers 3
-  .line 467
+  .line 485
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v0
     const/4 v1, -1
@@ -1507,10 +1507,10 @@
 
 .method private onList(Landroidx/recyclerview/widget/RecyclerView;)Z
   .registers 4
-  .line 456
+  .line 474
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v0
-  .line 457
+  .line 475
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v1
     if-eqz v1, :L0
@@ -1562,14 +1562,14 @@
 
 .method private refreshHead(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 9
-  .line 665
+  .line 683
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->head()Landroid/view/View;
     move-result-object v0
-  .line 666
+  .line 684
     if-nez v0, :L0
     return-void
   :L0
-  .line 667
+  .line 685
     iget v1, p0, Lcom/innioasis/ipp/Bar;->y:F
     invoke-static { v1 }, Ljava/lang/Float;->isNaN(F)Z
     move-result v1
@@ -1582,7 +1582,7 @@
     if-eqz p1, :L1
     goto :L2
   :L1
-  .line 668
+  .line 686
     iget p1, p0, Lcom/innioasis/ipp/Bar;->y:F
     invoke-static { p1 }, Ljava/lang/Math;->round(F)I
     move-result p1
@@ -1598,20 +1598,20 @@
     xor-long/2addr v1, v3
     goto :L3
   :L2
-  .line 667
+  .line 685
     const-wide v1, 9223372036854775806L
   :L3
-  .line 669
+  .line 687
     iget-wide v3, p0, Lcom/innioasis/ipp/Bar;->headKey:J
     cmp-long p1, v1, v3
     if-nez p1, :L4
     return-void
   :L4
-  .line 670
+  .line 688
     iput-wide v1, p0, Lcom/innioasis/ipp/Bar;->headKey:J
-  .line 671
+  .line 689
     invoke-virtual { v0 }, Landroid/view/View;->invalidate()V
-  .line 672
+  .line 690
     return-void
 .end method
 
@@ -1643,6 +1643,60 @@
   .line 435
     const/4 p0, 1
     return p0
+.end method
+
+.method public static relisted(Landroidx/recyclerview/widget/RecyclerView$Adapter;)V
+  .catchall { :L0 .. :L3 } :L5
+  .registers 4
+  .line 445
+    if-eqz p0, :L7
+  :L0
+    sget-object v0, Lcom/innioasis/ipp/Bar;->BARS:Ljava/util/WeakHashMap;
+    invoke-virtual { v0 }, Ljava/util/WeakHashMap;->isEmpty()Z
+    move-result v1
+    if-eqz v1, :L1
+    goto :L7
+  :L1
+  .line 446
+    invoke-virtual { v0 }, Ljava/util/WeakHashMap;->values()Ljava/util/Collection;
+    move-result-object v0
+    invoke-interface { v0 }, Ljava/util/Collection;->iterator()Ljava/util/Iterator;
+    move-result-object v0
+  :L2
+  .line 447
+    invoke-interface { v0 }, Ljava/util/Iterator;->hasNext()Z
+    move-result v1
+    if-eqz v1, :L4
+  .line 448
+    invoke-interface { v0 }, Ljava/util/Iterator;->next()Ljava/lang/Object;
+    move-result-object v1
+    check-cast v1, Lcom/innioasis/ipp/Bar;
+  .line 449
+    iget-object v1, v1, Lcom/innioasis/ipp/Bar;->rv:Ljava/lang/ref/WeakReference;
+    invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
+    move-result-object v1
+    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+  .line 450
+    if-eqz v1, :L3
+    invoke-virtual { v1 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
+    move-result-object v2
+    if-ne v2, p0, :L3
+    invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->relist(Landroidx/recyclerview/widget/RecyclerView;)Z
+  :L3
+  .line 451
+    goto :L2
+  :L4
+  .line 453
+    goto :L6
+  :L5
+  .line 452
+    move-exception p0
+  :L6
+  .line 454
+    return-void
+  :L7
+  .line 445
+    return-void
 .end method
 
 .method public static row(Landroid/view/View;)V
@@ -1704,10 +1758,10 @@
 
 .method private settle(Landroidx/recyclerview/widget/RecyclerView;I)Z
   .registers 5
-  .line 522
+  .line 540
     iget-boolean v0, p0, Lcom/innioasis/ipp/Bar;->snap:Z
     if-eqz v0, :L2
-  .line 524
+  .line 542
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->isLayoutRequested()Z
     move-result v0
     const/4 v1, 0
@@ -1720,34 +1774,34 @@
     if-nez v0, :L0
     goto :L1
   :L0
-  .line 525
+  .line 543
     invoke-direct { p0, p1, p2 }, Lcom/innioasis/ipp/Bar;->target(Landroidx/recyclerview/widget/RecyclerView;I)F
     move-result p1
     iput p1, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 526
+  .line 544
     int-to-float p1, p2
     iput p1, p0, Lcom/innioasis/ipp/Bar;->hb:F
-  .line 527
+  .line 545
     iput-boolean v1, p0, Lcom/innioasis/ipp/Bar;->snap:Z
     goto :L3
   :L1
-  .line 524
+  .line 542
     return v1
   :L2
-  .line 528
+  .line 546
     iget v0, p0, Lcom/innioasis/ipp/Bar;->y:F
     invoke-static { v0 }, Ljava/lang/Float;->isNaN(F)Z
     move-result v0
     if-eqz v0, :L3
-  .line 529
+  .line 547
     invoke-direct { p0, p1, p2 }, Lcom/innioasis/ipp/Bar;->target(Landroidx/recyclerview/widget/RecyclerView;I)F
     move-result p1
     iput p1, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 530
+  .line 548
     int-to-float p1, p2
     iput p1, p0, Lcom/innioasis/ipp/Bar;->hb:F
   :L3
-  .line 532
+  .line 550
     const/4 p1, 1
     return p1
 .end method
@@ -1944,44 +1998,44 @@
 
 .method private start()V
   .registers 3
-  .line 849
+  .line 867
     iget-boolean v0, p0, Lcom/innioasis/ipp/Bar;->running:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 850
+  .line 868
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/ipp/Bar;->running:Z
-  .line 851
+  .line 869
     const-wide/16 v0, 0
     iput-wide v0, p0, Lcom/innioasis/ipp/Bar;->last:J
-  .line 852
+  .line 870
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object v0
     invoke-virtual { v0, p0 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
-  .line 853
+  .line 871
     return-void
 .end method
 
 .method private stop()V
   .registers 2
-  .line 856
+  .line 874
     iget-boolean v0, p0, Lcom/innioasis/ipp/Bar;->running:Z
     if-eqz v0, :L0
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object v0
     invoke-virtual { v0, p0 }, Landroid/view/Choreographer;->removeFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L0
-  .line 857
+  .line 875
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Bar;->running:Z
-  .line 858
+  .line 876
     return-void
 .end method
 
 .method private target(Landroidx/recyclerview/widget/RecyclerView;I)F
   .registers 6
-  .line 557
+  .line 575
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->onHead()Z
     move-result v0
     if-eqz v0, :L0
@@ -1992,22 +2046,22 @@
     int-to-float p1, p1
     return p1
   :L0
-  .line 558
+  .line 576
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v0
-  .line 559
+  .line 577
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
     move-result v1
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingBottom()I
     move-result v2
     sub-int/2addr v1, v2
     sub-int/2addr v1, p2
-  .line 561
+  .line 579
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/Bar;->cursorRow(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
     move-result-object p2
-  .line 562
+  .line 580
     if-eqz p2, :L1
-  .line 563
+  .line 581
     invoke-virtual { p2 }, Landroid/view/View;->getTop()I
     move-result p1
     int-to-float p1, p1
@@ -2016,7 +2070,7 @@
     add-float/2addr p1, p2
     goto :L7
   :L1
-  .line 565
+  .line 583
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result p2
     const/4 v2, 0
@@ -2027,14 +2081,14 @@
   :L2
     const/4 p2, 0
   :L3
-  .line 566
+  .line 584
     if-nez p2, :L4
     goto :L5
   :L4
     invoke-virtual { p1, p2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildLayoutPosition(Landroid/view/View;)I
     move-result v2
   :L5
-  .line 567
+  .line 585
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result p1
     if-ge p1, v2, :L6
@@ -2043,7 +2097,7 @@
   :L6
     int-to-float p1, v1
   :L7
-  .line 569
+  .line 587
     int-to-float p2, v0
     int-to-float v0, v1
     invoke-static { v0, p1 }, Ljava/lang/Math;->min(FF)F
@@ -2055,57 +2109,57 @@
 
 .method private static ticked(Landroidx/recyclerview/widget/RecyclerView;I)Z
   .registers 5
-  .line 482
+  .line 500
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object p0
-  .line 483
+  .line 501
     const/4 v0, 0
     if-gez p1, :L0
     return v0
   :L0
-  .line 484
+  .line 502
     nop
-  .line 485
+  .line 503
     instance-of v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     const/4 v2, 1
     if-eqz v1, :L1
-  .line 486
+  .line 504
     check-cast p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
     move-result-object p0
     goto :L8
   :L1
-  .line 487
+  .line 505
     instance-of v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
     if-eqz v1, :L2
-  .line 488
+  .line 506
     check-cast p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getMultiSelectIndexes()Ljava/util/List;
     move-result-object p0
     goto :L8
   :L2
-  .line 489
+  .line 507
     instance-of v1, p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     if-eqz v1, :L7
-  .line 490
+  .line 508
     check-cast p0, Lcom/innioasis/y1/base/BaseBindingAdapter;
     invoke-virtual { p0 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object p0
-  .line 491
+  .line 509
     if-eqz p0, :L6
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v1
     if-lt p1, v1, :L3
     goto :L6
   :L3
-  .line 492
+  .line 510
     invoke-interface { p0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p0
-  .line 493
+  .line 511
     instance-of p1, p0, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;
     if-eqz p1, :L4
     check-cast p0, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;
-  .line 494
+  .line 512
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/video/VideoListActivity$BrowseItem;->isMultiSelect()Z
     move-result p0
     if-eqz p0, :L4
@@ -2114,16 +2168,16 @@
   :L4
     nop
   :L5
-  .line 493
+  .line 511
     return v0
   :L6
-  .line 491
+  .line 509
     return v0
   :L7
-  .line 489
+  .line 507
     const/4 p0, 0
   :L8
-  .line 496
+  .line 514
     if-eqz p0, :L9
     invoke-interface { p0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
@@ -2140,20 +2194,20 @@
 
 .method private tint(Landroid/view/View;I)V
   .registers 9
-  .line 580
+  .line 598
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 581
+  .line 599
     if-lez p2, :L12
     if-nez v0, :L0
     goto/16 :L12
   :L0
-  .line 582
+  .line 600
     invoke-virtual { v0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildLayoutPosition(Landroid/view/View;)I
     move-result v1
-  .line 583
+  .line 601
     invoke-virtual { p1 }, Landroid/view/View;->getTop()I
     move-result v2
     int-to-float v2, v2
@@ -2172,11 +2226,11 @@
   :L2
     invoke-direct { p0, v0, p2, v2, v3 }, Lcom/innioasis/ipp/Bar;->claims(Landroidx/recyclerview/widget/RecyclerView;IFZ)Z
     move-result p2
-  .line 584
+  .line 602
     iget-object v2, p0, Lcom/innioasis/ipp/Bar;->activity:Ljava/lang/ref/WeakReference;
     invoke-virtual { v2 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v2
-  .line 585
+  .line 603
     instance-of v3, v2, Lcom/innioasis/y1/activity/EqActivity;
     if-eqz v3, :L3
     iget v3, p0, Lcom/innioasis/ipp/Bar;->rowText:I
@@ -2186,7 +2240,7 @@
   :L3
     iget v3, p0, Lcom/innioasis/ipp/Bar;->rowText:I
   :L4
-  .line 587
+  .line 605
     if-nez p2, :L5
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result p2
@@ -2197,62 +2251,62 @@
   :L5
     iget v3, p0, Lcom/innioasis/ipp/Bar;->selText:I
   :L6
-  .line 588
+  .line 606
     nop
-  .line 589
+  .line 607
     const/4 p2, 0
   :L7
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v0, v0, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     array-length v0, v0
     if-ge v5, v0, :L10
-  .line 590
+  .line 608
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v0, v0, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     aget v0, v0, v5
     invoke-virtual { p1, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 591
+  .line 609
     instance-of v1, v0, Landroid/widget/TextView;
     if-nez v1, :L8
     goto :L9
   :L8
-  .line 592
+  .line 610
     check-cast v0, Landroid/widget/TextView;
-  .line 593
+  .line 611
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result v1
     if-eq v1, v3, :L9
-  .line 594
+  .line 612
     invoke-virtual { v0, v3 }, Landroid/widget/TextView;->setTextColor(I)V
-  .line 595
+  .line 613
     const/4 p2, 1
   :L9
-  .line 589
+  .line 607
     add-int/lit8 v5, v5, 1
     goto :L7
   :L10
-  .line 598
+  .line 616
     if-eqz p2, :L11
     invoke-static { p1, v2, v3 }, Lcom/innioasis/ipp/Bar;->followText(Landroid/view/View;Ljava/lang/Object;I)V
   :L11
-  .line 599
+  .line 617
     return-void
   :L12
-  .line 581
+  .line 599
     return-void
 .end method
 
 .method private tintHead(Landroidx/recyclerview/widget/RecyclerView;I)V
   .registers 6
-  .line 613
+  .line 631
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->head()Landroid/view/View;
     move-result-object v0
-  .line 614
+  .line 632
     if-nez v0, :L0
     return-void
   :L0
-  .line 615
+  .line 633
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/Bar;->headTop(Landroidx/recyclerview/widget/RecyclerView;Landroid/view/View;)I
     move-result v1
     int-to-float v1, v1
@@ -2266,49 +2320,49 @@
   :L1
     iget p1, p0, Lcom/innioasis/ipp/Bar;->rowText:I
   :L2
-  .line 616
+  .line 634
     const/4 p2, 0
   :L3
     iget-object v1, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v1, v1, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     array-length v1, v1
     if-ge p2, v1, :L5
-  .line 617
+  .line 635
     iget-object v1, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v1, v1, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     aget v1, v1, p2
     invoke-virtual { v0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 618
+  .line 636
     instance-of v2, v1, Landroid/widget/TextView;
     if-eqz v2, :L4
     check-cast v1, Landroid/widget/TextView;
     invoke-virtual { v1 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result v2
     if-eq v2, p1, :L4
-  .line 619
+  .line 637
     invoke-virtual { v1, p1 }, Landroid/widget/TextView;->setTextColor(I)V
   :L4
-  .line 616
+  .line 634
     add-int/lit8 p2, p2, 1
     goto :L3
   :L5
-  .line 622
+  .line 640
     return-void
 .end method
 
 .method private undressHead()V
   .registers 6
-  .line 651
+  .line 669
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->head:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/view/View;
-  .line 652
+  .line 670
     if-nez v0, :L0
     return-void
   :L0
-  .line 653
+  .line 671
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v1
     const/4 v2, -1
@@ -2319,7 +2373,7 @@
   :L1
     const/4 v1, 0
   :L2
-  .line 654
+  .line 672
     sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     if-eqz v1, :L3
     const v4, 2131231047
@@ -2328,20 +2382,20 @@
     const v4, 2131231044
   :L4
     invoke-virtual { v2, v0, v4, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 655
+  .line 673
     nop
   :L5
     iget-object v2, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v2, v2, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     array-length v2, v2
     if-ge v3, v2, :L9
-  .line 656
+  .line 674
     iget-object v2, p0, Lcom/innioasis/ipp/Bar;->spec:Lcom/innioasis/ipp/Bar$Spec;
     iget-object v2, v2, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
     aget v2, v2, v3
     invoke-virtual { v0, v2 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v2
-  .line 657
+  .line 675
     instance-of v4, v2, Landroid/widget/TextView;
     if-eqz v4, :L8
     check-cast v2, Landroid/widget/TextView;
@@ -2353,17 +2407,17 @@
   :L7
     invoke-virtual { v2, v4 }, Landroid/widget/TextView;->setTextColor(I)V
   :L8
-  .line 655
+  .line 673
     add-int/lit8 v3, v3, 1
     goto :L5
   :L9
-  .line 659
+  .line 677
     const-wide v0, 9223372036854775806L
     iput-wide v0, p0, Lcom/innioasis/ipp/Bar;->headKey:J
-  .line 660
+  .line 678
     const/high16 v0, 0x7FC00000
     iput v0, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 661
+  .line 679
     return-void
 .end method
 
@@ -2386,12 +2440,12 @@
 
 .method public doFrame(J)V
   .registers 11
-  .line 861
+  .line 879
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 862
+  .line 880
     const/4 v1, 0
     if-eqz v0, :L12
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getWindowToken()Landroid/os/IBinder;
@@ -2408,10 +2462,10 @@
     if-nez v2, :L0
     goto/16 :L12
   :L0
-  .line 866
+  .line 884
     const-wide/32 v2, 1000000
     div-long/2addr p1, v2
-  .line 867
+  .line 885
     iget-wide v2, p0, Lcom/innioasis/ipp/Bar;->last:J
     const-wide/16 v4, 0
     cmp-long v6, v2, v4
@@ -2427,29 +2481,29 @@
     invoke-static { v3, v2 }, Ljava/lang/Math;->min(FF)F
     move-result v2
   :L2
-  .line 868
+  .line 886
     iput-wide p1, p0, Lcom/innioasis/ipp/Bar;->last:J
-  .line 869
+  .line 887
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->observe()V
-  .line 870
+  .line 888
     invoke-direct { p0, v0 }, Lcom/innioasis/ipp/Bar;->height(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result p1
-  .line 871
+  .line 889
     iget-boolean p2, p0, Lcom/innioasis/ipp/Bar;->snap:Z
     if-nez p2, :L7
     invoke-direct { p0, v0, p1 }, Lcom/innioasis/ipp/Bar;->settle(Landroidx/recyclerview/widget/RecyclerView;I)Z
     move-result p2
     if-eqz p2, :L7
-  .line 872
+  .line 890
     invoke-direct { p0, v0, p1 }, Lcom/innioasis/ipp/Bar;->target(Landroidx/recyclerview/widget/RecyclerView;I)F
     move-result p2
-  .line 873
+  .line 891
     iget v3, p0, Lcom/innioasis/ipp/Bar;->y:F
     sub-float v3, p2, v3
-  .line 874
+  .line 892
     invoke-static { v3 }, Ljava/lang/Math;->abs(F)F
     move-result v4
-  .line 875
+  .line 893
     const/high16 v5, 0x41B00000
     mul-float v5, v5, v4
     const v6, 1169915904
@@ -2458,11 +2512,11 @@
     const/high16 v6, 0x442F0000
     invoke-static { v6, v5 }, Ljava/lang/Math;->max(FF)F
     move-result v5
-  .line 876
+  .line 894
     mul-float v5, v5, v2
     invoke-static { v4, v5 }, Ljava/lang/Math;->min(FF)F
     move-result v2
-  .line 878
+  .line 896
     iget v5, p0, Lcom/innioasis/ipp/Bar;->hb:F
     invoke-static { v5 }, Ljava/lang/Float;->isNaN(F)Z
     move-result v5
@@ -2472,7 +2526,7 @@
     if-nez v5, :L3
     goto :L4
   :L3
-  .line 879
+  .line 897
     iget v5, p0, Lcom/innioasis/ipp/Bar;->hb:F
     int-to-float v7, p1
     sub-float/2addr v7, v5
@@ -2482,11 +2536,11 @@
     iput v5, p0, Lcom/innioasis/ipp/Bar;->hb:F
     goto :L5
   :L4
-  .line 878
+  .line 896
     int-to-float v4, p1
     iput v4, p0, Lcom/innioasis/ipp/Bar;->hb:F
   :L5
-  .line 880
+  .line 898
     iget v4, p0, Lcom/innioasis/ipp/Bar;->y:F
     cmpg-float v3, v3, v6
     if-gez v3, :L6
@@ -2494,29 +2548,29 @@
   :L6
     add-float/2addr v4, v2
     iput v4, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 881
+  .line 899
     sub-float v2, p2, v4
     invoke-static { v2 }, Ljava/lang/Math;->abs(F)F
     move-result v2
     const/high16 v3, 0x3F000000
     cmpg-float v2, v2, v3
     if-gez v2, :L7
-  .line 882
+  .line 900
     iput p2, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 883
+  .line 901
     int-to-float p2, p1
     iput p2, p0, Lcom/innioasis/ipp/Bar;->hb:F
   :L7
-  .line 886
+  .line 904
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->invalidate()V
-  .line 888
+  .line 906
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->head()Landroid/view/View;
     move-result-object p2
-  .line 889
+  .line 907
     if-eqz p2, :L8
     invoke-virtual { p2 }, Landroid/view/View;->invalidate()V
   :L8
-  .line 890
+  .line 908
     iget-boolean p2, p0, Lcom/innioasis/ipp/Bar;->snap:Z
     if-nez p2, :L10
     iget p2, p0, Lcom/innioasis/ipp/Bar;->y:F
@@ -2530,21 +2584,21 @@
     if-eqz p1, :L9
     goto :L10
   :L9
-  .line 893
+  .line 911
     iput-boolean v1, p0, Lcom/innioasis/ipp/Bar;->running:Z
     goto :L11
   :L10
-  .line 891
+  .line 909
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object p1
     invoke-virtual { p1, p0 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L11
-  .line 895
+  .line 913
     return-void
   :L12
-  .line 863
+  .line 881
     iput-boolean v1, p0, Lcom/innioasis/ipp/Bar;->running:Z
-  .line 864
+  .line 882
     return-void
 .end method
 
@@ -2584,50 +2638,50 @@
   .catchall { :L0 .. :L15 } :L17
   .registers 15
   :L0
-  .line 781
+  .line 799
     invoke-virtual { p2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result p3
-  .line 782
+  .line 800
     if-eqz p3, :L16
     invoke-static { p2 }, Lcom/innioasis/ipp/Bar;->live(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v0
     if-nez v0, :L1
     goto/16 :L16
   :L1
-  .line 783
+  .line 801
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->observe()V
-  .line 784
+  .line 802
     iget-object v0, p0, Lcom/innioasis/ipp/Bar;->rowProbe:Landroid/view/View;
     invoke-virtual { v0 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v0
-  .line 785
+  .line 803
     iget-object v1, p0, Lcom/innioasis/ipp/Bar;->selProbe:Landroid/view/View;
     invoke-virtual { v1 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v1
-  .line 786
+  .line 804
     const/4 v2, 0
     invoke-virtual { p2, v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v3
-  .line 787
+  .line 805
     invoke-virtual { v3 }, Landroid/view/View;->getLeft()I
     move-result v4
-  .line 788
+  .line 806
     invoke-virtual { v3 }, Landroid/view/View;->getRight()I
     move-result v3
-  .line 789
+  .line 807
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v5
-  .line 790
+  .line 808
     nop
   :L2
     if-ge v2, p3, :L7
-  .line 791
+  .line 809
     invoke-virtual { p2, v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v6
-  .line 792
+  .line 810
     invoke-virtual { p2, v6 }, Landroidx/recyclerview/widget/RecyclerView;->getChildLayoutPosition(Landroid/view/View;)I
     move-result v7
-  .line 794
+  .line 812
     if-eq v7, v5, :L3
     invoke-static { p2, v7 }, Lcom/innioasis/ipp/Bar;->ticked(Landroidx/recyclerview/widget/RecyclerView;I)Z
     move-result v7
@@ -2637,11 +2691,11 @@
   :L3
     move-object v7, v0
   :L4
-  .line 795
+  .line 813
     if-nez v7, :L5
     goto :L6
   :L5
-  .line 796
+  .line 814
     invoke-virtual { v6 }, Landroid/view/View;->getTop()I
     move-result v8
     int-to-float v8, v8
@@ -2650,7 +2704,7 @@
     add-float/2addr v8, v9
     invoke-static { v8 }, Ljava/lang/Math;->round(F)I
     move-result v8
-  .line 797
+  .line 815
     invoke-virtual { v6 }, Landroid/view/View;->getLeft()I
     move-result v9
     invoke-virtual { v6 }, Landroid/view/View;->getRight()I
@@ -2659,44 +2713,44 @@
     move-result v6
     add-int/2addr v6, v8
     invoke-virtual { v7, v9, v8, v10, v6 }, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
-  .line 798
+  .line 816
     invoke-virtual { v7, p1 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
   :L6
-  .line 790
+  .line 808
     add-int/lit8 v2, v2, 1
     goto :L2
   :L7
-  .line 800
+  .line 818
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Bar;->onList(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result p3
     if-nez p3, :L8
-  .line 802
+  .line 820
     const/high16 p1, 0x7FC00000
     iput p1, p0, Lcom/innioasis/ipp/Bar;->y:F
-  .line 803
+  .line 821
     return-void
   :L8
-  .line 805
+  .line 823
     invoke-direct { p0, p2 }, Lcom/innioasis/ipp/Bar;->height(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result p3
-  .line 806
+  .line 824
     invoke-direct { p0, p2, p3 }, Lcom/innioasis/ipp/Bar;->settle(Landroidx/recyclerview/widget/RecyclerView;I)Z
     move-result v0
-  .line 807
+  .line 825
     invoke-direct { p0, p2, p3 }, Lcom/innioasis/ipp/Bar;->target(Landroidx/recyclerview/widget/RecyclerView;I)F
     move-result v2
-  .line 808
+  .line 826
     if-nez v0, :L9
-  .line 809
+  .line 827
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->start()V
-  .line 810
+  .line 828
     return-void
   :L9
-  .line 812
+  .line 830
     iget v0, p0, Lcom/innioasis/ipp/Bar;->y:F
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
-  .line 813
+  .line 831
     iget v5, p0, Lcom/innioasis/ipp/Bar;->hb:F
     invoke-static { v5 }, Ljava/lang/Float;->isNaN(F)Z
     move-result v5
@@ -2708,22 +2762,22 @@
   :L11
     invoke-static { v5 }, Ljava/lang/Math;->round(F)I
     move-result v5
-  .line 814
+  .line 832
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->dark()Z
     move-result v6
     if-nez v6, :L13
-  .line 815
+  .line 833
     if-eqz v1, :L12
-  .line 816
+  .line 834
     add-int/2addr v5, v0
     invoke-virtual { v1, v4, v0, v3, v5 }, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
-  .line 817
+  .line 835
     invoke-virtual { v1, p1 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
   :L12
-  .line 819
+  .line 837
     invoke-direct { p0, p1, p2, v0 }, Lcom/innioasis/ipp/Bar;->drawArrow(Landroid/graphics/Canvas;Landroidx/recyclerview/widget/RecyclerView;I)V
   :L13
-  .line 821
+  .line 839
     iget p1, p0, Lcom/innioasis/ipp/Bar;->y:F
     cmpl-float p1, p1, v2
     if-nez p1, :L14
@@ -2734,15 +2788,15 @@
   :L14
     invoke-direct { p0 }, Lcom/innioasis/ipp/Bar;->start()V
   :L15
-  .line 823
+  .line 841
     goto :L18
   :L16
-  .line 782
+  .line 800
     return-void
   :L17
-  .line 822
+  .line 840
     move-exception p1
   :L18
-  .line 824
+  .line 842
     return-void
 .end method

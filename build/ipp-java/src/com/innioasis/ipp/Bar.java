@@ -435,6 +435,24 @@ public final class Bar extends RecyclerView.ItemDecoration
         return true;
     }
 
+    /**
+     * Top of {@code BaseQuickAdapter.setList}: a new list in the same adapter (a Videos folder
+     * opened or left). The bar stands on the cursor, as on a new adapter, instead of flying there
+     * from a row of the list that is gone.
+     */
+    public static void relisted(RecyclerView.Adapter a) {
+        try {
+            if (a == null || BARS.isEmpty()) return;
+            java.util.Iterator it = BARS.values().iterator();
+            while (it.hasNext()) {
+                Bar b = (Bar) it.next();
+                RecyclerView r = (RecyclerView) b.rv.get();
+                if (r != null && r.getAdapter() == a) relist(r);
+            }
+        } catch (Throwable t) {
+        }
+    }
+
     private int cursor() {
         if (spec.byAdapter) {
             RecyclerView r = (RecyclerView) rv.get();

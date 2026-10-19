@@ -14,13 +14,13 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/Bar;)V
   .registers 3
-  .line 678
+  .line 696
     invoke-direct { p0 }, Landroid/graphics/drawable/Drawable;-><init>()V
-  .line 679
+  .line 697
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Bar$HeadPaint;->bar:Ljava/lang/ref/WeakReference;
-  .line 680
+  .line 698
     return-void
 .end method
 
@@ -28,45 +28,45 @@
   .catchall { :L0 .. :L7 } :L10
   .registers 8
   :L0
-  .line 684
+  .line 702
     iget-object v0, p0, Lcom/innioasis/ipp/Bar$HeadPaint;->bar:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/ipp/Bar;
-  .line 685
+  .line 703
     if-nez v0, :L1
     return-void
   :L1
-  .line 686
+  .line 704
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Bar$HeadPaint;->getBounds()Landroid/graphics/Rect;
     move-result-object v1
-  .line 687
+  .line 705
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$000(Lcom/innioasis/ipp/Bar;)Landroid/view/View;
     move-result-object v2
     invoke-virtual { v2 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v2
-  .line 688
+  .line 706
     if-eqz v2, :L2
-  .line 689
+  .line 707
     invoke-virtual { v2, v1 }, Landroid/graphics/drawable/Drawable;->setBounds(Landroid/graphics/Rect;)V
-  .line 690
+  .line 708
     invoke-virtual { v2, p1 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
   :L2
-  .line 692
+  .line 710
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$100(Lcom/innioasis/ipp/Bar;)Ljava/lang/ref/WeakReference;
     move-result-object v2
     invoke-virtual { v2 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Landroidx/recyclerview/widget/RecyclerView;
-  .line 693
+  .line 711
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$200(Lcom/innioasis/ipp/Bar;)Landroid/view/View;
     move-result-object v3
-  .line 694
+  .line 712
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$300(Lcom/innioasis/ipp/Bar;)Landroid/view/View;
     move-result-object v4
     invoke-virtual { v4 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v4
-  .line 695
+  .line 713
     if-eqz v2, :L9
     if-eqz v3, :L9
     if-eqz v4, :L9
@@ -83,7 +83,7 @@
     if-eqz v5, :L3
     goto :L9
   :L3
-  .line 696
+  .line 714
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$400(Lcom/innioasis/ipp/Bar;)F
     move-result v5
     invoke-static { v5 }, Ljava/lang/Math;->round(F)I
@@ -91,7 +91,7 @@
     invoke-static { v2, v3 }, Lcom/innioasis/ipp/Bar;->access$700(Landroidx/recyclerview/widget/RecyclerView;Landroid/view/View;)I
     move-result v2
     sub-int/2addr v5, v2
-  .line 697
+  .line 715
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->access$800(Lcom/innioasis/ipp/Bar;)F
     move-result v2
     invoke-static { v2 }, Ljava/lang/Float;->isNaN(F)Z
@@ -107,7 +107,7 @@
   :L5
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
-  .line 698
+  .line 716
     iget v2, v1, Landroid/graphics/Rect;->bottom:I
     if-ge v5, v2, :L8
     add-int/2addr v0, v5
@@ -115,50 +115,50 @@
     if-gt v0, v2, :L6
     goto :L8
   :L6
-  .line 699
+  .line 717
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->save()I
-  .line 700
+  .line 718
     invoke-virtual { p1, v1 }, Landroid/graphics/Canvas;->clipRect(Landroid/graphics/Rect;)Z
-  .line 701
+  .line 719
     iget v2, v1, Landroid/graphics/Rect;->left:I
     iget v1, v1, Landroid/graphics/Rect;->right:I
     invoke-virtual { v4, v2, v5, v1, v0 }, Landroid/graphics/drawable/Drawable;->setBounds(IIII)V
-  .line 702
+  .line 720
     invoke-virtual { v4, p1 }, Landroid/graphics/drawable/Drawable;->draw(Landroid/graphics/Canvas;)V
-  .line 703
+  .line 721
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->restore()V
   :L7
-  .line 705
+  .line 723
     goto :L11
   :L8
-  .line 698
+  .line 716
     return-void
   :L9
-  .line 695
+  .line 713
     return-void
   :L10
-  .line 704
+  .line 722
     move-exception p1
   :L11
-  .line 706
+  .line 724
     return-void
 .end method
 
 .method public getOpacity()I
   .registers 2
-  .line 715
+  .line 733
     const/4 v0, -3
     return v0
 .end method
 
 .method public setAlpha(I)V
   .registers 2
-  .line 709
+  .line 727
     return-void
 .end method
 
 .method public setColorFilter(Landroid/graphics/ColorFilter;)V
   .registers 2
-  .line 712
+  .line 730
     return-void
 .end method
