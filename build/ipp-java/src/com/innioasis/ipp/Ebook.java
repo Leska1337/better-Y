@@ -173,6 +173,24 @@ public final class Ebook {
     }
 
     /**
+     * The "Progress" and "Last read time" captions of a Library row take their values' colour
+     * (stock painted the values and left the captions white). The captions have no id: they are
+     * the other children of the values' own line.
+     */
+    public static void librarySub(com.innioasis.y1.databinding.ItemBookLibraryBinding b) {
+        if (b == null || b.progress == null) return;
+        android.view.ViewParent p = b.progress.getParent();
+        if (!(p instanceof android.view.ViewGroup)) return;
+        android.view.ViewGroup line = (android.view.ViewGroup) p;
+        for (int i = 0; i < line.getChildCount(); i++) {
+            android.view.View v = line.getChildAt(i);
+            if (v instanceof TextView && v != b.progress && v != b.time) {
+                Rows.subLine(b.progress, (TextView) v);
+            }
+        }
+    }
+
+    /**
      * Local files never lists our folder: its row menu DELETES files, and losing
      * {@code comma_artists.txt} silently drops the artist-splitting exceptions. Full path match.
      */

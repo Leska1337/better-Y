@@ -150,15 +150,15 @@
 .method public static hidden(Ljava/io/File;)Z
   .catchall { :L0 .. :L1 } :L3
   .registers 3
-  .line 181
+  .line 199
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 182
+  .line 200
     invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
     move-result-object v1
-  .line 183
+  .line 201
     if-eqz v1, :L2
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
@@ -172,9 +172,9 @@
   :L2
     return v0
   :L3
-  .line 184
+  .line 202
     move-exception p0
-  .line 185
+  .line 203
     return v0
 .end method
 
@@ -225,6 +225,57 @@
   :L3
   .line 34
     return v0
+.end method
+
+.method public static librarySub(Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;)V
+  .registers 5
+  .line 181
+    if-eqz p0, :L5
+    iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
+    if-nez v0, :L0
+    goto :L5
+  :L0
+  .line 182
+    iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
+    invoke-virtual { v0 }, Landroid/widget/TextView;->getParent()Landroid/view/ViewParent;
+    move-result-object v0
+  .line 183
+    instance-of v1, v0, Landroid/view/ViewGroup;
+    if-nez v1, :L1
+    return-void
+  :L1
+  .line 184
+    check-cast v0, Landroid/view/ViewGroup;
+  .line 185
+    const/4 v1, 0
+  :L2
+    invoke-virtual { v0 }, Landroid/view/ViewGroup;->getChildCount()I
+    move-result v2
+    if-ge v1, v2, :L4
+  .line 186
+    invoke-virtual { v0, v1 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
+    move-result-object v2
+  .line 187
+    instance-of v3, v2, Landroid/widget/TextView;
+    if-eqz v3, :L3
+    iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
+    if-eq v2, v3, :L3
+    iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->time:Landroid/widget/TextView;
+    if-eq v2, v3, :L3
+  .line 188
+    iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
+    check-cast v2, Landroid/widget/TextView;
+    invoke-static { v3, v2 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
+  :L3
+  .line 185
+    add-int/lit8 v1, v1, 1
+    goto :L2
+  :L4
+  .line 191
+    return-void
+  :L5
+  .line 181
+    return-void
 .end method
 
 .method public static maxMark(Landroid/app/Activity;II)I

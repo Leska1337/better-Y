@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..38747153 100644
+index 01b1f730..f095e823 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..38747153 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100251
++  versionCode: 10100252
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..6dc83ce0 100644
+index 71fe29d0..20a7a80f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..6dc83ce0 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev251</string>
++    <string name="ipp_version">v1.1.0-dev252</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -71457,7 +71457,7 @@ index a8dc40f3..a259d93b 100644
      invoke-virtual {p0}, Lcom/innioasis/y1_eBook/base/BaseActivity;->getApplicationContext()Landroid/content/Context;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
-index 858b0ba9..e823cf25 100644
+index 858b0ba9..732b981f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 @@ -326,17 +326,17 @@
@@ -71486,7 +71486,7 @@ index 858b0ba9..e823cf25 100644
  
      goto :goto_1
  
-@@ -388,17 +388,15 @@
+@@ -388,18 +388,19 @@
  
      invoke-virtual {p2, p3, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -71509,7 +71509,11 @@ index 858b0ba9..e823cf25 100644
 +    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
  
      :goto_1
++    # ipp: the "Progress" / "Last read time" captions take their values' colour, both branches
++    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->librarySub(Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;)V
++
      return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 index 27f20fbd..b9de7b12 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
