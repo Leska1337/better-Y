@@ -117,6 +117,24 @@ public final class Bar extends RecyclerView.ItemDecoration
         return null;
     }
 
+    /**
+     * Every list of the screen that carries a bar. The better-Y menu has two, its groups and the
+     * rows of one group, shown one at a time; the cursor is the mark of whichever is shown.
+     */
+    private static Spec[] specs(BaseActivity a) {
+        if (a instanceof com.innioasis.y1.activity.IppActivity) {
+            // the groups are the Music menu's own rows, the rows a stock Settings row's
+            Spec cats = new Spec(R.id.rc_list, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white), new int[] {R.id.tv_item}, R.id.iv_arrow);
+            Spec rows = new Spec(R.id.recycler, R.drawable.item_setting_sel, 0, ACCENT, WHITE,
+                    new int[] {R.id.title, R.id.text, R.id.tv_item}, R.id.arrow);
+            return new Spec[] {cats, rows};
+        }
+        Spec s = spec(a);
+        return s == null ? new Spec[0] : new Spec[] {s};
+    }
+
     /** The music and video lists: stock's selected row and plain row, its two text colours. */
     private static Spec plain(BaseActivity a, int list, int[] texts) {
         return new Spec(list, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
@@ -189,9 +207,15 @@ public final class Bar extends RecyclerView.ItemDecoration
         try {
             if (!(act instanceof BaseActivity)) return;
             BaseActivity a = (BaseActivity) act;
-            Spec s = spec(a);
-            if (s == null) return;
-            View v = act.findViewById(s.list);
+            Spec[] ss = specs(a);
+            for (int i = 0; i < ss.length; i++) apply(a, ss[i]);
+        } catch (Throwable t) {
+        }
+    }
+
+    private static void apply(BaseActivity a, Spec s) {
+        try {
+            View v = ((android.app.Activity) a).findViewById(s.list);
             if (!(v instanceof RecyclerView)) return;
             RecyclerView rv = (RecyclerView) v;
             Bar b = (Bar) BARS.get(rv);
@@ -810,6 +834,8 @@ public final class Bar extends RecyclerView.ItemDecoration
                 Bar b = (Bar) bar.get();
                 RecyclerView r = b == null ? null : (RecyclerView) b.rv.get();
                 if (r == null || !live(r)) return true;
+                // the better-Y menu's list not shown: its cursor is the other list's
+                if (!r.isShown() && b.head.get() == null) return true;
                 if (r.getChildCount() == 0) {
                     // no results: the input line alone, as stock paints it
                     if (b.dressed()) b.undressHead();
@@ -914,7 +940,8 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     public void doFrame(long nanos) {
         RecyclerView r = (RecyclerView) rv.get();
-        if (r == null || r.getWindowToken() == null || r.getChildCount() == 0 || !live(r) || !onList(r)) {
+        if (r == null || r.getWindowToken() == null || r.getChildCount() == 0 || !live(r) || !onList(r)
+                || !r.isShown() && head.get() == null) {
             running = false;
             return;
         }

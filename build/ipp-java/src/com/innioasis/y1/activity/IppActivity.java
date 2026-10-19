@@ -7,9 +7,11 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.ipp.AlbumArtist;
 import com.innioasis.ipp.Anim;
@@ -20,6 +22,7 @@ import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
 import com.innioasis.ipp.Art;
 import com.innioasis.ipp.Artists;
+import com.innioasis.ipp.Bar;
 import com.innioasis.ipp.Backup;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
@@ -48,6 +51,7 @@ import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.Tint;
 import com.innioasis.ipp.TopBar;
 import com.innioasis.ipp.TrackCache;
+import com.innioasis.ipp.Wheel;
 import com.innioasis.ipp.YearCache;
 import com.innioasis.music.util.Other;
 import com.innioasis.y1.R;
@@ -136,24 +140,22 @@ public final class IppActivity extends BaseActivity {
     }
 
     private List items;                 // List<Item>
-    private View[] rowViews;            // the row itself — what carries the look (null for headers)
-    private View[] rowBoxes;            // the container's own child: the row inside its hairline
-    private TextView[] labels;          // per item (null for headers)
-    private TextView[] values;          // per item (null for headers)
-    private TextView[] marks;           // the sub-item arrow, where a row has one
-    private android.widget.ImageView[] arrows;   // the theme's arrow, on a row that opens something
     private int[] groupOf;              // per item: index of the header or SUB row it stands under
     private int sel;                    // index into items of the focused selectable+visible row
-    private ScrollView scroller;
-    private LinearLayout rowList;       // the rows of every group; only the open group's are shown
 
     private int group = -1;             // the open header or SUB row; -1 = the list of groups
     private int[] cats;                 // index into items of each header, in order
-    private View[] catRows;
-    private TextView[] catLabels;
-    private android.widget.ImageView[] catArrows;
     private int catSel;                 // index into cats
-    private LinearLayout catList;
+
+    // Two lists, one shown at a time: the groups, and the rows of the open group. The cursor of
+    // the one shown is the screen's mark, which the travelling bar reads.
+    private RecyclerView catList;
+    private RecyclerView rowList;
+    private LinearLayoutManager catLm;
+    private LinearLayoutManager rowLm;
+    private CatAdapter catAdapter;
+    private RowAdapter rowAdapter;
+    private int[] shown = new int[0];   // the open group's visible rows, as indices into items
 
     // NUMBER edit mode: the wheel picks the value, which blinks while it does.
     private static final long BLINK_MS = 400;
@@ -316,20 +318,9 @@ public final class IppActivity extends BaseActivity {
         ViewGroup root = (ViewGroup) getVb().getRoot();
         root.removeAllViews();
 
-        // No side padding, or the wallpaper shows as a stripe down both edges; the row's own
-        // padding keeps the text off the edge.
-        rowList = new LinearLayout(this);
-        rowList.setOrientation(LinearLayout.VERTICAL);
-
         items = buildItems();
         lastItems = items;
         int n = items.size();
-        rowViews = new View[n];
-        rowBoxes = new View[n];
-        labels = new TextView[n];
-        values = new TextView[n];
-        marks = new TextView[n];
-        arrows = new android.widget.ImageView[n];
         groupOf = new int[n];
 
         int heads = 0;
@@ -337,103 +328,15 @@ public final class IppActivity extends BaseActivity {
             if (((Item) items.get(i)).type == HEADER) heads++;
         }
         cats = new int[heads];
-        catRows = new View[heads];
-        catLabels = new TextView[heads];
-        catArrows = new android.widget.ImageView[heads];
-        catList = new LinearLayout(this);
-        catList.setOrientation(LinearLayout.VERTICAL);
-
         int cur = -1;
         int c = 0;
         for (int i = 0; i < n; i++) {
-            Item it = (Item) items.get(i);
-            if (it.type == HEADER) {
-                // a group is the Music menu's own row (item_main), themed alike
+            if (((Item) items.get(i)).type == HEADER) {
                 cur = i;
-                groupOf[i] = i;
-                View v = getLayoutInflater().inflate(R.layout.item_main, catList, false);
-                TextView tv = (TextView) v.findViewById(R.id.tv_item);
-                tv.setText(label(it));
-                cats[c] = i;
-                catRows[c] = v;
-                catLabels[c] = tv;
-                catArrows[c] = (android.widget.ImageView) v.findViewById(R.id.iv_arrow);
-                // where a stock Settings row has it, not where the narrower main menu does
-                ViewGroup.MarginLayoutParams cp = (ViewGroup.MarginLayoutParams) catArrows[c].getLayoutParams();
-                cp.rightMargin = ARROW_END;
-                cp.setMarginEnd(ARROW_END);
-                catList.addView(v);
-                c++;
-            } else {
-                groupOf[i] = cur;
-                // a FIXED height: a theme's selection bitmap would stretch it
-                LinearLayout row = new LinearLayout(this);
-                row.setOrientation(LinearLayout.HORIZONTAL);
-                row.setBaselineAligned(false);
-                row.setGravity(Gravity.CENTER_VERTICAL);
-                row.setPadding(TEXT_START, 0, 5, 0);
-
-                // A sub-item's arrow: "\u21b4" rotated 180\u00b0, pointing back to its row. Rotated
-                // rather than a ready glyph, which theme fonts may lack.
-                if (it.showIf != null) {
-                    TextView mark = new TextView(this);
-                    mark.setTextSize(13.0f);
-                    mark.setTypeface(font());
-                    mark.setIncludeFontPadding(false);
-                    mark.setGravity(Gravity.CENTER);
-                    mark.setText("\u21b4");
-                    mark.setRotation(180.0f);
-                    LinearLayout.LayoutParams mp = new LinearLayout.LayoutParams(-2, -1);
-                    mp.rightMargin = 3;
-                    row.addView(mark, mp);
-                    marks[i] = mark;
-                }
-
-                // item_main's text. The two-argument setTypeface fakes bold for a font without it.
-                TextView label = new TextView(this);
-                label.setTextSize(TEXT_SP);
-                label.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-                label.setIncludeFontPadding(false);
-                label.setGravity(Gravity.CENTER_VERTICAL);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1);
-                lp.weight = 1.0f;
-                row.addView(label, lp);
-
-                TextView value = new TextView(this);
-                value.setTextSize(TEXT_SP);
-                value.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-                value.setIncludeFontPadding(false);
-                value.setGravity(Gravity.CENTER_VERTICAL);
-                value.setPadding(6, 0, 6, 0);
-                row.addView(value, -2, -2);
-
-                // A row with no value opens something: the arrow of a stock Settings row.
-                if (it.type == SUB || it.type == ACTION) {
-                    android.widget.ImageView arrow = new android.widget.ImageView(this);
-                    arrow.setAdjustViewBounds(true);
-                    arrow.setVisibility(View.INVISIBLE);
-                    LinearLayout.LayoutParams ap = new LinearLayout.LayoutParams(-2, -1);
-                    ap.rightMargin = ARROW_END - row.getPaddingRight();
-                    row.addView(arrow, ap);
-                    arrows[i] = arrow;
-                }
-
-                rowViews[i] = row;
-                labels[i] = label;
-                values[i] = value;
-
-                // a hairline on the BOTTOM edge only, or two rows double it up
-                LinearLayout box = new LinearLayout(this);
-                box.setOrientation(LinearLayout.VERTICAL);
-                // Two lines of text; fitRows() then stretches it to fill the screen evenly.
-                minRow = 2 * label.getLineHeight() + 4;
-                box.addView(row, new LinearLayout.LayoutParams(-1, minRow));
-                box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
-                rowBoxes[i] = box;
-                rowList.addView(box, new LinearLayout.LayoutParams(-1, -2));
+                cats[c++] = i;
             }
+            groupOf[i] = cur;
         }
-
         // a row named into a section stands under that row, not under the group
         for (int i = 0; i < n; i++) {
             Item it = (Item) items.get(i);
@@ -444,9 +347,35 @@ public final class IppActivity extends BaseActivity {
             }
         }
 
-        scroller = new ScrollView(this);
-        root.addView(scroller, -1, -1);
+        // No side padding, or the wallpaper shows as a stripe down both edges; the row's own
+        // padding keeps the text off the edge.
+        android.widget.FrameLayout box = new android.widget.FrameLayout(this);
+        catList = newList(R.id.rc_list);
+        catLm = (LinearLayoutManager) catList.getLayoutManager();
+        catAdapter = new CatAdapter(this);
+        catList.setAdapter(catAdapter);
+        rowList = newList(R.id.recycler);
+        rowLm = (LinearLayoutManager) rowList.getLayoutManager();
+        rowAdapter = new RowAdapter(this);
+        rowList.setAdapter(rowAdapter);
+        rowList.setVisibility(View.GONE);
+        box.addView(catList, -1, -1);
+        box.addView(rowList, -1, -1);
+        root.addView(box, -1, -1);
         show(-1, -1);
+    }
+
+    /** A list moved by Wheel.follow: rows rebound in place, never notified (ipp-wheel-scroll). */
+    private RecyclerView newList(int id) {
+        RecyclerView rv = new RecyclerView(this);
+        rv.setId(id);
+        LinearLayoutManager lm = new LinearLayoutManager(this);
+        rv.setLayoutManager(lm);
+        rv.setItemAnimator(null);
+        rv.setItemViewCacheSize(0);
+        lm.setItemPrefetchEnabled(false);
+        rv.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        return rv;
     }
 
     /**
@@ -455,35 +384,44 @@ public final class IppActivity extends BaseActivity {
      */
     private void show(int g, int cursor) {
         group = g;
-        scroller.removeAllViews();
         if (g < 0) {
             setStateBarLeftText(getString(R.string.ipp_settings_title));
-            scroller.addView(catList, -1, -2);
+            rowList.setVisibility(View.GONE);
+            catList.setVisibility(View.VISIBLE);
+            setMark(catSel);
+            catAdapter.notifyDataSetChanged();
+            Bar.relist(catList);
+            catLm.scrollToPosition(catSel);
         } else {
             setStateBarLeftText(label((Item) items.get(g)));
-            scroller.addView(rowList, -1, -2);
             sel = cursor >= 0 && selectable(cursor) ? cursor : firstSelectable();
             fitRows();
-        }
-        scroller.scrollTo(0, 0);
-        render();
-        // the rows just shown have no place yet; the cursor's is known by the next frame
-        if (g >= 0 && cursor >= 0) {
-            scroller.getViewTreeObserver().addOnPreDrawListener(new Settle(this));
+            catList.setVisibility(View.GONE);
+            rowList.setVisibility(View.VISIBLE);
+            relist();
+            Bar.relist(rowList);
+            rowLm.scrollToPosition(cursor >= 0 ? posOf(sel) : 0);
         }
     }
 
-    /** Brings the cursor into view in the frame the freshly shown rows are first drawn in. */
-    static final class Settle implements android.view.ViewTreeObserver.OnPreDrawListener {
-        private final IppActivity a;
-
-        Settle(IppActivity a) { this.a = a; }
-
-        public boolean onPreDraw() {
-            a.scroller.getViewTreeObserver().removeOnPreDrawListener(this);
-            a.scrollToSel(false);
-            return true;
+    /** The open group's visible rows, the cursor among them, the list rebound. */
+    private void relist() {
+        ArrayList l = new ArrayList();
+        for (int i = 0; i < items.size(); i++) {
+            if (selectable(i)) l.add(Integer.valueOf(i));
         }
+        shown = new int[l.size()];
+        for (int p = 0; p < shown.length; p++) shown[p] = ((Integer) l.get(p)).intValue();
+        setMark(posOf(sel));
+        rowAdapter.notifyDataSetChanged();
+    }
+
+    /** An item's position in the open group's list, -1 when it is not shown. */
+    private int posOf(int i) {
+        for (int p = 0; p < shown.length; p++) {
+            if (shown[p] == i) return p;
+        }
+        return -1;
     }
 
     /** item_main's text size, and how far it may shrink. */
@@ -500,7 +438,12 @@ public final class IppActivity extends BaseActivity {
     /** Rows on one screen inside a group. */
     private static final int ROWS = 5;
 
-    private int minRow;                 // px: two lines of a row's text, until fitRows() runs
+    /** The sub-item arrow's size, sp, and its gap to the label, px. */
+    private static final float MARK_SP = 13.0f;
+    private static final int MARK_GAP = 3;
+
+    private float textSp = TEXT_SP;     // every row's, from fitRows()
+    private int rowPx;                  // a row's height without its hairline; 0 until fitRows()
     private boolean rowsFitted;
 
     /**
@@ -508,8 +451,8 @@ public final class IppActivity extends BaseActivity {
      * label of this language fits two lines beside its widest value. Once, at the first group.
      */
     private void fitRows() {
-        int visible = scroller.getHeight();
-        int width = scroller.getWidth();
+        int visible = catList.getHeight();
+        int width = catList.getWidth();
         if (rowsFitted || visible <= 0 || width <= 0) return;
         rowsFitted = true;
         int h = visible / ROWS - HAIR_H;
@@ -519,32 +462,30 @@ public final class IppActivity extends BaseActivity {
         for (; sp > TEXT_MIN_SP; sp -= 1.0f) {
             if (fits(sp * scaled, width, h)) break;
         }
-        for (int i = 0; i < rowViews.length; i++) {
-            if (rowViews[i] == null) continue;
-            labels[i].setTextSize(sp);
-            values[i].setTextSize(sp);
-            rowViews[i].getLayoutParams().height = h;
-            rowViews[i].requestLayout();
-        }
+        textSp = sp;
+        rowPx = h;
     }
 
     /** Every label fits two lines of {@code h} at {@code px}. */
     private boolean fits(float px, int width, int h) {
-        for (int i = 0; i < rowViews.length; i++) {
-            if (rowViews[i] == null) continue;
+        android.text.TextPaint p = new android.text.TextPaint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        p.setTypeface(font());
+        p.setTextSize(px);
+        android.text.TextPaint mp = new android.text.TextPaint(android.graphics.Paint.ANTI_ALIAS_FLAG);
+        mp.setTypeface(font());
+        mp.setTextSize(MARK_SP * getResources().getDisplayMetrics().scaledDensity);
+        int markRoom = (int) Math.ceil(mp.measureText("↴")) + MARK_GAP;
+        for (int i = 0; i < items.size(); i++) {
             Item it = (Item) items.get(i);
-            android.text.TextPaint p = new android.text.TextPaint(labels[i].getPaint());
-            p.setTextSize(px);
+            if (it.type == HEADER) continue;
             float widest = 0;
             // an ACTION's values name what it opens; its value column is empty
             String[] vals = it.type == ACTION ? new String[0] : valuesOf(it);
             for (int v = 0; v < vals.length; v++) widest = Math.max(widest, p.measureText(vals[v]));
-            int room = width - rowViews[i].getPaddingLeft() - rowViews[i].getPaddingRight()
-                    - values[i].getPaddingLeft() - values[i].getPaddingRight() - (int) Math.ceil(widest);
-            if (marks[i] != null) {
-                room -= (int) Math.ceil(marks[i].getPaint().measureText("↴")) + 3;
-            }
-            if (arrows[i] != null) room -= ARROW_ROOM;
+            // the row's padding and the value column's
+            int room = width - TEXT_START - 5 - 6 - 6 - (int) Math.ceil(widest);
+            if (it.showIf != null) room -= markRoom;
+            if (it.type == SUB || it.type == ACTION) room -= ARROW_ROOM;
             if (room <= 0) return false;
             android.text.StaticLayout l = new android.text.StaticLayout(label(it), p, room,
                     android.text.Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
@@ -613,57 +554,154 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
+    /** A value changed: a toggle may show or hide a sub-item, so the open list is rebuilt. */
     private void render() {
         if (group < 0) {
-            for (int c = 0; c < cats.length; c++) paintCat(c);
-            scrollToSel();
+            catAdapter.notifyDataSetChanged();
             return;
         }
         clampSel();
-        for (int i = 0; i < items.size(); i++) {
-            Item it = (Item) items.get(i);
-            if (it.type == HEADER) continue;
+        relist();
+    }
 
-            // the BOX, or a hidden sub-item leaves its hairline behind
-            boolean vis = groupOf[i] == group && visible(it);
-            rowBoxes[i].setVisibility(vis ? View.VISIBLE : View.GONE);
-            if (!vis) continue;
-
-            labels[i].setText(label(it));
-            values[i].setText(valueText(it));
-
-            paint(i);
-        }
-        scrollToSel();
+    /** A group's row: the Music menu's own (item_main), its arrow where a stock Settings row has it. */
+    CatHolder newCat(ViewGroup parent) {
+        View v = getLayoutInflater().inflate(R.layout.item_main, parent, false);
+        CatHolder h = new CatHolder(v, (TextView) v.findViewById(R.id.tv_item),
+                (android.widget.ImageView) v.findViewById(R.id.iv_arrow));
+        ViewGroup.MarginLayoutParams cp = (ViewGroup.MarginLayoutParams) h.arrow.getLayoutParams();
+        cp.rightMargin = ARROW_END;
+        cp.setMarginEnd(ARROW_END);
+        return h;
     }
 
     /** A group's row, painted the way MainAdapter paints a row of the Music menu. */
-    private void paintCat(int c) {
-        if (catRows == null || c < 0 || c >= catRows.length) return;
+    void bindCat(CatHolder h, int c) {
+        h.label.setText(label((Item) items.get(cats[c])));
         boolean on = c == catSel;
-        View v = catRows[c];
-        TextView tv = catLabels[c];
-        android.widget.ImageView arrow = catArrows[c];
         if (on) {
-            ThemeManager.INSTANCE.itemSetBackground(v, R.drawable.item_selected_no_arrow, true);
-            ThemeManager.INSTANCE.itemSetRightArrow(arrow, R.mipmap.right_arrow);
-            arrow.setVisibility(View.VISIBLE);
-            ThemeManager.INSTANCE.itemSetTextColor(tv,
+            if (!Anim.on()) ThemeManager.INSTANCE.itemSetBackground(h.itemView, R.drawable.item_selected_no_arrow, true);
+            ThemeManager.INSTANCE.itemSetRightArrow(h.arrow, R.mipmap.right_arrow);
+            h.arrow.setVisibility(View.VISIBLE);
+            ThemeManager.INSTANCE.itemSetTextColor(h.label,
                     getResources().getColor(R.color.selected_text_color), true);
         } else {
-            ThemeManager.INSTANCE.itemSetBackground(v, R.drawable.item_no_selected, false);
-            ThemeManager.INSTANCE.itemSetTextColor(tv, getResources().getColor(R.color.white), false);
-            arrow.setVisibility(View.INVISIBLE);
+            if (!Anim.on()) ThemeManager.INSTANCE.itemSetBackground(h.itemView, R.drawable.item_no_selected, false);
+            ThemeManager.INSTANCE.itemSetTextColor(h.label, getResources().getColor(R.color.white), false);
+            h.arrow.setVisibility(View.INVISIBLE);
         }
+        Bar.row(h.itemView);
+    }
+
+    /**
+     * A row of a group: label, value column, the theme's arrow on a row that opens something, the
+     * sub-item mark before a row that exists only while another is on. Hairline on the bottom edge.
+     */
+    RowHolder newRow() {
+        // a FIXED height: a theme's selection bitmap would stretch it
+        LinearLayout line = new LinearLayout(this);
+        line.setOrientation(LinearLayout.HORIZONTAL);
+        line.setBaselineAligned(false);
+        line.setGravity(Gravity.CENTER_VERTICAL);
+        line.setPadding(TEXT_START, 0, 5, 0);
+
+        // "↴" rotated 180°, pointing back to its row. Rotated rather than a ready
+        // glyph, which theme fonts may lack.
+        TextView mark = new TextView(this);
+        mark.setId(R.id.tv_item);
+        mark.setTextSize(MARK_SP);
+        mark.setTypeface(font());
+        mark.setIncludeFontPadding(false);
+        mark.setGravity(Gravity.CENTER);
+        mark.setText("↴");
+        mark.setRotation(180.0f);
+        LinearLayout.LayoutParams mp = new LinearLayout.LayoutParams(-2, -1);
+        mp.rightMargin = MARK_GAP;
+        line.addView(mark, mp);
+
+        // item_main's text. The two-argument setTypeface fakes bold for a font without it.
+        TextView label = new TextView(this);
+        label.setId(R.id.title);
+        label.setTextSize(textSp);
+        label.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        label.setIncludeFontPadding(false);
+        label.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1);
+        lp.weight = 1.0f;
+        line.addView(label, lp);
+
+        TextView value = new TextView(this);
+        value.setId(R.id.text);
+        value.setTextSize(textSp);
+        value.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        value.setIncludeFontPadding(false);
+        value.setGravity(Gravity.CENTER_VERTICAL);
+        value.setPadding(6, 0, 6, 0);
+        line.addView(value, -2, -2);
+
+        // A row with no value opens something: the arrow of a stock Settings row.
+        android.widget.ImageView arrow = new android.widget.ImageView(this);
+        arrow.setId(R.id.arrow);
+        arrow.setAdjustViewBounds(true);
+        LinearLayout.LayoutParams ap = new LinearLayout.LayoutParams(-2, -1);
+        ap.rightMargin = ARROW_END - line.getPaddingRight();
+        line.addView(arrow, ap);
+
+        LinearLayout box = new LinearLayout(this);
+        box.setOrientation(LinearLayout.VERTICAL);
+        // two lines of text until fitRows() has measured the screen
+        box.addView(line, new LinearLayout.LayoutParams(-1, 2 * label.getLineHeight() + 4));
+        box.addView(hair(), new LinearLayout.LayoutParams(-1, HAIR_H));
+        box.setLayoutParams(new RecyclerView.LayoutParams(-1, -2));
+        return new RowHolder(box, line, mark, label, value, arrow);
+    }
+
+    /** A row of the open group, at position {@code p}. */
+    void bindRow(RowHolder h, int p) {
+        int i = shown[p];
+        Item it = (Item) items.get(i);
+        h.item = i;
+        if (h.label.getTextSize() != textSp * getResources().getDisplayMetrics().scaledDensity) {
+            h.label.setTextSize(textSp);
+            h.value.setTextSize(textSp);
+        }
+        setHeight(h.line, rowPx > 0 ? rowPx : 2 * h.label.getLineHeight() + 4);
+        h.label.setText(label(it));
+        h.value.setText(editing && i == editIndex ? String.valueOf(it.choices[editVal]) : valueText(it));
+        h.value.setVisibility(View.VISIBLE);
+        h.mark.setVisibility(it.showIf != null ? View.VISIBLE : View.GONE);
+
+        boolean on = (i == sel);
+        int fg = on ? ACCENT : -1;
+        if (!Anim.on()) ThemeManager.INSTANCE.itemSetBackground(h.line, on ? R.drawable.item_setting_sel : 0, on);
+        ThemeManager.INSTANCE.itemSetTextColor(h.label, fg, on);
+        ThemeManager.INSTANCE.itemSetTextColor(h.value, fg, on);
+        ThemeManager.INSTANCE.itemSetTextColor(h.mark, fg, on);
+        // seen only under the cursor, like a stock Settings row's
+        if (it.type == SUB || it.type == ACTION) {
+            if (on) ThemeManager.INSTANCE.itemSetRightArrow(h.arrow, R.mipmap.right_arrow);
+            h.arrow.setVisibility(on ? View.VISIBLE : View.INVISIBLE);
+        } else {
+            h.arrow.setVisibility(View.GONE);
+        }
+        Bar.row(h.itemView);
+    }
+
+    private static boolean setHeight(View v, int h) {
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (lp == null || lp.height == h) return false;
+        lp.height = h;
+        v.setLayoutParams(lp);
+        return true;
     }
 
     /** A wheel click repaints the two rows that change, not the whole menu ({@link #render}). */
     private void move(int old) {
         clampSel();
         if (old == sel) return;
-        paint(old);
-        paint(sel);
-        scrollToSel();
+        int np = posOf(sel);
+        setMark(np);
+        Wheel.follow(rowList, posOf(old), np, rowAdapter);
     }
 
     /**
@@ -684,41 +722,6 @@ public final class IppActivity extends BaseActivity {
 
     private int hairColor;
 
-    private void paint(int i) {
-        if (rowViews == null || i < 0 || i >= rowViews.length) return;
-        Item it = (Item) items.get(i);
-        if (it.type == HEADER || rowViews[i] == null) return;
-        if (rowBoxes[i] == null || rowBoxes[i].getVisibility() != View.VISIBLE) return;
-        boolean on = (i == sel);
-        int fg = on ? ACCENT : -1;
-        ThemeManager.INSTANCE.itemSetBackground(rowViews[i], on ? R.drawable.item_setting_sel : 0, on);
-        ThemeManager.INSTANCE.itemSetTextColor(labels[i], fg, on);
-        ThemeManager.INSTANCE.itemSetTextColor(values[i], fg, on);
-        if (marks[i] != null) ThemeManager.INSTANCE.itemSetTextColor(marks[i], fg, on);
-        if (arrows[i] != null) {
-            if (on) ThemeManager.INSTANCE.itemSetRightArrow(arrows[i], R.mipmap.right_arrow);
-            arrows[i].setVisibility(on ? View.VISIBLE : View.INVISIBLE);
-        }
-    }
-
-    /** One scroll per burst of clicks, not one per click. */
-    private void postScroll() {
-        if (scroller == null || scrollPending) return;
-        scrollPending = true;
-        scroller.post(new Scroll(this));
-    }
-
-    private boolean scrollPending;
-
-    static final class Scroll implements Runnable {
-        private final IppActivity a;
-        Scroll(IppActivity a) { this.a = a; }
-        public void run() {
-            a.scrollPending = false;
-            a.scrollToSel(false);            // one retry, never a chain of them
-        }
-    }
-
     private CharSequence valueText(Item it) {
         if (it.type == TOGGLE) {
             return getString(toggleOn(it) ? R.string.ipp_on : R.string.ipp_off);
@@ -732,62 +735,14 @@ public final class IppActivity extends BaseActivity {
         return "";   // ACTION: no value column
     }
 
-    private void scrollToSel() {
-        scrollToSel(true);
-    }
-
-    private void scrollToSel(boolean mayPost) {
-        if (scroller == null) return;
-        // the box: the list's own child, in the scroller's coordinates
-        View v;
-        boolean first;
-        if (group < 0) {
-            if (catRows == null || catSel < 0 || catSel >= catRows.length) return;
-            v = catRows[catSel];
-            first = catSel == 0;
-        } else {
-            if (rowBoxes == null || sel < 0 || sel >= rowBoxes.length) return;
-            v = rowBoxes[sel];
-            first = sel == firstSelectable();
-        }
-        if (v == null) return;
-        // not laid out yet: once more next frame (the posted path never re-posts)
-        if (v.getHeight() <= 0) {
-            if (mayPost) postScroll();
-            return;
-        }
-        if (first) {
-            glide(0);
-            return;
-        }
-        int top = v.getTop();
-        int bottom = v.getBottom();
-        int scrollY = scroller.getScrollY();
-        int h = scroller.getHeight();
-        if (top < scrollY) {
-            glide(top);
-        } else if (bottom > scrollY + h) {
-            glide(bottom - h);
-        }
-    }
-
-    /** Move the list to {@code y} at once, never animated (skill {@code wip-scroll-animation}). */
-    private void glide(int y) {
-        View content = scroller.getChildCount() > 0 ? scroller.getChildAt(0) : null;
-        int max = content == null ? 0 : content.getHeight() - scroller.getHeight();
-        if (max < 0) max = 0;
-        if (y < 0) y = 0;
-        if (y > max) y = max;
-        scroller.scrollTo(0, y);
-    }
-
+    /** The next row of the open group; at its ends it stops, or goes round with loop scrolling. */
     private int step(int from, int dir) {
         int i = from + dir;
         while (i >= 0 && i < items.size()) {
             if (selectable(i)) return i;
             i += dir;
         }
-        if (!Loop.wrap()) return from;
+        if (!Bar.wraps(rowList, dir)) return from;
         i = dir > 0 ? 0 : items.size() - 1;
         while (i != from) {
             if (selectable(i)) return i;
@@ -799,12 +754,14 @@ public final class IppActivity extends BaseActivity {
     /** The cursor over the groups; at the ends it stops, or goes round with loop scrolling. */
     private void moveCat(int dir) {
         int old = catSel;
+        // while the rows still glide towards an end, going round it is swallowed
+        boolean end = dir > 0 ? catSel >= cats.length - 1 : catSel <= 0;
+        if (end && Bar.holds(catList, dir)) return;
         int c = Loop.step(catSel, dir, cats.length);
         if (c == old) return;
         catSel = c;
-        paintCat(old);
-        paintCat(catSel);
-        scrollToSel();
+        setMark(catSel);
+        Wheel.follow(catList, old, catSel, catAdapter);
     }
 
     @Override
@@ -846,22 +803,30 @@ public final class IppActivity extends BaseActivity {
         showCandidate(it);
     }
 
+    /** The value column of the row being edited, while it is on screen. */
+    private TextView editValue() {
+        View v = rowLm.findViewByPosition(posOf(editIndex));
+        if (v == null) return null;
+        RecyclerView.ViewHolder h = rowList.getChildViewHolder(v);
+        return h instanceof RowHolder ? ((RowHolder) h).value : null;
+    }
+
     /** The candidate, the blink restarted from "visible". */
     private void showCandidate(Item it) {
-        TextView v = values[editIndex];
-        if (v == null) return;
-        v.setText(String.valueOf(it.choices[editVal]));
-        v.removeCallbacks(blink);
-        v.setVisibility(View.VISIBLE);
-        v.postDelayed(blink, BLINK_MS);
+        rowList.removeCallbacks(blink);
+        TextView v = editValue();
+        if (v != null) {
+            v.setText(String.valueOf(it.choices[editVal]));
+            v.setVisibility(View.VISIBLE);
+        }
+        rowList.postDelayed(blink, BLINK_MS);
     }
 
     void blinkTick() {
         if (!editing) return;
-        TextView v = values[editIndex];
-        if (v == null) return;
-        v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
-        v.postDelayed(blink, BLINK_MS);
+        TextView v = editValue();
+        if (v != null) v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
+        rowList.postDelayed(blink, BLINK_MS);
     }
 
     /** Leave edit mode; {@code commit} false drops the candidate. */
@@ -869,11 +834,7 @@ public final class IppActivity extends BaseActivity {
         if (!editing) return;
         editing = false;
         Item it = (Item) items.get(editIndex);
-        TextView v = values[editIndex];
-        if (v != null) {
-            v.removeCallbacks(blink);
-            v.setVisibility(View.VISIBLE);       // INVISIBLE keeps the space, but not the value
-        }
+        if (blink != null) rowList.removeCallbacks(blink);
         if (commit) Prefs.setInt(this, it.key, editVal);
         render();
     }
@@ -883,6 +844,70 @@ public final class IppActivity extends BaseActivity {
         private final IppActivity a;
         Blink(IppActivity a) { this.a = a; }
         public void run() { a.blinkTick(); }
+    }
+
+    /** The groups. */
+    static final class CatAdapter extends RecyclerView.Adapter {
+        private final IppActivity a;
+
+        CatAdapter(IppActivity a) { this.a = a; }
+
+        public int getItemCount() { return a.cats == null ? 0 : a.cats.length; }
+
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+            return a.newCat(parent);
+        }
+
+        public void onBindViewHolder(RecyclerView.ViewHolder h, int p) {
+            a.bindCat((CatHolder) h, p);
+        }
+    }
+
+    /** The rows of the open group or section. */
+    static final class RowAdapter extends RecyclerView.Adapter {
+        private final IppActivity a;
+
+        RowAdapter(IppActivity a) { this.a = a; }
+
+        public int getItemCount() { return a.shown.length; }
+
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
+            return a.newRow();
+        }
+
+        public void onBindViewHolder(RecyclerView.ViewHolder h, int p) {
+            a.bindRow((RowHolder) h, p);
+        }
+    }
+
+    static final class CatHolder extends RecyclerView.ViewHolder {
+        final TextView label;
+        final android.widget.ImageView arrow;
+
+        CatHolder(View v, TextView label, android.widget.ImageView arrow) {
+            super(v);
+            this.label = label;
+            this.arrow = arrow;
+        }
+    }
+
+    static final class RowHolder extends RecyclerView.ViewHolder {
+        final LinearLayout line;
+        final TextView mark;
+        final TextView label;
+        final TextView value;
+        final android.widget.ImageView arrow;
+        int item;
+
+        RowHolder(View box, LinearLayout line, TextView mark, TextView label, TextView value,
+                android.widget.ImageView arrow) {
+            super(box);
+            this.line = line;
+            this.mark = mark;
+            this.label = label;
+            this.value = value;
+            this.arrow = arrow;
+        }
     }
 
     @Override
