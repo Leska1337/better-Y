@@ -8,20 +8,16 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.innioasis.music.GenresActivity;
 import com.innioasis.music.adapter.AlbumListAdapter;
 import com.innioasis.music.adapter.MainAdapter;
 import com.innioasis.music.adapter.MyBaseAdapter;
-import androidx.viewbinding.ViewBinding;
 
 import com.innioasis.music.data.Album;
 import com.innioasis.music.data.Genre;
-import com.innioasis.music.util.Other;
 import com.innioasis.y1.database.Song;
-import com.innioasis.y1.databinding.ActivityGenresBinding;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 
@@ -103,10 +99,9 @@ public final class Mark {
             if (sel != null) sel.clear();
             ad.setAlbums(names);
 
-            ViewBinding vb = a.getVb();
-            ListView lv = vb instanceof ActivityGenresBinding ? ((ActivityGenresBinding) vb).lv : null;
-            if (lv == null) return false;
-            Other.INSTANCE.gotoAdapter(lv, ad, 0);
+            View lv = ((android.app.Activity) a).findViewById(R.id.lv);
+            if (!Lv.is(lv)) return false;
+            Lv.go(lv, ad, 0);
             afterFill(ad, lv);
             Diag.slow("genre artist albums", t0);
             return true;
@@ -140,9 +135,9 @@ public final class Mark {
     }
 
     /** The cursor is on a button; top of a screen's {@code longConfirm}, for every level. */
-    public static boolean blockedList(ListView lv) {
+    public static boolean blockedList(View lv) {
         try {
-            Object a = lv == null ? null : lv.getAdapter();
+            Object a = lv == null ? null : Lv.model(lv);
             if (!(a instanceof MyBaseAdapter)) return false;
             return blocked(a, ((MyBaseAdapter) a).getPosition());
         } catch (Throwable t) {
@@ -165,21 +160,21 @@ public final class Mark {
 
     /** Moves the cursor off a leading button, only while it is still on row 0 (a fresh list). */
     public static void afterFill(Object adapter) {
-        afterFill(adapter, null);
+        afterFill(adapter, (View) null);
     }
 
     /**
      * @param lv kept resting at row 0 while the cursor goes to row 1, or the button scrolls off
      *           the top — so NOT {@code Other.gotoAdapter(lv, a, 1)}.
      */
-    public static void afterFill(Object adapter, ListView lv) {
+    public static void afterFill(Object adapter, View lv) {
         try {
             if (!(adapter instanceof MyBaseAdapter)) return;
             MyBaseAdapter a = (MyBaseAdapter) adapter;
             if (a.getPosition() != 0 || a.getCount() < 2) return;
             if (!blocked(a, 0)) return;
             a.setPosition(1);
-            if (lv != null) lv.setSelection(0);
+            if (lv != null) Lv.select(lv, 0);
         } catch (Throwable t) {
         }
     }

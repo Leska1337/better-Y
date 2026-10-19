@@ -187,10 +187,10 @@
     return p0
 .end method
 
-.method static synthetic access$800(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+.method static synthetic access$800(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
   .registers 1
   .line 39
-    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
     move-result-object p0
     return-object p0
 .end method
@@ -665,12 +665,12 @@
 
 .method public static backClose()Z
   .registers 2
-  .line 145
-    sget-boolean v0, Lcom/innioasis/ipp/Genres;->closeOnBack:Z
   .line 146
+    sget-boolean v0, Lcom/innioasis/ipp/Genres;->closeOnBack:Z
+  .line 147
     const/4 v1, 0
     sput-boolean v1, Lcom/innioasis/ipp/Genres;->closeOnBack:Z
-  .line 147
+  .line 148
     return v0
 .end method
 
@@ -850,21 +850,21 @@
 
 .method private static indexOf(Ljava/util/List;Ljava/lang/String;)I
   .registers 6
-  .line 135
+  .line 136
     const/4 v0, -1
     if-nez p1, :L0
     return v0
   :L0
-  .line 136
+  .line 137
     const/4 v1, 0
   :L1
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L3
-  .line 137
+  .line 138
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
-  .line 138
+  .line 139
     instance-of v3, v2, Lcom/innioasis/y1/database/Song;
     if-eqz v3, :L2
     check-cast v2, Lcom/innioasis/y1/database/Song;
@@ -875,11 +875,11 @@
     if-eqz v2, :L2
     return v1
   :L2
-  .line 136
+  .line 137
     add-int/lit8 v1, v1, 1
     goto :L1
   :L3
-  .line 140
+  .line 141
     return v0
 .end method
 
@@ -918,14 +918,14 @@
     const/4 v0, 0
     invoke-virtual { p1, v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setPosition(I)V
   .line 706
-    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
     move-result-object p0
   .line 707
     if-eqz p0, :L1
-    invoke-virtual { p0, v0 }, Landroid/widget/ListView;->setSelection(I)V
+    invoke-static { p0, v0 }, Lcom/innioasis/ipp/Lv;->select(Landroid/view/View;I)V
   :L1
   .line 708
-    invoke-static { p1, p0 }, Lcom/innioasis/ipp/Mark;->afterFill(Ljava/lang/Object;Landroid/widget/ListView;)V
+    invoke-static { p1, p0 }, Lcom/innioasis/ipp/Mark;->afterFill(Ljava/lang/Object;Landroid/view/View;)V
   .line 709
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   .line 710
@@ -956,73 +956,65 @@
 
 .method private static levelOf(Ljava/lang/Object;)I
   .registers 2
-  .line 163
+  .line 164
     instance-of v0, p0, Lcom/innioasis/music/adapter/GenreListAdapter;
     if-eqz v0, :L0
     const/4 p0, 0
     return p0
   :L0
-  .line 164
+  .line 165
     instance-of v0, p0, Lcom/innioasis/music/adapter/MainAdapter;
     if-eqz v0, :L1
     const/4 p0, 1
     return p0
   :L1
-  .line 165
+  .line 166
     instance-of v0, p0, Lcom/innioasis/music/adapter/AlbumListAdapter;
     if-eqz v0, :L2
     const/4 p0, 2
     return p0
   :L2
-  .line 166
+  .line 167
     instance-of p0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-eqz p0, :L3
     const/4 p0, 3
     return p0
   :L3
-  .line 167
+  .line 168
     const/4 p0, -1
     return p0
 .end method
 
 .method private static live(Lcom/innioasis/music/GenresActivity;)Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .registers 3
-  .line 179
-    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
-    move-result-object p0
+  .registers 1
   .line 180
-    const/4 v0, 0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
+    move-result-object p0
+  .line 181
     if-nez p0, :L0
-    move-object p0, v0
+    const/4 p0, 0
     goto :L1
   :L0
-    invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->model(Landroid/view/View;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object p0
   :L1
-  .line 181
-    instance-of v1, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-    if-eqz v1, :L2
-    move-object v0, p0
-    check-cast v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  :L2
-    return-object v0
+    return-object p0
 .end method
 
-.method private static lv(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+.method private static lv(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
   .catchall { :L0 .. :L1 } :L2
-  .registers 1
+  .registers 2
+  .line 173
+    const v0, 2131362180
   :L0
-  .line 172
-    invoke-virtual { p0 }, Lcom/innioasis/music/GenresActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+    invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-    check-cast p0, Lcom/innioasis/y1/databinding/ActivityGenresBinding;
-    iget-object p0, p0, Lcom/innioasis/y1/databinding/ActivityGenresBinding;->lv:Landroid/widget/ListView;
   :L1
     return-object p0
   :L2
-  .line 173
-    move-exception p0
   .line 174
+    move-exception p0
+  .line 175
     const/4 p0, 0
     return-object p0
 .end method
@@ -1389,7 +1381,7 @@
 
 .method public static openRequest(Landroid/app/Activity;)V
   .catchall { :L0 .. :L5 } :L8
-  .registers 8
+  .registers 7
   :L0
   .line 99
     instance-of v0, p0, Lcom/innioasis/music/GenresActivity;
@@ -1471,30 +1463,29 @@
     move-result-object v0
     invoke-virtual { v0, v1 }, Lcom/innioasis/music/adapter/SongListAdapter2;->setItems(Ljava/util/List;)V
   .line 124
-    invoke-virtual { p0 }, Lcom/innioasis/music/GenresActivity;->getAdapter4()Lcom/innioasis/music/adapter/SongListAdapter2;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
     move-result-object v0
-    iget-object v5, v4, Lcom/innioasis/y1/databinding/ActivityGenresBinding;->lv:Landroid/widget/ListView;
-    invoke-static { v0, v1, v5 }, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;Landroid/widget/ListView;)V
   .line 125
-    sget-object v0, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-    iget-object v5, v4, Lcom/innioasis/y1/databinding/ActivityGenresBinding;->lv:Landroid/widget/ListView;
     invoke-virtual { p0 }, Lcom/innioasis/music/GenresActivity;->getAdapter4()Lcom/innioasis/music/adapter/SongListAdapter2;
-    move-result-object v6
-    invoke-virtual { v0, v5, v6, v2 }, Lcom/innioasis/music/util/Other;->gotoAdapter(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
+    move-result-object v4
+    invoke-static { v4, v1, v0 }, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;Landroid/view/View;)V
   .line 126
-    const/4 v0, 1
-    sput-boolean v0, Lcom/innioasis/ipp/Genres;->closeOnBack:Z
-  .line 128
-    invoke-static { v1, v3 }, Lcom/innioasis/ipp/Genres;->indexOf(Ljava/util/List;Ljava/lang/String;)I
-    move-result v0
+    invoke-virtual { p0 }, Lcom/innioasis/music/GenresActivity;->getAdapter4()Lcom/innioasis/music/adapter/SongListAdapter2;
+    move-result-object v4
+    invoke-static { v0, v4, v2 }, Lcom/innioasis/ipp/Lv;->go(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
+  .line 127
+    const/4 v2, 1
+    sput-boolean v2, Lcom/innioasis/ipp/Genres;->closeOnBack:Z
   .line 129
-    if-ltz v0, :L5
+    invoke-static { v1, v3 }, Lcom/innioasis/ipp/Genres;->indexOf(Ljava/util/List;Ljava/lang/String;)I
+    move-result v1
+  .line 130
+    if-ltz v1, :L5
     invoke-virtual { p0 }, Lcom/innioasis/music/GenresActivity;->getAdapter4()Lcom/innioasis/music/adapter/SongListAdapter2;
     move-result-object p0
-    iget-object v1, v4, Lcom/innioasis/y1/databinding/ActivityGenresBinding;->lv:Landroid/widget/ListView;
-    invoke-static { p0, v1, v0 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;I)V
+    invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;I)V
   :L5
-  .line 131
+  .line 132
     goto :L9
   :L6
   .line 114
@@ -1503,10 +1494,10 @@
   .line 101
     return-void
   :L8
-  .line 130
+  .line 131
     move-exception p0
   :L9
-  .line 132
+  .line 133
     return-void
 .end method
 
@@ -1540,9 +1531,9 @@
     move-result v4
     if-eqz v4, :L2
   .line 246
-    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->lv(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Genres;->live(Lcom/innioasis/music/GenresActivity;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->addFromListView(Landroid/widget/ListView;)V
+    invoke-static { p0 }, Lcom/innioasis/ipp/Queue;->addFromAdapter(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .line 247
     return v0
   :L2

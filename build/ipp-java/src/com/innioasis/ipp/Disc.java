@@ -6,8 +6,6 @@ import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.y1.R;
@@ -374,17 +372,17 @@ public final class Disc {
      * {@code row.getParent()} — null on the first fill. Coalesced into one update.
      */
     public static void note(Object adapter, View parent) {
-        if (!(parent instanceof ListView)) return;
-        if (discList(adapter)) post((ListView) parent);
+        if (!Lv.is(parent)) return;
+        if (discList(adapter)) post(parent);
     }
 
     /**
-     * {@code AlbumListAdapter.getView}: the album list shares the songs' ListView, so without this
+     * {@code AlbumListAdapter.getView}: the album list shares the songs' list, so without this
      * the bar would keep naming the last album's disc.
      */
     public static void offBar(View parent) {
-        if (!(parent instanceof ListView)) return;
-        post((ListView) parent);
+        if (!Lv.is(parent)) return;
+        post(parent);
         // the status icon too: leaving an album binds no song row (see Status)
         Status.check(parent);
     }
@@ -395,7 +393,7 @@ public final class Disc {
      * Update the bar from a one-shot pre-draw listener, not a posted message: posted, it lands a
      * frame late and the bar and the strip show the same label for a frame.
      */
-    private static void post(ListView lv) {
+    private static void post(View lv) {
         barLv = new WeakReference(lv);
         if (posted) return;
         posted = true;
@@ -412,13 +410,12 @@ public final class Disc {
      * The disc of the topmost row, or null. No {@code ensure}: the layout that triggered this has
      * already recomputed for the current list.
      */
-    private static String label(ListView lv) {
-        ListAdapter la = lv.getAdapter();
+    private static String label(View lv) {
+        Object la = Lv.model(lv);
         if (!discList(la)) return null;
         if (!enabled || discs == null) return null;
         // NOT getFirstVisiblePosition(): an attached row can be wholly hidden behind the bar.
-        int first = lv.getFirstVisiblePosition();
-        int pos = Wheel.firstShown(lv, first, Head.top(lv));
+        int pos = Lv.firstShown(lv, Lv.top(lv));
         if (pos < 0 || pos >= discs.length) return null;
         int d = discs[pos];
         // The bar keeps naming the disc ABOVE until the new disc's first row scrolls under the top
@@ -435,8 +432,8 @@ public final class Disc {
      * the bar. Only the text: the view keeps its height and background. The tag goes too, so the
      * next {@link #bind} restores it; the restoring branch covers moves that bind nothing.
      */
-    private static void handOver(ListView lv, int pos, boolean taken) {
-        View c = lv.getChildAt(pos - lv.getFirstVisiblePosition());
+    private static void handOver(View lv, int pos, boolean taken) {
+        View c = Lv.row(lv, pos);
         if (c == null) return;
         View h = c.findViewById(R.id.tv_disc_header);
         if (!(h instanceof TextView)) return;
@@ -454,9 +451,9 @@ public final class Disc {
     }
 
     /** The row at {@code pos} has started under the top edge ({@code Head.top}, not the padding). */
-    private static boolean under(ListView lv, int pos) {
-        View c = lv.getChildAt(pos - lv.getFirstVisiblePosition());
-        return c != null && c.getTop() < Head.top(lv);
+    private static boolean under(View lv, int pos) {
+        View c = Lv.row(lv, pos);
+        return c != null && c.getTop() < Lv.top(lv);
     }
 
     static final class Bar implements ViewTreeObserver.OnPreDrawListener, Runnable {
@@ -475,15 +472,15 @@ public final class Disc {
                 if (vto != null && vto.isAlive()) vto.removeOnPreDrawListener(this);
             }
             Object o = barLv == null ? null : barLv.get();
-            if (o instanceof ListView) paint((ListView) o, label((ListView) o));
+            if (o instanceof View) paint((View) o, label((View) o));
         }
     }
 
     /**
-     * Genres: hands the bar its ListView — reached via "open source", no row has been bound to
-     * say which ListView that is.
+     * Genres: hands the bar its list — reached via "open source", no row has been bound to
+     * say which list that is.
      */
-    public static void preset(Object adapter, List songs, ListView lv) {
+    public static void preset(Object adapter, List songs, View lv) {
         if (lv != null && discList(adapter)) barLv = new WeakReference(lv);
         preset(adapter, songs);
     }
@@ -499,21 +496,21 @@ public final class Disc {
         sig = null;
         ensure(songs, flatOf(adapter));
         Object o = barLv == null ? null : barLv.get();
-        if (!(o instanceof ListView)) return;
+        if (!(o instanceof View)) return;
         // a fresh list is parked on row 0
-        paint((ListView) o, enabled && discs != null && discs.length > 0 ? discLabel(discs[0]) : null);
+        paint((View) o, enabled && discs != null && discs.length > 0 ? discLabel(discs[0]) : null);
     }
 
     /** Drop the bar before the album list is put back on screen. */
     public static void offBarNow() {
         Object o = barLv == null ? null : barLv.get();
-        if (o instanceof ListView) paint((ListView) o, null);
+        if (o instanceof View) paint((View) o, null);
     }
 
     /** The bar's left padding as the layout has it, read before any background replaces it. */
     private static int barLeft = -1;
 
-    private static void paint(ListView lv, String label) {
+    private static void paint(View lv, String label) {
         try {
             Object parent = lv.getParent();
             if (!(parent instanceof View)) return;
@@ -523,7 +520,10 @@ public final class Disc {
 
             if (label == null) {
                 shown = null;
-                if (tv.getVisibility() != View.GONE) tv.setVisibility(View.GONE);
+                if (tv.getVisibility() != View.GONE) {
+                    tv.setVisibility(View.GONE);
+                    SongRows.plateChanged(lv);
+                }
                 return;
             }
             if (label.equals(shown) && tv.getVisibility() == View.VISIBLE) return;
@@ -540,7 +540,10 @@ public final class Disc {
             Head.backdrop(tv);
             // a layered background brings a padding of its own, zero, and takes the layout's
             tv.setPadding(left, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
-            tv.setVisibility(View.VISIBLE);
+            if (tv.getVisibility() != View.VISIBLE) {
+                tv.setVisibility(View.VISIBLE);
+                SongRows.plateChanged(lv);
+            }
         } catch (Throwable t) {
         }
     }

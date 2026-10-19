@@ -38,6 +38,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         final int list, selRes, rowRes, selColor, rowColor, arrow;
         final int[] texts;
         int[] bgs = new int[0];
+        /** A second arrow id, for a screen whose lists draw different rows (Genres). */
+        int arrow2;
         boolean byAdapter;
         /** A row ABOVE the list that the cursor stands on as position -1 (Search's input line). */
         int head;
@@ -119,6 +121,17 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.byAdapter = true;
             return s;
         }
+        if (a instanceof com.innioasis.music.GenresActivity) {
+            // four lists through one RecyclerView (SongRows): genres, artists, albums, songs
+            Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white),
+                    new int[] {R.id.genre_name, R.id.info, R.id.tv_item, R.id.album_name, R.id.artist_name,
+                            R.id.tv_song_index, R.id.tv_song_name, R.id.tv_artists}, R.id.right_arrow);
+            s.arrow2 = R.id.iv_arrow;
+            s.byAdapter = true;
+            return s;
+        }
         if (a instanceof com.innioasis.fm.MenuActivity) {
             // four levels through this one list, each its own adapter (ipp-fm)
             return new Spec(R.id.recycler, R.drawable.bg_fm_menu_sel, 0, ACCENT, WHITE,
@@ -186,6 +199,14 @@ public final class Bar extends RecyclerView.ItemDecoration
     private long headKey = NO_KEY;
     /** Not Long.MIN_VALUE: its constant does not assemble (const-wide/high16). */
     private static final long NO_KEY = 0x7ffffffffffffffeL;
+
+    /** A screen just opened lays itself out over several frames: the bar stands on its row meanwhile. */
+    private static final long OPEN_MS = 400L;
+    private final long standUntil = android.os.SystemClock.uptimeMillis() + OPEN_MS;
+
+    private boolean opening() {
+        return android.os.SystemClock.uptimeMillis() < standUntil;
+    }
 
     private Bar(RecyclerView rv, BaseActivity a, Spec spec) {
         this.rv = new WeakReference(rv);
@@ -303,6 +324,49 @@ public final class Bar extends RecyclerView.ItemDecoration
         return v.getTag() == CAPTION;
     }
 
+    /**
+     * The disc strip on top of a disc's first row: its bottom within the row, 0 = none. The bar
+     * stands under it, as it stands under a caption.
+     */
+    private static int strip(View row) {
+        View s = row == null ? null : row.findViewById(R.id.tv_disc_header);
+        if (s == null || s.getVisibility() != View.VISIBLE || s.getHeight() == 0) return 0;
+        int y = s.getBottom();
+        for (ViewParent p = s.getParent(); p instanceof View && p != row; p = p.getParent()) {
+            y += ((View) p).getTop();
+        }
+        return y;
+    }
+
+    /** A caption, a disc strip or a pinned divider between where the bar is and where it goes. */
+    private static boolean crosses(RecyclerView r, float from, float fromH, float to, float toH) {
+        if (Math.abs(to - from) < 0.5f) return false;
+        boolean down = to > from;
+        float gapTop = down ? from + fromH : to + toH;
+        float gapBottom = down ? to : from;
+        // outside the list: the queue's caption pinned between its playing row and the list
+        if (gapTop < -1 && gapBottom >= 0) return true;
+        // a pinned plate over the list (SongRows)
+        int[] pl = SongRows.plateSpan(r);
+        if (pl != null && pl[0] >= gapTop - 1 && pl[1] <= gapBottom + 1) return true;
+        for (int i = 0; i < r.getChildCount(); i++) {
+            View v = r.getChildAt(i);
+            float t = v.getTop() + v.getTranslationY();
+            float dt, db;
+            if (caption(v)) {
+                dt = t;
+                db = t + v.getHeight();
+            } else {
+                int s = strip(v);
+                if (s == 0) continue;
+                dt = t;
+                db = t + s;
+            }
+            if (dt >= gapTop - 1 && db <= gapBottom + 1) return true;
+        }
+        return false;
+    }
+
     /** An adapter of our own that says where the cursor is, as a row of the list. */
     public interface Cursor {
         int cursor();
@@ -333,10 +397,8 @@ public final class Bar extends RecyclerView.ItemDecoration
                 blank(v);
             }
         }
-        if (spec.arrow != 0) {
-            View arrow = row.findViewById(spec.arrow);
-            if (arrow != null && arrow.getVisibility() == View.VISIBLE) arrow.setVisibility(View.INVISIBLE);
-        }
+        View arrow = arrowOf(row);
+        if (arrow != null && arrow.getVisibility() == View.VISIBLE) arrow.setVisibility(View.INVISIBLE);
         tint(row, row.getHeight());
     }
 
@@ -656,12 +718,13 @@ public final class Bar extends RecyclerView.ItemDecoration
     /** Where the bar belongs now: on the cursor's row, never past the list's edges. */
     private float target(RecyclerView r, int h) {
         if (onHead()) return headTop(r, head());
-        int top = r.getPaddingTop();
+        // under a pinned plate, if the screen has one (SongRows.top)
+        int top = SongRows.top(r, cursor());
         int bottom = r.getHeight() - r.getPaddingBottom() - h;
         float t;
         View v = cursorRow(r);
         if (v != null) {
-            t = v.getTop() + v.getTranslationY();
+            t = v.getTop() + v.getTranslationY() + strip(v);
         } else {
             View first = r.getChildCount() > 0 ? r.getChildAt(0) : null;
             int fp = first == null ? 0 : r.getChildLayoutPosition(first);
@@ -681,7 +744,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         RecyclerView r = (RecyclerView) rv.get();
         if (h <= 0 || r == null || caption(row)) return;
         int pos = r.getChildLayoutPosition(row);
-        boolean on = claims(r, h, row.getTop() + row.getTranslationY(), pos == cursor());
+        boolean on = claims(r, h, row.getTop() + row.getTranslationY() + strip(row), pos == cursor());
         Object a = activity.get();
         int off = a instanceof com.innioasis.y1.activity.EqActivity ? Eq.rowColor(pos, rowText) : rowText;
         // the cursor's own row is lit by the bar alone, ticked or not: it goes dark with the blink
@@ -730,6 +793,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     private void dressHead() {
         View hv = (View) head.get();
         if (hv == null) return;
+        stockHead = false;
         Drawable d = hv.getBackground();
         if (d instanceof Rows.Flat) {
             Rows.Flat f = (Rows.Flat) d;
@@ -747,11 +811,15 @@ public final class Bar extends RecyclerView.ItemDecoration
         return d instanceof Rows.Flat && ((Rows.Flat) d).inner() == headPaint;
     }
 
+    /** The line has stock's look: an empty list under it from the first frame was never dressed. */
+    private boolean stockHead;
+
     /** No bar (gone, or no results under it): the line gets stock's own look for where the cursor is. */
     private void undressHead() {
         View hv = (View) head.get();
         if (hv == null) return;
         boolean on = cursor() == -1;
+        stockHead = true;
         ThemeManager.INSTANCE.itemSetBackground(hv, on ? spec.headSel : R.drawable.item_no_selected, on);
         for (int i = 0; i < spec.texts.length; i++) {
             View tv = hv.findViewById(spec.texts[i]);
@@ -824,7 +892,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         } else if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
             ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
         } else if (a instanceof com.innioasis.music.SongListActivity
-                || a instanceof com.innioasis.music.PlayListActivity) {
+                || a instanceof com.innioasis.music.PlayListActivity
+                || a instanceof com.innioasis.music.GenresActivity) {
             SongRows.tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);
@@ -843,7 +912,27 @@ public final class Bar extends RecyclerView.ItemDecoration
         for (int i = 0; v == null && i < r.getChildCount(); i++) {
             if (!caption(r.getChildAt(i))) v = r.getChildAt(i);
         }
-        return v == null ? 0 : v.getHeight();
+        return v == null ? 0 : v.getHeight() - strip(v);
+    }
+
+    /**
+     * Before the frame: the cursor's row may have moved without the list redrawing (the layout
+     * above it changed), so the bar is told here — it stands on it while the screen is opening,
+     * else it goes. Here and not in the draw, or the texts keep the colours of the old place.
+     */
+    private void follow(RecyclerView r, int h) {
+        if (!onList(r) || snap || Float.isNaN(y)) return;
+        float goal = target(r, h);
+        if (goal == y && hb == h) return;
+        if (opening()) {
+            y = goal;
+            hb = h;
+            r.invalidate();
+            View hv = head();
+            if (hv != null) hv.invalidate();
+        } else {
+            start();
+        }
     }
 
     private final Tinter tinter = new Tinter(this);
@@ -868,12 +957,13 @@ public final class Bar extends RecyclerView.ItemDecoration
                 if (!r.isShown() && b.head.get() == null) return true;
                 if (r.getChildCount() == 0) {
                     // no results: the input line alone, as stock paints it
-                    if (b.dressed()) b.undressHead();
+                    if (!b.stockHead) b.undressHead();
                     return true;
                 }
                 b.observe();
                 int h = b.height(r);
                 if (b.onList(r)) b.settle(r, h);
+                b.follow(r, h);
                 for (int i = 0; i < r.getChildCount(); i++) b.tint(r.getChildAt(i), h);
                 if (b.head.get() != null) {
                     b.dressHead();
@@ -934,12 +1024,17 @@ public final class Bar extends RecyclerView.ItemDecoration
         }
     }
 
+    private View arrowOf(View row) {
+        View a = spec.arrow == 0 ? null : row.findViewById(spec.arrow);
+        if (a == null && spec.arrow2 != 0) a = row.findViewById(spec.arrow2);
+        return a;
+    }
+
     /** The cursor row's own arrow, drawn on the bar: the theme's arrow may carry the bar's colour. */
     private void drawArrow(Canvas c, RecyclerView r, int top) {
         View row = cursorRow(r);
         if (row == null) return;
-        if (spec.arrow == 0) return;
-        View arrow = row.findViewById(spec.arrow);
+        View arrow = arrowOf(row);
         // a GONE arrow keeps the width of its last layout
         if (arrow == null || arrow.getVisibility() == View.GONE || arrow.getWidth() == 0) return;
         // the arrow may sit deeper than the row's own children
@@ -982,6 +1077,11 @@ public final class Bar extends RecyclerView.ItemDecoration
         int h = height(r);
         if (!snap && settle(r, h)) {
             float goal = target(r, h);
+            // a divider between the two rows (the bar would pass under it), or the screen just opened
+            if (!Float.isNaN(hb) && (opening() || crosses(r, y, hb, goal, h))) {
+                y = goal;
+                hb = h;
+            }
             float d = goal - y;
             float a = Math.abs(d);
             float v = Math.max(VMIN, Math.min(VMAX, a * RATE));

@@ -647,7 +647,9 @@ public final class Wheel {
         int first = l.findFirstCompletelyVisibleItemPosition();
         int last = l.findLastCompletelyVisibleItemPosition();
         if (first >= 0 && pos >= first && pos <= last) {
-            return;                                                  // already fully visible
+            // already fully visible, unless under a pinned plate (SongRows.top)
+            View fv = l.getOrientation() == LinearLayoutManager.HORIZONTAL ? null : l.findViewByPosition(pos);
+            if (fv == null || start(fv, false) >= SongRows.top(rv, pos)) return;
         }
         if (!releasing && gliding.get(rv) != null && PlGrid.holds(rv, pos)) {
             hold(rv);
@@ -660,7 +662,7 @@ public final class Wheel {
         boolean down = first < 0 || pos > last;
         // the keyboard's letter strip is horizontal: the same arithmetic on the other axis
         boolean horiz = l.getOrientation() == LinearLayoutManager.HORIZONTAL;
-        int top = horiz ? rv.getPaddingLeft() : rv.getPaddingTop();
+        int top = horiz ? rv.getPaddingLeft() : SongRows.top(rv, pos);
         int bottom = horiz ? rv.getWidth() - rv.getPaddingRight()
                            : rv.getHeight() - rv.getPaddingBottom();
         View v = l.findViewByPosition(pos);
@@ -791,7 +793,7 @@ public final class Wheel {
             return false;
         }
         boolean down = pos > last;
-        int top = rv.getPaddingTop();
+        int top = SongRows.top(rv, pos);
         int bottom = rv.getHeight() - rv.getPaddingBottom();
         View v = l.findViewByPosition(pos);
         int rows = down ? pos - last : first - pos;
@@ -838,7 +840,7 @@ public final class Wheel {
         if (left == 0 || l instanceof androidx.recyclerview.widget.GridLayoutManager) return false;
         View v = l.findViewByPosition(pos);
         if (v == null) return false;
-        int top = rv.getPaddingTop();
+        int top = SongRows.top(rv, pos);
         int bottom = rv.getHeight() - rv.getPaddingBottom();
         int s = Math.round(left);
         int vt = start(v, false) - s;
@@ -956,7 +958,7 @@ public final class Wheel {
             View v = lm instanceof LinearLayoutManager ? ((LinearLayoutManager) lm).findViewByPosition(aimPos) : null;
             if (v == null) return;
             int exact = aimDown ? end(v, false) - (rv.getHeight() - rv.getPaddingBottom())
-                                : start(v, false) - rv.getPaddingTop();
+                                : start(v, false) - SongRows.top(rv, aimPos);
             if (easeMs > 0) easeTotal += Math.round(exact - left);
             left = exact;
             aimPos = -1;
@@ -1072,6 +1074,30 @@ public final class Wheel {
                     ((MyBaseAdapter) a).getPosition()
             });
         } catch (Throwable t) {
+        }
+    }
+
+    /** The same for a screen whose lists are on one RecyclerView ({@link SongRows}). */
+    public static void noteLevel(RecyclerView rv) {
+        try {
+            MyBaseAdapter a = Lv.model(rv);
+            if (a == null || rv.getChildCount() == 0) return;
+            View top = rv.getChildAt(0);
+            level.put(a, new int[] {Lv.first(rv), top.getTop(), a.getPosition()});
+        } catch (Throwable t) {
+        }
+    }
+
+    public static void gotoLevel(RecyclerView rv, MyBaseAdapter a) {
+        if (rv == null || a == null) return;
+        SongRows.set(rv, a);
+        int pos = a.getPosition();
+        Object o = level.remove(a);
+        int[] st = (o instanceof int[]) ? (int[]) o : null;
+        if (st != null && st[0] >= -SongRows.heads(rv) && st[0] < a.getCount() && st[2] == pos) {
+            Lv.place(rv, st[0], st[1]);
+        } else {
+            SongRows.select(rv, pos);
         }
     }
 

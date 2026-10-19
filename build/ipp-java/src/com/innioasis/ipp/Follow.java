@@ -373,11 +373,11 @@ public final class Follow {
     private static void moveTo(MyBaseAdapter a, View v, int pos) {
         if (v instanceof RecyclerView) {
             // the wheel's own step: Wheel.follow draws and scrolls it
-            int from = a.getPosition() + SongRows.HEAD_ROWS;
+            int from = a.getPosition() + SongRows.heads((RecyclerView) v);
             leaveShuffleRow(v);
             a.setPosition(pos);
             RecyclerView rv = (RecyclerView) v;
-            Wheel.follow(rv, from, pos + SongRows.HEAD_ROWS, rv.getAdapter());
+            Wheel.follow(rv, from, pos + SongRows.heads(rv), rv.getAdapter());
             return;
         }
         ListView lv = (ListView) v;

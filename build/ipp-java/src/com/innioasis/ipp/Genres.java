@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
-import android.widget.ListView;
+import android.view.View;
 
 import com.innioasis.music.GenresActivity;
 import com.innioasis.music.adapter.AlbumListAdapter;
@@ -120,13 +120,14 @@ public final class Genres {
             vb.spv.bind(g.getAdapter4());
             vb.spv.show();
             g.getAdapter4().setItems(songs);
-            // no album list was drawn, so the bar is handed its ListView
-            Disc.preset(g.getAdapter4(), songs, (ListView) vb.lv);
-            Other.INSTANCE.gotoAdapter((ListView) vb.lv, g.getAdapter4(), 0);
+            // no album list was drawn, so the bar is handed its list
+            View lv = lv(g);
+            Disc.preset(g.getAdapter4(), songs, lv);
+            Lv.go(lv, g.getAdapter4(), 0);
             closeOnBack = true;
 
             int at = indexOf(songs, focus);
-            if (at >= 0) Follow.land(g.getAdapter4(), (ListView) vb.lv, at);
+            if (at >= 0) Follow.land(g.getAdapter4(), lv, at);
         } catch (Throwable t) {
         }
     }
@@ -158,7 +159,7 @@ public final class Genres {
     /** The menu being shown, so a sort sub-dialog can dismiss it. */
     private static SubMenuDialog parent;
 
-    /** By the adapter the ListView actually carries. */
+    /** By the adapter the list actually carries. */
     private static int levelOf(Object adapter) {
         if (adapter instanceof GenreListAdapter) return L_GENRES;
         if (adapter instanceof MainAdapter) return L_ARTISTS;
@@ -167,18 +168,17 @@ public final class Genres {
         return L_NONE;
     }
 
-    private static ListView lv(GenresActivity a) {
+    private static View lv(GenresActivity a) {
         try {
-            return ((ActivityGenresBinding) a.getVb()).lv;
+            return ((android.app.Activity) a).findViewById(R.id.lv);
         } catch (Throwable t) {
             return null;
         }
     }
 
     private static MyBaseAdapter live(GenresActivity a) {
-        ListView lv = lv(a);
-        Object o = lv == null ? null : lv.getAdapter();
-        return (o instanceof MyBaseAdapter) ? (MyBaseAdapter) o : null;
+        View lv = lv(a);
+        return lv == null ? null : Lv.model(lv);
     }
 
     /**
@@ -243,7 +243,7 @@ public final class Genres {
             int level = levelOf(ad);
 
             if (s.equals(a.getString(R.string.ipp_queue_add))) {
-                Queue.addFromListView(lv(a));
+                Queue.addFromAdapter(live(a));
                 return DONE;
             }
             if (s.equals(a.getString(R.string.song_menu_sort_by))) {
@@ -703,8 +703,8 @@ public final class Genres {
         List sel = ad.getSelectedIndexList();
         if (sel != null) sel.clear();
         ad.setPosition(0);
-        ListView lv = lv(a);
-        if (lv != null) lv.setSelection(0);
+        View lv = lv(a);
+        if (lv != null) Lv.select(lv, 0);
         Mark.afterFill(ad, lv);
         ad.notifyDataSetChanged();
     }

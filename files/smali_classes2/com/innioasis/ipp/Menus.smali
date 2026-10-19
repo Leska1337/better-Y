@@ -1421,7 +1421,7 @@
     instance-of v1, p0, Lcom/innioasis/ipp/SongRows;
     if-eqz v1, :L5
     check-cast p0, Lcom/innioasis/ipp/SongRows;
-    invoke-virtual { p0 }, Lcom/innioasis/ipp/SongRows;->model()Lcom/innioasis/music/adapter/SongListAdapter;
+    invoke-virtual { p0 }, Lcom/innioasis/ipp/SongRows;->model()Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object p0
   :L5
   .line 520

@@ -196,7 +196,7 @@ public final class Loop {
 
     /** The cursor as a row of a RecyclerView ({@code SongRows}); unused for a ListView. */
     private static int cursorRow(View lv, MyBaseAdapter a) {
-        return a.getPosition() + SongRows.HEAD_ROWS;
+        return a.getPosition() + (lv instanceof RecyclerView ? SongRows.heads((RecyclerView) lv) : 0);
     }
 
     private static void toRow(View lv, MyBaseAdapter a, int pos, int from) {
@@ -205,7 +205,7 @@ public final class Loop {
         a.notifyDataSetChanged();
         if (lv instanceof RecyclerView) {
             // round the end: Wheel.follow stands the rows and the bar on it at once
-            Wheel.follow((RecyclerView) lv, from, pos + SongRows.HEAD_ROWS, ((RecyclerView) lv).getAdapter());
+            Wheel.follow((RecyclerView) lv, from, pos + SongRows.heads((RecyclerView) lv), ((RecyclerView) lv).getAdapter());
         } else if (pos == 0) {
             Head.rest((ListView) lv);      // the start of the list, Shuffle row showing
         } else {

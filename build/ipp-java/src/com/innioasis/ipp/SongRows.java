@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,67 +26,133 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 /**
- * A song list on a RecyclerView. {@code SongListAdapter} stays the model — its items, cursor and
- * ticks are what every screen and menu reads — and this draws its rows. The Shuffle row is row 0
- * of the list itself, so it scrolls with it and the travelling {@link Bar} stands on it; adapter
- * position p is list row p + {@link #HEAD_ROWS}. Every {@code notifyDataSetChanged} of the model
- * reaches the list through {@link Watch}.
+ * The lists of a music screen on one RecyclerView. The stock adapter ({@code MyBaseAdapter}) stays
+ * the model — its items, cursor and ticks are what every screen and menu reads — and this draws its
+ * rows: a song row by {@link #bindRow}, any other through the model's own {@code getView}. A screen
+ * paging several lists (Genres) swaps them with {@link #set}, one instance per model. On a song
+ * list the Shuffle row is row 0 of the list itself, so adapter position p is list row p +
+ * {@link #heads()}. Every {@code notifyDataSetChanged} of the model reaches the list through
+ * {@link Watch}.
  */
 public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, Bar.Ticks {
-
-    /** The Shuffle row ahead of the songs. */
-    static final int HEAD_ROWS = 1;
 
     private static final int ROW = 0;
     private static final int HEAD = 1;
     /** More than a screen of rows. */
     private static final int POOL = 16;
 
-    private final SongListAdapter model;
+    private final MyBaseAdapter model;
     private final WeakReference list;
+    /** The Shuffle row, on a song list only. */
     private final ShufflePlaylistItemView spv;
+    /** This model's view type: the pool is the screen's, and its lists' rows must not mix. */
+    private final int rowType;
 
-    private SongRows(RecyclerView rv, ShufflePlaylistItemView spv, SongListAdapter model) {
+    private SongRows(RecyclerView rv, ShufflePlaylistItemView spv, MyBaseAdapter model) {
         this.model = model;
         this.list = new WeakReference(rv);
-        this.spv = spv;
+        boolean songs = model instanceof SongListAdapter;
+        this.spv = songs ? spv : null;
+        this.rowType = songs ? ROW : typeOf(model.getClass());
     }
 
-    /** {@code initView}, in place of {@code lv.setAdapter}: the screen's {@code spv} beside the list. */
+    private static final java.util.HashMap TYPES = new java.util.HashMap();
+
+    private static int typeOf(Class c) {
+        Object t = TYPES.get(c);
+        if (t == null) {
+            t = Integer.valueOf(HEAD + 1 + TYPES.size());
+            TYPES.put(c, t);
+        }
+        return ((Integer) t).intValue();
+    }
+
+    /** {@code initView}, in place of {@code lv.setAdapter}. */
     public static void attach(RecyclerView rv, SongListAdapter a) {
-        Object p = rv == null ? null : rv.getParent();
-        View s = p instanceof View ? ((View) p).findViewById(R.id.spv) : null;
-        attach(rv, s instanceof ShufflePlaylistItemView ? (ShufflePlaylistItemView) s : null, a);
+        set(rv, a);
     }
 
-    /** The Shuffle row moves into the list, as its row 0. */
-    public static void attach(RecyclerView rv, ShufflePlaylistItemView spv, SongListAdapter a) {
-        if (rv == null || a == null) return;
-        if (spv != null && spv.getParent() instanceof ViewGroup && spv.getParent() != rv) {
+    /** {@code lv.setAdapter(adapter)}: whichever list of the screen goes on. */
+    public static void set(RecyclerView rv, ListAdapter la) {
+        if (rv == null || !(la instanceof MyBaseAdapter)) return;
+        MyBaseAdapter a = (MyBaseAdapter) la;
+        SongRows on = of(rv);
+        if (on != null && on.model == a) {
+            on.notifyDataSetChanged();
+            return;
+        }
+        if (on == null) setUp(rv);
+        Object w = MODELS.get(a);
+        SongRows r = w == null ? null : (SongRows) ((WeakReference) w).get();
+        if (r == null || r.list() != rv) {
+            r = new SongRows(rv, shuffleOf(rv), a);
+            // before setAdapter: it cannot change once the list observes the adapter
+            r.setHasStableIds(true);
+            a.registerDataSetObserver(new Watch(r));
+            MODELS.put(a, new WeakReference(r));
+        }
+        if (r.spv != null) HEADS.put(r.spv, new WeakReference(r));
+        // A rebuild (a jump by letter, a new sort) sends every row on screen to the pool, which
+        // keeps 5 by default: the rest were inflated again on every jump.
+        rv.getRecycledViewPool().setMaxRecycledViews(r.rowType, POOL);
+        rv.setAdapter(r);
+        Wheel.tune(rv);
+    }
+
+    /** Model → its rows: a list swapped back on keeps its instance and its one {@link Watch}. */
+    private static final java.util.WeakHashMap MODELS = new java.util.WeakHashMap();
+
+    private static void setUp(RecyclerView rv) {
+        if (!(rv.getLayoutManager() instanceof LinearLayoutManager)) {
+            rv.setLayoutManager(new LinearLayoutManager(rv.getContext()));
+        }
+        if (plate(rv) != null) {
+            rv.addItemDecoration(new Gap());
+            rv.getViewTreeObserver().addOnPreDrawListener(new Plate(rv));
+        }
+    }
+
+    /** The screen's Shuffle row, moved into the list the first time: row 0 of every song list. */
+    private static ShufflePlaylistItemView shuffleOf(RecyclerView rv) {
+        Object w = SPVS.get(rv);
+        Object o = w == null ? null : ((WeakReference) w).get();
+        if (o instanceof ShufflePlaylistItemView) return (ShufflePlaylistItemView) o;
+        Object p = rv.getParent();
+        View s = p instanceof View ? ((View) p).findViewById(R.id.spv) : null;
+        if (!(s instanceof ShufflePlaylistItemView)) return null;
+        ShufflePlaylistItemView spv = (ShufflePlaylistItemView) s;
+        if (spv.getParent() instanceof ViewGroup && spv.getParent() != rv) {
             int h = spv.getLayoutParams() == null ? ViewGroup.LayoutParams.WRAP_CONTENT
                     : spv.getLayoutParams().height;
             ((ViewGroup) spv.getParent()).removeView(spv);
             spv.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, h));
         }
-        rv.setLayoutManager(new LinearLayoutManager(rv.getContext()));
-        SongRows r = new SongRows(rv, spv, a);
-        // before setAdapter: it cannot change once the list observes the adapter
-        r.setHasStableIds(true);
-        if (spv != null) HEADS.put(spv, new WeakReference(r));
-        a.registerDataSetObserver(new Watch(r));
-        Wheel.tune(rv);
-        // A rebuild (a jump by letter, a new sort) sends every row on screen to the pool, which
-        // keeps 5 by default: the rest were inflated again on every jump.
-        rv.getRecycledViewPool().setMaxRecycledViews(ROW, POOL);
-        rv.setAdapter(r);
+        SPVS.put(rv, new WeakReference(spv));
+        return spv;
     }
+
+    private static final java.util.WeakHashMap SPVS = new java.util.WeakHashMap();
 
     static SongRows of(RecyclerView rv) {
         Object a = rv == null ? null : rv.getAdapter();
         return a instanceof SongRows ? (SongRows) a : null;
     }
 
-    SongListAdapter model() {
+    /** {@code lv.getAdapter()}: the model on the list. */
+    public static ListAdapter adapter(RecyclerView rv) {
+        SongRows r = of(rv);
+        return r == null ? null : r.model;
+    }
+
+    /** {@code Other.gotoAdapter(lv, a, to)}: the list on, the cursor on {@code to} (-1 = its own). */
+    public static void go(RecyclerView rv, MyBaseAdapter a, int to) {
+        if (rv == null || a == null) return;
+        set(rv, a);
+        if (to >= 0) a.setPosition(to);
+        select(rv, to >= 0 ? to : a.getPosition());
+    }
+
+    MyBaseAdapter model() {
         return model;
     }
 
@@ -97,9 +164,19 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         return (RecyclerView) list.get();
     }
 
+    /** List rows ahead of the model's: the Shuffle row. */
+    int heads() {
+        return spv == null ? 0 : 1;
+    }
+
+    static int heads(RecyclerView rv) {
+        SongRows r = of(rv);
+        return r == null ? 0 : r.heads();
+    }
+
     public int getItemCount() {
         int n = model.getCount();
-        return n == 0 ? 0 : n + HEAD_ROWS;
+        return n == 0 ? 0 : n + heads();
     }
 
     /**
@@ -127,11 +204,15 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         // the first row on screen after the move is the one across the top edge, as now
         int above = Math.max(0, y + h - 1) / h;
         int first = rv.getChildLayoutPosition(c0);
-        r.idBase += first - (rvPos - above);
+        int shift = first - (rvPos - above);
+        if (shift == 0) return;
+        r.idBase += shift;
+        // a row found by its id is reused as it is: without this it keeps the song it showed
+        r.notifyDataSetChanged();
     }
 
     public int getItemViewType(int p) {
-        return p < HEAD_ROWS ? HEAD : ROW;
+        return p < heads() ? HEAD : rowType;
     }
 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int type) {
@@ -140,14 +221,26 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
             return new HeadHolder(v);
         }
         dbgMade++;
-        return new Holder(ItemSonglistBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        if (type == ROW) {
+            return new Holder(ItemSonglistBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        }
+        // the model inflates its own row; it is bound for real right after
+        View v = model.getView(0, null, parent);
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        if (!(lp instanceof RecyclerView.LayoutParams)) {
+            // inflated without a parent the row has none, and ListView made it full width
+            v.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    lp != null ? lp.height : ViewGroup.LayoutParams.WRAP_CONTENT));
+        }
+        return new ItemHolder(v);
     }
 
     public void onBindViewHolder(RecyclerView.ViewHolder h, int p) {
         try {
             long t0 = android.os.SystemClock.uptimeMillis();
             if (h.itemView.isLayoutRequested()) dbgReqBefore++;
-            if (h instanceof Holder) bindRow((Holder) h, p - HEAD_ROWS);
+            if (h instanceof Holder) bindRow((Holder) h, p - heads());
+            else if (h instanceof ItemHolder) bindItem(h.itemView, p - heads());
             else Bar.row(h.itemView);
             dbgBinds++;
             if (h.itemView.isLayoutRequested()) {
@@ -157,6 +250,12 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
             dbgBindMs += android.os.SystemClock.uptimeMillis() - t0;
         } catch (Throwable t) {
         }
+    }
+
+    /** A row that is not a song's: the model's own {@code getView} on the recycled row. */
+    private void bindItem(View row, int q) {
+        model.getView(q, row, list());
+        Bar.row(row);
     }
 
     // temporary: what a jump by letter costs
@@ -183,17 +282,17 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
 
     /** The cursor as a list row: the Shuffle row is 0 while the model is parked at -1 on it. */
     public int cursor() {
-        return model.getPosition() + HEAD_ROWS;
+        return model.getPosition() + heads();
     }
 
     public boolean ticked(int p) {
         List s = model.getSelectedIndexList();
-        return p >= HEAD_ROWS && s != null && s.contains(Integer.valueOf(p - HEAD_ROWS));
+        return p >= heads() && s != null && s.contains(Integer.valueOf(p - heads()));
     }
 
     /** {@code SongListAdapter.getView}, row for row. */
     private void bindRow(Holder h, int q) {
-        SongListAdapter a = model;
+        SongListAdapter a = (SongListAdapter) model;
         RecyclerView rv = list();
         ListWatch.tick(a);
         Follow.note(a, rv);
@@ -275,6 +374,95 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         else Lv.pin(rv, pos);
     }
 
+    // ---- the disc plate ---------------------------------------------------------------------
+
+    /** The screen's pinned disc plate ({@link Disc}), or null. */
+    private static View plate(RecyclerView rv) {
+        Object p = rv.getParent();
+        View v = p instanceof View ? ((View) p).findViewById(R.id.ipp_disc_bar) : null;
+        return v == null || v.getParent() != p ? null : v;
+    }
+
+    private static int plateHeight(View plate) {
+        if (plate == null || plate.getVisibility() != View.VISIBLE) return 0;
+        ViewGroup.LayoutParams lp = plate.getLayoutParams();
+        return lp != null && lp.height > 0 ? lp.height : plate.getHeight();
+    }
+
+    /** The bottom of the Shuffle row while it is on screen, else the list's top. */
+    private static int headBottom(RecyclerView rv) {
+        SongRows r = of(rv);
+        View s = r == null ? null : r.spv;
+        int top = rv.getPaddingTop();
+        if (s == null || s.getParent() != rv) return top;
+        return Math.max(top, s.getBottom());
+    }
+
+    /**
+     * Where the visible list begins for the row at list position {@code pos}: under the plate,
+     * which stands under the Shuffle row. The Shuffle row itself is above it.
+     */
+    static int top(RecyclerView rv, int pos) {
+        int pad = rv.getPaddingTop();
+        if (pos < heads(rv)) return pad;
+        int h = plateHeight(plate(rv));
+        return h == 0 ? pad : headBottom(rv) + h;
+    }
+
+    /** The plate in the list's coordinates, {top, bottom}, or null while there is none. */
+    static int[] plateSpan(RecyclerView rv) {
+        int h = plateHeight(plate(rv));
+        if (h == 0) return null;
+        int t = headBottom(rv);
+        return new int[] {t, t + h};
+    }
+
+    /** The same with the list pinned: the Shuffle row scrolled off, the plate on top. */
+    static int pinTop(RecyclerView rv) {
+        return rv.getPaddingTop() + plateHeight(plate(rv));
+    }
+
+    /** From {@link Disc}: the plate came or went, and the room under the Shuffle row with it. */
+    static void plateChanged(View v) {
+        if (v instanceof RecyclerView && of((RecyclerView) v) != null) {
+            ((RecyclerView) v).invalidateItemDecorations();
+        }
+    }
+
+    /** Room under the Shuffle row for the plate at the list's start. */
+    static final class Gap extends RecyclerView.ItemDecoration {
+        public void getItemOffsets(android.graphics.Rect out, View v, RecyclerView rv, RecyclerView.State st) {
+            out.set(0, 0, 0, v instanceof ShufflePlaylistItemView ? plateHeight(plate(rv)) : 0);
+        }
+    }
+
+    /** The plate rides under the Shuffle row and stays on top once the row has gone. */
+    static final class Plate implements android.view.ViewTreeObserver.OnPreDrawListener {
+        private final WeakReference rv;
+
+        Plate(RecyclerView r) {
+            rv = new WeakReference(r);
+        }
+
+        public boolean onPreDraw() {
+            try {
+                RecyclerView r = (RecyclerView) rv.get();
+                View p = r == null ? null : plate(r);
+                if (p == null || p.getVisibility() != View.VISIBLE) return true;
+                float want = r.getTop() + headBottom(r) - p.getTop();
+                if (p.getTranslationY() != want) {
+                    p.setTranslationY(want);
+                    // its backdrop is aligned to the screen (Head.backdrop)
+                    p.invalidate();
+                }
+            } catch (Throwable t) {
+            }
+            return true;
+        }
+    }
+
+    // ---- deleting ---------------------------------------------------------------------------
+
     /** The first ticked row, before {@code removeItems} takes the ticks away: {@link #kept}. */
     private static volatile int deleted = -1;
 
@@ -320,8 +508,9 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
                 SongRows s = of(r);
                 if (s == null || s.model.getCount() == 0) return;
                 RecyclerView.LayoutManager lm = r.getLayoutManager();
-                View v = lm == null ? null : lm.findViewByPosition(s.cursor());
-                if (v == null || v.getTop() < r.getPaddingTop()
+                int c = s.cursor();
+                View v = lm == null ? null : lm.findViewByPosition(c);
+                if (v == null || v.getTop() < top(r, c)
                         || v.getBottom() > r.getHeight() - r.getPaddingBottom()) {
                     Lv.pin(r, s.model.getPosition());
                 }
@@ -330,7 +519,7 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         }
     }
 
-    /** {@code BaseActivity.cancelMultiSelect} for a song list on a RecyclerView. */
+    /** {@code BaseActivity.cancelMultiSelect} for a list on a RecyclerView. */
     public static void cancel(RecyclerView rv, MyBaseAdapter[] adapters) {
         SongRows r = of(rv);
         if (r == null || adapters == null) return;
@@ -374,7 +563,7 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
             try {
                 RecyclerView r = (RecyclerView) rv.get();
                 SongRows s = of(r);
-                if (s == null || s.cursor() != 0) return;
+                if (s == null || s.heads() == 0 || s.cursor() != 0) return;
                 Wheel.follow(r, 0, s);
             } catch (Throwable t) {
             }
@@ -405,6 +594,13 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         Holder(ItemSonglistBinding b) {
             super(b.getRoot());
             this.b = b;
+        }
+    }
+
+    /** A row the model draws itself. */
+    static final class ItemHolder extends RecyclerView.ViewHolder {
+        ItemHolder(View v) {
+            super(v);
         }
     }
 

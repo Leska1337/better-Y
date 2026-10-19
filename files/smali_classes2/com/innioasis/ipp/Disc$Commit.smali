@@ -17,7 +17,7 @@
 
 .method constructor <init>(Ljava/util/List;Ljava/util/List;)V
   .registers 3
-  .line 198
+  .line 196
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Disc$Commit;->paths:Ljava/util/List;
     iput-object p2, p0, Lcom/innioasis/ipp/Disc$Commit;->tags:Ljava/util/List;
@@ -26,14 +26,14 @@
 
 .method public run()V
   .registers 4
-  .line 201
+  .line 199
     const/4 v0, 0
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/Disc$Commit;->paths:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
     if-ge v0, v1, :L1
-  .line 202
+  .line 200
     iget-object v1, p0, Lcom/innioasis/ipp/Disc$Commit;->paths:Ljava/util/List;
     invoke-interface { v1, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
@@ -43,17 +43,17 @@
     move-result-object v2
     check-cast v2, Lcom/innioasis/ipp/DiscCache$Tags;
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/DiscCache;->commit(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
-  .line 201
+  .line 199
     add-int/lit8 v0, v0, 1
     goto :L0
   :L1
-  .line 204
+  .line 202
     invoke-static { }, Lcom/innioasis/ipp/DiscCache;->flush()V
-  .line 205
+  .line 203
     const/4 v0, 0
     invoke-static { v0 }, Lcom/innioasis/ipp/Disc;->access$002(Ljava/lang/String;)Ljava/lang/String;
-  .line 206
+  .line 204
     invoke-static { }, Lcom/innioasis/ipp/Lists;->refresh()V
-  .line 207
+  .line 205
     return-void
 .end method

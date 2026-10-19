@@ -60,9 +60,9 @@
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->ad:Lcom/innioasis/music/adapter/MyBaseAdapter;
     iget-object v1, p0, Lcom/innioasis/ipp/Genres$Apply;->list:Ljava/util/List;
     iget-object v2, p0, Lcom/innioasis/ipp/Genres$Apply;->a:Lcom/innioasis/music/GenresActivity;
-    invoke-static { v2 }, Lcom/innioasis/ipp/Genres;->access$800(Lcom/innioasis/music/GenresActivity;)Landroid/widget/ListView;
+    invoke-static { v2 }, Lcom/innioasis/ipp/Genres;->access$800(Lcom/innioasis/music/GenresActivity;)Landroid/view/View;
     move-result-object v2
-    invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;Landroid/widget/ListView;)V
+    invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Disc;->preset(Ljava/lang/Object;Ljava/util/List;Landroid/view/View;)V
   :L3
   .line 694
     iget-object v0, p0, Lcom/innioasis/ipp/Genres$Apply;->a:Lcom/innioasis/music/GenresActivity;
