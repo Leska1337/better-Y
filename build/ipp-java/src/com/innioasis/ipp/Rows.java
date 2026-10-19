@@ -237,34 +237,6 @@ public final class Rows {
         }
     }
 
-    /**
-     * Start the marquee {@code makeItMarquee} could not: on a list's first fill the row has no
-     * width yet, and {@code setSelected(true)} starts it only on the transition. Asked again after
-     * the layout; free on the wheel path, where rows have widths.
-     */
-    public static void marqueeKick(TextView tv) {
-        if (tv == null || tv.getWidth() > 0) return;
-        tv.post(new Kick(tv));
-    }
-
-    static final class Kick implements Runnable {
-        private final TextView tv;
-
-        Kick(TextView tv) {
-            this.tv = tv;
-        }
-
-        public void run() {
-            try {
-                // recycled off the cursor in the meantime: no longer selected
-                if (tv.getWidth() <= 0 || !tv.isSelected()) return;
-                tv.setSelected(false);
-                tv.setSelected(true);
-            } catch (Throwable t) {
-            }
-        }
-    }
-
     /** The colour the row's own name has just been given, white if there is no name to ask. */
     private static int rowColour(View row) {
         View name = row.findViewById(R.id.tv_name);

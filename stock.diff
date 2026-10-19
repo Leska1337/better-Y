@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f095e823 100644
+index 01b1f730..b0fa789d 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..f095e823 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100252
++  versionCode: 10100253
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -608,7 +608,7 @@ index 21c1e9d8..2ada0cb4 100644
      </androidx.cardview.widget.CardView>
      <androidx.recyclerview.widget.RecyclerView android:id="@id/rv" android:background="#ff0a214b" android:layout_width="fill_parent" android:layout_height="70.0dip" app:layout_constraintBottom_toBottomOf="parent" />
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
-index 4b9d1219..1f123ae8 100644
+index 4b9d1219..566e3208 100644
 --- a/build/src/res/layout/item_album.xml
 +++ b/build/src/res/layout/item_album.xml
 @@ -1,8 +1,85 @@
@@ -693,7 +693,7 @@ index 4b9d1219..1f123ae8 100644
 +    <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:layout_marginRight="10.0dip" android:layout_centerVertical="true" android:layout_toRightOf="@id/cover" android:layout_toLeftOf="@id/right_arrow">
 +        <!-- ipp: the album name has a FIXED height, and that is what stops the row's labels moving
 +             when the cursor lands on a long title. AlbumListAdapter marquees this one view on the
-+             focused row (makeItMarquee) and ellipsizes it everywhere else, and the two states
++             focused row (Scroll) and ellipsizes it everywhere else, and the two states
 +             measure one pixel apart — the glyphs sit at the same offset from the view's own top,
 +             but the view is a pixel taller when it is laid out full-width for the marquee. With
 +             both labels wrap_content that pixel went into the block's height, and the block is
@@ -969,7 +969,7 @@ index 132396d1..984dcc7b 100644
      <ImageView android:id="@id/arrow" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="5.0dip" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_songlist.xml b/build/src/res/layout/item_songlist.xml
-index 60b91724..d8e6db23 100644
+index 60b91724..a1bcb63d 100644
 --- a/build/src/res/layout/item_songlist.xml
 +++ b/build/src/res/layout/item_songlist.xml
 @@ -1,8 +1,55 @@
@@ -1021,7 +1021,7 @@ index 60b91724..d8e6db23 100644
 +        <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:layout_marginRight="3.0dip" android:layout_alignParentRight="true" android:layout_alignParentTop="true" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" />
 +        <!-- ipp: the 40dip is the FLOOR, not the width — Rows.indexWidth widens the column to the
 +             widest number this list can show. It stays EXACTLY-width, never wrap_content: the
-+             title beside it is marqueed (see makeItNormal). -->
++             title beside it is marqueed, and a view that can grow grows with the marquee. -->
 +        <TextView android:textSize="16.0sp" android:textStyle="bold" android:textColor="@color/white" android:gravity="start" android:id="@id/tv_song_index" android:layout_width="40.0dip" android:layout_height="25.0dip" android:layout_marginLeft="10.0dip" android:layout_marginTop="3.0dip" android:layout_alignParentLeft="true" android:layout_alignParentTop="true" />
 +        <!-- ipp: the playing marker, in the track number's own column and vertically centred on the
 +             title (NOT on the row: a disc-start row is taller by the strip above, and the strip is
@@ -20012,7 +20012,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..20a7a80f 100644
+index 71fe29d0..a6ddc3c4 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..20a7a80f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev252</string>
++    <string name="ipp_version">v1.1.0-dev253</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -54758,7 +54758,7 @@ index 13bfb259..8e3e1b0c 100644
      return-object p2
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
-index 1b2fd585..9674e109 100644
+index 1b2fd585..26fa85da 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/MyBaseAdapter.smali
 @@ -229,6 +229,28 @@
@@ -54805,94 +54805,57 @@ index 1b2fd585..9674e109 100644
      if-eqz p1, :cond_1
  
      .line 141
-@@ -589,16 +619,85 @@
-     .line 96
-     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
- 
-+    # ipp: on the FIRST fill of a list the row is bound before it has ever been measured, so the
-+    # setSelected above starts nothing (TextView.startMarquee gives up while the width is 0) and
-+    # nothing asks again -- a section opened with the cursor already on a long title showed it
-+    # standing still until the cursor was moved off and back. Kick it once after the layout.
-+    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->marqueeKick(Landroid/widget/TextView;)V
-+
-     return-void
+@@ -564,49 +594,6 @@
+     return v0
  .end method
  
- .method public final makeItNormal(Landroid/widget/TextView;)V
+-.method public final makeItMarquee(Landroid/widget/TextView;)V
 -    .locals 1
-+    .locals 2
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 93
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    const/16 v0, 0x2537
+-
+-    .line 94
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setMarqueeRepeatLimit(I)V
+-
+-    .line 95
+-    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
+-
+-    const/4 v0, 0x1
+-
+-    .line 96
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
+-
+-    return-void
+-.end method
+-
+-.method public final makeItNormal(Landroid/widget/TextView;)V
+-    .locals 1
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 99
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    return-void
+-.end method
+-
+ .method public final removeItemAt(I)V
+     .locals 1
  
-     const-string v0, "tv"
- 
-     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
- 
-+    # ipp: there is nothing to undo when the row is already in the normal state, and the undo is
-+    # NOT free -- setSingleLine() installs a TransformationMethod, and setTransformationMethod
-+    # re-applies the text, i.e. it rebuilds the view's whole text Layout;
-+    # setHorizontallyScrolling has no early-out of its own either and drops the Layout again.
-+    # Recycled rows are overwhelmingly already normal (only one row at a time is marqueed), so
-+    # this ran the most expensive part of a bind for nothing on nearly every row.
-+    #
-+    # "Already normal" is exactly `ellipsize == END && !isSelected`, the pair this method leaves
-+    # behind: makeItMarquee always sets MARQUEE + selected, and a freshly inflated row carries END
-+    # from its layout (item_songlist/item_main declare android:ellipsize="end"), which is the state
-+    # stock's own one-line makeItNormal left it in anyway.
-+    invoke-virtual {p1}, Landroid/widget/TextView;->getEllipsize()Landroid/text/TextUtils$TruncateAt;
-+
-+    move-result-object v0
-+
-+    sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    if-ne v0, v1, :ipp_undo_marquee
-+
-+    invoke-virtual {p1}, Landroid/widget/TextView;->isSelected()Z
-+
-+    move-result v0
-+
-+    if-nez v0, :ipp_undo_marquee
-+
-+    return-void
-+
-+    :ipp_undo_marquee
-+
-+    # ipp: undo makeItMarquee properly. Stock only put the ellipsize back, which was enough while
-+    # it inflated a fresh row per bind; once rows are recycled whatever the marquee left
-+    # behind stayed on the row for good. Three parts, and the order of them matters:
-+    #
-+    # setSelected(false) FIRST, while the ellipsize is still MARQUEE: TextView stops its Marquee
-+    # from setSelected and only `if (mEllipsize == MARQUEE)` at that moment. Clear the flag later
-+    # and the Marquee stays alive -- and since Marquee.tick() advances only while the view is
-+    # selected, it freezes at whatever offset it had reached while onDraw goes on translating the
-+    # canvas by it, i.e. that row draws its text shifted from then on.
-+    #
-+    # Then setSingleLine() -- deliberately the SAME call the marquee state makes (setLines(1), a
-+    # SingleLineTransformationMethod and horizontal scrolling), so that the two states differ in as
-+    # little as possible.
-+    #
-+    # One pixel of height is left over and cannot be fixed here: a constrained layout that
-+    # ellipsizes measures one pixel shorter than the VERY_WIDE one the marquee needs (44px focused,
-+    # 43px not -- measured on the device), and the ellipsize is the whole point. The GLYPHS sit at
-+    # the same offset from their view's own top either way, so the row absorbs it by aligning the
-+    # title to its top edge instead of centring it in the row -- see item_main.xml.
-+    # ipp: the horizontal scrolling is NOT taken back, i.e. the row is left in
-+    # exactly the state its layout gives it (every list row declares android:singleLine, which is
-+    # what turns the scrolling on at inflate time). Turning it off makes StaticLayout break the
-+    # text BY WORDS at the view's width, and with maxLines=1 only the first line survives: a title
-+    # is cut at the last space that fits and "…" lands there, well before the right edge -- "Timed
-+    # shutd…" became "Timed…", and an album's "(2010)" disappeared with the words it shared a line
-+    # with. With the scrolling on the text is one line and END truncates it BY CHARACTERS at the
-+    # edge, which is what the rows are supposed to look like. The views this runs on are all
-+    # EXACTLY-width (fill_parent, or 0dip with a weight), so none of them can grow with it on.
-+    const/4 v0, 0x0
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
-+
-+    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
-+
-     .line 99
-     sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
- 
-@@ -836,6 +935,18 @@
+@@ -836,6 +823,18 @@
  
      invoke-interface {v0, p1}, Lkotlin/jvm/functions/Function1;->invoke(Ljava/lang/Object;)Ljava/lang/Object;
  
@@ -54911,7 +54874,7 @@ index 1b2fd585..9674e109 100644
      return-void
  .end method
  
-@@ -993,10 +1104,11 @@
+@@ -993,10 +992,11 @@
  
      iput v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;->nowPosition:I
  
@@ -54925,7 +54888,7 @@ index 1b2fd585..9674e109 100644
      return-void
  .end method
  
-@@ -1017,9 +1129,8 @@
+@@ -1017,9 +1017,8 @@
      .line 43
      iput v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;->nowPosition:I
  
@@ -55856,75 +55819,60 @@ index fe02089c..61f4ade8 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
-index bf78e9a8..0bf8c44d 100644
+index bf78e9a8..a33e99b5 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseViewHolder.smali
-@@ -96,25 +96,59 @@
-     .line 14
-     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
- 
-+    # ipp: a row bound before it has ever been measured cannot start a marquee -- see Rows.
-+    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->marqueeKick(Landroid/widget/TextView;)V
-+
-     return-void
+@@ -71,50 +71,3 @@
+     .end annotation
  .end method
  
- .method public final makeItNormal(Landroid/widget/TextView;)V
+-.method public final makeItMarquee(Landroid/widget/TextView;)V
 -    .locals 1
-+    .locals 2
- 
-     const-string v0, "tv"
- 
-     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
- 
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 11
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    const/16 v0, 0x2537
+-
+-    .line 12
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setMarqueeRepeatLimit(I)V
+-
+-    .line 13
+-    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
+-
+-    const/4 v0, 0x1
+-
+-    .line 14
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
+-
+-    return-void
+-.end method
+-
+-.method public final makeItNormal(Landroid/widget/TextView;)V
+-    .locals 1
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
 -    .line 17
 -    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+    # ipp: same undo as MyBaseAdapter.makeItNormal -- stock left setSelected(true) and the
-+    # horizontal scrolling the marquee turned on, and with scrolling on the view is laid out at the
-+    # text's FULL width, so END truncates past the right edge instead of at it (the text vanishes
-+    # at the edge with no ellipsis). Early-out when the row is already normal: the undo rebuilds
-+    # the view's text Layout twice and only one row is ever marqueed.
-+    invoke-virtual {p1}, Landroid/widget/TextView;->getEllipsize()Landroid/text/TextUtils$TruncateAt;
- 
+-
 -    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
-+    move-result-object v0
- 
+-
 -    const/4 v0, 0x1
-+    sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    if-ne v0, v1, :ipp_undo_marquee
-+
-+    invoke-virtual {p1}, Landroid/widget/TextView;->isSelected()Z
-+
-+    move-result v0
-+
-+    if-nez v0, :ipp_undo_marquee
-+
-+    return-void
-+
-+    :ipp_undo_marquee
-+
-+    # setSelected(false) FIRST, while the ellipsize is still MARQUEE: TextView stops the Marquee
-+    # from inside setSelected and only while the ellipsize is MARQUEE at that moment.
-+    const/4 v0, 0x0
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
-+
-+    const/4 v1, 0x1
- 
-+    # The scrolling setSingleLine turns on is left ON -- see MyBaseAdapter.makeItNormal: without it
-+    # the text breaks by WORDS and a long title is cut at the last space instead of at the edge.
-     .line 18
+-
+-    .line 18
 -    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
-+    invoke-virtual {p1, v1}, Landroid/widget/TextView;->setSingleLine(Z)V
-+
-+    .line 17
-+    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
- 
-     return-void
- .end method
+-
+-    return-void
+-.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali b/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
 index 6681baa9..54fa1dec 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/LyricParse$Companion.smali
@@ -65573,68 +65521,60 @@ index 33d41dd3..a68a0f37 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
-index b04c4d3d..144d4164 100644
+index b04c4d3d..9fccd4aa 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseViewHolder.smali
-@@ -96,25 +96,52 @@
-     .line 14
-     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
- 
-+    # ipp: a row bound before it has ever been measured cannot start a marquee -- see Rows.
-+    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->marqueeKick(Landroid/widget/TextView;)V
-+
-     return-void
+@@ -71,50 +71,3 @@
+     .end annotation
  .end method
  
- .method public final makeItNormal(Landroid/widget/TextView;)V
+-.method public final makeItMarquee(Landroid/widget/TextView;)V
 -    .locals 1
-+    .locals 2
- 
-     const-string v0, "tv"
- 
-     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
- 
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 11
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    const/16 v0, 0x2537
+-
+-    .line 12
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setMarqueeRepeatLimit(I)V
+-
+-    .line 13
+-    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
+-
+-    const/4 v0, 0x1
+-
+-    .line 14
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
+-
+-    return-void
+-.end method
+-
+-.method public final makeItNormal(Landroid/widget/TextView;)V
+-    .locals 1
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
 -    .line 17
 -    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+    # ipp: the second copy of the same helper (video screens) -- see the music one for the why.
-+    invoke-virtual {p1}, Landroid/widget/TextView;->getEllipsize()Landroid/text/TextUtils$TruncateAt;
- 
+-
 -    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
-+    move-result-object v0
- 
+-
 -    const/4 v0, 0x1
-+    sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    if-ne v0, v1, :ipp_undo_marquee
-+
-+    invoke-virtual {p1}, Landroid/widget/TextView;->isSelected()Z
-+
-+    move-result v0
-+
-+    if-nez v0, :ipp_undo_marquee
-+
-+    return-void
-+
-+    :ipp_undo_marquee
-+
-+    const/4 v0, 0x0
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
-+
-+    const/4 v1, 0x1
- 
-+    # The scrolling setSingleLine turns on is left ON -- see MyBaseAdapter.makeItNormal.
-     .line 18
+-
+-    .line 18
 -    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
-+    invoke-virtual {p1, v1}, Landroid/widget/TextView;->setSingleLine(Z)V
-+
-+    .line 17
-+    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
- 
-     return-void
- .end method
+-
+-    return-void
+-.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
 index 402025b9..031110b6 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/adapter/AudiobookAdapter.smali
@@ -65836,7 +65776,7 @@ index bedaedce..c6d756a2 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
-index 78735fa1..59d0b162 100644
+index 78735fa1..214e1d36 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseBindingAdapter.smali
 @@ -152,6 +152,9 @@
@@ -65849,66 +65789,55 @@ index 78735fa1..59d0b162 100644
      return-void
  .end method
  
-@@ -203,16 +206,59 @@
-     .line 46
-     invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
- 
-+    # ipp: a row bound before it has ever been measured cannot start a marquee -- see Rows.
-+    invoke-static {p1}, Lcom/innioasis/ipp/Rows;->marqueeKick(Landroid/widget/TextView;)V
-+
-     return-void
+@@ -178,49 +181,6 @@
+     .end annotation
  .end method
  
- .method public final makeItNormal(Landroid/widget/TextView;)V
+-.method public final makeItMarquee(Landroid/widget/TextView;)V
 -    .locals 1
-+    .locals 2
- 
-     const-string v0, "tv"
- 
-     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
- 
-+    # ipp: the same undo MyBaseAdapter.makeItNormal already does, for the same reason -- these rows
-+    # are recycled too (every RecyclerView menu: Settings, the main menu, Language, themes), and
-+    # stock only put the ellipsize back. What the marquee leaves behind is setSelected(true) and,
-+    # through setSingleLine(), HORIZONTAL SCROLLING: with that still on the view is laid out at the
-+    # text's full width, so END truncates past the right edge instead of at it -- the text simply
-+    # disappears at the edge with no ellipsis, and a frozen Marquee offset shifts what is left.
-+    #
-+    # Early-out when the row is already normal (ellipsize END and not selected): the undo is the
-+    # most expensive part of a bind (setSingleLine installs a TransformationMethod, which rebuilds
-+    # the view's text Layout, and setHorizontallyScrolling drops it again) and only one row at a
-+    # time is ever marqueed.
-+    invoke-virtual {p1}, Landroid/widget/TextView;->getEllipsize()Landroid/text/TextUtils$TruncateAt;
-+
-+    move-result-object v0
-+
-+    sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-+
-+    if-ne v0, v1, :ipp_undo_marquee
-+
-+    invoke-virtual {p1}, Landroid/widget/TextView;->isSelected()Z
-+
-+    move-result v0
-+
-+    if-nez v0, :ipp_undo_marquee
-+
-+    return-void
-+
-+    :ipp_undo_marquee
-+
-+    # setSelected(false) FIRST, while the ellipsize is still MARQUEE: TextView stops its Marquee
-+    # from inside setSelected and only `if (mEllipsize == MARQUEE)` at that moment.
-+    const/4 v0, 0x0
-+
-+    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
-+
-+    # The scrolling is left ON deliberately -- see MyBaseAdapter.makeItNormal: turning it off makes
-+    # the text break by WORDS, so a title is cut at the last space that fits ("Timed shutdown"
-+    # became "Timed…") instead of at the right edge.
-+    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
-+
-     .line 49
-     sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 43
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    const/16 v0, 0x2537
+-
+-    .line 44
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setMarqueeRepeatLimit(I)V
+-
+-    .line 45
+-    invoke-virtual {p1}, Landroid/widget/TextView;->setSingleLine()V
+-
+-    const/4 v0, 0x1
+-
+-    .line 46
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setSelected(Z)V
+-
+-    return-void
+-.end method
+-
+-.method public final makeItNormal(Landroid/widget/TextView;)V
+-    .locals 1
+-
+-    const-string v0, "tv"
+-
+-    invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+-
+-    .line 49
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p1, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    return-void
+-.end method
+-
+ .method public bridge synthetic onCreateDefViewHolder(Landroid/view/ViewGroup;I)Lcom/chad/library/adapter/base/viewholder/BaseViewHolder;
+     .locals 0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseDialog.smali
 index 4c89afa4..26daa540 100644
