@@ -15,9 +15,9 @@
 
 .method constructor <init>()V
   .registers 3
-  .line 310
+  .line 365
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 311
+  .line 366
     new-instance v0, Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -27,11 +27,11 @@
 
 .method at(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows$Reveal;
   .registers 3
-  .line 314
+  .line 369
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/SongRows$Reveal;->rv:Ljava/lang/ref/WeakReference;
-  .line 315
+  .line 370
     return-object p0
 .end method
 
@@ -39,34 +39,34 @@
   .catchall { :L0 .. :L2 } :L4
   .registers 4
   :L0
-  .line 320
+  .line 375
     iget-object v0, p0, Lcom/innioasis/ipp/SongRows$Reveal;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 321
+  .line 376
     invoke-static { v0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v1
-  .line 322
+  .line 377
     if-eqz v1, :L3
     invoke-virtual { v1 }, Lcom/innioasis/ipp/SongRows;->cursor()I
     move-result v2
     if-eqz v2, :L1
     goto :L3
   :L1
-  .line 323
+  .line 378
     const/4 v2, 0
     invoke-static { v0, v2, v1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
   :L2
-  .line 325
+  .line 380
     goto :L5
   :L3
-  .line 322
+  .line 377
     return-void
   :L4
-  .line 324
+  .line 379
     move-exception v0
   :L5
-  .line 326
+  .line 381
     return-void
 .end method

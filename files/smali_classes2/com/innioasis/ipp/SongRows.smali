@@ -9,6 +9,7 @@
     Lcom/innioasis/ipp/SongRows$Watch;,
     Lcom/innioasis/ipp/SongRows$HeadHolder;,
     Lcom/innioasis/ipp/SongRows$Holder;,
+    Lcom/innioasis/ipp/SongRows$Shown;,
     Lcom/innioasis/ipp/SongRows$Reveal;
   }
 .end annotation
@@ -37,6 +38,8 @@
 
 .field static dbgWho:Ljava/lang/String;
 
+.field private static volatile deleted:I
+
 .field private idBase:J
 
 .field private final list:Ljava/lang/ref/WeakReference;
@@ -47,11 +50,14 @@
 
 .method static constructor <clinit>()V
   .registers 1
-  .line 306
+  .line 279
+    const/4 v0, -1
+    sput v0, Lcom/innioasis/ipp/SongRows;->deleted:I
+  .line 361
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/SongRows;->HEADS:Ljava/util/WeakHashMap;
-  .line 308
+  .line 363
     new-instance v0, Lcom/innioasis/ipp/SongRows$Reveal;
     invoke-direct { v0 }, Lcom/innioasis/ipp/SongRows$Reveal;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/SongRows;->REVEAL:Lcom/innioasis/ipp/SongRows$Reveal;
@@ -72,6 +78,13 @@
     iput-object p2, p0, Lcom/innioasis/ipp/SongRows;->spv:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
   .line 52
     return-void
+.end method
+
+.method static synthetic access$000(Lcom/innioasis/ipp/SongRows;)Lcom/innioasis/music/adapter/SongListAdapter;
+  .registers 1
+  .line 34
+    iget-object p0, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/SongListAdapter;
+    return-object p0
 .end method
 
 .method public static attach(Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/music/adapter/SongListAdapter;)V
@@ -424,44 +437,128 @@
 
 .method public static cancel(Landroidx/recyclerview/widget/RecyclerView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 5
-  .line 280
+  .line 335
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object p0
-  .line 281
+  .line 336
     if-eqz p0, :L6
     if-nez p1, :L0
     goto :L6
   :L0
-  .line 282
+  .line 337
     const/4 v0, 0
   :L1
     array-length v1, p1
     if-ge v0, v1, :L5
-  .line 283
+  .line 338
     aget-object v1, p1, v0
     iget-object v2, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/SongListAdapter;
     if-eq v1, v2, :L2
     goto :L4
   :L2
-  .line 284
+  .line 339
     invoke-virtual { v2 }, Lcom/innioasis/music/adapter/SongListAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object v1
-  .line 285
+  .line 340
     if-eqz v1, :L3
     invoke-interface { v1 }, Ljava/util/List;->clear()V
   :L3
-  .line 286
+  .line 341
     iget-object v1, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/SongListAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/SongListAdapter;->notifyDataSetChanged()V
   :L4
-  .line 282
+  .line 337
     add-int/lit8 v0, v0, 1
     goto :L1
   :L5
-  .line 288
+  .line 343
     return-void
   :L6
-  .line 281
+  .line 336
+    return-void
+.end method
+
+.method public static deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
+  .registers 5
+  .line 283
+    if-nez p0, :L0
+    const/4 p0, 0
+    goto :L1
+  :L0
+    invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
+    move-result-object p0
+  :L1
+  .line 284
+    nop
+  .line 285
+    const/4 v0, -1
+    const/4 v1, 0
+  :L2
+    if-eqz p0, :L6
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result v2
+    if-ge v1, v2, :L6
+  .line 286
+    invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v2
+  .line 287
+    instance-of v3, v2, Ljava/lang/Integer;
+    if-nez v3, :L3
+    goto :L5
+  :L3
+  .line 288
+    check-cast v2, Ljava/lang/Integer;
+    invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
+    move-result v2
+  .line 289
+    if-ltz v2, :L5
+    if-ltz v0, :L4
+    if-ge v2, v0, :L5
+  :L4
+    move v0, v2
+  :L5
+  .line 285
+    add-int/lit8 v1, v1, 1
+    goto :L2
+  :L6
+  .line 291
+    sput v0, Lcom/innioasis/ipp/SongRows;->deleted:I
+  .line 292
+    return-void
+.end method
+
+.method public static kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+  .registers 4
+  .line 300
+    invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
+    move-result-object v0
+  .line 301
+    if-nez v0, :L0
+    return-void
+  :L0
+  .line 302
+    sget v1, Lcom/innioasis/ipp/SongRows;->deleted:I
+    if-ltz v1, :L1
+    sget p1, Lcom/innioasis/ipp/SongRows;->deleted:I
+  :L1
+  .line 303
+    const/4 v1, -1
+    sput v1, Lcom/innioasis/ipp/SongRows;->deleted:I
+  .line 304
+    iget-object v0, v0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/SongListAdapter;
+    invoke-virtual { v0 }, Lcom/innioasis/music/adapter/SongListAdapter;->getCount()I
+    move-result v1
+    add-int/lit8 v1, v1, -1
+    invoke-static { p1, v1 }, Ljava/lang/Math;->min(II)I
+    move-result p1
+    invoke-virtual { v0, p1 }, Lcom/innioasis/music/adapter/SongListAdapter;->setPosition(I)V
+  .line 305
+    invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->relist(Landroidx/recyclerview/widget/RecyclerView;)Z
+  .line 306
+    new-instance p1, Lcom/innioasis/ipp/SongRows$Shown;
+    invoke-direct { p1, p0 }, Lcom/innioasis/ipp/SongRows$Shown;-><init>(Landroidx/recyclerview/widget/RecyclerView;)V
+    invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->post(Ljava/lang/Runnable;)Z
+  .line 307
     return-void
 .end method
 
@@ -533,7 +630,7 @@
 
 .method static reveal(Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
   .registers 4
-  .line 295
+  .line 350
     const/4 v0, 0
     if-nez p0, :L0
     move-object v1, v0
@@ -543,7 +640,7 @@
     invoke-virtual { v1, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
   :L1
-  .line 296
+  .line 351
     if-nez v1, :L2
     move-object v1, v0
     goto :L3
@@ -553,21 +650,21 @@
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/SongRows;
   :L3
-  .line 297
+  .line 352
     if-nez v1, :L4
     goto :L5
   :L4
     invoke-virtual { v1 }, Lcom/innioasis/ipp/SongRows;->list()Landroidx/recyclerview/widget/RecyclerView;
     move-result-object v0
   :L5
-  .line 298
+  .line 353
     if-eqz v0, :L8
     invoke-static { v0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v2
     if-eq v2, v1, :L6
     goto :L8
   :L6
-  .line 300
+  .line 355
     invoke-virtual { p0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->getParent()Landroid/view/ViewParent;
     move-result-object v1
     if-ne v1, v0, :L7
@@ -578,17 +675,17 @@
     if-lt p0, v1, :L7
     return-void
   :L7
-  .line 301
+  .line 356
     sget-object p0, Lcom/innioasis/ipp/SongRows;->REVEAL:Lcom/innioasis/ipp/SongRows$Reveal;
     invoke-virtual { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;->removeCallbacks(Ljava/lang/Runnable;)Z
-  .line 302
+  .line 357
     invoke-virtual { p0, v0 }, Lcom/innioasis/ipp/SongRows$Reveal;->at(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows$Reveal;
     move-result-object p0
     invoke-virtual { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;->post(Ljava/lang/Runnable;)Z
-  .line 303
+  .line 358
     return-void
   :L8
-  .line 298
+  .line 353
     return-void
 .end method
 

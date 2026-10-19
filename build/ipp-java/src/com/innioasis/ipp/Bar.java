@@ -109,7 +109,8 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.headColor = a.getResources().getColor(R.color.selected_text_color);
             return s;
         }
-        if (a instanceof com.innioasis.music.SongListActivity) {
+        if (a instanceof com.innioasis.music.SongListActivity
+                || a instanceof com.innioasis.music.PlayListActivity) {
             // the Shuffle row is the list's row 0, the cursor the adapter's (SongRows)
             Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
                     a.getResources().getColor(R.color.selected_text_color),
@@ -822,7 +823,8 @@ public final class Bar extends RecyclerView.ItemDecoration
             PlGrid.listRow(row);
         } else if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
             ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
-        } else if (a instanceof com.innioasis.music.SongListActivity) {
+        } else if (a instanceof com.innioasis.music.SongListActivity
+                || a instanceof com.innioasis.music.PlayListActivity) {
             SongRows.tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);

@@ -275,6 +275,61 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         else Lv.pin(rv, pos);
     }
 
+    /** The first ticked row, before {@code removeItems} takes the ticks away: {@link #kept}. */
+    private static volatile int deleted = -1;
+
+    /** Ahead of {@code removeItems}, on the deleting thread. */
+    public static void deleting(MyBaseAdapter a) {
+        List s = a == null ? null : a.getSelectedIndexList();
+        int m = -1;
+        for (int i = 0; s != null && i < s.size(); i++) {
+            Object o = s.get(i);
+            if (!(o instanceof Integer)) continue;
+            int v = ((Integer) o).intValue();
+            if (v >= 0 && (m < 0 || v < m)) m = v;
+        }
+        deleted = m;
+    }
+
+    /**
+     * After a delete, in place of {@code setSelection}: the cursor stays on the place of the first
+     * removed row (the last row, when the end was removed) and the list does not move. Stock put it
+     * there too but pinned that row to the top, and sent the cursor to row 0 past the end.
+     */
+    public static void kept(RecyclerView rv, int pos) {
+        SongRows r = of(rv);
+        if (r == null) return;
+        int p = deleted >= 0 ? deleted : pos;
+        deleted = -1;
+        r.model.setPosition(Math.min(p, r.model.getCount() - 1));
+        Bar.relist(rv);
+        rv.post(new Shown(rv));
+    }
+
+    /** The cursor's row off screen after a delete (the ticks were far apart): it goes to the top. */
+    static final class Shown implements Runnable {
+        private final WeakReference rv;
+
+        Shown(RecyclerView r) {
+            rv = new WeakReference(r);
+        }
+
+        public void run() {
+            try {
+                RecyclerView r = (RecyclerView) rv.get();
+                SongRows s = of(r);
+                if (s == null || s.model.getCount() == 0) return;
+                RecyclerView.LayoutManager lm = r.getLayoutManager();
+                View v = lm == null ? null : lm.findViewByPosition(s.cursor());
+                if (v == null || v.getTop() < r.getPaddingTop()
+                        || v.getBottom() > r.getHeight() - r.getPaddingBottom()) {
+                    Lv.pin(r, s.model.getPosition());
+                }
+            } catch (Throwable t) {
+            }
+        }
+    }
+
     /** {@code BaseActivity.cancelMultiSelect} for a song list on a RecyclerView. */
     public static void cancel(RecyclerView rv, MyBaseAdapter[] adapters) {
         SongRows r = of(rv);
