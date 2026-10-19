@@ -438,6 +438,12 @@ public final class Wheel {
                 // ...and prefetch re-grows that cache behind setItemViewCacheSize's back
                 // (GapWorker, on our own scrollBy at the screen's edge). Off for good.
                 if (lm != null) lm.setItemPrefetchEnabled(false);
+                // A row never takes the focus: after a layout RecyclerView hands it to a row, and
+                // a focused row scrolls the list to itself, behind the glide — the list stopped
+                // between rows. The wheel needs no focus.
+                rv.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                View f = rv.findFocus();
+                if (f != null && f != rv) rv.requestFocus();
             }
 
             // the panel BEFORE the rows: it belongs at the end of the burst, once
@@ -453,9 +459,13 @@ public final class Wheel {
                 if (prev < 0 || !paint(rv, adapter, prev, n) || !paint(rv, adapter, pos, n)) {
                     adapter.notifyDataSetChanged();
                 }
-                // an unknown row before counts: the first step on entering may well be round the end
-                wrapping = stickyWrap || n > 1 && ((prev == n - 1 || prev < 0) && pos == 0
-                        || (prev == 0 || prev < 0) && pos == n - 1);
+                // an unknown row before counts: the first step on entering may well be round the end.
+                // A step to the NEXT row is no wrap — on two rows both ends are next to each other,
+                // and only a wrap just taken (Loop.justWrapped) says it went round.
+                boolean ends = (prev == n - 1 || prev < 0) && pos == 0
+                        || (prev == 0 || prev < 0) && pos == n - 1;
+                wrapping = stickyWrap || n > 1 && ends
+                        && (prev < 0 || Math.abs(pos - prev) > 1 || Loop.justWrapped());
                 stickyWrap = false;
             } else {
                 wrapping = false;
@@ -502,6 +512,7 @@ public final class Wheel {
             return;
         }
         LinearLayoutManager l = (LinearLayoutManager) lm;
+        dbg("to " + pos + " wrap " + wrapping + " jump " + jumping + " rel " + releasing + " left " + Glider.left(rv) + " " + edge(rv));
         // round the end under a travelling bar: rows and bar move together, at once
         if (!releasing && wrapping && Bar.defer(rv, pos)) return;
         if (!jumping && retarget(rv, l, pos)) return;
@@ -779,6 +790,7 @@ public final class Wheel {
         }
 
         static void stop() {
+            if (running && left != 0) dbg("glider stop left " + left + " from " + caller());
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
@@ -867,7 +879,9 @@ public final class Wheel {
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
+            if (Math.abs(left) >= 1f && atEnd(rv, left > 0)) dbg("glider atEnd left " + left + " " + edge(rv));
             if (Math.abs(left) < 1f || atEnd(rv, left > 0)) left = 0;
+            if (left == 0) dbg("glider done " + edge(rv));
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {
@@ -875,6 +889,24 @@ public final class Wheel {
                 measured();
             }
         }
+    }
+
+    // ---- temporary: where a list's glide stops (the main menu stuck between rows) -----------
+
+    static void dbg(String s) {
+        android.util.Log.i("ipp", "bardbg " + s);
+    }
+
+    static String edge(RecyclerView rv) {
+        View v = rv.getChildCount() == 0 ? null : rv.getChildAt(0);
+        return v == null ? "-" : "first " + rv.getChildAdapterPosition(v) + "@" + v.getTop() + " pad " + rv.getPaddingTop();
+    }
+
+    static String caller() {
+        StackTraceElement[] st = new Throwable().getStackTrace();
+        StringBuilder b = new StringBuilder();
+        for (int i = 2; i < st.length && i < 5; i++) b.append(st[i].getMethodName()).append(':').append(st[i].getLineNumber()).append(' ');
+        return b.toString();
     }
 
     /** A row's edges INCLUDING margins, as the list steps (the gallery tiles have margins). */

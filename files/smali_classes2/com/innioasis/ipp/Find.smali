@@ -647,20 +647,20 @@
 
 .method private static songOf(Lcom/innioasis/music/adapter/rv/RVBaseAdapter;)Lcom/innioasis/y1/database/Song;
   .registers 3
-  .line 414
+  .line 441
     const/4 v0, 0
     if-nez p0, :L0
     return-object v0
   :L0
-  .line 415
+  .line 442
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectItem()Ljava/lang/Object;
     move-result-object p0
-  .line 416
+  .line 443
     instance-of v1, p0, Lcom/innioasis/music/SearchActivity$Item;
     if-nez v1, :L1
     return-object v0
   :L1
-  .line 417
+  .line 444
     check-cast p0, Lcom/innioasis/music/SearchActivity$Item;
     invoke-virtual { p0 }, Lcom/innioasis/music/SearchActivity$Item;->getSong()Lcom/innioasis/y1/database/Song;
     move-result-object p0
@@ -808,6 +808,74 @@
   .line 152
     const/4 p0, 1
     return p0
+.end method
+
+.method public static step(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;I)V
+  .catchall { :L1 .. :L7 } :L8
+  .registers 5
+  .line 420
+    if-eqz p0, :L10
+    if-nez p1, :L0
+    goto :L10
+  :L0
+  .line 421
+    nop
+  :L1
+  .line 422
+    instance-of v0, p1, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
+    if-eqz v0, :L2
+  .line 423
+    move-object v0, p1
+    check-cast v0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;
+    invoke-virtual { v0 }, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getSelectPosition()I
+    move-result v0
+    goto :L4
+  :L2
+  .line 424
+    instance-of v0, p1, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
+    if-eqz v0, :L3
+  .line 425
+    move-object v0, p1
+    check-cast v0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getSelectPosition()I
+    move-result v0
+    goto :L4
+  :L3
+  .line 424
+    const/4 v0, -1
+  :L4
+  .line 427
+    invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
+    move-result v1
+  .line 429
+    if-ltz v0, :L6
+    if-ge v0, v1, :L6
+  .line 430
+    if-gez p2, :L5
+    invoke-static { p0, v0, v0, p1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+    goto :L7
+  :L5
+  .line 431
+    invoke-static { p0, v0, p1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+    goto :L7
+  :L6
+  .line 432
+    if-ltz p2, :L7
+    if-ge p2, v1, :L7
+  .line 433
+    invoke-virtual { p1, p2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyItemChanged(I)V
+  :L7
+  .line 436
+    goto :L9
+  :L8
+  .line 435
+    move-exception p0
+  :L9
+  .line 437
+    return-void
+  :L10
+  .line 420
+    return-void
 .end method
 
 .method private static trackArt(Ljava/lang/String;)Landroid/graphics/Bitmap;

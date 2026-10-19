@@ -130,7 +130,8 @@ public final class PlGrid {
                 prepare(rv);
             } else {
                 rv.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(a));
-                Wheel.glides(rv, false);
+                // a list under the travelling bar glides too
+                Wheel.glides(rv, Bar.relist(rv));
                 Object m = movers.remove(rv);
                 if (m != null) rv.removeItemDecoration((RecyclerView.ItemDecoration) m);
                 rv.setPadding(rv.getPaddingLeft(), 0, rv.getPaddingRight(), rv.getPaddingBottom());

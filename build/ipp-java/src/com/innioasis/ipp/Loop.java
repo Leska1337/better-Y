@@ -46,10 +46,21 @@ public final class Loop {
     public static boolean wrap() {
         if (!on()) return false;
         wrapped = true;
+        wrappedAt = android.os.SystemClock.uptimeMillis();
         return true;
     }
 
     private static boolean wrapped;
+    private static long wrappedAt;
+
+    /** For {@code Wheel.follow}, once: the step it repaints went round, within this key event. */
+    static boolean justWrapped() {
+        boolean w = android.os.SystemClock.uptimeMillis() - wrappedAt < JUST_MS;
+        wrappedAt = 0;
+        return w;
+    }
+
+    private static final long JUST_MS = 150L;
 
     /** From {@code SpeedUtil.runMultipleTimes}: true once after a wrap, which ends the burst. */
     public static boolean takeWrap() {

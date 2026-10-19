@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..eab23a52 100644
+index 01b1f730..4e44df93 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..eab23a52 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100234
++  versionCode: 10100240
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19990,7 +19990,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..3bedd918 100644
+index 71fe29d0..04ec1cd3 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20939,7 +20939,7 @@ index 71fe29d0..3bedd918 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev234</string>
++    <string name="ipp_version">v1.1.0-dev240</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -51954,6 +51954,120 @@ index 66c966fd..e99806cc 100644
      const p2, 0x7f1101a1
  
      .line 271
+diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyAdapter.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyAdapter.smali
+index 49a04e23..650c435f 100644
+--- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyAdapter.smali
++++ b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyAdapter.smali
+@@ -329,55 +329,11 @@
+     invoke-virtual {p0, v1}, Lcom/innioasis/music/SearchActivity$MyAdapter;->setNowPosition(I)V
+ 
+     :cond_0
+-    if-eqz p2, :cond_1
+-
+-    .line 478
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    .line 479
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    goto :goto_0
+-
+-    .line 480
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyDataSetChanged()V
+-
+-    .line 481
+-    :goto_0
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getItemCount()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result v0
++    # ipp: Wheel.follow instead of notifyItemChanged x2 + scrollToPosition -- see Find.step.
++    invoke-static {p1, p0, v0}, Lcom/innioasis/ipp/Find;->step(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;I)V
+ 
+     const/4 v1, 0x0
+ 
+-    if-ltz v0, :cond_2
+-
+-    if-ge v0, p2, :cond_2
+-
+-    goto :goto_1
+-
+-    :cond_2
+-    const/4 v2, 0x0
+-
+-    :goto_1
+-    if-eqz v2, :cond_3
+-
+-    .line 482
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
+-
+     .line 483
+     :cond_3
+     invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+@@ -510,49 +466,9 @@
+     invoke-virtual {p0, v3}, Lcom/innioasis/music/SearchActivity$MyAdapter;->setNowPosition(I)V
+ 
+     :cond_0
+-    if-eqz p2, :cond_2
+-
+-    if-ltz v0, :cond_1
+-
+-    .line 456
+-    invoke-virtual {p0, v0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    .line 457
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    if-ltz p2, :cond_3
+-
+-    .line 458
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    goto :goto_0
+-
+-    .line 461
+-    :cond_2
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->notifyDataSetChanged()V
+-
+-    .line 463
+-    :cond_3
+-    :goto_0
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    if-ltz p2, :cond_4
+-
+-    .line 464
+-    invoke-virtual {p0}, Lcom/innioasis/music/SearchActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
++    # ipp: see toNext -- Find.step.
++    invoke-static {p1, p0, v0}, Lcom/innioasis/ipp/Find;->step(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;I)V
+ 
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
+ 
+     .line 465
+     :cond_4
 diff --git a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
 index 64e6832c..42837012 100644
 --- a/build/src/smali_classes2/com/innioasis/music/SearchActivity$MyViewHolder.smali
@@ -55510,7 +55624,7 @@ index 306c059f..05023aa4 100644
  
      invoke-static {p2, p3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
-index fe02089c..b0cd7ead 100644
+index fe02089c..61f4ade8 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/rv/RVBaseAdapter.smali
 @@ -411,6 +411,18 @@
@@ -55543,26 +55657,41 @@ index fe02089c..b0cd7ead 100644
      if-eqz p1, :cond_1
  
      .line 131
-@@ -987,47 +1003,41 @@
+@@ -745,6 +761,11 @@
+     :goto_1
+     invoke-virtual {p1, v0, v1, v2}, Lcom/innioasis/music/adapter/rv/RVBaseViewHolder;->bind(Ljava/lang/Object;ZZ)V
+ 
++    # ipp: a row of a list under the travelling bar gives its background to the list -- see Bar.
++    iget-object v0, p1, Landroidx/recyclerview/widget/RecyclerView$ViewHolder;->itemView:Landroid/view/View;
++
++    invoke-static {v0}, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
++
+     return-void
+ .end method
+ 
+@@ -987,47 +1008,44 @@
  
      if-lt v1, v2, :cond_0
  
 -    invoke-virtual {p0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->getItemCount()I
-+    # ipp: loop scrolling -- past the last row comes the first
-+    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
- 
-     move-result v1
- 
+-
+-    move-result v1
+-
 -    add-int/lit8 v1, v1, -0x1
 -
 -    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
--
++    # ipp: loop scrolling -- past the last row comes the first; not while the rows still glide
++    # to this end under a travelling bar (Bar.wraps)
++    const/4 v1, 0x1
+ 
 -    :cond_0
 -    if-eqz p2, :cond_1
--
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Bar;->wraps(Landroidx/recyclerview/widget/RecyclerView;I)Z
+ 
 -    .line 60
 -    invoke-virtual {p0, v0}, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->notifyItemChanged(I)V
--
++    move-result v1
+ 
 -    .line 61
 -    iget p2, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
 +    if-eqz v1, :cond_ipp_clamp
@@ -55612,16 +55741,17 @@ index fe02089c..b0cd7ead 100644
      return-void
  .end method
  
-@@ -1048,43 +1058,38 @@
+@@ -1048,43 +1066,40 @@
  
      if-gez v1, :cond_0
  
 -    const/4 v1, 0x0
--
++    # ipp: loop scrolling -- before the first row comes the last; see toNext
++    const/4 v1, -0x1
+ 
 -    .line 70
 -    iput v1, p0, Lcom/innioasis/music/adapter/rv/RVBaseAdapter;->nowPosition:I
-+    # ipp: loop scrolling -- before the first row comes the last
-+    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Bar;->wraps(Landroidx/recyclerview/widget/RecyclerView;I)Z
  
 -    :cond_0
 -    if-eqz p2, :cond_1
@@ -63705,6 +63835,120 @@ index 5e61f77d..d9199ac0 100644
      .line 241
      iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->nowPath:Ljava/lang/String;
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali
+index 82f7646a..c7ea36f1 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali
+@@ -329,55 +329,11 @@
+     invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->setNowPosition(I)V
+ 
+     :cond_0
+-    if-eqz p2, :cond_1
+-
+-    .line 430
+-    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    .line 431
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    goto :goto_0
+-
+-    .line 432
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyDataSetChanged()V
+-
+-    .line 433
+-    :goto_0
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getItemCount()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result v0
++    # ipp: Wheel.follow instead of notifyItemChanged x2 + scrollToPosition -- see Find.step.
++    invoke-static {p1, p0, v0}, Lcom/innioasis/ipp/Find;->step(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;I)V
+ 
+     const/4 v1, 0x0
+ 
+-    if-ltz v0, :cond_2
+-
+-    if-ge v0, p2, :cond_2
+-
+-    goto :goto_1
+-
+-    :cond_2
+-    const/4 v2, 0x0
+-
+-    :goto_1
+-    if-eqz v2, :cond_3
+-
+-    .line 434
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
+-
+     .line 435
+     :cond_3
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+@@ -510,49 +466,9 @@
+     invoke-virtual {p0, v3}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->setNowPosition(I)V
+ 
+     :cond_0
+-    if-eqz p2, :cond_2
+-
+-    if-ltz v0, :cond_1
+-
+-    .line 408
+-    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    .line 409
+-    :cond_1
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    if-ltz p2, :cond_3
+-
+-    .line 410
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyItemChanged(I)V
+-
+-    goto :goto_0
+-
+-    .line 413
+-    :cond_2
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->notifyDataSetChanged()V
+-
+-    .line 415
+-    :cond_3
+-    :goto_0
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
+-
+-    if-ltz p2, :cond_4
+-
+-    .line 416
+-    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter;->getNowPosition()I
+-
+-    move-result p2
++    # ipp: see toNext -- Find.step.
++    invoke-static {p1, p0, v0}, Lcom/innioasis/ipp/Find;->step(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;I)V
+ 
+-    invoke-virtual {p1, p2}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
+ 
+     .line 417
+     :cond_4
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali
 index d1c852f8..9dc068ea 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyViewHolder.smali
@@ -65115,10 +65359,22 @@ index 44fce9d8..5b082b1e 100644
      move-result-object v10
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
-index 33d41dd3..79173834 100644
+index 33d41dd3..a68a0f37 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/adapter/RVBaseAdapter.smali
-@@ -985,47 +985,35 @@
+@@ -743,6 +743,11 @@
+     :goto_1
+     invoke-virtual {p1, v0, v1, v2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseViewHolder;->bind(Ljava/lang/Object;ZZ)V
+ 
++    # ipp: a row of a list under the travelling bar gives its background to the list -- see Bar.
++    iget-object v0, p1, Landroidx/recyclerview/widget/RecyclerView$ViewHolder;->itemView:Landroid/view/View;
++
++    invoke-static {v0}, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
++
+     return-void
+ .end method
+ 
+@@ -985,47 +990,35 @@
  
      if-lt v1, v2, :cond_0
  
@@ -65129,30 +65385,30 @@ index 33d41dd3..79173834 100644
      move-result v1
  
 -    add-int/lit8 v1, v1, -0x1
--
++    if-eqz v1, :cond_ipp_clamp
+ 
 -    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
 -
 -    :cond_0
 -    if-eqz p2, :cond_1
-+    if-eqz v1, :cond_ipp_clamp
- 
+-
 -    .line 55
 -    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
 -
 -    .line 56
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
+-
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
 +    const/4 v1, 0x0
  
--    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
-+    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
- 
 -    goto :goto_0
-+    goto :cond_0
++    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
  
 -    .line 57
 -    :cond_1
 -    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyDataSetChanged()V
--
++    goto :cond_0
+ 
 -    .line 58
 -    :goto_0
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
@@ -65181,40 +65437,40 @@ index 33d41dd3..79173834 100644
      return-void
  .end method
  
-@@ -1046,43 +1034,36 @@
+@@ -1046,43 +1039,36 @@
  
      if-gez v1, :cond_0
  
 -    const/4 v1, 0x0
--
--    .line 65
--    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
 +    # ipp: loop scrolling -- before the first row comes the last
 +    invoke-static {}, Lcom/innioasis/ipp/Loop;->wrap()Z
  
+-    .line 65
+-    iput v1, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
++    move-result v1
+ 
 -    :cond_0
 -    if-eqz p2, :cond_1
-+    move-result v1
++    if-eqz v1, :cond_ipp_clamp
  
 -    .line 67
 -    invoke-virtual {p0, v0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
-+    if-eqz v1, :cond_ipp_clamp
++    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getItemCount()I
  
 -    .line 68
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I
-+    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->getItemCount()I
- 
--    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
 +    move-result v1
  
--    goto :goto_0
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyItemChanged(I)V
 +    add-int/lit8 v1, v1, -0x1
+ 
+-    goto :goto_0
++    if-ltz v1, :cond_ipp_clamp
  
 -    .line 69
 -    :cond_1
 -    invoke-virtual {p0}, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->notifyDataSetChanged()V
-+    if-ltz v1, :cond_ipp_clamp
- 
+-
 -    .line 70
 -    :goto_0
 -    iget p2, p0, Lcom/innioasis/y1/activity/video/adapter/RVBaseAdapter;->nowPosition:I

@@ -118,21 +118,21 @@
     new-instance v0, Lcom/innioasis/ipp/Wheel$Now;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Wheel$Now;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->NOW:Lcom/innioasis/ipp/Wheel$Now;
-  .line 573
+  .line 584
     new-instance v0, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v1
     invoke-direct { v0, v1 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->UI:Landroid/os/Handler;
-  .line 574
+  .line 585
     new-instance v0, Lcom/innioasis/ipp/Wheel$Release;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Wheel$Release;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->RELEASE:Lcom/innioasis/ipp/Wheel$Release;
-  .line 615
+  .line 626
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->gliding:Ljava/util/WeakHashMap;
-  .line 900
+  .line 932
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->level:Ljava/util/WeakHashMap;
@@ -375,6 +375,47 @@
     return v0
 .end method
 
+.method static caller()Ljava/lang/String;
+  .registers 5
+  .line 906
+    new-instance v0, Ljava/lang/Throwable;
+    invoke-direct { v0 }, Ljava/lang/Throwable;-><init>()V
+    invoke-virtual { v0 }, Ljava/lang/Throwable;->getStackTrace()[Ljava/lang/StackTraceElement;
+    move-result-object v0
+  .line 907
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
+  .line 908
+    const/4 v2, 2
+  :L0
+    array-length v3, v0
+    if-ge v2, v3, :L1
+    const/4 v3, 5
+    if-ge v2, v3, :L1
+    aget-object v3, v0, v2
+    invoke-virtual { v3 }, Ljava/lang/StackTraceElement;->getMethodName()Ljava/lang/String;
+    move-result-object v3
+    invoke-virtual { v1, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const/16 v4, 58
+    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
+    move-result-object v3
+    aget-object v4, v0, v2
+    invoke-virtual { v4 }, Ljava/lang/StackTraceElement;->getLineNumber()I
+    move-result v4
+    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const/16 v4, 32
+    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
+    add-int/lit8 v2, v2, 1
+    goto :L0
+  :L1
+  .line 909
+    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    return-object v0
+.end method
+
 .method static cutAtTop(Landroid/widget/ListView;II)Z
   .registers 4
   .line 179
@@ -408,6 +449,24 @@
     return p2
 .end method
 
+.method static dbg(Ljava/lang/String;)V
+  .registers 3
+  .line 897
+    new-instance v0, Ljava/lang/StringBuilder;
+    invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v1, "bardbg "
+    invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object p0
+    const-string v0, "ipp"
+    invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+  .line 898
+    return-void
+.end method
+
 .method private static drop()V
   .registers 1
   .line 159
@@ -422,12 +481,59 @@
     return-void
 .end method
 
+.method static edge(Landroidx/recyclerview/widget/RecyclerView;)Ljava/lang/String;
+  .registers 4
+  .line 901
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
+    move-result v0
+    if-nez v0, :L0
+    const/4 v0, 0
+    goto :L1
+  :L0
+    const/4 v0, 0
+    invoke-virtual { p0, v0 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
+    move-result-object v0
+  :L1
+  .line 902
+    if-nez v0, :L2
+    const-string p0, "-"
+    goto :L3
+  :L2
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v2, "first "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { p0, v0 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAdapterPosition(Landroid/view/View;)I
+    move-result v2
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, "@"
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v0 }, Landroid/view/View;->getTop()I
+    move-result v0
+    invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v0
+    const-string v1, " pad "
+    invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
+    move-result p0
+    invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object p0
+  :L3
+    return-object p0
+.end method
+
 .method private static end(Landroid/view/View;Z)I
   .registers 4
-  .line 888
+  .line 920
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->margins(Landroid/view/View;)Landroid/view/ViewGroup$MarginLayoutParams;
     move-result-object v0
-  .line 889
+  .line 921
     const/4 v1, 0
     if-eqz p1, :L2
     invoke-virtual { p0 }, Landroid/view/View;->getRight()I
@@ -440,7 +546,7 @@
     add-int/2addr p0, v1
     return p0
   :L2
-  .line 890
+  .line 922
     invoke-virtual { p0 }, Landroid/view/View;->getBottom()I
     move-result p0
     if-nez v0, :L3
@@ -542,8 +648,8 @@
 .end method
 
 .method public static follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
-  .catchall { :L0 .. :L14 } :L15
-  .registers 8
+  .catchall { :L0 .. :L19 } :L20
+  .registers 9
   .line 426
     if-nez p0, :L0
     return-void
@@ -562,7 +668,7 @@
     if-eqz v1, :L1
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
-    if-eq v1, v0, :L2
+    if-eq v1, v0, :L3
   :L1
   .line 431
     new-instance v1, Ljava/lang/ref/WeakReference;
@@ -582,102 +688,134 @@
     invoke-virtual { v0, v2 }, Landroidx/recyclerview/widget/RecyclerView$LayoutManager;->setItemPrefetchEnabled(Z)V
   :L2
   .line 444
-    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Wheel;->postRest(Landroidx/recyclerview/widget/RecyclerView;I)V
+    const/high16 v0, 0x00060000
+    invoke-virtual { p0, v0 }, Landroidx/recyclerview/widget/RecyclerView;->setDescendantFocusability(I)V
+  .line 445
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->findFocus()Landroid/view/View;
+    move-result-object v0
   .line 446
-    if-eqz p2, :L12
-  .line 447
+    if-eqz v0, :L3
+    if-eq v0, p0, :L3
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->requestFocus()Z
+  :L3
+  .line 450
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Wheel;->postRest(Landroidx/recyclerview/widget/RecyclerView;I)V
+  .line 452
+    if-eqz p2, :L17
+  .line 453
     invoke-virtual { p2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
     move-result v0
-  .line 449
+  .line 455
     sget-object v1, Lcom/innioasis/ipp/Wheel;->lastRv:Ljava/lang/ref/WeakReference;
-    if-eqz v1, :L3
+    if-eqz v1, :L4
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
-    if-ne v1, p0, :L3
+    if-ne v1, p0, :L4
     sget-object v1, Lcom/innioasis/ipp/Wheel;->lastAdapter:Ljava/lang/ref/WeakReference;
-    if-eqz v1, :L3
-  .line 450
+    if-eqz v1, :L4
+  .line 456
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
-    if-ne v1, p2, :L3
+    if-ne v1, p2, :L4
     sget v1, Lcom/innioasis/ipp/Wheel;->lastPos:I
-    goto :L4
-  :L3
-    const/4 v1, -1
+    goto :L5
   :L4
-  .line 453
-    if-ltz v1, :L5
+    const/4 v1, -1
+  :L5
+  .line 459
+    if-ltz v1, :L6
     invoke-static { p0, p2, v1, v0 }, Lcom/innioasis/ipp/Wheel;->paint(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;II)Z
     move-result v3
-    if-eqz v3, :L5
+    if-eqz v3, :L6
     invoke-static { p0, p2, p1, v0 }, Lcom/innioasis/ipp/Wheel;->paint(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;II)Z
     move-result v3
-    if-nez v3, :L6
-  :L5
-  .line 454
-    invoke-virtual { p2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyDataSetChanged()V
+    if-nez v3, :L7
   :L6
-  .line 457
-    sget-boolean v3, Lcom/innioasis/ipp/Wheel;->stickyWrap:Z
-    const/4 v4, 1
-    if-nez v3, :L11
-    if-le v0, v4, :L10
-    sub-int/2addr v0, v4
-    if-eq v1, v0, :L7
-    if-gez v1, :L8
-  :L7
-    if-eqz p1, :L11
-  :L8
-    if-eqz v1, :L9
-    if-gez v1, :L10
-  :L9
-    if-ne p1, v0, :L10
-    goto :L11
-  :L10
-    const/4 v4, 0
-  :L11
-    sput-boolean v4, Lcom/innioasis/ipp/Wheel;->wrapping:Z
-  .line 459
-    sput-boolean v2, Lcom/innioasis/ipp/Wheel;->stickyWrap:Z
   .line 460
+    invoke-virtual { p2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyDataSetChanged()V
+  :L7
+  .line 465
+    add-int/lit8 v3, v0, -1
+    const/4 v4, 1
+    if-eq v1, v3, :L8
+    if-gez v1, :L9
+  :L8
+    if-eqz p1, :L12
+  :L9
+    if-eqz v1, :L10
+    if-gez v1, :L11
+  :L10
+    if-ne p1, v3, :L11
+    goto :L12
+  :L11
+    const/4 v3, 0
     goto :L13
   :L12
-  .line 461
-    sput-boolean v2, Lcom/innioasis/ipp/Wheel;->wrapping:Z
+    const/4 v3, 1
   :L13
-  .line 463
+  .line 467
+    sget-boolean v5, Lcom/innioasis/ipp/Wheel;->stickyWrap:Z
+    if-nez v5, :L15
+    if-le v0, v4, :L14
+    if-eqz v3, :L14
+    if-ltz v1, :L15
+    sub-int v0, p1, v1
+  .line 468
+    invoke-static { v0 }, Ljava/lang/Math;->abs(I)I
+    move-result v0
+    if-gt v0, v4, :L15
+    invoke-static { }, Lcom/innioasis/ipp/Loop;->justWrapped()Z
+    move-result v0
+    if-eqz v0, :L14
+    goto :L15
+  :L14
+    const/4 v4, 0
+    goto :L16
+  :L15
+    nop
+  :L16
+    sput-boolean v4, Lcom/innioasis/ipp/Wheel;->wrapping:Z
+  .line 469
+    sput-boolean v2, Lcom/innioasis/ipp/Wheel;->stickyWrap:Z
+  .line 470
+    goto :L18
+  :L17
+  .line 471
+    sput-boolean v2, Lcom/innioasis/ipp/Wheel;->wrapping:Z
+  :L18
+  .line 473
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->lastRv:Ljava/lang/ref/WeakReference;
-  .line 464
+  .line 474
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p2 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->lastAdapter:Ljava/lang/ref/WeakReference;
-  .line 465
+  .line 475
     sput p1, Lcom/innioasis/ipp/Wheel;->lastPos:I
-  .line 467
+  .line 477
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Wheel;->scrollTo(Landroidx/recyclerview/widget/RecyclerView;I)V
-  :L14
-  .line 469
-    goto :L16
-  :L15
-  .line 468
+  :L19
+  .line 479
+    goto :L21
+  :L20
+  .line 478
     move-exception p0
-  :L16
-  .line 470
+  :L21
+  .line 480
     return-void
 .end method
 
 .method private static glide(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;III)Z
   .registers 10
-  .line 630
+  .line 641
     instance-of v0, p1, Landroidx/recyclerview/widget/GridLayoutManager;
     if-nez v0, :L0
     invoke-static { p0, p1, p2, p3, p4 }, Lcom/innioasis/ipp/Wheel;->glideList(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;III)Z
     move-result p0
     return p0
   :L0
-  .line 631
+  .line 642
     sget-object v0, Lcom/innioasis/ipp/Wheel;->gliding:Ljava/util/WeakHashMap;
     invoke-virtual { v0, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
@@ -686,12 +824,12 @@
     if-gez p3, :L1
     goto/16 :L15
   :L1
-  .line 632
+  .line 643
     move-object v0, p1
     check-cast v0, Landroidx/recyclerview/widget/GridLayoutManager;
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/GridLayoutManager;->getSpanCount()I
     move-result v0
-  .line 633
+  .line 644
     const/4 v2, 1
     if-le p2, p4, :L2
     const/4 v3, 1
@@ -699,7 +837,7 @@
   :L2
     const/4 v3, 0
   :L3
-  .line 634
+  .line 645
     if-eqz v3, :L4
     move v4, p4
     goto :L5
@@ -708,12 +846,12 @@
   :L5
     invoke-virtual { p1, v4 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object p1
-  .line 635
+  .line 646
     if-lez v0, :L14
     if-nez p1, :L6
     goto :L14
   :L6
-  .line 636
+  .line 647
     if-eqz v3, :L7
     div-int/2addr p2, v0
     div-int/2addr p4, v0
@@ -724,7 +862,7 @@
     div-int/2addr p2, v0
     sub-int p2, p3, p2
   :L8
-  .line 637
+  .line 648
     if-lt p2, v2, :L13
     const/4 p3, 4
     if-le p2, p3, :L9
@@ -732,13 +870,13 @@
     if-nez p3, :L9
     goto :L13
   :L9
-  .line 638
+  .line 649
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p3
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/Wheel;->start(Landroid/view/View;Z)I
     move-result p4
     sub-int/2addr p3, p4
-  .line 639
+  .line 650
     if-eqz v3, :L10
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p1
@@ -752,7 +890,7 @@
     sub-int/2addr p1, p3
     goto :L11
   :L10
-  .line 640
+  .line 651
     invoke-static { p1, v1 }, Lcom/innioasis/ipp/Wheel;->start(Landroid/view/View;Z)I
     move-result p1
     mul-int p3, p3, p2
@@ -761,7 +899,7 @@
     move-result p3
     sub-int/2addr p1, p3
   :L11
-  .line 641
+  .line 652
     sget-boolean p3, Lcom/innioasis/ipp/Wheel;->wrapping:Z
     if-eqz p3, :L12
     mul-int/lit8 p2, p2, 45
@@ -771,22 +909,22 @@
     move-result v1
   :L12
     invoke-static { p0, p1, v1 }, Lcom/innioasis/ipp/Wheel$Glider;->to(Landroidx/recyclerview/widget/RecyclerView;II)V
-  .line 642
+  .line 653
     return v2
   :L13
-  .line 637
+  .line 648
     return v1
   :L14
-  .line 635
+  .line 646
     return v1
   :L15
-  .line 631
+  .line 642
     return v1
 .end method
 
 .method private static glideList(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;III)Z
   .registers 14
-  .line 651
+  .line 662
     const/4 v0, 0
     if-ltz p3, :L20
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/LinearLayoutManager;->getOrientation()I
@@ -799,33 +937,33 @@
     if-nez v1, :L0
     goto/16 :L20
   :L0
-  .line 654
+  .line 665
     if-le p2, p4, :L1
     const/4 v7, 1
     goto :L2
   :L1
     const/4 v7, 0
   :L2
-  .line 655
+  .line 666
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v1
-  .line 656
+  .line 667
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
     move-result v3
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingBottom()I
     move-result v4
     sub-int/2addr v3, v4
-  .line 657
+  .line 668
     invoke-virtual { p1, p2 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object v4
-  .line 658
+  .line 669
     if-eqz v7, :L3
     sub-int v5, p2, p4
     goto :L4
   :L3
     sub-int v5, p3, p2
   :L4
-  .line 659
+  .line 670
     if-lt v5, v2, :L19
     sget-boolean v6, Lcom/innioasis/ipp/Wheel;->wrapping:Z
     if-eqz v6, :L5
@@ -837,15 +975,15 @@
     if-le v5, v6, :L7
     goto :L19
   :L7
-  .line 661
+  .line 672
     if-eqz v4, :L10
-  .line 662
+  .line 673
     invoke-static { v4, v0 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p1
     invoke-static { v4, v0 }, Lcom/innioasis/ipp/Wheel;->start(Landroid/view/View;Z)I
     move-result p3
     sub-int/2addr p1, p3
-  .line 663
+  .line 674
     if-eqz v7, :L8
     invoke-static { v4, v0 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p3
@@ -860,23 +998,23 @@
     move v4, p3
     goto :L15
   :L10
-  .line 665
+  .line 676
     if-eqz v7, :L11
     move p3, p4
   :L11
     invoke-virtual { p1, p3 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object p1
-  .line 666
+  .line 677
     if-nez p1, :L12
     return v0
   :L12
-  .line 667
+  .line 678
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p3
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/Wheel;->start(Landroid/view/View;Z)I
     move-result p4
     sub-int/2addr p3, p4
-  .line 668
+  .line 679
     if-eqz v7, :L13
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p1
@@ -894,11 +1032,11 @@
     move v4, p1
     move v8, p3
   :L15
-  .line 670
+  .line 681
     if-nez v4, :L16
     return v2
   :L16
-  .line 671
+  .line 682
     sget-boolean p1, Lcom/innioasis/ipp/Wheel;->wrapping:Z
     if-eqz p1, :L17
     mul-int/lit8 v5, v5, 45
@@ -914,54 +1052,54 @@
     move-object v3, p0
     move v6, p2
     invoke-static/range { v3 .. v8 }, Lcom/innioasis/ipp/Wheel;->listGlide(Landroidx/recyclerview/widget/RecyclerView;IIIZI)V
-  .line 672
+  .line 683
     return v2
   :L19
-  .line 659
+  .line 670
     return v0
   :L20
-  .line 652
+  .line 663
     return v0
 .end method
 
 .method public static glides(Landroidx/recyclerview/widget/RecyclerView;Z)V
   .registers 3
-  .line 619
+  .line 630
     if-nez p0, :L0
     return-void
   :L0
-  .line 620
+  .line 631
     if-eqz p1, :L1
     sget-object p1, Lcom/innioasis/ipp/Wheel;->gliding:Ljava/util/WeakHashMap;
     sget-object v0, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
     invoke-virtual { p1, p0, v0 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
     goto :L2
   :L1
-  .line 621
+  .line 632
     sget-object p1, Lcom/innioasis/ipp/Wheel;->gliding:Ljava/util/WeakHashMap;
     invoke-virtual { p1, p0 }, Ljava/util/WeakHashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   :L2
-  .line 622
+  .line 633
     return-void
 .end method
 
 .method public static gotoLevel(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 6
-  .line 920
+  .line 952
     if-eqz p0, :L5
     if-nez p1, :L0
     goto :L5
   :L0
-  .line 921
+  .line 953
     invoke-virtual { p0, p1 }, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
-  .line 922
+  .line 954
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v0
-  .line 923
+  .line 955
     sget-object v1, Lcom/innioasis/ipp/Wheel;->level:Ljava/util/WeakHashMap;
     invoke-virtual { v1, p1 }, Ljava/util/WeakHashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
-  .line 924
+  .line 956
     instance-of v2, v1, [I
     if-eqz v2, :L1
     check-cast v1, [I
@@ -969,7 +1107,7 @@
   :L1
     const/4 v1, 0
   :L2
-  .line 925
+  .line 957
     if-eqz v1, :L3
     const/4 v2, 0
     aget v3, v1, v2
@@ -980,26 +1118,26 @@
     const/4 p1, 2
     aget p1, v1, p1
     if-ne p1, v0, :L3
-  .line 927
+  .line 959
     aget p1, v1, v2
     const/4 v0, 1
     aget v0, v1, v0
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Head;->restore(Landroid/widget/ListView;II)V
     goto :L4
   :L3
-  .line 929
+  .line 961
     invoke-virtual { p0, v0 }, Landroid/widget/ListView;->setSelection(I)V
   :L4
-  .line 931
+  .line 963
     return-void
   :L5
-  .line 920
+  .line 952
     return-void
 .end method
 
 .method static held(Landroidx/recyclerview/widget/RecyclerView;)Z
   .registers 2
-  .line 584
+  .line 595
     if-eqz p0, :L0
     sget-object v0, Lcom/innioasis/ipp/Wheel;->heldRv:Ljava/lang/ref/WeakReference;
     if-eqz v0, :L0
@@ -1016,7 +1154,7 @@
 
 .method private static hold(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 4
-  .line 577
+  .line 588
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->held(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v0
     if-eqz v0, :L0
@@ -1032,25 +1170,25 @@
     const/4 v0, 0
   :L3
     sput-boolean v0, Lcom/innioasis/ipp/Wheel;->heldWrap:Z
-  .line 578
+  .line 589
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel;->heldRv:Ljava/lang/ref/WeakReference;
-  .line 579
+  .line 590
     sget-object p0, Lcom/innioasis/ipp/Wheel;->UI:Landroid/os/Handler;
     sget-object v0, Lcom/innioasis/ipp/Wheel;->RELEASE:Lcom/innioasis/ipp/Wheel$Release;
     invoke-virtual { p0, v0 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 580
+  .line 591
     const-wide/16 v1, 500
     invoke-virtual { p0, v0, v1, v2 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 581
+  .line 592
     return-void
 .end method
 
 .method static jumpNow(Landroidx/recyclerview/widget/RecyclerView;I)V
   .catchall { :L0 .. :L2 } :L3
   .registers 4
-  .line 551
+  .line 562
     const/4 v0, 0
     if-eqz p0, :L5
   :L0
@@ -1059,35 +1197,35 @@
     if-nez v1, :L1
     goto :L5
   :L1
-  .line 552
+  .line 563
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->stop()V
-  .line 553
+  .line 564
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Wheel;->releasing:Z
-  .line 554
+  .line 565
     sput-boolean v1, Lcom/innioasis/ipp/Wheel;->jumping:Z
-  .line 555
+  .line 566
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Wheel;->scrollTo(Landroidx/recyclerview/widget/RecyclerView;I)V
   :L2
     goto :L4
   :L3
-  .line 556
+  .line 567
     move-exception p0
   :L4
-  .line 558
+  .line 569
     sput-boolean v0, Lcom/innioasis/ipp/Wheel;->releasing:Z
-  .line 559
+  .line 570
     sput-boolean v0, Lcom/innioasis/ipp/Wheel;->jumping:Z
-  .line 560
+  .line 571
     nop
-  .line 561
+  .line 572
     return-void
   :L5
-  .line 558
+  .line 569
     sput-boolean v0, Lcom/innioasis/ipp/Wheel;->releasing:Z
-  .line 559
+  .line 570
     sput-boolean v0, Lcom/innioasis/ipp/Wheel;->jumping:Z
-  .line 551
+  .line 562
     return-void
 .end method
 
@@ -1289,45 +1427,45 @@
 
 .method private static listGlide(Landroidx/recyclerview/widget/RecyclerView;IIIZI)V
   .registers 7
-  .line 681
+  .line 692
     div-int/lit8 p5, p5, 2
-  .line 682
+  .line 693
     if-nez p2, :L2
     if-lez p5, :L2
     invoke-static { p1 }, Ljava/lang/Math;->abs(I)I
     move-result v0
     if-le v0, p5, :L2
-  .line 683
+  .line 694
     if-lez p1, :L0
     sub-int p5, p1, p5
     goto :L1
   :L0
     add-int/2addr p5, p1
   :L1
-  .line 684
+  .line 695
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->stop()V
-  .line 685
+  .line 696
     const/4 v0, 0
     invoke-virtual { p0, v0, p5 }, Landroidx/recyclerview/widget/RecyclerView;->scrollBy(II)V
-  .line 686
+  .line 697
     sub-int/2addr p1, p5
   :L2
-  .line 688
+  .line 699
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Wheel$Glider;->to(Landroidx/recyclerview/widget/RecyclerView;II)V
-  .line 689
+  .line 700
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->list()V
-  .line 690
+  .line 701
     invoke-static { p3, p4 }, Lcom/innioasis/ipp/Wheel$Glider;->aim(IZ)V
-  .line 691
+  .line 702
     return-void
 .end method
 
 .method private static margins(Landroid/view/View;)Landroid/view/ViewGroup$MarginLayoutParams;
   .registers 2
-  .line 894
+  .line 926
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object p0
-  .line 895
+  .line 927
     instance-of v0, p0, Landroid/view/ViewGroup$MarginLayoutParams;
     if-eqz v0, :L0
     check-cast p0, Landroid/view/ViewGroup$MarginLayoutParams;
@@ -1341,31 +1479,31 @@
 .method public static noteLevel(Landroid/widget/ListView;)V
   .catchall { :L0 .. :L4 } :L5
   .registers 6
-  .line 905
+  .line 937
     if-nez p0, :L0
     return-void
   :L0
-  .line 906
+  .line 938
     invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
     move-result-object v0
-  .line 907
+  .line 939
     instance-of v1, v0, Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-nez v1, :L1
     return-void
   :L1
-  .line 908
+  .line 940
     const/4 v1, 0
     invoke-virtual { p0, v1 }, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
     move-result-object v2
-  .line 909
+  .line 941
     sget-object v3, Lcom/innioasis/ipp/Wheel;->level:Ljava/util/WeakHashMap;
     const/4 v4, 3
     new-array v4, v4, [I
-  .line 910
+  .line 942
     invoke-virtual { p0 }, Landroid/widget/ListView;->getFirstVisiblePosition()I
     move-result p0
     aput p0, v4, v1
-  .line 911
+  .line 943
     if-nez v2, :L2
     goto :L3
   :L2
@@ -1376,69 +1514,69 @@
     aput v1, v4, p0
     move-object p0, v0
     check-cast p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 912
+  .line 944
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result p0
     const/4 v1, 2
     aput p0, v4, v1
-  .line 909
+  .line 941
     invoke-virtual { v3, v0, v4 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   :L4
-  .line 915
+  .line 947
     goto :L6
   :L5
-  .line 914
+  .line 946
     move-exception p0
   :L6
-  .line 916
+  .line 948
     return-void
 .end method
 
 .method private static paint(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView$Adapter;II)Z
   .catchall { :L0 .. :L4 } :L5
   .registers 6
-  .line 478
+  .line 488
     const/4 v0, 0
     if-ltz p2, :L6
     if-lt p2, p3, :L0
     goto :L6
   :L0
-  .line 479
+  .line 489
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object p3
-  .line 480
+  .line 490
     instance-of v1, p3, Landroidx/recyclerview/widget/LinearLayoutManager;
     if-nez v1, :L1
     return v0
   :L1
-  .line 481
+  .line 491
     check-cast p3, Landroidx/recyclerview/widget/LinearLayoutManager;
     invoke-virtual { p3, p2 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object p3
-  .line 483
+  .line 493
     const/4 v1, 1
     if-nez p3, :L2
     return v1
   :L2
-  .line 484
+  .line 494
     invoke-virtual { p0, p3 }, Landroidx/recyclerview/widget/RecyclerView;->getChildViewHolder(Landroid/view/View;)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
     move-result-object p0
-  .line 485
+  .line 495
     if-nez p0, :L3
     return v0
   :L3
-  .line 486
+  .line 496
     invoke-virtual { p1, p0, p2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->bindViewHolder(Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
   :L4
-  .line 487
+  .line 497
     return v1
   :L5
-  .line 488
+  .line 498
     move-exception p0
-  .line 489
+  .line 499
     return v0
   :L6
-  .line 478
+  .line 488
     return v0
 .end method
 
@@ -1642,28 +1780,28 @@
 
 .method static releaseSoon(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 2
-  .line 589
+  .line 600
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->held(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result p0
     if-nez p0, :L0
     return-void
   :L0
-  .line 590
+  .line 601
     sget-object p0, Lcom/innioasis/ipp/Wheel;->UI:Landroid/os/Handler;
     sget-object v0, Lcom/innioasis/ipp/Wheel;->RELEASE:Lcom/innioasis/ipp/Wheel$Release;
     invoke-virtual { p0, v0 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 591
+  .line 602
     invoke-virtual { p0, v0 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 592
+  .line 603
     return-void
 .end method
 
 .method private static retarget(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;I)Z
   .registers 14
-  .line 698
+  .line 709
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel$Glider;->left(Landroidx/recyclerview/widget/RecyclerView;)F
     move-result v0
-  .line 699
+  .line 710
     const/4 v1, 0
     const/4 v2, 0
     cmpl-float v1, v0, v1
@@ -1672,34 +1810,34 @@
     if-eqz v1, :L0
     goto :L8
   :L0
-  .line 700
+  .line 711
     invoke-virtual { p1, p2 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object p1
-  .line 701
+  .line 712
     if-nez p1, :L1
     return v2
   :L1
-  .line 702
+  .line 713
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v1
-  .line 703
+  .line 714
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
     move-result v3
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingBottom()I
     move-result v4
     sub-int/2addr v3, v4
-  .line 704
+  .line 715
     invoke-static { v0 }, Ljava/lang/Math;->round(F)I
     move-result v0
-  .line 705
+  .line 716
     invoke-static { p1, v2 }, Lcom/innioasis/ipp/Wheel;->start(Landroid/view/View;Z)I
     move-result v4
     sub-int/2addr v4, v0
-  .line 706
+  .line 717
     invoke-static { p1, v2 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p1
     sub-int/2addr p1, v0
-  .line 707
+  .line 718
     if-le p1, v3, :L2
     sub-int v1, p1, v3
     goto :L4
@@ -1710,7 +1848,7 @@
   :L3
     const/4 v1, 0
   :L4
-  .line 708
+  .line 719
     const/4 v3, 1
     if-eqz v1, :L7
     add-int v6, v0, v1
@@ -1726,10 +1864,10 @@
     move v8, p2
     invoke-static/range { v5 .. v10 }, Lcom/innioasis/ipp/Wheel;->listGlide(Landroidx/recyclerview/widget/RecyclerView;IIIZI)V
   :L7
-  .line 709
+  .line 720
     return v3
   :L8
-  .line 699
+  .line 710
     return v2
 .end method
 
@@ -1790,20 +1928,63 @@
 
 .method private static scrollTo(Landroidx/recyclerview/widget/RecyclerView;I)V
   .registers 10
-  .line 499
+  .line 509
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v0
-  .line 500
+  .line 510
     instance-of v1, v0, Landroidx/recyclerview/widget/LinearLayoutManager;
     if-nez v1, :L0
-  .line 501
+  .line 511
     invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
-  .line 502
+  .line 512
     return-void
   :L0
-  .line 504
+  .line 514
     check-cast v0, Landroidx/recyclerview/widget/LinearLayoutManager;
-  .line 506
+  .line 515
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v2, "to "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v1, p1 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, " wrap "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    sget-boolean v2, Lcom/innioasis/ipp/Wheel;->wrapping:Z
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, " jump "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    sget-boolean v2, Lcom/innioasis/ipp/Wheel;->jumping:Z
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, " rel "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    sget-boolean v2, Lcom/innioasis/ipp/Wheel;->releasing:Z
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, " left "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-static { p0 }, Lcom/innioasis/ipp/Wheel$Glider;->left(Landroidx/recyclerview/widget/RecyclerView;)F
+    move-result v2
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(F)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v2, " "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->edge(Landroidx/recyclerview/widget/RecyclerView;)Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
+    invoke-static { v1 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
+  .line 517
     sget-boolean v1, Lcom/innioasis/ipp/Wheel;->releasing:Z
     if-nez v1, :L1
     sget-boolean v1, Lcom/innioasis/ipp/Wheel;->wrapping:Z
@@ -1813,7 +1994,7 @@
     if-eqz v1, :L1
     return-void
   :L1
-  .line 507
+  .line 518
     sget-boolean v1, Lcom/innioasis/ipp/Wheel;->jumping:Z
     if-nez v1, :L2
     invoke-static { p0, v0, p1 }, Lcom/innioasis/ipp/Wheel;->retarget(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;I)Z
@@ -1821,20 +2002,20 @@
     if-eqz v1, :L2
     return-void
   :L2
-  .line 508
+  .line 519
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findFirstCompletelyVisibleItemPosition()I
     move-result v1
-  .line 509
+  .line 520
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findLastCompletelyVisibleItemPosition()I
     move-result v2
-  .line 510
+  .line 521
     if-ltz v1, :L3
     if-lt p1, v1, :L3
     if-gt p1, v2, :L3
-  .line 511
+  .line 522
     return-void
   :L3
-  .line 513
+  .line 524
     sget-boolean v3, Lcom/innioasis/ipp/Wheel;->releasing:Z
     if-nez v3, :L4
     sget-object v3, Lcom/innioasis/ipp/Wheel;->gliding:Ljava/util/WeakHashMap;
@@ -1844,12 +2025,12 @@
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/PlGrid;->holds(Landroidx/recyclerview/widget/RecyclerView;I)Z
     move-result v3
     if-eqz v3, :L4
-  .line 514
+  .line 525
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->hold(Landroidx/recyclerview/widget/RecyclerView;)V
-  .line 515
+  .line 526
     return-void
   :L4
-  .line 517
+  .line 528
     sget-boolean v3, Lcom/innioasis/ipp/Wheel;->jumping:Z
     if-nez v3, :L5
     invoke-static { p0, v0, p1, v1, v2 }, Lcom/innioasis/ipp/Wheel;->glide(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/LinearLayoutManager;III)Z
@@ -1857,11 +2038,11 @@
     if-eqz v3, :L5
     return-void
   :L5
-  .line 518
+  .line 529
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->stop()V
-  .line 519
+  .line 530
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->stopScroll()V
-  .line 521
+  .line 532
     const/4 v3, 1
     const/4 v4, 0
     if-ltz v1, :L7
@@ -1873,7 +2054,7 @@
   :L7
     const/4 v1, 1
   :L8
-  .line 523
+  .line 534
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/LinearLayoutManager;->getOrientation()I
     move-result v2
     if-nez v2, :L9
@@ -1881,7 +2062,7 @@
   :L9
     const/4 v3, 0
   :L10
-  .line 524
+  .line 535
     if-eqz v3, :L11
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingLeft()I
     move-result v2
@@ -1890,7 +2071,7 @@
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v2
   :L12
-  .line 525
+  .line 536
     if-eqz v3, :L13
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getWidth()I
     move-result v5
@@ -1899,19 +2080,19 @@
     sub-int/2addr v5, v6
     goto :L14
   :L13
-  .line 526
+  .line 537
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
     move-result v5
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingBottom()I
     move-result v6
     sub-int/2addr v5, v6
   :L14
-  .line 527
+  .line 538
     invoke-virtual { v0, p1 }, Landroidx/recyclerview/widget/LinearLayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object v6
-  .line 528
+  .line 539
     if-eqz v6, :L19
-  .line 530
+  .line 541
     if-eqz v1, :L15
     invoke-static { v6, v3 }, Lcom/innioasis/ipp/Wheel;->end(Landroid/view/View;Z)I
     move-result p1
@@ -1922,22 +2103,22 @@
     move-result p1
     sub-int/2addr p1, v2
   :L16
-  .line 531
+  .line 542
     if-eqz p1, :L18
-  .line 532
+  .line 543
     if-eqz v3, :L17
     invoke-virtual { p0, p1, v4 }, Landroidx/recyclerview/widget/RecyclerView;->scrollBy(II)V
     goto :L18
   :L17
     invoke-virtual { p0, v4, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollBy(II)V
   :L18
-  .line 534
+  .line 545
     return-void
   :L19
-  .line 536
+  .line 547
     invoke-virtual { v0, v4 }, Landroidx/recyclerview/widget/LinearLayoutManager;->getChildAt(I)Landroid/view/View;
     move-result-object v6
-  .line 537
+  .line 548
     if-nez v6, :L20
     const/4 v7, 0
     goto :L21
@@ -1948,10 +2129,10 @@
     move-result v3
     sub-int/2addr v7, v3
   :L21
-  .line 538
+  .line 549
     if-lez v7, :L23
     if-le v5, v2, :L23
-  .line 539
+  .line 550
     if-eqz v1, :L22
     sub-int/2addr v5, v2
     sub-int v4, v5, v7
@@ -1959,10 +2140,10 @@
     invoke-virtual { v0, p1, v4 }, Landroidx/recyclerview/widget/LinearLayoutManager;->scrollToPositionWithOffset(II)V
     goto :L24
   :L23
-  .line 541
+  .line 552
     invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
   :L24
-  .line 543
+  .line 554
     return-void
 .end method
 
@@ -1984,10 +2165,10 @@
 
 .method private static start(Landroid/view/View;Z)I
   .registers 4
-  .line 882
+  .line 914
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->margins(Landroid/view/View;)Landroid/view/ViewGroup$MarginLayoutParams;
     move-result-object v0
-  .line 883
+  .line 915
     const/4 v1, 0
     if-eqz p1, :L2
     invoke-virtual { p0 }, Landroid/view/View;->getLeft()I
@@ -2000,7 +2181,7 @@
     sub-int/2addr p0, v1
     return p0
   :L2
-  .line 884
+  .line 916
     invoke-virtual { p0 }, Landroid/view/View;->getTop()I
     move-result p0
     if-nez v0, :L3

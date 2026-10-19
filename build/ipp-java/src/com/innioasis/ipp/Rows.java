@@ -85,6 +85,8 @@ public final class Rows {
     public static void blink(View row, int res, boolean on) {
         try {
             if (row == null) return;
+            // under a travelling bar the bar blinks, and the row has no background to toggle
+            if (Bar.blink(row, on)) return;
             // a grid tile blinks its frame
             View frame = row.findViewById(R.id.img_sel);
             if (frame instanceof androidx.cardview.widget.CardView) {
@@ -571,6 +573,10 @@ public final class Rows {
 
         Flat(Drawable d) {
             this.d = d;
+        }
+
+        Drawable inner() {
+            return d;
         }
 
         boolean holds(Bitmap b) {

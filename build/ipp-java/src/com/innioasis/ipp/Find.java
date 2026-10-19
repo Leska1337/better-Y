@@ -409,6 +409,33 @@ public final class Find {
         Albums.openAlbumOfSong(a, s);
     }
 
+    /**
+     * The tail of the search adapters' toNext/toPrevious (music and video), the cursor already
+     * moved: {@code Wheel.follow} onto a result row; onto the input line, only the row it left is
+     * repainted. Stock's input-line painting runs after this.
+     */
+    public static void step(androidx.recyclerview.widget.RecyclerView lv,
+            androidx.recyclerview.widget.RecyclerView.Adapter a, int old) {
+        try {
+            if (lv == null || a == null) return;
+            int now = -1;
+            if (a instanceof RVBaseAdapter) {
+                now = ((RVBaseAdapter) a).getSelectPosition();
+            } else if (a instanceof com.innioasis.y1.activity.video.adapter.RVBaseAdapter) {
+                now = ((com.innioasis.y1.activity.video.adapter.RVBaseAdapter) a).getSelectPosition();
+            }
+            int n = a.getItemCount();
+            // off the input line the row before is known: not the "unknown" a wrap is guessed from
+            if (now >= 0 && now < n) {
+                if (old < 0) Wheel.follow(lv, now, now, a);
+                else Wheel.follow(lv, now, a);
+            } else if (old >= 0 && old < n) {
+                a.notifyItemChanged(old);
+            }
+        } catch (Throwable t) {
+        }
+    }
+
     /** Null on an album row. */
     private static Song songOf(RVBaseAdapter adapter) {
         if (adapter == null) return null;
