@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f8765bd3 100644
+index 01b1f730..468ce083 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..f8765bd3 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100232
++  versionCode: 10100233
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -933,7 +933,7 @@ index ce45631a..5e5d5bed 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_setting.xml b/build/src/res/layout/item_setting.xml
-index 132396d1..48a6a3dd 100644
+index 132396d1..984dcc7b 100644
 --- a/build/src/res/layout/item_setting.xml
 +++ b/build/src/res/layout/item_setting.xml
 @@ -1,7 +1,7 @@
@@ -942,7 +942,7 @@ index 132396d1..48a6a3dd 100644
 +<LinearLayout android:gravity="center" android:layout_width="fill_parent" android:layout_height="45.0dip"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="5.0dip" android:layout_marginEnd="5.0dip" />
-+    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="5.0dip" />
++    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:ellipsize="end" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="5.0dip" />
      <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="5.0dip" />
      <ImageView android:id="@id/arrow" android:visibility="gone" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="5.0dip" />
  </LinearLayout>
@@ -19990,7 +19990,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..2d7325ff 100644
+index 71fe29d0..a22bcec7 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20939,7 +20939,7 @@ index 71fe29d0..2d7325ff 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev232</string>
++    <string name="ipp_version">v1.1.0-dev233</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -63105,6 +63105,30 @@ index 4f3366ed..dacbafe2 100644
      .line 1450
      :try_start_0
      invoke-static {p0}, Lcom/innioasis/y1/activity/SettingActivity;->access$getClearDialog$p(Lcom/innioasis/y1/activity/SettingActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$adapter$2$1.smali
+index 51cb3171..c87e458b 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$adapter$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$adapter$2$1.smali
+@@ -172,7 +172,9 @@
+ 
+     invoke-static {p3, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p3}, Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's marquee. The platform's drops the ellipsis the moment the row is selected;
++    # Scroll keeps it until the list has stood still. The ellipsis itself is the layout's.
++    invoke-static {p3}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 105
+     sget-object p3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -249,7 +251,7 @@
+ 
+     invoke-static {p2, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;->makeItNormal(Landroid/widget/TextView;)V
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 113
+     iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemSettingBinding;->arrow:Landroid/widget/ImageView;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali
 index a5a04dcd..1bdae584 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/SettingActivity$clickShutdown$1.smali
