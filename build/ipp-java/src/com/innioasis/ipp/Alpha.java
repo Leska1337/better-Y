@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -181,7 +180,7 @@ public final class Alpha {
     }
 
     /** Top of {@code Wheel.list}; true = handled, no row scroll. */
-    public static boolean step(ListView lv, MyBaseAdapter a, int type) {
+    public static boolean step(View lv, MyBaseAdapter a, int type) {
         try {
             long now = SystemClock.uptimeMillis();
             boolean replay = (now - lastCall) < BURST_MS;
@@ -212,7 +211,7 @@ public final class Alpha {
     }
 
     /** By Activity class and adapter: {@code SongListAdapter} alone serves four sorts. */
-    private static int mode(ListView lv, MyBaseAdapter a) {
+    private static int mode(View lv, MyBaseAdapter a) {
         Context c = lv.getContext();
         if (!(c instanceof Activity)) return NONE;
         String screen = c.getClass().getName();
@@ -243,7 +242,7 @@ public final class Alpha {
             if (s == Y1Repository.SortAlbumType.Date_Asc.getType()
              || s == Y1Repository.SortAlbumType.Date_Desc.getType()) return YEAR;
         }
-        // One ListView for four levels; the adapter is the level.
+        // One list for four levels; the adapter is the level.
         if (screen.endsWith(".GenresActivity")) {
             int k = Genres.alphaKind(a);
             if (k == Genres.A_LETTER) return LETTER;
@@ -265,7 +264,7 @@ public final class Alpha {
         return v == a.getType() || v == b.getType();
     }
 
-    private static void jump(ListView lv, MyBaseAdapter a, int type, int mode) {
+    private static void jump(View lv, MyBaseAdapter a, int type, int mode) {
         int n = a.getCount();
         int pos = a.getPosition();
         if (pos < 0) pos = 0;
@@ -291,8 +290,11 @@ public final class Alpha {
         if (target == pos) return;
 
         a.setPosition(target);                   // setPosition repaints
-        // To the top in BOTH directions, through Head (not setSelection).
-        Head.selectPinned(lv, target);
+        if (lv instanceof androidx.recyclerview.widget.RecyclerView) {
+            Bar.stand((androidx.recyclerview.widget.RecyclerView) lv);
+        }
+        // To the top in BOTH directions, through Lv (not setSelection).
+        Lv.pin(lv, target);
     }
 
     private static String keyAt(MyBaseAdapter a, int pos, int mode) {
@@ -334,7 +336,7 @@ public final class Alpha {
     }
 
     /** In the Activity's content FrameLayout, reused while that Activity is up. */
-    private static void show(ListView lv, String key) {
+    private static void show(View lv, String key) {
         TextView tv = overlay(lv);
         if (tv == null) return;
         if (OTHER.equals(key)) key = OTHER_TEXT;
@@ -346,7 +348,7 @@ public final class Alpha {
         lv.postDelayed(HIDE, IDLE_MS);
     }
 
-    private static TextView overlay(ListView lv) {
+    private static TextView overlay(View lv) {
         Context c = lv.getContext();
         if (!(c instanceof Activity)) return null;
         Activity act = (Activity) c;

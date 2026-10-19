@@ -516,6 +516,11 @@ public final class Menus {
         }
         if (v instanceof RecyclerView) {
             Object ad = ((RecyclerView) v).getAdapter();
+            if (ad instanceof SongRows) ad = ((SongRows) ad).model();
+            if (ad instanceof MyBaseAdapter) {
+                List s = ((MyBaseAdapter) ad).getSelectedIndexList();
+                return (s == null) ? 0 : s.size();
+            }
             if (ad instanceof RVBaseAdapter) {
                 List s = ((RVBaseAdapter) ad).getMultiSelectIndexes();
                 return (s == null) ? 0 : s.size();

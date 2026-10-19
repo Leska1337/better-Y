@@ -25,7 +25,10 @@ public final class Shuffle {
         last = new WeakReference(row);
         Head.attach(row);
         // Here rather than in the wheel code: every route that selects the row ends up in style().
-        if (row.isSelect()) Head.reveal(row);
+        if (row.isSelect()) {
+            Head.reveal(row);
+            SongRows.reveal(row);
+        }
         View v = row.findViewById(R.id.tv_song_name);
         if (!(v instanceof TextView)) return;
         TextView tv = (TextView) v;
@@ -40,6 +43,8 @@ public final class Shuffle {
         if (im instanceof ImageView) Icons.menu((ImageView) im, tv.getCurrentTextColor());
         // Stock sets the background only from updateSelectUI, which a screen may never reach.
         ThemeManager.INSTANCE.itemSetBackground(row, sel ? R.drawable.item_selected_no_arrow : 0, sel);
+        // row 0 of a list under the travelling bar: the bar paints it
+        Bar.row(row);
     }
 
     /**
@@ -60,6 +65,7 @@ public final class Shuffle {
         try {
             boolean sel = row.isSelect();
             ThemeManager.INSTANCE.itemSetBackground(row, sel ? R.drawable.item_selected_no_arrow : 0, sel);
+            Bar.row(row);
         } catch (Throwable t) {
         } finally {
             busy = false;

@@ -144,29 +144,31 @@ public final class Loop {
     private static ShufflePlaylistItemView kept;
 
     /**
-     * From {@code Wheel.list}, before the step: up from the Shuffle row (adapter parked at -1) to
-     * the last track, the one move a step cannot express. True when handled.
+     * From {@code Wheel.list}/{@code Wheel.rows}, before the step: up from the Shuffle row (adapter
+     * parked at -1) to the last track, the one move a step cannot express. True when handled.
      */
-    static boolean fromShuffle(ListView lv, MyBaseAdapter a, int type) {
+    static boolean fromShuffle(View lv, MyBaseAdapter a, int type) {
         if (type == 1 || a.getPosition() >= 0 || !on()) return false;
-        ShufflePlaylistItemView spv = shuffleRow(lv);
+        ShufflePlaylistItemView spv = Lv.shuffle(lv);
         if (spv == null || !spv.isSelect()) return false;
         int n = a.getCount();
         if (n <= 0) return false;
         wrap();
+        int from = cursorRow(lv, a);
         spv.onClockwise();                 // stock's own exit from the row
-        toRow(lv, a, n - 1);
+        toRow(lv, a, n - 1, from);
         return true;
     }
 
-    /** From {@code Wheel.list} after a step clamped at {@code old}. True when the cursor went round. */
-    static boolean list(ListView lv, MyBaseAdapter a, int type, int old) {
+    /** From {@code Wheel.list}/{@code Wheel.rows} after a step clamped at {@code old}. True when the cursor went round. */
+    static boolean list(View lv, MyBaseAdapter a, int type, int old) {
         if (!on()) return false;
         int n = a.getCount();
         if (n <= 0) return false;
-        ShufflePlaylistItemView spv = shuffleRow(lv);
+        ShufflePlaylistItemView spv = Lv.shuffle(lv);
         boolean row = spv != null && spv.getVisibility() == View.VISIBLE
                 && a.getSelectedIndexList().isEmpty();       // no Shuffle row in MultiSelect
+        int from = cursorRow(lv, a);
         if (type == 1) {
             if (old != n - 1) return false;
             if (row) {
@@ -178,25 +180,37 @@ public final class Loop {
                 spv.onAntiClockwise(false);
                 kept = spv;
                 a.notifyDataSetChanged();
-                Head.rest(lv);
+                if (lv instanceof RecyclerView) Wheel.follow((RecyclerView) lv, from, 0, ((RecyclerView) lv).getAdapter());
+                else Head.rest((ListView) lv);
                 return true;
             }
-            toRow(lv, a, 0);
+            toRow(lv, a, 0, from);
             return true;
         }
         if (old != 0) return false;
         if (row) return false;             // up from track 1 is the Shuffle row, as ever
         if (n == 1) return false;
-        toRow(lv, a, n - 1);
+        toRow(lv, a, n - 1, from);
         return true;
     }
 
-    private static void toRow(ListView lv, MyBaseAdapter a, int pos) {
+    /** The cursor as a row of a RecyclerView ({@code SongRows}); unused for a ListView. */
+    private static int cursorRow(View lv, MyBaseAdapter a) {
+        return a.getPosition() + SongRows.HEAD_ROWS;
+    }
+
+    private static void toRow(View lv, MyBaseAdapter a, int pos, int from) {
         wrap();
         a.setPosition(pos);
         a.notifyDataSetChanged();
-        if (pos == 0) Head.rest(lv);       // the start of the list, Shuffle row showing
-        else Head.selectPinned(lv, pos);   // the list clamps it to its bottom edge
+        if (lv instanceof RecyclerView) {
+            // round the end: Wheel.follow stands the rows and the bar on it at once
+            Wheel.follow((RecyclerView) lv, from, pos + SongRows.HEAD_ROWS, ((RecyclerView) lv).getAdapter());
+        } else if (pos == 0) {
+            Head.rest((ListView) lv);      // the start of the list, Shuffle row showing
+        } else {
+            Head.selectPinned((ListView) lv, pos);   // the list clamps it to its bottom edge
+        }
     }
 
     /** From the top of {@code ShufflePlaylistItemView.onClockwise}: true once after {@link #list} wrapped onto it. */
@@ -204,12 +218,5 @@ public final class Loop {
         if (spv == null || spv != kept) return false;
         kept = null;
         return true;
-    }
-
-    private static ShufflePlaylistItemView shuffleRow(ListView lv) {
-        Object p = lv.getParent();
-        if (!(p instanceof View)) return null;
-        View v = ((View) p).findViewById(R.id.spv);
-        return v instanceof ShufflePlaylistItemView ? (ShufflePlaylistItemView) v : null;
     }
 }

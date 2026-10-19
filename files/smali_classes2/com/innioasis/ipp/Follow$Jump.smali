@@ -13,17 +13,17 @@
 
 .field private final a:Lcom/innioasis/music/adapter/MyBaseAdapter;
 
-.field private final lv:Landroid/widget/ListView;
+.field private final lv:Landroid/view/View;
 
-.method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
+.method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
   .registers 3
-  .line 551
+  .line 549
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 552
+  .line 550
     iput-object p1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 553
-    iput-object p2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/widget/ListView;
-  .line 554
+  .line 551
+    iput-object p2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/view/View;
+  .line 552
     return-void
 .end method
 
@@ -31,42 +31,42 @@
   .catchall { :L0 .. :L4 } :L5
   .registers 4
   :L0
-  .line 559
+  .line 557
     invoke-static { }, Lcom/innioasis/ipp/Follow;->access$300()Ljava/lang/String;
     move-result-object v0
-  .line 560
+  .line 558
     if-nez v0, :L1
     return-void
   :L1
-  .line 561
+  .line 559
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Follow;->access$400(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
     move-result v0
-  .line 562
+  .line 560
     if-gez v0, :L2
     return-void
   :L2
-  .line 563
+  .line 561
     const-wide/16 v1, 0
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Follow;->access$502(J)J
-  .line 564
+  .line 562
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v1
     if-ne v0, v1, :L3
     return-void
   :L3
-  .line 565
+  .line 563
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
-    iget-object v2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/widget/ListView;
-    invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;I)V
+    iget-object v2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/view/View;
+    invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;I)V
   :L4
-  .line 567
+  .line 565
     goto :L6
   :L5
-  .line 566
+  .line 564
     move-exception v0
   :L6
-  .line 568
+  .line 566
     return-void
 .end method

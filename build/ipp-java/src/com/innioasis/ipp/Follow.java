@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ListView;
 
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
@@ -45,7 +47,7 @@ public final class Follow {
     }
 
     private static WeakReference adapterRef;   // MyBaseAdapter
-    private static WeakReference listRef;      // ListView
+    private static WeakReference listRef;      // the song list, either kind (Lv)
 
     /**
      * When each list's cursor was last moved by the wheel, per ADAPTER — a global stamp would let
@@ -55,20 +57,20 @@ public final class Follow {
 
     /** {@code SongListAdapter.getView}, every row: remember the list being drawn. Keep it cheap. */
     public static void note(MyBaseAdapter a, ViewGroup parent) {
-        if (a == null || !(parent instanceof ListView)) return;
+        if (a == null || !Lv.is(parent)) return;
         if (adapterRef == null || adapterRef.get() != a) adapterRef = new WeakReference(a);
         if (listRef == null || listRef.get() != parent) listRef = new WeakReference(parent);
         Lit.watch(parent.getContext());          // "is the screen on", see Lit
-        if (pendingUntil != 0) tryPending(a, (ListView) parent);
+        if (pendingUntil != 0) tryPending(a, parent);
         Status.check(parent);
     }
 
     /**
-     * The wheel has just moved this list's cursor. From {@code Wheel.list}, NOT the key event: in
-     * the player the wheel is volume. At its TOP, before Alpha's branch and the clamped-at-an-end
-     * return — both are the user turning the wheel.
+     * The wheel has just moved this list's cursor. From {@code Wheel.list}/{@code rows}, NOT the
+     * key event: in the player the wheel is volume. At its TOP, before Alpha's branch and the
+     * clamped-at-an-end return — both are the user turning the wheel.
      */
-    public static void touched(ListView lv, Object a) {
+    public static void touched(View lv, Object a) {
         if (a == null) return;
         // the landing watcher would undo the user's own scroll
         stopLanding();
@@ -101,7 +103,7 @@ public final class Follow {
             if (holds > 0) holds--;
             // closing a menu restarts the delay; the watcher re-armed brings the catch-up
             MyBaseAdapter a = adapter();
-            ListView lv = list();
+            View lv = list();
             if (a == null || lv == null || !enabled()) return;
             lastMove.put(a, Long.valueOf(android.os.SystemClock.uptimeMillis()));
             arm(lv, a);
@@ -147,7 +149,7 @@ public final class Follow {
      */
     private static Idle idle;
 
-    private static void arm(ListView lv, Object a) {
+    private static void arm(View lv, Object a) {
         if (lv == null) return;
         if (idle != null && idle.alive && idle.adapter() == a) return;
         Idle i = new Idle(a, lv);
@@ -160,7 +162,7 @@ public final class Follow {
         private final WeakReference lvRef;
         boolean alive = true;
 
-        Idle(Object a, ListView lv) {
+        Idle(Object a, View lv) {
             this.aRef = new WeakReference(a);
             this.lvRef = new WeakReference(lv);
         }
@@ -174,18 +176,18 @@ public final class Follow {
             try {
                 Object a = aRef.get();
                 Object lv = lvRef.get();
-                if (!(a instanceof MyBaseAdapter) || !(lv instanceof ListView)) {
+                if (!(a instanceof MyBaseAdapter) || !(lv instanceof View)) {
                     alive = false;
                     return;
                 }
                 long left = freeIn(a);
                 if (left > 0) {
-                    ((ListView) lv).postDelayed(this, left);
+                    ((View) lv).postDelayed(this, left);
                     return;
                 }
                 alive = false;
                 if (Follow.adapter() != a) return;
-                catchUp((MyBaseAdapter) a, (ListView) lv);
+                catchUp((MyBaseAdapter) a, (View) lv);
             } catch (Throwable t) {
                 alive = false;
             }
@@ -193,7 +195,7 @@ public final class Follow {
     }
 
     /** The list has just become free: jump to what is playing. */
-    private static void catchUp(MyBaseAdapter a, ListView lv) {
+    private static void catchUp(MyBaseAdapter a, View lv) {
         try {
             if (!enabled()) return;
             if (!Queue.atSource(a)) return;
@@ -211,7 +213,7 @@ public final class Follow {
         try {
             if (!enabled()) return;
             MyBaseAdapter a = adapter();
-            ListView lv = list();
+            View lv = list();
             if (a == null || lv == null) return;
             if (busy(a)) return;
             // only the list the track was started from
@@ -232,7 +234,7 @@ public final class Follow {
      * near the start the list stays at rest with the Shuffle row shown. Placed from a pre-draw:
      * the caller has usually just handed the list its songs, and the children are still the old ones.
      */
-    public static void land(MyBaseAdapter a, ListView lv, int pos) {
+    public static void land(MyBaseAdapter a, View lv, int pos) {
         if (a == null || lv == null || pos < 0) return;
         try {
             leaveShuffleRow(lv);
@@ -271,14 +273,14 @@ public final class Follow {
          * and leaving with the top button never reaches {@link #touched}.
          */
         private final MyBaseAdapter a;
-        private final ListView lv;
+        private final View lv;
         private final int pos;
         private final long until = android.os.SystemClock.uptimeMillis() + WATCH_MS;
         private int passes;
         private int settled;
         private int snaps;
 
-        Land(MyBaseAdapter a, ListView lv, int pos) {
+        Land(MyBaseAdapter a, View lv, int pos) {
             this.a = a;
             this.lv = lv;
             this.pos = pos;
@@ -291,14 +293,11 @@ public final class Follow {
          */
         private boolean restIfNoNeed(View c, int bottom, int h) {
             if (snaps >= 2) return false;
-            if (lv.getFirstVisiblePosition() != 0 || lv.getChildCount() == 0) return false;
-            View c0 = lv.getChildAt(0);
-            if (c0 == null) return false;
-            int scrolled = lv.getPaddingTop() - c0.getTop();
+            int scrolled = Lv.scrolled(lv);
             if (scrolled <= 0) return false;                  // already at its start
             if (c.getTop() + scrolled > bottom - h) return false;   // the scroll is really needed
             snaps++;
-            Head.rest(lv);
+            Lv.rest(lv);
             settled = 0;
             return true;
         }
@@ -321,27 +320,27 @@ public final class Follow {
         public boolean onPreDraw() {
             try {
                 // Another list now; null is "not attached yet" and waits.
-                Object now = lv.getAdapter();
+                Object now = Lv.model(lv);
                 if (now != null && now != a) return done();
 
-                int top = Head.top(lv);
-                int bottom = lv.getHeight() - lv.getPaddingBottom();
+                int top = Lv.top(lv);
+                int bottom = Lv.bottom(lv);
                 if (++passes > MAX_PASSES
                         || android.os.SystemClock.uptimeMillis() > until) return done();
                 if (bottom <= top) return true;           // not laid out yet
 
-                View c = lv.getChildAt(pos - lv.getFirstVisiblePosition());
+                View c = Lv.row(lv, pos);
                 if (c != null) {
                     int h = c.getHeight();
                     if (h > bottom - top) return done();
                     if (restIfNoNeed(c, bottom, h)) return false;
                     if (c.getBottom() > bottom) {
-                        Head.place(lv, pos, bottom - h);
+                        Lv.place(lv, pos, bottom - h);
                         settled = 0;
                         return false;
                     }
                     if (c.getTop() < top) {
-                        Head.place(lv, pos, top);
+                        Lv.place(lv, pos, top);
                         settled = 0;
                         return false;
                     }
@@ -351,14 +350,14 @@ public final class Follow {
 
                 // Not attached: aim with the tallest row — overshooting only shows the next row.
                 int h = 0;
-                for (int i = 0; i < lv.getChildCount(); i++) {
-                    View v = lv.getChildAt(i);
+                for (int i = 0; i < ((android.view.ViewGroup) lv).getChildCount(); i++) {
+                    View v = ((android.view.ViewGroup) lv).getChildAt(i);
                     if (v != null && v.getHeight() > h) h = v.getHeight();
                 }
                 if (h <= 0) return done();
                 int y = bottom - h;
                 if (y < top) y = top;
-                Head.place(lv, pos, y);
+                Lv.place(lv, pos, y);
                 settled = 0;
                 return false;
             } catch (Throwable t) {
@@ -371,7 +370,17 @@ public final class Follow {
      * A STEP onto row {@code pos}, scrolled by exactly the wheel's rule ({@code Wheel.list}), so it
      * sits as if scrolled there by hand. A jump is {@link #land}.
      */
-    private static void moveTo(MyBaseAdapter a, ListView lv, int pos) {
+    private static void moveTo(MyBaseAdapter a, View v, int pos) {
+        if (v instanceof RecyclerView) {
+            // the wheel's own step: Wheel.follow draws and scrolls it
+            int from = a.getPosition() + SongRows.HEAD_ROWS;
+            leaveShuffleRow(v);
+            a.setPosition(pos);
+            RecyclerView rv = (RecyclerView) v;
+            Wheel.follow(rv, from, pos + SongRows.HEAD_ROWS, rv.getAdapter());
+            return;
+        }
+        ListView lv = (ListView) v;
         int first = lv.getFirstVisiblePosition();
         int last = lv.getLastVisiblePosition();
         leaveShuffleRow(lv);                                 // before setPosition
@@ -388,15 +397,15 @@ public final class Follow {
 
     /**
      * The queue's "open the source": land on the playing track, outside the toggle and the
-     * busy/free rule. The ListView is found by walking the screen; posted, the screen is still
+     * busy/free rule. The list is found by walking the screen; posted, the screen is still
      * coming back up.
      */
     public static void toPlaying(Activity act) {
         try {
             if (act == null || act.getWindow() == null) return;
-            ListView lv = findList(act.getWindow().getDecorView());
+            View lv = Lv.find(act.getWindow().getDecorView());
             if (lv == null) return;
-            Object ad = lv.getAdapter();
+            Object ad = Lv.model(lv);
             if (!(ad instanceof MyBaseAdapter)) return;
             free(ad);
             lv.post(new Jump((MyBaseAdapter) ad, lv));
@@ -427,11 +436,11 @@ public final class Follow {
             if (!(screen instanceof Activity)) return;
             Activity act = (Activity) screen;
             if (act.getWindow() == null) return;
-            ListView lv = findList(act.getWindow().getDecorView());
+            View lv = Lv.find(act.getWindow().getDecorView());
             if (lv == null) return;
             // Armed BEFORE the adapter check: a new screen has no adapter at onResume yet.
             armPending(player, null, act);
-            Object ad = lv.getAdapter();
+            Object ad = Lv.model(lv);
             if (!(ad instanceof MyBaseAdapter)) return;
             free(ad);
             if (!Queue.atSource(ad)) return;
@@ -486,7 +495,7 @@ public final class Follow {
         return null;
     }
 
-    private static void tryPending(MyBaseAdapter a, ListView lv) {
+    private static void tryPending(MyBaseAdapter a, View lv) {
         try {
             if (android.os.SystemClock.uptimeMillis() > pendingUntil) { pendingUntil = 0; return; }
             if (!pendingForce && !enabled()) { pendingUntil = 0; return; }
@@ -507,9 +516,9 @@ public final class Follow {
 
     private static final class PreJump implements ViewTreeObserver.OnPreDrawListener {
         private final MyBaseAdapter a;
-        private final ListView lv;
+        private final View lv;
 
-        PreJump(MyBaseAdapter a, ListView lv) {
+        PreJump(MyBaseAdapter a, View lv) {
             this.a = a;
             this.lv = lv;
         }
@@ -533,22 +542,11 @@ public final class Follow {
         }
     }
 
-    private static ListView findList(View v) {
-        if (v instanceof ListView) return (ListView) v;
-        if (!(v instanceof ViewGroup)) return null;
-        ViewGroup g = (ViewGroup) v;
-        for (int i = 0; i < g.getChildCount(); i++) {
-            ListView lv = findList(g.getChildAt(i));
-            if (lv != null) return lv;
-        }
-        return null;
-    }
-
     private static final class Jump implements Runnable {
         private final MyBaseAdapter a;
-        private final ListView lv;
+        private final View lv;
 
-        Jump(MyBaseAdapter a, ListView lv) {
+        Jump(MyBaseAdapter a, View lv) {
             this.a = a;
             this.lv = lv;
         }
@@ -572,14 +570,10 @@ public final class Follow {
      * The Shuffle row keeps its own selection outside the adapter; a jump into the list leaves it
      * highlighted too. {@code onClockwise} is stock's exit from the row.
      */
-    private static void leaveShuffleRow(ListView lv) {
+    private static void leaveShuffleRow(View lv) {
         try {
-            Object parent = lv.getParent();
-            if (!(parent instanceof View)) return;
-            View v = ((View) parent).findViewById(R.id.spv);
-            if (!(v instanceof ShufflePlaylistItemView)) return;
-            ShufflePlaylistItemView spv = (ShufflePlaylistItemView) v;
-            if (spv.isSelect()) spv.onClockwise();
+            ShufflePlaylistItemView spv = Lv.shuffle(lv);
+            if (spv != null && spv.isSelect()) spv.onClockwise();
         } catch (Throwable t) {
         }
     }
@@ -613,8 +607,8 @@ public final class Follow {
         return (o instanceof MyBaseAdapter) ? (MyBaseAdapter) o : null;
     }
 
-    static ListView list() {
+    static View list() {
         Object o = listRef == null ? null : listRef.get();
-        return (o instanceof ListView) ? (ListView) o : null;
+        return (o instanceof View) ? (View) o : null;
     }
 }

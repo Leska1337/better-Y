@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.View;
-import android.widget.ListView;
 
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.y1.R;
@@ -127,7 +126,7 @@ public final class Status {
         public void run() {
             posted = false;
             try {
-                ListView lv = Follow.list();
+                View lv = Follow.list();
                 if (lv == null) return;
                 Object c = lv.getContext();
                 if (!(c instanceof Activity)) return;
@@ -158,7 +157,7 @@ public final class Status {
         public void run() {
             hiding = false;
             try {
-                ListView lv = Follow.list();
+                View lv = Follow.list();
                 if (lv == null) return;
                 Object c = lv.getContext();
                 if (!(c instanceof Activity)) return;
@@ -189,7 +188,7 @@ public final class Status {
     private static void step(Object activity, boolean now) {
         try {
             if (!(activity instanceof Activity)) return;
-            ListView lv = Follow.list();
+            View lv = Follow.list();
             if (lv == null || lv.getContext() != activity) return;
             if (!markerVisible(lv, Follow.adapter())) return;
             if (now) {
@@ -222,19 +221,19 @@ public final class Status {
     }
 
     /**
-     * The marked row is among the visible ones. The adapter must still be the ListView's:
+     * The marked row is among the visible ones. The adapter must still be the list's:
      * AlbumsActivity swaps it for the album list without binding a song row.
      */
-    private static boolean markerVisible(ListView lv, MyBaseAdapter a) {
-        if (a == null || lv.getAdapter() != a) return false;
+    private static boolean markerVisible(View lv, MyBaseAdapter a) {
+        if (a == null || Lv.model(lv) != a) return false;
         if (lv.getVisibility() != View.VISIBLE || lv.getWindowToken() == null) return false;
         PlayerService s = Y1Application.Companion.getPlayerService();
         // getPlayingSong, not getPlayingMusic: audiobook lists draw the marker too.
         Song song = (s == null) ? null : s.getPlayingSong();
         String path = (song == null) ? null : song.getPath();
         if (path == null || Rows.playMark(path, a) == 0) return false;
-        int first = lv.getFirstVisiblePosition();
-        int last = lv.getLastVisiblePosition();
+        int first = Lv.first(lv);
+        int last = Lv.last(lv);
         int n = a.getCount();
         if (last >= n) last = n - 1;
         for (int i = (first < 0 ? 0 : first); i <= last; i++) {

@@ -421,30 +421,158 @@ public final class Wheel {
         follow(rv, pos, adapter);
     }
 
+    /**
+     * A song list on a RecyclerView ({@link SongRows}), in place of {@code Other.listViewScroll}:
+     * what {@link #list} does for a ListView, with the step drawn by {@link #follow}.
+     */
+    public static void rows(RecyclerView rv, int type) {
+        try {
+            SongRows r = SongRows.of(rv);
+            if (r == null) return;
+            MyBaseAdapter a = r.model();
+            Follow.touched(rv, a);
+            long t0 = SystemClock.uptimeMillis();
+            int p0 = a.getPosition();
+            if (Alpha.step(rv, a, type)) {
+                long t1 = SystemClock.uptimeMillis();
+                if (a.getPosition() != p0) {
+                    dbg("alpha step " + (t1 - t0) + " ms");
+                    android.view.Choreographer.getInstance().postFrameCallback(new AlphaDbg(t1, rv));
+                }
+                return;
+            }
+            Status.check(rv);
+            // a jump still being laid out, or the rows still gliding to the end to go round
+            if (Bar.holds(rv, type)) return;
+            int old = r.cursor();
+            int m = a.getPosition();
+            if (type == 1 ? m >= a.getCount() - 1 : m <= 0) {
+                // round the end the step draws itself: what is drawn so far must be current
+                flushRows();
+                if (Loop.fromShuffle(rv, a, type)) return;
+                // on the Shuffle row nothing is above it: the screen's spv.onAntiClockwise keeps it
+                if (m < 0) return;
+            }
+            if (type == 1) a.toNext(); else a.toPrevious();
+            if (a.getPosition() == m) {                 // clamped at an end
+                Loop.list(rv, a, type, m);
+                return;
+            }
+            stepRows(rv, old);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** Temporary: what the frame after a jump by letter costs. */
+    static final class AlphaDbg implements Runnable, android.view.Choreographer.FrameCallback,
+            android.view.ViewTreeObserver.OnGlobalLayoutListener,
+            android.view.ViewTreeObserver.OnPreDrawListener {
+        private final long at;
+        private final RecyclerView rv;
+        private long frame, laid, pre;
+
+        AlphaDbg(long at, RecyclerView rv) {
+            this.at = at;
+            this.rv = rv;
+        }
+
+        public void doFrame(long n) {
+            frame = SystemClock.uptimeMillis();
+            rv.getViewTreeObserver().addOnGlobalLayoutListener(this);
+            rv.getViewTreeObserver().addOnPreDrawListener(this);
+            UI.post(this);              // after this frame's layout and draw
+        }
+
+        public void onGlobalLayout() {
+            if (laid == 0) laid = SystemClock.uptimeMillis();
+        }
+
+        public boolean onPreDraw() {
+            if (pre == 0) pre = SystemClock.uptimeMillis();
+            return true;
+        }
+
+        public void run() {
+            long end = SystemClock.uptimeMillis();
+            rv.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            rv.getViewTreeObserver().removeOnPreDrawListener(this);
+            dbg("alpha frame " + (end - at) + " ms: wait " + (frame - at) + " layout " + (laid == 0 ? -1 : laid - frame)
+                    + " predraw " + (pre == 0 ? -1 : pre - (laid == 0 ? frame : laid)) + " draw " + (pre == 0 ? -1 : end - pre)
+                    + ", binds " + SongRows.dbgBinds + " in " + SongRows.dbgBindMs + " ms, made " + SongRows.dbgMade + ", requested before " + SongRows.dbgReqBefore + " after " + SongRows.dbgReqAfter + " [" + SongRows.dbgWho + "]");
+            SongRows.dbgWho = null;
+            SongRows.dbgReqBefore = 0;
+            SongRows.dbgReqAfter = 0;
+            SongRows.dbgBinds = 0;
+            SongRows.dbgBindMs = 0;
+            SongRows.dbgMade = 0;
+        }
+    }
+
+    // A step moves the model's cursor at once and is DRAWN once per frame: the wheel's
+    // acceleration replays a step several times per click, and a repaint and scroll per replay
+    // let the clicks queue up behind the list — it scrolled on after the wheel stopped.
+    private static WeakReference stepRv;
+    private static int stepFrom;
+    private static boolean stepOn;
+    private static final Step STEP = new Step();
+
+    private static void stepRows(RecyclerView rv, int from) {
+        if (stepOn && stepRv != null && stepRv.get() == rv) return;   // drawn from the first one
+        flushRows();
+        stepRv = new WeakReference(rv);
+        stepFrom = from;
+        stepOn = true;
+        android.view.Choreographer.getInstance().postFrameCallback(STEP);
+    }
+
+    /** The pending step drawn now. */
+    static void flushRows() {
+        if (!stepOn) return;
+        android.view.Choreographer.getInstance().removeFrameCallback(STEP);
+        STEP.doFrame(0);
+    }
+
+    static final class Step implements android.view.Choreographer.FrameCallback {
+        public void doFrame(long nanos) {
+            if (!stepOn) return;
+            stepOn = false;
+            RecyclerView rv = stepRv == null ? null : (RecyclerView) stepRv.get();
+            stepRv = null;
+            SongRows r = SongRows.of(rv);
+            if (r == null) return;
+            follow(rv, stepFrom, r.cursor(), r);
+        }
+    }
+
+    /**
+     * Once per RecyclerView AND LayoutManager — not keyed on getItemAnimator(), which Settings
+     * nulls itself.
+     */
+    static void tune(RecyclerView rv) {
+        RecyclerView.LayoutManager lm = rv.getLayoutManager();
+        if (tuned != null && tuned.get() == rv && tunedLm != null && tunedLm.get() == lm) return;
+        tuned = new WeakReference(rv);
+        tunedLm = new WeakReference(lm);
+        rv.setItemAnimator(null);
+        // The view cache returns rows by position WITHOUT a rebind, and rows here are rebound in
+        // place, never notified: a cached row comes back with its old look and the cursor
+        // vanishes. Held at zero.
+        rv.setItemViewCacheSize(0);
+        // ...and prefetch re-grows that cache behind setItemViewCacheSize's back (GapWorker, on
+        // our own scrollBy at the screen's edge). Off for good.
+        if (lm != null) lm.setItemPrefetchEnabled(false);
+        // A row never takes the focus: after a layout RecyclerView hands it to a row, and a
+        // focused row scrolls the list to itself, behind the glide — the list stopped between
+        // rows. The wheel needs no focus.
+        rv.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        View f = rv.findFocus();
+        if (f != null && f != rv) rv.requestFocus();
+    }
+
     public static void follow(RecyclerView rv, int pos, RecyclerView.Adapter adapter) {
         try {
             if (rv == null) return;
-            // Once per RecyclerView AND LayoutManager — not keyed on getItemAnimator(), which
-            // Settings nulls itself.
-            RecyclerView.LayoutManager lm = rv.getLayoutManager();
-            if (tuned == null || tuned.get() != rv || tunedLm == null || tunedLm.get() != lm) {
-                tuned = new WeakReference(rv);
-                tunedLm = new WeakReference(lm);
-                rv.setItemAnimator(null);
-                // The view cache returns rows by position WITHOUT a rebind, and rows here are
-                // rebound in place, never notified: a cached row comes back with its old look and
-                // the cursor vanishes. Held at zero.
-                rv.setItemViewCacheSize(0);
-                // ...and prefetch re-grows that cache behind setItemViewCacheSize's back
-                // (GapWorker, on our own scrollBy at the screen's edge). Off for good.
-                if (lm != null) lm.setItemPrefetchEnabled(false);
-                // A row never takes the focus: after a layout RecyclerView hands it to a row, and
-                // a focused row scrolls the list to itself, behind the glide — the list stopped
-                // between rows. The wheel needs no focus.
-                rv.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                View f = rv.findFocus();
-                if (f != null && f != rv) rv.requestFocus();
-            }
+            tune(rv);
 
             // the panel BEFORE the rows: it belongs at the end of the burst, once
             postRest(rv, pos);

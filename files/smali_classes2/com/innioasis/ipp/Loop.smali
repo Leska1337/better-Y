@@ -87,6 +87,15 @@
     return v1
 .end method
 
+.method private static cursorRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;)I
+  .registers 2
+  .line 199
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
+    move-result p0
+    add-int/lit8 p0, p0, 1
+    return p0
+.end method
+
 .method private static firstList(Landroid/view/View;)Landroidx/recyclerview/widget/RecyclerView;
   .registers 4
   .line 133
@@ -126,7 +135,7 @@
     return-object v1
 .end method
 
-.method static fromShuffle(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)Z
+.method static fromShuffle(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;I)Z
   .registers 6
   .line 151
     const/4 v0, 0
@@ -141,7 +150,7 @@
     goto :L4
   :L0
   .line 152
-    invoke-static { p0 }, Lcom/innioasis/ipp/Loop;->shuffleRow(Landroid/widget/ListView;)Lcom/innioasis/y1/view/ShufflePlaylistItemView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->shuffle(Landroid/view/View;)Lcom/innioasis/y1/view/ShufflePlaylistItemView;
     move-result-object p2
   .line 153
     if-eqz p2, :L3
@@ -160,11 +169,14 @@
   .line 156
     invoke-static { }, Lcom/innioasis/ipp/Loop;->wrap()Z
   .line 157
-    invoke-virtual { p2 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->onClockwise()V
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Loop;->cursorRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;)I
+    move-result v0
   .line 158
-    sub-int/2addr v2, v1
-    invoke-static { p0, p1, v2 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
+    invoke-virtual { p2 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->onClockwise()V
   .line 159
+    sub-int/2addr v2, v1
+    invoke-static { p0, p1, v2, v0 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;II)V
+  .line 160
     return v1
   :L3
   .line 153
@@ -219,20 +231,20 @@
 
 .method public static keep(Lcom/innioasis/y1/view/ShufflePlaylistItemView;)Z
   .registers 2
-  .line 204
+  .line 218
     if-eqz p0, :L1
     sget-object v0, Lcom/innioasis/ipp/Loop;->kept:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
     if-eq p0, v0, :L0
     goto :L1
   :L0
-  .line 205
+  .line 219
     const/4 p0, 0
     sput-object p0, Lcom/innioasis/ipp/Loop;->kept:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-  .line 206
+  .line 220
     const/4 p0, 1
     return p0
   :L1
-  .line 204
+  .line 218
     const/4 p0, 0
     return p0
 .end method
@@ -254,32 +266,32 @@
     return p0
 .end method
 
-.method static list(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;II)Z
-  .registers 9
-  .line 164
+.method static list(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;II)Z
+  .registers 10
+  .line 165
     invoke-static { }, Lcom/innioasis/ipp/Loop;->on()Z
     move-result v0
     const/4 v1, 0
     if-nez v0, :L0
     return v1
   :L0
-  .line 165
+  .line 166
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
     move-result v0
-  .line 166
+  .line 167
     if-gtz v0, :L1
     return v1
   :L1
-  .line 167
-    invoke-static { p0 }, Lcom/innioasis/ipp/Loop;->shuffleRow(Landroid/widget/ListView;)Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-    move-result-object v2
   .line 168
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->shuffle(Landroid/view/View;)Lcom/innioasis/y1/view/ShufflePlaylistItemView;
+    move-result-object v2
+  .line 169
     const/4 v3, 1
     if-eqz v2, :L2
     invoke-virtual { v2 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->getVisibility()I
     move-result v4
     if-nez v4, :L2
-  .line 169
+  .line 170
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object v4
     invoke-interface { v4 }, Ljava/util/List;->isEmpty()Z
@@ -290,53 +302,67 @@
   :L2
     const/4 v4, 0
   :L3
-  .line 170
-    if-ne p2, v3, :L6
   .line 171
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Loop;->cursorRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;)I
+    move-result v5
+  .line 172
+    if-ne p2, v3, :L8
+  .line 173
     sub-int/2addr v0, v3
     if-eq p3, v0, :L4
     return v1
   :L4
-  .line 172
-    if-eqz v4, :L5
-  .line 175
-    invoke-static { }, Lcom/innioasis/ipp/Loop;->wrap()Z
-  .line 176
-    invoke-virtual { p1, v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setPosition(I)V
+  .line 174
+    if-eqz v4, :L7
   .line 177
-    invoke-virtual { v2 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->recordOldPosition()V
+    invoke-static { }, Lcom/innioasis/ipp/Loop;->wrap()Z
   .line 178
-    invoke-virtual { v2, v1 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->onAntiClockwise(Z)V
+    invoke-virtual { p1, v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setPosition(I)V
   .line 179
-    sput-object v2, Lcom/innioasis/ipp/Loop;->kept:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
+    invoke-virtual { v2 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->recordOldPosition()V
   .line 180
-    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
+    invoke-virtual { v2, v1 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->onAntiClockwise(Z)V
   .line 181
-    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->rest(Landroid/widget/ListView;)V
+    sput-object v2, Lcom/innioasis/ipp/Loop;->kept:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
   .line 182
-    return v3
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
+  .line 183
+    instance-of p1, p0, Landroidx/recyclerview/widget/RecyclerView;
+    if-eqz p1, :L5
+    check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
+    move-result-object p1
+    invoke-static { p0, v5, v1, p1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+    goto :L6
   :L5
   .line 184
-    invoke-static { p0, p1, v1 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
+    check-cast p0, Landroid/widget/ListView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->rest(Landroid/widget/ListView;)V
+  :L6
   .line 185
     return v3
-  :L6
-  .line 187
-    if-eqz p3, :L7
-    return v1
   :L7
+  .line 187
+    invoke-static { p0, p1, v1, v5 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;II)V
   .line 188
-    if-eqz v4, :L8
-    return v1
+    return v3
   :L8
-  .line 189
-    if-ne v0, v3, :L9
+  .line 190
+    if-eqz p3, :L9
     return v1
   :L9
-  .line 190
-    sub-int/2addr v0, v3
-    invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
   .line 191
+    if-eqz v4, :L10
+    return v1
+  :L10
+  .line 192
+    if-ne v0, v3, :L11
+    return v1
+  :L11
+  .line 193
+    sub-int/2addr v0, v3
+    invoke-static { p0, p1, v0, v5 }, Lcom/innioasis/ipp/Loop;->toRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;II)V
+  .line 194
     return v3
 .end method
 
@@ -419,31 +445,6 @@
     return v0
 .end method
 
-.method private static shuffleRow(Landroid/widget/ListView;)Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-  .registers 3
-  .line 210
-    invoke-virtual { p0 }, Landroid/widget/ListView;->getParent()Landroid/view/ViewParent;
-    move-result-object p0
-  .line 211
-    instance-of v0, p0, Landroid/view/View;
-    const/4 v1, 0
-    if-nez v0, :L0
-    return-object v1
-  :L0
-  .line 212
-    check-cast p0, Landroid/view/View;
-    const v0, 2131362396
-    invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object p0
-  .line 213
-    instance-of v0, p0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-    if-eqz v0, :L1
-    move-object v1, p0
-    check-cast v1, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-  :L1
-    return-object v1
-.end method
-
 .method public static step(III)I
   .registers 4
   .line 73
@@ -499,23 +500,37 @@
     return v0
 .end method
 
-.method private static toRow(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
-  .registers 3
-  .line 195
+.method private static toRow(Landroid/view/View;Lcom/innioasis/music/adapter/MyBaseAdapter;II)V
+  .registers 4
+  .line 203
     invoke-static { }, Lcom/innioasis/ipp/Loop;->wrap()Z
-  .line 196
+  .line 204
     invoke-virtual { p1, p2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setPosition(I)V
-  .line 197
+  .line 205
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
-  .line 198
-    if-nez p2, :L0
-    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->rest(Landroid/widget/ListView;)V
-    goto :L1
+  .line 206
+    instance-of p1, p0, Landroidx/recyclerview/widget/RecyclerView;
+    if-eqz p1, :L0
+  .line 208
+    check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
+    add-int/lit8 p2, p2, 1
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
+    move-result-object p1
+    invoke-static { p0, p3, p2, p1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+    goto :L2
   :L0
-  .line 199
-    invoke-static { p0, p2 }, Lcom/innioasis/ipp/Head;->selectPinned(Landroid/widget/ListView;I)V
+  .line 209
+    if-nez p2, :L1
+  .line 210
+    check-cast p0, Landroid/widget/ListView;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Head;->rest(Landroid/widget/ListView;)V
+    goto :L2
   :L1
-  .line 200
+  .line 212
+    check-cast p0, Landroid/widget/ListView;
+    invoke-static { p0, p2 }, Lcom/innioasis/ipp/Head;->selectPinned(Landroid/widget/ListView;I)V
+  :L2
+  .line 214
     return-void
 .end method
 

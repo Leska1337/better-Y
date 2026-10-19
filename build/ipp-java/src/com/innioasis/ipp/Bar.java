@@ -109,6 +109,15 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.headColor = a.getResources().getColor(R.color.selected_text_color);
             return s;
         }
+        if (a instanceof com.innioasis.music.SongListActivity) {
+            // the Shuffle row is the list's row 0, the cursor the adapter's (SongRows)
+            Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white),
+                    new int[] {R.id.tv_song_index, R.id.tv_song_name, R.id.tv_artists}, R.id.right_arrow);
+            s.byAdapter = true;
+            return s;
+        }
         if (a instanceof com.innioasis.fm.MenuActivity) {
             // four levels through this one list, each its own adapter (ipp-fm)
             return new Spec(R.id.recycler, R.drawable.bg_fm_menu_sel, 0, ACCENT, WHITE,
@@ -291,6 +300,16 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     private static boolean caption(View v) {
         return v.getTag() == CAPTION;
+    }
+
+    /** An adapter of our own that says where the cursor is, as a row of the list. */
+    public interface Cursor {
+        int cursor();
+    }
+
+    /** The list carries a bar: its rows leave their backgrounds to it. */
+    static boolean on(RecyclerView r) {
+        return r != null && BARS.get(r) != null && live(r);
     }
 
     /** An adapter of our own that keeps the multi-select ticks. */
@@ -480,6 +499,12 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     private static final java.util.HashMap MULTI = new java.util.HashMap();
 
+    /** A jump by letter: the bar stands on the cursor's row once it is laid out, not flown there. */
+    static void stand(RecyclerView r) {
+        Bar b = r == null ? null : (Bar) BARS.get(r);
+        if (b != null) b.snap = true;
+    }
+
     /** Playlists turned back into a list in place: glide again, and the bar stands on the cursor. */
     public static boolean relist(RecyclerView r) {
         Bar b = r == null ? null : (Bar) BARS.get(r);
@@ -512,6 +537,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         if (spec.byAdapter) {
             RecyclerView r = (RecyclerView) rv.get();
             RecyclerView.Adapter a = r == null ? null : r.getAdapter();
+            if (a instanceof Cursor) return ((Cursor) a).cursor();
             if (a instanceof com.innioasis.music.adapter.rv.RVBaseAdapter) {
                 return ((com.innioasis.music.adapter.rv.RVBaseAdapter) a).getSelectPosition();
             }
@@ -796,6 +822,8 @@ public final class Bar extends RecyclerView.ItemDecoration
             PlGrid.listRow(row);
         } else if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
             ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
+        } else if (a instanceof com.innioasis.music.SongListActivity) {
+            SongRows.tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);
             // only an icon of ours carries a filter; a picture of a video does not

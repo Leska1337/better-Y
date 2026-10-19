@@ -96,6 +96,10 @@ public final class Rows {
                 return;
             }
             ThemeManager.INSTANCE.itemSetBackground(row, res, on);
+            // the text goes with the background: selected-colour text on a plain row is
+            // invisible on a light theme, the whole row blinked out
+            android.content.res.Resources rs = row.getResources();
+            blinkText(row, rs.getColor(on ? R.color.selected_text_color : R.color.white), on);
             View a = arrowOf(row);
             if (a == null) return;
             if (on) {
@@ -104,6 +108,27 @@ public final class Rows {
                 if (a.getVisibility() == View.VISIBLE) a.setVisibility(View.INVISIBLE);
             }
         } catch (Throwable t) {
+        }
+    }
+
+    /**
+     * Every text of the row in the theme's colour for that half of the blink, and the playing
+     * marker tinted after it. Not the disc strip, which keeps its own colour.
+     */
+    private static void blinkText(View v, int color, boolean on) {
+        if (v instanceof TextView) {
+            if (v.getId() != R.id.tv_disc_header) {
+                ThemeManager.INSTANCE.itemSetTextColor((TextView) v, color, on);
+            }
+            return;
+        }
+        if (!(v instanceof ViewGroup)) return;
+        ViewGroup g = (ViewGroup) v;
+        for (int i = 0; i < g.getChildCount(); i++) blinkText(g.getChildAt(i), color, on);
+        View m = g.findViewById(R.id.ipp_song_mark);
+        View n = g.findViewById(R.id.tv_song_index);
+        if (m instanceof ImageView && n instanceof TextView && m.getVisibility() == View.VISIBLE) {
+            Icons.menu((ImageView) m, ((TextView) n).getCurrentTextColor());
         }
     }
 
