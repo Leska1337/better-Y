@@ -20,9 +20,9 @@ import com.innioasis.y1.theme.ThemeManager;
 
 /**
  * The travelling highlight of the menu lists (main menu, Settings, Language, Wallpaper,
- * Equalizer, Videos, Search, video search, Playlists as a list, the FM menu): the list paints every row's
- * background itself and draws the selected one as a bar that slides from row to row, kept inside
- * the list's edges while the rows glide under it. On a jump (round the list's end) the rows and
+ * Equalizer, Videos, Search, video search, Playlists as a list, the FM menu, the queue): the list
+ * paints every row's background itself and draws the selected one as a bar that slides from row
+ * to row, kept inside the list's edges while the rows glide under it. On a jump (round the list's end) the rows and
  * the bar move at once, in the same frame. Ticked rows of a multi-select keep a still highlight
  * and the bar blinks. Only with "Enable animations"; off, the rows paint themselves as stock does.
  */
@@ -41,6 +41,9 @@ public final class Bar extends RecyclerView.ItemDecoration
         boolean byAdapter;
         /** A row ABOVE the list that the cursor stands on as position -1 (Search's input line). */
         int head;
+        /** That row's own look when no bar stands on it: its highlight, its plain text (0 = the rows'). */
+        int headSel = R.drawable.item_selected;
+        int headColor;
 
         Spec(int list, int selRes, int rowRes, int selColor, int rowColor, int[] texts, int arrow) {
             this.list = list;
@@ -97,6 +100,15 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.byAdapter = true;
             return s;
         }
+        if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
+            // the playing row pinned above the list is the cursor's position -1
+            Spec s = new Spec(R.id.recycler, R.drawable.item_setting_sel, 0, ACCENT, WHITE,
+                    new int[] {R.id.title, R.id.text, R.id.tv_item}, 0);
+            s.head = R.id.search_head;
+            s.headSel = R.drawable.item_setting_sel;
+            s.headColor = a.getResources().getColor(R.color.selected_text_color);
+            return s;
+        }
         if (a instanceof com.innioasis.fm.MenuActivity) {
             // four levels through this one list, each its own adapter (ipp-fm)
             return new Spec(R.id.recycler, R.drawable.bg_fm_menu_sel, 0, ACCENT, WHITE,
@@ -128,6 +140,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     private final View rowProbe;
     private final int selText;
     private final int rowText;
+    private final int headText;
     private float y = Float.NaN;
     /** A jump: the bar waits for the cursor's row to be laid out, then stands on it. */
     private boolean snap;
@@ -164,6 +177,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         selText = t.getCurrentTextColor();
         ThemeManager.INSTANCE.itemSetTextColor(t, spec.rowColor, false);
         rowText = t.getCurrentTextColor();
+        if (spec.headColor != 0) ThemeManager.INSTANCE.itemSetTextColor(t, spec.headColor, false);
+        headText = spec.headColor != 0 ? t.getCurrentTextColor() : rowText;
     }
 
     /**
@@ -244,7 +259,23 @@ public final class Bar extends RecyclerView.ItemDecoration
         return !(r.getLayoutManager() instanceof androidx.recyclerview.widget.GridLayoutManager);
     }
 
+    /**
+     * The tag of a list child that is not a row (the queue's group captions): the bar neither
+     * paints under it nor strips or tints it, and the cursor never stands on it.
+     */
+    public static final Object CAPTION = new Object();
+
+    private static boolean caption(View v) {
+        return v.getTag() == CAPTION;
+    }
+
+    /** An adapter of our own that keeps the multi-select ticks. */
+    public interface Ticks {
+        boolean ticked(int pos);
+    }
+
     private void clean(View row) {
+        if (caption(row)) return;
         WeakReference me = new WeakReference(this);
         ROWS.put(row, me);
         if (spec.bgs.length == 0) {
@@ -360,7 +391,7 @@ public final class Bar extends RecyclerView.ItemDecoration
      * The multi-select blink ({@code Rows.blink}): true when the row is a bar's, which then blinks
      * the bar and leaves the row's background alone. Videos hands in a child of the row.
      */
-    static boolean blink(View v, boolean on) {
+    public static boolean blink(View v, boolean on) {
         try {
             for (int i = 0; v != null && i < 3; i++) {
                 Bar b = of(v);
@@ -499,6 +530,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     private static boolean ticked(RecyclerView r, int pos) {
         RecyclerView.Adapter a = r.getAdapter();
         if (pos < 0) return false;
+        if (a instanceof Ticks) return ((Ticks) a).ticked(pos);
         java.util.List l = null;
         if (a instanceof com.innioasis.music.adapter.rv.RVBaseAdapter) {
             l = ((com.innioasis.music.adapter.rv.RVBaseAdapter) a).getMultiSelectIndexes();
@@ -596,7 +628,7 @@ public final class Bar extends RecyclerView.ItemDecoration
      */
     private void tint(View row, int h) {
         RecyclerView r = (RecyclerView) rv.get();
-        if (h <= 0 || r == null) return;
+        if (h <= 0 || r == null || caption(row)) return;
         int pos = r.getChildLayoutPosition(row);
         boolean on = claims(r, h, row.getTop() + row.getTranslationY(), pos == cursor());
         Object a = activity.get();
@@ -630,7 +662,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     private void tintHead(RecyclerView r, int h) {
         View hv = head();
         if (hv == null) return;
-        int want = claims(r, h, headTop(r, hv), onHead()) ? selText : rowText;
+        int want = claims(r, h, headTop(r, hv), onHead()) ? selText : headText;
         for (int i = 0; i < spec.texts.length; i++) {
             View tv = hv.findViewById(spec.texts[i]);
             if (tv instanceof TextView && ((TextView) tv).getCurrentTextColor() != want) {
@@ -669,10 +701,10 @@ public final class Bar extends RecyclerView.ItemDecoration
         View hv = (View) head.get();
         if (hv == null) return;
         boolean on = cursor() == -1;
-        ThemeManager.INSTANCE.itemSetBackground(hv, on ? R.drawable.item_selected : R.drawable.item_no_selected, on);
+        ThemeManager.INSTANCE.itemSetBackground(hv, on ? spec.headSel : R.drawable.item_no_selected, on);
         for (int i = 0; i < spec.texts.length; i++) {
             View tv = hv.findViewById(spec.texts[i]);
-            if (tv instanceof TextView) ((TextView) tv).setTextColor(on ? selText : rowText);
+            if (tv instanceof TextView) ((TextView) tv).setTextColor(on ? selText : headText);
         }
         headKey = NO_KEY;
         y = Float.NaN;
@@ -738,6 +770,8 @@ public final class Bar extends RecyclerView.ItemDecoration
     private static void followText(View row, Object a, int color) {
         if (a instanceof com.innioasis.music.PlaylistsActivity) {
             PlGrid.listRow(row);
+        } else if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
+            ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);
             // only an icon of ours carries a filter; a picture of a video does not
@@ -752,7 +786,9 @@ public final class Bar extends RecyclerView.ItemDecoration
         View hv = onHead() ? head() : null;
         if (hv != null) return hv.getHeight();
         View v = cursorRow(r);
-        if (v == null && r.getChildCount() > 0) v = r.getChildAt(0);
+        for (int i = 0; v == null && i < r.getChildCount(); i++) {
+            if (!caption(r.getChildAt(i))) v = r.getChildAt(i);
+        }
         return v == null ? 0 : v.getHeight();
     }
 
@@ -807,6 +843,7 @@ public final class Bar extends RecyclerView.ItemDecoration
             int cur = cursor();
             for (int i = 0; i < n; i++) {
                 View v = r.getChildAt(i);
+                if (caption(v)) continue;
                 int p = r.getChildLayoutPosition(v);
                 // a ticked row keeps stock's still highlight; the cursor's own is the bar
                 Drawable d = p != cur && ticked(r, p) ? selBg : rowBg;

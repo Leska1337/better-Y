@@ -17,13 +17,13 @@
 
 .method constructor <init>(Ljava/util/List;Ljava/util/UUID;)V
   .registers 3
-  .line 1360
+  .line 1368
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1361
+  .line 1369
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;->songs:Ljava/util/List;
-  .line 1362
+  .line 1370
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;->id:Ljava/util/UUID;
-  .line 1363
+  .line 1371
     return-void
 .end method
 
@@ -31,22 +31,22 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 1368
+  .line 1376
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
-  .line 1369
+  .line 1377
     if-eqz v0, :L1
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;->songs:Ljava/util/List;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppQueueActivity$AddTask;->id:Ljava/util/UUID;
     invoke-virtual { v0, v1, v2 }, Lcom/innioasis/y1/database/Y1Repository;->addToPlayList(Ljava/util/List;Ljava/util/UUID;)V
   :L1
-  .line 1371
+  .line 1379
     goto :L3
   :L2
-  .line 1370
+  .line 1378
     move-exception v0
   :L3
-  .line 1372
+  .line 1380
     return-void
 .end method
