@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..468ce083 100644
+index 01b1f730..eab23a52 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..468ce083 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100233
++  versionCode: 10100234
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -19990,7 +19990,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..a22bcec7 100644
+index 71fe29d0..3bedd918 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20939,7 +20939,7 @@ index 71fe29d0..a22bcec7 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev233</string>
++    <string name="ipp_version">v1.1.0-dev234</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -63364,7 +63364,7 @@ index 4a99a22f..0969406f 100644
      move-object v0, p0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
-index cdc50c54..29234a6c 100644
+index cdc50c54..aae80378 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
 @@ -220,6 +220,10 @@
@@ -63378,7 +63378,18 @@ index cdc50c54..29234a6c 100644
      .line 51
      iget-object p2, p0, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->this$0:Lcom/innioasis/y1/activity/WallpaperListActivity;
  
-@@ -248,6 +252,9 @@
+@@ -230,7 +234,9 @@
+ 
+     invoke-static {p1, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-static {p1}, Lcom/innioasis/y1/utils/view/TextViewUtilsKt;->enableMarquee(Landroid/widget/TextView;)V
++    # ipp: Scroll directly, as in Settings: enableMarquee's setSingleLine re-lays the window out on
++    # every bind. One line and the ellipsis are the layout's (item_setting.xml).
++    invoke-static {p1}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     goto :goto_1
+ 
+@@ -248,12 +254,15 @@
  
      invoke-virtual {p2, p3, v0, v0}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -63388,6 +63399,13 @@ index cdc50c54..29234a6c 100644
      .line 55
      iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemSettingBinding;->title:Landroid/widget/TextView;
  
+     invoke-static {p1, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-static {p1}, Lcom/innioasis/y1/utils/view/TextViewUtilsKt;->disableMarquee(Landroid/widget/TextView;)V
++    invoke-static {p1}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     :goto_1
+     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 index 981585c3..e963309e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
