@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c1bc9471 100644
+index 01b1f730..38747153 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..c1bc9471 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100250
++  versionCode: 10100251
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -726,9 +726,18 @@ index 7bfa38ba..e1fd92df 100644
 +    <View android:layout_width="fill_parent" android:layout_height="1.0px" />
  </LinearLayout>
 diff --git a/build/src/res/layout/item_book_library.xml b/build/src/res/layout/item_book_library.xml
-index 47fb6a5a..755be867 100644
+index 47fb6a5a..aa2fad0b 100644
 --- a/build/src/res/layout/item_book_library.xml
 +++ b/build/src/res/layout/item_book_library.xml
+@@ -2,7 +2,7 @@
+ <LinearLayout android:orientation="horizontal" android:id="@id/layout" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+     <LinearLayout android:orientation="vertical" android:padding="10.0dip" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0">
+-        <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="6.0dip" android:maxLines="1" android:singleLine="true" />
++        <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="6.0dip" android:maxLines="1" android:singleLine="true" />
+         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content">
+             <TextView android:textSize="16.0sp" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/book_progress" />
+             <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/progress" android:layout_width="wrap_content" android:layout_height="wrap_content" />
 @@ -10,5 +10,12 @@
              <TextView android:textSize="16.0sp" android:textColor="@color/white" android:id="@id/time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
          </LinearLayout>
@@ -756,6 +765,19 @@ index 78a5c221..b572eebe 100644
      <ImageView android:id="@id/iv_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="fill_parent" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
      <TextView android:textSize="20.0sp" android:textColor="@color/white" android:layout_gravity="end|center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="10.0dip" />
  </LinearLayout>
+diff --git a/build/src/res/layout/item_book_search.xml b/build/src/res/layout/item_book_search.xml
+index e3298a8b..2302184d 100644
+--- a/build/src/res/layout/item_book_search.xml
++++ b/build/src/res/layout/item_book_search.xml
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <LinearLayout android:orientation="vertical" android:id="@id/layout" android:padding="10.0dip" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/name" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="6.0dip" android:maxLines="1" android:singleLine="true" />
++    <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="6.0dip" android:maxLines="1" android:singleLine="true" />
+     <LinearLayout android:layout_width="fill_parent" android:layout_height="wrap_content">
+         <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/size" android:layout_width="wrap_content" android:layout_height="wrap_content" />
+         <TextView android:textSize="18.0sp" android:textColor="@color/white" android:id="@id/time" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="20.0dip" android:layout_marginEnd="10.0dip" />
 diff --git a/build/src/res/layout/item_eq.xml b/build/src/res/layout/item_eq.xml
 index ceb7695d..252a74ff 100644
 --- a/build/src/res/layout/item_eq.xml
@@ -1015,7 +1037,7 @@ index 60b91724..d8e6db23 100644
 +    </RelativeLayout>
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/item_video.xml b/build/src/res/layout/item_video.xml
-index f543a231..2778d8e7 100644
+index f543a231..ad902ebc 100644
 --- a/build/src/res/layout/item_video.xml
 +++ b/build/src/res/layout/item_video.xml
 @@ -2,15 +2,27 @@
@@ -1027,7 +1049,7 @@ index f543a231..2778d8e7 100644
 -        <LinearLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
 -            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/video_name" android:layout_width="400.0dip" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:maxLines="1" />
 +        <LinearLayout android:orientation="vertical" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_weight="1.0" android:layout_marginEnd="45.0dip">
-+            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/video_name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:maxLines="1" />
++            <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/video_name" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginBottom="4.0dip" android:singleLine="true" android:maxLines="1" />
              <TextView android:textSize="20.0sp" android:textColor="@color/white" android:id="@id/video_time" android:layout_width="wrap_content" android:layout_height="wrap_content" />
          </LinearLayout>
      </LinearLayout>
@@ -1047,7 +1069,7 @@ index f543a231..2778d8e7 100644
 +         arrow is as tall; both names end short of it. -->
 +    <LinearLayout android:gravity="center" android:orientation="horizontal" android:id="@id/file_layout" android:layout_width="fill_parent" android:layout_height="45.0dip">
 +        <ImageView android:id="@id/file_img" android:padding="6.0dip" android:visibility="invisible" android:layout_width="40.0dip" android:layout_height="40.0dip" android:adjustViewBounds="true" android:layout_marginStart="10.0dip" android:layout_marginEnd="0.0dip" />
-+        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="45.0dip" />
++        <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/file_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:maxLines="1" android:layout_weight="1.0" android:layout_marginStart="10.0dip" android:layout_marginEnd="45.0dip" />
      </LinearLayout>
 -    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="30.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
 +    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="45.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
@@ -19990,7 +20012,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b213f6fe 100644
+index 71fe29d0..6dc83ce0 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20939,7 +20961,7 @@ index 71fe29d0..b213f6fe 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev250</string>
++    <string name="ipp_version">v1.1.0-dev251</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -62063,6 +62085,30 @@ index 0bfdbeec..0c11ab93 100644
 +
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
+index 3c10a113..e9972766 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity$initRecycler$1.smali
+@@ -134,7 +134,8 @@
+ 
+     invoke-static {p2, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/MainActivity$initRecycler$1;->makeItMarquee(Landroid/widget/TextView;)V
++    # ipp: the mod's marquee, not the platform's: no setSingleLine per bind (item_main declares it)
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     .line 445
+     sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -207,7 +208,8 @@
+ 
+     invoke-static {p2, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p0, p2}, Lcom/innioasis/y1/activity/MainActivity$initRecycler$1;->makeItNormal(Landroid/widget/TextView;)V
++    # ipp: see rowText above
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     .line 455
+     sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 index a9542df1..0b78d71f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
@@ -71033,33 +71079,32 @@ index beb88ad2..d2e05a12 100644
      invoke-virtual {v3}, Ljava/io/File;->isDirectory()Z
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/view/TextViewUtilsKt.smali b/build/src/smali_classes2/com/innioasis/y1/utils/view/TextViewUtilsKt.smali
-index 222d17e2..f7ad7738 100644
+index 222d17e2..1103d0d9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/view/TextViewUtilsKt.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/view/TextViewUtilsKt.smali
-@@ -33,15 +33,18 @@
+@@ -33,15 +33,14 @@
  
      invoke-static {p0, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
 -    const/4 v0, 0x1
+-
+-    .line 28
+-    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
+-
 +    # ipp: the mod's own marquee (Scroll) instead of the platform's. setSelected(false) FIRST,
 +    # while the ellipsize may still be MARQUEE -- TextView only stops its Marquee from in there.
 +    # The horizontal scrolling is deliberately left on: Scroll keeps a flag saying it set it.
-+    const/4 v0, 0x0
++    # No setSingleLine here: item_video.xml declares it, and the call asks a layout every bind.
+     const/4 v0, 0x0
  
-     .line 28
--    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
-+    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSelected(Z)V
- 
--    const/4 v0, 0x0
-+    const/4 v0, 0x1
- 
-     .line 29
+-    .line 29
 -    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setHorizontallyScrolling(Z)V
-+    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
++    .line 28
++    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSelected(Z)V
  
      .line 30
      sget-object v1, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
-@@ -49,10 +52,7 @@
+@@ -49,10 +48,7 @@
      invoke-virtual {p0, v1}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
  
      .line 31
@@ -71071,16 +71116,19 @@ index 222d17e2..f7ad7738 100644
  
      return-void
  .end method
-@@ -64,6 +64,8 @@
+@@ -64,32 +60,16 @@
  
      invoke-static {p0, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
 +    # ipp: the row under the cursor runs the mod's marquee. Gone with the platform's: the MARQUEE
 +    # ellipsize, the repeat limit, focusability, setSelected. The text is already on the view.
++    # Single line is item_video.xml's; setHorizontallyScrolling has an early-out of its own.
      const/4 v0, 0x1
  
-     .line 11
-@@ -73,23 +75,7 @@
+-    .line 11
+-    invoke-virtual {p0, v0}, Landroid/widget/TextView;->setSingleLine(Z)V
+-
+     .line 13
      invoke-virtual {p0, v0}, Landroid/widget/TextView;->setHorizontallyScrolling(Z)V
  
      .line 15
@@ -71409,10 +71457,10 @@ index a8dc40f3..a259d93b 100644
      invoke-virtual {p0}, Lcom/innioasis/y1_eBook/base/BaseActivity;->getApplicationContext()Landroid/content/Context;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
-index 858b0ba9..73d098be 100644
+index 858b0ba9..e823cf25 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1.smali
-@@ -326,6 +326,11 @@
+@@ -326,17 +326,17 @@
  
      invoke-virtual {p2, p3, v0, v6}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -71424,7 +71472,21 @@ index 858b0ba9..73d098be 100644
      .line 58
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
  
-@@ -388,6 +393,10 @@
+-    sget-object p3, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p2, p3}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    .line 59
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
+-
+-    invoke-virtual {p1, v6}, Landroid/widget/TextView;->setSelected(Z)V
++    # ipp: the mod's marquee (Scroll) instead of the platform's, which drops the ellipsis the
++    # moment the row is selected and asks a layout on every bind
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     goto :goto_1
+ 
+@@ -388,17 +388,15 @@
  
      invoke-virtual {p2, p3, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -71435,6 +71497,19 @@ index 858b0ba9..73d098be 100644
      .line 67
      iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
  
+-    sget-object p3, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+-
+-    invoke-virtual {p2, p3}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    .line 68
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->name:Landroid/widget/TextView;
+-
+-    invoke-virtual {p1, v3}, Landroid/widget/TextView;->setSelected(Z)V
++    # ipp: see rowText above
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     :goto_1
+     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 index 27f20fbd..b9de7b12 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
@@ -71585,40 +71660,67 @@ index 27f20fbd..b9de7b12 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833eac..63d803d2 100644
+index b6833eac..fb5411b9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-@@ -275,6 +275,16 @@
+@@ -275,17 +275,22 @@
  
      invoke-virtual {p2, v1, v0, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
+-    .line 185
+-    iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+-
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->MARQUEE:Landroid/text/TextUtils$TruncateAt;
 +    # ipp: same defect as the Library rows -- the row is wrap_content and a theme's
 +    # itemSelectedBackground is a 640x91 bitmap, whose intrinsic height becomes the row's minimum.
 +    # Here it showed as the list creeping: RecyclerView scrolls by row, and one row taller than
 +    # the rest leaves a few pixels over on every step.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
-+
+ 
+-    invoke-virtual {p2, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
 +    # ipp: the size and the date were @color/white while the name went through ThemeManager --
 +    # they take whatever the name became. After the name is painted, and in both branches.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
-+
-     .line 185
-     iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
  
-@@ -314,6 +324,12 @@
+-    .line 186
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
++    .line 185
++    iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+ 
+-    invoke-virtual {p1, v3}, Landroid/widget/TextView;->setSelected(Z)V
++    # ipp: the mod's marquee (Scroll) instead of the platform's, which drops the ellipsis the
++    # moment the row is selected and asks a layout on every bind
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowText(Landroid/widget/TextView;)V
+ 
+     goto :goto_0
+ 
+@@ -314,17 +319,17 @@
  
      invoke-virtual {p2, v1, v3, v3}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
+-    .line 191
+-    iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
 +    # ipp: the unselected state too -- rows are recycled.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
-+
+ 
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
 +    # ipp: the unselected half of the same thing.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
-+
-     .line 191
-     iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
  
-@@ -635,6 +651,30 @@
+-    invoke-virtual {p2, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
+-
+-    .line 192
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
++    .line 191
++    iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+ 
+-    invoke-virtual {p1, v3}, Landroid/widget/TextView;->setSelected(Z)V
++    # ipp: see rowText above
++    invoke-static {p2}, Lcom/innioasis/ipp/Scroll;->rowPlain(Landroid/widget/TextView;)V
+ 
+     :goto_0
+     return-void
+@@ -635,6 +640,30 @@
  
      if-gez p1, :cond_1
  
@@ -71649,7 +71751,7 @@ index b6833eac..63d803d2 100644
      .line 130
      invoke-virtual {p0, v1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->setMark(I)V
  
-@@ -688,6 +728,18 @@
+@@ -688,6 +717,18 @@
  
      if-lt p1, v0, :cond_3
  
