@@ -26,6 +26,8 @@
 
 .field private static box:[I
 
+.field static volatile dirty:Z
+
 .field private static foundBm:Landroid/graphics/Bitmap;
 
 .field private static foundColor:I
@@ -70,6 +72,52 @@
   :L4
   .line 55
     const v0, -7564110
+    return v0
+.end method
+
+.method static busy()Z
+  .catchall { :L0 .. :L2 } :L4
+  .registers 4
+  .line 361
+    const/4 v0, 0
+  :L0
+    invoke-static { }, Lcom/innioasis/ipp/Open;->screen()Landroid/app/Activity;
+    move-result-object v1
+  .line 362
+    const/4 v2, 1
+    if-eqz v1, :L1
+    invoke-virtual { v1 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
+    move-result-object v1
+    invoke-virtual { v1 }, Ljava/lang/Class;->getName()Ljava/lang/String;
+    move-result-object v1
+    const-string v3, "com.innioasis.fm."
+    invoke-virtual { v1, v3 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
+    move-result v1
+    if-eqz v1, :L1
+    return v2
+  :L1
+  .line 363
+    sget-object v1, Lcom/innioasis/y1/utils/Static;->INSTANCE:Lcom/innioasis/y1/utils/Static;
+    invoke-virtual { v1 }, Lcom/innioasis/y1/utils/Static;->getPlayValue()Landroidx/lifecycle/LiveData;
+    move-result-object v1
+    invoke-virtual { v1 }, Landroidx/lifecycle/LiveData;->getValue()Ljava/lang/Object;
+    move-result-object v1
+  .line 364
+    instance-of v3, v1, Ljava/lang/Integer;
+    if-eqz v3, :L3
+    check-cast v1, Ljava/lang/Integer;
+    invoke-virtual { v1 }, Ljava/lang/Integer;->intValue()I
+    move-result v1
+  :L2
+    const/4 v3, 4
+    if-ne v1, v3, :L3
+    const/4 v0, 1
+  :L3
+    return v0
+  :L4
+  .line 365
+    move-exception v1
+  .line 366
     return v0
 .end method
 
@@ -592,6 +640,51 @@
     return v0
 .end method
 
+.method public static reopen()V
+  .catchall { :L1 .. :L4 } :L5
+  .registers 3
+  .line 348
+    sget-boolean v0, Lcom/innioasis/ipp/Fm;->dirty:Z
+    if-nez v0, :L0
+    return-void
+  :L0
+  .line 349
+    const/4 v0, 0
+    sput-boolean v0, Lcom/innioasis/ipp/Fm;->dirty:Z
+  :L1
+  .line 351
+    invoke-static { }, Lcom/mediatek/FMRadio/FMRadioNative;->closedev()Z
+  .line 352
+    invoke-static { }, Lcom/mediatek/FMRadio/FMRadioNative;->opendev()Z
+    move-result v0
+  .line 353
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v2, "fm: /dev/fm reopened after a child process, "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    if-eqz v0, :L2
+    const-string v0, "ok"
+    goto :L3
+  :L2
+    const-string v0, "FAILED"
+  :L3
+    invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v0
+    invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
+  :L4
+  .line 355
+    goto :L6
+  :L5
+  .line 354
+    move-exception v0
+  :L6
+  .line 356
+    return-void
+.end method
+
 .method public static ruler(Landroid/widget/HorizontalScrollView;Lcom/mediatek/view/FmView;F)Z
   .catchall { :L0 .. :L2 } :L3
   .registers 5
@@ -841,7 +934,7 @@
 .method private static window(Landroid/view/View;)[I
   .catchall { :L0 .. :L4 } :L5
   .registers 4
-  .line 341
+  .line 373
     const/4 v0, 0
     if-eqz p0, :L6
   :L0
@@ -851,27 +944,27 @@
     if-ne v1, v2, :L1
     goto :L6
   :L1
-  .line 344
+  .line 376
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 345
+  .line 377
     instance-of v1, p0, Landroid/widget/HorizontalScrollView;
     if-nez v1, :L2
     return-object v0
   :L2
-  .line 346
+  .line 378
     check-cast p0, Landroid/widget/HorizontalScrollView;
-  .line 347
+  .line 379
     invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getWidth()I
     move-result v1
-  .line 348
+  .line 380
     if-gtz v1, :L3
     return-object v0
   :L3
-  .line 349
+  .line 381
     invoke-virtual { p0 }, Landroid/widget/HorizontalScrollView;->getScrollX()I
     move-result p0
-  .line 350
+  .line 382
     sub-int v2, p0, v1
     mul-int/lit8 v1, v1, 2
     add-int/2addr p0, v1
@@ -880,11 +973,11 @@
   :L4
     return-object p0
   :L5
-  .line 351
+  .line 383
     move-exception p0
-  .line 352
+  .line 384
     return-object v0
   :L6
-  .line 342
+  .line 374
     return-object v0
 .end method

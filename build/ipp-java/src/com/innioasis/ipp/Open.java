@@ -40,6 +40,11 @@ public final class Open {
         return keyAt;
     }
 
+    /** The screen opened last. */
+    static Activity screen() {
+        return screen;
+    }
+
     /** Top of {@code BaseActivity.onCreate}: nothing of the window may be touched yet. */
     public static void open(Activity a) {
         try {

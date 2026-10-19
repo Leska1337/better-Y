@@ -335,6 +335,38 @@ public final class Fm {
         return w == null ? 0 : Math.max(0, Math.min(last, (w[0] - TICK) / TICK - 1));
     }
 
+    /** A process was started from the app since {@code /dev/fm} was last (re)opened. */
+    static volatile boolean dirty;
+
+    /**
+     * In {@code FmRadioService.powerUpFM}, right before the native power-up. A child process
+     * closes its inherited {@code /dev/fm}, and the driver's state is spoilt for the next
+     * power-up: slow, then the HAL's I2S setup fails and the chip answers nothing. Closing and
+     * opening the device again gives a clean one.
+     */
+    public static void reopen() {
+        if (!dirty) return;
+        dirty = false;
+        try {
+            com.mediatek.FMRadio.FMRadioNative.closedev();
+            boolean ok = com.mediatek.FMRadio.FMRadioNative.opendev();
+            Diag.note("fm: /dev/fm reopened after a child process, " + (ok ? "ok" : "FAILED"));
+        } catch (Throwable t) {
+        }
+    }
+
+    /** FM on screen or playing: no process may be started from the app then (Panel.exec). */
+    static boolean busy() {
+        try {
+            android.app.Activity a = Open.screen();
+            if (a != null && a.getClass().getName().startsWith("com.innioasis.fm.")) return true;
+            Object v = com.innioasis.y1.utils.Static.INSTANCE.getPlayValue().getValue();
+            return v instanceof Integer && ((Integer) v).intValue() == 4;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     /** In the ruler's x: the window plus a window each side. */
     private static int[] window(android.view.View ruler) {
         try {

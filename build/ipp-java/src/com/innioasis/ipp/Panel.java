@@ -108,13 +108,20 @@ public final class Panel {
         }
     }
 
-    /** Output capped at {@code cap} bytes; a refusal's text is returned as the output. */
+    /**
+     * Output capped at {@code cap} bytes; a refusal's text is returned as the output. Never while
+     * FM is up: the child closes the inherited {@code /dev/fm}, the driver powers the chip down
+     * behind the FM service, and the radio stays silent until Pause and Play. Otherwise the next
+     * power-up reopens the device first (Fm.reopen).
+     */
     static String exec(String[] cmd, int cap) {
+        if (Fm.busy()) return "(skipped: FM radio is on, a process started now silences it)\n";
         Process p = null;
         InputStream in = null;
         try {
             ProcessBuilder pb = new ProcessBuilder(cmd);
             pb.redirectErrorStream(true);
+            Fm.dirty = true;
             p = pb.start();
             in = p.getInputStream();
             byte[] buf = new byte[8192];

@@ -168,113 +168,122 @@
 .end method
 
 .method static exec([Ljava/lang/String;I)Ljava/lang/String;
-  .catchall { :L0 .. :L1 } :L18
-  .catchall { :L1 .. :L6 } :L17
-  .catchall { :L7 .. :L8 } :L9
-  .catchall { :L12 .. :L13 } :L14
-  .catchall { :L19 .. :L20 } :L31
-  .catchall { :L21 .. :L22 } :L23
-  .catchall { :L26 .. :L27 } :L28
-  .catchall { :L32 .. :L33 } :L34
-  .catchall { :L37 .. :L38 } :L39
+  .catchall { :L1 .. :L2 } :L19
+  .catchall { :L2 .. :L7 } :L18
+  .catchall { :L8 .. :L9 } :L10
+  .catchall { :L13 .. :L14 } :L15
+  .catchall { :L20 .. :L21 } :L32
+  .catchall { :L22 .. :L23 } :L24
+  .catchall { :L27 .. :L28 } :L29
+  .catchall { :L33 .. :L34 } :L35
+  .catchall { :L38 .. :L39 } :L40
   .registers 11
-  .line 113
-    nop
-  .line 114
-    nop
-  .line 116
-    const/4 v0, 0
+  .line 118
+    invoke-static { }, Lcom/innioasis/ipp/Fm;->busy()Z
+    move-result v0
+    if-eqz v0, :L0
+    const-string p0, "(skipped: FM radio is on, a process started now silences it)\n"
+    return-object p0
   :L0
+  .line 119
+    nop
+  .line 120
+    nop
+  .line 122
+    const/4 v0, 0
+  :L1
     new-instance v1, Ljava/lang/ProcessBuilder;
     invoke-direct { v1, p0 }, Ljava/lang/ProcessBuilder;-><init>([Ljava/lang/String;)V
-  .line 117
+  .line 123
     const/4 p0, 1
     invoke-virtual { v1, p0 }, Ljava/lang/ProcessBuilder;->redirectErrorStream(Z)Ljava/lang/ProcessBuilder;
-  .line 118
+  .line 124
+    sput-boolean p0, Lcom/innioasis/ipp/Fm;->dirty:Z
+  .line 125
     invoke-virtual { v1 }, Ljava/lang/ProcessBuilder;->start()Ljava/lang/Process;
     move-result-object p0
-  :L1
-  .line 119
+  :L2
+  .line 126
     invoke-virtual { p0 }, Ljava/lang/Process;->getInputStream()Ljava/io/InputStream;
     move-result-object v0
-  .line 120
+  .line 127
     const/16 v1, 8192
     new-array v2, v1, [B
-  .line 121
+  .line 128
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3, v1 }, Ljava/lang/StringBuilder;-><init>(I)V
-  .line 122
+  .line 129
     const/4 v1, 0
     const/4 v4, 0
-  :L2
-  .line 123
+  :L3
+  .line 130
     invoke-virtual { v0, v2 }, Ljava/io/InputStream;->read([B)I
     move-result v5
-    if-lez v5, :L5
-  .line 124
-    if-lt v4, p1, :L3
-    goto :L5
-  :L3
-  .line 125
-    add-int v6, v4, v5
-    if-le v6, p1, :L4
-    sub-int v5, p1, v4
+    if-lez v5, :L6
+  .line 131
+    if-lt v4, p1, :L4
+    goto :L6
   :L4
-  .line 126
+  .line 132
+    add-int v6, v4, v5
+    if-le v6, p1, :L5
+    sub-int v5, p1, v4
+  :L5
+  .line 133
     new-instance v6, Ljava/lang/String;
     const-string v7, "UTF-8"
     invoke-direct { v6, v2, v1, v5, v7 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
     invoke-virtual { v3, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 127
+  .line 134
     add-int/2addr v4, v5
-    goto :L2
-  :L5
-  .line 129
+    goto :L3
+  :L6
+  .line 136
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p1
-  :L6
-  .line 134
-    if-eqz v0, :L10
   :L7
-    invoke-virtual { v0 }, Ljava/io/InputStream;->close()V
+  .line 141
+    if-eqz v0, :L11
   :L8
-    goto :L10
+    invoke-virtual { v0 }, Ljava/io/InputStream;->close()V
   :L9
-  .line 135
-    move-exception v0
     goto :L11
   :L10
-  .line 136
-    nop
+  .line 142
+    move-exception v0
+    goto :L12
   :L11
-  .line 138
-    if-eqz p0, :L15
+  .line 143
+    nop
   :L12
-    invoke-virtual { p0 }, Ljava/lang/Process;->destroy()V
+  .line 145
+    if-eqz p0, :L16
   :L13
-    goto :L15
+    invoke-virtual { p0 }, Ljava/lang/Process;->destroy()V
   :L14
-  .line 139
-    move-exception p0
     goto :L16
   :L15
-  .line 140
-    nop
+  .line 146
+    move-exception p0
+    goto :L17
   :L16
-  .line 129
-    return-object p1
+  .line 147
+    nop
   :L17
-  .line 130
+  .line 136
+    return-object p1
+  :L18
+  .line 137
     move-exception p1
     move-object v8, v0
     move-object v0, p0
     move-object p0, v8
-    goto :L19
-  :L18
+    goto :L20
+  :L19
     move-exception p1
     move-object p0, v0
-  :L19
-  .line 131
+  :L20
+  .line 138
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "(failed: "
@@ -287,74 +296,74 @@
     move-result-object p1
     invoke-virtual { p1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p1
-  :L20
-  .line 134
-    if-eqz p0, :L24
   :L21
-    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
+  .line 141
+    if-eqz p0, :L25
   :L22
-    goto :L24
+    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
   :L23
-  .line 135
-    move-exception p0
     goto :L25
   :L24
-  .line 136
-    nop
-  :L25
-  .line 138
-    if-eqz v0, :L29
-  :L26
-    invoke-virtual { v0 }, Ljava/lang/Process;->destroy()V
-  :L27
-    goto :L29
-  :L28
-  .line 139
+  .line 142
     move-exception p0
+    goto :L26
+  :L25
+  .line 143
+    nop
+  :L26
+  .line 145
+    if-eqz v0, :L30
+  :L27
+    invoke-virtual { v0 }, Ljava/lang/Process;->destroy()V
+  :L28
     goto :L30
   :L29
-  .line 140
-    nop
-  :L30
-  .line 131
-    return-object p1
-  :L31
-  .line 133
-    move-exception p1
-  .line 134
-    if-eqz p0, :L35
-  :L32
-    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
-  :L33
-    goto :L35
-  :L34
-  .line 135
+  .line 146
     move-exception p0
+    goto :L31
+  :L30
+  .line 147
+    nop
+  :L31
+  .line 138
+    return-object p1
+  :L32
+  .line 140
+    move-exception p1
+  .line 141
+    if-eqz p0, :L36
+  :L33
+    invoke-virtual { p0 }, Ljava/io/InputStream;->close()V
+  :L34
     goto :L36
   :L35
-  .line 136
-    nop
-  :L36
-  .line 138
-    if-eqz v0, :L40
-  :L37
-    invoke-virtual { v0 }, Ljava/lang/Process;->destroy()V
-  :L38
-    goto :L40
-  :L39
-  .line 139
+  .line 142
     move-exception p0
+    goto :L37
+  :L36
+  .line 143
+    nop
+  :L37
+  .line 145
+    if-eqz v0, :L41
+  :L38
+    invoke-virtual { v0 }, Ljava/lang/Process;->destroy()V
+  :L39
     goto :L41
   :L40
-  .line 140
-    nop
-  :L41
-  .line 141
-    goto :L43
-  :L42
-    throw p1
-  :L43
+  .line 146
+    move-exception p0
     goto :L42
+  :L41
+  .line 147
+    nop
+  :L42
+  .line 148
+    goto :L44
+  :L43
+    throw p1
+  :L44
+    goto :L43
 .end method
 
 .method static logs()Ljava/io/File;

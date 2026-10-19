@@ -20,7 +20,7 @@ import com.innioasis.y1.theme.ThemeManager;
 
 /**
  * The travelling highlight of the menu lists (main menu, Settings, Language, Wallpaper,
- * Equalizer, Videos, Search, video search, Playlists as a list): the list paints every row's
+ * Equalizer, Videos, Search, video search, Playlists as a list, the FM menu): the list paints every row's
  * background itself and draws the selected one as a bar that slides from row to row, kept inside
  * the list's edges while the rows glide under it. On a jump (round the list's end) the rows and
  * the bar move at once, in the same frame. Ticked rows of a multi-select keep a still highlight
@@ -96,6 +96,11 @@ public final class Bar extends RecyclerView.ItemDecoration
             Spec s = plain(a, R.id.playlist, new int[] {R.id.tv_item});
             s.byAdapter = true;
             return s;
+        }
+        if (a instanceof com.innioasis.fm.MenuActivity) {
+            // four levels through this one list, each its own adapter (ipp-fm)
+            return new Spec(R.id.recycler, R.drawable.bg_fm_menu_sel, 0, ACCENT, WHITE,
+                    new int[] {R.id.tv_item, R.id.text}, R.id.iv_arrow);
         }
         return null;
     }
@@ -496,10 +501,21 @@ public final class Bar extends RecyclerView.ItemDecoration
      * flown to. Two wheel steps between frames are NOT that: they cut the glide short.
      */
     private void observe() {
+        RecyclerView r = (RecyclerView) rv.get();
+        Object ad = r == null ? null : r.getAdapter();
+        if (adapter.get() != ad) {
+            // another list in the same RecyclerView (the FM menu's levels): stand on its cursor
+            adapter = new WeakReference(ad);
+            y = Float.NaN;
+            snap = false;
+            lastPos = -1;
+        }
         int pos = cursor();
         if (lastPos >= 0 && Math.abs(pos - lastPos) > JUMP) snap = true;
         lastPos = pos;
     }
+
+    private WeakReference adapter = new WeakReference(null);
 
     /** The bar onto the cursor's row once that row is laid out; false while it is not yet. */
     private boolean settle(RecyclerView r, int h) {

@@ -155,6 +155,7 @@ public final class Diag {
         private static String lastLine;     // the newest line already in the ring
 
         static void request() {
+            if (Fm.busy()) return;                  // Panel.exec would refuse anyway
             synchronized (Gc.class) {
                 if (running) return;
                 running = true;
