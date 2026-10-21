@@ -12,9 +12,13 @@
 
 .field public art:[B
 
+.field public artNs:J
+
 .field public info:Lcom/innioasis/ipp/Meta$Info;
 
 .field public ok:Z
+
+.field public openNs:J
 
 .field public wanted:Z
 

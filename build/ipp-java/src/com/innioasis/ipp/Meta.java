@@ -33,6 +33,9 @@ public final class Meta {
         public byte[] art;              // only when it was asked for
         /** False when the read failed part way: its nulls then say nothing about the file. */
         public boolean ok;
+        /** What the read cost, ns: the open with every key, and the picture alone ("Cache library" log). */
+        public long openNs;
+        public long artNs;
     }
 
     /** The platform's 3 MB less a margin: reading a tag it could have read costs only a file open. */
@@ -70,6 +73,7 @@ public final class Meta {
         Info out = new Info();
         if (path == null) return out;
 
+        long t0 = System.nanoTime();
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
             r.setDataSource(path);
@@ -82,7 +86,9 @@ public final class Meta {
             out.disc = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DISC_NUMBER);
             out.year = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_YEAR);
             out.date = r.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
+            long t1 = System.nanoTime();
             if (wantArt) out.art = r.getEmbeddedPicture();
+            out.artNs = System.nanoTime() - t1;
             out.ok = true;
         } catch (Throwable t) {
         }
@@ -96,6 +102,7 @@ public final class Meta {
             id3(path, out, wantArt);
             out.ok = true;
         }
+        out.openNs = System.nanoTime() - t0 - out.artNs;
         return out;
     }
 

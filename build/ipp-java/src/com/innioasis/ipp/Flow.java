@@ -357,6 +357,30 @@ public final class Flow {
     }
 
     /**
+     * "Cache library": the slide straight from the picture's bytes the pass has just read, with no
+     * second open and no read-back of the big cover's JPEG. False leaves it to {@link #cacheSlide}.
+     */
+    public static boolean slideFrom(String path, byte[] raw) {
+        try {
+            if (raw == null || raw.length == 0) return false;
+            File f = FlowCache.file(path);
+            if (f == null) return false;
+            if (f.exists()) return true;
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(raw, 0, raw.length, o);
+            if (o.outWidth <= 0 || o.outHeight <= 0) return false;
+            o.inSampleSize = Art.sample(o.outWidth, o.outHeight, S, S);
+            o.inJustDecodeBounds = false;
+            Bitmap b = BitmapFactory.decodeByteArray(raw, 0, raw.length, o);
+            if (b == null) return false;
+            return FlowCache.write(path, Cover.square(b, S));
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /**
      * "Cache library": an album's Cover Flow cover, unless it is there already. False when it
      * should be there and is not — the pass then is not complete.
      */

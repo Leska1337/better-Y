@@ -28,26 +28,26 @@
 
 .method constructor <init>(ILjava/lang/String;I[ILjava/lang/String;)V
   .registers 6
-  .line 129
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 130
-    iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
-  .line 131
-    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
   .line 132
-    iput p3, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 133
-    iput-object p4, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->choices:[I
+    iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->type:I
   .line 134
-    iput-object p5, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
+    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->key:Ljava/lang/String;
   .line 135
+    iput p3, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->count:I
+  .line 136
+    iput-object p4, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->choices:[I
+  .line 137
+    iput-object p5, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->showIf:Ljava/lang/String;
+  .line 138
     return-void
 .end method
 
 .method in(Ljava/lang/String;)Lcom/innioasis/y1/activity/IppActivity$Item;
   .registers 2
-  .line 138
+  .line 141
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Item;->parent:Ljava/lang/String;
-  .line 139
+  .line 142
     return-object p0
 .end method

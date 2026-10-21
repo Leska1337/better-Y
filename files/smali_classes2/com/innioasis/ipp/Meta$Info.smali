@@ -16,6 +16,8 @@
 
 .field public art:[B
 
+.field public artNs:J
+
 .field public artist:Ljava/lang/String;
 
 .field public date:Ljava/lang/String;
@@ -25,6 +27,8 @@
 .field public genre:Ljava/lang/String;
 
 .field public ok:Z
+
+.field public openNs:J
 
 .field public title:Ljava/lang/String;
 

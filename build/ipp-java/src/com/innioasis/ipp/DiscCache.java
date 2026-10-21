@@ -34,6 +34,8 @@ public final class DiscCache {
         public byte[] art;            // the embedded picture, or null
         /** False when the file did not read: nothing in here is an answer then. */
         public boolean ok;
+        public long openNs;           // Meta.Info's, for the pass's log line
+        public long artNs;
     }
 
     /**
@@ -50,6 +52,8 @@ public final class DiscCache {
         info.art = null;
         if (tags) out.info = info;
         out.ok = info.ok;
+        out.openNs = info.openNs;
+        out.artNs = info.artNs;
         return out;
     }
 

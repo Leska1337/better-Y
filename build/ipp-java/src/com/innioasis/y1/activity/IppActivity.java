@@ -69,9 +69,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
@@ -1136,6 +1139,15 @@ public final class IppActivity extends BaseActivity {
             a.scanTick(label + "\n" + (v * 100 / total) + "%");
         }
 
+        /** Album thumbnails on the pool; each job ticks once. */
+        void runAlbums(List list) {
+            if (list.isEmpty()) return;
+            Blocks aq = Blocks.each(list.size());
+            AlbumWorker[] aw = new AlbumWorker[workers()];
+            for (int i = 0; i < aw.length; i++) aw[i] = new AlbumWorker(this, list, aq);
+            spread(aw);
+        }
+
         @Override
         public void run() {
             int done = 0;
@@ -1143,6 +1155,7 @@ public final class IppActivity extends BaseActivity {
             int unwritten = 0;
             long tAlbums = 0L, tSongs = 0L, tFlow = 0L;
             long heap = 0L;
+            Steps steps = new Steps();
             boolean covers = (mask & Pick.COVERS) != 0;
             boolean tags = (mask & Pick.TAGS) != 0;
             boolean flow = (mask & Pick.FLOW) != 0;
@@ -1199,6 +1212,10 @@ public final class IppActivity extends BaseActivity {
                 // Albums: the thumbnails. What each needs is decided HERE, so workers never touch
                 // the caches' lazy loading.
                 ArrayList jobs = new ArrayList();
+                // a thumbnail out of the tags is made by the song half from the picture it reads
+                // anyway; one from a cover file needs no song opened and is made up front
+                ArrayList early = new ArrayList();
+                HashMap fromSongs = new HashMap();      // representative path -> AlbumJob
                 for (int i = 0; i < m; i++) {
                     String key = (String) keys.get(i);
                     Song s = (Song) reps.get(key);
@@ -1213,13 +1230,18 @@ public final class IppActivity extends BaseActivity {
                     j.thumb = covers && CoverCache.peek(key) == null;
                     j.art = j.thumb && Art.thumbFromTags(key, path);
                     jobs.add(j);
+                    if (j.art) fromSongs.put(path, j);
+                    else early.add(j);
                     done++;
                 }
+                // Cover Flow's slides, too, from the picture the song half holds
+                HashSet slides = new HashSet();
+                if (flow) {
+                    for (int i = 0; i < m; i++) slides.add(((Song) reps.get(keys.get(i))).getPath());
+                }
+
                 long t0 = SystemClock.uptimeMillis();
-                Blocks aq = Blocks.each(jobs.size());
-                AlbumWorker[] aw = new AlbumWorker[workers()];
-                for (int i = 0; i < aw.length; i++) aw[i] = new AlbumWorker(this, jobs, aq);
-                spread(aw);
+                runAlbums(early);
                 tAlbums = SystemClock.uptimeMillis() - t0;
 
                 // Songs, the expensive half. A metadata read costs the file OPEN, so everything a
@@ -1235,7 +1257,7 @@ public final class IppActivity extends BaseActivity {
                     Blocks q = Blocks.folders(byPath);
                     SongWorker[] w = new SongWorker[workers()];
                     for (int i = 0; i < w.length; i++) {
-                        w[i] = new SongWorker(this, byPath, q, tags, covers);
+                        w[i] = new SongWorker(this, byPath, q, tags, covers, fromSongs, slides);
                     }
                     spread(w);
                     // what the Tags still hold until the commit: the pass's high-water mark
@@ -1244,6 +1266,8 @@ public final class IppActivity extends BaseActivity {
                     for (int i = 0; i < w.length; i++) {
                         unread += w[i].failed;
                         unwritten += w[i].unwritten;
+                        steps.add(w[i].steps);
+                        steps.cover(w[i].walk);
                     }
                     if (tags) {
                         for (int i = 0; i < w.length; i++) w[i].commit();
@@ -1252,7 +1276,18 @@ public final class IppActivity extends BaseActivity {
                 }
                 tSongs = SystemClock.uptimeMillis() - t0;
 
-                // Cover Flow's covers last: made from the covers the pass above has just cached
+                // what the song half could not do: its representative had nothing read this time
+                t0 = SystemClock.uptimeMillis();
+                ArrayList late = new ArrayList();
+                Iterator it = fromSongs.values().iterator();
+                while (it.hasNext()) {
+                    AlbumJob j = (AlbumJob) it.next();
+                    if (!j.done) late.add(j);
+                }
+                runAlbums(late);
+                tAlbums += SystemClock.uptimeMillis() - t0;
+
+                // Cover Flow: only slides the song half did not make, from the cached big covers
                 t0 = SystemClock.uptimeMillis();
                 if (flow) {
                     for (int i = 0; i < m; i++) {
@@ -1264,9 +1299,11 @@ public final class IppActivity extends BaseActivity {
 
                 // a pass that left anything out is not "already cached": the next press finishes it
                 if (unread == 0 && unwritten == 0) Albums.noteCached(a, n, stamp, mask);
-                Diag.note("cache library: albums " + tAlbums + " ms, songs " + tSongs
-                        + " ms, flow " + tFlow + " ms, heap " + (heap >> 20) + " MB; "
+                Diag.note("cache library: albums " + tAlbums + " ms (" + late.size() + " late), songs "
+                        + tSongs + " ms, flow " + tFlow + " ms, heap " + (heap >> 20) + " MB; "
                         + unread + " file(s) did not read, " + unwritten + " cover(s) not written");
+                Diag.note("cache library steps: " + steps.line());
+                Diag.note("cache library cover: " + steps.coverLine());
             } catch (Throwable t) {
             } finally {
                 // a pass that died half way still writes down what it learned
@@ -1280,6 +1317,13 @@ public final class IppActivity extends BaseActivity {
     // The pass is bound by file opens, so it runs a small pool. Safe by how the work is split, not
     // by locks: a worker takes whole FOLDERS (a cover walk's representative never crosses threads),
     // writes only its own keys, and its answers are committed on the pass thread afterwards.
+
+    /**
+     * The workers' nice value: below the main thread's, so the progress animation keeps its CPU on
+     * a dual-core chip. Not THREAD_PRIORITY_BACKGROUND — that moves the thread into the background
+     * cgroup, and binder hands the caller's priority on to mediaserver, which does the reading.
+     */
+    private static final int WORKER_PRIORITY = 5;
 
     /** One more than the cores: each spends much of its time waiting on the card. */
     private static int workers() {
@@ -1370,12 +1414,96 @@ public final class IppActivity extends BaseActivity {
         int to(int b) { return to[b]; }
     }
 
+    /**
+     * Where the song half's time went, summed over the workers (so above the wall time): the open
+     * with every tag, the picture, the big cover, the thumbnail, the slide — and the open per format.
+     */
+    static final class Steps {
+        long files, openNs, artNs, coverNs, thumbNs, slideNs;
+        final HashMap byExt = new HashMap();      // extension -> long[]{files, open ns}
+
+        void read(String path, DiscCache.Tags t) {
+            files++;
+            openNs += t.openNs;
+            artNs += t.artNs;
+            int dot = path.lastIndexOf('.');
+            String ext = dot < 0 ? "?" : path.substring(dot + 1).toLowerCase();
+            long[] e = (long[]) byExt.get(ext);
+            if (e == null) byExt.put(ext, e = new long[2]);
+            e[0]++;
+            e[1] += t.openNs;
+        }
+
+        // BigCover.cache's own breakdown, one Walk per worker
+        long embedded, external, none, sameBytes, verbatim, encoded, samePixels, own, coverFailed;
+        long externalNs, decodeNs, storeNs;
+
+        void cover(BigCover.Walk w) {
+            embedded += w.embedded;
+            external += w.external;
+            none += w.none;
+            sameBytes += w.sameBytes;
+            verbatim += w.verbatim;
+            encoded += w.encoded;
+            samePixels += w.samePixels;
+            own += w.own;
+            coverFailed += w.failed;
+            externalNs += w.externalNs;
+            decodeNs += w.decodeNs;
+            storeNs += w.storeNs;
+        }
+
+        String coverLine() {
+            return "picture from tags " + embedded + ", from a cover file " + external + ", none " + none
+                    + "; same bytes " + sameBytes + ", new album stored as is " + verbatim
+                    + ", re-encoded " + encoded + ", same pixels " + samePixels + ", own " + own
+                    + ", failed " + coverFailed + "; cover file read " + externalNs / 1000000L
+                    + " ms, decode " + decodeNs / 1000000L + " ms, encode+write " + storeNs / 1000000L + " ms";
+        }
+
+        void add(Steps s) {
+            files += s.files;
+            openNs += s.openNs;
+            artNs += s.artNs;
+            coverNs += s.coverNs;
+            thumbNs += s.thumbNs;
+            slideNs += s.slideNs;
+            Iterator it = s.byExt.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry en = (Map.Entry) it.next();
+                long[] v = (long[]) en.getValue();
+                long[] e = (long[]) byExt.get(en.getKey());
+                if (e == null) byExt.put(en.getKey(), e = new long[2]);
+                e[0] += v[0];
+                e[1] += v[1];
+            }
+        }
+
+        String line() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(files).append(" files, open ").append(openNs / 1000000L)
+                    .append(" ms, art ").append(artNs / 1000000L)
+                    .append(" ms, cover ").append(coverNs / 1000000L)
+                    .append(" ms, thumb ").append(thumbNs / 1000000L)
+                    .append(" ms, slide ").append(slideNs / 1000000L).append(" ms;");
+            Iterator it = byExt.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry en = (Map.Entry) it.next();
+                long[] v = (long[]) en.getValue();
+                sb.append(' ').append(en.getKey()).append(' ').append(v[0])
+                        .append(" x ").append(v[0] > 0 ? v[1] / v[0] / 1000000L : 0).append(" ms");
+            }
+            return sb.toString();
+        }
+    }
+
     /** One album's worth of work, and the answers coming back from the worker. */
     static final class AlbumJob {
         String key;
         String path;
         boolean thumb;       // build the 50px thumbnail
         boolean art;         // ... and it has to come out of the tags, not a cover file
+        boolean done;        // made by the song half; read after the join
     }
 
     /** Opens one album's representative and builds its thumbnail; writes no cache but the covers'. */
@@ -1391,6 +1519,7 @@ public final class IppActivity extends BaseActivity {
         }
 
         public void run() {
+            try { android.os.Process.setThreadPriority(WORKER_PRIORITY); } catch (Throwable t) { }
             int b;
             while ((b = q.take()) >= 0) {
                 for (int i = q.from(b); i < q.to(b); i++) {
@@ -1413,19 +1542,27 @@ public final class IppActivity extends BaseActivity {
         private final boolean covers;
         private final ArrayList paths = new ArrayList();
         private final ArrayList read = new ArrayList();
+        private final Map thumbs;          // representative path -> AlbumJob; read only
+        private final HashSet slides;      // Cover Flow's representatives; read only
         int failed;
         int unwritten;
+        final Steps steps = new Steps();
+        final BigCover.Walk walk = new BigCover.Walk();
 
-        SongWorker(CacheTask task, List byPath, Blocks q, boolean tags, boolean covers) {
+        SongWorker(CacheTask task, List byPath, Blocks q, boolean tags, boolean covers,
+                   Map thumbs, HashSet slides) {
             this.task = task;
             this.byPath = byPath;
             this.q = q;
             this.tags = tags;
             this.covers = covers;
+            this.thumbs = thumbs;
+            this.slides = slides;
         }
 
         public void run() {
-            BigCover.Walk w = new BigCover.Walk();
+            try { android.os.Process.setThreadPriority(WORKER_PRIORITY); } catch (Throwable t) { }
+            BigCover.Walk w = walk;
             int b;
             while ((b = q.take()) >= 0) {
                 for (int i = q.from(b); i < q.to(b); i++) {
@@ -1447,11 +1584,39 @@ public final class IppActivity extends BaseActivity {
             boolean wantArt = covers && BigCover.needs(path);
             if (!wantTags && !wantArt) return;          // nothing left to learn about it
             DiscCache.Tags t = DiscCache.read(path, wantTags, wantArt);
+            steps.read(path, t);
             if (!t.ok) {
                 failed++;                               // left unknown: read when it is next asked for
                 return;
             }
-            if (wantArt && !BigCover.cache(w, path, t.art)) unwritten++;
+            if (wantArt) {
+                long t0 = System.nanoTime();
+                boolean stored = BigCover.cache(w, path, t.art);
+                steps.coverNs += System.nanoTime() - t0;
+                if (!stored) {
+                    unwritten++;
+                } else {
+                    // the same picture, at the other two sizes: no second open, no read-back
+                    AlbumJob j = (AlbumJob) thumbs.get(path);
+                    if (j != null) {
+                        t0 = System.nanoTime();
+                        Art.hint(path, t.art);
+                        try {
+                            CoverCache.get(j.key, path);
+                        } finally {
+                            Art.hint(null, null);
+                        }
+                        j.done = true;
+                        steps.thumbNs += System.nanoTime() - t0;
+                        task.tick();
+                    }
+                    if (t.art != null && slides.contains(path)) {
+                        t0 = System.nanoTime();
+                        Flow.slideFrom(path, t.art);
+                        steps.slideNs += System.nanoTime() - t0;
+                    }
+                }
+            }
             // the answer is kept until the commit; a library of pictures does not fit the heap
             t.art = null;
             if (wantTags) {

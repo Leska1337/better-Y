@@ -306,6 +306,16 @@ public final class BigCover {
         private String folder;
         private byte[] raw;        // the representative's own file bytes, when read in this pass
         private Bitmap rep;        // decoded — only when a track's bytes actually differ
+        // the last cover file read, kept across folders: a folder.jpg above serves several
+        private String extPath;
+        private long extLen, extMod;
+        private byte[] extBytes;
+
+        // Where the time went, for the pass's log line. Counts by where the picture came from and
+        // which way it was settled; times in ns.
+        public long embedded, external, none;
+        public long sameBytes, sigOnDisk, verbatim, encoded, samePixels, own, failed;
+        public long externalNs, decodeNs, storeNs;
 
         /** Done with this folder: the representative is on disk. */
         public void done() {
@@ -355,11 +365,21 @@ public final class BigCover {
             if (w.folder != null && !w.folder.equals(folder)) w.done();
             w.folder = folder;
 
-            byte[] raw = embedded != null && embedded.length > 0 ? embedded : external(path);
-            if (raw == null || raw.length == 0) { noteSet(path, NONE); return true; }
+            byte[] raw;
+            if (embedded != null && embedded.length > 0) {
+                raw = embedded;
+                w.embedded++;
+            } else {
+                long t0 = System.nanoTime();
+                raw = external(w, path);
+                w.externalNs += System.nanoTime() - t0;
+                if (raw != null && raw.length > 0) w.external++;
+            }
+            if (raw == null || raw.length == 0) { w.none++; noteSet(path, NONE); return true; }
 
             // nearly every track: the same bytes as the representative, nothing decoded
             if (w.raw != null && Arrays.equals(w.raw, raw)) {
+                w.sameBytes++;
                 noteSet(path, SHARED);
                 return true;
             }
@@ -367,15 +387,20 @@ public final class BigCover {
             if (w.raw == null && w.rep == null) {
                 File had = file(folder);
                 if (had != null && had.exists() && sigIs(folder, raw)) {
+                    w.sigOnDisk++;
                     w.raw = raw;
                     noteSet(path, SHARED);
                     return true;
                 }
+                long t0 = System.nanoTime();
                 Bitmap onDisk = peek(folder);
+                w.decodeNs += System.nanoTime() - t0;
                 if (onDisk == null) {
+                    t0 = System.nanoTime();
                     int r = storeSrc(w, folder, raw);
-                    if (r == STORE_FAILED) return false;
-                    if (r == STORE_NO_PICTURE) { noteSet(path, NONE); return true; }
+                    w.storeNs += System.nanoTime() - t0;
+                    if (r == STORE_FAILED) { w.failed++; return false; }
+                    if (r == STORE_NO_PICTURE) { w.none++; noteSet(path, NONE); return true; }
                     w.raw = raw;
                     sigSet(folder, raw);
                     noteSet(path, SHARED);
@@ -384,10 +409,13 @@ public final class BigCover {
                 w.rep = onDisk;
             }
 
+            long t0 = System.nanoTime();
             Bitmap fresh = capped(raw);
-            if (fresh == null) { noteSet(path, NONE); return true; }
-            if (w.rep == null) w.rep = capped(w.raw);
+            if (fresh != null && w.rep == null) w.rep = capped(w.raw);
+            w.decodeNs += System.nanoTime() - t0;
+            if (fresh == null) { w.none++; noteSet(path, NONE); return true; }
             if (same(w.rep, fresh)) {
+                w.samePixels++;
                 // these bytes stand for the representative from now on: starts the byte path
                 if (w.raw == null) w.raw = raw;
                 noteSet(path, SHARED);
@@ -396,12 +424,16 @@ public final class BigCover {
             Src src = new Src();
             src.bmp = fresh;
             src.raw = raw;
+            t0 = System.nanoTime();
             boolean ok = store(path, src);
+            w.storeNs += System.nanoTime() - t0;
             mem.remove(path);
-            if (!ok) return false;
+            if (!ok) { w.failed++; return false; }
+            w.own++;
             noteSet(path, OWN);
             return true;
         } catch (Throwable t) {
+            w.failed++;
             return false;
         }
     }
@@ -418,13 +450,43 @@ public final class BigCover {
         }
     }
 
+    /**
+     * {@link #external(String)} for a pass: a folder's songs share one cover file, so the bytes
+     * read for the last song are handed back while the file's path, length and date are the same.
+     */
+    private static byte[] external(Walk w, String path) {
+        try {
+            File f = Art.file(path);
+            if (f == null) return null;
+            Art.stampRead(path);
+            String p = f.getPath();
+            long len = f.length();
+            long mod = f.lastModified();
+            if (w.extBytes != null && p.equals(w.extPath) && len == w.extLen && mod == w.extMod) {
+                return w.extBytes;
+            }
+            byte[] b = readAll(f);
+            w.extPath = p;
+            w.extLen = len;
+            w.extMod = mod;
+            w.extBytes = b;
+            return b;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
     private static final int STORED = 0;
     private static final int STORE_NO_PICTURE = 1;
     private static final int STORE_FAILED = 2;
 
     /** Store a representative during a pass; a fitting JPEG goes verbatim, nothing decoded. */
     private static int storeSrc(Walk w, String key, byte[] raw) {
-        if (raw.length <= LIMIT && isJpeg(raw)) return write(key, raw) ? STORED : STORE_FAILED;
+        if (raw.length <= LIMIT && isJpeg(raw)) {
+            w.verbatim++;
+            return write(key, raw) ? STORED : STORE_FAILED;
+        }
+        w.encoded++;
         Bitmap b = capped(raw);
         if (b == null) return STORE_NO_PICTURE;
         Src s = new Src();
@@ -713,22 +775,63 @@ public final class BigCover {
     private static byte[] fit(Src s) {
         if (s.raw != null && s.raw.length <= LIMIT && isJpeg(s.raw)) return s.raw;
 
+        // The last cover's answer is tried first, with its neighbour: covers land close together,
+        // so two encodes usually settle it. Only the order of the probes changes, not the result.
         byte[] best = null;
+        int bestQ = Q_MIN;
         int lo = Q_MIN;
         int hi = Q_MAX;
+        int g = lastQ;
+        if (g < Q_MIN || g > Q_MAX) g = (Q_MIN + Q_MAX) >> 1;
+        byte[] at = encode(s.bmp, g);
+        if (at != null) {
+            if (at.length <= LIMIT) {
+                best = at;
+                bestQ = g;
+                lo = g + 1;
+                if (lo <= hi) {
+                    byte[] up = encode(s.bmp, lo);
+                    if (up != null && up.length <= LIMIT) {
+                        best = up;
+                        bestQ = lo;
+                        lo++;
+                    } else if (up != null) {
+                        hi = g;                        // g fits and g + 1 does not
+                    }
+                }
+            } else {
+                hi = g - 1;
+                if (hi >= lo) {
+                    byte[] down = encode(s.bmp, hi);
+                    if (down != null && down.length <= LIMIT) {
+                        best = down;
+                        bestQ = hi;
+                        lo = hi + 1;                   // hi fits and hi + 1 did not
+                    } else if (down != null) {
+                        hi--;
+                    }
+                }
+            }
+        }
         while (lo <= hi) {
             int mid = (lo + hi + 1) >> 1;
             byte[] out = encode(s.bmp, mid);
             if (out == null) break;
             if (out.length <= LIMIT) {
                 best = out;
+                bestQ = mid;
                 lo = mid + 1;
             } else {
                 hi = mid - 1;
             }
         }
-        return best != null ? best : encode(s.bmp, Q_MIN);
+        if (best == null) return encode(s.bmp, Q_MIN);
+        lastQ = bestQ;
+        return best;
     }
+
+    /** The quality the last re-encoded cover settled on; shared by the workers, only a guess. */
+    private static volatile int lastQ;
 
     private static byte[] encode(Bitmap b, int quality) {
         try {
