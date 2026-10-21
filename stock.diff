@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..017f43bc 100644
+index 01b1f730..24536c8e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..017f43bc 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100297
++  versionCode: 10100298
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20004,7 +20004,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..ea41594f 100644
+index 71fe29d0..e9c9c6cd 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20953,7 +20953,7 @@ index 71fe29d0..ea41594f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev297</string>
++    <string name="ipp_version">v1.1.0-dev298</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -68418,10 +68418,10 @@ index 3c6fa2a9..8759230f 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
-index 189a7bb9..19f208d4 100644
+index 189a7bb9..6cdfccec 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
-@@ -1,199 +1,210 @@
+@@ -1,199 +1,211 @@
 -.class final Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1$1;
 -.super Lkotlin/jvm/internal/Lambda;
 -.source "Y1Repository.kt"
@@ -68762,7 +68762,8 @@ index 189a7bb9..19f208d4 100644
 +
 +    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins0()V
 +
-+    invoke-interface {v0, v1}, Lcom/innioasis/y1/database/SongDao;->insert([Lcom/innioasis/y1/database/Song;)V
++    # ipp: songDao.insert after every batch still queued by Scan.insert is written
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Scan;->insertLast(Lcom/innioasis/y1/database/SongDao;[Lcom/innioasis/y1/database/Song;)V
 +
 +    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins1()V
 +
@@ -69110,10 +69111,10 @@ index d7438262..347dfdc7 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-index e9374192..5660ad3d 100644
+index e9374192..517fc98e 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-@@ -1,366 +1,385 @@
+@@ -1,366 +1,387 @@
 -.class final Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1;
 -.super Lkotlin/jvm/internal/Lambda;
 -.source "Y1Repository.kt"
@@ -69760,7 +69761,9 @@ index e9374192..5660ad3d 100644
 +
 +    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins0()V
 +
-+    invoke-interface {v0, v3}, Lcom/innioasis/y1/database/SongDao;->insert([Lcom/innioasis/y1/database/Song;)V
++    # ipp: songDao.insert, but on a thread of its own -- the walk goes on while the batch is
++    # written; the tail waits for it (Scan.insertLast), so the scan ends with every row in place
++    invoke-static {v0, v3}, Lcom/innioasis/ipp/Scan;->insert(Lcom/innioasis/y1/database/SongDao;[Lcom/innioasis/y1/database/Song;)V
 +
 +    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins1()V
 +

@@ -57,6 +57,113 @@ public final class Scan {
         Albums.scanStarts();
     }
 
+    /**
+     * In place of the per-file lambda's {@code songDao.insert}: the batch of 100 is written by
+     * a thread of its own while the walk goes on. The writer drops the caches after each write,
+     * so no list read in between can be kept as the table.
+     */
+    public static void insert(SongDao dao, Song[] batch) {
+        if (dao == null || batch == null) return;
+        synchronized (WRITES) {
+            WRITES.addLast(new Object[] {dao, batch});
+            if (!writing) {
+                writing = true;
+                new Thread(new Writer(), "ipp-scan-db").start();
+            }
+            WRITES.notifyAll();
+        }
+    }
+
+    /**
+     * In place of the tail's {@code songDao.insert}: every batch still queued is written first,
+     * so the stock invalidation after it, {@code Albums.loadNow} and the scan's flag all come
+     * after the last row is in the table. A failure here is thrown, as stock's insert throws.
+     */
+    public static void insertLast(SongDao dao, Song[] batch) {
+        long t = System.nanoTime();
+        synchronized (WRITES) {
+            long until = SystemClock.uptimeMillis() + FLUSH_MS;
+            while ((!WRITES.isEmpty() && writing) || inWrite) {
+                long left = until - SystemClock.uptimeMillis();
+                if (left <= 0L) break;
+                try {
+                    WRITES.wait(left);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+        while (true) {      // left by a writer that died
+            Object[] w;
+            synchronized (WRITES) {
+                if (WRITES.isEmpty()) break;
+                w = (Object[]) WRITES.removeFirst();
+            }
+            write((SongDao) w[0], (Song[]) w[1]);
+        }
+        ScanProbe.flushed(System.nanoTime() - t);
+        dao.insert(batch);
+    }
+
+    private static final java.util.LinkedList WRITES = new java.util.LinkedList();
+    private static boolean writing;
+    private static boolean inWrite;
+    /** A writer that has not finished by then is stuck; the scan must not hang on it. */
+    private static final long FLUSH_MS = 60000L;
+
+    static final class Writer implements Runnable {
+        public void run() {
+            try {
+                while (true) {
+                    Object[] w;
+                    synchronized (WRITES) {
+                        long until = SystemClock.uptimeMillis() + IDLE_MS;
+                        while (WRITES.isEmpty()) {
+                            long left = until - SystemClock.uptimeMillis();
+                            if (left <= 0L) {
+                                writing = false;
+                                return;
+                            }
+                            WRITES.wait(left);
+                        }
+                        w = (Object[]) WRITES.removeFirst();
+                        inWrite = true;
+                    }
+                    try {
+                        write((SongDao) w[0], (Song[]) w[1]);
+                    } finally {
+                        synchronized (WRITES) {
+                            inWrite = false;
+                            WRITES.notifyAll();
+                        }
+                    }
+                }
+            } catch (Throwable t) {
+                synchronized (WRITES) {
+                    writing = false;
+                    inWrite = false;
+                    WRITES.notifyAll();
+                }
+            }
+        }
+    }
+
+    /** Three tries a second apart, as stock's {@code repeatTry} gives its per-file lambda. */
+    private static void write(SongDao dao, Song[] batch) {
+        for (int i = 0; i < 3; i++) {
+            long t = System.nanoTime();
+            try {
+                dao.insert(batch);
+                ScanProbe.wrote(System.nanoTime() - t);
+                Ipp.libraryChanged();
+                return;
+            } catch (Throwable e) {
+                SystemClock.sleep(1000L);
+            }
+        }
+        Diag.note("library scan: a batch of " + batch.length + " song(s) was not written");
+    }
+
     /** Pinyin of a tag remembered while a scan runs; dropped at its end. */
     private static volatile HashMap py;
 

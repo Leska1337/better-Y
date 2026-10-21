@@ -172,6 +172,7 @@ public final class ScanProbe {
                 howNs[i] = 0;
             }
             seenN = askedN = 0;
+            wrN = wrNs = flushNs = 0;
             for (int i = 0; i < wNs.length; i++) wNs[i] = 0;
             wLast = 0;
             wNodes = 0;
@@ -230,6 +231,10 @@ public final class ScanProbe {
         insN++;
         insNs += System.nanoTime() - insAt;
     }
+    private static long wrN, wrNs, flushNs;
+    public static synchronized void wrote(long ns) { wrN++; wrNs += ns; }
+    public static synchronized void flushed(long ns) { flushNs += ns; }
+
     public static void lc0() { lcAt = System.nanoTime(); }
     public static void lc1() {
         lcN++;
@@ -378,6 +383,8 @@ public final class ScanProbe {
             for (int i = 0; i < 4; i++) line(b, "Scan.song " + HOW[i] + " x" + howN[i], ms(howNs[i]), walk);
             line(b, "songDao.insert x" + insN, ms(insNs), walk);
             line(b, "Ipp.libraryChanged x" + lcN, ms(lcNs), walk);
+            line(b, "  writer thread: inserts x" + wrN, ms(wrNs), walk);
+            line(b, "  tail waited for the writer", ms(flushNs), walk);
             line(b, "listFiles x" + listN, ms(listNs), walk);
             long rest = walk - ms(knownNs) - ms(howNs[0] + howNs[1] + howNs[2] + howNs[3])
                 - ms(insNs) - ms(lcNs) - ms(listNs);
