@@ -43,9 +43,9 @@ public final class FlowCache {
     }
 
     /** A cover {@link Flow#S} square, written for good. */
-    static void write(String path, Bitmap square) {
+    static boolean write(String path, Bitmap square) {
         File f = file(path);
-        if (f == null || square == null) return;
+        if (f == null || square == null) return false;
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(f);
@@ -53,9 +53,12 @@ public final class FlowCache {
                 out.close();
                 out = null;
                 f.delete();
+                return false;
             }
+            return true;
         } catch (Throwable t) {
             f.delete();
+            return false;
         } finally {
             try { if (out != null) out.close(); } catch (Throwable t) { }
         }

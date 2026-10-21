@@ -356,16 +356,20 @@ public final class Flow {
         return fade;
     }
 
-    /** "Cache library": an album's Cover Flow cover, unless it is there already. */
-    public static void cacheSlide(String path) {
+    /**
+     * "Cache library": an album's Cover Flow cover, unless it is there already. False when it
+     * should be there and is not — the pass then is not complete.
+     */
+    public static boolean cacheSlide(String path) {
         try {
             File f = FlowCache.file(path);
-            if (f == null || f.exists()) return;
+            if (f == null || f.exists()) return true;
             Bitmap src = BigCover.peekTrackFree(path);
             if (src == null) src = BigCover.track(path);
-            if (src == null) return;
-            FlowCache.write(path, Cover.square(src, S));
+            if (src == null) return BigCover.knownNone(path);
+            return FlowCache.write(path, Cover.square(src, S));
         } catch (Throwable t) {
+            return false;
         }
     }
 

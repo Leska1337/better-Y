@@ -28,7 +28,7 @@
 
 .field private final static CACHE_V:Ljava/lang/String; = "cache_v"
 
-.field private final static CACHE_VERSION:I = 3
+.field private final static CACHE_VERSION:I = 4
 
 .field private final static CD_PAT:Ljava/util/regex/Pattern;
 
@@ -795,7 +795,7 @@
     const-string p1, "cache_v"
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Prefs;->getInt(Landroid/content/Context;Ljava/lang/String;I)I
     move-result p1
-    const/4 p2, 3
+    const/4 p2, 4
     if-eq p1, p2, :L1
     goto :L2
   :L1
@@ -1697,7 +1697,7 @@
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
   .line 408
     const-string p1, "cache_v"
-    const/4 p2, 3
+    const/4 p2, 4
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
   .line 409
     const-string p1, "cache_m"

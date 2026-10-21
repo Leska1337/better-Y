@@ -383,7 +383,7 @@ public final class Albums {
      * Bump whenever the pass starts filling something new, or an unchanged library reports
      * "already cached" for caches that were never written.
      */
-    private static final int CACHE_VERSION = 3;
+    private static final int CACHE_VERSION = 4;
 
     /** The categories ({@code Pick.COVERS}/{@code TAGS}) the signature vouches for, or 0. */
     private static int cachedMask(Context c, int songs, int stamp) {

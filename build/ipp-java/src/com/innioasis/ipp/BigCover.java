@@ -108,11 +108,12 @@ public final class BigCover {
             }
             Bitmap fresh = src.bmp;
 
+            // noted only once the JPEG is on disk: a note without its file is never read again
             Bitmap rep = peek(folder);
             if (rep == null) {
-                store(folder, src);
-                sigSet(folder, src.raw);
                 mem.put(path, fresh);
+                if (!store(folder, src)) return fresh;
+                sigSet(folder, src.raw);
                 noteSet(path, SHARED);
                 return fresh;
             }
@@ -121,9 +122,8 @@ public final class BigCover {
                 noteSet(path, SHARED);
                 return rep;
             }
-            store(path, src);
             mem.put(path, fresh);
-            noteSet(path, OWN);
+            if (store(path, src)) noteSet(path, OWN);
             return fresh;
         }
     }
@@ -319,9 +319,12 @@ public final class BigCover {
     /** While a pass runs the notes are saved once, at its end. */
     private static volatile boolean passing;
 
-    /** This track's cover has never been looked at. */
+    /** This track's cover has never been looked at, or its note points at a JPEG that is not there. */
     public static boolean needs(String path) {
-        return note(path) == UNKNOWN;
+        int n = note(path);
+        if (n == UNKNOWN) return true;
+        if (n == NONE) return false;
+        return cachedFile(path) == null;
     }
 
     /** This track has artwork of its OWN, different from its folder's (the Search row). */
@@ -342,22 +345,23 @@ public final class BigCover {
      * and nothing stays in memory beyond the folder being walked (hundreds of decoded covers run
      * out of memory). The representative is held, not re-read: a re-decoded JPEG never matches.
      * {@code embedded} comes from the caller, which already had the file open. Never on the UI thread.
+     * False when the JPEG could not be written: the track is left unknown for the next pass.
      */
-    public static void cache(Walk w, String path, byte[] embedded) {
-        if (path == null || w == null) return;
+    public static boolean cache(Walk w, String path, byte[] embedded) {
+        if (path == null || w == null) return true;
         try {
-            if (note(path) != UNKNOWN) return;
+            if (!needs(path)) return true;
             String folder = Albums.trackFolder(path);
             if (w.folder != null && !w.folder.equals(folder)) w.done();
             w.folder = folder;
 
             byte[] raw = embedded != null && embedded.length > 0 ? embedded : external(path);
-            if (raw == null || raw.length == 0) { noteSet(path, NONE); return; }
+            if (raw == null || raw.length == 0) { noteSet(path, NONE); return true; }
 
             // nearly every track: the same bytes as the representative, nothing decoded
             if (w.raw != null && Arrays.equals(w.raw, raw)) {
                 noteSet(path, SHARED);
-                return;
+                return true;
             }
 
             if (w.raw == null && w.rep == null) {
@@ -365,35 +369,40 @@ public final class BigCover {
                 if (had != null && had.exists() && sigIs(folder, raw)) {
                     w.raw = raw;
                     noteSet(path, SHARED);
-                    return;
+                    return true;
                 }
                 Bitmap onDisk = peek(folder);
                 if (onDisk == null) {
-                    w.rep = storeSrc(folder, raw);
+                    int r = storeSrc(w, folder, raw);
+                    if (r == STORE_FAILED) return false;
+                    if (r == STORE_NO_PICTURE) { noteSet(path, NONE); return true; }
                     w.raw = raw;
                     sigSet(folder, raw);
                     noteSet(path, SHARED);
-                    return;
+                    return true;
                 }
                 w.rep = onDisk;
             }
 
             Bitmap fresh = capped(raw);
-            if (fresh == null) { noteSet(path, NONE); return; }
+            if (fresh == null) { noteSet(path, NONE); return true; }
             if (w.rep == null) w.rep = capped(w.raw);
             if (same(w.rep, fresh)) {
                 // these bytes stand for the representative from now on: starts the byte path
                 if (w.raw == null) w.raw = raw;
                 noteSet(path, SHARED);
-            } else {
-                Src src = new Src();
-                src.bmp = fresh;
-                src.raw = raw;
-                store(path, src);
-                mem.remove(path);
-                noteSet(path, OWN);
+                return true;
             }
+            Src src = new Src();
+            src.bmp = fresh;
+            src.raw = raw;
+            boolean ok = store(path, src);
+            mem.remove(path);
+            if (!ok) return false;
+            noteSet(path, OWN);
+            return true;
         } catch (Throwable t) {
+            return false;
         }
     }
 
@@ -409,20 +418,23 @@ public final class BigCover {
         }
     }
 
-    /** Store a representative during a pass; null = stored verbatim, nothing decoded. */
-    private static Bitmap storeSrc(String key, byte[] raw) {
-        if (raw.length <= LIMIT && isJpeg(raw)) {
-            write(key, raw);
-            return null;
-        }
+    private static final int STORED = 0;
+    private static final int STORE_NO_PICTURE = 1;
+    private static final int STORE_FAILED = 2;
+
+    /** Store a representative during a pass; a fitting JPEG goes verbatim, nothing decoded. */
+    private static int storeSrc(Walk w, String key, byte[] raw) {
+        if (raw.length <= LIMIT && isJpeg(raw)) return write(key, raw) ? STORED : STORE_FAILED;
         Bitmap b = capped(raw);
-        if (b == null) return null;
+        if (b == null) return STORE_NO_PICTURE;
         Src s = new Src();
         s.bmp = b;
         s.raw = raw;
-        store(key, s);
+        boolean ok = store(key, s);
         mem.remove(key);
-        return b;
+        if (!ok) return STORE_FAILED;
+        w.rep = b;
+        return STORED;
     }
 
     public static void beginCache() {
@@ -661,19 +673,25 @@ public final class BigCover {
         }
     }
 
-    private static void store(String key, Src s) {
+    /** False when nothing reached the disk — an encode that ran out of memory included. */
+    private static boolean store(String key, Src s) {
         try {
-            if (s == null || s.bmp == null) return;
+            if (s == null || s.bmp == null) return false;
             byte[] out = fit(s);
-            if (out == null) return;
-            if (write(key, out)) mem.put(key, s.bmp);
+            if (out == null) return false;
+            if (!write(key, out)) return false;
+            mem.put(key, s.bmp);
+            return true;
         } catch (Throwable t) {
+            return false;
         }
     }
 
+    /** A half-written file is deleted: it would pass for a cover. */
     private static boolean write(String key, byte[] out) {
+        File f = null;
         try {
-            File f = file(key);
+            f = file(key);
             if (f == null) return false;
             FileOutputStream os = new FileOutputStream(f);
             try {
@@ -683,6 +701,7 @@ public final class BigCover {
             }
             return true;
         } catch (Throwable t) {
+            try { if (f != null) f.delete(); } catch (Throwable e) { }
             return false;
         }
     }

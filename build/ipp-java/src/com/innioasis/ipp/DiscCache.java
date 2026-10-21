@@ -45,8 +45,10 @@ public final class DiscCache {
         out.wanted = tags;
         if (path == null) return out;
         Meta.Info info = Meta.read(path, art);
-        if (tags) out.info = info;
         out.art = info.art;
+        // the picture lives in out.art alone: the caller drops it, while info is kept to the commit
+        info.art = null;
+        if (tags) out.info = info;
         out.ok = info.ok;
         return out;
     }

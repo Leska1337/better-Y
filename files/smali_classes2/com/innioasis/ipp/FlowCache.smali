@@ -17,10 +17,10 @@
   .catchall { :L0 .. :L5 } :L7
   .registers 3
   :L0
-  .line 83
+  .line 86
     invoke-static { }, Lcom/innioasis/ipp/FlowCache;->dir()Ljava/io/File;
     move-result-object v0
-  .line 84
+  .line 87
     if-nez v0, :L1
     const/4 v0, 0
     goto :L2
@@ -28,11 +28,11 @@
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
   :L2
-  .line 85
+  .line 88
     if-nez v0, :L3
     return-void
   :L3
-  .line 86
+  .line 89
     const/4 v1, 0
   :L4
     array-length v2, v0
@@ -43,13 +43,13 @@
     add-int/lit8 v1, v1, 1
     goto :L4
   :L6
-  .line 88
+  .line 91
     goto :L8
   :L7
-  .line 87
+  .line 90
     move-exception v0
   :L8
-  .line 89
+  .line 92
     return-void
 .end method
 
@@ -130,19 +130,19 @@
 .method public static forget(Ljava/lang/String;)V
   .catchall { :L0 .. :L4 } :L6
   .registers 6
-  .line 66
+  .line 69
     const-string v0, "-"
     if-nez p0, :L0
     return-void
   :L0
-  .line 68
+  .line 71
     invoke-static { }, Lcom/innioasis/ipp/FlowCache;->dir()Ljava/io/File;
     move-result-object v1
-  .line 69
+  .line 72
     if-nez v1, :L1
     return-void
   :L1
-  .line 70
+  .line 73
     new-instance v2, Ljava/io/File;
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
@@ -165,7 +165,7 @@
     move-result-object v3
     invoke-direct { v2, v1, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-virtual { v2 }, Ljava/io/File;->delete()Z
-  .line 71
+  .line 74
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-static { p0 }, Lcom/innioasis/ipp/FlowCache;->hex(Ljava/lang/String;)Ljava/lang/String;
@@ -176,19 +176,19 @@
     move-result-object p0
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
-  .line 72
+  .line 75
     invoke-virtual { v1 }, Ljava/io/File;->list()[Ljava/lang/String;
     move-result-object v0
-  .line 73
+  .line 76
     if-nez v0, :L2
     return-void
   :L2
-  .line 74
+  .line 77
     const/4 v2, 0
   :L3
     array-length v3, v0
     if-ge v2, v3, :L5
-  .line 75
+  .line 78
     aget-object v3, v0, v2
     invoke-virtual { v3, p0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v3
@@ -198,17 +198,17 @@
     invoke-direct { v3, v1, v4 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
   :L4
-  .line 74
+  .line 77
     add-int/lit8 v2, v2, 1
     goto :L3
   :L5
-  .line 78
+  .line 81
     goto :L7
   :L6
-  .line 77
+  .line 80
     move-exception p0
   :L7
-  .line 79
+  .line 82
     return-void
 .end method
 
@@ -222,39 +222,40 @@
     return-object p0
 .end method
 
-.method static write(Ljava/lang/String;Landroid/graphics/Bitmap;)V
-  .catchall { :L1 .. :L2 } :L11
-  .catchall { :L2 .. :L3 } :L10
-  .catchall { :L4 .. :L5 } :L11
-  .catchall { :L8 .. :L9 } :L16
-  .catchall { :L12 .. :L13 } :L18
-  .catchall { :L14 .. :L15 } :L16
-  .catchall { :L19 .. :L20 } :L21
-  .registers 6
+.method static write(Ljava/lang/String;Landroid/graphics/Bitmap;)Z
+  .catchall { :L1 .. :L2 } :L12
+  .catchall { :L2 .. :L3 } :L11
+  .catchall { :L4 .. :L5 } :L12
+  .catchall { :L7 .. :L8 } :L9
+  .catchall { :L13 .. :L14 } :L19
+  .catchall { :L15 .. :L16 } :L17
+  .catchall { :L20 .. :L21 } :L22
+  .registers 7
   .line 47
     invoke-static { p0 }, Lcom/innioasis/ipp/FlowCache;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p0
   .line 48
-    if-eqz p0, :L23
+    const/4 v0, 0
+    if-eqz p0, :L24
     if-nez p1, :L0
-    goto :L23
+    goto :L24
   :L0
   .line 49
     nop
   .line 51
-    const/4 v0, 0
+    const/4 v1, 0
   :L1
-    new-instance v1, Ljava/io/FileOutputStream;
-    invoke-direct { v1, p0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
+    new-instance v2, Ljava/io/FileOutputStream;
+    invoke-direct { v2, p0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L2
   .line 52
-    sget-object v2, Landroid/graphics/Bitmap$CompressFormat;->JPEG:Landroid/graphics/Bitmap$CompressFormat;
-    const/16 v3, 90
-    invoke-virtual { p1, v2, v3, v1 }, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
+    sget-object v3, Landroid/graphics/Bitmap$CompressFormat;->JPEG:Landroid/graphics/Bitmap$CompressFormat;
+    const/16 v4, 90
+    invoke-virtual { p1, v3, v4, v2 }, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
     move-result p1
     if-nez p1, :L6
   .line 53
-    invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
+    invoke-virtual { v2 }, Ljava/io/FileOutputStream;->close()V
   :L3
   .line 54
     nop
@@ -262,55 +263,64 @@
   .line 55
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L5
-    goto :L7
+  .line 56
+    nop
+  .line 63
+    nop
+  .line 56
+    return v0
   :L6
-  .line 52
-    move-object v0, v1
-  :L7
-  .line 60
-    if-eqz v0, :L17
-  :L8
-    invoke-virtual { v0 }, Ljava/io/FileOutputStream;->close()V
-  :L9
-    goto :L17
-  :L10
-  .line 57
-    move-exception p1
-    move-object v0, v1
-    goto :L12
-  :L11
-    move-exception p1
-  :L12
   .line 58
-    invoke-virtual { p0 }, Ljava/io/File;->delete()Z
+    nop
+  :L7
+  .line 63
+    invoke-virtual { v2 }, Ljava/io/FileOutputStream;->close()V
+  :L8
+    goto :L10
+  :L9
+    move-exception p0
+  :L10
+  .line 58
+    const/4 p0, 1
+    return p0
+  :L11
+  .line 59
+    move-exception p1
+    move-object v1, v2
+    goto :L13
+  :L12
+    move-exception p1
   :L13
   .line 60
-    if-eqz v0, :L17
+    invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L14
-    invoke-virtual { v0 }, Ljava/io/FileOutputStream;->close()V
-  :L15
-    goto :L17
-  :L16
-    move-exception p0
   .line 61
     nop
+  .line 63
+    if-eqz v1, :L18
+  :L15
+    invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
+  :L16
+    goto :L18
   :L17
-  .line 62
-    return-void
-  :L18
-  .line 60
     move-exception p0
-    if-eqz v0, :L22
-  :L19
-    invoke-virtual { v0 }, Ljava/io/FileOutputStream;->close()V
-  :L20
-    goto :L22
-  :L21
-    move-exception p1
-  :L22
+  :L18
   .line 61
-    throw p0
+    return v0
+  :L19
+  .line 63
+    move-exception p0
+    if-eqz v1, :L23
+  :L20
+    invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
+  :L21
+    goto :L23
+  :L22
+    move-exception p1
   :L23
+  .line 64
+    throw p0
+  :L24
   .line 48
-    return-void
+    return v0
 .end method

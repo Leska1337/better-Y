@@ -18,36 +18,36 @@
 
 .method private constructor <init>([I[I)V
   .registers 3
-  .line 1296
+  .line 1314
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1297
+  .line 1315
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
-  .line 1298
+  .line 1316
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->to:[I
-  .line 1299
+  .line 1317
     return-void
 .end method
 
 .method static each(I)Lcom/innioasis/y1/activity/IppActivity$Blocks;
   .registers 5
-  .line 1303
+  .line 1321
     new-array v0, p0, [I
-  .line 1304
+  .line 1322
     new-array v1, p0, [I
-  .line 1305
+  .line 1323
     const/4 v2, 0
   :L0
     if-ge v2, p0, :L1
-  .line 1306
+  .line 1324
     aput v2, v0, v2
-  .line 1307
+  .line 1325
     add-int/lit8 v3, v2, 1
     aput v3, v1, v2
-  .line 1305
+  .line 1323
     move v2, v3
     goto :L0
   :L1
-  .line 1309
+  .line 1327
     new-instance p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-direct { p0, v0, v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;-><init>([I[I)V
     return-object p0
@@ -55,20 +55,20 @@
 
 .method static folders(Ljava/util/List;)Lcom/innioasis/y1/activity/IppActivity$Blocks;
   .registers 12
-  .line 1314
+  .line 1332
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v0
-  .line 1315
+  .line 1333
     new-array v1, v0, [I
-  .line 1316
+  .line 1334
     new-array v2, v0, [I
-  .line 1317
+  .line 1335
     nop
-  .line 1318
+  .line 1336
     nop
-  .line 1319
+  .line 1337
     nop
-  .line 1320
+  .line 1338
     const/4 v3, 0
     const/4 v4, 0
     move-object v8, v4
@@ -77,10 +77,10 @@
     const/4 v7, 0
   :L0
     if-ge v5, v0, :L7
-  .line 1321
+  .line 1339
     invoke-interface { p0, v5 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v9
-  .line 1322
+  .line 1340
     instance-of v10, v9, Lcom/innioasis/y1/database/Song;
     if-eqz v10, :L1
     check-cast v9, Lcom/innioasis/y1/database/Song;
@@ -90,7 +90,7 @@
   :L1
     move-object v9, v4
   :L2
-  .line 1323
+  .line 1341
     if-nez v9, :L3
     const-string v9, ""
     goto :L4
@@ -98,50 +98,50 @@
     invoke-static { v9 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v9
   :L4
-  .line 1324
+  .line 1342
     if-nez v8, :L5
-  .line 1325
+  .line 1343
     move-object v8, v9
     goto :L6
   :L5
-  .line 1326
+  .line 1344
     invoke-virtual { v8, v9 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v10
     if-nez v10, :L6
-  .line 1327
+  .line 1345
     aput v7, v1, v6
-  .line 1328
+  .line 1346
     aput v5, v2, v6
-  .line 1329
+  .line 1347
     add-int/lit8 v6, v6, 1
-  .line 1330
+  .line 1348
     nop
-  .line 1331
+  .line 1349
     move v7, v5
     move-object v8, v9
   :L6
-  .line 1320
+  .line 1338
     add-int/lit8 v5, v5, 1
     goto :L0
   :L7
-  .line 1334
+  .line 1352
     if-lez v0, :L8
-  .line 1335
+  .line 1353
     aput v7, v1, v6
-  .line 1336
+  .line 1354
     aput v0, v2, v6
-  .line 1337
+  .line 1355
     add-int/lit8 v6, v6, 1
   :L8
-  .line 1339
+  .line 1357
     new-array p0, v6, [I
-  .line 1340
+  .line 1358
     new-array v0, v6, [I
-  .line 1341
+  .line 1359
     invoke-static { v1, v3, p0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 1342
+  .line 1360
     invoke-static { v2, v3, v0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 1343
+  .line 1361
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-direct { v1, p0, v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;-><init>([I[I)V
     return-object v1
@@ -149,7 +149,7 @@
 
 .method from(I)I
   .registers 3
-  .line 1350
+  .line 1368
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
     aget p1, v0, p1
     return p1
@@ -160,7 +160,7 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 1347
+  .line 1365
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->next:I
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
     array-length v1, v1
@@ -175,7 +175,7 @@
     monitor-exit p0
     return v0
   :L4
-  .line 1347
+  .line 1365
     move-exception v0
     monitor-exit p0
     throw v0
@@ -183,7 +183,7 @@
 
 .method to(I)I
   .registers 3
-  .line 1352
+  .line 1370
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->to:[I
     aget p1, v0, p1
     return p1

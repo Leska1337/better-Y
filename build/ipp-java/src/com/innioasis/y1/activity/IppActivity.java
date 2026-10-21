@@ -3,6 +3,7 @@ package com.innioasis.y1.activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -1139,6 +1140,9 @@ public final class IppActivity extends BaseActivity {
         public void run() {
             int done = 0;
             int unread = 0;
+            int unwritten = 0;
+            long tAlbums = 0L, tSongs = 0L, tFlow = 0L;
+            long heap = 0L;
             boolean covers = (mask & Pick.COVERS) != 0;
             boolean tags = (mask & Pick.TAGS) != 0;
             boolean flow = (mask & Pick.FLOW) != 0;
@@ -1211,14 +1215,17 @@ public final class IppActivity extends BaseActivity {
                     jobs.add(j);
                     done++;
                 }
+                long t0 = SystemClock.uptimeMillis();
                 Blocks aq = Blocks.each(jobs.size());
                 AlbumWorker[] aw = new AlbumWorker[workers()];
                 for (int i = 0; i < aw.length; i++) aw[i] = new AlbumWorker(this, jobs, aq);
                 spread(aw);
+                tAlbums = SystemClock.uptimeMillis() - t0;
 
                 // Songs, the expensive half. A metadata read costs the file OPEN, so everything a
                 // song gives — disc, track number, artwork — comes from ONE (DiscCache.read). In
                 // PATH order: BigCover compares against one folder's representative at a time.
+                t0 = SystemClock.uptimeMillis();
                 if (songs != null && n > 0) {
                     ArrayList byPath = new ArrayList(songs);
                     try {
@@ -1231,24 +1238,35 @@ public final class IppActivity extends BaseActivity {
                         w[i] = new SongWorker(this, byPath, q, tags, covers);
                     }
                     spread(w);
-                    for (int i = 0; i < w.length; i++) unread += w[i].failed;
+                    // what the Tags still hold until the commit: the pass's high-water mark
+                    Runtime rt = Runtime.getRuntime();
+                    heap = rt.totalMemory() - rt.freeMemory();
+                    for (int i = 0; i < w.length; i++) {
+                        unread += w[i].failed;
+                        unwritten += w[i].unwritten;
+                    }
                     if (tags) {
                         for (int i = 0; i < w.length; i++) w[i].commit();
                         DiscCache.flush();
                     }
                 }
+                tSongs = SystemClock.uptimeMillis() - t0;
 
                 // Cover Flow's covers last: made from the covers the pass above has just cached
+                t0 = SystemClock.uptimeMillis();
                 if (flow) {
                     for (int i = 0; i < m; i++) {
-                        Flow.cacheSlide(((Song) reps.get(keys.get(i))).getPath());
+                        if (!Flow.cacheSlide(((Song) reps.get(keys.get(i))).getPath())) unwritten++;
                         tick();
                     }
                 }
+                tFlow = SystemClock.uptimeMillis() - t0;
 
-                // a pass that left files unread is not "already cached": the next press finishes it
-                if (unread == 0) Albums.noteCached(a, n, stamp, mask);
-                else Diag.note("cache library: " + unread + " file(s) did not read");
+                // a pass that left anything out is not "already cached": the next press finishes it
+                if (unread == 0 && unwritten == 0) Albums.noteCached(a, n, stamp, mask);
+                Diag.note("cache library: albums " + tAlbums + " ms, songs " + tSongs
+                        + " ms, flow " + tFlow + " ms, heap " + (heap >> 20) + " MB; "
+                        + unread + " file(s) did not read, " + unwritten + " cover(s) not written");
             } catch (Throwable t) {
             } finally {
                 // a pass that died half way still writes down what it learned
@@ -1396,6 +1414,7 @@ public final class IppActivity extends BaseActivity {
         private final ArrayList paths = new ArrayList();
         private final ArrayList read = new ArrayList();
         int failed;
+        int unwritten;
 
         SongWorker(CacheTask task, List byPath, Blocks q, boolean tags, boolean covers) {
             this.task = task;
@@ -1432,7 +1451,7 @@ public final class IppActivity extends BaseActivity {
                 failed++;                               // left unknown: read when it is next asked for
                 return;
             }
-            if (wantArt) BigCover.cache(w, path, t.art);
+            if (wantArt && !BigCover.cache(w, path, t.art)) unwritten++;
             // the answer is kept until the commit; a library of pictures does not fit the heap
             t.art = null;
             if (wantTags) {
