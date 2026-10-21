@@ -5,6 +5,7 @@ import android.os.SystemClock;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.SongDao;
 import com.innioasis.y1.database.Y1Repository;
+import com.innioasis.y1.utils.HanziToPinyin;
 
 import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.Y1Application;
@@ -52,7 +53,30 @@ public final class Scan {
 
     private static synchronized void mark() {
         marked = true;
+        py = new HashMap();
         Albums.scanStarts();
+    }
+
+    /** Pinyin of a tag remembered while a scan runs; dropped at its end. */
+    private static volatile HashMap py;
+
+    /**
+     * {@code HanziToPinyin.getString} answers from the string alone, and an album's songs repeat
+     * its album, artist and genre — while every call takes the collator's lock.
+     */
+    public static String pinyin(HanziToPinyin h, String s) {
+        HashMap m = py;
+        if (m == null || s == null) return h.getString(s);
+        String r;
+        synchronized (m) {
+            r = (String) m.get(s);
+        }
+        if (r != null) return r;
+        r = h.getString(s);
+        synchronized (m) {
+            m.put(s, r);
+        }
+        return r;
     }
 
     /** From the scan's end: it walked music files and neither inserted nor deleted a row. */
@@ -311,6 +335,7 @@ public final class Scan {
         met = new HashSet();
         marked = false;
         wrote = false;
+        py = null;
     }
 
     private static synchronized HashSet table() {

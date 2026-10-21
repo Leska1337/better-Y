@@ -244,15 +244,15 @@ public final class Meta {
             if (i.album != null) {
                 song.setAlbum(i.album);
                 song.setLowAlbum(i.album.toLowerCase(Locale.ROOT));
-                song.setPinyinAlbum(h.getString(i.album));
+                song.setPinyinAlbum(Scan.pinyin(h, i.album));
             }
             if (i.artist != null) {
                 song.setArtist(i.artist);
-                song.setPinyinArtist(h.getString(i.artist));
+                song.setPinyinArtist(Scan.pinyin(h, i.artist));
             }
             if (i.genre != null) {
                 song.setGenre(i.genre);
-                song.setPinyinGenre(h.getString(i.genre));
+                song.setPinyinGenre(Scan.pinyin(h, i.genre));
             }
         } catch (Throwable t) {
         }
@@ -298,12 +298,12 @@ public final class Meta {
         String album = stockValue(i.album);
         song.setAlbum(album);
         song.setLowAlbum(album.toLowerCase(Locale.ROOT));
-        song.setPinyinAlbum(h.getString(album));
+        song.setPinyinAlbum(Scan.pinyin(h, album));
         String artist = stockValue(i.artist);
         song.setArtist(artist);
-        song.setPinyinArtist(h.getString(artist));
+        song.setPinyinArtist(Scan.pinyin(h, artist));
         song.setGenre(genre);
-        song.setPinyinGenre(h.getString(genre));
+        song.setPinyinGenre(Scan.pinyin(h, genre));
         Schema.fill(song, i);
         return true;
     }
