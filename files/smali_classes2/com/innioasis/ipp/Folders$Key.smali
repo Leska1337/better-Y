@@ -20,13 +20,13 @@
 
 .method constructor <init>(Ljava/lang/Object;ZLjava/lang/String;J)V
   .registers 6
-  .line 469
+  .line 508
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 470
+  .line 509
     iput-object p1, p0, Lcom/innioasis/ipp/Folders$Key;->item:Ljava/lang/Object;
     iput-boolean p2, p0, Lcom/innioasis/ipp/Folders$Key;->dir:Z
     iput-object p3, p0, Lcom/innioasis/ipp/Folders$Key;->name:Ljava/lang/String;
     iput-wide p4, p0, Lcom/innioasis/ipp/Folders$Key;->time:J
-  .line 471
+  .line 510
     return-void
 .end method

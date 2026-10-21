@@ -3,6 +3,7 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
@@ -166,6 +167,7 @@ public final class Albums {
 
     /** Drop the cached library. Called once per file during a scan, so it must stay trivial. */
     public static void invalidate() {
+        Lab.who("invalidate");
         synchronized (SONGS) {
             if (Thread.currentThread() != scanThread) foreign++;
             if (songCache != null) {
@@ -222,9 +224,11 @@ public final class Albums {
         synchronized (SONGS) { gen = songGen; }
         long t0 = SystemClock.uptimeMillis();
         Object order = orderNow();
+        Lab.who("full read");
         List all = repo.getSongsSync(0);
         if (order != orderNow()) order = null;
         Diag.slow("library read", t0);
+        android.util.Log.i("ipplab", "full read " + (all == null ? 0 : all.size()) + " rows " + (SystemClock.uptimeMillis() - t0) + " ms");
         if (all == null) return null;
         List read = all;
         synchronized (SONGS) {
@@ -354,6 +358,7 @@ public final class Albums {
         if (repo == null) return;
         songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
                 SharedPreferencesUtils.INSTANCE.getSortAllSong()));
+        Lab.reads();
     }
 
     /** The order {@code getSongsSync} reads in under the stock settings of this moment, as an All songs sort. */
@@ -391,7 +396,7 @@ public final class Albums {
      * The queried list over the Song objects the cached list already holds: a second set of them
      * is megabytes of heap, and every collection pauses for as long as the heap is large.
      */
-    private static List shared(List l) {
+    static List shared(List l) {
         List all = songCache;
         if (l == null || all == null) return l;
         HashMap by = new HashMap(all.size() * 2);
@@ -408,6 +413,55 @@ public final class Albums {
         return out;
     }
 
+    /** The ORDER BY of the stock {@code getSongsList} query for this sort; null for one it has not. */
+    private static String orderBy(Y1Repository.SongSortType type) {
+        if (type == Y1Repository.SongSortType.FileName_A_To_Z) return "lower(pinyinName)";
+        if (type == Y1Repository.SongSortType.FileName_Z_To_A) return "lower(pinyinName) desc";
+        if (type == Y1Repository.SongSortType.Time_Asc) return "fileDate";
+        if (type == Y1Repository.SongSortType.Time_Desc) return "fileDate desc";
+        if (type == Y1Repository.SongSortType.SongName_A_To_Z) return "lower(pinyinSongName) asc";
+        if (type == Y1Repository.SongSortType.SongName_Z_To_A) return "lower(pinyinSongName) desc";
+        if (type == Y1Repository.SongSortType.Album) return "lower(pinyinAlbum) desc";
+        return null;
+    }
+
+    /**
+     * That query's order with only the paths read, laid over the Song objects of the list in
+     * memory — a full read with its sort is ~20 s on a large library, the paths ~3. Null whenever
+     * the table and the list disagree (a row either side lacks): the caller then queries in full.
+     */
+    static List ordered(Y1Repository.SongSortType type) {
+        String by = orderBy(type);
+        List all = songCache;
+        if (by == null || all == null) return null;
+        Cursor c = null;
+        try {
+            HashMap byPath = new HashMap(all.size() * 2);
+            for (int i = 0; i < all.size(); i++) {
+                Object o = all.get(i);
+                if (o instanceof Song) byPath.put(((Song) o).getPath(), o);
+            }
+            c = PlGrid.db().query("select path from song where isAudiobook = 0 order by " + by, null);
+            if (c.getCount() != all.size()) return null;
+            ArrayList out = new ArrayList(all.size());
+            while (c.moveToNext()) {
+                Object s = byPath.get(c.isNull(0) ? null : c.getString(0));
+                if (s == null) return null;
+                out.add(s);
+            }
+            return out;
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Throwable t) {
+                }
+            }
+        }
+    }
+
     private static List songsIn(Y1Repository repo, Y1Repository.SongSortType type) {
         int gen;
         synchronized (SONGS) {
@@ -415,7 +469,11 @@ public final class Albums {
             if (sorted != null && type == sortedType) return sorted;
             gen = songGen;
         }
-        List l = shared(repo.getSongsList(type));
+        long tq = SystemClock.uptimeMillis();
+        List l = ordered(type);
+        android.util.Log.i("ipplab", "path order " + type + " " + (l != null) + " " + (SystemClock.uptimeMillis() - tq) + " ms");
+        if (l == null) l = shared(repo.getSongsList(type));
+        android.util.Log.i("ipplab", "sorted query " + type + " " + (SystemClock.uptimeMillis() - tq) + " ms");
         synchronized (SONGS) {
             if (l != null && gen == songGen) {
                 sorted = l;
@@ -579,12 +637,38 @@ public final class Albums {
         synchronized (SONGS) {
             if (foldersFor == all && foldersMemo != null) return foldersMemo;
         }
-        LinkedHashMap m = foldersByName(all);
+        LinkedHashMap m = new LinkedHashMap();
+        HashMap bySongs = new HashMap();
+        for (int i = 0; i < all.size(); i++) {
+            Song s = (Song) all.get(i);
+            String name = s.getAlbum() == null ? "" : s.getAlbum();
+            String folder = albumFolder(s.getPath());
+            Object o = m.get(name);
+            LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
+            if (set == null) { set = new LinkedHashSet(); m.put(name, set); }
+            set.add(folder);
+            String key = enc(name, folder);
+            ArrayList l = (ArrayList) bySongs.get(key);
+            if (l == null) { l = new ArrayList(); bySongs.put(key, l); }
+            l.add(s);
+        }
         synchronized (SONGS) {
             foldersFor = all;
             foldersMemo = m;
+            albumSongsMemo = bySongs;
         }
         return m;
+    }
+
+    /** Built with {@link #foldersOf}: an album's songs by name and folder, in the list's order. Read only. */
+    private static HashMap albumSongsMemo;
+
+    /** That index when it was built from this very list, else null. */
+    private static HashMap albumSongsOf(List all) {
+        foldersOf(all);
+        synchronized (SONGS) {
+            return foldersFor == all ? albumSongsMemo : null;
+        }
     }
 
     private static LinkedHashMap foldersByName(List songs) {
@@ -1017,8 +1101,10 @@ public final class Albums {
     public static List split(List names) {
         if (names == null) return names;
         List all = allSongs();
+        Lab.s("split allSongs");
         if (all == null) return names;
         LinkedHashMap byName = foldersOf(all);
+        Lab.s("split foldersOf");
         ArrayList out = new ArrayList();
         for (int i = 0; i < names.size(); i++) {
             String name = (String) names.get(i);
@@ -1029,7 +1115,10 @@ public final class Albums {
             Collections.sort(folders, STR_CMP);
             for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
         }
-        return byYear(out);
+        Lab.s("split loop");
+        List r = byYear(out);
+        Lab.s("split byYear");
+        return r;
     }
 
     /** The same split for the Search results, keeping the query's own order. */
@@ -1064,12 +1153,14 @@ public final class Albums {
         List all = allSongs();
         if (all == null || key == null) return out;
         String name = realName(key);
-        String folder = isEnc(key) ? folderOf(key) : null;
-        for (int i = 0; i < all.size(); i++) {
-            Song s = (Song) all.get(i);
-            if (s == null || !eq(s.getAlbum(), name)) continue;
-            if (folder != null && !eq(albumFolder(s.getPath()), folder)) continue;
-            out.add(s);
+        if (isEnc(key)) {
+            out.addAll(matchAlbum(all, name, folderOf(key)));
+        } else {
+            Object o = foldersOf(all).get(name == null ? "" : name);
+            if (o != null) {
+                Iterator it = ((LinkedHashSet) o).iterator();
+                while (it.hasNext()) out.addAll(matchAlbum(all, name, (String) it.next()));
+            }
         }
         Collections.sort(out, PATH_CMP);
         return out;
@@ -1083,6 +1174,11 @@ public final class Albums {
     }
 
     private static ArrayList matchAlbum(List all, String name, String folder) {
+        HashMap index = albumSongsOf(all);
+        if (index != null) {
+            Object l = index.get(enc(name == null ? "" : name, folder == null ? "" : folder));
+            return l == null ? new ArrayList() : new ArrayList((ArrayList) l);
+        }
         ArrayList matched = new ArrayList();
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
@@ -1226,12 +1322,14 @@ public final class Albums {
         String name = realName(album.getName());
         String folder = folderOf(album.getName());
         String gname = genre == null ? null : genre.getName();
-        ArrayList matched = new ArrayList();
-        for (int i = 0; i < all.size(); i++) {
-            Song s = (Song) all.get(i);
-            if (!eq(s.getAlbum(), name) || !eq(albumFolder(s.getPath()), folder)) continue;
-            if (gname != null && !GenreSplit.has(s.getGenre(), gname)) continue;
-            matched.add(s);
+        ArrayList matched = matchAlbum(all, name, folder);
+        if (gname != null) {
+            ArrayList in = new ArrayList();
+            for (int i = 0; i < matched.size(); i++) {
+                Song s = (Song) matched.get(i);
+                if (GenreSplit.has(s.getGenre(), gname)) in.add(s);
+            }
+            matched = in;
         }
         // path order: the representative (first) song is from CD1
         Collections.sort(matched, PATH_CMP);

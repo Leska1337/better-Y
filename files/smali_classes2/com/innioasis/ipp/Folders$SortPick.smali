@@ -15,7 +15,7 @@
 
 .method constructor <init>(Landroid/app/Activity;)V
   .registers 2
-  .line 606
+  .line 645
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     return-void
@@ -24,7 +24,7 @@
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .catchall { :L0 .. :L6 } :L7
   .registers 5
-  .line 610
+  .line 649
     const/4 p1, 1
     if-nez p2, :L0
     const/4 p2, 0
@@ -33,9 +33,9 @@
     invoke-virtual { p2 }, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;->getString()Ljava/lang/String;
     move-result-object p2
   :L1
-  .line 611
+  .line 650
     nop
-  .line 612
+  .line 651
     iget-object v0, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     const v1, 2131820971
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
@@ -46,7 +46,7 @@
     const/4 p2, 1
     goto :L5
   :L2
-  .line 613
+  .line 652
     iget-object v0, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     const v1, 2131820969
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
@@ -57,7 +57,7 @@
     const/4 p2, 2
     goto :L5
   :L3
-  .line 614
+  .line 653
     iget-object v0, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     const v1, 2131820970
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
@@ -70,26 +70,26 @@
   :L4
     const/4 p2, 0
   :L5
-  .line 615
+  .line 654
     iget-object v0, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Folders;->access$200(Landroid/app/Activity;)Ljava/lang/String;
     move-result-object v1
     invoke-static { v1 }, Lcom/innioasis/ipp/Folders;->access$300(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v1
     invoke-static { v0, v1, p2 }, Lcom/innioasis/ipp/Prefs;->setInt(Landroid/content/Context;Ljava/lang/String;I)V
-  .line 616
+  .line 655
     iget-object p2, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     invoke-static { p2 }, Lcom/innioasis/ipp/Folders;->access$400(Landroid/app/Activity;)V
-  .line 617
+  .line 656
     iget-object p2, p0, Lcom/innioasis/ipp/Folders$SortPick;->a:Landroid/app/Activity;
     invoke-static { p2 }, Lcom/innioasis/ipp/Folders;->access$500(Landroid/app/Activity;)V
   :L6
-  .line 619
+  .line 658
     goto :L8
   :L7
-  .line 618
+  .line 657
     move-exception p2
   :L8
-  .line 620
+  .line 659
     return p1
 .end method

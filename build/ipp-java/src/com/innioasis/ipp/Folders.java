@@ -171,8 +171,47 @@ public final class Folders {
         // fileList = sub-folders + own songs: the size difference says whether there are folders
         int songs = ownSongs == null ? 0 : ownSongs.size();
         boolean hasDirs = fileList.size() > songs;
-        if (hasDirs) return songsUnder(dir).isEmpty() ? null : mark(dir);
+        if (hasDirs) return anyUnder(dir) ? mark(dir) : null;
         return songs > 1 ? shufMark(dir) : null;
+    }
+
+    /** Whether {@link #songsUnder} would find anything: stops at the first song still on the card. */
+    private static boolean anyUnder(File dir) {
+        List all = Albums.allSongs();
+        String prefix = dir.getPath();
+        if (all == null || prefix == null) return false;
+        if (!prefix.endsWith("/")) prefix = prefix + "/";
+        for (int i = 0; i < all.size(); i++) {
+            Song s = (Song) all.get(i);
+            String path = s == null ? null : s.getPath();
+            if (path != null && path.startsWith(prefix) && new File(path).exists()) return true;
+        }
+        return false;
+    }
+
+    /**
+     * In place of {@code getSongsByParentPath} in {@code FilesActivity.refresh}: the folder's own
+     * songs off the list in memory. That query reads every row below the folder (the whole library
+     * at the root) for stock to keep the direct children; the order is {@link #sortFiles}'s anyway.
+     * Audiobooks are not in that list, and with no list yet nothing is read here: the query.
+     */
+    public static List byParent(Y1Repository repo, String dir) {
+        try {
+            List all = Albums.loaded();
+            if (all != null && dir != null && !Constant.INSTANCE.pathInAudiobook(dir)) {
+                ArrayList out = new ArrayList();
+                int n = dir.length();
+                for (int i = 0; i < all.size(); i++) {
+                    Song s = (Song) all.get(i);
+                    String path = s == null ? null : s.getPath();
+                    if (path != null && path.length() > n + 1 && path.charAt(n) == '/'
+                            && path.startsWith(dir) && path.indexOf('/', n + 1) < 0) out.add(s);
+                }
+                return out;
+            }
+        } catch (Throwable t) {
+        }
+        return repo.getSongsByParentPath(dir);
     }
 
     /**

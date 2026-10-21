@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..7fc74b9b 100644
+index 01b1f730..d12d5dfd 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..7fc74b9b 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100315
++  versionCode: 10100319
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..c765cce2 100644
+index 71fe29d0..9574d5d8 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..c765cce2 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev315</string>
++    <string name="ipp_version">v1.1.0-dev319</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -39220,10 +39220,10 @@ index 8f1b4c3c..9c0661a1 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
-index 04adc813..42877f32 100644
+index 04adc813..137dd16e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1.smali
-@@ -230,6 +230,10 @@
+@@ -230,6 +230,12 @@
  
      invoke-virtual {p1, v0}, Lcom/innioasis/music/adapter/AlbumListAdapter;->setAlbums(Ljava/util/List;)V
  
@@ -39231,17 +39231,30 @@ index 04adc813..42877f32 100644
 +    # first real album instead. Only when it is still on row 0, so a re-sort leaves it alone.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Mark;->afterFill(Ljava/lang/Object;)V
 +
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->a4()V
++
      .line 124
      iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1;->$albums:Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
-index e054b642..1ed478ef 100644
+index e054b642..b411d3bf 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
-@@ -221,7 +221,24 @@
+@@ -208,6 +208,8 @@
+     :cond_1
+     invoke-static {p1}, Lkotlin/ResultKt;->throwOnFailure(Ljava/lang/Object;)V
+ 
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->a0()V
++
+     .line 117
+     sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+ 
+@@ -221,7 +223,30 @@
  
      move-result-object p1
  
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->a1()V
++
 +    iget-object v1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
 +
 +    check-cast v1, Landroid/app/Activity;
@@ -39249,6 +39262,8 @@ index e054b642..1ed478ef 100644
 +    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->listForView(Ljava/util/List;Landroid/app/Activity;)Ljava/util/List;
 +
 +    move-result-object p1
++
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->a2()V
 +
 +    invoke-static {}, Lcom/innioasis/ipp/Prefs;->albumYearEnabled()Z
 +
@@ -39260,10 +39275,12 @@ index e054b642..1ed478ef 100644
 +
      .line 119
 +    :cond_2
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->a3()V
++
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
  
      move-result-object v1
-@@ -250,12 +267,12 @@
+@@ -250,12 +275,12 @@
  
      move-result-object p1
  
@@ -43482,10 +43499,10 @@ index 717ead6e..2102d906 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-index 67d99812..9453f059 100644
+index 67d99812..fdb9f225 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-@@ -283,6 +283,17 @@
+@@ -283,6 +283,19 @@
  
      invoke-virtual {p1, v2}, Landroid/widget/ListView;->setSelection(I)V
  
@@ -43500,14 +43517,49 @@ index 67d99812..9453f059 100644
 +
 +    invoke-static {p1}, Lcom/innioasis/ipp/Folders;->startRow(Ljava/lang/Object;)V
 +
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f5()V
++
      .line 118
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
-index d8dc6b04..22a0f692 100644
+index d8dc6b04..d2e671f1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
-@@ -475,18 +475,21 @@
+@@ -282,6 +282,8 @@
+     :cond_1
+     invoke-static/range {p1 .. p1}, Lkotlin/ResultKt;->throwOnFailure(Ljava/lang/Object;)V
+ 
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f0()V
++
+     .line 75
+     sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+ 
+@@ -299,10 +301,13 @@
+ 
+     invoke-static {v4, v5}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {v2, v4}, Lcom/innioasis/y1/database/Y1Repository;->getSongsByParentPath(Ljava/lang/String;)Ljava/util/List;
++    # ipp: the folder's own songs off the list in memory; the query read every row below it
++    invoke-static {v2, v4}, Lcom/innioasis/ipp/Folders;->byParent(Lcom/innioasis/y1/database/Y1Repository;Ljava/lang/String;)Ljava/util/List;
+ 
+     move-result-object v2
+ 
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f1()V
++
+     .line 77
+     new-instance v4, Ljava/util/ArrayList;
+ 
+@@ -466,6 +471,8 @@
+ 
+     .line 89
+     :cond_7
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f2()V
++
+     iget-object v2, v0, Lcom/innioasis/music/FilesActivity$refresh$1;->$file:Ljava/io/File;
+ 
+     sget-object v5, Lcom/innioasis/music/FilesActivity$refresh$1$$ExternalSyntheticLambda0;->INSTANCE:Lcom/innioasis/music/FilesActivity$refresh$1$$ExternalSyntheticLambda0;
+@@ -475,18 +482,21 @@
      move-result-object v2
  
      .line 94
@@ -43533,7 +43585,7 @@ index d8dc6b04..22a0f692 100644
  
      move-result v5
  
-@@ -529,9 +532,9 @@
+@@ -529,9 +539,9 @@
  
      .line 102
      :cond_9
@@ -43545,10 +43597,12 @@ index d8dc6b04..22a0f692 100644
  
      move-result v5
  
-@@ -573,6 +576,13 @@
+@@ -573,6 +583,15 @@
      .line 106
      :cond_b
      :goto_4
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f3()V
++
 +    # ipp: and the folder's OWN songs. The block above sorts the SUB-FOLDERS; these come from the
 +    # library in the query's order, so a folder of tracks re-sorted by nothing. Before the list is
 +    # handed on -- it is also the play order.
@@ -43559,7 +43613,7 @@ index d8dc6b04..22a0f692 100644
      iget-object v5, v0, Lcom/innioasis/music/FilesActivity$refresh$1;->this$0:Lcom/innioasis/music/FilesActivity;
  
      invoke-static {v5, v4}, Lcom/innioasis/music/FilesActivity;->access$setNowSongFileList$p(Lcom/innioasis/music/FilesActivity;Ljava/util/List;)V
-@@ -613,6 +623,30 @@
+@@ -613,6 +632,32 @@
  
      invoke-interface {v2, v4}, Ljava/util/List;->addAll(Ljava/util/Collection;)Z
  
@@ -43581,6 +43635,8 @@ index d8dc6b04..22a0f692 100644
 +    invoke-static {v7, v6, v2, v4}, Lcom/innioasis/ipp/Folders;->build(Landroid/app/Activity;Ljava/io/File;Ljava/util/List;Ljava/util/List;)Ljava/util/List;
 +
 +    move-result-object v6
++
++    invoke-static {}, Lcom/innioasis/ipp/Lab;->f4()V
 +
 +    if-eqz v6, :ipp_224_done
 +
