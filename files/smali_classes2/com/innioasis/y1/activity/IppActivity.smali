@@ -3154,7 +3154,7 @@
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
     iput-object v7, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
   .line 1030
-    invoke-static { v7 }, Lcom/innioasis/ipp/Loading;->awake(Landroid/app/Dialog;)V
+    invoke-static { v7 }, Lcom/innioasis/ipp/Loading;->counter(Landroid/app/Dialog;)V
   .line 1031
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
     invoke-virtual { v1 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V
@@ -3200,7 +3200,7 @@
     invoke-direct/range { v1 .. v6 }, Lcom/innioasis/y1/utils/LoadingDialog;-><init>(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/functions/Function0;)V
     iput-object v7, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
   .line 1004
-    invoke-static { v7 }, Lcom/innioasis/ipp/Loading;->awake(Landroid/app/Dialog;)V
+    invoke-static { v7 }, Lcom/innioasis/ipp/Loading;->counter(Landroid/app/Dialog;)V
   .line 1005
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity;->progress:Lcom/innioasis/y1/utils/LoadingDialog;
     invoke-virtual { v1 }, Lcom/innioasis/y1/utils/LoadingDialog;->show()V

@@ -21,6 +21,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -43,6 +46,7 @@ import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.utils.LoadingDialog;
 
 import java.lang.ref.WeakReference;
+import java.util.WeakHashMap;
 
 /**
  * The progress windows in the theme's dialog colours: {@code LoadingDialog} and the platform
@@ -83,14 +87,27 @@ public final class Loading {
             text(root, R.id.content, text);
             text(root, R.id.tip, text);
             View img = root.findViewById(R.id.loading_img);
-            if (spin(img, themed, 0)) {
+            View c = root.findViewById(R.id.content);
+            if (counts(d)) {
+                // the number is the window: no ring, the text takes its place at the top
+                if (img != null) img.setVisibility(View.GONE);
+                // content is tied to the bottom only, so a margin of its own would be ignored
+                root.setPadding(root.getPaddingLeft(),
+                        (int) (TOP_DIP * root.getResources().getDisplayMetrics().density),
+                        root.getPaddingRight(), root.getPaddingBottom());
+                // the tip line has no margin of its own and would sit on the box's edge
+                View tip = root.findViewById(R.id.tip);
+                if (tip != null) {
+                    int side = (int) (SIDE_DIP * root.getResources().getDisplayMetrics().density);
+                    tip.setPadding(side, tip.getPaddingTop(), side, tip.getPaddingBottom());
+                }
+                if (c instanceof TextView) steady((TextView) c);
+            } else if (spin(img, themed, 0)) {
                 Window w = d == null ? null : d.getWindow();
                 if (w != null) w.setWindowAnimations(FADE_STYLE);
             } else if (themed != PROBE && img instanceof ImageView) {
                 ((ImageView) img).setColorFilter(fade(themed));
             }
-            View c = root.findViewById(R.id.content);
-            if (c instanceof TextView) steady((TextView) c);
         } catch (Throwable t) {
         }
     }
@@ -113,18 +130,40 @@ public final class Loading {
         }
     }
 
-    /** The screen stays on while a long pass shows its window; the flag goes with the window. */
-    public static void awake(Dialog d) {
+    /**
+     * Before {@code show()}: a window that counts — no ring, the number large over a smaller title,
+     * and the screen kept on while it is up (the flag goes with the window).
+     */
+    public static void counter(Dialog d) {
+        if (d == null) return;
+        synchronized (COUNTERS) {
+            COUNTERS.put(d, Boolean.TRUE);
+        }
         try {
-            Window w = d == null ? null : d.getWindow();
+            Window w = d.getWindow();
             if (w != null) w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } catch (Throwable t) {
         }
     }
 
+    private static boolean counts(Dialog d) {
+        synchronized (COUNTERS) {
+            return d != null && COUNTERS.containsKey(d);
+        }
+    }
+
+    private static final WeakHashMap COUNTERS = new WeakHashMap();
+
+    /** The number against the layout's 30sp, and the title under it. */
+    private static final float BIG = 2.2f;
+    private static final float SMALL = 0.7f;
+    private static final int TOP_DIP = 16;
+    private static final int SIDE_DIP = 14;
+
     /**
-     * A text whose first line is the progress: the width is fixed at its widest form ("100%", or the
-     * count, which only grows), so the window does not jump with each digit. Only ever widened.
+     * A text whose first line is the progress: that line large, the rest small, and the width fixed
+     * at its widest form ("100%", or the count, which only grows), so the window does not jump with
+     * each digit. Only ever widened.
      */
     private static void steady(TextView tv) {
         CharSequence cs = tv.getText();
@@ -133,8 +172,18 @@ public final class Loading {
         int nl = s.indexOf('\n');
         String head = nl < 0 ? s : s.substring(0, nl);
         if (head.length() == 0 || !Character.isDigit(head.charAt(0))) return;
-        Paint p = tv.getPaint();
+        if (!(cs instanceof Spanned)) {
+            SpannableString sp = new SpannableString(s);
+            int ex = Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
+            sp.setSpan(new RelativeSizeSpan(BIG), 0, head.length(), ex);
+            if (nl >= 0) sp.setSpan(new RelativeSizeSpan(SMALL), nl + 1, s.length(), ex);
+            tv.setText(sp);
+        }
+        Paint p = new Paint(tv.getPaint());
+        float size = p.getTextSize();
+        p.setTextSize(size * BIG);
         float w = Math.max(p.measureText(head), p.measureText(FULL));
+        p.setTextSize(size * SMALL);
         int from = nl + 1;
         while (nl >= 0 && from <= s.length()) {
             int end = s.indexOf('\n', from);
@@ -143,7 +192,7 @@ public final class Loading {
             if (end < 0) break;
             from = end + 1;
         }
-        int px = (int) Math.ceil(w) + tv.getPaddingLeft() + tv.getPaddingRight();
+        int px = (int) Math.ceil(w) + SLACK + tv.getPaddingLeft() + tv.getPaddingRight();
         int max = tv.getResources().getDisplayMetrics().widthPixels * 9 / 10;
         if (px > max) px = max;
         Object had = tv.getTag(R.id.content);
@@ -153,6 +202,8 @@ public final class Loading {
     }
 
     private static final String FULL = "100%";
+    /** A span's measure and the paint's differ by a pixel or two; a wrap would add a line. */
+    private static final int SLACK = 4;
 
     // ---- the stock scan's window ------------------------------------------------------------
 
@@ -162,7 +213,7 @@ public final class Loading {
     /** In place of the stock scan window's {@code show()}: kept awake and given the progress line. */
     public static void scan(LoadingDialog d) {
         if (d == null) return;
-        awake(d);
+        counter(d);
         d.show();
         try {
             scanTitle = d.getContext().getString(R.string.scanning_files);

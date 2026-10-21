@@ -1001,7 +1001,7 @@ public final class IppActivity extends BaseActivity {
         try {
             progress = new LoadingDialog(getActivity(), Loading.percent(getString(R.string.ipp_scan_running), 0), "",
                     R.style.Dialog_Common, new Noop());
-            Loading.awake(progress);
+            Loading.counter(progress);
             progress.show();
         } catch (Throwable t) {
             progress = null;
@@ -1027,7 +1027,7 @@ public final class IppActivity extends BaseActivity {
         try {
             progress = new LoadingDialog(getActivity(), Loading.percent(getString(R.string.ipp_cache_running), 0), "",
                     R.style.Dialog_Common, new Noop());
-            Loading.awake(progress);
+            Loading.counter(progress);
             progress.show();
         } catch (Throwable t) {
             progress = null;
