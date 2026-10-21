@@ -18,6 +18,8 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -38,6 +40,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.utils.LoadingDialog;
+
+import java.lang.ref.WeakReference;
 
 /**
  * The progress windows in the theme's dialog colours: {@code LoadingDialog} and the platform
@@ -84,7 +89,113 @@ public final class Loading {
             } else if (themed != PROBE && img instanceof ImageView) {
                 ((ImageView) img).setColorFilter(fade(themed));
             }
+            View c = root.findViewById(R.id.content);
+            if (c instanceof TextView) steady((TextView) c);
         } catch (Throwable t) {
+        }
+    }
+
+    // ---- progress text ----------------------------------------------------------------------
+
+    /** The progress line over the title. */
+    public static String percent(String title, int pct) {
+        return pct + "%\n" + title;
+    }
+
+    /** Re-text a showing window, its width held. */
+    public static void show(LoadingDialog d, String text) {
+        if (d == null) return;
+        try {
+            d.show(text);
+            View v = d.findViewById(R.id.content);
+            if (v instanceof TextView) steady((TextView) v);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The screen stays on while a long pass shows its window; the flag goes with the window. */
+    public static void awake(Dialog d) {
+        try {
+            Window w = d == null ? null : d.getWindow();
+            if (w != null) w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } catch (Throwable t) {
+        }
+    }
+
+    /**
+     * A text whose first line is the progress: the width is fixed at its widest form ("100%", or the
+     * count, which only grows), so the window does not jump with each digit. Only ever widened.
+     */
+    private static void steady(TextView tv) {
+        CharSequence cs = tv.getText();
+        if (cs == null) return;
+        String s = cs.toString();
+        int nl = s.indexOf('\n');
+        String head = nl < 0 ? s : s.substring(0, nl);
+        if (head.length() == 0 || !Character.isDigit(head.charAt(0))) return;
+        Paint p = tv.getPaint();
+        float w = Math.max(p.measureText(head), p.measureText(FULL));
+        int from = nl + 1;
+        while (nl >= 0 && from <= s.length()) {
+            int end = s.indexOf('\n', from);
+            String line = end < 0 ? s.substring(from) : s.substring(from, end);
+            w = Math.max(w, p.measureText(line));
+            if (end < 0) break;
+            from = end + 1;
+        }
+        int px = (int) Math.ceil(w) + tv.getPaddingLeft() + tv.getPaddingRight();
+        int max = tv.getResources().getDisplayMetrics().widthPixels * 9 / 10;
+        if (px > max) px = max;
+        Object had = tv.getTag(R.id.content);
+        if (had instanceof Integer && px <= ((Integer) had).intValue()) return;
+        tv.setTag(R.id.content, Integer.valueOf(px));
+        tv.setWidth(px);
+    }
+
+    private static final String FULL = "100%";
+
+    // ---- the stock scan's window ------------------------------------------------------------
+
+    private static volatile WeakReference scanDialog;
+    private static String scanTitle;
+
+    /** In place of the stock scan window's {@code show()}: kept awake and given the progress line. */
+    public static void scan(LoadingDialog d) {
+        if (d == null) return;
+        awake(d);
+        d.show();
+        try {
+            scanTitle = d.getContext().getString(R.string.scanning_files);
+            scanDialog = new WeakReference(d);
+            show(d, percent(scanTitle, 0));
+        } catch (Throwable t) {
+        }
+    }
+
+    /** From the scan's thread: {@code seen} music files met, of {@code known} in the table before. */
+    static void scanned(int seen, int known) {
+        WeakReference r = scanDialog;
+        LoadingDialog d = r == null ? null : (LoadingDialog) r.get();
+        if (d == null) return;
+        String line = known > 0 ? percent(scanTitle, Math.min(99, seen * 100 / known))
+                : seen + "\n" + scanTitle;
+        MAIN.post(new ScanText(d, line));
+    }
+
+    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+
+    private static final class ScanText implements Runnable {
+        private final LoadingDialog d;
+        private final String text;
+
+        ScanText(LoadingDialog d, String text) {
+            this.d = d;
+            this.text = text;
+        }
+
+        public void run() {
+            if (!d.isShowing()) return;
+            show(d, text);
         }
     }
 

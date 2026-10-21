@@ -33,7 +33,22 @@ public final class Scan {
      * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
-        return inDb(path) ? MARKER : null;
+        boolean in = inDb(path);
+        count();
+        return in ? MARKER : null;
+    }
+
+    // the scan window's progress: music files met against the rows the table held before
+    private static int seen;
+    private static int expected;
+    private static int shown = -1;
+
+    private static synchronized void count() {
+        int n = ++seen;
+        int step = expected > 0 ? n * 100 / expected : n / 16;
+        if (step == shown) return;
+        shown = step;
+        Loading.scanned(n, expected);
     }
 
     /** Our card folder is not music; asked right after stock's {@code pathInThemes}. */
@@ -98,6 +113,11 @@ public final class Scan {
             fill(p, r.getSongsSync(0));                   // music
             fill(p, r.getSongsSync(1));                   // audiobooks
             Diag.note("library scan: " + p.size() + " path(s) already known");
+            synchronized (Scan.class) {
+                seen = 0;
+                expected = p.size();
+                shown = -1;
+            }
             // Only a scan of an EMPTY table reads every row with the current reader.
             if (p.isEmpty()) Meta.noteLibraryRead(Y1Application.Companion.getAppContext());
             paths = p;

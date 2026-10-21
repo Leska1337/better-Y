@@ -39,6 +39,7 @@ import com.innioasis.ipp.Help;
 import com.innioasis.ipp.HelpDialog;
 import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
+import com.innioasis.ipp.Loading;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.MenuStyle;
 import com.innioasis.ipp.Preview;
@@ -998,8 +999,9 @@ public final class IppActivity extends BaseActivity {
      */
     void runFullRescan() {
         try {
-            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_scan_running) + "\n0%", "",
+            progress = new LoadingDialog(getActivity(), Loading.percent(getString(R.string.ipp_scan_running), 0), "",
                     R.style.Dialog_Common, new Noop());
+            Loading.awake(progress);
             progress.show();
         } catch (Throwable t) {
             progress = null;
@@ -1023,8 +1025,9 @@ public final class IppActivity extends BaseActivity {
     void runCacheLibrary(int mask) {
         if (mask == 0) return;
         try {
-            progress = new LoadingDialog(getActivity(), getString(R.string.ipp_cache_running) + "\n0%", "",
+            progress = new LoadingDialog(getActivity(), Loading.percent(getString(R.string.ipp_cache_running), 0), "",
                     R.style.Dialog_Common, new Noop());
+            Loading.awake(progress);
             progress.show();
         } catch (Throwable t) {
             progress = null;
@@ -1084,7 +1087,7 @@ public final class IppActivity extends BaseActivity {
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
-                    if ((i & 15) == 0) a.scanTick(label + "\n" + (i * 100 / (n == 0 ? 1 : n)) + "%");
+                    if ((i & 15) == 0) a.scanTick(Loading.percent(label, i * 100 / (n == 0 ? 1 : n)));
                     File f = new File(s.getPath());
                     if (!f.exists()) continue;                      // gone: the stock scan removes it
 
@@ -1136,7 +1139,7 @@ public final class IppActivity extends BaseActivity {
                 v = ++progress;
                 if (v % tickEvery != 0) return;
             }
-            a.scanTick(label + "\n" + (v * 100 / total) + "%");
+            a.scanTick(Loading.percent(label, v * 100 / total));
         }
 
         /** Album thumbnails on the pool; each job ticks once. */
@@ -1725,7 +1728,7 @@ public final class IppActivity extends BaseActivity {
         @Override
         public void run() {
             LoadingDialog d = a.progress;
-            if (d != null && d.isShowing()) d.show(text);
+            if (d != null && d.isShowing()) Loading.show(d, text);
         }
     }
 
