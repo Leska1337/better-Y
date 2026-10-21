@@ -1064,8 +1064,8 @@ public final class IppActivity extends BaseActivity {
     }
 
     /**
-     * Re-read the rows whose file changed. {@code ippReplaceSong} never touches the file — unlike
-     * {@code deleteSong}, which DELETES it from disk.
+     * Re-read the rows whose file changed: {@code fileToSong} and {@code SongDao.insert} never touch
+     * the file — unlike {@code deleteSong}, which DELETES it from disk.
      */
     private static final class RescanTask implements Runnable {
         private final IppActivity a;
