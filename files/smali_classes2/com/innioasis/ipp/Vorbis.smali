@@ -30,7 +30,7 @@
 
 .method private static be32([BI)I
   .registers 4
-  .line 357
+  .line 374
     aget-byte v0, p0, p1
     and-int/lit16 v0, v0, 255
     shl-int/lit8 v0, v0, 24
@@ -54,27 +54,27 @@
 .method private static close(Ljava/io/RandomAccessFile;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 1
-  .line 362
+  .line 379
     if-eqz p0, :L3
   :L0
     invoke-virtual { p0 }, Ljava/io/RandomAccessFile;->close()V
   :L1
     goto :L3
   :L2
-  .line 363
+  .line 380
     move-exception p0
     goto :L4
   :L3
-  .line 364
+  .line 381
     nop
   :L4
-  .line 365
+  .line 382
     return-void
 .end method
 
 .method private static codec([BI)I
   .registers 9
-  .line 258
+  .line 275
     const/4 v0, 7
     const/4 v1, 3
     const/4 v2, 2
@@ -94,7 +94,7 @@
     if-ne v0, v5, :L0
     return v4
   :L0
-  .line 259
+  .line 276
     const/16 v0, 8
     const/4 v5, 4
     if-lt p1, v0, :L1
@@ -115,7 +115,7 @@
     if-ne v0, v6, :L1
     return v2
   :L1
-  .line 260
+  .line 277
     const/4 v0, 5
     if-lt p1, v0, :L2
     aget-byte p1, p0, v3
@@ -136,7 +136,7 @@
     if-ne p0, p1, :L2
     return v1
   :L2
-  .line 261
+  .line 278
     return v3
 .end method
 
@@ -148,71 +148,71 @@
   .end annotation
   .catchall { :L8 .. :L9 } :L10
   .registers 14
-  .line 273
+  .line 290
     add-int/lit8 v0, p1, 4
     if-le v0, p2, :L0
     return-void
   :L0
-  .line 274
+  .line 291
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
     move-result p1
-  .line 275
+  .line 292
     nop
-  .line 276
+  .line 293
     if-ltz p1, :L16
     add-int/2addr v0, p1
     add-int/lit8 p1, v0, 4
     if-le p1, p2, :L1
     goto/16 :L16
   :L1
-  .line 277
+  .line 294
     nop
-  .line 278
+  .line 295
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
     move-result v0
-  .line 279
+  .line 296
     nop
-  .line 280
+  .line 297
     const/4 v1, 0
     const/4 v2, 0
   :L2
     if-ge v2, v0, :L15
     add-int/lit8 v3, p1, 4
     if-gt v3, p2, :L15
-  .line 281
+  .line 298
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
     move-result p1
-  .line 282
+  .line 299
     nop
-  .line 283
+  .line 300
     if-ltz p1, :L14
     add-int/2addr p1, v3
     if-le p1, p2, :L3
     goto :L14
   :L3
-  .line 284
+  .line 301
     nop
-  .line 285
+  .line 302
     move v4, v3
   :L4
     if-ge v4, p1, :L6
     add-int/lit8 v5, v3, 64
     if-ge v4, v5, :L6
-  .line 286
+  .line 303
     aget-byte v5, p0, v4
     const/16 v6, 61
     if-ne v5, v6, :L5
     goto :L7
   :L5
-  .line 285
+  .line 302
     add-int/lit8 v4, v4, 1
     goto :L4
   :L6
-  .line 288
+  .line 305
     const/4 v4, -1
   :L7
     if-le v4, v3, :L13
-  .line 289
+  .line 306
     new-instance v5, Ljava/lang/String;
     sub-int v6, v4, v3
     const-string v7, "ISO-8859-1"
@@ -220,56 +220,56 @@
     sget-object v3, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
     invoke-virtual { v5, v3 }, Ljava/lang/String;->toUpperCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v3
-  .line 290
+  .line 307
     add-int/lit8 v4, v4, 1
-  .line 291
+  .line 308
     sub-int v5, p1, v4
-  .line 292
+  .line 309
     const-string v6, "METADATA_BLOCK_PICTURE"
     invoke-virtual { v3, v6 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v6
     if-eqz v6, :L12
-  .line 293
+  .line 310
     if-eqz p5, :L13
     if-lez v5, :L13
   :L8
-  .line 295
+  .line 312
     invoke-static { p0, v4, v5, v1 }, Landroid/util/Base64;->decode([BIII)[B
     move-result-object v3
-  .line 296
+  .line 313
     array-length v4, v3
     invoke-static { v3, v1, v4, p4 }, Lcom/innioasis/ipp/Vorbis;->picture([BIILcom/innioasis/ipp/Vorbis$Pic;)V
   :L9
     goto :L11
   :L10
-  .line 297
+  .line 314
     move-exception v3
   :L11
-  .line 298
+  .line 315
     goto :L13
   :L12
-  .line 300
+  .line 317
     if-lez v5, :L13
     const/high16 v6, 0x00010000
     if-gt v5, v6, :L13
-  .line 301
+  .line 318
     invoke-static { p0, v4, v5 }, Lcom/innioasis/ipp/Vorbis;->utf8([BII)Ljava/lang/String;
     move-result-object v4
     invoke-static { p3, v3, v4 }, Lcom/innioasis/ipp/Vorbis;->put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
   :L13
-  .line 304
+  .line 321
     nop
-  .line 280
+  .line 297
     add-int/lit8 v2, v2, 1
     goto :L2
   :L14
-  .line 283
+  .line 300
     return-void
   :L15
-  .line 306
+  .line 323
     return-void
   :L16
-  .line 276
+  .line 293
     return-void
 .end method
 
@@ -521,7 +521,7 @@
 
 .method private static le32([BI)I
   .registers 4
-  .line 353
+  .line 370
     aget-byte v0, p0, p1
     and-int/lit16 v0, v0, 255
     add-int/lit8 v1, p1, 1
@@ -559,281 +559,284 @@
   .registers 19
   .line 72
     move-object/from16 v1, p1
+    move/from16 v2, p2
   .line 74
-    const/4 v2, 0
     const/4 v3, 0
+    const/4 v4, 0
   :L0
-    new-instance v4, Ljava/io/RandomAccessFile;
+    new-instance v5, Ljava/io/RandomAccessFile;
     const-string v0, "r"
-    move-object/from16 v5, p0
-    invoke-direct { v4, v5, v0 }, Ljava/io/RandomAccessFile;-><init>(Ljava/lang/String;Ljava/lang/String;)V
+    move-object/from16 v6, p0
+    invoke-direct { v5, v6, v0 }, Ljava/io/RandomAccessFile;-><init>(Ljava/lang/String;Ljava/lang/String;)V
   :L1
   .line 75
-    new-instance v5, Lcom/innioasis/ipp/Vorbis$Ogg;
-    invoke-direct { v5, v4 }, Lcom/innioasis/ipp/Vorbis$Ogg;-><init>(Ljava/io/RandomAccessFile;)V
+    new-instance v6, Lcom/innioasis/ipp/Vorbis$Ogg;
+    invoke-direct { v6, v5, v2 }, Lcom/innioasis/ipp/Vorbis$Ogg;-><init>(Ljava/io/RandomAccessFile;Z)V
   .line 76
     const/16 v0, 16
-    new-array v6, v0, [B
+    new-array v7, v0, [B
   .line 77
-    invoke-virtual { v5, v6, v2, v0 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    invoke-virtual { v6, v7, v3, v0 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
     move-result v0
-    invoke-static { v6, v0 }, Lcom/innioasis/ipp/Vorbis;->codec([BI)I
+    invoke-static { v7, v0 }, Lcom/innioasis/ipp/Vorbis;->codec([BI)I
     move-result v0
   :L2
   .line 78
     if-nez v0, :L3
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 78
-    return v2
+    return v3
   :L3
   .line 79
-    invoke-virtual { v5 }, Lcom/innioasis/ipp/Vorbis$Ogg;->nextPacket()V
+    invoke-virtual { v6 }, Lcom/innioasis/ipp/Vorbis$Ogg;->nextPacket()V
   .line 81
-    const/16 v6, 8
-    const/4 v7, 2
-    const/4 v8, 4
-    const/4 v9, 1
-    if-ne v0, v9, :L4
-    const/4 v10, 7
+    const/16 v7, 8
+    const/4 v8, 2
+    const/4 v9, 4
+    const/4 v10, 1
+    if-ne v0, v10, :L4
+    const/4 v11, 7
     goto :L6
   :L4
-    if-ne v0, v7, :L5
-    const/16 v10, 8
+    if-ne v0, v8, :L5
+    const/16 v11, 8
     goto :L6
   :L5
-    const/4 v10, 4
+    const/4 v11, 4
   :L6
   .line 82
-    new-array v6, v6, [B
+    new-array v7, v7, [B
   .line 83
-    invoke-virtual { v5, v6, v2, v10 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
-    move-result v11
+    invoke-virtual { v6, v7, v3, v11 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    move-result v12
   .line 84
-    iget-boolean v12, v5, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
+    iget-boolean v13, v6, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
   :L7
-    if-eqz v12, :L8
+    if-eqz v13, :L8
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 84
-    return v2
+    return v3
   :L8
   .line 85
-    const/4 v12, 3
-    if-ne v0, v9, :L12
-    if-ne v11, v10, :L11
+    const/4 v13, 3
+    if-ne v0, v10, :L12
+    if-ne v12, v11, :L11
   :L9
-    aget-byte v13, v6, v2
+    aget-byte v14, v7, v3
   :L10
-    if-eq v13, v12, :L12
+    if-eq v14, v13, :L12
   :L11
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 85
-    return v2
+    return v3
   :L12
   .line 86
-    if-ne v0, v7, :L16
-    if-ne v11, v10, :L15
+    if-ne v0, v8, :L16
+    if-ne v12, v11, :L15
   :L13
-    aget-byte v7, v6, v2
-    const/16 v13, 79
-    if-ne v7, v13, :L15
-    aget-byte v7, v6, v8
+    aget-byte v8, v7, v3
+    const/16 v14, 79
+    if-ne v8, v14, :L15
+    aget-byte v8, v7, v9
   :L14
-    const/16 v13, 84
-    if-eq v7, v13, :L16
+    const/16 v14, 84
+    if-eq v8, v14, :L16
   :L15
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 86
-    return v2
+    return v3
   :L16
   .line 87
-    if-ne v0, v12, :L20
-    if-ne v11, v10, :L19
+    if-ne v0, v13, :L20
+    if-ne v12, v11, :L19
   :L17
-    aget-byte v0, v6, v2
+    aget-byte v0, v7, v3
   :L18
     and-int/lit8 v0, v0, 127
-    if-eq v0, v8, :L20
+    if-eq v0, v9, :L20
   :L19
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 87
-    return v9
+    return v10
   :L20
   .line 89
-    new-instance v6, Lcom/innioasis/ipp/Vorbis$Pic;
-    invoke-direct { v6, v3 }, Lcom/innioasis/ipp/Vorbis$Pic;-><init>(Lcom/innioasis/ipp/Vorbis$1;)V
+    new-instance v7, Lcom/innioasis/ipp/Vorbis$Pic;
+    invoke-direct { v7, v4 }, Lcom/innioasis/ipp/Vorbis$Pic;-><init>(Lcom/innioasis/ipp/Vorbis$1;)V
   .line 90
-    new-array v3, v8, [B
+    new-array v4, v9, [B
   .line 91
-    invoke-virtual { v5, v3, v2, v8 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    invoke-virtual { v6, v4, v3, v9 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
     move-result v0
-    if-eq v0, v8, :L22
-    iget-boolean v0, v5, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
+    if-eq v0, v9, :L22
+    iget-boolean v0, v6, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
   :L21
   .line 139
-    xor-int/2addr v0, v9
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    xor-int/2addr v0, v10
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 91
     return v0
   :L22
   .line 92
-    invoke-static { v3, v2 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
+    invoke-static { v4, v3 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
     move-result v0
   .line 93
     if-ltz v0, :L53
-    int-to-long v10, v0
-    invoke-virtual { v5, v10, v11 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
+    int-to-long v11, v0
+    invoke-virtual { v6, v11, v12 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
     move-result v0
     if-nez v0, :L23
     goto/16 :L53
   :L23
   .line 94
-    invoke-virtual { v5, v3, v2, v8 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    invoke-virtual { v6, v4, v3, v9 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
     move-result v0
-    if-eq v0, v8, :L25
-    iget-boolean v0, v5, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
+    if-eq v0, v9, :L25
+    iget-boolean v0, v6, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
   :L24
   .line 139
-    xor-int/2addr v0, v9
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    xor-int/2addr v0, v10
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 94
     return v0
   :L25
   .line 95
-    invoke-static { v3, v2 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
-    move-result v7
+    invoke-static { v4, v3 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
+    move-result v8
   .line 96
-    const/16 v10, 64
-    new-array v11, v10, [B
+    const/16 v11, 64
+    new-array v12, v11, [B
   .line 97
-    const/4 v12, 0
+    const/4 v13, 0
   :L26
-    if-ge v12, v7, :L49
+    if-ge v13, v8, :L49
   .line 98
-    invoke-virtual { v5, v3, v2, v8 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    invoke-virtual { v6, v4, v3, v9 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
     move-result v0
-    if-eq v0, v8, :L27
+    if-eq v0, v9, :L27
     goto/16 :L49
   :L27
   .line 99
-    invoke-static { v3, v2 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
+    invoke-static { v4, v3 }, Lcom/innioasis/ipp/Vorbis;->le32([BI)I
     move-result v0
   .line 100
     if-gez v0, :L28
     goto/16 :L49
   :L28
   .line 101
-    invoke-static { v0, v10 }, Ljava/lang/Math;->min(II)I
-    move-result v13
-    invoke-virtual { v5, v11, v2, v13 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
-    move-result v13
-  .line 102
-    invoke-static { v0, v10 }, Ljava/lang/Math;->min(II)I
+    invoke-static { v0, v11 }, Ljava/lang/Math;->min(II)I
     move-result v14
-    if-ge v13, v14, :L29
+    invoke-virtual { v6, v12, v3, v14 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    move-result v14
+  .line 102
+    invoke-static { v0, v11 }, Ljava/lang/Math;->min(II)I
+    move-result v15
+    if-ge v14, v15, :L29
     goto/16 :L49
   :L29
   .line 103
     nop
   .line 104
-    const/4 v14, 0
+    const/4 v15, 0
   :L30
-    if-ge v14, v13, :L32
+    if-ge v15, v14, :L32
   .line 105
-    aget-byte v15, v11, v14
-    const/16 v8, 61
-    if-ne v15, v8, :L31
+    aget-byte v9, v12, v15
+    const/16 v11, 61
+    if-ne v9, v11, :L31
     goto :L33
   :L31
   .line 104
-    add-int/lit8 v14, v14, 1
-    const/4 v8, 4
+    add-int/lit8 v15, v15, 1
+    const/4 v9, 4
+    const/16 v11, 64
     goto :L30
   :L32
-    const/4 v14, -1
+    const/4 v15, -1
   :L33
   .line 107
-    if-gtz v14, :L34
+    if-gtz v15, :L34
   .line 108
-    sub-int/2addr v0, v13
-    int-to-long v13, v0
-    invoke-virtual { v5, v13, v14 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
+    sub-int/2addr v0, v14
+    int-to-long v14, v0
+    invoke-virtual { v6, v14, v15 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
     move-result v0
     if-nez v0, :L48
     goto/16 :L49
   :L34
   .line 111
-    new-instance v8, Ljava/lang/String;
-    const-string v15, "ISO-8859-1"
-    invoke-direct { v8, v11, v2, v14, v15 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
-    sget-object v15, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
-    invoke-virtual { v8, v15 }, Ljava/lang/String;->toUpperCase(Ljava/util/Locale;)Ljava/lang/String;
-    move-result-object v8
+    new-instance v9, Ljava/lang/String;
+    const-string v11, "ISO-8859-1"
+    invoke-direct { v9, v12, v3, v15, v11 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
+    sget-object v11, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
+    invoke-virtual { v9, v11 }, Ljava/lang/String;->toUpperCase(Ljava/util/Locale;)Ljava/lang/String;
+    move-result-object v9
   .line 112
-    sub-int v15, v0, v14
-    sub-int/2addr v15, v9
+    sub-int v11, v0, v15
+    sub-int/2addr v11, v10
   .line 113
-    const-string v10, "METADATA_BLOCK_PICTURE"
-    invoke-virtual { v8, v10 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v10
+    const-string v3, "METADATA_BLOCK_PICTURE"
+    invoke-virtual { v9, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v3
   .line 114
-    if-eqz v10, :L35
-    if-eqz p2, :L37
-    if-lez v15, :L37
-    const/high16 v2, 0x00C00000
-    if-gt v15, v2, :L37
+    if-eqz v3, :L35
+    if-eqz v2, :L37
+    if-lez v11, :L37
+    const/high16 v10, 0x00C00000
+    if-gt v11, v10, :L37
     goto :L36
   :L35
-    if-lez v15, :L37
-    const/high16 v2, 0x00010000
-    if-gt v15, v2, :L37
+    if-lez v11, :L37
+    const/high16 v10, 0x00010000
+    if-gt v11, v10, :L37
   :L36
-    const/4 v2, 1
+    const/4 v10, 1
     goto :L38
   :L37
-    const/4 v2, 0
+    const/4 v10, 0
   :L38
   .line 115
-    if-nez v2, :L39
+    if-nez v10, :L39
   .line 116
-    sub-int/2addr v0, v13
-    int-to-long v13, v0
-    invoke-virtual { v5, v13, v14 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
+    sub-int/2addr v0, v14
+    int-to-long v9, v0
+    invoke-virtual { v6, v9, v10 }, Lcom/innioasis/ipp/Vorbis$Ogg;->skip(J)Z
     move-result v0
     if-nez v0, :L48
     goto :L49
   :L39
   .line 119
-    new-array v0, v15, [B
+    new-array v0, v11, [B
   .line 120
-    sub-int/2addr v13, v14
-    sub-int/2addr v13, v9
+    sub-int/2addr v14, v15
+    const/4 v10, 1
+    sub-int/2addr v14, v10
   .line 121
-    add-int/lit8 v14, v14, 1
-    const/4 v2, 0
-    invoke-static { v11, v14, v0, v2, v13 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+    add-int/lit8 v15, v15, 1
+    const/4 v10, 0
+    invoke-static { v12, v15, v0, v10, v14 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
   .line 122
-    sub-int v2, v15, v13
-    invoke-virtual { v5, v0, v13, v2 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
-    move-result v13
+    sub-int v10, v11, v14
+    invoke-virtual { v6, v0, v14, v10 }, Lcom/innioasis/ipp/Vorbis$Ogg;->read([BII)I
+    move-result v14
   :L40
-    if-eq v13, v2, :L41
+    if-eq v14, v10, :L41
     goto :L49
   :L41
   .line 123
-    if-eqz v10, :L46
+    if-eqz v3, :L46
   .line 125
-    const/4 v2, 0
+    const/4 v3, 0
   :L42
-    invoke-static { v0, v2, v15, v2 }, Landroid/util/Base64;->decode([BIII)[B
+    invoke-static { v0, v3, v11, v3 }, Landroid/util/Base64;->decode([BIII)[B
     move-result-object v0
   .line 126
-    array-length v8, v0
-    invoke-static { v0, v2, v8, v6 }, Lcom/innioasis/ipp/Vorbis;->picture([BIILcom/innioasis/ipp/Vorbis$Pic;)V
+    array-length v9, v0
+    invoke-static { v0, v3, v9, v7 }, Lcom/innioasis/ipp/Vorbis;->picture([BIILcom/innioasis/ipp/Vorbis$Pic;)V
   :L43
     goto :L45
   :L44
@@ -844,54 +847,57 @@
     goto :L48
   :L46
   .line 130
-    const/4 v2, 0
+    const/4 v3, 0
   :L47
-    invoke-static { v0, v2, v15 }, Lcom/innioasis/ipp/Vorbis;->utf8([BII)Ljava/lang/String;
+    invoke-static { v0, v3, v11 }, Lcom/innioasis/ipp/Vorbis;->utf8([BII)Ljava/lang/String;
     move-result-object v0
-    invoke-static { v1, v8, v0 }, Lcom/innioasis/ipp/Vorbis;->put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
+    invoke-static { v1, v9, v0 }, Lcom/innioasis/ipp/Vorbis;->put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
   :L48
   .line 97
-    add-int/lit8 v12, v12, 1
-    const/4 v2, 0
-    const/4 v8, 4
-    const/16 v10, 64
+    add-int/lit8 v13, v13, 1
+    const/4 v3, 0
+    const/4 v9, 4
+    const/4 v10, 1
+    const/16 v11, 64
     goto/16 :L26
   :L49
   .line 133
-    iget-boolean v0, v5, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
+    iget-boolean v0, v6, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
   :L50
     if-eqz v0, :L51
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 133
     const/4 v1, 0
     return v1
   :L51
   .line 134
-    iget-object v0, v6, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
+    iget-object v0, v7, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
     if-eqz v0, :L52
-    iget-object v0, v6, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
+    iget-object v0, v7, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
     iput-object v0, v1, Lcom/innioasis/ipp/Meta$Info;->art:[B
   :L52
   .line 135
     nop
   .line 139
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 135
-    return v9
+    const/4 v1, 1
+    return v1
   :L53
   .line 93
-    iget-boolean v0, v5, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
+    iget-boolean v0, v6, Lcom/innioasis/ipp/Vorbis$Ogg;->eof:Z
   :L54
+    const/4 v1, 1
   .line 139
-    xor-int/2addr v0, v9
-    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    xor-int/2addr v0, v1
+    invoke-static { v5 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 93
     return v0
   :L55
   .line 136
     move-exception v0
-    move-object v3, v4
+    move-object v4, v5
     goto :L57
   :L56
     move-exception v0
@@ -899,7 +905,7 @@
   .line 137
     nop
   .line 139
-    invoke-static { v3 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
+    invoke-static { v4 }, Lcom/innioasis/ipp/Vorbis;->close(Ljava/io/RandomAccessFile;)V
   .line 137
     const/4 v1, 0
     return v1
@@ -907,51 +913,51 @@
 
 .method private static picture([BIILcom/innioasis/ipp/Vorbis$Pic;)V
   .registers 7
-  .line 322
+  .line 339
     add-int/lit8 v0, p1, 8
     if-le v0, p2, :L0
     return-void
   :L0
-  .line 323
+  .line 340
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result v0
-  .line 324
+  .line 341
     add-int/lit8 p1, p1, 4
-  .line 325
+  .line 342
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result v1
-  .line 326
+  .line 343
     add-int/lit8 p1, p1, 4
-  .line 327
+  .line 344
     if-ltz v1, :L10
     add-int/2addr p1, v1
     add-int/lit8 v1, p1, 4
     if-le v1, p2, :L1
     goto :L10
   :L1
-  .line 328
+  .line 345
     nop
-  .line 329
+  .line 346
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result p1
-  .line 330
+  .line 347
     nop
-  .line 331
+  .line 348
     if-ltz p1, :L9
     add-int v2, v1, p1
     add-int/lit8 v2, v2, 20
     if-le v2, p2, :L2
     goto :L9
   :L2
-  .line 332
+  .line 349
     add-int/lit8 p1, p1, 16
     add-int/2addr v1, p1
-  .line 333
+  .line 350
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result p1
-  .line 334
+  .line 351
     add-int/lit8 v1, v1, 4
-  .line 335
+  .line 352
     if-lez p1, :L8
     const/high16 v2, 0x00800000
     if-gt p1, v2, :L8
@@ -959,7 +965,7 @@
     if-le v2, p2, :L3
     goto :L8
   :L3
-  .line 336
+  .line 353
     const/4 p2, 3
     const/4 v2, 0
     if-ne v0, p2, :L4
@@ -968,7 +974,7 @@
   :L4
     const/4 p2, 0
   :L5
-  .line 337
+  .line 354
     iget-object v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
     if-eqz v0, :L7
     iget-boolean v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->front:Z
@@ -977,34 +983,34 @@
   :L6
     return-void
   :L7
-  .line 338
+  .line 355
     new-array v0, p1, [B
-  .line 339
+  .line 356
     invoke-static { p0, v1, v0, v2, p1 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 340
+  .line 357
     iput-object v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
-  .line 341
+  .line 358
     iput-boolean p2, p3, Lcom/innioasis/ipp/Vorbis$Pic;->front:Z
-  .line 342
+  .line 359
     return-void
   :L8
-  .line 335
+  .line 352
     return-void
   :L9
-  .line 331
+  .line 348
     return-void
   :L10
-  .line 327
+  .line 344
     return-void
 .end method
 
 .method private static put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;Ljava/lang/String;)V
   .registers 4
-  .line 309
+  .line 326
     if-nez p2, :L0
     return-void
   :L0
-  .line 310
+  .line 327
     const-string v0, "TITLE"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1012,7 +1018,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
     goto :L9
   :L1
-  .line 311
+  .line 328
     const-string v0, "ARTIST"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1020,7 +1026,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
     goto :L9
   :L2
-  .line 312
+  .line 329
     const-string v0, "ALBUMARTIST"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1031,7 +1037,7 @@
     if-eqz v0, :L3
     goto :L8
   :L3
-  .line 313
+  .line 330
     const-string v0, "ALBUM"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1039,7 +1045,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
     goto :L9
   :L4
-  .line 314
+  .line 331
     const-string v0, "GENRE"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1047,7 +1053,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
     goto :L9
   :L5
-  .line 315
+  .line 332
     const-string v0, "TRACKNUMBER"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1055,7 +1061,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
     goto :L9
   :L6
-  .line 316
+  .line 333
     const-string v0, "DISCNUMBER"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -1063,7 +1069,7 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
     goto :L9
   :L7
-  .line 317
+  .line 334
     const-string v0, "DATE"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
@@ -1071,10 +1077,10 @@
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->date:Ljava/lang/String;
     goto :L9
   :L8
-  .line 312
+  .line 329
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
   :L9
-  .line 318
+  .line 335
     return-void
 .end method
 
@@ -1082,16 +1088,16 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 346
+  .line 363
     new-instance v0, Ljava/lang/String;
     const-string v1, "UTF-8"
     invoke-direct { v0, p0, p1, p2, v1 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
   :L1
     return-object v0
   :L2
-  .line 347
+  .line 364
     move-exception p0
-  .line 348
+  .line 365
     const/4 p0, 0
     return-object p0
 .end method

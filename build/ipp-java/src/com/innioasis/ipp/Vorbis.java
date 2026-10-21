@@ -72,7 +72,7 @@ final class Vorbis {
         RandomAccessFile f = null;
         try {
             f = new RandomAccessFile(path, "r");
-            Ogg o = new Ogg(f);
+            Ogg o = new Ogg(f, wantArt);
             byte[] head = new byte[16];
             int codec = codec(head, o.read(head, 0, head.length));
             if (codec == 0) return false;
@@ -141,9 +141,9 @@ final class Vorbis {
     }
 
     /**
-     * The packets of an Ogg file's first logical stream, as bytes. A page body is read whole on the
-     * first byte wanted from it and not at all when only skipped over. {@code eof}: the file ended
-     * inside a packet.
+     * The packets of an Ogg file's first logical stream, as bytes. A page body is read from the
+     * first byte wanted, a window at a time, and not at all when only skipped over. {@code eof}:
+     * the file ended inside a packet.
      */
     private static final class Ogg {
         private final RandomAccessFile f;
@@ -151,14 +151,16 @@ final class Vorbis {
         private long next;                  // the next page header
         private int serial;
         private boolean any;
-        private final byte[] ph = new byte[27];
+        private final byte[] ph = new byte[27 + 255];
         private final byte[] seg = new byte[255];
         private int nseg;
         private int si;
         private long body;
         private int bodyLen;
-        private final byte[] buf = new byte[255 * 255];
+        private final byte[] buf;
         private boolean loaded;
+        private int winAt;                  // the body offset buf starts at
+        private int winLen;
         private int off;                    // where the next segment starts in the body
         private int segStart;
         private int segLen;
@@ -167,22 +169,32 @@ final class Vorbis {
         private boolean started;
         boolean eof;
 
-        Ogg(RandomAccessFile f) throws java.io.IOException {
+        /** A small window when only text is wanted; a picture is read a page at a time. */
+        Ogg(RandomAccessFile f, boolean wantArt) throws java.io.IOException {
             this.f = f;
+            buf = new byte[wantArt ? 255 * 255 : 4096];
             len = f.length();
         }
 
         private boolean page() throws java.io.IOException {
             while (true) {
                 if (next + 27 > len) return false;
+                // the header and its segment table in one read: on vfat every call queues
                 f.seek(next);
-                f.readFully(ph);
-                if (ph[0] != 'O' || ph[1] != 'g' || ph[2] != 'g' || ph[3] != 'S') {
+                int want = (int) Math.min((long) ph.length, len - next);
+                int r = 0;
+                while (r < want) {
+                    int k = f.read(ph, r, want - r);
+                    if (k < 0) break;
+                    r += k;
+                }
+                if (r < 27 || ph[0] != 'O' || ph[1] != 'g' || ph[2] != 'g' || ph[3] != 'S') {
                     throw new java.io.IOException("not an Ogg page");
                 }
                 int s = le32(ph, 14);
                 int n = ph[26] & 0xff;
-                f.readFully(seg, 0, n);
+                if (27 + n > r) throw new java.io.IOException("short page");
+                System.arraycopy(ph, 27, seg, 0, n);
                 int b = 0;
                 for (int i = 0; i < n; i++) b += seg[i] & 0xff;
                 body = next + 27 + n;
@@ -225,14 +237,19 @@ final class Vorbis {
         int read(byte[] b, int o, int n) throws java.io.IOException {
             int got = 0;
             while (got < n && more()) {
-                if (!loaded) {
+                int at = segStart + segAt;
+                if (!loaded || at < winAt || at >= winAt + winLen) {
+                    // a window of the body around the byte wanted, not the whole page: a page
+                    // is up to 64 KB, mostly a picture nobody asked for
                     if (body + bodyLen > len) throw new java.io.IOException("short page");
-                    f.seek(body);
-                    f.readFully(buf, 0, bodyLen);
+                    winAt = at;
+                    winLen = Math.min(buf.length, bodyLen - at);
+                    f.seek(body + at);
+                    f.readFully(buf, 0, winLen);
                     loaded = true;
                 }
-                int k = Math.min(n - got, segLen - segAt);
-                System.arraycopy(buf, segStart + segAt, b, o + got, k);
+                int k = Math.min(Math.min(n - got, segLen - segAt), winAt + winLen - at);
+                System.arraycopy(buf, at - winAt, b, o + got, k);
                 segAt += k;
                 got += k;
             }
