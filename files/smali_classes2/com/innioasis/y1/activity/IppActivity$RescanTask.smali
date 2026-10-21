@@ -147,7 +147,7 @@
   .line 1101
     invoke-virtual { v8 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v8
-    invoke-static { v8 }, Lcom/innioasis/ipp/Meta;->oversized(Ljava/lang/String;)Z
+    invoke-static { v8 }, Lcom/innioasis/ipp/Meta;->reread(Ljava/lang/String;)Z
     move-result v8
     if-nez v8, :L12
     goto :L13

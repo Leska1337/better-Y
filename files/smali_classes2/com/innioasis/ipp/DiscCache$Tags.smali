@@ -20,6 +20,8 @@
 
 .field public openNs:J
 
+.field public ours:Z
+
 .field public wanted:Z
 
 .method public constructor <init>()V

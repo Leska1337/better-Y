@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..bf696783 100644
+index 01b1f730..c3f3b841 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..bf696783 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100271
++  versionCode: 10100273
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20004,7 +20004,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..14f95fa7 100644
+index 71fe29d0..6f6bc1ef 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20953,7 +20953,7 @@ index 71fe29d0..14f95fa7 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev271</string>
++    <string name="ipp_version">v1.1.0-dev273</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23128,10 +23128,10 @@ index 060ed6d1..70bb975c 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..91725a1e 100644
+index 4fcfcfff..4454a040 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7946 @@
+@@ -1,7643 +1,7956 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -33963,6 +33963,11 @@ index 4fcfcfff..91725a1e 100644
 +
 +    move-result-object v0
 +
++    # ipp: opus, oga, m4b added to stock's list
++    invoke-static {v0}, Lcom/innioasis/ipp/Formats;->more(Ljava/util/List;)Ljava/util/List;
++
++    move-result-object v0
++
 +    .line 908
 +    invoke-direct {p0, p1, v0}, Lcom/innioasis/y1/database/Y1Repository;->endIsInList(Ljava/io/File;Ljava/util/List;)Z
 +
@@ -34136,6 +34141,11 @@ index 4fcfcfff..91725a1e 100644
 +
 +    .line 854
 +    invoke-static {v0}, Lkotlin/collections/CollectionsKt;->listOf([Ljava/lang/Object;)Ljava/util/List;
++
++    move-result-object v0
++
++    # ipp: opus, oga, m4b added to stock's list
++    invoke-static {v0}, Lcom/innioasis/ipp/Formats;->more(Ljava/util/List;)Ljava/util/List;
 +
 +    move-result-object v0
 +
@@ -38722,24 +38732,36 @@ index 4fcfcfff..91725a1e 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..9375daf5 100644
+index 54919080..a6f0a460 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-@@ -747,17 +747,13 @@
+@@ -497,6 +497,11 @@
+ 
+     move-result-object v0
+ 
++    # ipp: opus, oga, m4b play through ffmpeg too
++    invoke-static {v0}, Lcom/innioasis/ipp/Formats;->more(Ljava/util/List;)Ljava/util/List;
++
++    move-result-object v0
++
+     iput-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->formatListForIjk:Ljava/util/List;
+ 
+     .line 323
+@@ -747,17 +752,13 @@
  
      .line 861
      :cond_6
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
--
--    invoke-interface {v5}, Ljava/util/List;->size()I
--
--    move-result v5
 +    # ipp: repeat-off end of the audiobook list. Stock tested "index == size-1", which says
 +    # nothing under a shuffled pass and nothing while the queue still holds entries.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
+-    invoke-interface {v5}, Ljava/util/List;->size()I
+-
+-    move-result v5
+-
 -    sub-int/2addr v5, v4
 +    move-result v0
  
@@ -38748,7 +38770,7 @@ index 54919080..9375daf5 100644
  
      const/16 v0, 0xa
  
-@@ -814,17 +810,14 @@
+@@ -814,17 +815,14 @@
  
      .line 841
      :cond_c
@@ -38772,7 +38794,7 @@ index 54919080..9375daf5 100644
  
      const/16 v0, 0x9
  
-@@ -2226,6 +2219,11 @@
+@@ -2226,6 +2224,11 @@
  .method private final toRestart()V
      .locals 11
  
@@ -38784,7 +38806,7 @@ index 54919080..9375daf5 100644
      const-string v0, "restore"
  
      .line 520
-@@ -2259,6 +2257,9 @@
+@@ -2259,6 +2262,9 @@
  
      if-nez v1, :cond_1
  
@@ -38794,7 +38816,7 @@ index 54919080..9375daf5 100644
      return-void
  
      .line 548
-@@ -2463,6 +2464,9 @@
+@@ -2463,6 +2469,9 @@
  
      if-nez v1, :cond_4
  
@@ -38804,7 +38826,7 @@ index 54919080..9375daf5 100644
      return-void
  
      .line 523
-@@ -2622,6 +2626,9 @@
+@@ -2622,6 +2631,9 @@
  
      :cond_6
      :goto_1
@@ -38814,7 +38836,7 @@ index 54919080..9375daf5 100644
      return-void
  .end method
  
-@@ -4215,6 +4222,22 @@
+@@ -4215,6 +4227,22 @@
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
@@ -38837,7 +38859,7 @@ index 54919080..9375daf5 100644
      .line 757
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
-@@ -4296,6 +4319,22 @@
+@@ -4296,6 +4324,22 @@
  
      .line 745
      :cond_a
@@ -38860,7 +38882,7 @@ index 54919080..9375daf5 100644
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
      invoke-virtual {v1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getMusicIsShuffle()Z
-@@ -5183,6 +5222,21 @@
+@@ -5183,6 +5227,21 @@
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
@@ -38882,7 +38904,7 @@ index 54919080..9375daf5 100644
      .line 805
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
-@@ -5272,19 +5326,21 @@
+@@ -5272,19 +5331,21 @@
  
      .line 792
      :cond_a
@@ -38910,7 +38932,7 @@ index 54919080..9375daf5 100644
      :cond_b
      iget v1, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
  
-@@ -5349,6 +5405,12 @@
+@@ -5349,6 +5410,12 @@
  .method public final restartPlay(Z)V
      .locals 4
  
@@ -38923,7 +38945,7 @@ index 54919080..9375daf5 100644
      .line 591
      invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->stopRepeat()V
  
-@@ -5403,6 +5465,11 @@
+@@ -5403,6 +5470,11 @@
  
      invoke-virtual {v0, v3, v2}, Ltimber/log/Timber$Tree;->d(Ljava/lang/String;[Ljava/lang/Object;)V
  
@@ -38935,7 +38957,7 @@ index 54919080..9375daf5 100644
      const/16 v0, 0x10
  
      const/4 v2, 0x2
-@@ -5412,6 +5479,9 @@
+@@ -5412,6 +5484,9 @@
      .line 599
      invoke-static {p0, v0, v1, v2, v3}, Lcom/innioasis/y1/service/PlayerService;->pause$default(Lcom/innioasis/y1/service/PlayerService;IZILjava/lang/Object;)V
  
@@ -38945,7 +38967,7 @@ index 54919080..9375daf5 100644
      .line 600
      iput-boolean p1, p0, Lcom/innioasis/y1/service/PlayerService;->isSetPlayValue:Z
  
-@@ -5451,6 +5521,11 @@
+@@ -5451,6 +5526,11 @@
  
      invoke-virtual {p1}, Lcom/innioasis/y1/service/PlayerService$timerForRestartPlay$1;->start()Landroid/os/CountDownTimer;
  
@@ -38957,7 +38979,7 @@ index 54919080..9375daf5 100644
      :goto_0
      return-void
  .end method
-@@ -5984,6 +6059,11 @@
+@@ -5984,6 +6064,11 @@
  .method public final saveState()V
      .locals 19
  
@@ -38969,7 +38991,7 @@ index 54919080..9375daf5 100644
      move-object/from16 v12, p0
  
      .line 235
-@@ -6371,6 +6451,16 @@
+@@ -6371,6 +6456,16 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -38986,7 +39008,7 @@ index 54919080..9375daf5 100644
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
  
-@@ -6581,6 +6671,25 @@
+@@ -6581,6 +6676,25 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  

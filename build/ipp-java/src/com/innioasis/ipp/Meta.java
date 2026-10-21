@@ -36,6 +36,8 @@ public final class Meta {
         /** What the read cost, ns: the open with every key, and the picture alone ("Cache library" log). */
         public long openNs;
         public long artNs;
+        /** Read by our own reader, not the platform's ("Cache library" log). */
+        public boolean ours;
     }
 
     /** The platform's 3 MB less a margin: reading a tag it could have read costs only a file open. */
@@ -51,7 +53,7 @@ public final class Meta {
      * so "Update library" does one pass while this is behind. Bump it when the reader learns to
      * read something new.
      */
-    private static final int READER = 1;
+    private static final int READER = 2;
 
     private static final String KEY_READER = "meta_v";
 
@@ -67,9 +69,13 @@ public final class Meta {
 
     /**
      * Opens the file: callers ask only for a song whose row was never read, or for its art. Art
-     * only when {@code wantArt}: the one key not free once open. Thread-safe; not the UI thread.
+     * only when {@code wantArt}: the one key not free once open. Our reader first ({@link #own}),
+     * the platform's where it cannot answer. Thread-safe; not the UI thread.
      */
     public static Info read(String path, boolean wantArt) {
+        Info mine = own(path, wantArt);
+        if (mine != null && mine.ok) return mine;
+
         Info out = new Info();
         if (path == null) return out;
 
@@ -106,9 +112,70 @@ public final class Meta {
         return out;
     }
 
+    /**
+     * Our own readers, which read only the tag where the platform parses the whole container: ID3v2
+     * for mp3, Vorbis comment for flac and Ogg, the iTunes list for MP4 — compared field by field
+     * with the platform on a real library. Null for a format none of them reads; {@code ok} false
+     * when the container did not parse, or an mp3 has no ID3v2 tag to walk whole — the platform's
+     * then, ID3v1 included.
+     */
+    public static Info own(String path, boolean wantArt) {
+        String ext = ext(path);
+        if (ext == null) return null;
+        Info out = new Info();
+        long t0 = System.nanoTime();
+        if (!ownInto(ext, path, out, wantArt)) {
+            if (!readable(ext)) return null;
+            out.ok = false;
+        } else {
+            out.ok = true;
+            out.ours = true;
+        }
+        out.openNs = System.nanoTime() - t0;
+        return out;
+    }
+
+    private static boolean readable(String ext) {
+        return ext.equals("mp3") || ext.equals("flac") || ext.equals("ogg") || ext.equals("oga")
+                || ext.equals("opus") || ext.equals("m4a") || ext.equals("m4b") || ext.equals("m4r")
+                || ext.equals("mp4");
+    }
+
+    private static boolean ownInto(String ext, String path, Info out, boolean wantArt) {
+        if (ext.equals("mp3")) return id3(path, out, wantArt);
+        if (ext.equals("flac")) return Vorbis.flac(path, out, wantArt);
+        if (ext.equals("ogg") || ext.equals("oga") || ext.equals("opus")) return Vorbis.ogg(path, out, wantArt);
+        if (ext.equals("m4a") || ext.equals("m4b") || ext.equals("m4r") || ext.equals("mp4")) {
+            return Mp4.read(path, out, wantArt);
+        }
+        return false;
+    }
+
+    private static String ext(String path) {
+        if (path == null) return null;
+        int dot = path.lastIndexOf('.');
+        return dot < 0 ? null : path.substring(dot + 1).toLowerCase(Locale.ROOT);
+    }
+
+    /**
+     * Formats the stock scan does not open (it lists only what the platform reads), so the row gets
+     * its tags from our reader alone: opus, an Ogg under {@code .oga}, an m4a audiobook.
+     */
+    public static boolean blind(String path) {
+        String ext = ext(path);
+        return ext != null && (ext.equals("opus") || ext.equals("oga") || ext.equals("m4b"));
+    }
+
+    /** A row read wrongly or not at all by the platform: the reader-version pass reads it again. */
+    public static boolean reread(String path) {
+        return blind(path) || oversized(path);
+    }
+
     /** The picture alone, without paying for every key of {@link #read}. */
     public static byte[] art(String path) {
         if (path == null) return null;
+        Info mine = own(path, true);
+        if (mine != null && mine.ok) return mine.art;
         byte[] out = null;
         MediaMetadataRetriever r = new MediaMetadataRetriever();
         try {
@@ -128,6 +195,10 @@ public final class Meta {
      * ordinary file after ten bytes, so cheap enough for the drawing path.
      */
     public static byte[] tagArt(String path) {
+        if (blind(path)) {
+            Info b = own(path, true);
+            return b != null && b.ok ? b.art : null;
+        }
         if (!oversized(path)) return null;
         Info i = new Info();
         id3(path, i, true);
@@ -137,15 +208,21 @@ public final class Meta {
     /**
      * End of stock {@code fileToSong} (scan and "Update library"): an oversized tag's values put
      * back, pinyin keys included — only those actually found; the rest stays the retriever's.
+     * A format stock does not open at all ({@link #blind}) gets every value from our reader.
      */
     public static void fixSong(Song song) {
         if (song == null) return;
         try {
             String path = song.getPath();
-            if (!oversized(path)) return;
+            boolean blind = blind(path);
+            if (!blind && !oversized(path)) return;
 
             Info i = Schema.info(song);
-            id3(path, i, false);
+            if (blind) {
+                if (!ownInto(ext(path), path, i, false)) return;     // left unread, not "no tags"
+            } else {
+                id3(path, i, false);
+            }
             Schema.fill(song, i);
             HanziToPinyin h = HanziToPinyin.getInstance();
 
@@ -214,17 +291,19 @@ public final class Meta {
     /**
      * Fills what the tag says, leaving the rest alone. Frames are walked by header and stepped over
      * with {@code seek}, so a huge picture is read only when asked for. One walk for 2.2-2.4.
+     * True when the whole tag was walked; false with no tag, or at a frame it could not read.
      */
-    private static void id3(String path, Info out, boolean wantArt) {
+    private static boolean id3(String path, Info out, boolean wantArt) {
         RandomAccessFile f = null;
+        boolean whole = false;
         try {
             f = new RandomAccessFile(path, "r");
             byte[] h = new byte[10];
-            if (f.read(h) != 10) return;
-            if (h[0] != 'I' || h[1] != 'D' || h[2] != '3') return;
+            if (f.read(h) != 10) return false;
+            if (h[0] != 'I' || h[1] != 'D' || h[2] != '3') return false;
 
             int major = h[3] & 0xff;
-            if (major < 2 || major > 4) return;         // 2.5 does not exist; a 0xFF here is junk
+            if (major < 2 || major > 4) return false;   // 2.5 does not exist; a 0xFF here is junk
             int flags = h[5] & 0xff;
             boolean unsync = (flags & 0x80) != 0;
             long end = 10 + syncsafe(h, 6);
@@ -237,15 +316,17 @@ public final class Meta {
             byte[] fh = new byte[hdrLen];
             Pic pic = null;                             // the best picture seen so far
 
+            // whole: the walk reached the padding or the tag's end, not a frame it could not read
+            whole = true;
             while (pos + hdrLen <= end) {
                 f.seek(pos);
-                if (f.read(fh) != hdrLen) break;
+                if (f.read(fh) != hdrLen) { whole = false; break; }
                 if (fh[0] == 0) break;                  // padding: the frames are over
                 String id = ascii(fh, 0, idLen);
-                if (!isFrameId(id)) break;              // not a frame boundary any more
+                if (!isFrameId(id)) { whole = false; break; }   // not a frame boundary any more
 
                 long len = frameLen(fh, major);
-                if (len < 0 || pos + hdrLen + len > end) break;
+                if (len < 0 || pos + hdrLen + len > end) { whole = false; break; }
                 long body = pos + hdrLen;
                 pos = body + len;
 
@@ -256,7 +337,7 @@ public final class Meta {
 
                 f.seek(body);
                 byte[] d = new byte[(int) len];
-                if (f.read(d) != len) break;
+                if (f.read(d) != len) { whole = false; break; }
                 if (unsync) d = resync(d);
 
                 if (picture) {
@@ -269,9 +350,11 @@ public final class Meta {
             }
             if (pic != null) out.art = pic.data;
         } catch (Throwable t) {
+            whole = false;
         } finally {
             close(f);
         }
+        return whole;
     }
 
     /** A return value, not statics: several threads read files at once. */
@@ -298,29 +381,11 @@ public final class Meta {
         else if (id.equals("TPE1") || id.equals("TP1")) out.artist = v;
         else if (id.equals("TPE2") || id.equals("TP2")) out.albumArtist = v;
         else if (id.equals("TALB") || id.equals("TAL")) out.album = v;
-        else if (id.equals("TCON") || id.equals("TCO")) out.genre = genre(v);
+        else if (id.equals("TCON") || id.equals("TCO")) out.genre = v;   // "(17)" as written: the platform does not translate it
         else if (id.equals("TRCK") || id.equals("TRK")) out.track = v;
         else if (id.equals("TPOS") || id.equals("TPA")) out.disc = v;
         else if (id.equals("TYER") || id.equals("TYE")) out.year = v;
         else if (id.equals("TDRC") || id.equals("TDRL")) out.date = v;
-    }
-
-    /**
-     * "(17)Rock" -> "Rock". A bare number gives null rather than a second copy of stock's
-     * STANDARD_GENRES table.
-     */
-    private static String genre(String v) {
-        String s = v.trim();
-        if (s.startsWith("(")) {
-            int k = s.indexOf(')');
-            if (k > 0) s = s.substring(k + 1).trim();
-        }
-        if (s.length() == 0) return null;
-        boolean digits = true;
-        for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) < '0' || s.charAt(i) > '9') { digits = false; break; }
-        }
-        return digits ? null : s;
     }
 
     /**

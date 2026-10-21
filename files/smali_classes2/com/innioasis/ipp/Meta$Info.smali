@@ -30,6 +30,8 @@
 
 .field public openNs:J
 
+.field public ours:Z
+
 .field public title:Ljava/lang/String;
 
 .field public track:Ljava/lang/String;

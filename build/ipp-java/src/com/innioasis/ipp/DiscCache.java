@@ -36,6 +36,7 @@ public final class DiscCache {
         public boolean ok;
         public long openNs;           // Meta.Info's, for the pass's log line
         public long artNs;
+        public boolean ours;
     }
 
     /**
@@ -54,6 +55,7 @@ public final class DiscCache {
         out.ok = info.ok;
         out.openNs = info.openNs;
         out.artNs = info.artNs;
+        out.ours = info.ours;
         return out;
     }
 

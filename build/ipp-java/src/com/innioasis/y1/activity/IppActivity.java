@@ -1098,7 +1098,7 @@ public final class IppActivity extends BaseActivity {
                     }
 
                     if (f.lastModified() == s.getFileDate()
-                            && !(migrate && Meta.oversized(s.getPath()))) continue;
+                            && !(migrate && Meta.reread(s.getPath()))) continue;
                     repo.ippReplaceSong(f);
                     updated++;
                 }
@@ -1420,7 +1420,7 @@ public final class IppActivity extends BaseActivity {
      */
     static final class Steps {
         long files, openNs, artNs, coverNs, thumbNs, slideNs;
-        final HashMap byExt = new HashMap();      // extension -> long[]{files, open ns}
+        final HashMap byExt = new HashMap();      // extension -> long[]{files, open ns, read by ours}
 
         void read(String path, DiscCache.Tags t) {
             files++;
@@ -1429,9 +1429,10 @@ public final class IppActivity extends BaseActivity {
             int dot = path.lastIndexOf('.');
             String ext = dot < 0 ? "?" : path.substring(dot + 1).toLowerCase();
             long[] e = (long[]) byExt.get(ext);
-            if (e == null) byExt.put(ext, e = new long[2]);
+            if (e == null) byExt.put(ext, e = new long[3]);
             e[0]++;
             e[1] += t.openNs;
+            if (t.ours) e[2]++;
         }
 
         // BigCover.cache's own breakdown, one Walk per worker
@@ -1473,9 +1474,10 @@ public final class IppActivity extends BaseActivity {
                 Map.Entry en = (Map.Entry) it.next();
                 long[] v = (long[]) en.getValue();
                 long[] e = (long[]) byExt.get(en.getKey());
-                if (e == null) byExt.put(en.getKey(), e = new long[2]);
+                if (e == null) byExt.put(en.getKey(), e = new long[3]);
                 e[0] += v[0];
                 e[1] += v[1];
+                e[2] += v[2];
             }
         }
 
@@ -1491,7 +1493,7 @@ public final class IppActivity extends BaseActivity {
                 Map.Entry en = (Map.Entry) it.next();
                 long[] v = (long[]) en.getValue();
                 sb.append(' ').append(en.getKey()).append(' ').append(v[0])
-                        .append(" x ").append(v[0] > 0 ? v[1] / v[0] / 1000000L : 0).append(" ms");
+                        .append(" x ").append(v[0] > 0 ? v[1] / v[0] / 1000000L : 0).append(" ms (ours ").append(v[2]).append(")");
             }
             return sb.toString();
         }

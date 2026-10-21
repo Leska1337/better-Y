@@ -122,8 +122,10 @@ public final class Albums {
         return isCdFolder(base) ? dir.substring(0, j) : dir;
     }
 
-    // The token may sit anywhere in the name ("CD2 (Bonus disk)").
-    private static final Pattern CD_PAT = Pattern.compile("(cd|disc|disk|диск)[ ._-]?(\\d+)");
+    // The token may sit anywhere in the name ("CD2 (Bonus disk)"), but as a word of its own and
+    // with a disc-sized number: a catalogue number such as "UICD-3019" is not disc 3019.
+    private static final Pattern CD_PAT =
+            Pattern.compile("(?<![\\p{L}\\p{N}])(cd|disc|disk|диск)[ ._-]?(\\d{1,2})(?!\\d)");
 
     private static boolean isCdFolder(String name) {
         return discNumber(name) > 0;
