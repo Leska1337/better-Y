@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..5c90f91b 100644
+index 01b1f730..91ba36fe 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..5c90f91b 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100312
++  versionCode: 10100313
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..dfe0ca5b 100644
+index 71fe29d0..6d455b87 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..dfe0ca5b 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev312</string>
++    <string name="ipp_version">v1.1.0-dev313</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23137,10 +23137,10 @@ index 060ed6d1..70bb975c 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..966072b6 100644
+index 4fcfcfff..6d3e2500 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7949 @@
+@@ -1,7643 +1,7935 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -34261,8 +34261,6 @@ index 4fcfcfff..966072b6 100644
 +
 +    invoke-static {v1, v2}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->fBegin()V
-+
 +    .line 932
 +    invoke-static {}, Lcom/innioasis/y1/utils/HanziToPinyin;->getInstance()Lcom/innioasis/y1/utils/HanziToPinyin;
 +
@@ -34543,8 +34541,6 @@ index 4fcfcfff..966072b6 100644
 +
 +    move-result v3
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->fPreMmr()V
-+
 +    if-eqz v3, :cond_1
 +
 +    # ipp: our tag reader first -- it reads the tag alone, where the retriever parses the whole
@@ -34604,8 +34600,6 @@ index 4fcfcfff..966072b6 100644
 +    move-result-object v1
 +
 +    invoke-virtual {v3, v1}, Landroid/media/MediaMetadataRetriever;->setDataSource(Ljava/lang/String;)V
-+
-+    invoke-static {v1}, Lcom/innioasis/ipp/ScanProbe;->fOpened(Ljava/lang/String;)V
 +
 +    .line 978
 +    invoke-direct {v0, v3, v11}, Lcom/innioasis/y1/database/Y1Repository;->extractMetadata(Landroid/media/MediaMetadataRetriever;I)Ljava/lang/String;
@@ -34712,11 +34706,7 @@ index 4fcfcfff..966072b6 100644
 +
 +    # ipp: the retriever is still open on the file. Take the tags the row has no column for out
 +    # of this very open. See MetaCache.
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->fExtracted()V
-+
 +    invoke-static {v3, v5}, Lcom/innioasis/ipp/Meta;->scanned(Landroid/media/MediaMetadataRetriever;Lcom/innioasis/y1/database/Song;)V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->fScanned()V
 +
 +    .line 991
 +    sget-object v1, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
@@ -34762,8 +34752,6 @@ index 4fcfcfff..966072b6 100644
 +    .line 997
 +    :cond_1
 +    :goto_0
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->fLogged()V
-+
 +    invoke-static {v5}, Lcom/innioasis/ipp/Meta;->fixSong(Lcom/innioasis/y1/database/Song;)V
 +
 +    :ipp_own
@@ -34784,8 +34772,6 @@ index 4fcfcfff..966072b6 100644
 +    invoke-virtual {v5, v8}, Lcom/innioasis/y1/database/Song;->setAudiobook(I)V
 +
 +    :cond_2
-+    invoke-static {v5}, Lcom/innioasis/ipp/ScanProbe;->fEnd(Lcom/innioasis/y1/database/Song;)V
-+
 +    return-object v5
 +.end method
 +
@@ -68396,10 +68382,10 @@ index 3c6fa2a9..8759230f 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
-index 189a7bb9..6cdfccec 100644
+index 189a7bb9..f83b1d6c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$1.smali
-@@ -1,199 +1,211 @@
+@@ -1,199 +1,203 @@
 -.class final Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1$1;
 -.super Lkotlin/jvm/internal/Lambda;
 -.source "Y1Repository.kt"
@@ -68738,19 +68724,11 @@ index 189a7bb9..6cdfccec 100644
 +
 +    check-cast v1, [Lcom/innioasis/y1/database/Song;
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins0()V
-+
 +    # ipp: songDao.insert after every batch still queued by Scan.insert is written
 +    invoke-static {v0, v1}, Lcom/innioasis/ipp/Scan;->insertLast(Lcom/innioasis/y1/database/SongDao;[Lcom/innioasis/y1/database/Song;)V
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins1()V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->lc0()V
-+
 +    # ipp: the Song table changed -> drop the cached library list and the "no cover" answers
 +    invoke-static {}, Lcom/innioasis/ipp/Ipp;->libraryChanged()V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->lc1()V
 +
 +    .line 696
 +    sget-object v0, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
@@ -69089,10 +69067,10 @@ index d7438262..347dfdc7 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-index e9374192..517fc98e 100644
+index e9374192..dfbaef01 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1.smali
-@@ -1,366 +1,387 @@
+@@ -1,366 +1,379 @@
 -.class final Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1$r$1;
 -.super Lkotlin/jvm/internal/Lambda;
 -.source "Y1Repository.kt"
@@ -69737,20 +69715,12 @@ index e9374192..517fc98e 100644
 +
 +    check-cast v3, [Lcom/innioasis/y1/database/Song;
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins0()V
-+
 +    # ipp: songDao.insert, but on a thread of its own -- the walk goes on while the batch is
 +    # written; the tail waits for it (Scan.insertLast), so the scan ends with every row in place
 +    invoke-static {v0, v3}, Lcom/innioasis/ipp/Scan;->insert(Lcom/innioasis/y1/database/SongDao;[Lcom/innioasis/y1/database/Song;)V
 +
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->ins1()V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->lc0()V
-+
 +    # ipp: the Song table changed -> drop the cached library list and the "no cover" answers
 +    invoke-static {}, Lcom/innioasis/ipp/Ipp;->libraryChanged()V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->lc1()V
 +
 +    .line 646
 +    sget-object v0, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
@@ -69847,47 +69817,12 @@ index e9374192..517fc98e 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
-index 7bf058bc..eb8f7ced 100644
+index 7bf058bc..1110fdcc 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
-@@ -83,6 +83,8 @@
- 
-     move-object/from16 v1, p0
- 
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->begin()V
-+
-     const-string v0, "node.path"
- 
-     .line 592
-@@ -217,6 +219,8 @@
- 
-     .line 622
-     :goto_0
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wHead()V
-+
-     invoke-interface {v10}, Ljava/util/List;->size()I
- 
-     move-result v12
-@@ -241,6 +245,8 @@
- 
-     if-eqz v12, :cond_0
- 
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->slept()V
-+
-     invoke-static {v13, v14}, Ljava/lang/Thread;->sleep(J)V
- 
-     goto :goto_1
-@@ -278,14 +284,22 @@
- 
-     invoke-virtual {v13, v3, v14}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
- 
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wLogged()V
-+
-     .line 627
+@@ -282,7 +282,9 @@
      invoke-interface {v10, v4}, Ljava/util/List;->remove(I)Ljava/lang/Object;
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wRemoved()V
-+
      .line 628
 -    invoke-virtual {v12}, Ljava/io/File;->exists()Z
 +    # ipp: exists, endIsAudiobook, endIsMusic, endIsVideo and isDirectory of this node answered by
@@ -69896,12 +69831,7 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v3
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wExists()V
-+
-     if-eqz v3, :cond_8
- 
-     sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-@@ -296,10 +310,18 @@
+@@ -296,7 +298,13 @@
  
      invoke-static {v13, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -69916,12 +69846,7 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v3
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wSkip()V
-+
-     if-eqz v3, :cond_1
- 
-     goto/16 :goto_3
-@@ -308,7 +330,7 @@
+@@ -308,7 +316,7 @@
      :cond_1
      iget-object v3, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
@@ -69930,7 +69855,7 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v3
      :try_end_1
-@@ -337,7 +359,7 @@
+@@ -337,7 +345,7 @@
      :cond_2
      iget-object v3, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
@@ -69939,21 +69864,8 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v3
  
-@@ -359,6 +381,8 @@
- 
-     .line 635
-     :cond_3
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wMusic()V
-+
-     sget-object v16, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
- 
-     const/16 v17, 0x0
-@@ -427,12 +451,16 @@
- 
-     .line 659
+@@ -429,7 +437,7 @@
      :goto_2
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wPost()V
-+
      iget-object v0, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
 -    invoke-virtual {v0, v12}, Lcom/innioasis/y1/database/Y1Repository;->endIsVideo(Ljava/io/File;)Z
@@ -69961,64 +69873,26 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v0
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wVideo()V
-+
-     if-eqz v0, :cond_5
- 
-     .line 660
-@@ -497,10 +525,14 @@
+@@ -497,7 +505,7 @@
  
      .line 687
      :cond_5
 -    invoke-virtual {v12}, Ljava/io/File;->isDirectory()Z
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wVideoDone()V
-+
 +    invoke-static {v12}, Lcom/innioasis/ipp/Scan;->dir(Ljava/io/File;)Z
  
      move-result v0
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->wDir()V
-+
-     if-eqz v0, :cond_7
- 
-     invoke-virtual {v12}, Ljava/io/File;->isHidden()Z
-@@ -510,10 +542,17 @@
-     if-nez v0, :cond_7
- 
-     .line 688
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->list0()V
-+
-     invoke-virtual {v12}, Ljava/io/File;->listFiles()[Ljava/io/File;
+@@ -514,6 +522,9 @@
  
      move-result-object v0
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->list1()V
-+
 +    # ipp: the children looked at ahead of the walk, on another thread (Scan.listed)
 +    invoke-static {v0}, Lcom/innioasis/ipp/Scan;->listed([Ljava/io/File;)V
 +
      .line 689
      move-object v3, v10
  
-@@ -545,6 +584,8 @@
- 
-     .line 692
-     :cond_9
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->walked()V
-+
-     sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
- 
-     const-string v3, "refreshDatabase  \u7ed3\u675f\u5e7f\u5ea6\u641c\u7d22"
-@@ -585,6 +626,8 @@
- 
-     invoke-virtual {v0, v4, v13, v14, v3}, Lcom/innioasis/music/util/Other;->repeatTry(IJLkotlin/jvm/functions/Function0;)Z
- 
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->finalInserted()V
-+
-     .line 702
-     iget-object v0, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
- 
-@@ -592,14 +635,16 @@
+@@ -592,14 +603,16 @@
  
      move-result-object v0
  
@@ -70037,7 +69911,7 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v4
  
-@@ -630,15 +675,9 @@
+@@ -630,15 +643,9 @@
      check-cast v4, Lcom/innioasis/y1/database/Song;
  
      .line 705
@@ -70056,26 +69930,13 @@ index 7bf058bc..eb8f7ced 100644
  
      move-result v9
  
-@@ -677,6 +716,8 @@
- 
-     .line 715
-     :cond_c
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->cleaned()V
-+
-     iget-object v0, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
- 
-     invoke-static {v0}, Lcom/innioasis/y1/database/Y1Repository;->access$getVideoDao$p(Lcom/innioasis/y1/database/Y1Repository;)Lcom/innioasis/y1/database/video/VideoInfoDao;
-@@ -807,6 +848,14 @@
+@@ -807,6 +814,10 @@
  
      .line 723
      :goto_6
 +    # ipp: read the song list back while the scan dialog is still up (it waits for the flag
 +    # below), so the first section opened afterwards does not wait for it.
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->preLoad()V
-+
 +    invoke-static {}, Lcom/innioasis/ipp/Albums;->loadNow()V
-+
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->end()V
 +
      sget-object v0, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
  
@@ -70809,7 +70670,7 @@ index 8590fe7c..ba3c2594 100644
      iput-boolean p4, p0, Lcom/innioasis/y1/utils/DialogUtil;->isConfirm:Z
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
-index 2c02dafb..734986dc 100644
+index 2c02dafb..1309d610 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
 @@ -9645,10 +9645,22 @@
@@ -70844,7 +70705,7 @@ index 2c02dafb..734986dc 100644
      .locals 4
      .annotation system Ldalvik/annotation/MethodParameters;
          accessFlags = {
-@@ -9727,6 +9739,19 @@
+@@ -9727,6 +9739,15 @@
          }
      .end annotation
  
@@ -70854,21 +70715,16 @@ index 2c02dafb..734986dc 100644
 +    # it as well. The library scan now builds its songs on several threads (see ipp Scan), so the
 +    # method is serialised: the calls are short string work next to a file read, and this collator
 +    # is the only state they share.
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->pyIn()V
-+
 +    monitor-enter p0
 +
 +    :try_start_ipp
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->pyLocked()V
-+
      .line 550
      invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/HanziToPinyin;->get(Ljava/lang/String;)Ljava/util/ArrayList;
  
-@@ -9795,5 +9820,18 @@
+@@ -9795,5 +9816,17 @@
  
      move-result-object p1
  
-+    invoke-static {}, Lcom/innioasis/ipp/ScanProbe;->pyOut()V
 +    :try_end_ipp
 +    .catchall {:try_start_ipp .. :try_end_ipp} :catchall_ipp
 +
@@ -71939,19 +71795,6 @@ index 1e05f275..668ad554 100644
  
      int-to-float v3, v3
  
-diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
-index b1762e18..c8514b10 100644
---- a/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
-+++ b/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
-@@ -135,6 +135,8 @@
- 
-     move-result v0
- 
-+    const/4 v0, 0x1
-+
-     if-nez v0, :cond_0
- 
-     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 index 97739f51..5f13fa79 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali

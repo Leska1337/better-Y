@@ -37,13 +37,10 @@ public final class Scan {
      * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
-        long t = System.nanoTime();
         if (!marked) mark();
         boolean in = inDb(path);
         meet(path);
         count();
-        ScanProbe.known(System.nanoTime() - t);
-        if (ScanProbe.force) return null;
         return in ? MARKER : null;
     }
 
@@ -80,7 +77,6 @@ public final class Scan {
      * after the last row is in the table. A failure here is thrown, as stock's insert throws.
      */
     public static void insertLast(SongDao dao, Song[] batch) {
-        long t = System.nanoTime();
         synchronized (WRITES) {
             long until = SystemClock.uptimeMillis() + FLUSH_MS;
             while ((!WRITES.isEmpty() && writing) || inWrite) {
@@ -101,7 +97,6 @@ public final class Scan {
             }
             write((SongDao) w[0], (Song[]) w[1]);
         }
-        ScanProbe.flushed(System.nanoTime() - t);
         dao.insert(batch);
     }
 
@@ -151,10 +146,8 @@ public final class Scan {
     /** Three tries a second apart, as stock's {@code repeatTry} gives its per-file lambda. */
     private static void write(SongDao dao, Song[] batch) {
         for (int i = 0; i < 3; i++) {
-            long t = System.nanoTime();
             try {
                 dao.insert(batch);
-                ScanProbe.wrote(System.nanoTime() - t);
                 Ipp.libraryChanged();
                 return;
             } catch (Throwable e) {
@@ -341,7 +334,6 @@ public final class Scan {
         synchronized (Scan.class) {
             seen = met.contains(path);
         }
-        ScanProbe.exists(seen);
         boolean stays = !ours(path) && (seen || new File(path).exists());
         if (!stays) {
             synchronized (Scan.class) {
@@ -566,15 +558,12 @@ public final class Scan {
     /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
         Song s = null;
-        long t0 = System.nanoTime();
-        ScanProbe.how = 3;
         try {
             s = take(r, f);
         } catch (Throwable t) {
             s = null;
         }
         if (s == null) s = r.fileToSong(f);
-        ScanProbe.song(ScanProbe.how, System.nanoTime() - t0);
         built(s);
         return s;
     }
@@ -593,7 +582,6 @@ public final class Scan {
             Object o = at.get(path);
             int idx = o == null ? -1 : ((Integer) o).intValue();
             if (idx < cursor) {
-                ScanProbe.how = 2;
                 return null;                    // not where the walk was expected to be
             }
             pass(idx);
@@ -605,11 +593,8 @@ public final class Scan {
                 return null;                    // nobody is on it: quicker to do it here
             }
             Song s = (Song) ready.remove(path);
-            if (s != null) {
-                ScanProbe.how = 0;
-            } else if (building.contains(path)) {
+            if (s == null && building.contains(path)) {
                 // A worker is on this very file: waiting beats starting over.
-                ScanProbe.how = 1;
                 long deadline = SystemClock.uptimeMillis() + WAIT_MS;
                 while (building.contains(path)) {
                     long left = deadline - SystemClock.uptimeMillis();
@@ -697,7 +682,7 @@ public final class Scan {
                     try {
                         // Known paths are skipped, as the scan skips them; a folder named like a
                         // song is not built. Outside the lock.
-                        if (r != null && (ScanProbe.force || !inDb(f.getPath())) && f.isFile()) {
+                        if (r != null && !inDb(f.getPath()) && f.isFile()) {
                             s = r.fileToSong(f);
                         }
                     } catch (Throwable t) {

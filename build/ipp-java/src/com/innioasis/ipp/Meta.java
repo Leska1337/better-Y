@@ -214,14 +214,6 @@ public final class Meta {
      * A format stock does not open at all ({@link #blind}) gets every value from our reader.
      */
     public static void fixSong(Song song) {
-        long t0 = System.nanoTime();
-        fixSongBody(song);
-        if (song != null && blind(song.getPath())) {
-            ScanProbe.own("blind " + ext(song.getPath()), System.nanoTime() - t0, true);
-        }
-    }
-
-    private static void fixSongBody(Song song) {
         if (song == null) return;
         try {
             String path = song.getPath();
@@ -265,7 +257,6 @@ public final class Meta {
      */
     public static boolean scanOwn(Song song) {
         if (song == null) return false;
-        long t0 = System.nanoTime();
         String path = song.getPath();
         String ext = ext(path);
         boolean done = false;
@@ -278,7 +269,6 @@ public final class Meta {
         } catch (Throwable t) {
             done = false;
         }
-        ScanProbe.own(ext, System.nanoTime() - t0, done);
         return done;
     }
 
