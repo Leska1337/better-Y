@@ -51,7 +51,7 @@ public final class ScanProbe {
     private static long pyCount, pyWait, pyBody;
     private static long knownN, knownNs;
     // Scan.song outcomes on the scan thread: 0 ready, 1 waited, 2 first of folder, 3 nobody on it
-    private static final String[] HOW = {"ready", "waited", "firstOfFolder", "nobodyOnIt"};
+    private static final String[] HOW = {"ready", "waited", "notQueued", "nobodyOnIt"};
     private static final long[] howN = new long[4];
     private static final long[] howNs = new long[4];
     static int how;

@@ -19,7 +19,7 @@ import java.util.Locale;
 
 /**
  * Speeds up the stock scan ({@code Y1Repository.refreshDatabase}) through single-call injections
- * into its per-file lambda. Workers build the {@code Song}s of the current folder a few files ahead
+ * into its walk. Workers build the {@code Song}s of the files the walk will reach next, a few ahead
  * of the scan, which stays on stock's thread; whether a path is already known is answered from
  * memory. {@code fileToSong} is thread-safe only because {@code HanziToPinyin.getString} is
  * patched {@code synchronized}.
@@ -260,6 +260,7 @@ public final class Scan {
      */
     public static void listed(File[] children) {
         if (children == null || children.length == 0) return;
+        queue(children);
         synchronized (AHEAD) {
             AHEAD.addLast(children);
             if (!looking) {
@@ -443,6 +444,7 @@ public final class Scan {
         marked = false;
         wrote = false;
         py = null;
+        forgetQueue();
     }
 
     private static synchronized HashSet table() {
@@ -511,21 +513,55 @@ public final class Scan {
     }
 
     /** Songs that may stand ready in front of the scan. */
-    private static final int LOOK = 4;
+    private static final int LOOK = 6;
     private static final long IDLE_MS = 5000L;
     /** The scan's wait for a song a worker is building, before doing it itself. */
     private static final long WAIT_MS = 20000L;
 
     private static final Object LOCK = new Object();
 
+    // The files the walk will hand to the song lambda, in the order it will: its queue is FIFO and
+    // every listFiles of it passes through listed, so the order is that of the children listed.
     private static Y1Repository repo;
-    private static String dir;                 // the folder being built
-    private static File[] files;               // its audio files, in the order the walk meets them
+    private static final ArrayList upcoming = new ArrayList();  // File, nulled once passed
+    private static final HashMap at = new HashMap();            // path -> index, while not passed
+    private static int cursor;                 // the walk is past everything before this
     private static int next;                   // index the workers take from
     private static int live;                   // workers running
 
     private static final HashMap ready = new HashMap();       // path -> Song, built and waiting
     private static final HashSet building = new HashSet();     // paths a worker has taken
+
+    /** The song lambda's own test, on the name only: a book extension in the audiobook folder, music outside it. */
+    private static boolean songFile(File f) {
+        if (f.isHidden()) return false;
+        String path = f.getPath();
+        if (path == null) return false;
+        String e = extOf(f);
+        return Constant.INSTANCE.pathInAudiobook(path) ? bookExt.contains(e) : musicExt.contains(e);
+    }
+
+    /** From {@link #listed}: the walk's next files, for the workers to build ahead. */
+    private static void queue(File[] children) {
+        synchronized (LOCK) {
+            boolean any = false;
+            for (int i = 0; i < children.length; i++) {
+                File f = children[i];
+                try {
+                    if (f == null || !songFile(f)) continue;
+                } catch (Throwable t) {
+                    continue;
+                }
+                at.put(f.getPath(), Integer.valueOf(upcoming.size()));
+                upcoming.add(f);
+                any = true;
+            }
+            if (any && repo != null) {
+                start();
+                LOCK.notifyAll();
+            }
+        }
+    }
 
     /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
@@ -543,62 +579,67 @@ public final class Scan {
         return s;
     }
 
-    /** Ready or on its way, else null. The file the scan is on also drives the workers' queue. */
+    /** Ready or on its way, else null. The file the scan is on also moves the workers' window. */
     private static Song take(Y1Repository r, File f) {
         String path = f.getPath();
-        String folder = f.getParent();
-        if (path == null || folder == null) return null;
+        if (path == null) return null;
 
         synchronized (LOCK) {
-            repo = r;
-            if (!folder.equals(dir)) {
-                dir = folder;
-                files = audio(r, new File(folder));
-                next = indexAfter(path);
-                ready.clear();
-                building.clear();
-                start();
-                ScanProbe.how = 2;
-                return null;                    // this one the scan builds itself
-            }
-            next = Math.max(next, indexAfter(path));
-
-            Song s = (Song) ready.remove(path);
-            if (s != null) {
+            if (repo == null) {
+                repo = r;
                 start();
                 LOCK.notifyAll();
-                ScanProbe.how = 0;
-                return s;
             }
-            if (!building.contains(path)) {
+            Object o = at.get(path);
+            int idx = o == null ? -1 : ((Integer) o).intValue();
+            if (idx < cursor) {
+                ScanProbe.how = 2;
+                return null;                    // not where the walk was expected to be
+            }
+            pass(idx);
+            if (idx >= next) {
+                next = idx + 1;
+                at.remove(path);
                 start();
                 LOCK.notifyAll();
                 return null;                    // nobody is on it: quicker to do it here
             }
-            // A worker is on this very file: waiting beats starting over.
-            ScanProbe.how = 1;
-            long deadline = SystemClock.uptimeMillis() + WAIT_MS;
-            while (building.contains(path) && folder.equals(dir)) {
-                long left = deadline - SystemClock.uptimeMillis();
-                if (left <= 0L) break;
-                try {
-                    LOCK.wait(left);
-                } catch (Throwable t) {
-                    break;
+            Song s = (Song) ready.remove(path);
+            if (s != null) {
+                ScanProbe.how = 0;
+            } else if (building.contains(path)) {
+                // A worker is on this very file: waiting beats starting over.
+                ScanProbe.how = 1;
+                long deadline = SystemClock.uptimeMillis() + WAIT_MS;
+                while (building.contains(path)) {
+                    long left = deadline - SystemClock.uptimeMillis();
+                    if (left <= 0L) break;
+                    try {
+                        LOCK.wait(left);
+                    } catch (Throwable t) {
+                        break;
+                    }
                 }
+                s = (Song) ready.remove(path);
             }
-            s = (Song) ready.remove(path);
+            at.remove(path);
             LOCK.notifyAll();
             return s;
         }
     }
 
-    private static int indexAfter(String path) {
-        if (files == null) return 0;
-        for (int i = 0; i < files.length; i++) {
-            if (path.equals(files[i].getPath())) return i + 1;
+    /** Under the lock: the walk is at {@code idx}; what it went past is never asked for. */
+    private static void pass(int idx) {
+        for (int i = cursor; i < idx; i++) {
+            File g = (File) upcoming.get(i);
+            if (g == null) continue;
+            String p = g.getPath();
+            at.remove(p);
+            ready.remove(p);
+            upcoming.set(i, null);
         }
-        return next;
+        upcoming.set(idx, null);
+        cursor = idx + 1;
     }
 
     /** Under the lock. */
@@ -612,28 +653,22 @@ public final class Scan {
 
     private static int pool() {
         int c = Runtime.getRuntime().availableProcessors();
-        if (c < 1) c = 1;
+        c++;                    // the scan thread mostly waits on them; a fourth only crowds the lock
         if (c > 3) c = 3;
-        return c;               // plus the scan thread itself
+        return c;
     }
 
-    /** By stock's rule, in the order its walk meets them. */
-    private static File[] audio(Y1Repository r, File folder) {
-        File[] all = folder.listFiles();
-        if (all == null) return new File[0];
-        File[] out = new File[all.length];
-        int n = 0;
-        for (int i = 0; i < all.length; i++) {
-            try {
-                if (all[i].isFile() && !all[i].isHidden() && musicExt.contains(extOf(all[i]))) {
-                    out[n++] = all[i];
-                }
-            } catch (Throwable t) {
-            }
+    /** From {@link #done}. */
+    private static void forgetQueue() {
+        synchronized (LOCK) {
+            upcoming.clear();
+            at.clear();
+            ready.clear();
+            cursor = 0;
+            next = 0;
+            repo = null;
+            LOCK.notifyAll();
         }
-        File[] cut = new File[n];
-        System.arraycopy(out, 0, cut, 0, n);
-        return cut;
     }
 
     static final class Builder implements Runnable {
@@ -642,7 +677,6 @@ public final class Scan {
             try {
                 while (true) {
                     File f;
-                    String folder;
                     Y1Repository r;
                     synchronized (LOCK) {
                         long idleUntil = SystemClock.uptimeMillis() + IDLE_MS;
@@ -656,23 +690,24 @@ public final class Scan {
                             }
                             LOCK.wait(left);
                         }
-                        folder = dir;
                         r = repo;
                     }
 
                     Song s = null;
                     try {
-                        // Known paths are skipped, as the scan skips them. Outside the lock.
-                        if (ScanProbe.force || !inDb(f.getPath())) s = r.fileToSong(f);
+                        // Known paths are skipped, as the scan skips them; a folder named like a
+                        // song is not built. Outside the lock.
+                        if (r != null && (ScanProbe.force || !inDb(f.getPath())) && f.isFile()) {
+                            s = r.fileToSong(f);
+                        }
                     } catch (Throwable t) {
                         s = null;
                     }
 
                     synchronized (LOCK) {
-                        building.remove(f.getPath());
-                        if (s != null && folder != null && folder.equals(dir)) {
-                            ready.put(f.getPath(), s);
-                        }
+                        String p = f.getPath();
+                        building.remove(p);
+                        if (s != null && at.containsKey(p)) ready.put(p, s);
                         LOCK.notifyAll();
                     }
                 }
@@ -684,14 +719,17 @@ public final class Scan {
             }
         }
 
-        /** Under the lock; null while the queue is full. */
+        /** Under the lock; null while the window is full. */
         private static File claim() {
-            if (files == null || dir == null) return null;
-            if (ready.size() + building.size() >= LOOK) return null;
-            if (next >= files.length) return null;
-            File f = files[next++];
-            building.add(f.getPath());
-            return f;
+            if (repo == null) return null;
+            if (next < cursor) next = cursor;
+            while (next < upcoming.size() && ready.size() + building.size() < LOOK) {
+                File f = (File) upcoming.get(next++);
+                if (f == null) continue;
+                building.add(f.getPath());
+                return f;
+            }
+            return null;
         }
     }
 }

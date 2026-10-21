@@ -180,7 +180,7 @@
     aput-object v10, v3, v4
     const-string v10, "waited"
     aput-object v10, v3, v0
-    const-string v10, "firstOfFolder"
+    const-string v10, "notQueued"
     aput-object v10, v3, v5
     const-string v10, "nobodyOnIt"
     aput-object v10, v3, v6
