@@ -1269,6 +1269,16 @@ public final class IppActivity extends BaseActivity {
             this.mask = mask;
         }
 
+        // the albums this pass filled anything for: what the toast counts
+        private final HashSet touched = new HashSet();
+
+        void touch(String key) {
+            if (key == null) return;
+            synchronized (touched) {
+                touched.add(key);
+            }
+        }
+
         /** One item done, from any worker; the dialog re-texted every 1/60 of the work. */
         void tick() {
             int v;
@@ -1372,7 +1382,6 @@ public final class IppActivity extends BaseActivity {
                     jobs.add(j);
                     if (j.art) fromSongs.put(path, j);
                     else early.add(j);
-                    done++;
                 }
                 // Cover Flow's slides, too, from the picture the song half holds
                 HashSet slides = new HashSet();
@@ -1431,7 +1440,11 @@ public final class IppActivity extends BaseActivity {
                 t0 = SystemClock.uptimeMillis();
                 if (flow) {
                     for (int i = 0; i < m; i++) {
-                        if (!Flow.cacheSlide(((Song) reps.get(keys.get(i))).getPath())) unwritten++;
+                        String p = ((Song) reps.get(keys.get(i))).getPath();
+                        java.io.File had = com.innioasis.ipp.FlowCache.file(p);
+                        boolean fresh = had != null && !had.exists();
+                        if (!Flow.cacheSlide(p)) unwritten++;
+                        else if (fresh) touch((String) keys.get(i));
                         tick();
                     }
                 }
@@ -1450,6 +1463,11 @@ public final class IppActivity extends BaseActivity {
                 // a pass that died half way still writes down what it learned
                 try { BigCover.endCache(); } catch (Throwable t) { }
                 try { Art.flushStamps(); } catch (Throwable t) { }
+                if (done != -1) {
+                    synchronized (touched) {
+                        done = touched.size();
+                    }
+                }
                 a.cacheFinished(done);
             }
         }
@@ -1672,8 +1690,10 @@ public final class IppActivity extends BaseActivity {
             int b;
             while ((b = q.take()) >= 0) {
                 for (int i = q.from(b); i < q.to(b); i++) {
+                    AlbumJob j = (AlbumJob) jobs.get(i);
+                    if (j.thumb) task.touch(j.key);
                     try {
-                        album((AlbumJob) jobs.get(i));
+                        album(j);
                     } catch (Throwable t) {
                     }
                     task.tick();
@@ -1738,6 +1758,7 @@ public final class IppActivity extends BaseActivity {
                 failed++;                               // left unknown: read when it is next asked for
                 return;
             }
+            task.touch(Albums.keyOf(s));
             if (wantArt) {
                 long t0 = System.nanoTime();
                 boolean stored = BigCover.cache(w, path, t.art);
