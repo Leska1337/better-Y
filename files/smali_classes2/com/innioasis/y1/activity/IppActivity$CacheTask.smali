@@ -165,7 +165,7 @@
     add-int/lit8 v5, v5, 1
     goto :L11
   :L14
-  .line 1307
+  .line 1308
     move-exception v0
   :L15
     move-object v1, v9
@@ -186,21 +186,21 @@
   .line 1175
     nop
   :L19
-  .line 1310
+  .line 1311
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->endCache()V
   :L20
     goto :L22
   :L21
     move-exception v0
   :L22
-  .line 1311
+  .line 1312
     invoke-static { }, Lcom/innioasis/ipp/Art;->flushStamps()V
   :L23
     goto :L25
   :L24
     move-exception v0
   :L25
-  .line 1312
+  .line 1313
     iget-object v0, v9, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->a:Lcom/innioasis/y1/activity/IppActivity;
     const/4 v1, -1
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppActivity;->cacheFinished(I)V
@@ -452,7 +452,7 @@
     move/from16 v13, v24
     goto/16 :L45
   :L58
-  .line 1307
+  .line 1308
     move-exception v0
     move v11, v1
     goto/16 :L15
@@ -633,7 +633,7 @@
   :L80
     goto :L85
   :L81
-  .line 1307
+  .line 1308
     move-exception v0
     move/from16 v27, v1
   :L82
@@ -691,7 +691,7 @@
     move/from16 v2, v17
     goto :L86
   :L90
-  .line 1307
+  .line 1308
     move-exception v0
     goto :L82
   :L91
@@ -760,7 +760,7 @@
   :L102
     goto :L104
   :L103
-  .line 1307
+  .line 1308
     move-exception v0
     move-object/from16 v1, p0
     goto/16 :L83
@@ -790,7 +790,15 @@
     move-result-object v0
     invoke-virtual { v0, v10, v11 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
     move-result-object v0
-    const-string v5, " ms, heap "
+    const-string v5, " ms, "
+    invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+  .line 1303
+    invoke-static { }, Lcom/innioasis/y1/activity/IppActivity;->access$300()I
+    move-result v5
+    invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v0
+    const-string v5, " workers, heap "
     invoke-virtual { v0, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
     const/16 v5, 20
@@ -812,8 +820,9 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
+  .line 1302
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 1305
+  .line 1306
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "cache library steps: "
@@ -826,7 +835,7 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 1306
+  .line 1307
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "cache library cover: "
@@ -840,28 +849,28 @@
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L105
-  .line 1310
+  .line 1311
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->endCache()V
   :L106
     goto :L108
   :L107
     move-exception v0
   :L108
-  .line 1311
+  .line 1312
     invoke-static { }, Lcom/innioasis/ipp/Art;->flushStamps()V
   :L109
     goto :L111
   :L110
     move-exception v0
   :L111
-  .line 1312
+  .line 1313
     move-object/from16 v1, p0
     iget-object v0, v1, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->a:Lcom/innioasis/y1/activity/IppActivity;
     move/from16 v2, v27
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppActivity;->cacheFinished(I)V
     goto :L125
   :L112
-  .line 1307
+  .line 1308
     move-exception v0
     move-object/from16 v1, p0
     goto :L114
@@ -883,27 +892,27 @@
     move-object v1, v9
     const/4 v11, 0
   :L118
-  .line 1310
+  .line 1311
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->endCache()V
   :L119
     goto :L121
   :L120
     move-exception v0
   :L121
-  .line 1311
+  .line 1312
     invoke-static { }, Lcom/innioasis/ipp/Art;->flushStamps()V
   :L122
     goto :L124
   :L123
     move-exception v0
   :L124
-  .line 1312
+  .line 1313
     iget-object v0, v1, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v0, v11 }, Lcom/innioasis/y1/activity/IppActivity;->cacheFinished(I)V
   :L125
-  .line 1313
-    nop
   .line 1314
+    nop
+  .line 1315
     return-void
 .end method
 

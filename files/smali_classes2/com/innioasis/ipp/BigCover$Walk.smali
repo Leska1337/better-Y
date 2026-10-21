@@ -14,6 +14,8 @@
 
 .field public embedded:J
 
+.field public encodeNs:J
+
 .field public encoded:J
 
 .field private extBytes:[B
@@ -36,6 +38,8 @@
 
 .field public own:J
 
+.field public probes:J
+
 .field private raw:[B
 
 .field private rep:Landroid/graphics/Bitmap;
@@ -46,9 +50,13 @@
 
 .field public sigOnDisk:J
 
+.field public srcDecodeNs:J
+
 .field public storeNs:J
 
 .field public verbatim:J
+
+.field public writeNs:J
 
 .method public constructor <init>()V
   .registers 1
@@ -157,7 +165,7 @@
 
 .method public done()V
   .registers 3
-  .line 322
+  .line 324
     iget-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     if-eqz v0, :L0
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->access$000()Ljava/util/Map;
@@ -165,13 +173,13 @@
     iget-object v1, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     invoke-interface { v0, v1 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   :L0
-  .line 323
+  .line 325
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
-  .line 324
-    iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
-  .line 325
-    iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
   .line 326
+    iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
+  .line 327
+    iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
+  .line 328
     return-void
 .end method

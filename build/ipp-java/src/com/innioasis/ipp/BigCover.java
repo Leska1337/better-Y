@@ -112,7 +112,7 @@ public final class BigCover {
             Bitmap rep = peek(folder);
             if (rep == null) {
                 mem.put(path, fresh);
-                if (!store(folder, src)) return fresh;
+                if (!store(folder, src, null)) return fresh;
                 sigSet(folder, src.raw);
                 noteSet(path, SHARED);
                 return fresh;
@@ -123,7 +123,7 @@ public final class BigCover {
                 return rep;
             }
             mem.put(path, fresh);
-            if (store(path, src)) noteSet(path, OWN);
+            if (store(path, src, null)) noteSet(path, OWN);
             return fresh;
         }
     }
@@ -316,6 +316,8 @@ public final class BigCover {
         public long embedded, external, none;
         public long sameBytes, sigOnDisk, verbatim, encoded, samePixels, own, failed;
         public long externalNs, decodeNs, storeNs;
+        // storeNs split: the source's decode for a re-encode, the encodes (and their count), the writes
+        public long srcDecodeNs, encodeNs, probes, writeNs;
 
         /** Done with this folder: the representative is on disk. */
         public void done() {
@@ -425,7 +427,7 @@ public final class BigCover {
             src.bmp = fresh;
             src.raw = raw;
             t0 = System.nanoTime();
-            boolean ok = store(path, src);
+            boolean ok = store(path, src, w);
             w.storeNs += System.nanoTime() - t0;
             mem.remove(path);
             if (!ok) { w.failed++; return false; }
@@ -484,15 +486,20 @@ public final class BigCover {
     private static int storeSrc(Walk w, String key, byte[] raw) {
         if (raw.length <= LIMIT && isJpeg(raw)) {
             w.verbatim++;
-            return write(key, raw) ? STORED : STORE_FAILED;
+            long t0 = System.nanoTime();
+            boolean ok = write(key, raw);
+            w.writeNs += System.nanoTime() - t0;
+            return ok ? STORED : STORE_FAILED;
         }
         w.encoded++;
+        long t0 = System.nanoTime();
         Bitmap b = capped(raw);
+        w.srcDecodeNs += System.nanoTime() - t0;
         if (b == null) return STORE_NO_PICTURE;
         Src s = new Src();
         s.bmp = b;
         s.raw = raw;
-        boolean ok = store(key, s);
+        boolean ok = store(key, s, w);
         mem.remove(key);
         if (!ok) return STORE_FAILED;
         w.rep = b;
@@ -736,12 +743,15 @@ public final class BigCover {
     }
 
     /** False when nothing reached the disk — an encode that ran out of memory included. */
-    private static boolean store(String key, Src s) {
+    private static boolean store(String key, Src s, Walk w) {
         try {
             if (s == null || s.bmp == null) return false;
-            byte[] out = fit(s);
+            byte[] out = fit(s, w);
             if (out == null) return false;
-            if (!write(key, out)) return false;
+            long t0 = System.nanoTime();
+            boolean ok = write(key, out);
+            if (w != null) w.writeNs += System.nanoTime() - t0;
+            if (!ok) return false;
             mem.put(key, s.bmp);
             return true;
         } catch (Throwable t) {
@@ -769,77 +779,78 @@ public final class BigCover {
     }
 
     /**
-     * A JPEG that fits {@link #LIMIT} verbatim; otherwise the highest quality that fits, by binary
-     * search. On a conflict the QUALITY floor wins over the weight.
+     * A JPEG that fits {@link #LIMIT} verbatim; otherwise the highest quality that fits, by a search
+     * that brackets it. On a conflict the QUALITY floor wins over the weight.
      */
-    private static byte[] fit(Src s) {
+    private static byte[] fit(Src s, Walk w) {
         if (s.raw != null && s.raw.length <= LIMIT && isJpeg(s.raw)) return s.raw;
 
-        // The last cover's answer is tried first, with its neighbour: covers land close together,
-        // so two encodes usually settle it. Only the order of the probes changes, not the result.
+        // A search over [lo, hi] for the highest quality that fits, as a binary search would find
+        // it; only the next probe is chosen differently — where the weights seen so far put the
+        // limit (ln size is close to linear in ln of libjpeg's table scale, 200 - 2q).
         byte[] best = null;
-        int bestQ = Q_MIN;
+        byte[] atMin = null;
+        int bestQ = 0;
         int lo = Q_MIN;
         int hi = Q_MAX;
-        int g = lastQ;
-        if (g < Q_MIN || g > Q_MAX) g = (Q_MIN + Q_MAX) >> 1;
-        byte[] at = encode(s.bmp, g);
-        if (at != null) {
-            if (at.length <= LIMIT) {
-                best = at;
-                bestQ = g;
-                lo = g + 1;
-                if (lo <= hi) {
-                    byte[] up = encode(s.bmp, lo);
-                    if (up != null && up.length <= LIMIT) {
-                        best = up;
-                        bestQ = lo;
-                        lo++;
-                    } else if (up != null) {
-                        hi = g;                        // g fits and g + 1 does not
-                    }
-                }
-            } else {
-                hi = g - 1;
-                if (hi >= lo) {
-                    byte[] down = encode(s.bmp, hi);
-                    if (down != null && down.length <= LIMIT) {
-                        best = down;
-                        bestQ = hi;
-                        lo = hi + 1;                   // hi fits and hi + 1 did not
-                    } else if (down != null) {
-                        hi--;
-                    }
-                }
-            }
-        }
+        int q = lastQ;
+        if (q < Q_MIN || q > Q_MAX) q = (Q_MIN + Q_MAX) >> 1;
+        double lnLimit = Math.log(limit());
+        double xa = 0, ya = 0, xb = 0, yb = 0;
+        int points = 0;
         while (lo <= hi) {
-            int mid = (lo + hi + 1) >> 1;
-            byte[] out = encode(s.bmp, mid);
+            if (q < lo) q = lo;
+            if (q > hi) q = hi;
+            byte[] out = encode(s.bmp, q, w);
             if (out == null) break;
             if (out.length <= LIMIT) {
                 best = out;
-                bestQ = mid;
-                lo = mid + 1;
+                bestQ = q;
+                lo = q + 1;
             } else {
-                hi = mid - 1;
+                if (q == Q_MIN) atMin = out;
+                hi = q - 1;
             }
+            xa = xb;
+            ya = yb;
+            xb = Math.log(200 - 2 * q);
+            yb = Math.log(out.length);
+            points++;
+            double slope = SLOPE;
+            if (points > 1 && xb != xa) {
+                double k = (yb - ya) / (xb - xa);
+                if (k < 0) slope = k;
+            }
+            double scale = Math.exp(xb + (lnLimit - yb) / slope);
+            int m = (int) Math.ceil(scale);       // ints: a round double literal does not assemble
+            q = m >= 200 ? Q_MIN : (200 - m) >> 1;
         }
-        if (best == null) return encode(s.bmp, Q_MIN);
-        lastQ = bestQ;
-        return best;
+        byte[] res = best != null ? best : atMin != null ? atMin : encode(s.bmp, Q_MIN, w);
+        if (best != null) lastQ = bestQ;
+        return res;
+    }
+
+    /** d(ln size)/d(ln scale) before two probes have measured it. */
+    private static final double SLOPE = -0.6;
+
+    /** Not a compile-time constant, which would fold into a round double literal. */
+    private static int limit() {
+        return LIMIT;
     }
 
     /** The quality the last re-encoded cover settled on; shared by the workers, only a guess. */
     private static volatile int lastQ;
 
-    private static byte[] encode(Bitmap b, int quality) {
+    private static byte[] encode(Bitmap b, int quality, Walk w) {
+        long t0 = System.nanoTime();
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream(LIMIT);
             b.compress(Bitmap.CompressFormat.JPEG, quality, out);
             return out.toByteArray();
         } catch (Throwable t) {
             return null;
+        } finally {
+            if (w != null) { w.probes++; w.encodeNs += System.nanoTime() - t0; }
         }
     }
 

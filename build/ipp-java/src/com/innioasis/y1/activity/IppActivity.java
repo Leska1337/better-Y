@@ -1300,7 +1300,8 @@ public final class IppActivity extends BaseActivity {
                 // a pass that left anything out is not "already cached": the next press finishes it
                 if (unread == 0 && unwritten == 0) Albums.noteCached(a, n, stamp, mask);
                 Diag.note("cache library: albums " + tAlbums + " ms (" + late.size() + " late), songs "
-                        + tSongs + " ms, flow " + tFlow + " ms, heap " + (heap >> 20) + " MB; "
+                        + tSongs + " ms, flow " + tFlow + " ms, " + workers() + " workers, heap "
+                        + (heap >> 20) + " MB; "
                         + unread + " file(s) did not read, " + unwritten + " cover(s) not written");
                 Diag.note("cache library steps: " + steps.line());
                 Diag.note("cache library cover: " + steps.coverLine());
@@ -1325,7 +1326,7 @@ public final class IppActivity extends BaseActivity {
      */
     private static final int WORKER_PRIORITY = 5;
 
-    /** One more than the cores: each spends much of its time waiting on the card. */
+    /** One more than the cores: on the dual-core chip 3 beats 2 and matches 4, with less heap. */
     private static int workers() {
         int c = Runtime.getRuntime().availableProcessors();
         if (c < 1) c = 1;
@@ -1437,9 +1438,13 @@ public final class IppActivity extends BaseActivity {
 
         // BigCover.cache's own breakdown, one Walk per worker
         long embedded, external, none, sameBytes, verbatim, encoded, samePixels, own, coverFailed;
-        long externalNs, decodeNs, storeNs;
+        long externalNs, decodeNs, storeNs, srcDecodeNs, encodeNs, probes, writeNs;
 
         void cover(BigCover.Walk w) {
+            srcDecodeNs += w.srcDecodeNs;
+            encodeNs += w.encodeNs;
+            probes += w.probes;
+            writeNs += w.writeNs;
             embedded += w.embedded;
             external += w.external;
             none += w.none;
@@ -1459,7 +1464,9 @@ public final class IppActivity extends BaseActivity {
                     + "; same bytes " + sameBytes + ", new album stored as is " + verbatim
                     + ", re-encoded " + encoded + ", same pixels " + samePixels + ", own " + own
                     + ", failed " + coverFailed + "; cover file read " + externalNs / 1000000L
-                    + " ms, decode " + decodeNs / 1000000L + " ms, encode+write " + storeNs / 1000000L + " ms";
+                    + " ms, decode " + decodeNs / 1000000L + " ms, encode+write " + storeNs / 1000000L
+                    + " ms (source decode " + srcDecodeNs / 1000000L + " ms, " + probes + " encodes "
+                    + encodeNs / 1000000L + " ms, write " + writeNs / 1000000L + " ms)";
         }
 
         void add(Steps s) {
