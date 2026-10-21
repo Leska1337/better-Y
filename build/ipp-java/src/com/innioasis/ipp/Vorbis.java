@@ -64,80 +64,193 @@ final class Vorbis {
     }
 
     /**
-     * Ogg: the first logical stream's second packet is its comment header. Pages are read whole
-     * and only that packet is kept.
+     * Ogg: the first logical stream's second packet is its comment header, read as a stream. Page
+     * bodies are read only where a byte is wanted, so a picture the caller did not ask for is
+     * stepped over by page headers alone: it is most of a big comment packet.
      */
     static boolean ogg(String path, Meta.Info out, boolean wantArt) {
         RandomAccessFile f = null;
         try {
             f = new RandomAccessFile(path, "r");
-            long len = f.length();
-            byte[] ph = new byte[27];
-            byte[] seg = new byte[255];
-            byte[] packet = null;      // the comment packet, as it grows
-            int have = 0;
-            int index = 0;             // which packet the segments belong to
-            int codec = 0;             // 1 vorbis, 2 opus, 3 flac
+            Ogg o = new Ogg(f);
             byte[] head = new byte[16];
-            int headLen = 0;
-            long pos = 0;
-            int serial = 0;
-            boolean first = true;
-            while (pos + 27 <= len) {
-                f.seek(pos);
-                if (f.read(ph) != 27) return false;
-                if (ph[0] != 'O' || ph[1] != 'g' || ph[2] != 'g' || ph[3] != 'S') return false;
-                int s = le32(ph, 14);
-                if (first) { serial = s; first = false; }
-                int n = ph[26] & 0xff;
-                if (f.read(seg, 0, n) != n) return false;
-                int body = 0;
-                for (int i = 0; i < n; i++) body += seg[i] & 0xff;
-                long data = pos + 27 + n;
-                pos = data + body;
-                if (s != serial) continue;            // another logical stream
-                byte[] page = new byte[body];
-                f.readFully(page);
-                int at = 0;
-                for (int i = 0; i < n; i++) {
-                    int l = seg[i] & 0xff;
-                    if (index == 0) {
-                        int k = Math.min(l, head.length - headLen);
-                        if (k > 0) { System.arraycopy(page, at, head, headLen, k); headLen += k; }
-                    } else if (index == 1) {
-                        if (packet == null) packet = new byte[Math.max(4096, l)];
-                        if (have + l > MAX_BLOCK) return false;
-                        if (have + l > packet.length) {
-                            byte[] g = new byte[Math.max(have + l, packet.length * 2)];
-                            System.arraycopy(packet, 0, g, 0, have);
-                            packet = g;
-                        }
-                        System.arraycopy(page, at, packet, have, l);
-                        have += l;
+            int codec = codec(head, o.read(head, 0, head.length));
+            if (codec == 0) return false;
+            o.nextPacket();
+
+            int off = codec == 1 ? 7 : codec == 2 ? 8 : 4;
+            byte[] magic = new byte[8];
+            int m = o.read(magic, 0, off);
+            if (o.eof) return false;
+            if (codec == 1 && !(m == off && magic[0] == 3)) return false;
+            if (codec == 2 && !(m == off && magic[0] == 'O' && magic[4] == 'T')) return false;
+            if (codec == 3 && !(m == off && (magic[0] & 0x7f) == 4)) return true;
+
+            Pic pic = new Pic();
+            byte[] w = new byte[4];
+            if (o.read(w, 0, 4) != 4) return !o.eof;
+            int vendor = le32(w, 0);
+            if (vendor < 0 || !o.skip(vendor)) return !o.eof;
+            if (o.read(w, 0, 4) != 4) return !o.eof;
+            int n = le32(w, 0);
+            byte[] k = new byte[64];
+            for (int i = 0; i < n; i++) {
+                if (o.read(w, 0, 4) != 4) break;
+                int l = le32(w, 0);
+                if (l < 0) break;
+                int got = o.read(k, 0, Math.min(l, k.length));
+                if (got < Math.min(l, k.length)) break;
+                int eq = -1;
+                for (int j = 0; j < got; j++) {
+                    if (k[j] == '=') { eq = j; break; }
+                }
+                if (eq <= 0) {
+                    if (!o.skip(l - got)) break;
+                    continue;
+                }
+                String key = new String(k, 0, eq, "ISO-8859-1").toUpperCase(Locale.ROOT);
+                int vl = l - eq - 1;
+                boolean art = key.equals("METADATA_BLOCK_PICTURE");
+                boolean want = art ? wantArt && vl > 0 && vl <= MAX_BLOCK : vl > 0 && vl <= 64 * 1024;
+                if (!want) {
+                    if (!o.skip(l - got)) break;
+                    continue;
+                }
+                byte[] v = new byte[vl];
+                int have = got - eq - 1;
+                System.arraycopy(k, eq + 1, v, 0, have);
+                if (o.read(v, have, vl - have) != vl - have) break;
+                if (art) {
+                    try {
+                        byte[] b = Base64.decode(v, 0, vl, Base64.DEFAULT);
+                        picture(b, 0, b.length, pic);
+                    } catch (Throwable t) {
                     }
-                    at += l;
-                    if (l < 255) {
-                        if (index == 0) codec = codec(head, headLen);
-                        if (index == 0 && codec == 0) return false;
-                        index++;
-                        if (index == 2) {
-                            Pic pic = new Pic();
-                            int off = codec == 1 ? 7 : codec == 2 ? 8 : 4;
-                            if (codec == 1 && !(have > 7 && packet[0] == 3)) return false;
-                            if (codec == 2 && !(have > 8 && packet[0] == 'O' && packet[4] == 'T')) return false;
-                            if (codec == 3 && !(have > 4 && (packet[0] & 0x7f) == 4)) return true;
-                            comment(packet, off, have, out, pic, wantArt);
-                            if (pic.data != null) out.art = pic.data;
-                            return true;
-                        }
-                    }
+                } else {
+                    put(out, key, utf8(v, 0, vl));
                 }
             }
-            return false;
+            if (o.eof) return false;
+            if (pic.data != null) out.art = pic.data;
+            return true;
         } catch (Throwable t) {
             return false;
         } finally {
             close(f);
+        }
+    }
+
+    /**
+     * The packets of an Ogg file's first logical stream, as bytes. A page body is read whole on the
+     * first byte wanted from it and not at all when only skipped over. {@code eof}: the file ended
+     * inside a packet.
+     */
+    private static final class Ogg {
+        private final RandomAccessFile f;
+        private final long len;
+        private long next;                  // the next page header
+        private int serial;
+        private boolean any;
+        private final byte[] ph = new byte[27];
+        private final byte[] seg = new byte[255];
+        private int nseg;
+        private int si;
+        private long body;
+        private int bodyLen;
+        private final byte[] buf = new byte[255 * 255];
+        private boolean loaded;
+        private int off;                    // where the next segment starts in the body
+        private int segStart;
+        private int segLen;
+        private int segAt;
+        private boolean packetEnd;
+        private boolean started;
+        boolean eof;
+
+        Ogg(RandomAccessFile f) throws java.io.IOException {
+            this.f = f;
+            len = f.length();
+        }
+
+        private boolean page() throws java.io.IOException {
+            while (true) {
+                if (next + 27 > len) return false;
+                f.seek(next);
+                f.readFully(ph);
+                if (ph[0] != 'O' || ph[1] != 'g' || ph[2] != 'g' || ph[3] != 'S') {
+                    throw new java.io.IOException("not an Ogg page");
+                }
+                int s = le32(ph, 14);
+                int n = ph[26] & 0xff;
+                f.readFully(seg, 0, n);
+                int b = 0;
+                for (int i = 0; i < n; i++) b += seg[i] & 0xff;
+                body = next + 27 + n;
+                next = body + b;
+                if (!any) {
+                    serial = s;
+                    any = true;
+                }
+                if (s != serial) continue;          // another logical stream
+                nseg = n;
+                si = 0;
+                off = 0;
+                bodyLen = b;
+                loaded = false;
+                return true;
+            }
+        }
+
+        /** The current packet has a byte left; false at its end (or the file's). */
+        private boolean more() throws java.io.IOException {
+            while (!started || segAt == segLen) {
+                if (started && packetEnd) return false;
+                while (si >= nseg) {
+                    if (!page()) {
+                        eof = true;
+                        return false;
+                    }
+                }
+                int l = seg[si++] & 0xff;
+                segStart = off;
+                off += l;
+                segLen = l;
+                segAt = 0;
+                packetEnd = l < 255;
+                started = true;
+            }
+            return true;
+        }
+
+        int read(byte[] b, int o, int n) throws java.io.IOException {
+            int got = 0;
+            while (got < n && more()) {
+                if (!loaded) {
+                    if (body + bodyLen > len) throw new java.io.IOException("short page");
+                    f.seek(body);
+                    f.readFully(buf, 0, bodyLen);
+                    loaded = true;
+                }
+                int k = Math.min(n - got, segLen - segAt);
+                System.arraycopy(buf, segStart + segAt, b, o + got, k);
+                segAt += k;
+                got += k;
+            }
+            return got;
+        }
+
+        boolean skip(long n) throws java.io.IOException {
+            while (n > 0 && more()) {
+                int k = (int) Math.min(n, (long) (segLen - segAt));
+                segAt += k;
+                n -= k;
+            }
+            return n == 0;
+        }
+
+        void nextPacket() throws java.io.IOException {
+            while (more()) segAt = segLen;
+            started = false;
         }
     }
 

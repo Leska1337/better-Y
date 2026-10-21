@@ -3,15 +3,18 @@ package com.innioasis.ipp;
 import android.os.SystemClock;
 
 import com.innioasis.y1.database.Song;
+import com.innioasis.y1.database.SongDao;
 import com.innioasis.y1.database.Y1Repository;
 
 import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.Y1Application;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Speeds up the stock scan ({@code Y1Repository.refreshDatabase}) through single-call injections
@@ -33,8 +36,12 @@ public final class Scan {
      * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
+        long t = System.nanoTime();
         boolean in = inDb(path);
+        meet(path);
         count();
+        ScanProbe.known(System.nanoTime() - t);
+        if (ScanProbe.force) return null;
         return in ? MARKER : null;
     }
 
@@ -51,22 +58,208 @@ public final class Scan {
         Loading.scanned(n, expected);
     }
 
+    // The walk's checks of one node, in place of stock's File.exists / endIsAudiobook / endIsMusic /
+    // endIsVideo / isDirectory: each of those asks the file system again and builds its list anew.
+    // The lists are stock's, plus Formats; the answers are stock's for every node.
+
+    private static final String[] MUSIC = {"ogg", "mp3", "amr", "ape", "flac", "wav", "wma", "aac",
+        "m4r", "mmf", "mp2", "wv", "m4a", "mid", "aiff", "au", "mka", "ra", "ac3", "aif", "caf", "3gpp"};
+    private static final String[] BOOK = {"ogg", "mp3", "amr", "ape", "flac", "wav", "wma", "aac",
+        "m4r", "mmf", "mp2", "wv", "m4a", "aiff", "au", "mka", "ra", "ac3", "aif", "caf", "3gpp"};
+    private static final String[] VIDEO = {"mp4", "mov", "wmv", "flv", "avi", "mkv"};
+
+    private static final HashSet musicExt = new HashSet(Formats.more(java.util.Arrays.asList(MUSIC)));
+    private static final HashSet bookExt = new HashSet(Formats.more(java.util.Arrays.asList(BOOK)));
+    private static final HashSet videoExt = new HashSet(java.util.Arrays.asList(VIDEO));
+
+    private static final int EXISTS = 1;
+    private static final int DIR = 2;
+
+    // the node the walk is on; the walk is one thread
+    private static File node;
+    private static int kind;
+    private static String ext;
+
+    private static int kind(File f) {
+        if (f != node) {
+            int k = 0;
+            if (f.isFile()) k = EXISTS;
+            else if (f.isDirectory()) k = EXISTS | DIR;
+            else if (f.exists()) k = EXISTS;
+            ext = extOf(f);
+            kind = k;
+            node = f;
+        }
+        return kind;
+    }
+
+    private static String extOf(File f) {
+        String name = f.getName();
+        int dot = name.lastIndexOf('.');
+        return dot < 0 ? "" : name.substring(dot + 1).toLowerCase(Locale.ROOT);
+    }
+
+    public static boolean exists(File f) {
+        return (kind(f) & EXISTS) != 0;
+    }
+
+    public static boolean dir(File f) {
+        return (kind(f) & DIR) != 0;
+    }
+
+    /**
+     * After the walk's {@code listFiles}: the children are looked at on another thread, in the
+     * order the walk will reach them, so its own look at each finds the file system's answer
+     * cached. The same look, sooner, on the second core; nothing is answered from here.
+     */
+    public static void listed(File[] children) {
+        if (children == null || children.length == 0) return;
+        synchronized (AHEAD) {
+            AHEAD.addLast(children);
+            if (!looking) {
+                looking = true;
+                new Thread(new Looker(), "ipp-scan-stat").start();
+            }
+            AHEAD.notifyAll();
+        }
+    }
+
+    private static final java.util.LinkedList AHEAD = new java.util.LinkedList();
+    private static boolean looking;
+
+    static final class Looker implements Runnable {
+        public void run() {
+            try {
+                while (true) {
+                    File[] next;
+                    synchronized (AHEAD) {
+                        long until = SystemClock.uptimeMillis() + IDLE_MS;
+                        while (AHEAD.isEmpty()) {
+                            long left = until - SystemClock.uptimeMillis();
+                            if (left <= 0L) {
+                                looking = false;
+                                return;
+                            }
+                            AHEAD.wait(left);
+                        }
+                        next = (File[]) AHEAD.removeFirst();
+                    }
+                    for (int i = 0; i < next.length; i++) next[i].isFile();
+                }
+            } catch (Throwable t) {
+                synchronized (AHEAD) {
+                    looking = false;
+                }
+            }
+        }
+    }
+
+    /** Stock's endIsAudiobook. */
+    public static boolean book(File f) {
+        return (kind(f) & DIR) == 0 && !f.isHidden() && bookExt.contains(ext);
+    }
+
+    /** Stock's endIsMusic. */
+    public static boolean music(File f) {
+        return (kind(f) & DIR) == 0 && !f.isHidden() && musicExt.contains(ext);
+    }
+
+    /** Stock's endIsVideo. */
+    public static boolean video(File f) {
+        return (kind(f) & DIR) == 0 && !f.isHidden() && videoExt.contains(ext);
+    }
+
+    /** Stock's {@code ThemeManager.pathInThemes}: a bare prefix, as stock has it, without a copy. */
+    public static boolean themes(String path) {
+        return path != null && path.regionMatches(true, 0, THEMES, 0, THEMES.length());
+    }
+
+    private static final String THEMES = "/storage/sdcard0/themes";
+
     /** Our card folder is not music; asked right after stock's {@code pathInThemes}. */
     public static boolean skip(boolean stock, String path) {
         return stock || ours(path);
     }
 
-    /** In the clean-up, in place of {@code File.exists()}: rows from our folder go (row only). */
-    public static boolean stays(boolean exists, Song s) {
-        return exists && (s == null || !ours(s.getPath()));
+    /**
+     * In the clean-up, in place of {@code File.exists()}: rows from our folder go (row only). A
+     * file the walk has just met exists without asking the card; any other row is asked as stock
+     * asks, so a path that fails to match only costs the call.
+     */
+    public static boolean stays(Song s) {
+        if (s == null) return true;
+        String path = s.getPath();
+        if (path == null) return true;
+        if (ours(path)) return false;
+        boolean seen;
+        synchronized (Scan.class) {
+            seen = met.contains(path);
+        }
+        ScanProbe.exists(seen);
+        return seen || new File(path).exists();
+    }
+
+    /**
+     * In place of the clean-up's {@code getSongsSync()}: only the rows whose files the walk has not
+     * met, each read by its path — every other row the clean-up would keep anyway. Usually none.
+     * No paths from this scan: the query, as stock asks it.
+     */
+    public static List rows(SongDao dao) {
+        ArrayList unmet = new ArrayList();
+        synchronized (Scan.class) {
+            if (paths == null) return dao.getSongsSync();
+            java.util.Iterator it = paths.iterator();
+            while (it.hasNext()) {
+                Object p = it.next();
+                if (!met.contains(p)) unmet.add(p);
+            }
+        }
+        ArrayList out = new ArrayList(unmet.size());
+        for (int i = 0; i < unmet.size(); i++) {
+            Song s = dao.getSongByPathSyncDB((String) unmet.get(i));
+            if (s != null) out.add(s);
+        }
+        return out;
+    }
+
+    /** The clean-up's "total" for the scan dialog: what {@code getSongsSync().size()} would say. */
+    public static int total(List rows) {
+        synchronized (Scan.class) {
+            if (paths != null) return paths.size() + added;
+        }
+        return rows == null ? 0 : rows.size();
+    }
+
+    private static int added;
+
+    private static synchronized void built(Song s) {
+        HashSet p = paths;
+        if (s == null || p == null) return;
+        if (!p.contains(s.getPath())) added++;
+    }
+
+    /** The music files this scan's walk has met, as the table writes them; dropped at its end. */
+    private static HashSet met = new HashSet();
+
+    private static synchronized void meet(String path) {
+        if (path != null) met.add(Constant.INSTANCE.normalizeAudioBookPath(path));
     }
 
     /** Case-blind: the card is FAT, and a folder renamed by hand keeps being ours. */
     private static boolean ours(String path) {
+        String dir = card;
+        if (dir == null) card = dir = Panel.card().getPath();
+        return under(path, dir);
+    }
+
+    private static String card;
+
+    /** {@code path} is {@code dir} or lies in it, case-blind, without a lower-cased copy. */
+    private static boolean under(String path, String dir) {
         if (path == null) return false;
-        String dir = Panel.card().getPath().toLowerCase();
-        String p = path.toLowerCase();
-        return p.equals(dir) || p.startsWith(dir + "/");
+        int n = dir.length();
+        if (!path.regionMatches(true, 0, dir, 0, n)) return false;
+        return path.length() == n || path.charAt(n) == '/';
     }
 
     /** Non-null = known; nothing reads its fields. */
@@ -93,6 +286,8 @@ public final class Scan {
      */
     static synchronized void done() {
         paths = null;
+        added = 0;
+        met = new HashSet();
     }
 
     private static synchronized HashSet table() {
@@ -109,14 +304,17 @@ public final class Scan {
             Artists.ensureExceptions();
             Y1Repository r = Y1Application.Companion.getY1Repository();
             if (r == null) return paths;
-            HashSet p = new HashSet();
-            fill(p, r.getSongsSync(0));                   // music
-            fill(p, r.getSongsSync(1));                   // audiobooks
+            HashSet p = pathsOnly();
+            if (p == null) {
+                p = new HashSet();
+                fill(p, r.ippSongDao().getSongsSync());
+            }
             Diag.note("library scan: " + p.size() + " path(s) already known");
             synchronized (Scan.class) {
                 seen = 0;
                 expected = p.size();
                 shown = -1;
+                added = 0;
             }
             // Only a scan of an EMPTY table reads every row with the current reader.
             if (p.isEmpty()) Meta.noteLibraryRead(Y1Application.Companion.getAppContext());
@@ -124,6 +322,26 @@ public final class Scan {
             return p;
         } catch (Throwable t) {
             return paths;
+        }
+    }
+
+    /** Every row's path, music and audiobooks, without building a Song per row; null on failure. */
+    private static HashSet pathsOnly() {
+        android.database.Cursor c = null;
+        try {
+            c = PlGrid.db().query("select path from song", null);
+            HashSet p = new HashSet(c.getCount() * 2 + 16);
+            while (c.moveToNext()) {
+                if (!c.isNull(0)) p.add(c.getString(0));
+            }
+            return p;
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            try {
+                if (c != null) c.close();
+            } catch (Throwable t) {
+            }
         }
     }
 
@@ -157,12 +375,17 @@ public final class Scan {
     /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
         Song s = null;
+        long t0 = System.nanoTime();
+        ScanProbe.how = 3;
         try {
             s = take(r, f);
         } catch (Throwable t) {
             s = null;
         }
-        return s != null ? s : r.fileToSong(f);
+        if (s == null) s = r.fileToSong(f);
+        ScanProbe.song(ScanProbe.how, System.nanoTime() - t0);
+        built(s);
+        return s;
     }
 
     /** Ready or on its way, else null. The file the scan is on also drives the workers' queue. */
@@ -180,6 +403,7 @@ public final class Scan {
                 ready.clear();
                 building.clear();
                 start();
+                ScanProbe.how = 2;
                 return null;                    // this one the scan builds itself
             }
             next = Math.max(next, indexAfter(path));
@@ -188,6 +412,7 @@ public final class Scan {
             if (s != null) {
                 start();
                 LOCK.notifyAll();
+                ScanProbe.how = 0;
                 return s;
             }
             if (!building.contains(path)) {
@@ -196,6 +421,7 @@ public final class Scan {
                 return null;                    // nobody is on it: quicker to do it here
             }
             // A worker is on this very file: waiting beats starting over.
+            ScanProbe.how = 1;
             long deadline = SystemClock.uptimeMillis() + WAIT_MS;
             while (building.contains(path) && folder.equals(dir)) {
                 long left = deadline - SystemClock.uptimeMillis();
@@ -244,7 +470,9 @@ public final class Scan {
         int n = 0;
         for (int i = 0; i < all.length; i++) {
             try {
-                if (all[i].isFile() && r.endIsMusic(all[i])) out[n++] = all[i];
+                if (all[i].isFile() && !all[i].isHidden() && musicExt.contains(extOf(all[i]))) {
+                    out[n++] = all[i];
+                }
             } catch (Throwable t) {
             }
         }
@@ -280,7 +508,7 @@ public final class Scan {
                     Song s = null;
                     try {
                         // Known paths are skipped, as the scan skips them. Outside the lock.
-                        if (!inDb(f.getPath())) s = r.fileToSong(f);
+                        if (ScanProbe.force || !inDb(f.getPath())) s = r.fileToSong(f);
                     } catch (Throwable t) {
                         s = null;
                     }

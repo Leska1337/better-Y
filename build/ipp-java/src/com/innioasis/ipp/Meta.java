@@ -3,7 +3,10 @@ package com.innioasis.ipp;
 import android.content.Context;
 import android.media.MediaMetadataRetriever;
 
+import com.innioasis.music.objects.Constant;
+import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
+import com.innioasis.y1.database.Y1Repository;
 import com.innioasis.y1.utils.HanziToPinyin;
 
 import java.io.RandomAccessFile;
@@ -211,6 +214,14 @@ public final class Meta {
      * A format stock does not open at all ({@link #blind}) gets every value from our reader.
      */
     public static void fixSong(Song song) {
+        long t0 = System.nanoTime();
+        fixSongBody(song);
+        if (song != null && blind(song.getPath())) {
+            ScanProbe.own("blind " + ext(song.getPath()), System.nanoTime() - t0, true);
+        }
+    }
+
+    private static void fixSongBody(Song song) {
         if (song == null) return;
         try {
             String path = song.getPath();
@@ -245,6 +256,99 @@ public final class Meta {
             }
         } catch (Throwable t) {
         }
+    }
+
+    /**
+     * From {@code Y1Repository.fileToSong} before it opens a retriever: true when our reader filled
+     * the row and the platform is not asked (nor {@link #fixSong}). Every value goes through the
+     * rules of stock's {@code extractMetadata}, so the row is what the platform's read would give.
+     */
+    public static boolean scanOwn(Song song) {
+        if (song == null) return false;
+        long t0 = System.nanoTime();
+        String path = song.getPath();
+        String ext = ext(path);
+        boolean done = false;
+        try {
+            if (ext != null && (ext.equals("mp3") || ext.equals("flac") || ext.equals("ogg")
+                    || ext.equals("m4a") || ext.equals("m4r"))) {
+                Info i = new Info();
+                if (ownInto(ext, path, i, false)) done = fill(song, i);
+            }
+        } catch (Throwable t) {
+            done = false;
+        }
+        ScanProbe.own(ext, System.nanoTime() - t0, done);
+        return done;
+    }
+
+    /** False where stock's read would have failed part way (a genre number past its table). */
+    private static boolean fill(Song song, Info i) {
+        String genre = stockValue(i.genre);
+        Integer n = number(genre);
+        if (n != null) {
+            String[] names = genreNames();
+            if (names == null || n.intValue() < 0 || n.intValue() >= names.length) return false;
+            genre = stockValue(names[n.intValue()]);
+        }
+        HanziToPinyin h = HanziToPinyin.getInstance();
+        String title = stockValue(i.title);
+        song.setSongName(title);
+        song.setPinyinSongName(h.getString(title));
+        String album = stockValue(i.album);
+        song.setAlbum(album);
+        song.setLowAlbum(album.toLowerCase(Locale.ROOT));
+        song.setPinyinAlbum(h.getString(album));
+        String artist = stockValue(i.artist);
+        song.setArtist(artist);
+        song.setPinyinArtist(h.getString(artist));
+        song.setGenre(genre);
+        song.setPinyinGenre(h.getString(genre));
+        Schema.fill(song, i);
+        return true;
+    }
+
+    /** Stock's {@code extractMetadata}: absent or blank is {@code Constant.UNKNOWN}. */
+    private static String stockValue(String v) {
+        if (v == null) return Constant.UNKNOWN;
+        for (int k = 0; k < v.length(); k++) {
+            char c = v.charAt(k);
+            if (!Character.isWhitespace(c) && !Character.isSpaceChar(c)) return v;
+        }
+        return Constant.UNKNOWN;
+    }
+
+    /** Kotlin's {@code toIntOrNull}: an optional sign and decimal digits, nothing else. */
+    private static Integer number(String v) {
+        try {
+            int k = 0;
+            if (v.length() > 0 && (v.charAt(0) == '-' || v.charAt(0) == '+')) k = 1;
+            if (k >= v.length()) return null;
+            for (int j = k; j < v.length(); j++) {
+                if (v.charAt(j) < '0' || v.charAt(j) > '9') return null;
+            }
+            return Integer.valueOf(v.charAt(0) == '+' ? v.substring(1) : v);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private static volatile String[] genres;
+
+    /** Stock's private STANDARD_GENRES, the table its {@code extractMetadata} maps a number by. */
+    private static String[] genreNames() {
+        String[] g = genres;
+        if (g != null) return g;
+        try {
+            Object repo = Y1Application.Companion.getY1Repository();
+            java.lang.reflect.Field f = Y1Repository.class.getDeclaredField("STANDARD_GENRES");
+            f.setAccessible(true);
+            g = (String[]) f.get(repo);
+            genres = g;
+        } catch (Throwable t) {
+            g = null;
+        }
+        return g;
     }
 
     /**
