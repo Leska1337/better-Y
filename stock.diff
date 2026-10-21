@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..83c84af9 100644
+index 01b1f730..2112726a 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..83c84af9 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100299
++  versionCode: 10100300
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20004,7 +20004,7 @@ index 803c1e7a..c8b17776 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..7821d30c 100644
+index 71fe29d0..ce363273 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,584 @@
@@ -20953,7 +20953,7 @@ index 71fe29d0..7821d30c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev299</string>
++    <string name="ipp_version">v1.1.0-dev300</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -70831,10 +70831,33 @@ index 8590fe7c..ba3c2594 100644
      iput-boolean p4, p0, Lcom/innioasis/y1/utils/DialogUtil;->isConfirm:Z
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
-index 2c02dafb..7fc125e8 100644
+index 2c02dafb..734986dc 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/HanziToPinyin.smali
-@@ -9716,7 +9716,7 @@
+@@ -9645,10 +9645,22 @@
+ 
+     .line 521
+     :cond_3
++    # ipp: getToken asks the ICU collator about every character above U+00FF (every Cyrillic
++    # letter) and answers from the character alone -- so it is asked once per character
++    invoke-static {v6}, Lcom/innioasis/ipp/Pinyin;->token(C)Lcom/innioasis/y1/utils/HanziToPinyin$Token;
++
++    move-result-object v7
++
++    if-nez v7, :ipp_token
++
+     invoke-direct {p0, v6}, Lcom/innioasis/y1/utils/HanziToPinyin;->getToken(C)Lcom/innioasis/y1/utils/HanziToPinyin$Token;
+ 
+     move-result-object v7
+ 
++    invoke-static {v6, v7}, Lcom/innioasis/ipp/Pinyin;->keep(CLcom/innioasis/y1/utils/HanziToPinyin$Token;)V
++
++    :ipp_token
++
+     .line 522
+     iget v9, v7, Lcom/innioasis/y1/utils/HanziToPinyin$Token;->type:I
+ 
+@@ -9716,7 +9728,7 @@
      return-object v0
  .end method
  
@@ -70843,7 +70866,7 @@ index 2c02dafb..7fc125e8 100644
      .locals 4
      .annotation system Ldalvik/annotation/MethodParameters;
          accessFlags = {
-@@ -9727,6 +9727,19 @@
+@@ -9727,6 +9739,19 @@
          }
      .end annotation
  
@@ -70863,7 +70886,7 @@ index 2c02dafb..7fc125e8 100644
      .line 550
      invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/HanziToPinyin;->get(Ljava/lang/String;)Ljava/util/ArrayList;
  
-@@ -9795,5 +9808,18 @@
+@@ -9795,5 +9820,18 @@
  
      move-result-object p1
  
