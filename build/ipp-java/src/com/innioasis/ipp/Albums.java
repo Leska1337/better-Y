@@ -167,7 +167,13 @@ public final class Albums {
     /** Drop the cached library. Called once per file during a scan, so it must stay trivial. */
     public static void invalidate() {
         synchronized (SONGS) {
-            if (songCache != null) songPrev = songCache;
+            if (Thread.currentThread() != scanThread) foreign++;
+            if (songCache != null) {
+                songPrev = songCache;
+                prevAt = songCacheAt;
+                sortedPrev = sorted;
+                sortedPrevType = sortedType;
+            }
             songCache = null;
             songCacheAt = 0L;
             songGen++;
@@ -225,6 +231,8 @@ public final class Albums {
             if (songCache != null) return songCache;
             if (songPrev != null && songPrev.equals(all)) all = songPrev;
             songPrev = null;
+            sortedPrev = null;
+            if (all != markList) markList = null;
             songOrder = order;
             songCache = all;
             songCacheAt = System.currentTimeMillis();
@@ -238,11 +246,54 @@ public final class Albums {
      */
     public static void loadNow() {
         try {
+            boolean clean = Scan.clean();
             Scan.done();
+            keep(clean);
             lists();
             Schema.backfill();
         } catch (Throwable t) {
         }
+    }
+
+    // A scan that wrote nothing still invalidates (its tail inserts an empty batch), and reading the
+    // table again is most of the scan's end. The list in memory when the scan began is that table.
+    private static Thread scanThread;
+    private static List markList;
+    private static int markForeign;
+    /** Invalidations from any thread but the scan's: a write the scan cannot vouch for. */
+    private static int foreign;
+    private static long prevAt;
+    private static List sortedPrev;
+    private static Object sortedPrevType;
+
+    /** From the scan's first file, on its thread: what the table held as the scan began. */
+    static void scanStarts() {
+        synchronized (SONGS) {
+            scanThread = Thread.currentThread();
+            markList = songCache;
+            markForeign = foreign;
+        }
+    }
+
+    /**
+     * The scan is over. When it wrote no row and nobody else invalidated meanwhile, the list it
+     * dropped comes back as is — the very object, so whatever is memoised against it stays.
+     */
+    private static void keep(boolean clean) {
+        synchronized (SONGS) {
+            List m = markList;
+            markList = null;
+            scanThread = null;
+            if (!clean || m == null || foreign != markForeign) return;
+            if (songCache != null || songPrev != m) return;
+            songCache = m;
+            songCacheAt = prevAt;
+            sorted = sortedPrev;
+            sortedType = sortedPrevType;
+            songPrev = null;
+            sortedPrev = null;
+        }
+        Diag.note("library scan: nothing written, the list in memory is kept");
     }
 
     /** The song list and what the first screens build from it: album folders, the All songs order. */

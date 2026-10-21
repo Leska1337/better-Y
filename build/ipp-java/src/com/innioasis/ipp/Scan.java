@@ -37,12 +37,27 @@ public final class Scan {
      */
     public static Song known(String path) {
         long t = System.nanoTime();
+        if (!marked) mark();
         boolean in = inDb(path);
         meet(path);
         count();
         ScanProbe.known(System.nanoTime() - t);
         if (ScanProbe.force) return null;
         return in ? MARKER : null;
+    }
+
+    // Whether this scan wrote a row: every song built is inserted, every row not staying is deleted.
+    private static boolean marked;
+    private static boolean wrote;
+
+    private static synchronized void mark() {
+        marked = true;
+        Albums.scanStarts();
+    }
+
+    /** From the scan's end: it walked music files and neither inserted nor deleted a row. */
+    static synchronized boolean clean() {
+        return marked && !wrote;
     }
 
     // the scan window's progress: music files met against the rows the table held before
@@ -190,13 +205,18 @@ public final class Scan {
         if (s == null) return true;
         String path = s.getPath();
         if (path == null) return true;
-        if (ours(path)) return false;
         boolean seen;
         synchronized (Scan.class) {
             seen = met.contains(path);
         }
         ScanProbe.exists(seen);
-        return seen || new File(path).exists();
+        boolean stays = !ours(path) && (seen || new File(path).exists());
+        if (!stays) {
+            synchronized (Scan.class) {
+                wrote = true;
+            }
+        }
+        return stays;
     }
 
     /**
@@ -233,6 +253,7 @@ public final class Scan {
     private static int added;
 
     private static synchronized void built(Song s) {
+        wrote = true;
         HashSet p = paths;
         if (s == null || p == null) return;
         if (!p.contains(s.getPath())) added++;
@@ -288,6 +309,8 @@ public final class Scan {
         paths = null;
         added = 0;
         met = new HashSet();
+        marked = false;
+        wrote = false;
     }
 
     private static synchronized HashSet table() {
