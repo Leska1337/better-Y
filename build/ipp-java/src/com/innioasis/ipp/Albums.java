@@ -226,6 +226,7 @@ public final class Albums {
         if (order != orderNow()) order = null;
         Diag.slow("library read", t0);
         if (all == null) return null;
+        List read = all;
         synchronized (SONGS) {
             if (gen != songGen) return all;
             if (songCache != null) return songCache;
@@ -237,7 +238,54 @@ public final class Albums {
             songCache = all;
             songCacheAt = System.currentTimeMillis();
         }
+        if (all == read) share(all);
         return all;
+    }
+
+    /**
+     * One String object per text across the album, artist and genre fields and their lower and
+     * pinyin copies: the songs of an album repeat them, and every collection pauses for as long as
+     * the heap is large. Equal text only, so nothing that compares by content can tell.
+     */
+    private static void share(List all) {
+        long t0 = SystemClock.uptimeMillis();
+        HashMap seen = new HashMap();
+        int bad = 0;
+        for (int i = 0; i < all.size(); i++) {
+            Object o = all.get(i);
+            if (!(o instanceof Song)) continue;
+            Song s = (Song) o;
+            try {
+                String v;
+                if ((v = one(seen, s.getAlbum())) != null) { bad += odd(v, s.getAlbum()); s.setAlbum(v); }
+                if ((v = one(seen, s.getLowAlbum())) != null) { bad += odd(v, s.getLowAlbum()); s.setLowAlbum(v); }
+                if ((v = one(seen, s.getPinyinAlbum())) != null) { bad += odd(v, s.getPinyinAlbum()); s.setPinyinAlbum(v); }
+                if ((v = one(seen, s.getArtist())) != null) { bad += odd(v, s.getArtist()); s.setArtist(v); }
+                if ((v = one(seen, s.getPinyinArtist())) != null) { bad += odd(v, s.getPinyinArtist()); s.setPinyinArtist(v); }
+                if ((v = one(seen, s.getGenre())) != null) { bad += odd(v, s.getGenre()); s.setGenre(v); }
+                if ((v = one(seen, s.getPinyinGenre())) != null) { bad += odd(v, s.getPinyinGenre()); s.setPinyinGenre(v); }
+                if ((v = one(seen, s.getAlbumArtist())) != null) { bad += odd(v, s.getAlbumArtist()); s.setAlbumArtist(v); }
+            } catch (Throwable t) {
+            }
+        }
+        String line = "library share: " + all.size() + " songs, " + seen.size() + " texts, "
+                + bad + " odd, " + (SystemClock.uptimeMillis() - t0) + " ms";
+        Diag.note(line);
+        android.util.Log.i("ippshare", line);
+    }
+
+    private static int odd(String shared, String own) {
+        return shared.equals(own) ? 0 : 1;
+    }
+
+    private static String one(HashMap seen, String v) {
+        if (v == null) return null;
+        String had = (String) seen.get(v);
+        if (had == null) {
+            seen.put(v, v);
+            return v;
+        }
+        return had;
     }
 
     /**

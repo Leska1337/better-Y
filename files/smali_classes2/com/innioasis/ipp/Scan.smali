@@ -44,7 +44,7 @@
 
 .field private static asked:J
 
-.field private final static at:Ljava/util/HashMap;
+.field private static at:Ljava/util/HashMap;
 
 .field private final static bookExt:Ljava/util/HashSet;
 
@@ -80,7 +80,7 @@
 
 .field private static volatile py:Ljava/util/HashMap;
 
-.field private final static ready:Ljava/util/HashMap;
+.field private static ready:Ljava/util/HashMap;
 
 .field private static repo:Lcom/innioasis/y1/database/Y1Repository;
 
@@ -88,7 +88,7 @@
 
 .field private static shown:I
 
-.field private final static upcoming:Ljava/util/ArrayList;
+.field private static upcoming:Ljava/util/ArrayList;
 
 .field private final static videoExt:Ljava/util/HashSet;
 
@@ -274,19 +274,19 @@
     new-instance v0, Ljava/lang/Object;
     invoke-direct { v0 }, Ljava/lang/Object;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
-  .line 518
+  .line 519
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
-  .line 519
+  .line 520
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
-  .line 524
+  .line 525
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
-  .line 525
+  .line 526
     new-instance v0, Ljava/util/HashSet;
     invoke-direct { v0 }, Ljava/util/HashSet;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
@@ -682,35 +682,38 @@
 .method private static forgetQueue()V
   .catchall { :L0 .. :L2 } :L1
   .registers 2
-  .line 648
+  .line 649
     sget-object v0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     monitor-enter v0
   :L0
-  .line 649
-    sget-object v1, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
-    invoke-virtual { v1 }, Ljava/util/ArrayList;->clear()V
   .line 650
-    sget-object v1, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
-    invoke-virtual { v1 }, Ljava/util/HashMap;->clear()V
+    new-instance v1, Ljava/util/ArrayList;
+    invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
+    sput-object v1, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
   .line 651
-    sget-object v1, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
-    invoke-virtual { v1 }, Ljava/util/HashMap;->clear()V
+    new-instance v1, Ljava/util/HashMap;
+    invoke-direct { v1 }, Ljava/util/HashMap;-><init>()V
+    sput-object v1, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
   .line 652
+    new-instance v1, Ljava/util/HashMap;
+    invoke-direct { v1 }, Ljava/util/HashMap;-><init>()V
+    sput-object v1, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
+  .line 653
     const/4 v1, 0
     sput v1, Lcom/innioasis/ipp/Scan;->cursor:I
-  .line 653
-    sput v1, Lcom/innioasis/ipp/Scan;->next:I
   .line 654
+    sput v1, Lcom/innioasis/ipp/Scan;->next:I
+  .line 655
     const/4 v1, 0
     sput-object v1, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
-  .line 655
-    invoke-virtual { v0 }, Ljava/lang/Object;->notifyAll()V
   .line 656
-    monitor-exit v0
+    invoke-virtual { v0 }, Ljava/lang/Object;->notifyAll()V
   .line 657
+    monitor-exit v0
+  .line 658
     return-void
   :L1
-  .line 656
+  .line 657
     move-exception v1
     monitor-exit v0
   :L2
@@ -1208,44 +1211,45 @@
 .end method
 
 .method private static pass(I)V
-  .registers 6
-  .line 618
+  .registers 5
+  .line 619
     sget v0, Lcom/innioasis/ipp/Scan;->cursor:I
   :L0
     const/4 v1, 0
     if-ge v0, p0, :L3
-  .line 619
+  .line 620
     sget-object v2, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
     invoke-virtual { v2, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
-    move-result-object v3
-    check-cast v3, Ljava/io/File;
-  .line 620
-    if-nez v3, :L1
+    move-result-object v2
+    check-cast v2, Ljava/io/File;
+  .line 621
+    if-nez v2, :L1
     goto :L2
   :L1
-  .line 621
-    invoke-virtual { v3 }, Ljava/io/File;->getPath()Ljava/lang/String;
-    move-result-object v3
   .line 622
-    sget-object v4, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
-    invoke-virtual { v4, v3 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+    invoke-virtual { v2 }, Ljava/io/File;->getPath()Ljava/lang/String;
+    move-result-object v2
   .line 623
-    sget-object v4, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
-    invoke-virtual { v4, v3 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+    sget-object v3, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
+    invoke-virtual { v3, v2 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   .line 624
+    sget-object v3, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
+    invoke-virtual { v3, v2 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+  .line 625
+    sget-object v2, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
     invoke-virtual { v2, v0, v1 }, Ljava/util/ArrayList;->set(ILjava/lang/Object;)Ljava/lang/Object;
   :L2
-  .line 618
+  .line 619
     add-int/lit8 v0, v0, 1
     goto :L0
   :L3
-  .line 626
+  .line 627
     sget-object v0, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
     invoke-virtual { v0, p0, v1 }, Ljava/util/ArrayList;->set(ILjava/lang/Object;)Ljava/lang/Object;
-  .line 627
+  .line 628
     add-int/lit8 p0, p0, 1
     sput p0, Lcom/innioasis/ipp/Scan;->cursor:I
-  .line 628
+  .line 629
     return-void
 .end method
 
@@ -1395,19 +1399,19 @@
 
 .method private static pool()I
   .registers 2
-  .line 640
+  .line 641
     invoke-static { }, Ljava/lang/Runtime;->getRuntime()Ljava/lang/Runtime;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Runtime;->availableProcessors()I
     move-result v0
-  .line 641
-    add-int/lit8 v0, v0, 1
   .line 642
+    add-int/lit8 v0, v0, 1
+  .line 643
     const/4 v1, 3
     if-le v0, v1, :L0
     const/4 v0, 3
   :L0
-  .line 643
+  .line 644
     return v0
 .end method
 
@@ -1415,22 +1419,22 @@
   .catchall { :L0 .. :L1 } :L10
   .catchall { :L2 .. :L3 } :L6
   .catchall { :L5 .. :L11 } :L10
-  .registers 8
-  .line 538
+  .registers 7
+  .line 539
     sget-object v0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     monitor-enter v0
-  .line 539
-    nop
   .line 540
+    nop
+  .line 541
     const/4 v1, 0
     const/4 v2, 0
   :L0
     array-length v3, p0
     if-ge v1, v3, :L8
-  .line 541
+  .line 542
     aget-object v3, p0, v1
   :L1
-  .line 543
+  .line 544
     if-eqz v3, :L7
   :L2
     invoke-static { v3 }, Lcom/innioasis/ipp/Scan;->songFile(Ljava/io/File;)Z
@@ -1439,50 +1443,51 @@
     if-nez v4, :L4
     goto :L7
   :L4
-  .line 546
+  .line 547
     nop
   :L5
-  .line 547
+  .line 548
     sget-object v2, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
     invoke-virtual { v3 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v4
     sget-object v5, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
     invoke-virtual { v5 }, Ljava/util/ArrayList;->size()I
-    move-result v6
-    invoke-static { v6 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
-    move-result-object v6
-    invoke-virtual { v2, v4, v6 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 548
-    invoke-virtual { v5, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+    move-result v5
+    invoke-static { v5 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+    move-result-object v5
+    invoke-virtual { v2, v4, v5 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
   .line 549
+    sget-object v2, Lcom/innioasis/ipp/Scan;->upcoming:Ljava/util/ArrayList;
+    invoke-virtual { v2, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 550
     const/4 v2, 1
     goto :L7
   :L6
-  .line 544
-    move-exception v3
   .line 545
+    move-exception v3
+  .line 546
     nop
   :L7
-  .line 540
+  .line 541
     add-int/lit8 v1, v1, 1
     goto :L0
   :L8
-  .line 551
+  .line 552
     if-eqz v2, :L9
     sget-object p0, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
     if-eqz p0, :L9
-  .line 552
-    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
   .line 553
+    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
+  .line 554
     sget-object p0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
   :L9
-  .line 555
-    monitor-exit v0
   .line 556
+    monitor-exit v0
+  .line 557
     return-void
   :L10
-  .line 555
+  .line 556
     move-exception p0
     monitor-exit v0
   :L11
@@ -1597,52 +1602,52 @@
 .method public static song(Lcom/innioasis/y1/database/Y1Repository;Ljava/io/File;)Lcom/innioasis/y1/database/Song;
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 560
+  .line 561
     nop
   :L0
-  .line 562
+  .line 563
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Scan;->take(Lcom/innioasis/y1/database/Y1Repository;Ljava/io/File;)Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L1
-  .line 565
+  .line 566
     goto :L3
   :L2
-  .line 563
-    move-exception v0
   .line 564
+    move-exception v0
+  .line 565
     const/4 v0, 0
   :L3
-  .line 566
+  .line 567
     if-nez v0, :L4
     invoke-virtual { p0, p1 }, Lcom/innioasis/y1/database/Y1Repository;->fileToSong(Ljava/io/File;)Lcom/innioasis/y1/database/Song;
     move-result-object v0
   :L4
-  .line 567
-    invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->built(Lcom/innioasis/y1/database/Song;)V
   .line 568
+    invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->built(Lcom/innioasis/y1/database/Song;)V
+  .line 569
     return-object v0
 .end method
 
 .method private static songFile(Ljava/io/File;)Z
   .registers 3
-  .line 529
+  .line 530
     invoke-virtual { p0 }, Ljava/io/File;->isHidden()Z
     move-result v0
     const/4 v1, 0
     if-eqz v0, :L0
     return v1
   :L0
-  .line 530
+  .line 531
     invoke-virtual { p0 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v0
-  .line 531
+  .line 532
     if-nez v0, :L1
     return v1
   :L1
-  .line 532
+  .line 533
     invoke-static { p0 }, Lcom/innioasis/ipp/Scan;->extOf(Ljava/io/File;)Ljava/lang/String;
     move-result-object p0
-  .line 533
+  .line 534
     sget-object v1, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
     invoke-virtual { v1, v0 }, Lcom/innioasis/music/objects/Constant;->pathInAudiobook(Ljava/lang/String;)Z
     move-result v0
@@ -1659,17 +1664,17 @@
 
 .method private static start()V
   .registers 3
-  .line 632
+  .line 633
     invoke-static { }, Lcom/innioasis/ipp/Scan;->pool()I
     move-result v0
   :L0
-  .line 633
+  .line 634
     sget v1, Lcom/innioasis/ipp/Scan;->live:I
     if-ge v1, v0, :L1
-  .line 634
+  .line 635
     add-int/lit8 v1, v1, 1
     sput v1, Lcom/innioasis/ipp/Scan;->live:I
-  .line 635
+  .line 636
     new-instance v1, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/ipp/Scan$Builder;
     invoke-direct { v2 }, Lcom/innioasis/ipp/Scan$Builder;-><init>()V
@@ -1677,7 +1682,7 @@
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
     goto :L0
   :L1
-  .line 637
+  .line 638
     return-void
 .end method
 
@@ -1793,130 +1798,131 @@
   .catchall { :L9 .. :L10 } :L11
   .catchall { :L12 .. :L15 } :L14
   .registers 10
-  .line 573
+  .line 574
     invoke-virtual { p1 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object p1
-  .line 574
+  .line 575
     const/4 v0, 0
     if-nez p1, :L0
     return-object v0
   :L0
-  .line 576
+  .line 577
     sget-object v1, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     monitor-enter v1
   :L1
-  .line 577
+  .line 578
     sget-object v2, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
     if-nez v2, :L2
-  .line 578
-    sput-object p0, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
   .line 579
-    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
+    sput-object p0, Lcom/innioasis/ipp/Scan;->repo:Lcom/innioasis/y1/database/Y1Repository;
   .line 580
+    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
+  .line 581
     invoke-virtual { v1 }, Ljava/lang/Object;->notifyAll()V
   :L2
-  .line 582
+  .line 583
     sget-object p0, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
     invoke-virtual { p0, p1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object v2
-  .line 583
-    if-nez v2, :L3
-    const/4 v2, -1
+    move-result-object p0
+  .line 584
+    if-nez p0, :L3
+    const/4 p0, -1
     goto :L4
   :L3
-    check-cast v2, Ljava/lang/Integer;
-    invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
-    move-result v2
+    check-cast p0, Ljava/lang/Integer;
+    invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
+    move-result p0
   :L4
-  .line 584
-    sget v3, Lcom/innioasis/ipp/Scan;->cursor:I
-    if-ge v2, v3, :L5
   .line 585
+    sget v2, Lcom/innioasis/ipp/Scan;->cursor:I
+    if-ge p0, v2, :L5
+  .line 586
     monitor-exit v1
     return-object v0
   :L5
-  .line 587
-    invoke-static { v2 }, Lcom/innioasis/ipp/Scan;->pass(I)V
   .line 588
-    sget v3, Lcom/innioasis/ipp/Scan;->next:I
-    if-lt v2, v3, :L6
+    invoke-static { p0 }, Lcom/innioasis/ipp/Scan;->pass(I)V
   .line 589
-    add-int/lit8 v2, v2, 1
-    sput v2, Lcom/innioasis/ipp/Scan;->next:I
+    sget v2, Lcom/innioasis/ipp/Scan;->next:I
+    if-lt p0, v2, :L6
   .line 590
-    invoke-virtual { p0, p1 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+    add-int/lit8 p0, p0, 1
+    sput p0, Lcom/innioasis/ipp/Scan;->next:I
   .line 591
-    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
+    sget-object p0, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
+    invoke-virtual { p0, p1 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   .line 592
-    invoke-virtual { v1 }, Ljava/lang/Object;->notifyAll()V
+    invoke-static { }, Lcom/innioasis/ipp/Scan;->start()V
   .line 593
+    invoke-virtual { v1 }, Ljava/lang/Object;->notifyAll()V
+  .line 594
     monitor-exit v1
     return-object v0
   :L6
-  .line 595
+  .line 596
     sget-object p0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
     invoke-virtual { p0, p1 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/database/Song;
-  .line 596
+  .line 597
     if-nez p0, :L13
     sget-object v0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
     invoke-virtual { v0, p1 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result v0
     if-eqz v0, :L13
-  .line 598
+  .line 599
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     const-wide/16 v4, 20000
     add-long/2addr v2, v4
   :L7
-  .line 599
+  .line 600
     sget-object p0, Lcom/innioasis/ipp/Scan;->building:Ljava/util/HashSet;
     invoke-virtual { p0, p1 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result p0
     if-eqz p0, :L12
-  .line 600
+  .line 601
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v4
   :L8
     sub-long v4, v2, v4
-  .line 601
+  .line 602
     const-wide/16 v6, 0
     cmp-long p0, v4, v6
     if-gtz p0, :L9
     goto :L12
   :L9
-  .line 603
+  .line 604
     sget-object p0, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     invoke-virtual { p0, v4, v5 }, Ljava/lang/Object;->wait(J)V
   :L10
-  .line 606
-    nop
   .line 607
+    nop
+  .line 608
     goto :L7
   :L11
-  .line 604
-    move-exception p0
   .line 605
+    move-exception p0
+  .line 606
     nop
   :L12
-  .line 608
+  .line 609
     sget-object p0, Lcom/innioasis/ipp/Scan;->ready:Ljava/util/HashMap;
     invoke-virtual { p0, p1 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
     check-cast p0, Lcom/innioasis/y1/database/Song;
   :L13
-  .line 610
+  .line 611
     sget-object v0, Lcom/innioasis/ipp/Scan;->at:Ljava/util/HashMap;
     invoke-virtual { v0, p1 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 611
+  .line 612
     sget-object p1, Lcom/innioasis/ipp/Scan;->LOCK:Ljava/lang/Object;
     invoke-virtual { p1 }, Ljava/lang/Object;->notifyAll()V
-  .line 612
+  .line 613
     monitor-exit v1
     return-object p0
   :L14
-  .line 613
+  .line 614
     move-exception p0
     monitor-exit v1
   :L15

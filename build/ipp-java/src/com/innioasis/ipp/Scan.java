@@ -515,13 +515,14 @@ public final class Scan {
     // The files the walk will hand to the song lambda, in the order it will: its queue is FIFO and
     // every listFiles of it passes through listed, so the order is that of the children listed.
     private static Y1Repository repo;
-    private static final ArrayList upcoming = new ArrayList();  // File, nulled once passed
-    private static final HashMap at = new HashMap();            // path -> index, while not passed
+    // Under LOCK only. Replaced rather than cleared at the end: a cleared table keeps its size.
+    private static ArrayList upcoming = new ArrayList();  // File, nulled once passed
+    private static HashMap at = new HashMap();            // path -> index, while not passed
     private static int cursor;                 // the walk is past everything before this
     private static int next;                   // index the workers take from
     private static int live;                   // workers running
 
-    private static final HashMap ready = new HashMap();       // path -> Song, built and waiting
+    private static HashMap ready = new HashMap();       // path -> Song, built and waiting
     private static final HashSet building = new HashSet();     // paths a worker has taken
 
     /** The song lambda's own test, on the name only: a book extension in the audiobook folder, music outside it. */
@@ -646,9 +647,9 @@ public final class Scan {
     /** From {@link #done}. */
     private static void forgetQueue() {
         synchronized (LOCK) {
-            upcoming.clear();
-            at.clear();
-            ready.clear();
+            upcoming = new ArrayList();
+            at = new HashMap();
+            ready = new HashMap();
             cursor = 0;
             next = 0;
             repo = null;
