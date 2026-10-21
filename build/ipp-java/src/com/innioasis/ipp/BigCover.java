@@ -527,6 +527,8 @@ public final class BigCover {
     private static final HashMap notes = new HashMap();   // track path -> Integer
     private static boolean notesLoaded;
     private static boolean notesDirty;
+    /** False only while no note can be NONE: clearMiss then has nothing to look for. */
+    private static boolean mayNone;
     private static final char SEP = '\t';
 
     private static File noteFile() {
@@ -553,7 +555,9 @@ public final class BigCover {
                 int t = s.indexOf(SEP);
                 if (t <= 0) continue;
                 try {
-                    notes.put(s.substring(0, t), Integer.valueOf(s.substring(t + 1).trim()));
+                    Integer v = Integer.valueOf(s.substring(t + 1).trim());
+                    notes.put(s.substring(0, t), v);
+                    if (v.intValue() == NONE) mayNone = true;
                 } catch (Throwable e) {
                 }
             }
@@ -594,6 +598,7 @@ public final class BigCover {
         if (path == null) return;
         noteLoad();
         Object had = notes.put(path, Integer.valueOf(value));
+        if (value == NONE) mayNone = true;
         if (had != null && ((Integer) had).intValue() == value) return;
         notesDirty = true;
         if (!passing) noteSave();
@@ -609,6 +614,7 @@ public final class BigCover {
     /** {@link #clearMiss} on disk. */
     private static synchronized void noteForgetNone() {
         noteLoad();
+        if (!mayNone) return;
         ArrayList drop = new ArrayList();
         Iterator it = notes.entrySet().iterator();
         while (it.hasNext()) {
@@ -616,6 +622,7 @@ public final class BigCover {
             if (((String) e.getKey()).startsWith(SIG)) continue;
             if (((Integer) e.getValue()).intValue() == NONE) drop.add(e.getKey());
         }
+        mayNone = false;
         if (drop.isEmpty()) return;
         for (int i = 0; i < drop.size(); i++) notes.remove(drop.get(i));
         notesDirty = true;
@@ -652,6 +659,7 @@ public final class BigCover {
 
     private static synchronized void noteClear() {
         notes.clear();
+        mayNone = false;
         notesLoaded = true;
         notesDirty = false;
         try {
