@@ -35,6 +35,17 @@ public final class Ipp {
      */
     public static void songChanged(Song song) {
         libraryChanged();
+        forget(song);
+    }
+
+    /** {@link #songChanged} for a batch written at once: the library is dropped once, not per song. */
+    public static void songsChanged(Song[] songs) {
+        libraryChanged();
+        if (songs == null) return;
+        for (int i = 0; i < songs.length; i++) forget(songs[i]);
+    }
+
+    private static void forget(Song song) {
         if (song == null) {
             return;
         }

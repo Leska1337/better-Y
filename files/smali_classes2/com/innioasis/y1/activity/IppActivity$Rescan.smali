@@ -1,0 +1,412 @@
+.class final Lcom/innioasis/y1/activity/IppActivity$Rescan;
+.super Ljava/lang/Object;
+.source "IppActivity.java"
+
+.annotation system Ldalvik/annotation/EnclosingClass;
+  value = Lcom/innioasis/y1/activity/IppActivity;
+.end annotation
+.annotation system Ldalvik/annotation/InnerClass;
+  accessFlags = 26
+  name = "Rescan"
+.end annotation
+
+.field private final static BATCH:I = 100
+
+.field built:I
+
+.field private closed:Z
+
+.field private final done:Ljava/util/ArrayList;
+
+.field failed:Z
+
+.field private live:I
+
+.field queued:I
+
+.field private repo:Lcom/innioasis/y1/database/Y1Repository;
+
+.field private final todo:Ljava/util/LinkedList;
+
+.method private constructor <init>()V
+  .registers 2
+  .line 1136
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 1138
+    new-instance v0, Ljava/util/LinkedList;
+    invoke-direct { v0 }, Ljava/util/LinkedList;-><init>()V
+    iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
+  .line 1139
+    new-instance v0, Ljava/util/ArrayList;
+    invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
+    iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    return-void
+.end method
+
+.method synthetic constructor <init>(Lcom/innioasis/y1/activity/IppActivity$1;)V
+  .registers 2
+  .line 1136
+    invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;-><init>()V
+    return-void
+.end method
+
+.method static synthetic access$400(Lcom/innioasis/y1/activity/IppActivity$Rescan;)Lcom/innioasis/y1/database/Y1Repository;
+  .registers 1
+  .line 1136
+    iget-object p0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->repo:Lcom/innioasis/y1/database/Y1Repository;
+    return-object p0
+.end method
+
+.method declared-synchronized add(Ljava/io/File;)V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 3
+    monitor-enter p0
+  :L0
+  .line 1160
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
+    invoke-virtual { v0, p1 }, Ljava/util/LinkedList;->addLast(Ljava/lang/Object;)V
+  .line 1161
+    iget p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
+    add-int/lit8 p1, p1, 1
+    iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
+  .line 1162
+    invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
+  :L1
+  .line 1163
+    monitor-exit p0
+    return-void
+  :L2
+  .line 1159
+    move-exception p1
+    monitor-exit p0
+    throw p1
+.end method
+
+.method declared-synchronized built(Lcom/innioasis/y1/database/Song;)V
+  .catchall { :L0 .. :L3 } :L4
+  .registers 4
+    monitor-enter p0
+  :L0
+  .line 1214
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built:I
+    const/4 v1, 1
+    add-int/2addr v0, v1
+    iput v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built:I
+  .line 1215
+    if-eqz p1, :L1
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    invoke-virtual { v0, p1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+    goto :L2
+  :L1
+  .line 1216
+    iput-boolean v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->failed:Z
+  :L2
+  .line 1217
+    invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
+  :L3
+  .line 1218
+    monitor-exit p0
+    return-void
+  :L4
+  .line 1213
+    move-exception p1
+    monitor-exit p0
+    throw p1
+.end method
+
+.method declared-synchronized close()V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 2
+    monitor-enter p0
+  .line 1166
+    const/4 v0, 1
+  :L0
+    iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->closed:Z
+  .line 1167
+    invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
+  :L1
+  .line 1168
+    monitor-exit p0
+    return-void
+  :L2
+  .line 1165
+    move-exception v0
+    monitor-exit p0
+    throw v0
+.end method
+
+.method declared-synchronized idle()Z
+  .catchall { :L0 .. :L1 } :L10
+  .catch Ljava/lang/InterruptedException; { :L3 .. :L4 } :L9
+  .catchall { :L3 .. :L4 } :L10
+  .catchall { :L5 .. :L6 } :L10
+  .registers 5
+    monitor-enter p0
+  :L0
+  .line 1172
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+  :L1
+    const/4 v1, 1
+    if-nez v0, :L2
+    monitor-exit p0
+    return v1
+  :L2
+  .line 1174
+    const-wide/16 v2, 200
+  :L3
+    invoke-virtual { p0, v2, v3 }, Ljava/lang/Object;->wait(J)V
+  :L4
+  .line 1177
+    nop
+  :L5
+  .line 1178
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+  :L6
+    if-nez v0, :L7
+    goto :L8
+  :L7
+    const/4 v1, 0
+  :L8
+    monitor-exit p0
+    return v1
+  :L9
+  .line 1175
+    move-exception v0
+  .line 1176
+    monitor-exit p0
+    return v1
+  :L10
+  .line 1171
+    move-exception v0
+    monitor-exit p0
+    throw v0
+.end method
+
+.method declared-synchronized next()Ljava/io/File;
+  .annotation system Ldalvik/annotation/Throws;
+    value = {
+      Ljava/lang/InterruptedException;
+    }
+  .end annotation
+  .catchall { :L0 .. :L3 } :L4
+  .registers 2
+    monitor-enter p0
+  :L0
+  .line 1209
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
+    invoke-virtual { v0 }, Ljava/util/LinkedList;->isEmpty()Z
+    move-result v0
+    if-eqz v0, :L1
+    iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->closed:Z
+    if-nez v0, :L1
+    invoke-virtual { p0 }, Ljava/lang/Object;->wait()V
+    goto :L0
+  :L1
+  .line 1210
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
+    invoke-virtual { v0 }, Ljava/util/LinkedList;->isEmpty()Z
+    move-result v0
+    if-eqz v0, :L2
+    const/4 v0, 0
+    goto :L3
+  :L2
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
+    invoke-virtual { v0 }, Ljava/util/LinkedList;->removeFirst()Ljava/lang/Object;
+    move-result-object v0
+    check-cast v0, Ljava/io/File;
+  :L3
+    monitor-exit p0
+    return-object v0
+  :L4
+  .line 1208
+    move-exception v0
+    monitor-exit p0
+    goto :L6
+  :L5
+    throw v0
+  :L6
+    goto :L5
+.end method
+
+.method declared-synchronized percent(II)I
+  .catchall { :L0 .. :L2 } :L3
+  .registers 4
+    monitor-enter p0
+  :L0
+  .line 1183
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
+    add-int/2addr p2, v0
+  .line 1184
+    if-nez p2, :L1
+    const/4 p1, 0
+    goto :L2
+  :L1
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built:I
+    add-int/2addr p1, v0
+    mul-int/lit8 p1, p1, 100
+    div-int/2addr p1, p2
+  :L2
+    monitor-exit p0
+    return p1
+  :L3
+  .line 1182
+    move-exception p1
+    monitor-exit p0
+    throw p1
+.end method
+
+.method declared-synchronized quit()V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 2
+    monitor-enter p0
+  :L0
+  .line 1221
+    iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+    add-int/lit8 v0, v0, -1
+    iput v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+  .line 1222
+    invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
+  :L1
+  .line 1223
+    monitor-exit p0
+    return-void
+  :L2
+  .line 1220
+    move-exception v0
+    monitor-exit p0
+    throw v0
+.end method
+
+.method start(Lcom/innioasis/y1/database/Y1Repository;)V
+  .catchall { :L2 .. :L5 } :L4
+  .registers 6
+  .line 1148
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->repo:Lcom/innioasis/y1/database/Y1Repository;
+  .line 1149
+    invoke-static { }, Ljava/lang/Runtime;->getRuntime()Ljava/lang/Runtime;
+    move-result-object p1
+    invoke-virtual { p1 }, Ljava/lang/Runtime;->availableProcessors()I
+    move-result p1
+    add-int/lit8 p1, p1, 1
+  .line 1150
+    const/4 v0, 3
+    if-le p1, v0, :L0
+    const/4 p1, 3
+  :L0
+  .line 1151
+    monitor-enter p0
+  .line 1152
+    const/4 v0, 0
+  :L1
+    if-ge v0, p1, :L3
+  :L2
+  .line 1153
+    iget v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+    add-int/lit8 v1, v1, 1
+    iput v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
+  .line 1154
+    new-instance v1, Ljava/lang/Thread;
+    new-instance v2, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;
+    invoke-direct { v2, p0 }, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;-><init>(Lcom/innioasis/y1/activity/IppActivity$Rescan;)V
+    const-string v3, "ipp-rescan"
+    invoke-direct { v1, v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
+    invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
+  .line 1152
+    add-int/lit8 v0, v0, 1
+    goto :L1
+  :L3
+  .line 1156
+    monitor-exit p0
+  .line 1157
+    return-void
+  :L4
+  .line 1156
+    move-exception p1
+    monitor-exit p0
+  :L5
+    goto :L7
+  :L6
+    throw p1
+  :L7
+    goto :L6
+.end method
+
+.method write(Lcom/innioasis/y1/database/Y1Repository;Z)I
+  .catchall { :L0 .. :L2 } :L9
+  .catchall { :L2 .. :L3 } :L4
+  .catchall { :L5 .. :L7 } :L6
+  .catchall { :L8 .. :L10 } :L9
+  .registers 5
+  .line 1190
+    monitor-enter p0
+  :L0
+  .line 1191
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
+    move-result v0
+    const/4 v1, 0
+    if-nez v0, :L8
+    if-nez p2, :L1
+    iget-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    invoke-virtual { p2 }, Ljava/util/ArrayList;->size()I
+    move-result p2
+    const/16 v0, 100
+    if-ge p2, v0, :L1
+    goto :L8
+  :L1
+  .line 1192
+    iget-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    invoke-virtual { p2 }, Ljava/util/ArrayList;->size()I
+    move-result v0
+    new-array v0, v0, [Lcom/innioasis/y1/database/Song;
+    invoke-virtual { p2, v0 }, Ljava/util/ArrayList;->toArray([Ljava/lang/Object;)[Ljava/lang/Object;
+    move-result-object p2
+    check-cast p2, [Lcom/innioasis/y1/database/Song;
+  .line 1193
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
+    invoke-virtual { v0 }, Ljava/util/ArrayList;->clear()V
+  .line 1194
+    monitor-exit p0
+  :L2
+  .line 1196
+    invoke-virtual { p1 }, Lcom/innioasis/y1/database/Y1Repository;->ippSongDao()Lcom/innioasis/y1/database/SongDao;
+    move-result-object p1
+    invoke-interface { p1, p2 }, Lcom/innioasis/y1/database/SongDao;->insert([Lcom/innioasis/y1/database/Song;)V
+  :L3
+  .line 1202
+    nop
+  .line 1203
+    invoke-static { p2 }, Lcom/innioasis/ipp/Ipp;->songsChanged([Lcom/innioasis/y1/database/Song;)V
+  .line 1204
+    array-length p1, p2
+    return p1
+  :L4
+  .line 1197
+    move-exception p1
+  .line 1198
+    monitor-enter p0
+  .line 1199
+    const/4 p1, 1
+  :L5
+    iput-boolean p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->failed:Z
+  .line 1200
+    monitor-exit p0
+  .line 1201
+    return v1
+  :L6
+  .line 1200
+    move-exception p1
+    monitor-exit p0
+  :L7
+    throw p1
+  :L8
+  .line 1191
+    monitor-exit p0
+    return v1
+  :L9
+  .line 1194
+    move-exception p1
+    monitor-exit p0
+  :L10
+    throw p1
+.end method

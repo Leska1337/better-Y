@@ -1077,39 +1077,176 @@ public final class IppActivity extends BaseActivity {
         @Override
         public void run() {
             int updated = 0;
+            long t0 = SystemClock.uptimeMillis();
+            Rescan q = new Rescan();
+            int n = 0;
             try {
                 Y1Repository repo = Y1Application.Companion.getY1Repository();
-                List songs = repo.getSongsSync(0);
-                int n = songs == null ? 0 : songs.size();
+                List songs = Albums.allSongs();             // read only: the list in memory
+                if (songs == null) songs = repo.getSongsSync(0);
+                n = songs == null ? 0 : songs.size();
                 String label = a.getString(R.string.ipp_scan_running);
                 // once per library: re-read rows the platform's tag limit truncated (Meta)
                 boolean migrate = !Meta.libraryRead(a);
+                q.start(repo);
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
-                    if ((i & 15) == 0) a.scanTick(Loading.percent(label, i * 100 / (n == 0 ? 1 : n)));
-                    File f = new File(s.getPath());
-                    if (!f.exists()) continue;                      // gone: the stock scan removes it
+                    if ((i & 15) == 0) a.scanTick(Loading.percent(label, q.percent(i, n)));
+                    String path = s.getPath();
+                    File f = new File(path);
+                    // one look at the card: 0 is what a missing file answers
+                    long date = f.lastModified();
+                    if (date == 0L && !f.exists()) continue;       // gone: the stock scan removes it
 
                     // An external cover changes no song's mtime: Art stamps the cover files per
                     // folder when it reads them.
-                    if (Art.coverChanged(s.getPath())) {
+                    if (Art.coverChanged(path)) {
                         CoverCache.forget(Albums.keyOf(s));                  // the list thumbnail
-                        BigCover.forget(s.getPath());                        // this track's cover
-                        BigCover.forget(Albums.trackFolder(s.getPath()));    // the album's own
+                        BigCover.forget(path);                               // this track's cover
+                        BigCover.forget(Albums.trackFolder(path));           // the album's own
                         updated++;
                     }
 
-                    if (f.lastModified() == s.getFileDate()
-                            && !(migrate && Meta.reread(s.getPath()))) continue;
-                    repo.ippReplaceSong(f);
-                    updated++;
+                    if (date == s.getFileDate() && !(migrate && Meta.reread(path))) continue;
+                    q.add(f);
+                    updated += q.write(repo, false);
                 }
-                Meta.noteLibraryRead(a);        // only on a pass that ran to the end
+                q.close();
+                while (!q.idle()) a.scanTick(Loading.percent(label, q.percent(n, n)));
+                updated += q.write(repo, true);
+                // only on a pass that ran to the end and read every file it meant to
+                if (!q.failed) Meta.noteLibraryRead(a);
             } catch (Throwable t) {
             } finally {
+                q.close();
                 Art.flushStamps();
+                Diag.note("update library: " + n + " row(s), " + q.built + " re-read, "
+                        + (SystemClock.uptimeMillis() - t0) + " ms");
                 a.scanFinished(updated);
+            }
+        }
+    }
+
+    /**
+     * The files "Update library" re-reads: the checking thread queues them and goes on, workers
+     * read them ({@code fileToSong} is thread-safe, see Scan), and the songs are written a batch
+     * at a time with one invalidation per batch.
+     */
+    private static final class Rescan {
+        private static final int BATCH = 100;
+        private final java.util.LinkedList todo = new java.util.LinkedList();
+        private final ArrayList done = new ArrayList();
+        private Y1Repository repo;
+        private int live;
+        private boolean closed;
+        int queued;
+        int built;
+        boolean failed;
+
+        void start(Y1Repository r) {
+            repo = r;
+            int c = Runtime.getRuntime().availableProcessors() + 1;
+            if (c > 3) c = 3;
+            synchronized (this) {
+                for (int i = 0; i < c; i++) {
+                    live++;
+                    new Thread(new RescanWorker(this), "ipp-rescan").start();
+                }
+            }
+        }
+
+        synchronized void add(File f) {
+            todo.addLast(f);
+            queued++;
+            notifyAll();
+        }
+
+        synchronized void close() {
+            closed = true;
+            notifyAll();
+        }
+
+        /** Waits a little; true once every worker has finished. */
+        synchronized boolean idle() {
+            if (live == 0) return true;
+            try {
+                wait(200L);
+            } catch (InterruptedException e) {
+                return true;
+            }
+            return live == 0;
+        }
+
+        /** The checked rows and the files re-read, over everything there is to do. */
+        synchronized int percent(int checked, int rows) {
+            int all = rows + queued;
+            return all == 0 ? 0 : (checked + built) * 100 / all;
+        }
+
+        /** Writes the songs read so far, when a batch is full or {@code all}; how many were written. */
+        int write(Y1Repository r, boolean all) {
+            Song[] b;
+            synchronized (this) {
+                if (done.isEmpty() || (!all && done.size() < BATCH)) return 0;
+                b = (Song[]) done.toArray(new Song[done.size()]);
+                done.clear();
+            }
+            try {
+                r.ippSongDao().insert(b);
+            } catch (Throwable t) {
+                synchronized (this) {
+                    failed = true;
+                }
+                return 0;
+            }
+            Ipp.songsChanged(b);
+            return b.length;
+        }
+
+        /** Worker side: the next file, or null once the queue is closed and empty. */
+        synchronized File next() throws InterruptedException {
+            while (todo.isEmpty() && !closed) wait();
+            return todo.isEmpty() ? null : (File) todo.removeFirst();
+        }
+
+        synchronized void built(Song s) {
+            built++;
+            if (s != null) done.add(s);
+            else failed = true;
+            notifyAll();
+        }
+
+        synchronized void quit() {
+            live--;
+            notifyAll();
+        }
+    }
+
+    private static final class RescanWorker implements Runnable {
+        private final Rescan q;
+
+        RescanWorker(Rescan q) {
+            this.q = q;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while (true) {
+                    File f = q.next();
+                    if (f == null) break;
+                    Song s = null;
+                    try {
+                        s = q.repo.fileToSong(f);
+                    } catch (Throwable t) {
+                        s = null;
+                    }
+                    q.built(s);
+                }
+            } catch (Throwable t) {
+            } finally {
+                q.quit();
             }
         }
     }

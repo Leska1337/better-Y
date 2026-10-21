@@ -19,15 +19,15 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity$CacheTask;Ljava/util/List;Lcom/innioasis/y1/activity/IppActivity$Blocks;)V
   .registers 4
-  .line 1527
+  .line 1664
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1528
+  .line 1665
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-  .line 1529
+  .line 1666
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->jobs:Ljava/util/List;
-  .line 1530
+  .line 1667
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
-  .line 1531
+  .line 1668
     return-void
 .end method
 
@@ -35,7 +35,7 @@
   .catchall { :L0 .. :L1 } :L2
   .catchall { :L5 .. :L6 } :L7
   .registers 4
-  .line 1534
+  .line 1671
     const/4 v0, 5
   :L0
     invoke-static { v0 }, Landroid/os/Process;->setThreadPriority(I)V
@@ -44,12 +44,12 @@
   :L2
     move-exception v0
   :L3
-  .line 1536
+  .line 1673
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->take()I
     move-result v0
     if-ltz v0, :L9
-  .line 1537
+  .line 1674
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v1, v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from(I)I
     move-result v1
@@ -59,26 +59,26 @@
     move-result v2
     if-ge v1, v2, :L3
   :L5
-  .line 1539
+  .line 1676
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->jobs:Ljava/util/List;
     invoke-interface { v2, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;
-    invoke-static { v2 }, Lcom/innioasis/y1/activity/IppActivity;->access$600(Lcom/innioasis/y1/activity/IppActivity$AlbumJob;)V
+    invoke-static { v2 }, Lcom/innioasis/y1/activity/IppActivity;->access$800(Lcom/innioasis/y1/activity/IppActivity$AlbumJob;)V
   :L6
-  .line 1541
+  .line 1678
     goto :L8
   :L7
-  .line 1540
+  .line 1677
     move-exception v2
   :L8
-  .line 1542
+  .line 1679
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$AlbumWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
     invoke-virtual { v2 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick()V
-  .line 1537
+  .line 1674
     add-int/lit8 v1, v1, 1
     goto :L4
   :L9
-  .line 1545
+  .line 1682
     return-void
 .end method
