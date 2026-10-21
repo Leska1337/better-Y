@@ -237,7 +237,9 @@ public final class Albums {
             if (songPrev != null && songPrev.equals(all)) all = songPrev;
             songPrev = null;
             sortedPrev = null;
-            if (all != markList) markList = null;
+            // Kept only when no write came during the read (songGen): read while a scan runs, it is
+            // the table, and stays it if the scan writes nothing — keep() hands it back then.
+            if (all != markList) markList = scanThread != null ? all : null;
             songOrder = order;
             songCache = all;
             songCacheAt = System.currentTimeMillis();
