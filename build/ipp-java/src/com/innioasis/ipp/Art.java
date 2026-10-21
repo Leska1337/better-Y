@@ -16,9 +16,11 @@ import com.innioasis.y1.database.Song;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Cover art from files, hooked into the null return of stock {@code Other.getAlbumCover} — so
@@ -303,6 +305,27 @@ public final class Art {
             if (f != null && f.exists()) f.delete();
         } catch (Throwable t) {
         }
+    }
+
+    /** Stamps of folders no song is in any more: their weight, and gone when {@code drop}. */
+    static long prune(Set folders, boolean drop) {
+        loadStamps();
+        long n = 0L;
+        synchronized (Art.class) {
+            ArrayList gone = new ArrayList();
+            Enumeration e = stamps.keys();
+            while (e.hasMoreElements()) {
+                String k = (String) e.nextElement();
+                if (folders.contains(k)) continue;
+                gone.add(k);
+                n += Stale.line(k, (String) stamps.get(k));
+            }
+            if (!drop || gone.isEmpty()) return n;
+            for (int i = 0; i < gone.size(); i++) stamps.remove(gone.get(i));
+            stampsDirty = true;
+        }
+        saveStamps();
+        return n;
     }
 
     /** Every file that could serve the folder, own and inherited: name, mtime, length. */

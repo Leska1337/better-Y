@@ -5,9 +5,11 @@ import android.content.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.innioasis.y1.Y1Application;
 
@@ -155,6 +157,33 @@ public final class AlbumInfo {
         }
         map.put(album, new String[] { artist, path });
         save();
+    }
+
+    /**
+     * Lines of albums no song carries, or whose song is gone: their weight, and gone when
+     * {@code drop}. A dropped line is read again by the row that needs it.
+     */
+    static long prune(Set albums, Set paths, boolean drop) {
+        load();
+        long n = 0L;
+        synchronized (map) {
+            ArrayList gone = new ArrayList();
+            Iterator it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry e = (Map.Entry) it.next();
+                String[] v = (String[]) e.getValue();
+                if (albums.contains(e.getKey()) && (v[1].length() == 0 || paths.contains(v[1]))) {
+                    continue;
+                }
+                gone.add(e.getKey());
+                n += Stale.line((String) e.getKey(), v[0] + "\t" + v[1]);
+            }
+            if (drop && !gone.isEmpty()) {
+                for (int i = 0; i < gone.size(); i++) map.remove(gone.get(i));
+                saveLocked();
+            }
+        }
+        return n;
     }
 
     public static void clear() {

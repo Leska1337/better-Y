@@ -19,11 +19,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.CRC32;
 
 /**
@@ -870,7 +872,43 @@ public final class BigCover {
     private static File file(String key) {
         File d = dir();
         if (d == null) return null;
-        return new File(d, Integer.toHexString(key.hashCode()) + "-" + key.length() + SUFFIX);
+        return new File(d, name(key));
+    }
+
+    private static String name(String key) {
+        return Integer.toHexString(key.hashCode()) + "-" + key.length() + SUFFIX;
+    }
+
+    /** Covers and notes of tracks and folders no song has any more: their weight, gone when {@code drop}. */
+    static long prune(Set paths, Set folders, boolean drop) {
+        HashSet keep = new HashSet();
+        Iterator it = paths.iterator();
+        while (it.hasNext()) keep.add(name((String) it.next()));
+        it = folders.iterator();
+        while (it.hasNext()) keep.add(name((String) it.next()));
+        return Stale.files(dir(), keep, drop) + pruneNotes(paths, folders, drop);
+    }
+
+    private static synchronized long pruneNotes(Set paths, Set folders, boolean drop) {
+        noteLoad();
+        long n = 0L;
+        ArrayList gone = new ArrayList();
+        Iterator it = notes.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry e = (Map.Entry) it.next();
+            String k = (String) e.getKey();
+            boolean live = k.startsWith(SIG) ? folders.contains(k.substring(SIG.length()))
+                    : paths.contains(k);
+            if (live) continue;
+            gone.add(k);
+            n += Stale.line(k, String.valueOf(e.getValue()));
+        }
+        if (drop && !gone.isEmpty()) {
+            for (int i = 0; i < gone.size(); i++) notes.remove(gone.get(i));
+            notesDirty = true;
+            noteSave();
+        }
+        return n;
     }
 
     private static File dir() {

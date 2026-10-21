@@ -61,6 +61,12 @@ public final class PickDialog extends BaseDialog {
     private static final float CORNER = 10.0f;
 
     public PickDialog(Activity a, String title, String okText, int[] cats, boolean sizes, Go go) {
+        this(a, title, okText, cats, sizes, -1, go);
+    }
+
+    /** Ticked as {@code start} says; -1 ticks all. */
+    public PickDialog(Activity a, String title, String okText, int[] cats, boolean sizes, int start,
+            Go go) {
         super(a, R.style.Dialog_Common);
         this.activity = a;
         this.title = title;
@@ -69,7 +75,7 @@ public final class PickDialog extends BaseDialog {
         this.sizes = sizes;
         this.go = go;
         this.names = null;
-        this.start = -1;
+        this.start = start;
         this.none = false;
     }
 
@@ -383,7 +389,7 @@ public final class PickDialog extends BaseDialog {
             for (int i = 0; i < d.cats.length; i++) {
                 long n = Pick.size(d.cats[i]);
                 out[i + 1] = n;
-                total += n;
+                if (Pick.inTotal(d.cats[i])) total += n;
             }
             out[0] = total;
             try {

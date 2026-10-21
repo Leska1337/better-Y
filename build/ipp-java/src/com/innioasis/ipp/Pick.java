@@ -34,6 +34,8 @@ public final class Pick {
     public static final int SYSTEM = 4;
     /** Cover Flow's covers at slide size. Made from the covers, so they go with them. */
     public static final int FLOW = 8;
+    /** What the three above hold for songs no longer in the library ({@link Stale}). Clearing only. */
+    public static final int STALE = 16;
 
     public static final int CACHE_ALL = COVERS | TAGS | FLOW;
 
@@ -41,15 +43,21 @@ public final class Pick {
         if (cat == COVERS) return R.string.ipp_pick_covers;
         if (cat == TAGS) return R.string.ipp_pick_tags;
         if (cat == FLOW) return R.string.ipp_pick_flow;
+        if (cat == STALE) return R.string.ipp_pick_stale;
         return R.string.ipp_pick_system;
+    }
+
+    /** Its weight is part of the others', so the total does not count it twice. */
+    static boolean inTotal(int cat) {
+        return cat != STALE;
     }
 
     /** From {@code SettingActivity.clickClearCache}; stock's body is {@code ippClearCache}. */
     public static void askClear(SettingActivity a) {
         if (a == null) return;
-        int[] cats = new int[]{COVERS, FLOW, TAGS, SYSTEM};
+        int[] cats = new int[]{STALE, COVERS, FLOW, TAGS, SYSTEM};
         new PickDialog(a, a.getString(R.string.add_req_clear_cache),
-                a.getString(R.string.ipp_pick_clear), cats, true, new DoClear(a)).show();
+                a.getString(R.string.ipp_pick_clear), cats, true, 0, new DoClear(a)).show();
     }
 
     static final class DoClear extends PickDialog.Go {
@@ -160,6 +168,7 @@ public final class Pick {
 
     /** Memory and files. {@link #SYSTEM} is ignored here. */
     public static void clear(int mask) {
+        if ((mask & STALE) != 0) Stale.clear();
         if ((mask & COVERS) != 0) {
             CoverCache.clear();
             BigCover.clear();
@@ -237,6 +246,7 @@ public final class Pick {
                         + CacheSize.dirSize(new File(d, "ipp_art.txt"));
             }
             if (cat == FLOW) return CacheSize.dirSize(new File(d, "ipp_flow"));
+            if (cat == STALE) return Stale.size();
             // the tags themselves are columns of the database, not files of the cache directory
             if (cat == TAGS) return tagFiles(d) + Schema.tagBytes();
             long n = CacheSize.total(c) - size(COVERS) - tagFiles(d) - size(FLOW);

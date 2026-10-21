@@ -6,7 +6,10 @@ import android.graphics.BitmapFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.innioasis.y1.Y1Application;
 
@@ -66,7 +69,19 @@ public final class CoverCache {
         if (d == null) {
             return null;
         }
-        return new File(d, Integer.toHexString(key.hashCode()) + "-" + key.length() + "-50q.jpg");
+        return new File(d, name(key));
+    }
+
+    private static String name(String key) {
+        return Integer.toHexString(key.hashCode()) + "-" + key.length() + "-50q.jpg";
+    }
+
+    /** Thumbnails of albums no song carries any more: their weight, and gone when {@code drop}. */
+    static long prune(Set albums, boolean drop) {
+        HashSet keep = new HashSet();
+        Iterator it = albums.iterator();
+        while (it.hasNext()) keep.add(name((String) it.next()));
+        return Stale.files(dir(), keep, drop);
     }
 
     private static void remember(String key, Bitmap b) {

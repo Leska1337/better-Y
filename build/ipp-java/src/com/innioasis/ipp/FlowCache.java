@@ -7,6 +7,9 @@ import com.innioasis.y1.Y1Application;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Cover Flow's own covers on disk: an album's cover at slide size, so a slide is one decode into a
@@ -40,6 +43,17 @@ public final class FlowCache {
         File d = path == null ? null : dir();
         if (d == null) return null;
         return new File(d, hex(Albums.trackFolder(path)) + "-" + hex(path) + SUFFIX);
+    }
+
+    /** Slides of tracks no longer in the library: their weight, and gone when {@code drop}. */
+    static long prune(Set paths, boolean drop) {
+        HashSet keep = new HashSet();
+        Iterator it = paths.iterator();
+        while (it.hasNext()) {
+            String p = (String) it.next();
+            keep.add(hex(Albums.trackFolder(p)) + "-" + hex(p) + SUFFIX);
+        }
+        return Stale.files(dir(), keep, drop);
     }
 
     /** A cover {@link Flow#S} square, written for good. */
