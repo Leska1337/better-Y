@@ -231,7 +231,13 @@ public final class Albums {
         Object order = orderNow();
         String sig = tableSig();
         Lab.who("full read");
-        List all = order == null ? null : readTable((Y1Repository.SongSortType) order, sig);
+        List all = null;
+        // a tag write during the read moves a row (INSERT OR REPLACE): read again, not stock's
+        // query — that one is ~20 s and another copy of the library in a heap that holds two already
+        for (int i = 0; i < 3 && all == null && order != null; i++) {
+            if (i > 0) sig = tableSig();
+            all = readTable((Y1Repository.SongSortType) order, sig);
+        }
         android.util.Log.i("ipplab", "portions " + (all != null) + " " + (SystemClock.uptimeMillis() - t0) + " ms");
         if (all != null) Lab.compareRead(all);
         if (all == null) all = repo.getSongsSync(0);
@@ -589,18 +595,18 @@ public final class Albums {
     }
 
     /**
-     * What a write to the table changes, in one aggregate row: the table only ever gets INSERT OR
-     * REPLACE (a new rowid) and DELETE, and the tag columns' UPDATE moves none of these. Null when
-     * the database could not be asked.
+     * What a write of songs changes, in one aggregate row: their number and their paths. No rowid:
+     * {@code Schema.write} stores tag columns with INSERT OR REPLACE, which gives the row a new one
+     * without changing the library, and must not read as a write nobody reported. Null when the
+     * database could not be asked.
      */
     private static String tableSig() {
         Cursor c = null;
         try {
-            c = PlGrid.db().query("select count(*), max(rowid), total(rowid), total(length(path))"
+            c = PlGrid.db().query("select count(*), total(length(path)), total(fileDate)"
                     + " from song where isAudiobook = 0", null);
             if (!c.moveToFirst()) return null;
-            return c.getLong(0) + "/" + c.getLong(1) + "/" + (long) c.getDouble(2)
-                    + "/" + (long) c.getDouble(3);
+            return c.getLong(0) + "/" + (long) c.getDouble(1) + "/" + (long) c.getDouble(2);
         } catch (Throwable t) {
             return null;
         } finally {
@@ -663,6 +669,9 @@ public final class Albums {
     }
 
     private static List songsIn(Y1Repository repo, Y1Repository.SongSortType type) {
+        // the list first, waiting for a read under way: without it ordered() has nothing to lay
+        // the order over, and stock's full query ran beside the read (out of memory on 25 000)
+        allSongs();
         int gen;
         synchronized (SONGS) {
             if (songCache != null && type == songOrder) return songCache;
