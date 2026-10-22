@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..1b21ca32 100644
+index 01b1f730..e660410c 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..1b21ca32 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100322
++  versionCode: 10100329
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..e638dbe5 100644
+index 71fe29d0..a287abb2 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..e638dbe5 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev322</string>
++    <string name="ipp_version">v1.1.0-dev329</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -70525,6 +70525,36 @@ index 2e1e1934..c23052e6 100644
 +
 +    return v0
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
+index 80ab6a74..7c346be9 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
+@@ -190,9 +190,8 @@
+ 
+     .line 139
+     :cond_2
+-    sget-object v1, Lcom/innioasis/y1/utils/SDReceiver;->Companion:Lcom/innioasis/y1/utils/SDReceiver$Companion;
+-
+-    invoke-virtual {v1}, Lcom/innioasis/y1/utils/SDReceiver$Companion;->isSdcard()Z
++    # ipp: the card counts once it is mounted, not while vold is still checking it
++    invoke-static {}, Lcom/innioasis/ipp/Theme;->bootReady()Z
+ 
+     move-result v1
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2.smali
+index b8c26022..0f6da259 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2.smali
+@@ -317,7 +317,8 @@
+ 
+     invoke-direct {p1, v1, v6}, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+ 
+-    const-wide/16 v6, 0x1388
++    # ipp: 60 s, not 5: vold checks a large card for 20 s at boot, and the theme waits for it
++    const-wide/32 v6, 0xea60
+ 
+     .line 138
+     new-instance v1, Lcom/innioasis/y1/theme/ThemeManager$loadConfig$2$1;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
 index 4d3bea7c..d93b1eec 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$setBackground$pair$1.smali
@@ -70607,7 +70637,7 @@ index e95eaea5..4ba2be02 100644
      goto :goto_0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
-index 79daca77..523f69d1 100644
+index 79daca77..2c4c8efe 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager.smali
 @@ -891,6 +891,18 @@
@@ -70681,7 +70711,17 @@ index 79daca77..523f69d1 100644
  
      goto :goto_0
  
-@@ -1513,19 +1526,9 @@
+@@ -1247,7 +1260,8 @@
+     if-nez p3, :cond_1
+ 
+     .line 616
+-    invoke-virtual {p1, p2}, Landroid/widget/ImageView;->setImageResource(I)V
++    # ipp: a panel picture (main menu, Settings) is decoded off the main thread and kept, as a theme's
++    invoke-static {p1, p2}, Lcom/innioasis/ipp/MenuStyle;->res(Landroid/widget/ImageView;I)V
+ 
+     :cond_1
+     :goto_0
+@@ -1513,19 +1527,9 @@
  
      .line 557
      :goto_3
@@ -70704,6 +70744,28 @@ index 79daca77..523f69d1 100644
      const-class v0, Landroid/graphics/Typeface;
  
      const-string v1, "MONOSPACE"
+@@ -1741,9 +1745,8 @@
+ 
+     if-nez v0, :cond_0
+ 
+-    sget-object v0, Lcom/innioasis/y1/utils/SDReceiver;->Companion:Lcom/innioasis/y1/utils/SDReceiver$Companion;
+-
+-    invoke-virtual {v0}, Lcom/innioasis/y1/utils/SDReceiver$Companion;->isSdcard()Z
++    # ipp: stock's isSdcard says yes while vold is still checking the card, and the theme was reset
++    invoke-static {}, Lcom/innioasis/ipp/Theme;->cardMounted()Z
+ 
+     move-result v0
+ 
+@@ -1795,7 +1798,8 @@
+     packed-switch p2, :pswitch_data_6
+ 
+     .line 414
+-    invoke-virtual {p1, p2}, Landroid/widget/ImageView;->setImageResource(I)V
++    # ipp: the same for a panel picture that has no theme key at all
++    invoke-static {p1, p2}, Lcom/innioasis/ipp/MenuStyle;->res(Landroid/widget/ImageView;I)V
+ 
+     return-void
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali
 index 8590fe7c..ba3c2594 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/DialogUtil.smali

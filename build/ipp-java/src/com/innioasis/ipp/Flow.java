@@ -155,12 +155,52 @@ public final class Flow {
         return Other.INSTANCE.unNamed(AlbumArtists.of(aa, rep.getArtist()));
     }
 
-    /** Every album of the library, A to Z; unknown names sort last by their own prefix. */
+    // The row, kept against the list object it was built from: a pass over a large library is
+    // seconds, and between two entries only the album-artist lines can change.
+    private static List rowFor;
+    private static int rowGen;
+    private static List row;
+
+    /** Every album of the library, A to Z; unknown names sort last by their own prefix. Read only. */
     public static List albums() {
-        ArrayList out = new ArrayList();
         long t0 = SystemClock.uptimeMillis();
         List all = Albums.allSongs();
         Diag.slow("flow songs", t0);
+        int gen = AlbumArtist.gen();
+        List kept = null;
+        synchronized (Flow.class) {
+            if (all != null && all == rowFor && row != null) {
+                kept = row;
+                if (gen == rowGen) gen = -1;
+                else rowGen = gen;
+            }
+        }
+        if (kept != null) {
+            // the tag columns were written since: only the line under each cover can have changed
+            if (gen != -1) {
+                for (int i = 0; i < kept.size(); i++) {
+                    Item it = (Item) kept.get(i);
+                    it.artist = artistOf(it.key, it.rep, AlbumArtist.get(it.key));
+                }
+            }
+            android.util.Log.i("ipplab", "flow albums kept " + kept.size() + " " + (SystemClock.uptimeMillis() - t0) + " ms");
+            return kept;
+        }
+        List built = build(all);
+        synchronized (Flow.class) {
+            if (all != null) {
+                rowFor = all;
+                rowGen = gen;
+                row = built;
+            }
+        }
+        android.util.Log.i("ipplab", "flow albums " + built.size() + " built " + (SystemClock.uptimeMillis() - t0) + " ms");
+        return built;
+    }
+
+    private static List build(List all) {
+        ArrayList out = new ArrayList();
+        long t0 = SystemClock.uptimeMillis();
         if (all == null) return out;
         HashMap reps = new HashMap();
         // one key per album tag and folder, not per song: the songs of a folder share it

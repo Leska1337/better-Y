@@ -18,6 +18,7 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 import com.innioasis.y1.activity.theme.ThemeListActivity;
 import com.innioasis.y1.databinding.ItemSettingBinding;
@@ -26,8 +27,11 @@ import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.theme.ThemeConfig;
 import com.innioasis.y1.theme.config.FileConfig;
 import com.innioasis.y1.theme.config.MenuConfig;
+import com.innioasis.y1.utils.SDReceiver;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -42,6 +46,50 @@ import java.util.List;
 public final class Theme {
 
     private static final HashMap CACHE = new HashMap();
+
+    /**
+     * In place of stock's {@code isSdcard} in {@code ThemeManager.checkThemeValid}. That one asks
+     * StatFs of the mount point, which answers for the filesystem UNDER it while vold is still
+     * checking the card at boot (20 s on a large library) — the theme's config.json is missing
+     * then, and the theme was reset. Here the card counts only once it is in /proc/mounts.
+     */
+    /**
+     * The splash's wait in {@code ThemeManager.loadConfig}: a theme or a Key tone sound of the
+     * card's is waited for until the card is really mounted; with neither nothing is.
+     */
+    public static boolean bootReady() {
+        try {
+            String theme = ThemeManager.INSTANCE.getThemeName();
+            Context c = Y1Application.Companion.getAppContext();
+            boolean card = theme != null && theme.length() > 0
+                    || c != null && Prefs.getString(c, Tone.KEY_SOUND, "").length() > 0;
+            return !card || cardMounted();
+        } catch (Throwable t) {
+            return cardMounted();
+        }
+    }
+
+    public static boolean cardMounted() {
+        if (!SDReceiver.Companion.isSdcard()) return false;
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new FileReader("/proc/mounts"));
+            String root = " " + Constant.ROOT_PATH + " ";
+            for (String l = in.readLine(); l != null; l = in.readLine()) {
+                if (l.indexOf(root) >= 0) return true;
+            }
+            return false;
+        } catch (Throwable t) {
+            return false;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (Throwable t) {
+                }
+            }
+        }
+    }
 
     /** Stock semantics: null / blank / unparseable -> null. Nulls are cached too. */
     public static Integer parseColor(String s) {

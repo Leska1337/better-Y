@@ -159,6 +159,8 @@ public final class Albums {
     /** Bumped by every invalidate, so a read that raced a write is not kept. */
     private static int songGen;
     private static boolean checkAsked;
+    /** {@link #tableSig} taken with the list: the TTL check compares it, never the rows. */
+    private static String songSig;
     private static final Object SONGS = new Object();
     private static final long CACHE_TTL_MS = 600000L;
     private static final long WARM_DELAY_MS = 2000L;
@@ -173,11 +175,13 @@ public final class Albums {
             if (songCache != null) {
                 songPrev = songCache;
                 prevAt = songCacheAt;
+                prevSig = songSig;
                 sortedPrev = sorted;
                 sortedPrevType = sortedType;
             }
             songCache = null;
             songCacheAt = 0L;
+            songSig = null;
             songGen++;
             sorted = null;
         }
@@ -224,6 +228,7 @@ public final class Albums {
         synchronized (SONGS) { gen = songGen; }
         long t0 = SystemClock.uptimeMillis();
         Object order = orderNow();
+        String sig = tableSig();
         Lab.who("full read");
         List all = repo.getSongsSync(0);
         if (order != orderNow()) order = null;
@@ -243,9 +248,50 @@ public final class Albums {
             songOrder = order;
             songCache = all;
             songCacheAt = System.currentTimeMillis();
+            songSig = sig;
         }
-        if (all == read) share(all);
+        if (all == read) {
+            share(all);
+            reserve();
+        }
         return all;
+    }
+
+    private static final int RESERVE = 24 << 20;
+    private static final int CAP = 1 << 20;
+    /** Kept for good: what stops the free run under it from being handed back to the system. */
+    private static byte[] cap;
+    private static byte[] block;
+
+    /**
+     * Dalvik never compacts: after the read the free space is the holes of the copies dropped
+     * around the live list, none big enough for a bitmap, and every large allocation then costs
+     * two stop-the-world collections. A large array is grown at the top of the heap, a small one
+     * laid on it and kept, and the large one let go: free memory at the very top is trimmed away,
+     * under a live object it stays. On Dalvik the identity hash is the address.
+     */
+    private static void reserve() {
+        try {
+            // a field, not a local: Dalvik frees a local the moment it is last read
+            block = new byte[RESERVE];
+            int at = System.identityHashCode(block);
+            ArrayList tries = new ArrayList();
+            for (int i = 0; i < 4; i++) {
+                byte[] c = new byte[CAP];
+                if (System.identityHashCode(c) - at > 0) {
+                    cap = c;
+                    Diag.note("heap reserve: " + (RESERVE >> 20) + " MB under the cap, try " + (i + 1));
+                    android.util.Log.i("ipplab", "heap reserve ok, try " + (i + 1));
+                    return;
+                }
+                tries.add(c);   // landed in an older hole: keep it there and try the next one
+            }
+            Diag.note("heap reserve: no cap above the block");
+            android.util.Log.i("ipplab", "heap reserve failed");
+        } catch (Throwable t) {
+        } finally {
+            block = null;
+        }
     }
 
     /**
@@ -317,6 +363,7 @@ public final class Albums {
     /** Invalidations from any thread but the scan's: a write the scan cannot vouch for. */
     private static int foreign;
     private static long prevAt;
+    private static String prevSig;
     private static List sortedPrev;
     private static Object sortedPrevType;
 
@@ -342,6 +389,7 @@ public final class Albums {
             if (songCache != null || songPrev != m) return;
             songCache = m;
             songCacheAt = prevAt;
+            songSig = prevSig;
             sorted = sortedPrev;
             sortedType = sortedPrevType;
             songPrev = null;
@@ -413,6 +461,31 @@ public final class Albums {
             out.add(had != null ? had : o);
         }
         return out;
+    }
+
+    /**
+     * What a write to the table changes, in one aggregate row: the table only ever gets INSERT OR
+     * REPLACE (a new rowid) and DELETE, and the tag columns' UPDATE moves none of these. Null when
+     * the database could not be asked.
+     */
+    private static String tableSig() {
+        Cursor c = null;
+        try {
+            c = PlGrid.db().query("select count(*), max(rowid), total(rowid), total(length(path))"
+                    + " from song where isAudiobook = 0", null);
+            if (!c.moveToFirst()) return null;
+            return c.getLong(0) + "/" + c.getLong(1) + "/" + (long) c.getDouble(2)
+                    + "/" + (long) c.getDouble(3);
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Throwable t) {
+                }
+            }
+        }
     }
 
     /** The ORDER BY of the stock {@code getSongsList} query for this sort; null for one it has not. */
@@ -511,16 +584,19 @@ public final class Albums {
                     return;
                 }
                 if (System.currentTimeMillis() - songCacheAt < CACHE_TTL_MS) return;
-                Y1Repository repo = Y1Application.Companion.getY1Repository();
-                if (repo == null) return;
                 int gen;
                 synchronized (SONGS) { gen = songGen; }
-                List fresh = repo.getSongsSync(0);
-                if (fresh == null) return;
-                boolean same = fresh.equals(old);
+                String sig = tableSig();
+                if (sig == null) return;
+                boolean same;
                 synchronized (SONGS) {
                     if (gen != songGen) return;
-                    if (same) songCacheAt = System.currentTimeMillis();
+                    // no signature of its own: nothing to compare with, this one becomes it
+                    same = songSig == null || sig.equals(songSig);
+                    if (same) {
+                        songSig = sig;
+                        songCacheAt = System.currentTimeMillis();
+                    }
                 }
                 // a write nobody reported: everything built off the old list goes with it
                 if (!same) Ipp.libraryChanged();
