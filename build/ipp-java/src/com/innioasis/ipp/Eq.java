@@ -351,7 +351,7 @@ public final class Eq {
             if (!(b instanceof ActivityEqBinding)) return;
             ActivityEqBinding vb = (ActivityEqBinding) b;
 
-            List l = EqActivity.getEqList();
+            List l = presets(a);
             int m = a.getMark();
             if (l == null || m < 0 || m >= l.size()) return;
             Object d = l.get(m);
@@ -362,6 +362,18 @@ public final class Eq {
             vb.text.setText(eq.getStr());
         } catch (Throwable t) {
         }
+    }
+
+    private static WeakReference listHost;
+    private static List list;
+
+    /** Once per screen: stock's {@code getEqList} parses all ten presets with a new Gson each. */
+    private static List presets(EqActivity a) {
+        if (list == null || listHost == null || listHost.get() != a) {
+            list = EqActivity.getEqList();
+            listHost = new WeakReference(a);
+        }
+        return list;
     }
 
     /**

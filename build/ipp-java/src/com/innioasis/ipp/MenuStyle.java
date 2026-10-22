@@ -186,7 +186,17 @@ public final class MenuStyle {
     private static boolean panel(ImageView iv) {
         int id = iv.getId();
         return id == R.id.iv_now || id == R.id.right_image
-                || id == R.id.image && iv.getContext() instanceof EqActivity;
+                || id == R.id.image && host(iv) instanceof EqActivity;
+    }
+
+    /** AppCompat hands its ImageView a TintContextWrapper, not the activity. */
+    private static android.content.Context host(View v) {
+        android.content.Context c = v.getContext();
+        for (int i = 0; i < 4 && !(c instanceof android.app.Activity)
+                && c instanceof android.content.ContextWrapper; i++) {
+            c = ((android.content.ContextWrapper) c).getBaseContext();
+        }
+        return c;
     }
 
     /** Stands in for {@code setImageResource} in {@code ThemeManager}: commonSetIcon, setBackground. */

@@ -33,6 +33,10 @@
 
 .field private static host:Ljava/lang/ref/WeakReference;
 
+.field private static list:Ljava/util/List;
+
+.field private static listHost:Ljava/lang/ref/WeakReference;
+
 .field private static sideH:I
 
 .field private static sideW:I
@@ -814,7 +818,7 @@
   .line 352
     check-cast v1, Lcom/innioasis/y1/databinding/ActivityEqBinding;
   .line 354
-    invoke-static { }, Lcom/innioasis/y1/activity/EqActivity;->getEqList()Ljava/util/List;
+    invoke-static { v0 }, Lcom/innioasis/ipp/Eq;->presets(Lcom/innioasis/y1/activity/EqActivity;)Ljava/util/List;
     move-result-object v2
   .line 355
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/EqActivity;->getMark()I
@@ -860,6 +864,31 @@
   :L10
   .line 365
     return-void
+.end method
+
+.method private static presets(Lcom/innioasis/y1/activity/EqActivity;)Ljava/util/List;
+  .registers 2
+  .line 372
+    sget-object v0, Lcom/innioasis/ipp/Eq;->list:Ljava/util/List;
+    if-eqz v0, :L0
+    sget-object v0, Lcom/innioasis/ipp/Eq;->listHost:Ljava/lang/ref/WeakReference;
+    if-eqz v0, :L0
+    invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
+    move-result-object v0
+    if-eq v0, p0, :L1
+  :L0
+  .line 373
+    invoke-static { }, Lcom/innioasis/y1/activity/EqActivity;->getEqList()Ljava/util/List;
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/Eq;->list:Ljava/util/List;
+  .line 374
+    new-instance v0, Ljava/lang/ref/WeakReference;
+    invoke-direct { v0, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+    sput-object v0, Lcom/innioasis/ipp/Eq;->listHost:Ljava/lang/ref/WeakReference;
+  :L1
+  .line 376
+    sget-object p0, Lcom/innioasis/ipp/Eq;->list:Ljava/util/List;
+    return-object p0
 .end method
 
 .method public static preview(Lcom/innioasis/y1/activity/EqActivity;)V
@@ -942,7 +971,7 @@
 .method public static stretch(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 3
-  .line 373
+  .line 385
     if-eqz p0, :L3
   :L0
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
@@ -953,14 +982,14 @@
   :L1
     goto :L3
   :L2
-  .line 374
+  .line 386
     move-exception p0
     goto :L4
   :L3
-  .line 375
+  .line 387
     nop
   :L4
-  .line 376
+  .line 388
     return-void
 .end method
 
