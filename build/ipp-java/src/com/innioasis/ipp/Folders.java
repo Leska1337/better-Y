@@ -229,7 +229,10 @@ public final class Folders {
         }
     }
 
-    /** Every library song below this folder, in path order — off the cached table, not the disk. */
+    /**
+     * Every library song below this folder, in path order — off the cached table, not the disk.
+     * Not checked against the card, like every other library screen: a stat per song costs seconds.
+     */
     private static List songsUnder(File dir) {
         ArrayList out = new ArrayList();
         List all = Albums.allSongs();
@@ -237,24 +240,22 @@ public final class Folders {
         String prefix = dir.getPath();
         if (prefix == null) return out;
         if (!prefix.endsWith("/")) prefix = prefix + "/";
+        long t0 = android.os.SystemClock.uptimeMillis();
+        String[] paths = new String[all.size()];
+        int n = 0;
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
             String path = s == null ? null : s.getPath();
-            if (path == null || !path.startsWith(prefix)) continue;
-            File f = new File(path);
-            if (f.exists()) out.add(f);
+            if (path != null && path.startsWith(prefix)) paths[n++] = path;
         }
-        Collections.sort(out, PATH);
+        long t1 = android.os.SystemClock.uptimeMillis();
+        Arrays.sort(paths, 0, n);
+        long t2 = android.os.SystemClock.uptimeMillis();
+        out.ensureCapacity(n);
+        for (int i = 0; i < n; i++) out.add(new File(paths[i]));
+        android.util.Log.i("ipplab", "songsUnder " + n + " songs, filter " + (t1 - t0) + " ms, sort "
+                + (t2 - t1) + " ms, files " + (android.os.SystemClock.uptimeMillis() - t2) + " ms");
         return out;
-    }
-
-    private static final Comparator PATH = new PathCmp();
-    private static final class PathCmp implements Comparator {
-        public int compare(Object a, Object b) {
-            String x = ((File) a).getPath();
-            String y = ((File) b).getPath();
-            return (x == null ? "" : x).compareTo(y == null ? "" : y);
-        }
     }
 
     /** {@code FilesActivity.confirm}: either marker row acts instead of opening a file. */
