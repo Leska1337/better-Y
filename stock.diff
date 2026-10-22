@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..66ebbbbe 100644
+index 01b1f730..95849f6b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..66ebbbbe 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100356
++  versionCode: 10100357
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..84863a3f 100644
+index 71fe29d0..a7858b5f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..84863a3f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev356</string>
++    <string name="ipp_version">v1.1.0-dev357</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -39237,7 +39237,7 @@ index 04adc813..137dd16e 100644
      iget-object p1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1$1;->$albums:Ljava/util/List;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
-index e054b642..b411d3bf 100644
+index e054b642..e1de8951 100644
 --- a/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/AlbumsActivity$getAlbumListBySort$1.smali
 @@ -208,6 +208,8 @@
@@ -39249,10 +39249,16 @@ index e054b642..b411d3bf 100644
      .line 117
      sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
  
-@@ -221,7 +223,30 @@
+@@ -217,11 +219,35 @@
  
-     move-result-object p1
+     iget-object v1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1;->$type:Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;
  
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/database/Y1Repository;->getAlbumsBySort(Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;)Ljava/util/List;
++    # ipp: the names kept for the list in memory (Albums.albumNames), else getAlbumsBySort
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->albumNames(Lcom/innioasis/y1/database/Y1Repository;Lcom/innioasis/y1/database/Y1Repository$SortAlbumType;)Ljava/util/List;
++
++    move-result-object p1
++
 +    invoke-static {}, Lcom/innioasis/ipp/Lab;->a1()V
 +
 +    iget-object v1, p0, Lcom/innioasis/music/AlbumsActivity$getAlbumListBySort$1;->this$0:Lcom/innioasis/music/AlbumsActivity;
@@ -39260,9 +39266,9 @@ index e054b642..b411d3bf 100644
 +    check-cast v1, Landroid/app/Activity;
 +
 +    invoke-static {p1, v1}, Lcom/innioasis/ipp/Albums;->listForView(Ljava/util/List;Landroid/app/Activity;)Ljava/util/List;
-+
-+    move-result-object p1
-+
+ 
+     move-result-object p1
+ 
 +    invoke-static {}, Lcom/innioasis/ipp/Lab;->a2()V
 +
 +    invoke-static {}, Lcom/innioasis/ipp/Prefs;->albumYearEnabled()Z
@@ -39280,7 +39286,7 @@ index e054b642..b411d3bf 100644
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
  
      move-result-object v1
-@@ -250,12 +275,12 @@
+@@ -250,12 +276,12 @@
  
      move-result-object p1
  

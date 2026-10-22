@@ -514,6 +514,7 @@ public final class Albums {
         Artists.index(all);
         Y1Repository repo = Y1Application.Companion.getY1Repository();
         if (repo == null) return;
+        prepareAlbums(repo, all);
         songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
                 SharedPreferencesUtils.INSTANCE.getSortAllSong()));
         if (byDate(sortValue(false))) {
@@ -1471,34 +1472,86 @@ public final class Albums {
     private static List splitNames;
     private static ArrayList splitOut;
 
+    /** One row per album and folder, in the names' order; a copy the caller may sort. */
+    private static ArrayList splitRows(List names, List all) {
+        synchronized (SONGS) {
+            if (splitFor != null && splitFor.get() == all && names.equals(splitNames)) return new ArrayList(splitOut);
+        }
+        LinkedHashMap byName = foldersOf(all);
+        ArrayList out = new ArrayList();
+        for (int i = 0; i < names.size(); i++) {
+            String name = (String) names.get(i);
+            Object o = byName.get(name == null ? "" : name);
+            LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
+            if (set == null || set.isEmpty()) { out.add(name); continue; }
+            ArrayList folders = new ArrayList(set);
+            Collections.sort(folders, STR_CMP);
+            for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
+        }
+        synchronized (SONGS) {
+            splitFor = new java.lang.ref.WeakReference(all);
+            splitNames = new ArrayList(names);
+            splitOut = new ArrayList(out);
+        }
+        return out;
+    }
+
+    // The album names of the stock query, by direction, for the list in memory: the query reads
+    // the table those rows came from, and a write drops that list.
+    private static java.lang.ref.WeakReference namesFor;
+    private static boolean namesRev;
+    private static List namesMemo;
+
+    /** In place of {@code getAlbumsBySort} in AlbumsActivity: the same names and the same sort note. */
+    public static List albumNames(Y1Repository r, Y1Repository.SortAlbumType t) {
+        boolean rev = t == Y1Repository.SortAlbumType.Z_A;
+        List all = loaded();
+        List hit = null;
+        synchronized (SONGS) {
+            if (all != null && namesFor != null && namesFor.get() == all && namesRev == rev && namesMemo != null) {
+                hit = new ArrayList(namesMemo);
+            }
+        }
+        if (hit != null) {
+            noteAlbumSort(t.getType());
+            return hit;
+        }
+        List l = r.getAlbumsBySort(t);
+        keepNames(all, rev, l);
+        return l;
+    }
+
+    private static void keepNames(List all, boolean rev, List names) {
+        if (all == null || names == null) return;
+        synchronized (SONGS) {
+            if (loaded() != all) return;
+            namesFor = new java.lang.ref.WeakReference(all);
+            namesRev = rev;
+            namesMemo = new ArrayList(names);
+        }
+    }
+
+    /** From {@link #lists}: the main Albums view's names and rows, so its first entry needs neither. */
+    private static void prepareAlbums(Y1Repository repo, List all) {
+        try {
+            long t0 = SystemClock.uptimeMillis();
+            boolean rev = SharedPreferencesUtils.INSTANCE.getSortAlbum() == Y1Repository.SortAlbumType.Z_A.getType();
+            List names = rev ? repo.ippSongDao().getAlbumsReverseSync(0) : repo.ippSongDao().getAlbumsSync(0);
+            long t1 = SystemClock.uptimeMillis();
+            keepNames(all, rev, names);
+            if (names != null) splitRows(names, all);
+            android.util.Log.i("ipplab", "prepare albums: names " + (t1 - t0) + " ms, split "
+                    + (SystemClock.uptimeMillis() - t1) + " ms");
+        } catch (Throwable t) {
+        }
+    }
+
     public static List split(List names) {
         if (names == null) return names;
         List all = allSongs();
         Lab.s("split allSongs");
         if (all == null) return names;
-        ArrayList out = null;
-        synchronized (SONGS) {
-            if (splitFor != null && splitFor.get() == all && names.equals(splitNames)) out = new ArrayList(splitOut);
-        }
-        if (out == null) {
-            LinkedHashMap byName = foldersOf(all);
-            Lab.s("split foldersOf");
-            out = new ArrayList();
-            for (int i = 0; i < names.size(); i++) {
-                String name = (String) names.get(i);
-                Object o = byName.get(name == null ? "" : name);
-                LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
-                if (set == null || set.isEmpty()) { out.add(name); continue; }
-                ArrayList folders = new ArrayList(set);
-                Collections.sort(folders, STR_CMP);
-                for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
-            }
-            synchronized (SONGS) {
-                splitFor = new java.lang.ref.WeakReference(all);
-                splitNames = new ArrayList(names);
-                splitOut = new ArrayList(out);
-            }
-        }
+        ArrayList out = splitRows(names, all);
         Lab.s("split loop");
         List r = byYear(out);
         Lab.s("split byYear");
