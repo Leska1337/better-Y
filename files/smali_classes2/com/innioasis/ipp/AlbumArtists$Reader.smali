@@ -19,13 +19,13 @@
 
 .method constructor <init>(Ljava/util/List;[Lcom/innioasis/ipp/Meta$Info;)V
   .registers 3
-  .line 234
+  .line 256
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 235
+  .line 257
     iput-object p1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
-  .line 236
+  .line 258
     iput-object p2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Lcom/innioasis/ipp/Meta$Info;
-  .line 237
+  .line 259
     return-void
 .end method
 
@@ -34,7 +34,7 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 240
+  .line 262
     iget v0, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->next:I
     iget-object v1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
@@ -51,7 +51,7 @@
     monitor-exit p0
     return v0
   :L4
-  .line 240
+  .line 262
     move-exception v0
     monitor-exit p0
     throw v0
@@ -60,14 +60,14 @@
 .method public run()V
   .catchall { :L1 .. :L2 } :L3
   .registers 5
-  .line 245
+  .line 267
     nop
   :L0
     invoke-direct { p0 }, Lcom/innioasis/ipp/AlbumArtists$Reader;->take()I
     move-result v0
     if-ltz v0, :L5
   :L1
-  .line 247
+  .line 269
     iget-object v1, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->out:[Lcom/innioasis/ipp/Meta$Info;
     iget-object v2, p0, Lcom/innioasis/ipp/AlbumArtists$Reader;->paths:Ljava/util/List;
     invoke-interface { v2, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
@@ -80,12 +80,12 @@
   :L2
     goto :L4
   :L3
-  .line 248
+  .line 270
     move-exception v0
   :L4
-  .line 249
+  .line 271
     goto :L0
   :L5
-  .line 251
+  .line 273
     return-void
 .end method

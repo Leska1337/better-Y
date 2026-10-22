@@ -42,6 +42,8 @@ public final class Lab {
 
     public static void s(String step) { lap(step); }
 
+    static void b(String w) { begin(w); }
+
     /** Who called: the thread and the first frames above the caller. */
     private static int whos;
 

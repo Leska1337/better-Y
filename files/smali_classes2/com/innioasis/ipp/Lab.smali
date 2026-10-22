@@ -76,6 +76,13 @@
     return-void
 .end method
 
+.method static b(Ljava/lang/String;)V
+  .registers 1
+  .line 45
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lab;->begin(Ljava/lang/String;)V
+    return-void
+.end method
+
 .method private static begin(Ljava/lang/String;)V
   .registers 3
   .line 20
@@ -92,18 +99,18 @@
 .method static compareRead(Ljava/util/List;)V
   .catchall { :L1 .. :L6 } :L7
   .registers 13
-  .line 97
+  .line 99
     const-string v0, "ipplab"
     sget-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
     if-nez v1, :L9
     if-nez p0, :L0
     goto/16 :L9
   :L0
-  .line 98
+  .line 100
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
   :L1
-  .line 100
+  .line 102
     new-instance v1, Ljava/io/File;
     const-string v2, "/data/local/tmp/ippread"
     invoke-direct { v1, v2 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
@@ -112,35 +119,35 @@
     if-nez v1, :L2
     return-void
   :L2
-  .line 101
+  .line 103
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
-  .line 102
+  .line 104
     sget-object v3, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v3 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v3
     const/4 v4, 0
     invoke-virtual { v3, v4 }, Lcom/innioasis/y1/database/Y1Repository;->getSongsSync(I)Ljava/util/List;
     move-result-object v3
-  .line 103
+  .line 105
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v5
-  .line 104
+  .line 106
     nop
-  .line 105
+  .line 107
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v7
     invoke-interface { v3 }, Ljava/util/List;->size()I
     move-result v8
     invoke-static { v7, v8 }, Ljava/lang/Math;->min(II)I
     move-result v7
-  .line 106
+  .line 108
     const/4 v8, -1
     const/4 v8, 0
     const/4 v9, -1
   :L3
     if-ge v4, v7, :L5
-  .line 107
+  .line 109
     invoke-interface { p0, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v10
     invoke-interface { v3, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
@@ -148,17 +155,17 @@
     invoke-virtual { v10, v11 }, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
     move-result v10
     if-nez v10, :L4
-  .line 108
+  .line 110
     add-int/lit8 v8, v8, 1
-  .line 109
+  .line 111
     if-gez v9, :L4
     move v9, v4
   :L4
-  .line 106
+  .line 108
     add-int/lit8 v4, v4, 1
     goto :L3
   :L5
-  .line 112
+  .line 114
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v7, "compare read: portions "
@@ -198,12 +205,12 @@
     move-result-object p0
     invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L6
-  .line 116
+  .line 118
     goto :L8
   :L7
-  .line 114
+  .line 116
     move-exception p0
-  .line 115
+  .line 117
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "compare read failed "
@@ -215,10 +222,10 @@
     move-result-object p0
     invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L8
-  .line 117
+  .line 119
     return-void
   :L9
-  .line 97
+  .line 99
     return-void
 .end method
 
@@ -275,20 +282,20 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 62
+  .line 64
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object v0
     new-instance v1, Lcom/innioasis/ipp/Lab$Frame;
     invoke-direct { v1 }, Lcom/innioasis/ipp/Lab$Frame;-><init>()V
     invoke-virtual { v0, v1 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L1
-  .line 64
+  .line 66
     goto :L3
   :L2
-  .line 63
+  .line 65
     move-exception v0
   :L3
-  .line 65
+  .line 67
     return-void
 .end method
 
@@ -338,16 +345,16 @@
 .method static reads()V
   .catchall { :L1 .. :L2 } :L4
   .registers 3
-  .line 83
+  .line 85
     sget-boolean v0, Lcom/innioasis/ipp/Lab;->ran:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 84
+  .line 86
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/Lab;->ran:Z
   :L1
-  .line 86
+  .line 88
     new-instance v0, Ljava/io/File;
     const-string v1, "/data/local/tmp/ipplab"
     invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
@@ -357,19 +364,19 @@
     if-nez v0, :L3
     return-void
   :L3
-  .line 89
+  .line 91
     nop
-  .line 90
+  .line 92
     new-instance v0, Lcom/innioasis/ipp/Lab$Reads;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Lab$Reads;-><init>()V
     const-wide/16 v1, 15000
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Albums;->later(Ljava/lang/Runnable;J)V
-  .line 91
+  .line 93
     return-void
   :L4
-  .line 87
+  .line 89
     move-exception v0
-  .line 88
+  .line 90
     return-void
 .end method
 
@@ -382,7 +389,7 @@
 
 .method static who(Ljava/lang/String;)V
   .registers 7
-  .line 49
+  .line 51
     sget v0, Lcom/innioasis/ipp/Lab;->whos:I
     add-int/lit8 v0, v0, 1
     sput v0, Lcom/innioasis/ipp/Lab;->whos:I
@@ -390,12 +397,12 @@
     if-le v0, v1, :L0
     return-void
   :L0
-  .line 50
+  .line 52
     new-instance v0, Ljava/lang/Throwable;
     invoke-direct { v0 }, Ljava/lang/Throwable;-><init>()V
     invoke-virtual { v0 }, Ljava/lang/Throwable;->getStackTrace()[Ljava/lang/StackTraceElement;
     move-result-object v0
-  .line 51
+  .line 53
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1, p0 }, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
     const-string p0, " on "
@@ -407,14 +414,14 @@
     move-result-object v1
     invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object p0
-  .line 52
+  .line 54
     const/4 v1, 2
   :L1
     array-length v2, v0
     if-ge v1, v2, :L2
     const/16 v2, 9
     if-ge v1, v2, :L2
-  .line 53
+  .line 55
     const-string v2, " < "
     invoke-virtual { p0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v2
@@ -427,7 +434,7 @@
     move-result-object v3
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v2
-  .line 54
+  .line 56
     const/16 v3, 46
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v2
@@ -443,15 +450,15 @@
     invoke-virtual { v3 }, Ljava/lang/StackTraceElement;->getLineNumber()I
     move-result v3
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-  .line 52
+  .line 54
     add-int/lit8 v1, v1, 1
     goto :L1
   :L2
-  .line 56
+  .line 58
     const-string v0, "ipplab"
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 57
+  .line 59
     return-void
 .end method

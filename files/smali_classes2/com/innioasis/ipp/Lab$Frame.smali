@@ -14,28 +14,28 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 67
+  .line 69
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public doFrame(J)V
   .registers 3
-  .line 69
+  .line 71
     new-instance p1, Landroid/os/Handler;
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object p2
     invoke-direct { p1, p2 }, Landroid/os/Handler;-><init>(Landroid/os/Looper;)V
     invoke-virtual { p1, p0 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 70
+  .line 72
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 73
+  .line 75
     const-string v0, "first frame"
     invoke-static { v0 }, Lcom/innioasis/ipp/Lab;->access$000(Ljava/lang/String;)V
-  .line 74
+  .line 76
     return-void
 .end method

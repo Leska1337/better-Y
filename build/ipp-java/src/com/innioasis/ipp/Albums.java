@@ -108,6 +108,24 @@ public final class Albums {
         return enc(album, albumFolder(s.getPath()));
     }
 
+    /** {@link #keyOf} for a pass over many songs: {@code byDir} keeps the folder per directory. */
+    public static String keyOf(Song s, HashMap byDir) {
+        if (s == null) return null;
+        String album = s.getAlbum() == null ? "" : s.getAlbum();
+        return enc(album, albumFolder(s.getPath(), byDir));
+    }
+
+    /** {@link #albumFolder} once per directory: the songs of one directory share the answer. */
+    static String albumFolder(String path, HashMap byDir) {
+        String dir = trackFolder(path);
+        String folder = (String) byDir.get(dir);
+        if (folder == null) {
+            folder = albumFolder(path);
+            byDir.put(dir, folder);
+        }
+        return folder;
+    }
+
     /** Immediate parent directory of a track (per-disc; used for the Now-Playing cover). */
     public static String trackFolder(String path) {
         if (path == null) return "";
@@ -892,10 +910,12 @@ public final class Albums {
         }
         LinkedHashMap m = new LinkedHashMap();
         HashMap bySongs = new HashMap();
+        HashMap byDir = new HashMap();
+        long t0 = SystemClock.uptimeMillis();
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
             String name = s.getAlbum() == null ? "" : s.getAlbum();
-            String folder = albumFolder(s.getPath());
+            String folder = albumFolder(s.getPath(), byDir);
             Object o = m.get(name);
             LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
             if (set == null) { set = new LinkedHashSet(); m.put(name, set); }
@@ -910,6 +930,8 @@ public final class Albums {
             foldersMemo = m;
             albumSongsMemo = bySongs;
         }
+        android.util.Log.i("ipplab", "foldersOf " + all.size() + " songs, " + byDir.size() + " dirs, "
+                + (SystemClock.uptimeMillis() - t0) + " ms");
         return m;
     }
 
@@ -917,7 +939,7 @@ public final class Albums {
     private static HashMap albumSongsMemo;
 
     /** That index when it was built from this very list, else null. */
-    private static HashMap albumSongsOf(List all) {
+    static HashMap albumSongsOf(List all) {
         foldersOf(all);
         synchronized (SONGS) {
             return foldersFor == all ? albumSongsMemo : null;
@@ -926,13 +948,14 @@ public final class Albums {
 
     private static LinkedHashMap foldersByName(List songs) {
         LinkedHashMap map = new LinkedHashMap();
+        HashMap byDir = new HashMap();
         for (int i = 0; i < songs.size(); i++) {
             Song s = (Song) songs.get(i);
             String key = s.getAlbum() == null ? "" : s.getAlbum();
             Object o = map.get(key);
             LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
             if (set == null) { set = new LinkedHashSet(); map.put(key, set); }
-            set.add(albumFolder(s.getPath()));
+            set.add(albumFolder(s.getPath(), byDir));
         }
         return map;
     }
@@ -952,8 +975,10 @@ public final class Albums {
         // Not getSongsByArtist: the row is a name derived from a tag, and only forMenu matches
         // by the test the row was drawn by.
         List asongs = Artists.forMenu(artist, null);
+        Lab.s("artist forMenu " + (asongs == null ? -1 : asongs.size()));
         if (asongs == null || asongs.isEmpty()) return new ArrayList();
         LinkedHashMap byName = foldersByName(asongs);
+        Lab.s("artist folders " + byName.size() + " names of " + names.size());
         ArrayList out = new ArrayList();
         if (!asongs.isEmpty()) out.add(allMark(artist));   // first row = "Show all songs"
         for (int i = 0; i < names.size(); i++) {
@@ -964,6 +989,7 @@ public final class Albums {
             Collections.sort(folders, STR_CMP);
             for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
         }
+        Lab.s("artist rows " + out.size());
         return byYear(out);
     }
 

@@ -109,12 +109,14 @@ public final class AlbumArtists {
     }
 
     public static String title(Activity a, String stock) {
+        if (screen(a)) Lab.b("album artists");
         return screen(a) ? a.getString(R.string.ipp_album_artists) : stock;
     }
 
     /** ArtistsActivity's two list builds (first fill on IO, sort change), in stock's artist sort. */
     public static List screenList(List stock, Activity a) {
         if (!screen(a)) return stock;
+        Lab.s("stock list");
         try {
             boolean desc = SharedPreferencesUtils.INSTANCE.getSortArtist()
                     == Y1Repository.SortArtistsType.Z_A.getType();
@@ -127,8 +129,27 @@ public final class AlbumArtists {
     private static List memoAll;           // Albums.allSongs() the model was built from
     private static int memoGen = -1;       // AlbumArtist.gen() it was built with
     private static HashMap keyToNorm;      // album key -> group
-    private static String[] songNorm;      // the group of each song of memoAll, by index
+    private static HashMap albumSongs;     // album key -> its songs, of memoAll. Read only
     private static LinkedHashMap names;    // group -> the spelling shown
+
+    /** Album key to its songs: the index Albums keeps for this list, else built here. */
+    private static HashMap albumIndex(List all) {
+        HashMap ix = Albums.albumSongsOf(all);
+        if (ix != null) return ix;
+        ix = new HashMap();
+        HashMap byDir = new HashMap();
+        for (int i = 0; i < all.size(); i++) {
+            Object o = all.get(i);
+            if (!(o instanceof Song)) continue;
+            Song s = (Song) o;
+            if (s.getPath() == null) continue;
+            String k = Albums.keyOf(s, byDir);
+            ArrayList l = (ArrayList) ix.get(k);
+            if (l == null) { l = new ArrayList(); ix.put(k, l); }
+            l.add(s);
+        }
+        return ix;
+    }
 
     /**
      * Unread tags are read first, one file each — seconds on a first entry, so never on the main
@@ -140,19 +161,23 @@ public final class AlbumArtists {
         if (all == memoAll && memoGen == AlbumArtist.gen() && keyToNorm != null) return true;
 
         // The representative is the lowest path, as the album row takes it.
+        HashMap index = albumIndex(all);
         HashMap reps = new HashMap();
-        String[] keys = new String[all.size()];
-        for (int i = 0; i < all.size(); i++) {
-            Object o = all.get(i);
-            if (!(o instanceof Song)) continue;
-            Song s = (Song) o;
-            if (s.getPath() == null) continue;
-            String k = Albums.keyOf(s);
-            keys[i] = k;
-            Song r = (Song) reps.get(k);
-            if (r == null || s.getPath().compareTo(r.getPath()) < 0) reps.put(k, s);
+        Iterator kt = index.entrySet().iterator();
+        while (kt.hasNext()) {
+            Map.Entry e = (Map.Entry) kt.next();
+            List l = (List) e.getValue();
+            Song r = null;
+            for (int i = 0; i < l.size(); i++) {
+                Song s = (Song) l.get(i);
+                if (s.getPath() == null) continue;
+                if (r == null || s.getPath().compareTo(r.getPath()) < 0) r = s;
+            }
+            if (r != null) reps.put(e.getKey(), r);
         }
+        Lab.s("index " + index.size() + " albums");
         readMissing(reps);
+        Lab.s("read missing");
 
         HashMap k2n = new HashMap();
         HashMap counts = new HashMap();    // group -> (spelling -> albums)
@@ -184,12 +209,9 @@ public final class AlbumArtists {
             }
             shown.put(e.getKey(), best);
         }
-        String[] sn = new String[keys.length];
-        for (int i = 0; i < keys.length; i++) {
-            if (keys[i] != null) sn[i] = (String) k2n.get(keys[i]);
-        }
-        songNorm = sn;
+        albumSongs = index;
         keyToNorm = k2n;
+        Lab.s("grouped");
         names = shown;
         memoAll = all;
         memoGen = AlbumArtist.gen();
@@ -279,14 +301,18 @@ public final class AlbumArtists {
             if (!build()) return out;
             String n = name(row);
             String target = Constant.UNKNOWN.equals(n) ? Constant.UNKNOWN : norm(n);
-            List all;
-            String[] sn;
+            HashMap k2n;
+            HashMap ix;
             synchronized (AlbumArtists.class) {
-                all = memoAll;
-                sn = songNorm;
+                k2n = keyToNorm;
+                ix = albumSongs;
             }
-            for (int i = 0; i < sn.length && i < all.size(); i++) {
-                if (target.equals(sn[i])) out.add(all.get(i));
+            Iterator it = k2n.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry e = (Map.Entry) it.next();
+                if (!target.equals(e.getValue())) continue;
+                Object l = ix.get(e.getKey());
+                if (l != null) out.addAll((List) l);
             }
             Y1Repository.SongSortType t = type == Y1Repository.SongSortType.Track_Number
                     ? Y1Repository.SongSortType.Album : type;
