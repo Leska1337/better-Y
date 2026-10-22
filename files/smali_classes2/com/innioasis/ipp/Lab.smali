@@ -9,6 +9,8 @@
   }
 .end annotation
 
+.field private static compared:Z
+
 .field private static last:J
 
 .field private static ran:Z
@@ -84,6 +86,139 @@
     sput-wide v0, Lcom/innioasis/ipp/Lab;->last:J
     sput-wide v0, Lcom/innioasis/ipp/Lab;->start:J
   .line 22
+    return-void
+.end method
+
+.method static compareRead(Ljava/util/List;)V
+  .catchall { :L1 .. :L6 } :L7
+  .registers 13
+  .line 97
+    const-string v0, "ipplab"
+    sget-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
+    if-nez v1, :L9
+    if-nez p0, :L0
+    goto/16 :L9
+  :L0
+  .line 98
+    const/4 v1, 1
+    sput-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
+  :L1
+  .line 100
+    new-instance v1, Ljava/io/File;
+    const-string v2, "/data/local/tmp/ippread"
+    invoke-direct { v1, v2 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
+    invoke-virtual { v1 }, Ljava/io/File;->exists()Z
+    move-result v1
+    if-nez v1, :L2
+    return-void
+  :L2
+  .line 101
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v1
+  .line 102
+    sget-object v3, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v3 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
+    move-result-object v3
+    const/4 v4, 0
+    invoke-virtual { v3, v4 }, Lcom/innioasis/y1/database/Y1Repository;->getSongsSync(I)Ljava/util/List;
+    move-result-object v3
+  .line 103
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v5
+  .line 104
+    nop
+  .line 105
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result v7
+    invoke-interface { v3 }, Ljava/util/List;->size()I
+    move-result v8
+    invoke-static { v7, v8 }, Ljava/lang/Math;->min(II)I
+    move-result v7
+  .line 106
+    const/4 v8, -1
+    const/4 v8, 0
+    const/4 v9, -1
+  :L3
+    if-ge v4, v7, :L5
+  .line 107
+    invoke-interface { p0, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v10
+    invoke-interface { v3, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v11
+    invoke-virtual { v10, v11 }, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
+    move-result v10
+    if-nez v10, :L4
+  .line 108
+    add-int/lit8 v8, v8, 1
+  .line 109
+    if-gez v9, :L4
+    move v9, v4
+  :L4
+  .line 106
+    add-int/lit8 v4, v4, 1
+    goto :L3
+  :L5
+  .line 112
+    new-instance v4, Ljava/lang/StringBuilder;
+    invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v7, "compare read: portions "
+    invoke-virtual { v4, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result p0
+    invoke-virtual { v4, p0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v4, ", stock "
+    invoke-virtual { p0, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-interface { v3 }, Ljava/util/List;->size()I
+    move-result v3
+    invoke-virtual { p0, v3 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v3, " rows in "
+    invoke-virtual { p0, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    sub-long/2addr v5, v1
+    invoke-virtual { p0, v5, v6 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v1, " ms, "
+    invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0, v8 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v1, " differ (first "
+    invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0, v9 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v1, ")"
+    invoke-virtual { p0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object p0
+    invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+  :L6
+  .line 116
+    goto :L8
+  :L7
+  .line 114
+    move-exception p0
+  .line 115
+    new-instance v1, Ljava/lang/StringBuilder;
+    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v2, "compare read failed "
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v1, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object p0
+    invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+  :L8
+  .line 117
+    return-void
+  :L9
+  .line 97
     return-void
 .end method
 

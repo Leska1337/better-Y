@@ -90,6 +90,32 @@ public final class Lab {
         Albums.later(new Reads(), 15000L);
     }
 
+    private static boolean compared;
+
+    /** Once per process, only while /data/local/tmp/ippread exists: the portions read against stock's. */
+    static void compareRead(java.util.List mine) {
+        if (compared || mine == null) return;
+        compared = true;
+        try {
+            if (!new File("/data/local/tmp/ippread").exists()) return;
+            long t0 = SystemClock.uptimeMillis();
+            java.util.List stock = com.innioasis.y1.Y1Application.Companion.getY1Repository().getSongsSync(0);
+            long t1 = SystemClock.uptimeMillis();
+            int diff = 0, first = -1;
+            int n = Math.min(mine.size(), stock.size());
+            for (int i = 0; i < n; i++) {
+                if (!mine.get(i).equals(stock.get(i))) {
+                    diff++;
+                    if (first < 0) first = i;
+                }
+            }
+            Log.i("ipplab", "compare read: portions " + mine.size() + ", stock " + stock.size() + " rows in "
+                    + (t1 - t0) + " ms, " + diff + " differ (first " + first + ")");
+        } catch (Throwable t) {
+            Log.i("ipplab", "compare read failed " + t);
+        }
+    }
+
     static final class Reads implements Runnable {
         public void run() {
             try {

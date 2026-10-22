@@ -230,7 +230,10 @@ public final class Albums {
         Object order = orderNow();
         String sig = tableSig();
         Lab.who("full read");
-        List all = repo.getSongsSync(0);
+        List all = order == null ? null : readTable((Y1Repository.SongSortType) order, sig);
+        android.util.Log.i("ipplab", "portions " + (all != null) + " " + (SystemClock.uptimeMillis() - t0) + " ms");
+        if (all != null) Lab.compareRead(all);
+        if (all == null) all = repo.getSongsSync(0);
         if (order != orderNow()) order = null;
         Diag.slow("library read", t0);
         android.util.Log.i("ipplab", "full read " + (all == null ? 0 : all.size()) + " rows " + (SystemClock.uptimeMillis() - t0) + " ms");
@@ -255,6 +258,85 @@ public final class Albums {
             reserve();
         }
         return all;
+    }
+
+    /** Rows per portion: one cursor window holds ~3000 of them, and a window that fills re-runs the query. */
+    private static final int PORTION = 1000;
+
+    /**
+     * {@code getSongsSync(0)} without its cost on a large library: the rows in rowid portions that
+     * never fill the cursor window, then the stock order as rowids alone. The rows are built as the
+     * stock DAO builds them. Null when the table changed under the read: the caller asks stock.
+     */
+    private static List readTable(Y1Repository.SongSortType type, String sig) {
+        String by = orderBy(type);
+        if (by == null || sig == null) return null;
+        Cursor c = null;
+        try {
+            androidx.room.RoomDatabase db = PlGrid.db();
+            int n = (int) Long.parseLong(sig.substring(0, sig.indexOf('/')));
+            long[] ids = new long[n];
+            Song[] rows = new Song[n];
+            int k = 0;
+            long after = -1L;
+            while (true) {
+                c = db.query("select rowid as ipp_rowid, * from song where isAudiobook = 0 and rowid > "
+                        + after + " order by rowid limit " + PORTION, null);
+                int got = 0;
+                int iId = c.getColumnIndexOrThrow("songId"), iName = c.getColumnIndexOrThrow("name"),
+                        iPyName = c.getColumnIndexOrThrow("pinyinName"), iSong = c.getColumnIndexOrThrow("songName"),
+                        iPySong = c.getColumnIndexOrThrow("pinyinSongName"), iArtist = c.getColumnIndexOrThrow("artist"),
+                        iPyArtist = c.getColumnIndexOrThrow("pinyinArtist"), iAlbum = c.getColumnIndexOrThrow("album"),
+                        iPyAlbum = c.getColumnIndexOrThrow("pinyinAlbum"), iGenre = c.getColumnIndexOrThrow("genre"),
+                        iPyGenre = c.getColumnIndexOrThrow("pinyinGenre"), iPath = c.getColumnIndexOrThrow("path"),
+                        iBook = c.getColumnIndexOrThrow("isAudiobook"), iDate = c.getColumnIndexOrThrow("date"),
+                        iFile = c.getColumnIndexOrThrow("fileDate"), iLower = c.getColumnIndexOrThrow("lowerName"),
+                        iLowAlbum = c.getColumnIndexOrThrow("lowAlbum");
+                while (c.moveToNext()) {
+                    if (k >= n) return null;
+                    after = c.getLong(0);
+                    Song s = new Song(str(c, iId), str(c, iName), str(c, iPyName), str(c, iSong), str(c, iPySong),
+                            str(c, iArtist), str(c, iPyArtist), str(c, iAlbum), str(c, iPyAlbum), str(c, iGenre),
+                            str(c, iPyGenre), str(c, iPath), c.getInt(iBook), c.getLong(iDate), c.getLong(iFile),
+                            str(c, iLower), str(c, iLowAlbum));
+                    Schema.read(c, s);
+                    ids[k] = after;
+                    rows[k++] = s;
+                    got++;
+                }
+                c.close();
+                c = null;
+                if (got < PORTION) break;
+            }
+            if (k != n) return null;
+            c = db.query("select rowid from song where isAudiobook = 0 order by " + by, null);
+            if (c.getCount() != n) return null;
+            ArrayList out = new ArrayList(n);
+            while (c.moveToNext()) {
+                int at = java.util.Arrays.binarySearch(ids, c.getLong(0));
+                if (at < 0 || rows[at] == null) return null;
+                out.add(rows[at]);
+                rows[at] = null;
+            }
+            c.close();
+            c = null;
+            if (!sig.equals(tableSig())) return null;
+            return out;
+        } catch (Throwable t) {
+            Diag.note("library read in portions failed: " + t);
+            return null;
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Throwable t) {
+                }
+            }
+        }
+    }
+
+    private static String str(Cursor c, int i) {
+        return c.isNull(i) ? null : c.getString(i);
     }
 
     private static final int RESERVE = 24 << 20;
