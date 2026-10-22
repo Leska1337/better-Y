@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.music.data.Album;
 import com.innioasis.music.data.Genre;
@@ -427,6 +428,7 @@ public final class Albums {
      * flag drops: the read is then inside the time the scan dialog is up.
      */
     public static void loadNow() {
+        if (!menuShown) scanToast = true;
         try {
             boolean clean = Scan.clean();
             Scan.done();
@@ -490,7 +492,48 @@ public final class Albums {
         if (repo == null) return;
         songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
                 SharedPreferencesUtils.INSTANCE.getSortAllSong()));
+        if (byDate(sortValue(false))) {
+            HashMap index = albumSongsOf(all);
+            if (index != null) YearCache.prepare(new ArrayList(index.keySet()));
+        }
+        synchronized (SONGS) { preparedFor = all; }
         Lab.reads();
+    }
+
+    private static boolean byDate(int sort) {
+        return sort == Y1Repository.SortAlbumType.Date_Asc.getType()
+                || sort == Y1Repository.SortAlbumType.Date_Desc.getType();
+    }
+
+    /** The list {@link #lists} has finished building off. */
+    private static List preparedFor;
+    private static long bootAsked;
+    /** Below the 60 s loadConfig gives the whole splash: the theme must still load. */
+    private static final long BOOT_WAIT_MS = 30000L;
+
+    /**
+     * Part of the splash's wait: the library read and what is built off it, so the main menu opens
+     * on a library that is ready. Not while a scan runs — its own window covers its read.
+     */
+    public static boolean bootReady() {
+        long now = SystemClock.uptimeMillis();
+        if (bootAsked == 0L) {
+            bootAsked = now;
+            started = true;
+            if (songCache == null) warmSoon(0L);
+        }
+        if (bootWaitOver()) return true;
+        synchronized (SONGS) {
+            if (songCache != null && songCache == preparedFor) return true;
+            // A scan runs on under the splash, but it holds off a read not yet begun: waiting for
+            // that would be waiting for the whole scan.
+            return Global.INSTANCE.getRefreshDatabaseState() && songCache == null && reader == null;
+        }
+    }
+
+    /** The splash has waited its bound since it first asked. */
+    public static boolean bootWaitOver() {
+        return bootAsked != 0L && SystemClock.uptimeMillis() - bootAsked > BOOT_WAIT_MS;
     }
 
     /** The order {@code getSongsSync} reads in under the stock settings of this moment, as an All songs sort. */
@@ -647,10 +690,26 @@ public final class Albums {
      * read on the library thread, so that the first section opened does not wait.
      */
     public static void atStart(Activity a) {
+        menuShown = true;
+        if (scanToast && a != null) {
+            scanToast = false;
+            try {
+                Toast.makeText(a, a.getString(R.string.total_count) + Global.INSTANCE.getScanTotalCount()
+                        + '\n' + a.getString(R.string.newly_added) + Global.INSTANCE.getScanNewAddedCount()
+                        + '\n' + a.getString(R.string.deleted_count) + Global.INSTANCE.getScanDeletedCount(),
+                        Toast.LENGTH_SHORT).show();
+            } catch (Throwable t) {
+            }
+        }
         if (started) return;
         started = true;
         if (songCache == null) warmSoon(0L);
     }
+
+    // Stock's scan toast is shown by the screen that showed the scan's window; a scan that ran
+    // whole under the splash had none, and its toast is shown by the main menu instead.
+    private static volatile boolean menuShown;
+    private static volatile boolean scanToast;
 
     static final class Warm implements Runnable {
         public void run() {
@@ -750,9 +809,34 @@ public final class Albums {
         return songCache;
     }
 
+    /** The thread reading the table now: a second asker waits for its list instead of reading too. */
+    private static Thread reader;
+
+    private static List readOnce() {
+        synchronized (SONGS) {
+            while (reader != null && reader != Thread.currentThread()) {
+                try {
+                    SONGS.wait();
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            if (songCache != null) return songCache;
+            reader = Thread.currentThread();
+        }
+        try {
+            return readSongs();
+        } finally {
+            synchronized (SONGS) {
+                reader = null;
+                SONGS.notifyAll();
+            }
+        }
+    }
+
     public static List allSongs() {
         List c = songCache;
-        if (c == null) return readSongs();
+        if (c == null) return readOnce();
         if (!checkAsked && System.currentTimeMillis() - songCacheAt >= CACHE_TTL_MS) {
             checkAsked = true;
             warmSoon(0L);
@@ -1419,6 +1503,41 @@ public final class Albums {
             base = matched;
         }
         return byDisc(base);
+    }
+
+    /**
+     * The path {@code songs(key, FileName_A_To_Z)} puts first — disc, then file name, the earliest
+     * on a tie — in one pass: no copy, no sort, and not the album song sort that getSongsByAlbum
+     * stores on the way. Null for a key that is not an encoded album: the caller asks stock.
+     */
+    static String firstPath(String key, boolean scoped) {
+        if (!isEnc(key) || isAllSongs(key)) return null;
+        List all = allSongs();
+        if (all == null) return null;
+        ArrayList matched = matchAlbum(all, realName(key), folderOf(key));
+        if (scoped) matched = onlyScoped(matched);
+        Song best = null;
+        int bestDisc = 0;
+        String bestName = null;
+        String lastFolder = null;
+        int folderDisc = 0;
+        for (int i = 0; i < matched.size(); i++) {
+            Song s = (Song) matched.get(i);
+            // discOf, with the folder's number parsed once per folder: the songs of one come together
+            String folder = trackFolder(s.getPath());
+            if (lastFolder == null || !lastFolder.equals(folder)) {
+                lastFolder = folder;
+                folderDisc = discNumber(folder);
+            }
+            int d = folderDisc > 0 ? folderDisc : DiscCache.get(s.getPath());
+            String n = s.getPinyinName() == null ? "" : s.getPinyinName().toLowerCase(Locale.ROOT);
+            if (best == null || d < bestDisc || (d == bestDisc && n.compareTo(bestName) < 0)) {
+                best = s;
+                bestDisc = d;
+                bestName = n;
+            }
+        }
+        return best == null ? null : best.getPath();
     }
 
     /**

@@ -67,6 +67,15 @@ public final class YearCache {
 
     /** Reads every album whose song was never read, then stores them in one batch. */
     public static void warm(List names) {
+        warm(names, true);
+    }
+
+    /** {@link #warm} for the whole library, off the screen: the artist scope of a list has no say. */
+    static void prepare(List keys) {
+        warm(keys, false);
+    }
+
+    private static void warm(List names, boolean scoped) {
         if (names == null) {
             return;
         }
@@ -82,6 +91,10 @@ public final class YearCache {
                     continue;
                 }
                 String path = repPath(album);
+                if (path == null) {
+                    path = Albums.firstPath(album, scoped);
+                    if (path != null) noteRep(album, path);
+                }
                 if (path == null) {
                     List songs = repo.getSongsByAlbum(album, Y1Repository.SongSortType.FileName_A_To_Z);
                     if (songs == null || songs.isEmpty()) {

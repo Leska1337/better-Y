@@ -55,7 +55,8 @@ public final class Theme {
      */
     /**
      * The splash's wait in {@code ThemeManager.loadConfig}: a theme or a Key tone sound of the
-     * card's is waited for until the card is really mounted; with neither nothing is.
+     * card's is waited for until the card is really mounted. The library ({@link Albums#bootReady})
+     * and, with neither of those, the card are waited for within the library's bound.
      */
     public static boolean bootReady() {
         try {
@@ -63,7 +64,12 @@ public final class Theme {
             Context c = Y1Application.Companion.getAppContext();
             boolean card = theme != null && theme.length() > 0
                     || c != null && Prefs.getString(c, Tone.KEY_SOUND, "").length() > 0;
-            return !card || cardMounted();
+            // asked first: it starts the read, which runs while the card is still being checked
+            boolean library = Albums.bootReady();
+            // the card too, within the library's bound: a scan at the mount starts while the splash
+            // is up, and the main menu, opened right after, shows its window (stock looks for 6 s)
+            boolean mounted = cardMounted() || !card && Albums.bootWaitOver();
+            return mounted && library;
         } catch (Throwable t) {
             return cardMounted();
         }
