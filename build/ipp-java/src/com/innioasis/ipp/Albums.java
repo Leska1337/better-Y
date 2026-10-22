@@ -910,19 +910,47 @@ public final class Albums {
         }
         LinkedHashMap m = new LinkedHashMap();
         HashMap bySongs = new HashMap();
-        HashMap byDir = new HashMap();
         long t0 = SystemClock.uptimeMillis();
+        // No string is built per song: the directory is found by its region of the path, and the
+        // album key is made once per album and folder.
+        Dirs dirs = new Dirs();
+        HashMap folderIds = new HashMap();
+        ArrayList folders = new ArrayList();      // folder id -> folder
+        ArrayList pairs = new ArrayList();        // folder id -> [name, songs, name, songs...]
         for (int i = 0; i < all.size(); i++) {
             Song s = (Song) all.get(i);
             String name = s.getAlbum() == null ? "" : s.getAlbum();
-            String folder = albumFolder(s.getPath(), byDir);
-            Object o = m.get(name);
-            LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
-            if (set == null) { set = new LinkedHashSet(); m.put(name, set); }
-            set.add(folder);
-            String key = enc(name, folder);
-            ArrayList l = (ArrayList) bySongs.get(key);
-            if (l == null) { l = new ArrayList(); bySongs.put(key, l); }
+            String path = s.getPath();
+            int fid = dirs.find(path);
+            if (fid < 0) {
+                String folder = albumFolder(path);
+                Object id = folderIds.get(folder);
+                if (id == null) {
+                    id = Integer.valueOf(folders.size());
+                    folderIds.put(folder, id);
+                    folders.add(folder);
+                    pairs.add(new ArrayList(2));
+                }
+                fid = ((Integer) id).intValue();
+                dirs.add(path, fid);
+            }
+            ArrayList here = (ArrayList) pairs.get(fid);
+            ArrayList l = null;
+            for (int j = 0; j < here.size(); j += 2) {
+                Object n = here.get(j);
+                if (n == name || n.equals(name)) { l = (ArrayList) here.get(j + 1); break; }
+            }
+            if (l == null) {
+                l = new ArrayList();
+                here.add(name);
+                here.add(l);
+                String folder = (String) folders.get(fid);
+                Object o = m.get(name);
+                LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
+                if (set == null) { set = new LinkedHashSet(); m.put(name, set); }
+                set.add(folder);
+                bySongs.put(enc(name, folder), l);
+            }
             l.add(s);
         }
         synchronized (SONGS) {
@@ -930,9 +958,69 @@ public final class Albums {
             foldersMemo = m;
             albumSongsMemo = bySongs;
         }
-        android.util.Log.i("ipplab", "foldersOf " + all.size() + " songs, " + byDir.size() + " dirs, "
+        android.util.Log.i("ipplab", "foldersOf " + all.size() + " songs, " + dirs.size + " dirs, "
+                + folders.size() + " folders, " + bySongs.size() + " albums, "
                 + (SystemClock.uptimeMillis() - t0) + " ms");
         return m;
+    }
+
+    /** Directory of a path to an int, looked up by the path's own characters: no substring per song. */
+    private static final class Dirs {
+        private String[] keys = new String[4096];
+        private int[] hashes = new int[4096];
+        private int[] ids = new int[4096];
+        int size;
+
+        private static int end(String path) {
+            return path == null ? -1 : path.lastIndexOf('/');
+        }
+
+        private static int hash(String path, int end) {
+            int h = 0;
+            for (int i = 0; i < end; i++) h = 31 * h + path.charAt(i);
+            return h;
+        }
+
+        /** The id given to this path's directory, or -1. */
+        int find(String path) {
+            int end = end(path);
+            if (end < 0) return -1;
+            int h = hash(path, end);
+            int mask = keys.length - 1;
+            for (int i = h & mask; keys[i] != null; i = (i + 1) & mask) {
+                String k = keys[i];
+                if (hashes[i] == h && k.length() == end && path.regionMatches(0, k, 0, end)) return ids[i];
+            }
+            return -1;
+        }
+
+        void add(String path, int id) {
+            int end = end(path);
+            if (end < 0) return;
+            if ((size + 1) * 2 > keys.length) grow();
+            put(path.substring(0, end), hash(path, end), id);
+        }
+
+        private void put(String key, int h, int id) {
+            int mask = keys.length - 1;
+            int i = h & mask;
+            while (keys[i] != null) i = (i + 1) & mask;
+            keys[i] = key;
+            hashes[i] = h;
+            ids[i] = id;
+            size++;
+        }
+
+        private void grow() {
+            String[] k = keys;
+            int[] h = hashes;
+            int[] d = ids;
+            keys = new String[k.length * 2];
+            hashes = new int[k.length * 2];
+            ids = new int[k.length * 2];
+            size = 0;
+            for (int i = 0; i < k.length; i++) if (k[i] != null) put(k[i], h[i], d[i]);
+        }
     }
 
     /** Built with {@link #foldersOf}: an album's songs by name and folder, in the list's order. Read only. */

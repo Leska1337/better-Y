@@ -37,10 +37,12 @@ public final class Scan {
      * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
+        long lt = SystemClock.uptimeMillis();
         if (!marked) mark();
         boolean in = inDb(path);
         meet(path);
         count();
+        labKnown += SystemClock.uptimeMillis() - lt;
         return in ? MARKER : null;
     }
 
@@ -48,7 +50,35 @@ public final class Scan {
     private static boolean marked;
     private static boolean wrote;
 
+    // Temporary: where a scan's time goes, one ipplab line at its end.
+    private static long labStart, labLook, labList, labSong, labTail, labLoad, labKnown, labListed, labCpu, labCpuTail;
+    private static int labNodes, labDirs, labSongs;
+
+    /** In place of the walk's {@code listFiles}: timed. */
+    public static File[] list(File f) {
+        long t = SystemClock.uptimeMillis();
+        File[] r = f.listFiles();
+        labList += SystemClock.uptimeMillis() - t;
+        labDirs++;
+        return r;
+    }
+
+    private static void labEnd() {
+        if (labStart == 0L) return;
+        long now = SystemClock.uptimeMillis();
+        android.util.Log.i("ipplab", "scan: total " + (now - labStart) + " ms, walk "
+                + ((labTail == 0L ? now : labTail) - labStart) + " ms, tail " +(labTail == 0L ? 0 : now - labTail)
+                + " ms; " + labNodes + " nodes looked " + labLook + " ms; " + labDirs + " dirs listFiles " + labList
+                + " ms; " + labSongs + " songs built " + labSong + " ms; paths load " + labLoad + " ms; wrote " + wrote
+                + "; known " + labKnown + " ms (incl. load), listed " + labListed + " ms; walk cpu "
+                + (labCpuTail - labCpu) + " ms");
+        labStart = labLook = labList = labSong = labTail = labLoad = labKnown = labListed = labCpu = labCpuTail = 0L;
+        labNodes = labDirs = labSongs = 0;
+    }
+
     private static synchronized void mark() {
+        labStart = SystemClock.uptimeMillis();
+        labCpu = SystemClock.currentThreadTimeMillis();
         marked = true;
         py = new HashMap();
         Albums.scanStarts();
@@ -221,10 +251,13 @@ public final class Scan {
 
     private static int kind(File f) {
         if (f != node) {
+            long t = SystemClock.uptimeMillis();
             int k = 0;
             if (f.isFile()) k = EXISTS;
             else if (f.isDirectory()) k = EXISTS | DIR;
             else if (f.exists()) k = EXISTS;
+            labLook += SystemClock.uptimeMillis() - t;
+            labNodes++;
             ext = extOf(f);
             kind = k;
             node = f;
@@ -253,6 +286,7 @@ public final class Scan {
      */
     public static void listed(File[] children) {
         if (children == null || children.length == 0) return;
+        long lt = SystemClock.uptimeMillis();
         queue(children);
         synchronized (AHEAD) {
             AHEAD.addLast(children);
@@ -262,6 +296,7 @@ public final class Scan {
             }
             AHEAD.notifyAll();
         }
+        labListed += SystemClock.uptimeMillis() - lt;
     }
 
     private static final java.util.LinkedList AHEAD = new java.util.LinkedList();
@@ -349,6 +384,8 @@ public final class Scan {
      * No paths from this scan: the query, as stock asks it.
      */
     public static List rows(SongDao dao) {
+        labTail = SystemClock.uptimeMillis();
+        labCpuTail = SystemClock.currentThreadTimeMillis();
         ArrayList unmet = new ArrayList();
         synchronized (Scan.class) {
             if (paths == null) return dao.getSongsSync();
@@ -430,6 +467,7 @@ public final class Scan {
      * nothing — the next scan reads it again anyway, and a missing set only means reading it.
      */
     static synchronized void done() {
+        labEnd();
         paths = null;
         added = 0;
         met = new HashSet();
@@ -453,7 +491,9 @@ public final class Scan {
             Artists.ensureExceptions();
             Y1Repository r = Y1Application.Companion.getY1Repository();
             if (r == null) return paths;
+            long lt = SystemClock.uptimeMillis();
             HashSet p = pathsOnly();
+            labLoad += SystemClock.uptimeMillis() - lt;
             if (p == null) {
                 p = new HashSet();
                 fill(p, r.ippSongDao().getSongsSync());
@@ -474,25 +514,37 @@ public final class Scan {
         }
     }
 
-    /** Every row's path, music and audiobooks, without building a Song per row; null on failure. */
+    /**
+     * Every row's path, music and audiobooks, without building a Song per row; null on failure.
+     * In rowid portions: one query over a large table overflows the cursor window and runs again.
+     */
     private static HashSet pathsOnly() {
-        android.database.Cursor c = null;
-        try {
-            c = PlGrid.db().query("select path from song", null);
-            HashSet p = new HashSet(c.getCount() * 2 + 16);
-            while (c.moveToNext()) {
-                if (!c.isNull(0)) p.add(c.getString(0));
-            }
-            return p;
-        } catch (Throwable t) {
-            return null;
-        } finally {
+        HashSet p = new HashSet();
+        long after = -1L;
+        while (true) {
+            android.database.Cursor c = null;
+            int n = 0;
             try {
-                if (c != null) c.close();
+                c = PlGrid.db().query("select rowid, path from song where rowid > " + after
+                        + " order by rowid limit " + PORTION, null);
+                while (c.moveToNext()) {
+                    after = c.getLong(0);
+                    if (!c.isNull(1)) p.add(c.getString(1));
+                    n++;
+                }
             } catch (Throwable t) {
+                return null;
+            } finally {
+                try {
+                    if (c != null) c.close();
+                } catch (Throwable t) {
+                }
             }
+            if (n < PORTION) return p;
         }
     }
+
+    private static final int PORTION = 5000;
 
     private static void fill(HashSet p, List songs) {
         if (songs == null) return;
@@ -534,17 +586,27 @@ public final class Scan {
         return Constant.INSTANCE.pathInAudiobook(path) ? bookExt.contains(e) : musicExt.contains(e);
     }
 
-    /** From {@link #listed}: the walk's next files, for the workers to build ahead. */
+    /**
+     * From {@link #listed}: the walk's next files the table does not know, for the workers to build
+     * ahead. A known file is never asked for; one asked for but not queued is built by the scan.
+     */
     private static void queue(File[] children) {
+        ArrayList fresh = null;
+        for (int i = 0; i < children.length; i++) {
+            File f = children[i];
+            try {
+                if (f == null || !songFile(f) || inDb(f.getPath())) continue;
+            } catch (Throwable t) {
+                continue;
+            }
+            if (fresh == null) fresh = new ArrayList();
+            fresh.add(f);
+        }
+        if (fresh == null) return;
         synchronized (LOCK) {
             boolean any = false;
-            for (int i = 0; i < children.length; i++) {
-                File f = children[i];
-                try {
-                    if (f == null || !songFile(f)) continue;
-                } catch (Throwable t) {
-                    continue;
-                }
+            for (int i = 0; i < fresh.size(); i++) {
+                File f = (File) fresh.get(i);
                 at.put(f.getPath(), Integer.valueOf(upcoming.size()));
                 upcoming.add(f);
                 any = true;
@@ -558,6 +620,7 @@ public final class Scan {
 
     /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
+        long lt = SystemClock.uptimeMillis();
         Song s = null;
         try {
             s = take(r, f);
@@ -565,6 +628,8 @@ public final class Scan {
             s = null;
         }
         if (s == null) s = r.fileToSong(f);
+        labSong += SystemClock.uptimeMillis() - lt;
+        labSongs++;
         built(s);
         return s;
     }

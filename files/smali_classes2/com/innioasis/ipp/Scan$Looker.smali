@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 270
+  .line 305
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -26,7 +26,7 @@
   .catchall { :L12 .. :L13 } :L13
   .catchall { :L14 .. :L16 } :L15
   .registers 10
-  .line 275
+  .line 310
     nop
   :L0
     const/4 v0, 0
@@ -35,49 +35,49 @@
     move-result-object v1
     monitor-enter v1
   :L2
-  .line 276
+  .line 311
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     const-wide/16 v4, 5000
     add-long/2addr v2, v4
   :L3
-  .line 277
+  .line 312
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$400()Ljava/util/LinkedList;
     move-result-object v4
     invoke-virtual { v4 }, Ljava/util/LinkedList;->isEmpty()Z
     move-result v4
     if-eqz v4, :L5
-  .line 278
+  .line 313
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v4
     sub-long v4, v2, v4
-  .line 279
+  .line 314
     const-wide/16 v6, 0
     cmp-long v8, v4, v6
     if-gtz v8, :L4
-  .line 280
+  .line 315
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$502(Z)Z
-  .line 281
+  .line 316
     monitor-exit v1
     return-void
   :L4
-  .line 283
+  .line 318
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$400()Ljava/util/LinkedList;
     move-result-object v6
     invoke-virtual { v6, v4, v5 }, Ljava/lang/Object;->wait(J)V
-  .line 284
+  .line 319
     goto :L3
   :L5
-  .line 285
+  .line 320
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$400()Ljava/util/LinkedList;
     move-result-object v2
     invoke-virtual { v2 }, Ljava/util/LinkedList;->removeFirst()Ljava/lang/Object;
     move-result-object v2
     check-cast v2, [Ljava/io/File;
-  .line 286
+  .line 321
     monitor-exit v1
   :L6
-  .line 287
+  .line 322
     const/4 v1, 0
   :L7
     array-length v3, v2
@@ -88,31 +88,31 @@
     add-int/lit8 v1, v1, 1
     goto :L7
   :L9
-  .line 288
+  .line 323
     goto :L0
   :L10
-  .line 286
+  .line 321
     move-exception v2
   :L11
     monitor-exit v1
   :L12
     throw v2
   :L13
-  .line 289
+  .line 324
     move-exception v1
-  .line 290
+  .line 325
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$400()Ljava/util/LinkedList;
     move-result-object v1
     monitor-enter v1
   :L14
-  .line 291
+  .line 326
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$502(Z)Z
-  .line 292
+  .line 327
     monitor-exit v1
-  .line 294
+  .line 329
     return-void
   :L15
-  .line 292
+  .line 327
     move-exception v0
     monitor-exit v1
   :L16
