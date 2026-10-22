@@ -1465,22 +1465,39 @@ public final class Albums {
      * Main-view split: EVERY album is encoded, one entry per folder — so every album goes through
      * {@link #songs}/{@link #songsSync} and gets disc grouping.
      */
+    // The last split, before the year sort: the same names over the same list give the same rows.
+    // Weak: a library read since must not keep the old list alive.
+    private static java.lang.ref.WeakReference splitFor;
+    private static List splitNames;
+    private static ArrayList splitOut;
+
     public static List split(List names) {
         if (names == null) return names;
         List all = allSongs();
         Lab.s("split allSongs");
         if (all == null) return names;
-        LinkedHashMap byName = foldersOf(all);
-        Lab.s("split foldersOf");
-        ArrayList out = new ArrayList();
-        for (int i = 0; i < names.size(); i++) {
-            String name = (String) names.get(i);
-            Object o = byName.get(name == null ? "" : name);
-            LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
-            if (set == null || set.isEmpty()) { out.add(name); continue; }
-            ArrayList folders = new ArrayList(set);
-            Collections.sort(folders, STR_CMP);
-            for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
+        ArrayList out = null;
+        synchronized (SONGS) {
+            if (splitFor != null && splitFor.get() == all && names.equals(splitNames)) out = new ArrayList(splitOut);
+        }
+        if (out == null) {
+            LinkedHashMap byName = foldersOf(all);
+            Lab.s("split foldersOf");
+            out = new ArrayList();
+            for (int i = 0; i < names.size(); i++) {
+                String name = (String) names.get(i);
+                Object o = byName.get(name == null ? "" : name);
+                LinkedHashSet set = (o == null) ? null : (LinkedHashSet) o;
+                if (set == null || set.isEmpty()) { out.add(name); continue; }
+                ArrayList folders = new ArrayList(set);
+                Collections.sort(folders, STR_CMP);
+                for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
+            }
+            synchronized (SONGS) {
+                splitFor = new java.lang.ref.WeakReference(all);
+                splitNames = new ArrayList(names);
+                splitOut = new ArrayList(out);
+            }
         }
         Lab.s("split loop");
         List r = byYear(out);

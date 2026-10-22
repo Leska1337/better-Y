@@ -145,6 +145,12 @@
 
 .field private static sortedType:Ljava/lang/Object;
 
+.field private static splitFor:Ljava/lang/ref/WeakReference;
+
+.field private static splitNames:Ljava/util/List;
+
+.field private static splitOut:Ljava/util/ArrayList;
+
 .field private static started:Z
 
 .field private static warmer:Landroid/os/Handler;
@@ -173,16 +179,16 @@
     sput v0, Lcom/innioasis/ipp/Albums;->listFirst:I
   .line 1419
     sput v0, Lcom/innioasis/ipp/Albums;->listPos:I
-  .line 1536
+  .line 1553
     new-instance v0, Lcom/innioasis/ipp/Albums$StrCmp;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/Albums$StrCmp;-><init>(Lcom/innioasis/ipp/Albums$1;)V
     sput-object v0, Lcom/innioasis/ipp/Albums;->STR_CMP:Ljava/util/Comparator;
-  .line 1678
+  .line 1695
     new-instance v0, Lcom/innioasis/ipp/Albums$DiscCmp;
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/Albums$DiscCmp;-><init>(Lcom/innioasis/ipp/Albums$1;)V
     sput-object v0, Lcom/innioasis/ipp/Albums;->DISC_CMP:Ljava/util/Comparator;
-  .line 1741
+  .line 1758
     new-instance v0, Lcom/innioasis/ipp/Albums$PathCmp;
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/Albums$PathCmp;-><init>(Lcom/innioasis/ipp/Albums$1;)V
     sput-object v0, Lcom/innioasis/ipp/Albums;->PATH_CMP:Ljava/util/Comparator;
@@ -624,27 +630,27 @@
 
 .method private static artistSongs(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
   .registers 4
-  .line 1562
+  .line 1579
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
-  .line 1563
+  .line 1580
     if-nez v0, :L0
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L0
-  .line 1564
+  .line 1581
     nop
-  .line 1565
+  .line 1582
     sget-object v1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Track_Number:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
     if-ne p1, v1, :L1
     sget-object p1, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Album:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
   :L1
-  .line 1566
+  .line 1583
     invoke-virtual { v0, p0, p1 }, Lcom/innioasis/y1/database/Y1Repository;->getSongsByArtist(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
     move-result-object p0
-  .line 1567
+  .line 1584
     if-nez p0, :L2
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
@@ -910,7 +916,7 @@
 
 .method public static byDisc(Ljava/util/List;)Ljava/util/List;
   .registers 3
-  .line 1672
+  .line 1689
     if-eqz p0, :L1
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v0
@@ -918,16 +924,16 @@
     if-ge v0, v1, :L0
     goto :L1
   :L0
-  .line 1673
+  .line 1690
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0, p0 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-  .line 1674
+  .line 1691
     sget-object p0, Lcom/innioasis/ipp/Albums;->DISC_CMP:Ljava/util/Comparator;
     invoke-static { v0, p0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1675
+  .line 1692
     return-object v0
   :L1
-  .line 1672
+  .line 1689
     return-object p0
 .end method
 
@@ -1098,7 +1104,7 @@
 
 .method private static cmpLong(JJ)I
   .registers 5
-  .line 1773
+  .line 1790
     cmp-long v0, p0, p2
     if-gez v0, :L0
     const/4 p0, -1
@@ -1116,7 +1122,7 @@
 
 .method private static cmpStr(Ljava/lang/String;Ljava/lang/String;)I
   .registers 4
-  .line 1768
+  .line 1785
     const-string v0, ""
     if-nez p0, :L0
     move-object p0, v0
@@ -1126,7 +1132,7 @@
     invoke-virtual { p0, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object p0
   :L1
-  .line 1769
+  .line 1786
     if-nez p1, :L2
     goto :L3
   :L2
@@ -1134,7 +1140,7 @@
     invoke-virtual { p1, v0 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v0
   :L3
-  .line 1770
+  .line 1787
     invoke-virtual { p0, v0 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result p0
     return p0
@@ -1325,7 +1331,7 @@
 
 .method static firstPath(Ljava/lang/String;Z)Ljava/lang/String;
   .registers 12
-  .line 1637
+  .line 1654
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isEnc(Ljava/lang/String;)Z
     move-result v0
     const/4 v1, 0
@@ -1335,36 +1341,36 @@
     if-eqz v0, :L0
     goto/16 :L15
   :L0
-  .line 1638
+  .line 1655
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1639
+  .line 1656
     if-nez v0, :L1
     return-object v1
   :L1
-  .line 1640
+  .line 1657
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->folderOf(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     invoke-static { v0, v2, p0 }, Lcom/innioasis/ipp/Albums;->matchAlbum(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Ljava/util/ArrayList;
     move-result-object p0
-  .line 1641
+  .line 1658
     if-eqz p1, :L2
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->onlyScoped(Ljava/util/ArrayList;)Ljava/util/ArrayList;
     move-result-object p0
   :L2
-  .line 1642
+  .line 1659
     nop
-  .line 1643
+  .line 1660
     nop
-  .line 1644
+  .line 1661
     nop
-  .line 1645
+  .line 1662
     nop
-  .line 1646
+  .line 1663
     nop
-  .line 1647
+  .line 1664
     const/4 p1, 0
     move-object v3, v1
     move-object v4, v3
@@ -1375,29 +1381,29 @@
     invoke-virtual { p0 }, Ljava/util/ArrayList;->size()I
     move-result v6
     if-ge p1, v6, :L12
-  .line 1648
+  .line 1665
     invoke-virtual { p0, p1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v6
     check-cast v6, Lcom/innioasis/y1/database/Song;
-  .line 1650
+  .line 1667
     invoke-virtual { v6 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v7
     invoke-static { v7 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v7
-  .line 1651
+  .line 1668
     if-eqz v4, :L4
     invoke-virtual { v4, v7 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v8
     if-nez v8, :L5
   :L4
-  .line 1652
+  .line 1669
     nop
-  .line 1653
+  .line 1670
     invoke-static { v7 }, Lcom/innioasis/ipp/Albums;->discNumber(Ljava/lang/String;)I
     move-result v0
     move-object v4, v7
   :L5
-  .line 1655
+  .line 1672
     if-lez v0, :L6
     move v7, v0
     goto :L7
@@ -1407,7 +1413,7 @@
     invoke-static { v7 }, Lcom/innioasis/ipp/DiscCache;->get(Ljava/lang/String;)I
     move-result v7
   :L7
-  .line 1656
+  .line 1673
     invoke-virtual { v6 }, Lcom/innioasis/y1/database/Song;->getPinyinName()Ljava/lang/String;
     move-result-object v8
     if-nez v8, :L8
@@ -1420,7 +1426,7 @@
     invoke-virtual { v8, v9 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v8
   :L9
-  .line 1657
+  .line 1674
     if-eqz v3, :L10
     if-lt v7, v2, :L10
     if-ne v7, v2, :L11
@@ -1428,20 +1434,20 @@
     move-result v9
     if-gez v9, :L11
   :L10
-  .line 1658
+  .line 1675
     nop
-  .line 1659
+  .line 1676
     nop
-  .line 1660
+  .line 1677
     move-object v3, v6
     move v2, v7
     move-object v5, v8
   :L11
-  .line 1647
+  .line 1664
     add-int/lit8 p1, p1, 1
     goto :L3
   :L12
-  .line 1663
+  .line 1680
     if-nez v3, :L13
     goto :L14
   :L13
@@ -1450,7 +1456,7 @@
   :L14
     return-object v1
   :L15
-  .line 1637
+  .line 1654
     return-object v1
 .end method
 
@@ -1962,7 +1968,7 @@
 
 .method public static isAllSongsList()Z
   .registers 1
-  .line 1605
+  .line 1622
     sget-boolean v0, Lcom/innioasis/ipp/Albums;->allList:Z
     return v0
 .end method
@@ -2470,12 +2476,12 @@
 
 .method private static matchAlbum(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Ljava/util/ArrayList;
   .registers 7
-  .line 1544
+  .line 1561
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->albumSongsOf(Ljava/util/List;)Ljava/util/HashMap;
     move-result-object v0
-  .line 1545
+  .line 1562
     if-eqz v0, :L4
-  .line 1546
+  .line 1563
     const-string p0, ""
     if-nez p1, :L0
     move-object p1, p0
@@ -2487,7 +2493,7 @@
     move-result-object p0
     invoke-virtual { v0, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 1547
+  .line 1564
     if-nez p0, :L2
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
@@ -2500,20 +2506,20 @@
   :L3
     return-object p0
   :L4
-  .line 1549
+  .line 1566
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1550
+  .line 1567
     const/4 v1, 0
   :L5
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L7
-  .line 1551
+  .line 1568
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/database/Song;
-  .line 1552
+  .line 1569
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Song;->getAlbum()Ljava/lang/String;
     move-result-object v3
     invoke-static { v3, p1 }, Lcom/innioasis/ipp/Albums;->eq(Ljava/lang/String;Ljava/lang/String;)Z
@@ -2528,11 +2534,11 @@
     if-eqz v3, :L6
     invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L6
-  .line 1550
+  .line 1567
     add-int/lit8 v1, v1, 1
     goto :L5
   :L7
-  .line 1554
+  .line 1571
     return-object v0
 .end method
 
@@ -2599,11 +2605,11 @@
 
 .method public static noteListAlbum(Ljava/lang/String;)V
   .registers 1
-  .line 1610
+  .line 1627
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isAllSongs(Ljava/lang/String;)Z
     move-result p0
     sput-boolean p0, Lcom/innioasis/ipp/Albums;->allList:Z
-  .line 1611
+  .line 1628
     return-void
 .end method
 
@@ -2737,9 +2743,9 @@
 
 .method private static onlyScoped(Ljava/util/ArrayList;)Ljava/util/ArrayList;
   .registers 6
-  .line 1585
+  .line 1602
     sget-object v0, Lcom/innioasis/ipp/Albums;->scope:Ljava/lang/String;
-  .line 1586
+  .line 1603
     if-eqz v0, :L7
     invoke-virtual { p0 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v1
@@ -2749,26 +2755,26 @@
     if-nez v1, :L0
     goto :L7
   :L0
-  .line 1588
+  .line 1605
     invoke-static { v0 }, Lcom/innioasis/ipp/AlbumArtists;->is(Ljava/lang/String;)Z
     move-result v1
     if-eqz v1, :L1
     return-object p0
   :L1
-  .line 1589
+  .line 1606
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 1590
+  .line 1607
     const/4 v2, 0
   :L2
     invoke-virtual { p0 }, Ljava/util/ArrayList;->size()I
     move-result v3
     if-ge v2, v3, :L4
-  .line 1591
+  .line 1608
     invoke-virtual { p0, v2 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Lcom/innioasis/y1/database/Song;
-  .line 1592
+  .line 1609
     invoke-virtual { v3 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
     move-result-object v4
     invoke-static { v4, v0 }, Lcom/innioasis/ipp/Artists;->has(Ljava/lang/String;Ljava/lang/String;)Z
@@ -2776,11 +2782,11 @@
     if-eqz v4, :L3
     invoke-virtual { v1, v3 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L3
-  .line 1590
+  .line 1607
     add-int/lit8 v2, v2, 1
     goto :L2
   :L4
-  .line 1595
+  .line 1612
     invoke-virtual { v1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v0
     if-eqz v0, :L5
@@ -2790,7 +2796,7 @@
   :L6
     return-object p0
   :L7
-  .line 1586
+  .line 1603
     return-object p0
 .end method
 
@@ -4292,16 +4298,16 @@
 
 .method private static scopeEnabled()Z
   .registers 2
-  .line 1579
+  .line 1596
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 1580
+  .line 1597
     if-nez v0, :L0
     const/4 v0, 0
     return v0
   :L0
-  .line 1581
+  .line 1598
     const-string v1, "artist_scope"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v0
@@ -4683,7 +4689,7 @@
 
 .method public static songs(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)Ljava/util/List;
   .registers 4
-  .line 1615
+  .line 1632
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isAllSongs(Ljava/lang/String;)Z
     move-result v0
     if-eqz v0, :L0
@@ -4693,23 +4699,23 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 1616
+  .line 1633
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isEnc(Ljava/lang/String;)Z
     move-result v0
     if-nez v0, :L1
     const/4 p0, 0
     return-object p0
   :L1
-  .line 1617
+  .line 1634
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1618
+  .line 1635
     if-nez v0, :L2
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L2
-  .line 1619
+  .line 1636
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v1
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->folderOf(Ljava/lang/String;)Ljava/lang/String;
@@ -4718,15 +4724,15 @@
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->onlyScoped(Ljava/util/ArrayList;)Ljava/util/ArrayList;
     move-result-object p0
-  .line 1621
+  .line 1638
     sget-object v0, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->Track_Number:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
     if-ne p1, v0, :L3
-  .line 1622
+  .line 1639
     new-instance p1, Lcom/innioasis/ipp/Albums$SongCmp;
     sget-object v0, Lcom/innioasis/y1/database/Y1Repository$SongSortType;->FileName_A_To_Z:Lcom/innioasis/y1/database/Y1Repository$SongSortType;
     invoke-direct { p1, v0 }, Lcom/innioasis/ipp/Albums$SongCmp;-><init>(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)V
     invoke-static { p0, p1 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1623
+  .line 1640
     invoke-static { }, Lcom/innioasis/ipp/Prefs;->trackSortEnabled()Z
     move-result p1
     if-eqz p1, :L4
@@ -4734,14 +4740,14 @@
     move-result-object p0
     goto :L4
   :L3
-  .line 1625
+  .line 1642
     new-instance v0, Lcom/innioasis/ipp/Albums$SongCmp;
     invoke-direct { v0, p1 }, Lcom/innioasis/ipp/Albums$SongCmp;-><init>(Lcom/innioasis/y1/database/Y1Repository$SongSortType;)V
     invoke-static { p0, v0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1626
+  .line 1643
     nop
   :L4
-  .line 1628
+  .line 1645
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->byDisc(Ljava/util/List;)Ljava/util/List;
     move-result-object p0
     return-object p0
@@ -4913,25 +4919,25 @@
 
 .method public static songsOf(Ljava/lang/String;)Ljava/util/List;
   .registers 5
-  .line 1519
+  .line 1536
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
-  .line 1520
+  .line 1537
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v1
-  .line 1521
+  .line 1538
     if-eqz v1, :L6
     if-nez p0, :L0
     goto :L6
   :L0
-  .line 1522
+  .line 1539
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
-  .line 1523
+  .line 1540
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isEnc(Ljava/lang/String;)Z
     move-result v3
     if-eqz v3, :L1
-  .line 1524
+  .line 1541
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->folderOf(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     invoke-static { v1, v2, p0 }, Lcom/innioasis/ipp/Albums;->matchAlbum(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Ljava/util/ArrayList;
@@ -4939,7 +4945,7 @@
     invoke-virtual { v0, p0 }, Ljava/util/ArrayList;->addAll(Ljava/util/Collection;)Z
     goto :L5
   :L1
-  .line 1526
+  .line 1543
     invoke-static { v1 }, Lcom/innioasis/ipp/Albums;->foldersOf(Ljava/util/List;)Ljava/util/LinkedHashMap;
     move-result-object p0
     if-nez v2, :L2
@@ -4950,14 +4956,14 @@
   :L3
     invoke-virtual { p0, v3 }, Ljava/util/LinkedHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p0
-  .line 1527
+  .line 1544
     if-eqz p0, :L5
-  .line 1528
+  .line 1545
     check-cast p0, Ljava/util/LinkedHashSet;
     invoke-virtual { p0 }, Ljava/util/LinkedHashSet;->iterator()Ljava/util/Iterator;
     move-result-object p0
   :L4
-  .line 1529
+  .line 1546
     invoke-interface { p0 }, Ljava/util/Iterator;->hasNext()Z
     move-result v3
     if-eqz v3, :L5
@@ -4969,26 +4975,26 @@
     invoke-virtual { v0, v3 }, Ljava/util/ArrayList;->addAll(Ljava/util/Collection;)Z
     goto :L4
   :L5
-  .line 1532
+  .line 1549
     sget-object p0, Lcom/innioasis/ipp/Albums;->PATH_CMP:Ljava/util/Comparator;
     invoke-static { v0, p0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1533
+  .line 1550
     return-object v0
   :L6
-  .line 1521
+  .line 1538
     return-object v0
 .end method
 
 .method public static songsSync(Lcom/innioasis/music/data/Album;ILcom/innioasis/music/data/Genre;)Ljava/util/List;
   .registers 7
-  .line 1689
+  .line 1706
     const/4 p1, 0
     if-nez p0, :L0
     return-object p1
   :L0
-  .line 1691
+  .line 1708
     invoke-static { p0, p2 }, Lcom/innioasis/ipp/Genres;->noteList(Lcom/innioasis/music/data/Album;Lcom/innioasis/music/data/Genre;)V
-  .line 1693
+  .line 1710
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->isGenreAll(Ljava/lang/String;)Z
@@ -4996,34 +5002,34 @@
     const/4 v1, 0
     const/4 v2, 1
     if-eqz v0, :L5
-  .line 1694
+  .line 1711
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object p1
-  .line 1695
+  .line 1712
     if-nez p1, :L1
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L1
-  .line 1696
+  .line 1713
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object p0
     invoke-virtual { p0, v2 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
     move-result-object p0
-  .line 1697
+  .line 1714
     new-instance p2, Ljava/util/ArrayList;
     invoke-direct { p2 }, Ljava/util/ArrayList;-><init>()V
-  .line 1698
+  .line 1715
     nop
   :L2
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v0
     if-ge v1, v0, :L4
-  .line 1699
+  .line 1716
     invoke-interface { p1, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/database/Song;
-  .line 1700
+  .line 1717
     if-eqz v0, :L3
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Song;->getGenre()Ljava/lang/String;
     move-result-object v2
@@ -5032,57 +5038,57 @@
     if-eqz v2, :L3
     invoke-virtual { p2, v0 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L3
-  .line 1698
+  .line 1715
     add-int/lit8 v1, v1, 1
     goto :L2
   :L4
-  .line 1702
+  .line 1719
     sget-object p0, Lcom/innioasis/ipp/Albums;->PATH_CMP:Ljava/util/Comparator;
     invoke-static { p2, p0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1703
+  .line 1720
     return-object p2
   :L5
-  .line 1706
+  .line 1723
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->isAllSongs(Ljava/lang/String;)Z
     move-result v0
     if-eqz v0, :L14
-  .line 1707
+  .line 1724
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1708
+  .line 1725
     if-nez v0, :L6
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L6
-  .line 1709
+  .line 1726
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object p0
     invoke-virtual { p0, v2 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
     move-result-object p0
-  .line 1710
+  .line 1727
     if-nez p2, :L7
     goto :L8
   :L7
     invoke-virtual { p2 }, Lcom/innioasis/music/data/Genre;->getName()Ljava/lang/String;
     move-result-object p1
   :L8
-  .line 1711
+  .line 1728
     new-instance p2, Ljava/util/ArrayList;
     invoke-direct { p2 }, Ljava/util/ArrayList;-><init>()V
-  .line 1712
+  .line 1729
     nop
   :L9
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L13
-  .line 1713
+  .line 1730
     invoke-interface { v0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, Lcom/innioasis/y1/database/Song;
-  .line 1714
+  .line 1731
     if-eqz v2, :L12
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
     move-result-object v3
@@ -5091,7 +5097,7 @@
     if-nez v3, :L10
     goto :L12
   :L10
-  .line 1715
+  .line 1732
     if-eqz p1, :L11
     invoke-virtual { v2 }, Lcom/innioasis/y1/database/Song;->getGenre()Ljava/lang/String;
     move-result-object v3
@@ -5100,20 +5106,20 @@
     if-nez v3, :L11
     goto :L12
   :L11
-  .line 1716
+  .line 1733
     invoke-virtual { p2, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L12
-  .line 1712
+  .line 1729
     add-int/lit8 v1, v1, 1
     goto :L9
   :L13
-  .line 1718
+  .line 1735
     sget-object p0, Lcom/innioasis/ipp/Albums;->PATH_CMP:Ljava/util/Comparator;
     invoke-static { p2, p0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1719
+  .line 1736
     return-object p2
   :L14
-  .line 1721
+  .line 1738
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->isEnc(Ljava/lang/String;)Z
@@ -5121,51 +5127,51 @@
     if-nez v0, :L15
     return-object p1
   :L15
-  .line 1722
+  .line 1739
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1723
+  .line 1740
     if-nez v0, :L16
     new-instance p0, Ljava/util/ArrayList;
     invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
     return-object p0
   :L16
-  .line 1724
+  .line 1741
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v2
     invoke-static { v2 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
-  .line 1725
+  .line 1742
     invoke-virtual { p0 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->folderOf(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 1726
+  .line 1743
     if-nez p2, :L17
     goto :L18
   :L17
     invoke-virtual { p2 }, Lcom/innioasis/music/data/Genre;->getName()Ljava/lang/String;
     move-result-object p1
   :L18
-  .line 1727
+  .line 1744
     invoke-static { v0, v2, p0 }, Lcom/innioasis/ipp/Albums;->matchAlbum(Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Ljava/util/ArrayList;
     move-result-object p0
-  .line 1728
+  .line 1745
     if-eqz p1, :L22
-  .line 1729
+  .line 1746
     new-instance p2, Ljava/util/ArrayList;
     invoke-direct { p2 }, Ljava/util/ArrayList;-><init>()V
-  .line 1730
+  .line 1747
     nop
   :L19
     invoke-virtual { p0 }, Ljava/util/ArrayList;->size()I
     move-result v0
     if-ge v1, v0, :L21
-  .line 1731
+  .line 1748
     invoke-virtual { p0, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/database/Song;
-  .line 1732
+  .line 1749
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Song;->getGenre()Ljava/lang/String;
     move-result-object v2
     invoke-static { v2, p1 }, Lcom/innioasis/ipp/GenreSplit;->has(Ljava/lang/String;Ljava/lang/String;)Z
@@ -5173,17 +5179,17 @@
     if-eqz v2, :L20
     invoke-virtual { p2, v0 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L20
-  .line 1730
+  .line 1747
     add-int/lit8 v1, v1, 1
     goto :L19
   :L21
-  .line 1734
+  .line 1751
     move-object p0, p2
   :L22
-  .line 1737
+  .line 1754
     sget-object p1, Lcom/innioasis/ipp/Albums;->PATH_CMP:Ljava/util/Comparator;
     invoke-static { p0, p1 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1738
+  .line 1755
     return-object p0
 .end method
 
@@ -5260,140 +5266,208 @@
 .end method
 
 .method public static split(Ljava/util/List;)Ljava/util/List;
-  .registers 9
-  .line 1469
+  .catchall { :L2 .. :L5 } :L20
+  .catchall { :L16 .. :L18 } :L17
+  .catchall { :L21 .. :L22 } :L20
+  .registers 11
+  .line 1475
     if-nez p0, :L0
     return-object p0
   :L0
-  .line 1470
+  .line 1476
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1471
+  .line 1477
     const-string v1, "split allSongs"
     invoke-static { v1 }, Lcom/innioasis/ipp/Lab;->s(Ljava/lang/String;)V
-  .line 1472
+  .line 1478
     if-nez v0, :L1
     return-object p0
   :L1
-  .line 1473
-    invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->foldersOf(Ljava/util/List;)Ljava/util/LinkedHashMap;
-    move-result-object v0
-  .line 1474
-    const-string v1, "split foldersOf"
-    invoke-static { v1 }, Lcom/innioasis/ipp/Lab;->s(Ljava/lang/String;)V
-  .line 1475
-    new-instance v1, Ljava/util/ArrayList;
-    invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 1476
-    const/4 v2, 0
-    const/4 v3, 0
+  .line 1479
+    nop
+  .line 1480
+    sget-object v1, Lcom/innioasis/ipp/Albums;->SONGS:Ljava/lang/Object;
+    monitor-enter v1
   :L2
-    invoke-interface { p0 }, Ljava/util/List;->size()I
-    move-result v4
-    if-ge v3, v4, :L11
-  .line 1477
-    invoke-interface { p0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
-    move-result-object v4
-    check-cast v4, Ljava/lang/String;
-  .line 1478
-    if-nez v4, :L3
-    const-string v5, ""
+  .line 1481
+    sget-object v2, Lcom/innioasis/ipp/Albums;->splitFor:Ljava/lang/ref/WeakReference;
+    const/4 v3, 0
+    if-eqz v2, :L3
+    invoke-virtual { v2 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
+    move-result-object v2
+    if-ne v2, v0, :L3
+    sget-object v2, Lcom/innioasis/ipp/Albums;->splitNames:Ljava/util/List;
+    invoke-interface { p0, v2 }, Ljava/util/List;->equals(Ljava/lang/Object;)Z
+    move-result v2
+    if-eqz v2, :L3
+    new-instance v2, Ljava/util/ArrayList;
+    sget-object v4, Lcom/innioasis/ipp/Albums;->splitOut:Ljava/util/ArrayList;
+    invoke-direct { v2, v4 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
     goto :L4
   :L3
-    move-object v5, v4
-  :L4
-    invoke-virtual { v0, v5 }, Ljava/util/LinkedHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object v5
-  .line 1479
-    if-nez v5, :L5
-    const/4 v5, 0
-    goto :L6
-  :L5
-    check-cast v5, Ljava/util/LinkedHashSet;
-  :L6
-  .line 1480
-    if-eqz v5, :L9
-    invoke-virtual { v5 }, Ljava/util/LinkedHashSet;->isEmpty()Z
-    move-result v6
-    if-eqz v6, :L7
-    goto :L9
-  :L7
-  .line 1481
-    new-instance v6, Ljava/util/ArrayList;
-    invoke-direct { v6, v5 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
   .line 1482
-    sget-object v5, Lcom/innioasis/ipp/Albums;->STR_CMP:Ljava/util/Comparator;
-    invoke-static { v6, v5 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
+    move-object v2, v3
+  :L4
+    monitor-exit v1
+  :L5
   .line 1483
-    const/4 v5, 0
-  :L8
-    invoke-virtual { v6 }, Ljava/util/ArrayList;->size()I
-    move-result v7
-    if-ge v5, v7, :L10
-    invoke-virtual { v6, v5 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
-    move-result-object v7
-    check-cast v7, Ljava/lang/String;
-    invoke-static { v4, v7 }, Lcom/innioasis/ipp/Albums;->enc(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-    move-result-object v7
-    invoke-virtual { v1, v7 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-    add-int/lit8 v5, v5, 1
-    goto :L8
-  :L9
-  .line 1480
-    invoke-virtual { v1, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  :L10
-  .line 1476
-    add-int/lit8 v3, v3, 1
-    goto :L2
-  :L11
+    if-nez v2, :L19
+  .line 1484
+    invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->foldersOf(Ljava/util/List;)Ljava/util/LinkedHashMap;
+    move-result-object v1
   .line 1485
+    const-string v2, "split foldersOf"
+    invoke-static { v2 }, Lcom/innioasis/ipp/Lab;->s(Ljava/lang/String;)V
+  .line 1486
+    new-instance v2, Ljava/util/ArrayList;
+    invoke-direct { v2 }, Ljava/util/ArrayList;-><init>()V
+  .line 1487
+    const/4 v4, 0
+    const/4 v5, 0
+  :L6
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result v6
+    if-ge v5, v6, :L15
+  .line 1488
+    invoke-interface { p0, v5 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v6
+    check-cast v6, Ljava/lang/String;
+  .line 1489
+    if-nez v6, :L7
+    const-string v7, ""
+    goto :L8
+  :L7
+    move-object v7, v6
+  :L8
+    invoke-virtual { v1, v7 }, Ljava/util/LinkedHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v7
+  .line 1490
+    if-nez v7, :L9
+    move-object v7, v3
+    goto :L10
+  :L9
+    check-cast v7, Ljava/util/LinkedHashSet;
+  :L10
+  .line 1491
+    if-eqz v7, :L13
+    invoke-virtual { v7 }, Ljava/util/LinkedHashSet;->isEmpty()Z
+    move-result v8
+    if-eqz v8, :L11
+    goto :L13
+  :L11
+  .line 1492
+    new-instance v8, Ljava/util/ArrayList;
+    invoke-direct { v8, v7 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+  .line 1493
+    sget-object v7, Lcom/innioasis/ipp/Albums;->STR_CMP:Ljava/util/Comparator;
+    invoke-static { v8, v7 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
+  .line 1494
+    const/4 v7, 0
+  :L12
+    invoke-virtual { v8 }, Ljava/util/ArrayList;->size()I
+    move-result v9
+    if-ge v7, v9, :L14
+    invoke-virtual { v8, v7 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
+    move-result-object v9
+    check-cast v9, Ljava/lang/String;
+    invoke-static { v6, v9 }, Lcom/innioasis/ipp/Albums;->enc(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v9
+    invoke-virtual { v2, v9 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+    add-int/lit8 v7, v7, 1
+    goto :L12
+  :L13
+  .line 1491
+    invoke-virtual { v2, v6 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  :L14
+  .line 1487
+    add-int/lit8 v5, v5, 1
+    goto :L6
+  :L15
+  .line 1496
+    sget-object v1, Lcom/innioasis/ipp/Albums;->SONGS:Ljava/lang/Object;
+    monitor-enter v1
+  :L16
+  .line 1497
+    new-instance v3, Ljava/lang/ref/WeakReference;
+    invoke-direct { v3, v0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+    sput-object v3, Lcom/innioasis/ipp/Albums;->splitFor:Ljava/lang/ref/WeakReference;
+  .line 1498
+    new-instance v0, Ljava/util/ArrayList;
+    invoke-direct { v0, p0 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+    sput-object v0, Lcom/innioasis/ipp/Albums;->splitNames:Ljava/util/List;
+  .line 1499
+    new-instance p0, Ljava/util/ArrayList;
+    invoke-direct { p0, v2 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+    sput-object p0, Lcom/innioasis/ipp/Albums;->splitOut:Ljava/util/ArrayList;
+  .line 1500
+    monitor-exit v1
+    goto :L19
+  :L17
+    move-exception p0
+    monitor-exit v1
+  :L18
+    throw p0
+  :L19
+  .line 1502
     const-string p0, "split loop"
     invoke-static { p0 }, Lcom/innioasis/ipp/Lab;->s(Ljava/lang/String;)V
-  .line 1486
-    invoke-static { v1 }, Lcom/innioasis/ipp/Albums;->byYear(Ljava/util/ArrayList;)Ljava/util/List;
+  .line 1503
+    invoke-static { v2 }, Lcom/innioasis/ipp/Albums;->byYear(Ljava/util/ArrayList;)Ljava/util/List;
     move-result-object p0
-  .line 1487
+  .line 1504
     const-string v0, "split byYear"
     invoke-static { v0 }, Lcom/innioasis/ipp/Lab;->s(Ljava/lang/String;)V
-  .line 1488
+  .line 1505
     return-object p0
+  :L20
+  .line 1482
+    move-exception p0
+  :L21
+    monitor-exit v1
+  :L22
+    goto :L24
+  :L23
+    throw p0
+  :L24
+    goto :L23
 .end method
 
 .method public static splitAlbums(Ljava/util/List;)Ljava/util/List;
   .registers 14
-  .line 1493
+  .line 1510
     if-nez p0, :L0
     return-object p0
   :L0
-  .line 1494
+  .line 1511
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
-  .line 1495
+  .line 1512
     if-nez v0, :L1
     return-object p0
   :L1
-  .line 1496
+  .line 1513
     invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->foldersOf(Ljava/util/List;)Ljava/util/LinkedHashMap;
     move-result-object v0
-  .line 1497
+  .line 1514
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 1498
+  .line 1515
     const/4 v2, 0
     const/4 v3, 0
   :L2
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v4
     if-ge v3, v4, :L12
-  .line 1499
+  .line 1516
     invoke-interface { p0, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v4
     check-cast v4, Lcom/innioasis/music/data/Album;
-  .line 1500
+  .line 1517
     if-nez v4, :L3
     goto :L11
   :L3
-  .line 1501
+  .line 1518
     invoke-virtual { v4 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v5
     const-string v6, ""
@@ -5404,10 +5478,10 @@
     invoke-virtual { v4 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
     move-result-object v5
   :L5
-  .line 1502
+  .line 1519
     invoke-virtual { v0, v5 }, Ljava/util/LinkedHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v7
-  .line 1503
+  .line 1520
     const/4 v8, 0
     if-nez v7, :L6
     move-object v7, v8
@@ -5415,26 +5489,26 @@
   :L6
     check-cast v7, Ljava/util/LinkedHashSet;
   :L7
-  .line 1504
+  .line 1521
     if-eqz v7, :L10
     invoke-virtual { v7 }, Ljava/util/LinkedHashSet;->isEmpty()Z
     move-result v9
     if-eqz v9, :L8
     goto :L10
   :L8
-  .line 1505
+  .line 1522
     new-instance v9, Ljava/util/ArrayList;
     invoke-direct { v9, v7 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-  .line 1506
+  .line 1523
     sget-object v7, Lcom/innioasis/ipp/Albums;->STR_CMP:Ljava/util/Comparator;
     invoke-static { v9, v7 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 1507
+  .line 1524
     const/4 v7, 0
   :L9
     invoke-virtual { v9 }, Ljava/util/ArrayList;->size()I
     move-result v10
     if-ge v7, v10, :L11
-  .line 1508
+  .line 1525
     new-instance v10, Lcom/innioasis/music/data/Album;
     invoke-virtual { v9, v7 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v11
@@ -5445,18 +5519,18 @@
     move-result-object v12
     invoke-direct { v10, v11, v12, v6, v8 }, Lcom/innioasis/music/data/Album;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Landroid/graphics/Bitmap;)V
     invoke-virtual { v1, v10 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1507
+  .line 1524
     add-int/lit8 v7, v7, 1
     goto :L9
   :L10
-  .line 1504
+  .line 1521
     invoke-virtual { v1, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L11
-  .line 1498
+  .line 1515
     add-int/lit8 v3, v3, 1
     goto :L2
   :L12
-  .line 1511
+  .line 1528
     return-object v1
 .end method
 
