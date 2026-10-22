@@ -48,9 +48,53 @@ public final class Schema {
         }
     }
 
+    /**
+     * songId becomes the path itself instead of its base64, which cost a second, longer copy of
+     * every path in the heap. The references are decoded back to the path they were made of, so a
+     * playlist entry, a bookmark or a progress keeps its song even when the song is no longer in
+     * the table. An id that does not decode to a path is left as it is.
+     */
+    static final class M78 extends Migration {
+        M78() { super(7, 8); }
+
+        @Override
+        public void migrate(SupportSQLiteDatabase db) {
+            db.execSQL("UPDATE OR IGNORE `Song` SET `songId` = `path` WHERE `songId` <> `path`");
+            refs(db, "SongCatPlaylist");
+            refs(db, "Progress");
+            refs(db, "Bookmark");
+        }
+
+        private static void refs(SupportSQLiteDatabase db, String table) {
+            ArrayList old = new ArrayList();
+            Cursor c = db.query("SELECT DISTINCT `songId` FROM `" + table + "` WHERE substr(`songId`, 1, 1) <> '/'");
+            try {
+                while (c.moveToNext()) old.add(c.getString(0));
+            } finally {
+                c.close();
+            }
+            for (int i = 0; i < old.size(); i++) {
+                String id = (String) old.get(i), path = pathOf(id);
+                // Progress is keyed by songId: two old spellings of one path keep one row.
+                if (path != null) db.execSQL("UPDATE OR REPLACE `" + table + "` SET `songId` = ? WHERE `songId` = ?",
+                        new Object[] { path, id });
+            }
+        }
+    }
+
+    /** The path an old base64 songId was made of, as {@code fileToSong} stores it; null if it is not one. */
+    static String pathOf(String id) {
+        try {
+            String p = new String(android.util.Base64.decode(id, android.util.Base64.DEFAULT), "UTF-8");
+            return p.startsWith("/") ? com.innioasis.music.objects.Constant.INSTANCE.normalizeAudioBookPath(p) : null;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
     /** Appended to the stock migration chain in {@code Y1Repository}. */
     public static RoomDatabase.Builder migrations(RoomDatabase.Builder b) {
-        return b.addMigrations(new Migration[] { new M67() });
+        return b.addMigrations(new Migration[] { new M67(), new M78() });
     }
 
     /** What {@code onValidateSchema} expects of the Song table besides the stock columns. */

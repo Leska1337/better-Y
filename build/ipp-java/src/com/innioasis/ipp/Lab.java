@@ -92,6 +92,92 @@ public final class Lab {
         Albums.later(new Reads(), 15000L);
     }
 
+    private static boolean idsRan;
+
+    /** Once per process, only while /data/local/tmp/ippid exists: songId against the path, and the references against the song table. */
+    static void ids() {
+        if (idsRan) return;
+        idsRan = true;
+        try {
+            if (!new File("/data/local/tmp/ippid").exists()) return;
+        } catch (Throwable t) {
+            return;
+        }
+        Albums.later(new Ids(), 5000L);
+    }
+
+    static final class Ids implements Runnable {
+        public void run() {
+            try {
+                androidx.room.RoomDatabase db = PlGrid.db();
+                com.innioasis.music.util.Other o = com.innioasis.music.util.Other.INSTANCE;
+                long t0 = SystemClock.uptimeMillis();
+                int n = 0, same = 0, b64 = 0, book = 0, bad = 0, nl = 0, maxId = 0;
+                long idChars = 0, pathChars = 0;
+                Cursor c = db.query("select songId, path from song", null);
+                while (c.moveToNext()) {
+                    String id = c.getString(0), path = c.getString(1);
+                    n++;
+                    idChars += id.length();
+                    pathChars += path.length();
+                    if (id.length() > maxId) maxId = id.length();
+                    if (id.indexOf('\n') >= 0) nl++;
+                    if (id.equals(path)) {
+                        same++;
+                    } else if (id.equals(o.toBase64(path))) {
+                        b64++;
+                    } else if (path.startsWith("/storage/sdcard0/audiobooks")
+                            && id.equals(o.toBase64("/storage/sdcard0/Audiobooks" + path.substring(27)))) {
+                        book++;
+                    } else {
+                        if (bad++ < 5) Log.i("ipplab", "id bad: path " + path + " id decodes to " + decode(id));
+                    }
+                }
+                c.close();
+                Log.i("ipplab", "ids song: " + n + " rows, path " + same + ", base64 " + b64 + ", Audiobooks " + book + ", other "
+                        + bad + ", with newline " + nl + ", id chars " + idChars + " (max " + maxId
+                        + "), path chars " + pathChars + ", " + (SystemClock.uptimeMillis() - t0) + " ms");
+                c = db.query("select count(*), count(distinct path), count(distinct lower(path)) from song", null);
+                if (c.moveToFirst()) Log.i("ipplab", "ids paths: " + c.getLong(0) + " rows, " + c.getLong(1)
+                        + " distinct, " + c.getLong(2) + " distinct ignoring case");
+                c.close();
+                refs(db, "songCatPlaylist");
+                refs(db, "Progress");
+                refs(db, "Bookmark");
+            } catch (Throwable t) {
+                Log.i("ipplab", "ids failed " + t);
+            }
+        }
+
+        private static void refs(androidx.room.RoomDatabase db, String table) {
+            Cursor c = db.query("select count(*) from " + table, null);
+            long rows = c.moveToFirst() ? c.getLong(0) : -1;
+            c.close();
+            c = db.query("select songId from " + table + " where songId not in (select songId from song)", null);
+            int orphans = 0, paths = 0, exist = 0;
+            while (c.moveToNext()) {
+                orphans++;
+                String p = decode(c.getString(0));
+                if (p != null && p.startsWith("/storage/")) {
+                    paths++;
+                    if (new File(p).exists()) exist++;
+                }
+                if (orphans <= 3) Log.i("ipplab", "ids " + table + " orphan decodes to " + p + " (" + c.getString(0) + ")");
+            }
+            c.close();
+            Log.i("ipplab", "ids " + table + ": " + rows + " rows, " + orphans + " not in song, " + paths
+                    + " decode to a path, " + exist + " of those exist");
+        }
+
+        private static String decode(String id) {
+            try {
+                return new String(android.util.Base64.decode(id, 0), "UTF-8");
+            } catch (Throwable t) {
+                return null;
+            }
+        }
+    }
+
     private static boolean compared;
 
     /** Once per process, only while /data/local/tmp/ippread exists: the portions read against stock's. */

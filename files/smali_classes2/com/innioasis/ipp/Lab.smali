@@ -5,11 +5,14 @@
 .annotation system Ldalvik/annotation/MemberClasses;
   value = {
     Lcom/innioasis/ipp/Lab$Frame;,
-    Lcom/innioasis/ipp/Lab$Reads;
+    Lcom/innioasis/ipp/Lab$Reads;,
+    Lcom/innioasis/ipp/Lab$Ids;
   }
 .end annotation
 
 .field private static compared:Z
+
+.field private static idsRan:Z
 
 .field private static last:J
 
@@ -99,18 +102,18 @@
 .method static compareRead(Ljava/util/List;)V
   .catchall { :L1 .. :L6 } :L7
   .registers 13
-  .line 99
+  .line 185
     const-string v0, "ipplab"
     sget-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
     if-nez v1, :L9
     if-nez p0, :L0
     goto/16 :L9
   :L0
-  .line 100
+  .line 186
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Lab;->compared:Z
   :L1
-  .line 102
+  .line 188
     new-instance v1, Ljava/io/File;
     const-string v2, "/data/local/tmp/ippread"
     invoke-direct { v1, v2 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
@@ -119,35 +122,35 @@
     if-nez v1, :L2
     return-void
   :L2
-  .line 103
+  .line 189
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
-  .line 104
+  .line 190
     sget-object v3, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v3 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v3
     const/4 v4, 0
     invoke-virtual { v3, v4 }, Lcom/innioasis/y1/database/Y1Repository;->getSongsSync(I)Ljava/util/List;
     move-result-object v3
-  .line 105
+  .line 191
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v5
-  .line 106
+  .line 192
     nop
-  .line 107
+  .line 193
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v7
     invoke-interface { v3 }, Ljava/util/List;->size()I
     move-result v8
     invoke-static { v7, v8 }, Ljava/lang/Math;->min(II)I
     move-result v7
-  .line 108
+  .line 194
     const/4 v8, -1
     const/4 v8, 0
     const/4 v9, -1
   :L3
     if-ge v4, v7, :L5
-  .line 109
+  .line 195
     invoke-interface { p0, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v10
     invoke-interface { v3, v4 }, Ljava/util/List;->get(I)Ljava/lang/Object;
@@ -155,17 +158,17 @@
     invoke-virtual { v10, v11 }, Ljava/lang/Object;->equals(Ljava/lang/Object;)Z
     move-result v10
     if-nez v10, :L4
-  .line 110
+  .line 196
     add-int/lit8 v8, v8, 1
-  .line 111
+  .line 197
     if-gez v9, :L4
     move v9, v4
   :L4
-  .line 108
+  .line 194
     add-int/lit8 v4, v4, 1
     goto :L3
   :L5
-  .line 114
+  .line 200
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v7, "compare read: portions "
@@ -205,12 +208,12 @@
     move-result-object p0
     invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L6
-  .line 118
+  .line 204
     goto :L8
   :L7
-  .line 116
+  .line 202
     move-exception p0
-  .line 117
+  .line 203
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "compare read failed "
@@ -222,10 +225,10 @@
     move-result-object p0
     invoke-static { v0, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L8
-  .line 119
+  .line 205
     return-void
   :L9
-  .line 99
+  .line 185
     return-void
 .end method
 
@@ -296,6 +299,44 @@
     move-exception v0
   :L3
   .line 67
+    return-void
+.end method
+
+.method static ids()V
+  .catchall { :L1 .. :L2 } :L4
+  .registers 3
+  .line 99
+    sget-boolean v0, Lcom/innioasis/ipp/Lab;->idsRan:Z
+    if-eqz v0, :L0
+    return-void
+  :L0
+  .line 100
+    const/4 v0, 1
+    sput-boolean v0, Lcom/innioasis/ipp/Lab;->idsRan:Z
+  :L1
+  .line 102
+    new-instance v0, Ljava/io/File;
+    const-string v1, "/data/local/tmp/ippid"
+    invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
+    invoke-virtual { v0 }, Ljava/io/File;->exists()Z
+    move-result v0
+  :L2
+    if-nez v0, :L3
+    return-void
+  :L3
+  .line 105
+    nop
+  .line 106
+    new-instance v0, Lcom/innioasis/ipp/Lab$Ids;
+    invoke-direct { v0 }, Lcom/innioasis/ipp/Lab$Ids;-><init>()V
+    const-wide/16 v1, 5000
+    invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Albums;->later(Ljava/lang/Runnable;J)V
+  .line 107
+    return-void
+  :L4
+  .line 103
+    move-exception v0
+  .line 104
     return-void
 .end method
 

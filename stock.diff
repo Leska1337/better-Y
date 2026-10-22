@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..ea9b7003 100644
+index 01b1f730..f5a65c14 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..ea9b7003 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100359
++  versionCode: 10100363
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..80063608 100644
+index 71fe29d0..bcf91a86 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..80063608 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev359</string>
++    <string name="ipp_version">v1.1.0-dev363</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23137,10 +23137,10 @@ index 060ed6d1..70bb975c 100644
      move-object v0, p0
  
 diff --git a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-index 4fcfcfff..6d3e2500 100644
+index 4fcfcfff..d4b4f3db 100644
 --- a/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
 +++ b/build/src/smali/com/innioasis/y1/database/Y1Repository.smali
-@@ -1,7643 +1,7935 @@
+@@ -1,7643 +1,7923 @@
 -.class public final Lcom/innioasis/y1/database/Y1Repository;
 -.super Ljava/lang/Object;
 -.source "Y1Repository.kt"
@@ -34324,22 +34324,8 @@ index 4fcfcfff..6d3e2500 100644
 +
 +    invoke-virtual {v5, v3, v4}, Lcom/innioasis/y1/database/Song;->setFileDate(J)V
 +
-+    .line 937
-+    sget-object v3, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-+
-+    invoke-virtual/range {p1 .. p1}, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
-+
-+    move-result-object v4
-+
++    # ipp: songId is the path itself (set with it below), not its base64 -- Schema.M78
 +    const-string v6, "file.absolutePath"
-+
-+    invoke-static {v4, v6}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
-+
-+    invoke-virtual {v3, v4}, Lcom/innioasis/music/util/Other;->toBase64(Ljava/lang/String;)Ljava/lang/String;
-+
-+    move-result-object v3
-+
-+    invoke-virtual {v5, v3}, Lcom/innioasis/y1/database/Song;->setSongId(Ljava/lang/String;)V
 +
 +    .line 939
 +    invoke-virtual/range {p1 .. p1}, Ljava/io/File;->getName()Ljava/lang/String;
@@ -34400,6 +34386,8 @@ index 4fcfcfff..6d3e2500 100644
 +    move-result-object v3
 +
 +    invoke-virtual {v5, v3}, Lcom/innioasis/y1/database/Song;->setPath(Ljava/lang/String;)V
++
++    invoke-virtual {v5, v3}, Lcom/innioasis/y1/database/Song;->setSongId(Ljava/lang/String;)V
 +
 +    const/16 v3, 0x15
 +
@@ -67284,7 +67272,7 @@ index 510ca002..abcf3e40 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Song.smali b/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
-index 368ecb72..9a0be5b0 100644
+index 368ecb72..b38bd087 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Song.smali
 @@ -141,6 +141,17 @@
@@ -67374,7 +67362,50 @@ index 368ecb72..9a0be5b0 100644
      iget-object v1, p0, Lcom/innioasis/y1/database/Song;->lowerName:Ljava/lang/String;
  
      iget-object v3, p1, Lcom/innioasis/y1/database/Song;->lowerName:Ljava/lang/String;
-@@ -1902,6 +1975,87 @@
+@@ -1499,11 +1572,41 @@
+ .end method
+ 
+ .method public final getSongId()Ljava/lang/String;
+-    .locals 1
++    .locals 2
+ 
+     .line 10
+     iget-object v0, p0, Lcom/innioasis/y1/database/Song;->songId:Ljava/lang/String;
+ 
++    # ipp: the id is the path. One that is not (base64 of it, from a queue saved by an older
++    # build in save_state) answers the path and is replaced by it -- Schema.M78 moved the tables.
++    if-eqz v0, :ipp_id_done
++
++    invoke-virtual {v0}, Ljava/lang/String;->length()I
++
++    move-result v1
++
++    if-eqz v1, :ipp_id_done
++
++    const/4 v1, 0x0
++
++    invoke-virtual {v0, v1}, Ljava/lang/String;->charAt(I)C
++
++    move-result v0
++
++    const/16 v1, 0x2f
++
++    if-eq v0, v1, :ipp_id_keep
++
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->path:Ljava/lang/String;
++
++    if-eqz v0, :ipp_id_keep
++
++    iput-object v0, p0, Lcom/innioasis/y1/database/Song;->songId:Ljava/lang/String;
++
++    :ipp_id_keep
++    iget-object v0, p0, Lcom/innioasis/y1/database/Song;->songId:Ljava/lang/String;
++
++    :ipp_id_done
+     return-object v0
+ .end method
+ 
+@@ -1902,6 +2005,87 @@
      return-void
  .end method
  
@@ -68088,7 +68119,7 @@ index b38b3a6f..9aaef33c 100644
      new-instance v2, Ljava/util/HashSet;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
-index 69411183..73876eb2 100644
+index 69411183..1524b69d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Database_Impl.smali
 @@ -383,11 +383,11 @@
@@ -68096,7 +68127,7 @@ index 69411183..73876eb2 100644
      new-instance v1, Lcom/innioasis/y1/database/Y1Database_Impl$1;
  
 -    const/4 v2, 0x6
-+    const/4 v2, 0x7
++    const/16 v2, 0x8
  
      invoke-direct {v1, p0, v2}, Lcom/innioasis/y1/database/Y1Database_Impl$1;-><init>(Lcom/innioasis/y1/database/Y1Database_Impl;I)V
  

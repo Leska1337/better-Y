@@ -291,7 +291,8 @@ public final class Albums {
     /**
      * {@code getSongsSync(0)} without its cost on a large library: the rows in rowid portions that
      * never fill the cursor window, then the stock order as rowids alone. The rows are built as the
-     * stock DAO builds them. Null when the table changed under the read: the caller asks stock.
+     * stock DAO builds them, except that songId, which equals the path ({@link Schema}), is the
+     * path's own object. Null when the table changed under the read: the caller asks stock.
      */
     private static List readTable(Y1Repository.SongSortType type, String sig) {
         String by = orderBy(type);
@@ -308,7 +309,7 @@ public final class Albums {
                 c = db.query("select rowid as ipp_rowid, * from song where isAudiobook = 0 and rowid > "
                         + after + " order by rowid limit " + PORTION, null);
                 int got = 0;
-                int iId = c.getColumnIndexOrThrow("songId"), iName = c.getColumnIndexOrThrow("name"),
+                int iName = c.getColumnIndexOrThrow("name"),
                         iPyName = c.getColumnIndexOrThrow("pinyinName"), iSong = c.getColumnIndexOrThrow("songName"),
                         iPySong = c.getColumnIndexOrThrow("pinyinSongName"), iArtist = c.getColumnIndexOrThrow("artist"),
                         iPyArtist = c.getColumnIndexOrThrow("pinyinArtist"), iAlbum = c.getColumnIndexOrThrow("album"),
@@ -320,9 +321,10 @@ public final class Albums {
                 while (c.moveToNext()) {
                     if (k >= n) return null;
                     after = c.getLong(0);
-                    Song s = new Song(str(c, iId), str(c, iName), str(c, iPyName), str(c, iSong), str(c, iPySong),
+                    String path = str(c, iPath);
+                    Song s = new Song(path, str(c, iName), str(c, iPyName), str(c, iSong), str(c, iPySong),
                             str(c, iArtist), str(c, iPyArtist), str(c, iAlbum), str(c, iPyAlbum), str(c, iGenre),
-                            str(c, iPyGenre), str(c, iPath), c.getInt(iBook), c.getLong(iDate), c.getLong(iFile),
+                            str(c, iPyGenre), path, c.getInt(iBook), c.getLong(iDate), c.getLong(iFile),
                             str(c, iLower), str(c, iLowAlbum));
                     Schema.read(c, s);
                     ids[k] = after;
@@ -523,6 +525,7 @@ public final class Albums {
         }
         synchronized (SONGS) { preparedFor = all; }
         Lab.reads();
+        Lab.ids();
     }
 
     private static boolean byDate(int sort) {
