@@ -92,6 +92,50 @@ public final class Lab {
         Albums.later(new Reads(), 15000L);
     }
 
+    /** The queue saved and handed to the player: size, the song at the index, whether its file is seen, who called. */
+    static void queue(String what, java.util.List l, int at) {
+        try {
+            StringBuilder b = new StringBuilder("queue ").append(what).append(": ")
+                    .append(l == null ? -1 : l.size()).append(" songs @").append(at);
+            if (l != null && at >= 0 && at < l.size()) {
+                com.innioasis.y1.database.Song s = (com.innioasis.y1.database.Song) l.get(at);
+                b.append(" ").append(s.getPath()).append(" exists ").append(new File(s.getPath()).exists())
+                        .append(" id ").append(s.getSongId().equals(s.getPath()) ? "path" : "other");
+            }
+            b.append(" on ").append(Thread.currentThread().getName()).append(" from");
+            StackTraceElement[] st = new Throwable().getStackTrace();
+            for (int i = 2; i < st.length && i < 7; i++) b.append(' ').append(st[i].getClassName())
+                    .append('.').append(st[i].getMethodName());
+            Log.i("ipplab", b.toString());
+        } catch (Throwable t) {
+            Log.i("ipplab", "queue " + what + " failed " + t);
+        }
+    }
+
+    private static long restoreAt;
+
+    /** Around the stock restore() at boot: the saved file, the time it took, what the player got. */
+    public static void restoring(com.innioasis.y1.service.PlayerService ps) {
+        restoreAt = SystemClock.uptimeMillis();
+        try {
+            File f = new File(ps.getFilesDir(), "save_state");
+            Log.i("ipplab", "restore begins: save_state " + f.length() + " bytes, card "
+                    + new File("/storage/sdcard0/Music").exists());
+        } catch (Throwable t) {
+            Log.i("ipplab", "restore begins failed " + t);
+        }
+    }
+
+    public static void restored(com.innioasis.y1.service.PlayerService ps) {
+        try {
+            Log.i("ipplab", "restore ends +" + (SystemClock.uptimeMillis() - restoreAt) + " ms, playing "
+                    + ps.getPlaying() + ", music " + (ps.getMusicList() == null ? -1 : ps.getMusicList().size())
+                    + " @" + ps.getMusicIndex());
+        } catch (Throwable t) {
+            Log.i("ipplab", "restore ends failed " + t);
+        }
+    }
+
     private static boolean idsRan;
 
     /** Once per process, only while /data/local/tmp/ippid exists: songId against the path, and the references against the song table. */

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..f5a65c14 100644
+index 01b1f730..b8d70b5b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..f5a65c14 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100363
++  versionCode: 10100368
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..bcf91a86 100644
+index 71fe29d0..49ade100 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..bcf91a86 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev363</string>
++    <string name="ipp_version">v1.1.0-dev368</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -38708,7 +38708,7 @@ index 4fcfcfff..d4b4f3db 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..a6f0a460 100644
+index 54919080..95081553 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -497,6 +497,11 @@
@@ -38753,15 +38753,15 @@ index 54919080..a6f0a460 100644
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
+-
+-    invoke-interface {v5}, Ljava/util/List;->size()I
+-
+-    move-result v5
 +    # ipp: repeat-off end-of-list. Stock only tested "index == size-1", which is meaningless
 +    # under shuffle; Queue.endOfList reports the spent shuffle cycle too (and never ends while
 +    # manually queued tracks are still pending).
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
--    invoke-interface {v5}, Ljava/util/List;->size()I
--
--    move-result v5
--
 -    sub-int/2addr v5, v4
 +    move-result v0
  
@@ -38955,19 +38955,27 @@ index 54919080..a6f0a460 100644
      :goto_0
      return-void
  .end method
-@@ -5984,6 +6064,11 @@
+@@ -5984,6 +6064,19 @@
  .method public final saveState()V
      .locals 19
  
-+    # ipp: the queue's source screen is written down in the same breath as stock's own state,
-+    # so the two can never describe different sessions -- see Queue.saveSource / ensureSource
++    # ipp: Saved.write streams the state to save_state (a long list as paths) and writes the
++    # queue's source in the same breath -- Queue.saveSource. False: stock's own code below.
 +    # /range because p0 is v19 here (.locals 19) and a plain invoke-static reaches only v0..v15
-+    invoke-static/range {p0 .. p0}, Lcom/innioasis/ipp/Queue;->saveSource(Lcom/innioasis/y1/service/PlayerService;)V
++    invoke-static/range {p0 .. p0}, Lcom/innioasis/ipp/Saved;->write(Lcom/innioasis/y1/service/PlayerService;)Z
++
++    move-result v0
++
++    if-eqz v0, :ipp_stock_save
++
++    return-void
++
++    :ipp_stock_save
 +
      move-object/from16 v12, p0
  
      .line 235
-@@ -6371,6 +6456,16 @@
+@@ -6371,6 +6464,16 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -38984,7 +38992,7 @@ index 54919080..a6f0a460 100644
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
  
-@@ -6581,6 +6676,25 @@
+@@ -6581,6 +6684,25 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -70582,6 +70590,26 @@ index 2e1e1934..c23052e6 100644
 +
 +    return v0
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/receiver/BootCompletedReceiver$restoreShutdownState$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/receiver/BootCompletedReceiver$restoreShutdownState$1$1.smali
+index 6f58dd16..b7d2cdf1 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/receiver/BootCompletedReceiver$restoreShutdownState$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/receiver/BootCompletedReceiver$restoreShutdownState$1$1.smali
+@@ -189,8 +189,15 @@
+ 
+     if-eqz p1, :cond_0
+ 
++    invoke-static {p1}, Lcom/innioasis/ipp/Lab;->restoring(Lcom/innioasis/y1/service/PlayerService;)V
++
+     invoke-virtual {p1}, Lcom/innioasis/y1/service/PlayerService;->restore()V
+ 
++    invoke-static {p1}, Lcom/innioasis/ipp/Lab;->restored(Lcom/innioasis/y1/service/PlayerService;)V
++
++    # ipp: a long list comes back as paths: Saved swaps them for the library's rows
++    invoke-static {p1}, Lcom/innioasis/ipp/Saved;->restored(Lcom/innioasis/y1/service/PlayerService;)V
++
+     sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
+ 
+     goto :goto_0
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
 index 80ab6a74..7c346be9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali

@@ -925,6 +925,7 @@ public final class Queue {
 
     /** @param handed the list given to the player, compared here for {@link #srcOrdered}. */
     private static void newPlaylist(int k, List handed) {
+        Lab.queue("set " + k, handed, 0);
         // a queue live on the OTHER list leaves it now; this kind's list is replaced wholesale
         if (kind != k) dropGuestsFrom(kind);
         kind = k;
@@ -1140,6 +1141,7 @@ public final class Queue {
 
     /** {@code PlayerService.saveState()}. {@code commit()}: the process is on its way down. */
     public static void saveSource(PlayerService ps) {
+        Lab.queue("save " + ps.getPlaying(), ps.getMusicList(), ps.getMusicIndex());
         try {
             SharedPreferences p = Prefs.file();
             if (p == null) return;
