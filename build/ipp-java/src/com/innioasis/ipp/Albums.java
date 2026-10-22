@@ -692,13 +692,28 @@ public final class Albums {
         // the order over, and stock's full query ran beside the read (out of memory on 25 000)
         allSongs();
         int gen;
+        List src = null;
         synchronized (SONGS) {
             if (songCache != null && type == songOrder) return songCache;
             if (sorted != null && type == sortedType) return sorted;
+            Y1Repository.SongSortType pair = pairOf(type);
+            if (pair != null && songCache != null && pair == songOrder) src = songCache;
+            else if (pair != null && sorted != null && pair == sortedType) src = sorted;
             gen = songGen;
         }
         long tq = SystemClock.uptimeMillis();
-        List l = ordered(type);
+        List l = src == null ? null : mirror(src, type);
+        if (l != null) {
+            android.util.Log.i("ipplab", "mirror " + type + " " + (SystemClock.uptimeMillis() - tq) + " ms");
+            synchronized (SONGS) {
+                if (gen == songGen) {
+                    sorted = l;
+                    sortedType = type;
+                }
+            }
+            return l;
+        }
+        l = ordered(type);
         android.util.Log.i("ipplab", "path order " + type + " " + (l != null) + " " + (SystemClock.uptimeMillis() - tq) + " ms");
         if (l == null) l = shared(repo.getSongsList(type));
         android.util.Log.i("ipplab", "sorted query " + type + " " + (SystemClock.uptimeMillis() - tq) + " ms");
@@ -709,6 +724,92 @@ public final class Albums {
             }
         }
         return l;
+    }
+
+    // ---- the reverse of a sort in memory ----------------------------------------------------
+
+    /** The sort whose stock query is this one's with the direction flipped; null when none is. */
+    static Y1Repository.SongSortType pairOf(Y1Repository.SongSortType t) {
+        if (t == Y1Repository.SongSortType.FileName_A_To_Z) return Y1Repository.SongSortType.FileName_Z_To_A;
+        if (t == Y1Repository.SongSortType.FileName_Z_To_A) return Y1Repository.SongSortType.FileName_A_To_Z;
+        if (t == Y1Repository.SongSortType.Time_Asc) return Y1Repository.SongSortType.Time_Desc;
+        if (t == Y1Repository.SongSortType.Time_Desc) return Y1Repository.SongSortType.Time_Asc;
+        if (t == Y1Repository.SongSortType.SongName_A_To_Z) return Y1Repository.SongSortType.SongName_Z_To_A;
+        if (t == Y1Repository.SongSortType.SongName_Z_To_A) return Y1Repository.SongSortType.SongName_A_To_Z;
+        return null;
+    }
+
+    /**
+     * {@code src}, in its pair's order, reversed run by run: rows with equal keys come out of the
+     * query in the same order whichever the direction, so a plain reverse would turn every such
+     * run around (an album copied at once shares one fileDate). Null when there is no pair.
+     */
+    static List mirror(List src, Y1Repository.SongSortType type) {
+        if (src == null || pairOf(type) == null) return null;
+        int n = src.size();
+        ArrayList out = new ArrayList(n);
+        int end = n;
+        while (end > 0) {
+            int start = end - 1;
+            while (start > 0 && sameKey((Song) src.get(start - 1), (Song) src.get(end - 1), type)) start--;
+            for (int i = start; i < end; i++) out.add(src.get(i));
+            end = start;
+        }
+        return out;
+    }
+
+    /** Equal under the query's ORDER BY: {@code lower()} of the pinyin column, or the date. */
+    private static boolean sameKey(Song a, Song b, Y1Repository.SongSortType t) {
+        if (t == Y1Repository.SongSortType.Time_Asc || t == Y1Repository.SongSortType.Time_Desc) {
+            return a.getFileDate() == b.getFileDate();
+        }
+        boolean file = t == Y1Repository.SongSortType.FileName_A_To_Z || t == Y1Repository.SongSortType.FileName_Z_To_A;
+        return lowerEq(file ? a.getPinyinName() : a.getPinyinSongName(),
+                file ? b.getPinyinName() : b.getPinyinSongName());
+    }
+
+    /** 1 = this database's lower() folds every letter (ICU), 0 = only A-Z, -1 = not asked yet. */
+    private static int unicodeLower = -1;
+
+    /** Equal as SQLite's lower() makes them: whichever folding the database answers with. */
+    static boolean lowerEq(String a, String b) {
+        if (a == null || b == null) return a == b;
+        if (a.length() != b.length()) return false;
+        if (unicodeLower < 0) unicodeLower = askLower();
+        boolean all = unicodeLower == 1;
+        for (int i = 0; i < a.length(); i++) {
+            char x = a.charAt(i);
+            char y = b.charAt(i);
+            if (x == y) continue;
+            if (all) {
+                if (Character.toLowerCase(x) != Character.toLowerCase(y)) return false;
+            } else {
+                if (x >= 'A' && x <= 'Z') x = (char) (x + 32);
+                if (y >= 'A' && y <= 'Z') y = (char) (y + 32);
+                if (x != y) return false;
+            }
+        }
+        return true;
+    }
+
+    private static int askLower() {
+        Cursor c = null;
+        try {
+            c = PlGrid.db().query("select lower('ПРИВЕТ')", null);
+            if (!c.moveToFirst()) return 0;
+            int r = "привет".equals(c.getString(0)) ? 1 : 0;
+            android.util.Log.i("ipplab", "sqlite lower() folds cyrillic: " + (r == 1));
+            return r;
+        } catch (Throwable t) {
+            return 0;
+        } finally {
+            if (c != null) {
+                try {
+                    c.close();
+                } catch (Throwable t) {
+                }
+            }
+        }
     }
 
     private static boolean started;

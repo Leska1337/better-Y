@@ -121,12 +121,41 @@ public final class Lab {
     static final class Reads implements Runnable {
         public void run() {
             try {
-                check(com.innioasis.y1.database.Y1Repository.SongSortType.FileName_A_To_Z);
-                check(com.innioasis.y1.database.Y1Repository.SongSortType.Time_Desc);
-                check(com.innioasis.y1.database.Y1Repository.SongSortType.SongName_A_To_Z);
+                mirrors(com.innioasis.y1.database.Y1Repository.SongSortType.FileName_A_To_Z);
+                mirrors(com.innioasis.y1.database.Y1Repository.SongSortType.Time_Asc);
+                mirrors(com.innioasis.y1.database.Y1Repository.SongSortType.SongName_A_To_Z);
             } catch (Throwable t) {
                 Log.i("ipplab", "reads failed " + t);
             }
+        }
+
+        /** Both directions by query, each mirrored against the other, position by position. */
+        private static void mirrors(com.innioasis.y1.database.Y1Repository.SongSortType asc) {
+            com.innioasis.y1.database.Y1Repository.SongSortType desc = Albums.pairOf(asc);
+            java.util.List a = Albums.ordered(asc);
+            java.util.List b = Albums.ordered(desc);
+            if (a == null || b == null) {
+                Log.i("ipplab", "mirror check " + asc + ": ordered " + (a != null) + "/" + (b != null));
+                return;
+            }
+            long t0 = SystemClock.uptimeMillis();
+            java.util.List mb = Albums.mirror(a, desc);
+            long t1 = SystemClock.uptimeMillis();
+            java.util.List ma = Albums.mirror(b, asc);
+            Log.i("ipplab", "mirror check " + asc + ": " + a.size() + " rows, to desc " + differ(mb, b)
+                    + " differ, to asc " + differ(ma, a) + " differ, mirror " + (t1 - t0) + " ms");
+        }
+
+        private static String differ(java.util.List x, java.util.List y) {
+            int diff = 0, first = -1;
+            int n = Math.min(x.size(), y.size());
+            for (int i = 0; i < n; i++) {
+                if (x.get(i) != y.get(i)) {
+                    diff++;
+                    if (first < 0) first = i;
+                }
+            }
+            return diff + " (first " + first + ", sizes " + x.size() + "/" + y.size() + ")";
         }
 
         /** The path order against the full stock query, position by position. */
