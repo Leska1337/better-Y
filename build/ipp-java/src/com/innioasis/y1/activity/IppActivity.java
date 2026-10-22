@@ -1310,8 +1310,8 @@ public final class IppActivity extends BaseActivity {
             boolean tags = (mask & Pick.TAGS) != 0;
             boolean flow = (mask & Pick.FLOW) != 0;
             try {
-                Y1Repository repo = Y1Application.Companion.getY1Repository();
-                List songs = repo == null ? null : repo.getSongsSync(0);
+                // the list in memory, read only: a query here is a second library in the heap
+                List songs = Albums.allSongs();
                 int n = songs == null ? 0 : songs.size();
 
                 long newest = 0L;
