@@ -879,17 +879,15 @@ public final class BigCover {
         return Integer.toHexString(key.hashCode()) + "-" + key.length() + SUFFIX;
     }
 
-    /** Covers and notes of tracks and folders no song has any more: their weight, gone when {@code drop}. */
-    static long prune(Set paths, Set folders, boolean drop) {
-        HashSet keep = new HashSet();
-        Iterator it = paths.iterator();
-        while (it.hasNext()) keep.add(name((String) it.next()));
-        it = folders.iterator();
-        while (it.hasNext()) keep.add(name((String) it.next()));
-        return Stale.files(dir(), keep, drop) + pruneNotes(paths, folders, drop);
+    /**
+     * Covers and notes of no path or folder in {@code keep} ({@link Stale.Keys#of}): their weight,
+     * gone when {@code drop}.
+     */
+    static long prune(Stale.Keys keep, Set folders, boolean drop) {
+        return Stale.files(dir(), keep, SUFFIX, false, drop) + pruneNotes(keep, folders, drop);
     }
 
-    private static synchronized long pruneNotes(Set paths, Set folders, boolean drop) {
+    private static synchronized long pruneNotes(Stale.Keys keep, Set folders, boolean drop) {
         noteLoad();
         long n = 0L;
         ArrayList gone = new ArrayList();
@@ -898,7 +896,7 @@ public final class BigCover {
             Map.Entry e = (Map.Entry) it.next();
             String k = (String) e.getKey();
             boolean live = k.startsWith(SIG) ? folders.contains(k.substring(SIG.length()))
-                    : paths.contains(k);
+                    : keep.has(Stale.Keys.of(k));
             if (live) continue;
             gone.add(k);
             n += Stale.line(k, String.valueOf(e.getValue()));

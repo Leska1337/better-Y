@@ -75,28 +75,28 @@
 .method public static clear()V
   .catchall { :L0 .. :L1 } :L2
   .registers 1
-  .line 190
+  .line 191
     sget-object v0, Lcom/innioasis/ipp/AlbumInfo;->map:Ljava/util/Hashtable;
     invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 191
+  .line 192
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/AlbumInfo;->loaded:Z
   :L0
-  .line 193
+  .line 194
     invoke-static { }, Lcom/innioasis/ipp/AlbumInfo;->file()Ljava/io/File;
     move-result-object v0
-  .line 194
-    if-eqz v0, :L1
   .line 195
+    if-eqz v0, :L1
+  .line 196
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
   :L1
-  .line 198
+  .line 199
     goto :L3
   :L2
-  .line 197
+  .line 198
     move-exception v0
   :L3
-  .line 199
+  .line 200
     return-void
 .end method
 
@@ -257,9 +257,9 @@
     return-object p0
 .end method
 
-.method static prune(Ljava/util/Set;Ljava/util/Set;Z)J
+.method static prune(Ljava/util/Set;Lcom/innioasis/ipp/Stale$Keys;Z)J
   .catchall { :L0 .. :L8 } :L7
-  .registers 13
+  .registers 15
   .line 167
     invoke-static { }, Lcom/innioasis/ipp/AlbumInfo;->load()V
   .line 168
@@ -299,21 +299,24 @@
     const/4 v9, 1
     if-eqz v8, :L2
     aget-object v8, v7, v9
+  .line 176
     invoke-virtual { v8 }, Ljava/lang/String;->length()I
     move-result v8
     if-eqz v8, :L1
     aget-object v8, v7, v9
-    invoke-interface { p1, v8 }, Ljava/util/Set;->contains(Ljava/lang/Object;)Z
+    invoke-static { v8 }, Lcom/innioasis/ipp/Stale$Keys;->of(Ljava/lang/String;)J
+    move-result-wide v10
+    invoke-virtual { p1, v10, v11 }, Lcom/innioasis/ipp/Stale$Keys;->has(J)Z
     move-result v8
     if-eqz v8, :L2
-  .line 176
+  .line 177
     goto :L1
   :L2
-  .line 178
+  .line 179
     invoke-interface { v5 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
     move-result-object v8
     invoke-virtual { v1, v8 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 179
+  .line 180
     invoke-interface { v5 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
     move-result-object v5
     check-cast v5, Ljava/lang/String;
@@ -333,15 +336,15 @@
     invoke-static { v5, v6 }, Lcom/innioasis/ipp/Stale;->line(Ljava/lang/String;Ljava/lang/String;)J
     move-result-wide v5
     add-long/2addr v3, v5
-  .line 180
+  .line 181
     goto :L1
   :L3
-  .line 181
+  .line 182
     if-eqz p2, :L6
     invoke-virtual { v1 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result p0
     if-nez p0, :L6
-  .line 182
+  .line 183
     nop
   :L4
     invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
@@ -354,15 +357,15 @@
     add-int/lit8 v6, v6, 1
     goto :L4
   :L5
-  .line 183
+  .line 184
     invoke-static { }, Lcom/innioasis/ipp/AlbumInfo;->saveLocked()V
   :L6
-  .line 185
-    monitor-exit v0
   .line 186
+    monitor-exit v0
+  .line 187
     return-wide v3
   :L7
-  .line 185
+  .line 186
     move-exception p0
     monitor-exit v0
   :L8

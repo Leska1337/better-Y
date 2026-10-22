@@ -7,9 +7,6 @@ import com.innioasis.y1.Y1Application;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 /**
  * Cover Flow's own covers on disk: an album's cover at slide size, so a slide is one decode into a
@@ -42,18 +39,17 @@ public final class FlowCache {
     public static File file(String path) {
         File d = path == null ? null : dir();
         if (d == null) return null;
-        return new File(d, hex(Albums.trackFolder(path)) + "-" + hex(path) + SUFFIX);
+        return new File(d, name(Albums.trackFolder(path), path));
     }
 
-    /** Slides of tracks no longer in the library: their weight, and gone when {@code drop}. */
-    static long prune(Set paths, boolean drop) {
-        HashSet keep = new HashSet();
-        Iterator it = paths.iterator();
-        while (it.hasNext()) {
-            String p = (String) it.next();
-            keep.add(hex(Albums.trackFolder(p)) + "-" + hex(p) + SUFFIX);
-        }
-        return Stale.files(dir(), keep, drop);
+    /** The file name of a track's slide; {@code folder} is the track's own directory. */
+    static String name(String folder, String path) {
+        return hex(folder) + "-" + hex(path) + SUFFIX;
+    }
+
+    /** Slides whose {@link #name} is not in {@code keep} (folder hash, path hash): their weight. */
+    static long prune(Stale.Keys keep, boolean drop) {
+        return Stale.files(dir(), keep, SUFFIX, true, drop);
     }
 
     /** A cover {@link Flow#S} square, written for good. */

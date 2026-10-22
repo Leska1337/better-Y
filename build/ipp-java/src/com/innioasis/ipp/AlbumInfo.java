@@ -163,7 +163,7 @@ public final class AlbumInfo {
      * Lines of albums no song carries, or whose song is gone: their weight, and gone when
      * {@code drop}. A dropped line is read again by the row that needs it.
      */
-    static long prune(Set albums, Set paths, boolean drop) {
+    static long prune(Set albums, Stale.Keys paths, boolean drop) {
         load();
         long n = 0L;
         synchronized (map) {
@@ -172,7 +172,8 @@ public final class AlbumInfo {
             while (it.hasNext()) {
                 Map.Entry e = (Map.Entry) it.next();
                 String[] v = (String[]) e.getValue();
-                if (albums.contains(e.getKey()) && (v[1].length() == 0 || paths.contains(v[1]))) {
+                if (albums.contains(e.getKey())
+                        && (v[1].length() == 0 || paths.has(Stale.Keys.of(v[1])))) {
                     continue;
                 }
                 gone.add(e.getKey());

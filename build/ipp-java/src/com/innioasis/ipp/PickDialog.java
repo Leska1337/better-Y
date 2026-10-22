@@ -377,21 +377,45 @@ public final class PickDialog extends BaseDialog {
         dismiss();
     }
 
-    /** Walks the cache directories, so never on the way to a frame. */
+    /**
+     * Walks the cache directories, so never on the way to a frame. What is outside the total (the
+     * deleted songs, which compares every file with the library) comes last and on its own, so the
+     * rest is not kept waiting for it.
+     */
     static final class Measure implements Runnable {
         private final PickDialog d;
 
         Measure(PickDialog d) { this.d = d; }
 
         public void run() {
-            final long[] out = new long[d.cats.length + 1];
+            long[] out = new long[d.cats.length + 1];
+            java.util.Arrays.fill(out, -1L);
             long total = 0L;
             for (int i = 0; i < d.cats.length; i++) {
+                if (!Pick.inTotal(d.cats[i])) continue;
+                long t0 = android.os.SystemClock.uptimeMillis();
                 long n = Pick.size(d.cats[i]);
+                android.util.Log.i("ipplab", "pick size " + d.cats[i] + ": " + n + " bytes +"
+                        + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
                 out[i + 1] = n;
-                if (Pick.inTotal(d.cats[i])) total += n;
+                total += n;
             }
             out[0] = total;
+            post(out);
+            out = (long[]) out.clone();
+            boolean more = false;
+            for (int i = 0; i < d.cats.length; i++) {
+                if (Pick.inTotal(d.cats[i]) || !d.isShowing()) continue;
+                long t0 = android.os.SystemClock.uptimeMillis();
+                out[i + 1] = Pick.size(d.cats[i]);
+                android.util.Log.i("ipplab", "pick size " + d.cats[i] + ": " + out[i + 1] + " bytes +"
+                        + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
+                more = true;
+            }
+            if (more) post(out);
+        }
+
+        private void post(long[] out) {
             try {
                 d.activity.runOnUiThread(new Apply(d, out));
             } catch (Throwable t) {
