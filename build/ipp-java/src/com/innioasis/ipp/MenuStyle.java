@@ -162,8 +162,8 @@ public final class MenuStyle {
     // The pictures beside the main menu and the Settings list, handled the way a theme's are: decoded
     // off the main thread at the view's width, kept, and shown when ready. Stock decodes the ~400 px
     // PNG on the main thread on every wheel click instead (the resource cache holds it weakly).
-    // Only stock pictures land here — a theme's own go to its BitmapCache, and applying a theme
-    // restarts the process, so nothing of the previous theme is ever kept.
+    // Only stock pictures land here — a theme's own go to its BitmapCache. Applying a theme drops
+    // them all ({@link #themeChanged}): a theme with pictures of its own has no use for them.
     private static final HashMap PREVIEWS = new HashMap();
     private static final Object PROBE = new Object();
     private static Handler loader;
@@ -373,7 +373,15 @@ public final class MenuStyle {
         return p;
     }
 
-    /** Once per process: the pictures of the rows the main menu has, the current theme's way. */
+    /** From {@link Theme#relaunch}: the next main menu preloads again, the new theme's way. */
+    public static void themeChanged() {
+        synchronized (PREVIEWS) {
+            PREVIEWS.clear();
+        }
+        mainLoaded = false;
+    }
+
+    /** Once per theme: the pictures of the rows the main menu has, the current theme's way. */
     private static void preloadMain(Activity a) {
         if (mainLoaded) return;
         View iv = a.findViewById(R.id.iv_now);

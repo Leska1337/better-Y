@@ -157,7 +157,12 @@ public final class Icons {
     private static final float BOX_W = 68f;
     private static final float BOX_H = 52f;
 
+    // drawn in the theme's font, so dropped with the theme (themeChanged)
     private static final java.util.HashMap stamps = new java.util.HashMap();
+
+    public static void themeChanged() {
+        stamps.clear();
+    }
 
     /** "On" drawings only: the digits are drawn white, then recoloured with the icon as one bitmap. */
     public static void label(ImageView iv, int light, int tint, String text) {

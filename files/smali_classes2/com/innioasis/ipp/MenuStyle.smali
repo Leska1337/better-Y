@@ -797,78 +797,78 @@
 
 .method private static preloadMain(Landroid/app/Activity;)V
   .registers 6
-  .line 378
+  .line 386
     sget-boolean v0, Lcom/innioasis/ipp/MenuStyle;->mainLoaded:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 379
+  .line 387
     const v0, 2131362147
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v0
-  .line 380
+  .line 388
     const v1, 2131362308
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 381
+  .line 389
     if-eqz v0, :L7
     instance-of v2, v1, Landroidx/recyclerview/widget/RecyclerView;
     if-nez v2, :L1
     goto :L7
   :L1
-  .line 382
+  .line 390
     check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v1 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v1
-  .line 383
+  .line 391
     instance-of v2, v1, Lcom/innioasis/y1/base/BaseBindingAdapter;
     if-nez v2, :L2
     return-void
   :L2
-  .line 384
+  .line 392
     invoke-static { v0 }, Lcom/innioasis/ipp/MenuStyle;->width(Landroid/view/View;)I
     move-result v0
-  .line 385
+  .line 393
     if-gtz v0, :L3
     return-void
   :L3
-  .line 386
+  .line 394
     const/4 v2, 1
     sput-boolean v2, Lcom/innioasis/ipp/MenuStyle;->mainLoaded:Z
-  .line 387
+  .line 395
     check-cast v1, Lcom/innioasis/y1/base/BaseBindingAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/y1/base/BaseBindingAdapter;->getData()Ljava/util/List;
     move-result-object v1
-  .line 388
+  .line 396
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/MenuStyle;->probeView(Landroid/content/Context;I)Landroid/widget/ImageView;
     move-result-object v0
-  .line 389
+  .line 397
     const/4 v2, 0
   :L4
     sget-object v3, Lcom/innioasis/ipp/MenuStyle;->MAIN_ROWS:[I
     array-length v4, v3
     if-ge v2, v4, :L6
-  .line 390
+  .line 398
     aget v3, v3, v2
     invoke-virtual { p0, v3 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v3
     invoke-interface { v1, v3 }, Ljava/util/List;->contains(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L5
-  .line 391
+  .line 399
     sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     sget-object v4, Lcom/innioasis/ipp/MenuStyle;->MAIN_PICS:[I
     aget v4, v4, v2
     invoke-virtual { v3, v0, v4 }, Lcom/innioasis/y1/theme/ThemeManager;->commonSetIcon(Landroid/widget/ImageView;I)V
   :L5
-  .line 389
+  .line 397
     add-int/lit8 v2, v2, 1
     goto :L4
   :L6
-  .line 394
+  .line 402
     return-void
   :L7
-  .line 381
+  .line 389
     return-void
 .end method
 
@@ -995,34 +995,61 @@
     return v0
 .end method
 
+.method public static themeChanged()V
+  .catchall { :L0 .. :L1 } :L2
+  .catchall { :L3 .. :L4 } :L2
+  .registers 2
+  .line 378
+    sget-object v0, Lcom/innioasis/ipp/MenuStyle;->PREVIEWS:Ljava/util/HashMap;
+    monitor-enter v0
+  :L0
+  .line 379
+    invoke-virtual { v0 }, Ljava/util/HashMap;->clear()V
+  .line 380
+    monitor-exit v0
+  :L1
+  .line 381
+    const/4 v0, 0
+    sput-boolean v0, Lcom/innioasis/ipp/MenuStyle;->mainLoaded:Z
+  .line 382
+    return-void
+  :L2
+  .line 380
+    move-exception v1
+  :L3
+    monitor-exit v0
+  :L4
+    throw v1
+.end method
+
 .method private static widen(Landroid/view/View;Z)V
   .registers 6
-  .line 398
+  .line 406
     if-nez p0, :L0
     return-void
   :L0
-  .line 399
+  .line 407
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 400
+  .line 408
     if-nez v0, :L1
     return-void
   :L1
-  .line 401
+  .line 409
     const v1, 2131362152
     invoke-virtual { p0, v1 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object v2
-  .line 402
+  .line 410
     instance-of v3, v2, Ljava/lang/Integer;
     if-nez v3, :L2
-  .line 403
+  .line 411
     iget v2, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
     invoke-static { v2 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v2
-  .line 404
+  .line 412
     invoke-virtual { p0, v1, v2 }, Landroid/view/View;->setTag(ILjava/lang/Object;)V
   :L2
-  .line 406
+  .line 414
     if-eqz p1, :L3
     const/4 p1, -1
     goto :L4
@@ -1031,16 +1058,16 @@
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result p1
   :L4
-  .line 407
+  .line 415
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
     if-ne v1, p1, :L5
     return-void
   :L5
-  .line 408
+  .line 416
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
-  .line 409
+  .line 417
     invoke-virtual { p0, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 410
+  .line 418
     return-void
 .end method
 

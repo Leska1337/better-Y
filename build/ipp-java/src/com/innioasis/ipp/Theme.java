@@ -1,6 +1,8 @@
 package com.innioasis.ipp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -18,8 +20,10 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.AppUtils;
 import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
+import com.innioasis.y1.activity.SplashActivity;
 import com.innioasis.y1.activity.theme.ThemeListActivity;
 import com.innioasis.y1.databinding.ItemSettingBinding;
 import com.innioasis.y1.Y1Application;
@@ -27,16 +31,21 @@ import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1.theme.ThemeConfig;
 import com.innioasis.y1.theme.config.FileConfig;
 import com.innioasis.y1.theme.config.MenuConfig;
+import com.innioasis.y1.theme.util.BitmapCache;
 import com.innioasis.y1.utils.SDReceiver;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
+
+import kotlin.Lazy;
 
 /**
  * Theme questions and theme-coloured bits of stock screens (tiles, Brightness, the theme gallery).
@@ -95,6 +104,57 @@ public final class Theme {
                 }
             }
         }
+    }
+
+    private static final WeakHashMap SCREENS = new WeakHashMap();
+
+    /** From {@code BaseActivity.onCreate}. */
+    public static void created(Activity a) {
+        SCREENS.put(a, Boolean.TRUE);
+    }
+
+    /**
+     * In place of stock's {@code relaunchApp} once the theme is changed: the screens start over from
+     * the splash, which loads the new theme, while the process keeps its library and playback. What
+     * the process holds of the old theme is dropped first; failing that, the process is relaunched.
+     * Every screen is finished by hand: FLAG_ACTIVITY_CLEAR_TASK closes nothing here, and the
+     * singleTask main menu would come back as the old instance, in the old font and on the old row.
+     */
+    public static void relaunch() {
+        try {
+            forgetBitmaps();
+            MenuStyle.themeChanged();
+            Icons.themeChanged();
+            Context c = Y1Application.Companion.getAppContext();
+            Intent i = new Intent(c, SplashActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            c.startActivity(i);
+            Object[] old = SCREENS.keySet().toArray();
+            SCREENS.clear();
+            for (int k = 0; k < old.length; k++) {
+                Activity a = (Activity) old[k];
+                if (a != null && !(a instanceof SplashActivity) && !a.isFinishing()) a.finish();
+            }
+            Diag.note("theme: " + ThemeManager.INSTANCE.getThemeName() + ", screens restarted");
+        } catch (Throwable t) {
+            Diag.note("Theme.relaunch: " + t);
+            AppUtils.relaunchApp(true);
+        }
+    }
+
+    /**
+     * Stock keys the theme's pictures by role ("itemBackground"), not by theme, and does not clear
+     * them at all on the way to no theme; its {@code clear()} parks them in weak references that
+     * still answer.
+     */
+    private static void forgetBitmaps() throws Exception {
+        Field f = ThemeManager.class.getDeclaredField("bitmapCache$delegate");
+        f.setAccessible(true);
+        BitmapCache cache = (BitmapCache) ((Lazy) f.get(null)).getValue();
+        cache.clear();
+        Field weak = BitmapCache.class.getDeclaredField("weakCache");
+        weak.setAccessible(true);
+        ((Map) weak.get(cache)).clear();
     }
 
     /** Stock semantics: null / blank / unparseable -> null. Nulls are cached too. */
