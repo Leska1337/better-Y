@@ -16,12 +16,13 @@ public final class Lists {
 
     private static final ArrayList refs = new ArrayList();   // ArrayList<WeakReference>
 
-    private static Object last;
+    // weak: a shortcut only, and a strong one kept the last closed list screen alive
+    private static WeakReference last;
 
     /** Called per bound row, so the common case — the same adapter again — must be free. */
     public static void note(BaseAdapter a) {
-        if (a == null || a == last) return;
-        last = a;
+        if (a == null || last != null && a == last.get()) return;
+        last = new WeakReference(a);
         try {
             for (int i = refs.size() - 1; i >= 0; i--) {
                 Object o = ((WeakReference) refs.get(i)).get();

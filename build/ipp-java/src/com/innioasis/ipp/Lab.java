@@ -44,6 +44,36 @@ public final class Lab {
 
     static void b(String w) { begin(w); }
 
+    /** Every screen ever built, weakly; 5 s after a theme change, which of them survive a collection. */
+    private static final java.util.WeakHashMap screensEver = new java.util.WeakHashMap();
+    private static int screenNo;
+
+    static void screen(android.app.Activity a) {
+        screensEver.put(a, Integer.valueOf(++screenNo));
+    }
+
+    static void screensLater() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Survivors(), 5000);
+    }
+
+    private static final class Survivors implements Runnable {
+        public void run() {
+            System.gc();
+            System.runFinalization();
+            System.gc();
+            Object[] all = screensEver.keySet().toArray();
+            StringBuilder b = new StringBuilder("screens alive ").append(all.length).append(':');
+            for (int i = 0; i < all.length; i++) {
+                android.app.Activity a = (android.app.Activity) all[i];
+                if (a == null) continue;
+                b.append(' ').append(a.getClass().getSimpleName()).append('#').append(screensEver.get(a));
+                if (a.isDestroyed()) b.append("(destroyed)");
+                else if (a.isFinishing()) b.append("(finishing)");
+            }
+            Log.i("ipplab", b.toString());
+        }
+    }
+
     /** Who called: the thread and the first frames above the caller. */
     private static int whos;
 

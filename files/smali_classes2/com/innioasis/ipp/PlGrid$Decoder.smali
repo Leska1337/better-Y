@@ -26,11 +26,11 @@
 
 .method static constructor <clinit>()V
   .registers 2
-  .line 985
+  .line 987
     new-instance v0, Ljava/util/LinkedList;
     invoke-direct { v0 }, Ljava/util/LinkedList;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
-  .line 987
+  .line 989
     new-instance v0, Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -40,21 +40,21 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 984
+  .line 986
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$1100()Ljava/util/LinkedList;
   .registers 1
-  .line 984
+  .line 986
     sget-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     return-object v0
 .end method
 
 .method static synthetic access$1202(Z)Z
   .registers 1
-  .line 984
+  .line 986
     sput-boolean p0, Lcom/innioasis/ipp/PlGrid$Decoder;->repaintPosted:Z
     return p0
 .end method
@@ -63,26 +63,26 @@
   .catchall { :L0 .. :L3 } :L5
   .registers 6
   :L0
-  .line 1021
+  .line 1023
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$700()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->getAllPlaylistSync()Ljava/util/List;
     move-result-object v0
-  .line 1022
+  .line 1024
     if-nez v0, :L1
     return-void
   :L1
-  .line 1023
+  .line 1025
     const/4 v1, 0
     const/4 v2, 0
   :L2
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v3
     if-ge v2, v3, :L4
-  .line 1024
+  .line 1026
     invoke-interface { v0, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
-  .line 1025
+  .line 1027
     instance-of v4, v3, Lcom/innioasis/y1/database/Playlist;
     if-eqz v4, :L3
     check-cast v3, Lcom/innioasis/y1/database/Playlist;
@@ -90,37 +90,37 @@
     move-result-object v3
     invoke-static { v3, p0, v1 }, Lcom/innioasis/ipp/PlGrid$Decoder;->want(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;Z)V
   :L3
-  .line 1023
+  .line 1025
     add-int/lit8 v2, v2, 1
     goto :L2
   :L4
-  .line 1028
+  .line 1030
     goto :L6
   :L5
-  .line 1027
+  .line 1029
     move-exception p0
   :L6
-  .line 1029
+  .line 1031
     return-void
 .end method
 
 .method static attach(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L2 } :L1
   .registers 3
-  .line 992
+  .line 994
     sget-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     monitor-enter v0
   :L0
-  .line 993
+  .line 995
     new-instance v1, Ljava/lang/ref/WeakReference;
     invoke-direct { v1, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v1, Lcom/innioasis/ipp/PlGrid$Decoder;->view:Ljava/lang/ref/WeakReference;
-  .line 994
+  .line 996
     monitor-exit v0
-  .line 995
+  .line 997
     return-void
   :L1
-  .line 994
+  .line 996
     move-exception p0
     monitor-exit v0
   :L2
@@ -130,11 +130,11 @@
 .method static grid()Landroidx/recyclerview/widget/RecyclerView;
   .catchall { :L0 .. :L2 } :L1
   .registers 2
-  .line 998
+  .line 1000
     sget-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     monitor-enter v0
   :L0
-  .line 999
+  .line 1001
     sget-object v1, Lcom/innioasis/ipp/PlGrid$Decoder;->view:Ljava/lang/ref/WeakReference;
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
@@ -142,7 +142,7 @@
     monitor-exit v0
     return-object v1
   :L1
-  .line 1000
+  .line 1002
     move-exception v1
     monitor-exit v0
   :L2
@@ -153,46 +153,46 @@
   .catchall { :L0 .. :L3 } :L4
   .catchall { :L5 .. :L6 } :L4
   .registers 3
-  .line 1081
+  .line 1083
     sget-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     monitor-enter v0
   :L0
-  .line 1082
+  .line 1084
     sget-boolean v1, Lcom/innioasis/ipp/PlGrid$Decoder;->repaintPosted:Z
     if-eqz v1, :L1
     monitor-exit v0
     return-void
   :L1
-  .line 1083
+  .line 1085
     sget-object v1, Lcom/innioasis/ipp/PlGrid$Decoder;->view:Ljava/lang/ref/WeakReference;
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
-  .line 1084
+  .line 1086
     if-nez v1, :L2
-  .line 1085
+  .line 1087
     const-string v1, "playlist covers: no grid to repaint"
     invoke-static { v1 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 1086
+  .line 1088
     monitor-exit v0
     return-void
   :L2
-  .line 1088
+  .line 1090
     const/4 v2, 1
     sput-boolean v2, Lcom/innioasis/ipp/PlGrid$Decoder;->repaintPosted:Z
-  .line 1089
+  .line 1091
     monitor-exit v0
   :L3
-  .line 1092
+  .line 1094
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$200()Landroid/os/Handler;
     move-result-object v0
     new-instance v2, Lcom/innioasis/ipp/PlGrid$Decoder$Repainted;
     invoke-direct { v2, v1 }, Lcom/innioasis/ipp/PlGrid$Decoder$Repainted;-><init>(Landroidx/recyclerview/widget/RecyclerView;)V
     invoke-virtual { v0, v2 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 1093
+  .line 1095
     return-void
   :L4
-  .line 1089
+  .line 1091
     move-exception v1
   :L5
     monitor-exit v0
@@ -204,16 +204,16 @@
   .catchall { :L1 .. :L7 } :L2
   .catchall { :L8 .. :L9 } :L2
   .registers 5
-  .line 1004
+  .line 1006
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->on()Z
     move-result v0
     if-nez v0, :L0
     return-void
   :L0
-  .line 1005
+  .line 1007
     sget-object v0, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     monitor-enter v0
-  .line 1006
+  .line 1008
     if-eqz p1, :L3
   :L1
     new-instance v1, Ljava/lang/ref/WeakReference;
@@ -221,46 +221,46 @@
     sput-object v1, Lcom/innioasis/ipp/PlGrid$Decoder;->view:Ljava/lang/ref/WeakReference;
     goto :L3
   :L2
-  .line 1012
+  .line 1014
     move-exception p0
     goto :L8
   :L3
-  .line 1007
+  .line 1009
     invoke-virtual { v0, p0 }, Ljava/util/LinkedList;->remove(Ljava/lang/Object;)Z
-  .line 1008
+  .line 1010
     if-eqz p2, :L4
     invoke-virtual { v0, p0 }, Ljava/util/LinkedList;->addFirst(Ljava/lang/Object;)V
     goto :L5
   :L4
-  .line 1009
+  .line 1011
     invoke-virtual { v0, p0 }, Ljava/util/LinkedList;->addLast(Ljava/lang/Object;)V
   :L5
-  .line 1010
+  .line 1012
     sget-boolean p0, Lcom/innioasis/ipp/PlGrid$Decoder;->running:Z
     if-eqz p0, :L6
     monitor-exit v0
     return-void
   :L6
-  .line 1011
+  .line 1013
     const/4 p0, 1
     sput-boolean p0, Lcom/innioasis/ipp/PlGrid$Decoder;->running:Z
-  .line 1012
+  .line 1014
     monitor-exit v0
   :L7
-  .line 1013
+  .line 1015
     new-instance p1, Ljava/lang/Thread;
     new-instance p2, Lcom/innioasis/ipp/PlGrid$Decoder;
     invoke-direct { p2 }, Lcom/innioasis/ipp/PlGrid$Decoder;-><init>()V
     const-string v0, "ipp-pl-covers"
     invoke-direct { p1, p2, v0 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-  .line 1014
-    invoke-virtual { p1, p0 }, Ljava/lang/Thread;->setDaemon(Z)V
-  .line 1015
-    invoke-virtual { p1 }, Ljava/lang/Thread;->start()V
   .line 1016
+    invoke-virtual { p1, p0 }, Ljava/lang/Thread;->setDaemon(Z)V
+  .line 1017
+    invoke-virtual { p1 }, Ljava/lang/Thread;->start()V
+  .line 1018
     return-void
   :L8
-  .line 1012
+  .line 1014
     monitor-exit v0
   :L9
     throw p0
@@ -271,28 +271,28 @@
   .catchall { :L4 .. :L10 } :L12
   .catchall { :L14 .. :L20 } :L19
   .registers 17
-  .line 1032
+  .line 1034
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 1033
+  .line 1035
     sget-object v0, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
     iput-object v0, v1, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
-  .line 1034
+  .line 1036
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
-  .line 1035
+  .line 1037
     nop
-  .line 1036
+  .line 1038
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     const/4 v5, 0
     const/4 v6, 0
   :L0
-  .line 1039
+  .line 1041
     sget-object v7, Lcom/innioasis/ipp/PlGrid$Decoder;->queue:Ljava/util/LinkedList;
     monitor-enter v7
   :L1
-  .line 1040
+  .line 1042
     invoke-virtual { v7 }, Ljava/util/LinkedList;->isEmpty()Z
     move-result v0
     if-nez v0, :L14
@@ -301,28 +301,28 @@
     if-nez v0, :L2
     goto/16 :L14
   :L2
-  .line 1050
+  .line 1052
     invoke-virtual { v7 }, Ljava/util/LinkedList;->removeFirst()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Ljava/util/UUID;
-  .line 1051
+  .line 1053
     monitor-exit v7
   :L3
-  .line 1053
+  .line 1055
     const/16 v7, 32
   :L4
     invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$800(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v8
-  .line 1054
+  .line 1056
     invoke-virtual { v8 }, Ljava/io/File;->lastModified()J
     move-result-wide v9
-  .line 1055
+  .line 1057
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$900()Ljava/util/Hashtable;
     move-result-object v11
     invoke-virtual { v11, v0 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v11
     check-cast v11, [Ljava/lang/Object;
-  .line 1056
+  .line 1058
     const-wide/16 v12, 0
     cmp-long v14, v9, v12
     if-eqz v14, :L11
@@ -336,29 +336,29 @@
     if-nez v15, :L5
     aget-object v11, v11, v12
     check-cast v11, Landroid/graphics/Bitmap;
-  .line 1057
+  .line 1059
     invoke-static { v11 }, Lcom/innioasis/ipp/PlGrid;->access$1000(Landroid/graphics/Bitmap;)Z
     move-result v11
     if-nez v11, :L5
     goto :L11
   :L5
-  .line 1059
+  .line 1061
     invoke-virtual { v8 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v8
     invoke-static { v8, v1 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object v8
-  .line 1061
+  .line 1063
     invoke-static { }, Lcom/innioasis/ipp/Theme;->tileCardSide()I
     move-result v11
-  .line 1062
+  .line 1064
     if-eqz v8, :L7
     if-lez v11, :L7
     invoke-virtual { v8 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v13
     if-le v13, v11, :L7
-  .line 1063
+  .line 1065
     nop
-  .line 1064
+  .line 1066
     invoke-virtual { v8 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v13
     mul-int v13, v13, v11
@@ -367,17 +367,17 @@
     div-int/2addr v13, v14
     invoke-static { v12, v13 }, Ljava/lang/Math;->max(II)I
     move-result v13
-  .line 1063
+  .line 1065
     invoke-static { v8, v11, v13, v12 }, Landroid/graphics/Bitmap;->createScaledBitmap(Landroid/graphics/Bitmap;IIZ)Landroid/graphics/Bitmap;
     move-result-object v11
-  .line 1065
+  .line 1067
     if-eq v11, v8, :L6
     invoke-virtual { v8 }, Landroid/graphics/Bitmap;->recycle()V
   :L6
-  .line 1066
+  .line 1068
     move-object v8, v11
   :L7
-  .line 1068
+  .line 1070
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$900()Ljava/util/Hashtable;
     move-result-object v11
     const/4 v13, 2
@@ -387,28 +387,28 @@
     aput-object v9, v13, v5
     aput-object v8, v13, v12
     invoke-virtual { v11, v0, v13 }, Ljava/util/Hashtable;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 1069
+  .line 1071
     if-eqz v8, :L8
     add-int/lit8 v6, v6, 1
     goto :L9
   :L8
-  .line 1070
+  .line 1072
     invoke-virtual { v4, v7 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v8
     invoke-virtual { v8, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
   :L9
-  .line 1071
+  .line 1073
     invoke-static { }, Lcom/innioasis/ipp/PlGrid$Decoder;->repaint()V
   :L10
-  .line 1074
+  .line 1076
     goto :L13
   :L11
-  .line 1057
+  .line 1059
     goto/16 :L0
   :L12
-  .line 1072
+  .line 1074
     move-exception v0
-  .line 1073
+  .line 1075
     invoke-virtual { v4, v7 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v7
     invoke-virtual { v0 }, Ljava/lang/Object;->getClass()Ljava/lang/Class;
@@ -417,20 +417,20 @@
     move-result-object v0
     invoke-virtual { v7, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L13
-  .line 1075
+  .line 1077
     goto/16 :L0
   :L14
-  .line 1041
-    invoke-virtual { v7 }, Ljava/util/LinkedList;->clear()V
-  .line 1042
-    sput-boolean v5, Lcom/innioasis/ipp/PlGrid$Decoder;->running:Z
   .line 1043
+    invoke-virtual { v7 }, Ljava/util/LinkedList;->clear()V
+  .line 1044
+    sput-boolean v5, Lcom/innioasis/ipp/PlGrid$Decoder;->running:Z
+  .line 1045
     if-gtz v6, :L15
     invoke-virtual { v4 }, Ljava/lang/StringBuilder;->length()I
     move-result v0
     if-lez v0, :L18
   :L15
-  .line 1044
+  .line 1046
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "playlist covers: "
@@ -441,7 +441,7 @@
     const-string v1, " read in "
     invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 1045
+  .line 1047
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v5
     sub-long/2addr v5, v2
@@ -450,7 +450,7 @@
     const-string v1, " ms"
     invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 1046
+  .line 1048
     invoke-virtual { v4 }, Ljava/lang/StringBuilder;->length()I
     move-result v1
     if-lez v1, :L16
@@ -471,14 +471,14 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 1044
+  .line 1046
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L18
-  .line 1048
+  .line 1050
     monitor-exit v7
     return-void
   :L19
-  .line 1051
+  .line 1053
     move-exception v0
     monitor-exit v7
   :L20

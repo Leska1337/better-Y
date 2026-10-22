@@ -1350,7 +1350,8 @@ public final class Queue {
         return b;
     }
 
-    private static Object memoAdapter;
+    // weak: a key only, and a strong one kept the last closed list screen alive
+    private static WeakReference memoAdapter;
     private static String memoTitle;
     private static String memoKey;
     private static boolean memoAns;
@@ -1367,9 +1368,11 @@ public final class Queue {
             if (!(adapter instanceof MyBaseAdapter)) return true;
             Context c = ((MyBaseAdapter) adapter).getContext();
             String t = (c instanceof BaseActivity) ? ((BaseActivity) c).getStateBarLeftText() : null;
-            if (adapter == memoAdapter && t == memoTitle && k == memoKey) return memoAns;
+            if (memoAdapter != null && adapter == memoAdapter.get() && t == memoTitle && k == memoKey) {
+                return memoAns;
+            }
             String s = keyOf((c instanceof Activity) ? (Activity) c : null);
-            memoAdapter = adapter;
+            memoAdapter = new WeakReference(adapter);
             memoTitle = t;
             memoKey = k;
             memoAns = (s == null) || k.equals(s);

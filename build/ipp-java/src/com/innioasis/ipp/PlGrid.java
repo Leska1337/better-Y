@@ -370,7 +370,9 @@ public final class PlGrid {
         /** The Photos grid: its own tile, its own frame colour, and a new list snaps the frame. */
         private final boolean photos;
         private int focus;
-        private RecyclerView.Adapter watched;
+        // Weak: the Mover is the value of movers, keyed by the list, and the adapter holds the
+        // screen, which holds the list — a strong reference kept every closed screen alive.
+        private java.lang.ref.WeakReference watched;
 
         Mover(boolean photos) {
             this.photos = photos;
@@ -378,8 +380,8 @@ public final class PlGrid {
 
         /** A folder entered or left fills the same list anew: the frame starts on its tile. */
         private void watch(RecyclerView.Adapter a) {
-            if (watched == a) return;
-            watched = a;
+            if (watched != null && watched.get() == a) return;
+            watched = new java.lang.ref.WeakReference(a);
             a.registerAdapterDataObserver(new Snap(this));
         }
 
