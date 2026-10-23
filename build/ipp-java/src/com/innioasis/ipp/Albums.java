@@ -384,8 +384,9 @@ public final class Albums {
             // a field, not a local: Dalvik frees a local the moment it is last read
             block = new byte[RESERVE];
             int at = System.identityHashCode(block);
+            // a try that lands lower fills an older hole the heap already has, and is let go after
             ArrayList tries = new ArrayList();
-            for (int i = 0; i < 4; i++) {
+            for (int i = 0; i < 64; i++) {
                 byte[] c = new byte[CAP];
                 if (System.identityHashCode(c) - at > 0) {
                     cap = c;
@@ -393,7 +394,7 @@ public final class Albums {
                     android.util.Log.i("ipplab", "heap reserve ok, try " + (i + 1));
                     return;
                 }
-                tries.add(c);   // landed in an older hole: keep it there and try the next one
+                tries.add(c);
             }
             Diag.note("heap reserve: no cap above the block");
             android.util.Log.i("ipplab", "heap reserve failed");

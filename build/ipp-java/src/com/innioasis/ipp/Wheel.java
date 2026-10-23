@@ -309,6 +309,11 @@ public final class Wheel {
 
     private static String painted;
 
+    /** The panel is painted with the cursor at rest, not from inside a burst of clicks. */
+    static boolean panelAtRest() {
+        return !busy;
+    }
+
     /** The panel still shows this row — for late work ({@code CacheSize}) before it repaints. */
     public static boolean panelShows(String title) {
         return title != null && title.equals(painted);
@@ -436,8 +441,10 @@ public final class Wheel {
             if (Alpha.step(rv, a, type)) {
                 long t1 = SystemClock.uptimeMillis();
                 if (a.getPosition() != p0) {
-                    dbg("alpha step " + (t1 - t0) + " ms");
-                    android.view.Choreographer.getInstance().postFrameCallback(new AlphaDbg(t1, rv));
+                    if (DBG) {
+                        dbg("alpha step " + (t1 - t0) + " ms");
+                        android.view.Choreographer.getInstance().postFrameCallback(new AlphaDbg(t1, rv));
+                    }
                 }
                 return;
             }
@@ -640,7 +647,7 @@ public final class Wheel {
             return;
         }
         LinearLayoutManager l = (LinearLayoutManager) lm;
-        dbg("to " + pos + " wrap " + wrapping + " jump " + jumping + " rel " + releasing + " left " + Glider.left(rv) + " " + edge(rv));
+        if (DBG) dbg("to " + pos + " wrap " + wrapping + " jump " + jumping + " rel " + releasing + " left " + Glider.left(rv) + " " + edge(rv));
         // round the end under a travelling bar: rows and bar move together, at once
         if (!releasing && wrapping && Bar.defer(rv, pos)) return;
         if (!jumping && retarget(rv, l, pos)) return;
@@ -920,7 +927,7 @@ public final class Wheel {
         }
 
         static void stop() {
-            if (running && left != 0) dbg("glider stop left " + left + " from " + caller());
+            if (DBG && running && left != 0) dbg("glider stop left " + left + " from " + caller());
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
@@ -1009,9 +1016,9 @@ public final class Wheel {
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            if (Math.abs(left) >= 1f && atEnd(rv, left > 0)) dbg("glider atEnd left " + left + " " + edge(rv));
+            if (DBG && Math.abs(left) >= 1f && atEnd(rv, left > 0)) dbg("glider atEnd left " + left + " " + edge(rv));
             if (Math.abs(left) < 1f || atEnd(rv, left > 0)) left = 0;
-            if (left == 0) dbg("glider done " + edge(rv));
+            if (DBG && left == 0) dbg("glider done " + edge(rv));
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {
@@ -1022,6 +1029,9 @@ public final class Wheel {
     }
 
     // ---- temporary: where a list's glide stops (the main menu stuck between rows) -----------
+
+    /** Only while /data/local/tmp/ippbar exists at process start: every call site builds its text first. */
+    static final boolean DBG = new java.io.File("/data/local/tmp/ippbar").exists();
 
     static void dbg(String s) {
         android.util.Log.i("ipp", "bardbg " + s);

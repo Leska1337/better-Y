@@ -29,9 +29,13 @@ public final class CacheSize {
     private static boolean stale = true;
     private static boolean running;
 
-    /** Never touches the filesystem. */
+    /**
+     * Never touches the filesystem. Measures only with the cursor at rest on the row: the walk is
+     * thousands of files and megabytes of garbage, too much for every pass of the wheel.
+     */
     public static String text(SettingActivity a) {
-        if (stale || value == null || SystemClock.uptimeMillis() - measuredAt > TTL_MS) start(a);
+        boolean old = value == null || SystemClock.uptimeMillis() - measuredAt > TTL_MS;
+        if (stale || old && Wheel.panelAtRest()) start(a);
         return value == null ? "…" : value;
     }
 

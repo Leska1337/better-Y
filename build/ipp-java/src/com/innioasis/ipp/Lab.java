@@ -50,6 +50,250 @@ public final class Lab {
 
     static void screen(android.app.Activity a) {
         screensEver.put(a, Integer.valueOf(++screenNo));
+        stacks();
+        allocs();
+    }
+
+    // ---- recent allocations ----------------------------------------------------------------
+
+    private static boolean allocating;
+
+    /** Once per process, only while /data/local/tmp/ippalloc exists: the DDM allocation tracker. */
+    private static void allocs() {
+        if (allocating) return;
+        allocating = true;
+        try {
+            if (!new File("/data/local/tmp/ippalloc").exists()) return;
+        } catch (Throwable t) {
+            return;
+        }
+        Thread t = new Thread(new Allocs(), "ipp-allocs");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Every second a 150 ms window of allocations, summed by the allocated class and the first frame
+     * outside the platform; the 15 heaviest every 20 s. The ring holds the last 512 records of a
+     * window, so the sums are shares, not bytes.
+     */
+    static final class Allocs implements Runnable {
+        private final java.util.HashMap bytes = new java.util.HashMap();
+        private long total;
+
+        public void run() {
+            try {
+                Class vm = Class.forName("org.apache.harmony.dalvik.ddmc.DdmVmInternal");
+                java.lang.reflect.Method on = vm.getMethod("enableRecentAllocations", new Class[] {boolean.class});
+                java.lang.reflect.Method get = vm.getMethod("getRecentAllocations", new Class[0]);
+                long lastDump = SystemClock.uptimeMillis();
+                while (true) {
+                    // a fresh ring per 150 ms window, off while parsing: the parse would fill it
+                    on.invoke(null, new Object[] {Boolean.TRUE});
+                    Thread.sleep(150);
+                    byte[] d = (byte[]) get.invoke(null, new Object[0]);
+                    on.invoke(null, new Object[] {Boolean.FALSE});
+                    parse(d);
+                    Thread.sleep(850);
+                    long now = SystemClock.uptimeMillis();
+                    if (now - lastDump >= 20000) {
+                        Log.i("ipplab", "allocs " + (total >> 10) + " KB: " + Stacks.sorted(bytes, 15));
+                        bytes.clear();
+                        total = 0;
+                        lastDump = now;
+                    }
+                }
+            } catch (Throwable t) {
+                Log.i("ipplab", "allocs failed: " + t);
+            }
+        }
+
+        private void parse(byte[] d) {
+            java.nio.ByteBuffer b = java.nio.ByteBuffer.wrap(d);
+            int headLen = b.get(0) & 0xff, entryLen = b.get(1) & 0xff, frameLen = b.get(2) & 0xff;
+            int n = b.getShort(3) & 0xffff, strings = b.getInt(5);
+            int nClass = b.getShort(9) & 0xffff, nMethod = b.getShort(11) & 0xffff;
+            b.position(strings);
+            String[] cls = names(b, nClass), meth = names(b, nMethod);
+            b.position(headLen);
+            for (int i = 0; i < n; i++) {
+                int at = b.position();
+                int size = b.getInt();
+                b.getShort();
+                int type = b.getShort() & 0xffff;
+                int depth = b.get() & 0xff;
+                b.position(at + entryLen);
+                String where = "?", top = null;
+                for (int f = 0; f < depth; f++) {
+                    int fa = b.position();
+                    int c = b.getShort() & 0xffff, m = b.getShort() & 0xffff;
+                    b.position(fa + frameLen);
+                    String name = cls[c] + "." + meth[m];
+                    if (top == null) top = name;
+                    if ("?".equals(where) && !platform(cls[c])) where = name;
+                }
+                String k = cls[type] + " @ " + where.replace("com.innioasis.", "")
+                        + ("?".equals(where) ? " top " + top : "");
+                int[] v = (int[]) bytes.get(k);
+                if (v == null) bytes.put(k, new int[] {size});
+                else v[0] += size;
+                total += size;
+            }
+        }
+
+        private static boolean platform(String c) {
+            return c.startsWith("java.") || c.startsWith("android.") || c.startsWith("dalvik.")
+                    || c.startsWith("libcore.") || c.startsWith("com.android.") || c.startsWith("androidx.")
+                    || c.startsWith("kotlin");
+        }
+
+        private static String[] names(java.nio.ByteBuffer b, int n) {
+            String[] out = new String[n];
+            for (int i = 0; i < n; i++) {
+                int len = b.getInt();
+                char[] ch = new char[len];
+                for (int j = 0; j < len; j++) ch[j] = b.getChar();
+                out[i] = ch.length > 0 && ch[0] == 'L' ? new String(ch, 1, len - 2).replace('/', '.') : new String(ch);
+            }
+            return out;
+        }
+    }
+
+    // ---- stacks of the main and binder threads ----------------------------------------------
+
+    private static boolean stacking;
+
+    /** Once per process, only while /data/local/tmp/ippstack exists: samples stacks into "ipplab". */
+    private static void stacks() {
+        if (stacking) return;
+        stacking = true;
+        try {
+            if (!new File("/data/local/tmp/ippstack").exists()) return;
+        } catch (Throwable t) {
+            return;
+        }
+        Thread t = new Thread(new Stacks(), "ipp-stacks");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Every 15 ms: what each Binder_N executes (the onTransact above Binder.execTransact) and whether
+     * the main thread is away from nativePollOnce. A main-thread streak of 250 ms or more is logged
+     * with its frames and the binder calls that ran during it; binder totals every 30 s.
+     */
+    static final class Stacks implements Runnable {
+        private final java.util.HashMap binder = new java.util.HashMap();
+        private final java.util.HashMap streakMain = new java.util.HashMap();
+        private final java.util.HashMap streakBinder = new java.util.HashMap();
+        private Thread[] binders = new Thread[0];
+        private long busySince, lastEnum, lastDump, samples;
+
+        public void run() {
+            Thread main = Looper.getMainLooper().getThread();
+            lastDump = SystemClock.uptimeMillis();
+            while (true) {
+                try {
+                    Thread.sleep(15);
+                } catch (InterruptedException e) {
+                    return;
+                }
+                long now = SystemClock.uptimeMillis();
+                if (now - lastEnum > 2000) {
+                    binders = binderThreads();
+                    lastEnum = now;
+                }
+                samples++;
+                for (int i = 0; i < binders.length; i++) {
+                    String k = transact(binders[i].getStackTrace());
+                    if (k == null) continue;
+                    count(binder, k);
+                    if (busySince != 0) count(streakBinder, k);
+                }
+                StackTraceElement[] ms = main.getStackTrace();
+                boolean idle = ms.length == 0
+                        || "nativePollOnce".equals(ms[0].getMethodName());
+                if (!idle) {
+                    if (busySince == 0) {
+                        busySince = now;
+                        streakMain.clear();
+                        streakBinder.clear();
+                    }
+                    count(streakMain, top(ms, 0, 6));
+                } else if (busySince != 0) {
+                    long len = now - busySince;
+                    busySince = 0;
+                    if (len >= 250) {
+                        Log.i("ipplab", "stall " + len + " ms main: " + sorted(streakMain, 4)
+                                + " || binder: " + sorted(streakBinder, 4));
+                    }
+                }
+                if (now - lastDump > 30000) {
+                    Log.i("ipplab", "binder in " + (now - lastDump) / 1000 + " s, " + samples
+                            + " samples: " + sorted(binder, 8));
+                    binder.clear();
+                    samples = 0;
+                    lastDump = now;
+                }
+            }
+        }
+
+        private static Thread[] binderThreads() {
+            ThreadGroup g = Thread.currentThread().getThreadGroup();
+            while (g.getParent() != null) g = g.getParent();
+            Thread[] all = new Thread[g.activeCount() + 16];
+            int n = g.enumerate(all, true);
+            java.util.ArrayList out = new java.util.ArrayList();
+            for (int i = 0; i < n; i++) {
+                if (all[i] != null && all[i].getName().startsWith("Binder")) out.add(all[i]);
+            }
+            return (Thread[]) out.toArray(new Thread[out.size()]);
+        }
+
+        /** The incoming call's onTransact and the top frames, or null for an idle binder thread. */
+        private static String transact(StackTraceElement[] st) {
+            for (int i = 0; i < st.length; i++) {
+                if ("execTransact".equals(st[i].getMethodName())) {
+                    String on = i > 0 ? st[i - 1].getClassName() : "?";
+                    return on + " { " + top(st, 0, Math.min(i - 1, 4)) + " }";
+                }
+            }
+            return null;
+        }
+
+        private static String top(StackTraceElement[] st, int from, int n) {
+            StringBuilder b = new StringBuilder();
+            for (int i = from; i < st.length && i < from + n; i++) {
+                if (b.length() > 0) b.append(" < ");
+                b.append(st[i].getClassName().replace("com.innioasis.", "")).append('.')
+                        .append(st[i].getMethodName()).append(':').append(st[i].getLineNumber());
+            }
+            return b.toString();
+        }
+
+        private static void count(java.util.HashMap m, String k) {
+            int[] c = (int[]) m.get(k);
+            if (c == null) m.put(k, new int[] {1});
+            else c[0]++;
+        }
+
+        private static String sorted(java.util.HashMap m, int n) {
+            java.util.ArrayList l = new java.util.ArrayList(m.entrySet());
+            java.util.Collections.sort(l, new ByCount());
+            StringBuilder b = new StringBuilder();
+            for (int i = 0; i < l.size() && i < n; i++) {
+                java.util.Map.Entry e = (java.util.Map.Entry) l.get(i);
+                b.append(" [").append(((int[]) e.getValue())[0]).append("x] ").append(e.getKey());
+            }
+            return b.toString();
+        }
+    }
+
+    static final class ByCount implements java.util.Comparator {
+        public int compare(Object a, Object b) {
+            return ((int[]) ((java.util.Map.Entry) b).getValue())[0]
+                    - ((int[]) ((java.util.Map.Entry) a).getValue())[0];
+        }
     }
 
     static void screensLater() {

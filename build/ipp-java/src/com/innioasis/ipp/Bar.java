@@ -476,12 +476,12 @@ public final class Bar extends RecyclerView.ItemDecoration
         try {
             Bar b = r == null ? null : (Bar) BARS.get(r);
             if (b == null || r.getAdapter() == null || !live(r)) return false;
-            if (b.snap) { Wheel.dbg("holds snap"); return true; }
+            if (b.snap) { if (Wheel.DBG) Wheel.dbg("holds snap"); return true; }
             if (Wheel.Glider.left(r) == 0) return false;
             int m = b.cursor();
             int n = r.getAdapter().getItemCount();
             boolean h = dir > 0 ? m >= n - 1 : m <= 0;
-            if (h) Wheel.dbg("holds end m " + m + " left " + Wheel.Glider.left(r));
+            if (h && Wheel.DBG) Wheel.dbg("holds end m " + m + " left " + Wheel.Glider.left(r));
             return h;
         } catch (Throwable t) {
             return false;

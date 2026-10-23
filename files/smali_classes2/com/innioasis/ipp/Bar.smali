@@ -1446,7 +1446,7 @@
 .end method
 
 .method public static holds(Landroidx/recyclerview/widget/RecyclerView;I)Z
-  .catchall { :L0 .. :L9 } :L11
+  .catchall { :L0 .. :L10 } :L12
   .registers 7
   .line 477
     const/4 v0, 0
@@ -1460,31 +1460,34 @@
     check-cast v1, Lcom/innioasis/ipp/Bar;
   :L1
   .line 478
-    if-eqz v1, :L10
+    if-eqz v1, :L11
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v2
-    if-eqz v2, :L10
+    if-eqz v2, :L11
     invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->live(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v2
     if-nez v2, :L2
-    goto :L10
+    goto :L11
   :L2
   .line 479
     iget-boolean v2, v1, Lcom/innioasis/ipp/Bar;->snap:Z
     const/4 v3, 1
-    if-eqz v2, :L3
+    if-eqz v2, :L4
+    sget-boolean p0, Lcom/innioasis/ipp/Wheel;->DBG:Z
+    if-eqz p0, :L3
     const-string p0, "holds snap"
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
-    return v3
   :L3
+    return v3
+  :L4
   .line 480
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel$Glider;->left(Landroidx/recyclerview/widget/RecyclerView;)F
     move-result v2
     const/4 v4, 0
     cmpl-float v2, v2, v4
-    if-nez v2, :L4
+    if-nez v2, :L5
     return v0
-  :L4
+  :L5
   .line 481
     invoke-direct { v1 }, Lcom/innioasis/ipp/Bar;->cursor()I
     move-result v1
@@ -1494,19 +1497,21 @@
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
     move-result v2
   .line 483
-    if-lez p1, :L5
+    if-lez p1, :L6
     sub-int/2addr v2, v3
-    if-lt v1, v2, :L7
-    goto :L6
-  :L5
-    if-gtz v1, :L7
+    if-lt v1, v2, :L8
+    goto :L7
   :L6
-    goto :L8
+    if-gtz v1, :L8
   :L7
-    const/4 v3, 0
+    goto :L9
   :L8
+    const/4 v3, 0
+  :L9
   .line 484
-    if-eqz v3, :L9
+    if-eqz v3, :L10
+    sget-boolean p1, Lcom/innioasis/ipp/Wheel;->DBG:Z
+    if-eqz p1, :L10
     new-instance p1, Ljava/lang/StringBuilder;
     invoke-direct { p1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "holds end m "
@@ -1524,13 +1529,13 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
-  :L9
+  :L10
   .line 485
     return v3
-  :L10
+  :L11
   .line 478
     return v0
-  :L11
+  :L12
   .line 486
     move-exception p0
   .line 487
