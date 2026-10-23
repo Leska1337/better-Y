@@ -668,10 +668,8 @@ public final class Folders {
     private static void clearTicks(Activity a) {
         try {
             View v = a.findViewById(R.id.lv);
-            if (!(v instanceof android.widget.ListView)) return;
-            Object ad = ((android.widget.ListView) v).getAdapter();
-            if (!(ad instanceof MyBaseAdapter)) return;
-            MyBaseAdapter m = (MyBaseAdapter) ad;
+            MyBaseAdapter m = v == null ? null : Lv.model(v);
+            if (m == null) return;
             List sel = m.getSelectedIndexList();
             if (sel == null || sel.isEmpty()) return;
             sel.clear();

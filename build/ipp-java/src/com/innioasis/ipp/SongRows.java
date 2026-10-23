@@ -30,7 +30,7 @@ import java.util.List;
  * the model — its items, cursor and ticks are what every screen and menu reads — and this draws its
  * rows: a song row by {@link #bindRow}, any other through the model's own {@code getView}. A screen
  * paging several lists (Genres) swaps them with {@link #set}, one instance per model. On a song
- * list the Shuffle row is row 0 of the list itself, so adapter position p is list row p +
+ * or audiobook list the Shuffle row is row 0 of the list itself, so adapter position p is list row p +
  * {@link #heads()}. Every {@code notifyDataSetChanged} of the model reaches the list through
  * {@link Watch}.
  */
@@ -52,7 +52,7 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         this.model = model;
         this.list = new WeakReference(rv);
         boolean songs = model instanceof SongListAdapter;
-        this.spv = songs ? spv : null;
+        this.spv = songs || model instanceof com.innioasis.y1.adapter.AudiobookAdapter ? spv : null;
         this.rowType = songs ? ROW : typeOf(model.getClass());
     }
 
@@ -353,12 +353,41 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
     /** From {@link Bar}: a row's text has a new colour, and what was tinted with it follows. */
     static void tinted(View row) {
         View t = row.findViewById(R.id.tv_song_name);
-        if (!(t instanceof TextView)) return;
+        if (!(t instanceof TextView)) {
+            fileTinted(row);
+            return;
+        }
         int c = ((TextView) t).getCurrentTextColor();
         View m = row.findViewById(R.id.ipp_song_mark);
         if (m instanceof ImageView && m.getVisibility() == View.VISIBLE) Icons.menu((ImageView) m, c);
         View im = row instanceof ShufflePlaylistItemView ? row.findViewById(R.id.img) : null;
         if (im instanceof ImageView) Icons.menu((ImageView) im, c);
+    }
+
+    /**
+     * A Folders row: the ▶ marker, and the icon only when it is ours (a theme's is drawn as is).
+     * An audiobook row: its ▶ marker. A menu row: its icon.
+     */
+    private static void fileTinted(View row) {
+        View t = row.findViewById(R.id.file_name);
+        if (!(t instanceof TextView)) {
+            if (!markTinted(row, R.id.tv_name, R.id.ipp_book_mark)) markTinted(row, R.id.tv_item, R.id.ipp_row_icon);
+            return;
+        }
+        int c = ((TextView) t).getCurrentTextColor();
+        View m = row.findViewById(R.id.ipp_file_play);
+        if (m instanceof ImageView && m.getVisibility() == View.VISIBLE) Icons.menu((ImageView) m, c);
+        View i = row.findViewById(R.id.left_icon);
+        if (i instanceof ImageView && ((ImageView) i).getColorFilter() != null) Icons.menu((ImageView) i, c);
+    }
+
+    /** The image {@code mark} in the colour of the text {@code text}, if the row has both, shown. */
+    private static boolean markTinted(View row, int text, int mark) {
+        View t = row.findViewById(text);
+        View m = row.findViewById(mark);
+        if (!(t instanceof TextView) || !(m instanceof ImageView)) return false;
+        if (m.getVisibility() == View.VISIBLE) Icons.menu((ImageView) m, ((TextView) t).getCurrentTextColor());
+        return true;
     }
 
     /** The row of adapter position {@code pos}, or null: the multi-select blink. */

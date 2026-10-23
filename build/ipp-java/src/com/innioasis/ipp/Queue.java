@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.ListView;
+import android.view.View;
 import android.widget.Toast;
 
 import com.blankj.utilcode.util.ActivityUtils;
@@ -519,11 +519,10 @@ public final class Queue {
         addPicked(picked);
     }
 
-    /** Screens paging several levels through one ListView: its adapter is the active level. */
-    public static void addFromListView(ListView lv) {
-        if (lv == null) return;
-        Object a = lv.getAdapter();
-        if (a instanceof MyBaseAdapter) addFromAdapter((MyBaseAdapter) a);
+    /** A screen's list of either kind: the adapter on it is the active level. */
+    public static void addFromList(View lv) {
+        MyBaseAdapter a = lv == null ? null : Lv.model(lv);
+        if (a != null) addFromAdapter(a);
     }
 
     /** Same, for the RecyclerView-based adapter used by the playlists screen (music only). */

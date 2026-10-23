@@ -122,7 +122,8 @@ public final class Bar extends RecyclerView.ItemDecoration
             return s;
         }
         if (a instanceof com.innioasis.music.GenresActivity
-                || a instanceof com.innioasis.music.AlbumsActivity) {
+                || a instanceof com.innioasis.music.AlbumsActivity
+                || a instanceof com.innioasis.music.ArtistsActivity) {
             // several lists through one RecyclerView (SongRows): genres, artists, albums, songs
             Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
                     a.getResources().getColor(R.color.selected_text_color),
@@ -130,6 +131,38 @@ public final class Bar extends RecyclerView.ItemDecoration
                     new int[] {R.id.genre_name, R.id.info, R.id.tv_item, R.id.album_name, R.id.artist_name,
                             R.id.tv_song_index, R.id.tv_song_name, R.id.tv_artists}, R.id.right_arrow);
             s.arrow2 = R.id.iv_arrow;
+            s.byAdapter = true;
+            return s;
+        }
+        if (a instanceof com.innioasis.y1.activity.AllAudiobooksActivity
+                || a instanceof com.innioasis.y1.activity.BookMarkActivity) {
+            // books and bookmarks share item_player; the Shuffle row of the books is row 0 (SongRows)
+            int list = a instanceof com.innioasis.y1.activity.BookMarkActivity ? R.id.lv_bookmark : R.id.lv_audiobooks;
+            Spec s = new Spec(list, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white),
+                    new int[] {R.id.ipp_book_index, R.id.tv_name, R.id.tv_prograss}, 0);
+            s.byAdapter = true;
+            return s;
+        }
+        if (a instanceof com.innioasis.music.MusicMainActivity
+                || a instanceof com.innioasis.y1.activity.EbookActivity) {
+            Spec s = plain(a, R.id.lv, new int[] {R.id.tv_item});
+            s.byAdapter = true;
+            return s;
+        }
+        if (a instanceof com.innioasis.y1.activity.PlayerActivity) {
+            // the artists or the albums of Audiobooks: Music menu rows (item_main)
+            Spec s = plain(a, R.id.lv_audiobooks, new int[] {R.id.tv_item});
+            s.byAdapter = true;
+            return s;
+        }
+        if (a instanceof com.innioasis.music.FilesActivity) {
+            // a folder of Music or Audiobooks, its own Activity per folder (SongRows)
+            Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
+                    a.getResources().getColor(R.color.selected_text_color),
+                    a.getResources().getColor(R.color.white),
+                    new int[] {R.id.file_name}, R.id.right_arrow);
             s.byAdapter = true;
             return s;
         }
@@ -902,7 +935,14 @@ public final class Bar extends RecyclerView.ItemDecoration
         } else if (a instanceof com.innioasis.music.SongListActivity
                 || a instanceof com.innioasis.music.PlayListActivity
                 || a instanceof com.innioasis.music.GenresActivity
-                || a instanceof com.innioasis.music.AlbumsActivity) {
+                || a instanceof com.innioasis.music.AlbumsActivity
+                || a instanceof com.innioasis.music.ArtistsActivity
+                || a instanceof com.innioasis.music.FilesActivity
+                || a instanceof com.innioasis.y1.activity.AllAudiobooksActivity
+                || a instanceof com.innioasis.y1.activity.PlayerActivity
+                || a instanceof com.innioasis.y1.activity.BookMarkActivity
+                || a instanceof com.innioasis.music.MusicMainActivity
+                || a instanceof com.innioasis.y1.activity.EbookActivity) {
             SongRows.tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);

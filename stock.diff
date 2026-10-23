@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3afcfeb0 100644
+index 01b1f730..cfbb81bd 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..3afcfeb0 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100411
++  versionCode: 10100414
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -142,34 +142,39 @@ index a65785d4..32c89343 100644
 +    <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="#FF3CFFDE" android:gravity="start|center" android:id="@id/ipp_disc_bar" android:paddingLeft="10.0dip" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="16.0dip" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_allaudiobooks.xml b/build/src/res/layout/activity_allaudiobooks.xml
-index 83c18457..38192792 100644
+index 83c18457..7a74e47b 100644
 --- a/build/src/res/layout/activity_allaudiobooks.xml
 +++ b/build/src/res/layout/activity_allaudiobooks.xml
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,10 @@
  <?xml version="1.0" encoding="utf-8"?>
  <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="60.0dip" app:layout_constraintTop_toTopOf="parent" />
 -    <ListView android:id="@id/lv_audiobooks" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/spv" />
-+    <!-- ipp: 49dip (one list row) and NOT pinned — the row rides away with the list, which the
-+         ListView makes room for as paddingTop + clipToPadding="false". See activity_song_list.xml. -->
++    <!-- ipp: 49dip (one list row). The Shuffle row is moved into the list at runtime as its row 0
++         (SongRows) and rides away with it; it stays declared here because the binding looks it
++         up by id. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <ListView android:id="@id/lv_audiobooks" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv_audiobooks" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_artists.xml b/build/src/res/layout/activity_artists.xml
-index a65785d4..f436993a 100644
+index a65785d4..da0408d5 100644
 --- a/build/src/res/layout/activity_artists.xml
 +++ b/build/src/res/layout/activity_artists.xml
-@@ -1,6 +1,8 @@
+@@ -1,6 +1,11 @@
  <?xml version="1.0" encoding="utf-8"?>
  <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="60.0dip" app:layout_constraintTop_toTopOf="parent" />
 -    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/spv" />
-+    <!-- ipp: 49dip (one list row) and NOT pinned — the row rides away with the list, which the
-+         ListView makes room for as paddingTop + clipToPadding="false". See activity_song_list.xml. -->
++    <!-- ipp: 49dip (one list row). The Shuffle row is moved into the list at runtime as row 0 of
++         the song list (SongRows) and rides away with it; it stays declared here because the
++         binding looks it up by id. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <com.innioasis.ipp.FixedList android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: the artist list and an artist's songs on one RecyclerView drawn by SongRows, a Fixed
++         so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_base.xml b/build/src/res/layout/activity_base.xml
 index dd92a115..d05efa91 100644
@@ -241,6 +246,18 @@ index cf5ce73a..4c396309 100644
 +    <View android:id="@id/ipp_book_divider" android:background="#ff2a2a2a" android:layout_width="fill_parent" android:layout_height="1.0dip" />
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
+diff --git a/build/src/res/layout/activity_bookmark.xml b/build/src/res/layout/activity_bookmark.xml
+index 7b6fe12d..204ea19d 100644
+--- a/build/src/res/layout/activity_bookmark.xml
++++ b/build/src/res/layout/activity_bookmark.xml
+@@ -2,5 +2,6 @@
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <ListView android:id="@id/lv_bookmark" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv_bookmark" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_brightness.xml b/build/src/res/layout/activity_brightness.xml
 index 3d953db5..65d23eeb 100644
 --- a/build/src/res/layout/activity_brightness.xml
@@ -312,6 +329,18 @@ index b2b33afe..377513d2 100644
 +        <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/show_date" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/ipp_state_top" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/cl" />
 +    </androidx.constraintlayout.widget.ConstraintLayout>
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_ebook.xml b/build/src/res/layout/activity_ebook.xml
+index c12a14ad..ee1e4254 100644
+--- a/build/src/res/layout/activity_ebook.xml
++++ b/build/src/res/layout/activity_ebook.xml
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" />
++    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_eq.xml b/build/src/res/layout/activity_eq.xml
 index a23161fa..b9604c92 100644
 --- a/build/src/res/layout/activity_eq.xml
@@ -342,15 +371,17 @@ index a23161fa..b9604c92 100644
 +    </FrameLayout>
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_files.xml b/build/src/res/layout/activity_files.xml
-index 9f9d0dc0..e9b1a5ec 100644
+index 9f9d0dc0..ce07c116 100644
 --- a/build/src/res/layout/activity_files.xml
 +++ b/build/src/res/layout/activity_files.xml
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,7 @@
  <?xml version="1.0" encoding="utf-8"?>
  <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintTop_toTopOf="parent" />
-+    <com.innioasis.ipp.FixedList android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: the folder's rows on a RecyclerView drawn by SongRows, a Fixed so a row's request
++         lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
 index a65785d4..d5d673a8 100644
@@ -454,6 +485,18 @@ index 4fcc1b5f..831d3b8a 100644
      </androidx.constraintlayout.widget.ConstraintLayout>
      <LinearLayout android:gravity="center_vertical" android:orientation="horizontal" android:id="@id/ll_volume" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="32.0dip" app:layout_constraintBottom_toBottomOf="parent">
          <ImageView android:layout_width="77.0dip" android:layout_height="16.0dip" android:src="@mipmap/music_volume_off" android:scaleType="center" />
+diff --git a/build/src/res/layout/activity_musicmain.xml b/build/src/res/layout/activity_musicmain.xml
+index 9f9d0dc0..7598b2d9 100644
+--- a/build/src/res/layout/activity_musicmain.xml
++++ b/build/src/res/layout/activity_musicmain.xml
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_play_list.xml b/build/src/res/layout/activity_play_list.xml
 index e5699c0f..d40b04ed 100644
 --- a/build/src/res/layout/activity_play_list.xml
@@ -469,6 +512,18 @@ index e5699c0f..d40b04ed 100644
 +         binding looks it up by id. See activity_song_list.xml. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
 +    <androidx.recyclerview.widget.RecyclerView android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_player.xml b/build/src/res/layout/activity_player.xml
+index ebd85237..a3430b67 100644
+--- a/build/src/res/layout/activity_player.xml
++++ b/build/src/res/layout/activity_player.xml
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <ListView android:id="@id/lv_audiobooks" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="#00000000" android:divider="@null" />
++    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
++    <com.innioasis.ipp.Fixed android:id="@id/lv_audiobooks" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_search.xml b/build/src/res/layout/activity_search.xml
 index 8592ee3d..f96f0905 100644
@@ -20027,7 +20082,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..0c382887 100644
+index 71fe29d0..d95c498a 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20976,7 +21031,7 @@ index 71fe29d0..0c382887 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev411</string>
++    <string name="ipp_version">v1.1.0-dev414</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -42285,6 +42340,39 @@ index 3dbb1fda..4616ea33 100644
 +
 +    throw p1
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1.smali
+index 4d9a707e..b1c21429 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1.smali
+@@ -297,7 +297,7 @@
+ 
+     check-cast v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v8, v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v8, v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v9, p1, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+ 
+@@ -307,15 +307,14 @@
+ 
+     check-cast v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v9, v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v9, v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v9}, Landroid/widget/ListView;->getFirstVisiblePosition()I
+-
+-    move-result v9
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
++    const/4 v9, 0x0
+ 
+     sub-int/2addr v7, v9
+ 
+-    invoke-virtual {v8, v7}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v8, v7}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
+ 
+     move-result-object v7
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
 index 9357eb57..0e166206 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1$select$3.smali
@@ -42342,10 +42430,29 @@ index 37ee4b9f..783becb9 100644
      iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$artistsMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
-index 19a1aba9..7b95f3b7 100644
+index 19a1aba9..678602f4 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$1.smali
-@@ -211,7 +211,13 @@
+@@ -92,7 +92,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {p0}, Lcom/innioasis/music/ArtistsActivity;->access$getAdapter(Lcom/innioasis/music/ArtistsActivity;)Lcom/innioasis/music/adapter/MainAdapter;
+ 
+@@ -102,7 +102,8 @@
+ 
+     move-result v1
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 147
+     invoke-static {p0}, Lcom/innioasis/music/ArtistsActivity;->access$getAdapter(Lcom/innioasis/music/ArtistsActivity;)Lcom/innioasis/music/adapter/MainAdapter;
+@@ -211,7 +212,13 @@
  
      const/4 v8, 0x0
  
@@ -42360,6 +42467,112 @@ index 19a1aba9..7b95f3b7 100644
  
      move-result-object v1
  
+@@ -264,6 +271,11 @@
+ 
+     move-result-object v0
+ 
++    # ipp: the first ticked row, for SongRows.kept
++
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
++
+     invoke-virtual {v0}, Lcom/innioasis/music/adapter/MainAdapter;->removeItems()V
+ 
+     .line 143
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1.smali
+index 10d9e0e7..c665de65 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1.smali
+@@ -186,7 +186,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+ 
+@@ -198,7 +198,8 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 165
+     iget-object p1, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+@@ -286,7 +287,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+ 
+@@ -296,7 +297,8 @@
+ 
+     check-cast v0, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 172
+     iget-object p1, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+@@ -307,7 +309,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+ 
+@@ -319,7 +321,8 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 173
+     iget-object p1, p0, Lcom/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2.smali
+index 1a762808..2aaa5374 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$isDeleteCallback$1$confirm$2.smali
+@@ -276,6 +276,11 @@
+ 
+     move-result-object p1
+ 
++    # ipp: the first ticked row, for SongRows.kept
++
++    invoke-static {p1}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
++
+     invoke-virtual {p1}, Lcom/innioasis/music/adapter/SongListAdapter;->removeItems()V
+ 
+     .line 161
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1$1.smali
+index 56cb049a..bfbc0624 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1$1.smali
+@@ -237,9 +237,10 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 82
+     iget-object p1, p0, Lcom/innioasis/music/ArtistsActivity$showArtistsList$1$1;->$artists:Ljava/util/List;
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali
 index 74372071..91a5e17b 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$showArtistsList$1.smali
@@ -43229,6 +43442,39 @@ index a5ddd058..ae5bb54f 100644
 +
 +    throw p1
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1.smali
+index 693db8f7..17a7aa88 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1.smali
+@@ -319,7 +319,7 @@
+ 
+     check-cast v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v8, v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v8, v8, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v9, p1, Lcom/innioasis/music/ArtistsActivity$songMenuDialogCallback$1$select$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
+ 
+@@ -329,15 +329,14 @@
+ 
+     check-cast v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v9, v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v9, v9, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v9}, Landroid/widget/ListView;->getFirstVisiblePosition()I
+-
+-    move-result v9
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
++    const/4 v9, 0x0
+ 
+     sub-int/2addr v7, v9
+ 
+-    invoke-virtual {v8, v7}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v8, v7}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
+ 
+     move-result-object v7
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
 index 9d6806a3..fedb0513 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$songMenuDialogCallback$1.smali
@@ -43268,11 +43514,100 @@ index 9d6806a3..fedb0513 100644
      .line 409
      iget-object v3, v0, Lcom/innioasis/music/ArtistsActivity$songMenuDialogCallback$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
  
+diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$switchSongSortType$1$1.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$switchSongSortType$1$1.smali
+index 939ce527..05866773 100644
+--- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$switchSongSortType$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity$switchSongSortType$1$1.smali
+@@ -225,9 +225,10 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 633
+     iget-object p1, p0, Lcom/innioasis/music/ArtistsActivity$switchSongSortType$1$1;->this$0:Lcom/innioasis/music/ArtistsActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
-index dfdea4b6..bbb293d8 100644
+index dfdea4b6..1f1ae64e 100644
 --- a/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/ArtistsActivity.smali
-@@ -759,7 +759,7 @@
+@@ -608,7 +608,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/music/ArtistsActivity;->getSongAdapter()Lcom/innioasis/music/adapter/SongListAdapter;
+ 
+@@ -616,7 +616,8 @@
+ 
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 584
+     invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -625,11 +626,12 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const/4 v1, 0x0
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 586
+     move-object v0, p0
+@@ -696,7 +698,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -704,7 +706,8 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 649
+     invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -734,7 +737,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -742,7 +745,8 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 643
+     invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -759,7 +763,7 @@
  .end method
  
  .method public confirm()V
@@ -43281,16 +43616,42 @@ index dfdea4b6..bbb293d8 100644
  
      .line 91
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
-@@ -877,7 +877,7 @@
+@@ -779,9 +783,10 @@
  
-     invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v0}, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->adapter(Landroidx/recyclerview/widget/RecyclerView;)Landroid/widget/ListAdapter;
+ 
+     move-result-object v0
+ 
+@@ -867,7 +872,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -875,9 +880,10 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
  
 -    goto :goto_1
 +    goto/16 :goto_1
  
      .line 103
      :cond_2
-@@ -885,7 +885,7 @@
+@@ -885,7 +891,7 @@
  
      move-result v0
  
@@ -43299,7 +43660,7 @@ index dfdea4b6..bbb293d8 100644
  
      .line 105
      invoke-direct {p0}, Lcom/innioasis/music/ArtistsActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
-@@ -925,6 +925,31 @@
+@@ -925,6 +931,31 @@
      .line 108
      iget-object v1, p0, Lcom/innioasis/music/ArtistsActivity;->artist:Ljava/lang/String;
  
@@ -43331,7 +43692,7 @@ index dfdea4b6..bbb293d8 100644
      invoke-direct {p0, v1, v0}, Lcom/innioasis/music/ArtistsActivity;->switchSongSortType(Ljava/lang/String;Lcom/innioasis/y1/database/Y1Repository$SongSortType;)V
  
      .line 109
-@@ -941,7 +966,7 @@
+@@ -941,7 +972,7 @@
      goto :goto_1
  
      .line 113
@@ -43340,7 +43701,7 @@ index dfdea4b6..bbb293d8 100644
      new-instance v0, Landroid/content/Intent;
  
      invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getContext()Landroid/content/Context;
-@@ -959,7 +984,7 @@
+@@ -959,7 +990,7 @@
  
      move-result-object v1
  
@@ -43349,7 +43710,7 @@ index dfdea4b6..bbb293d8 100644
  
      .line 115
      invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
-@@ -990,7 +1015,7 @@
+@@ -990,7 +1021,7 @@
      invoke-virtual {v1, v2, v3}, Lcom/innioasis/y1/service/PlayerService;->setMusicPlaylist(Ljava/util/List;I)V
  
      .line 117
@@ -43358,7 +43719,47 @@ index dfdea4b6..bbb293d8 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/music/ArtistsActivity;->startActivity(Landroid/content/Intent;)V
  
      :goto_1
-@@ -1198,6 +1223,11 @@
+@@ -1036,7 +1067,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {p1, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+@@ -1062,7 +1093,8 @@
+ 
+     aput-object v3, v1, v2
+ 
+-    invoke-virtual {p0, p1, v1}, Lcom/innioasis/music/ArtistsActivity;->cancelMultiSelect(Landroid/widget/ListView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {p1, v1}, Lcom/innioasis/ipp/SongRows;->cancel(Landroidx/recyclerview/widget/RecyclerView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
+ 
+     goto :goto_0
+ 
+@@ -1102,7 +1134,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v4, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v4, p1, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {v4, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+@@ -1120,7 +1152,10 @@
+ 
+     const/4 v8, 0x0
+ 
+-    invoke-static/range {v3 .. v8}, Lcom/innioasis/music/util/Other;->gotoAdapter$default(Lcom/innioasis/music/util/Other;Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;IILjava/lang/Object;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows; -1 = the cursor it has
++    const/4 v6, -0x1
++
++    invoke-static {v4, v5, v6}, Lcom/innioasis/ipp/SongRows;->go(Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/music/adapter/MyBaseAdapter;I)V
+ 
+     .line 228
+     invoke-direct {p0}, Lcom/innioasis/music/ArtistsActivity;->getSongAdapter()Lcom/innioasis/music/adapter/SongListAdapter;
+@@ -1198,6 +1233,11 @@
  
      invoke-static {v0, v1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -43370,7 +43771,65 @@ index dfdea4b6..bbb293d8 100644
      invoke-virtual {p0, v0}, Lcom/innioasis/music/ArtistsActivity;->setStateBarLeftText(Ljava/lang/String;)V
  
      .line 57
-@@ -1571,6 +1601,11 @@
+@@ -1207,7 +1247,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/music/ArtistsActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
+ 
+@@ -1215,7 +1255,8 @@
+ 
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 58
+     invoke-virtual {p0}, Lcom/innioasis/music/ArtistsActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -1263,9 +1304,10 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v0}, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->adapter(Landroidx/recyclerview/widget/RecyclerView;)Landroid/widget/ListAdapter;
+ 
+     move-result-object v0
+ 
+@@ -1290,9 +1332,10 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v0}, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->adapter(Landroidx/recyclerview/widget/RecyclerView;)Landroid/widget/ListAdapter;
+ 
+     move-result-object v0
+ 
+@@ -1349,9 +1392,10 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {v0}, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
++    # ipp: the lists are on a RecyclerView -- see SongRows
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->adapter(Landroidx/recyclerview/widget/RecyclerView;)Landroid/widget/ListAdapter;
+ 
+     move-result-object v0
+ 
+@@ -1571,6 +1615,11 @@
  
      move-result-object p1
  
@@ -43383,7 +43842,7 @@ index dfdea4b6..bbb293d8 100644
  
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
-index 717ead6e..2102d906 100644
+index 717ead6e..d9164bb5 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$handler$1.smali
 @@ -1,229 +1,231 @@
@@ -43723,11 +44182,11 @@ index 717ead6e..2102d906 100644
 +
 +    check-cast p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
 +
-+    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-virtual {p1}, Landroid/widget/ListView;->getFirstVisiblePosition()I
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
 +
-+    move-result p1
++    const/4 p1, 0x0
 +
 +    .line 61
 +    iget-object v3, p0, Lcom/innioasis/music/FilesActivity$handler$1;->this$0:Lcom/innioasis/music/FilesActivity;
@@ -43738,7 +44197,7 @@ index 717ead6e..2102d906 100644
 +
 +    check-cast v3, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
 +
-+    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    iget-object v4, p0, Lcom/innioasis/music/FilesActivity$handler$1;->this$0:Lcom/innioasis/music/FilesActivity;
 +
@@ -43762,7 +44221,7 @@ index 717ead6e..2102d906 100644
 +
 +    sub-int/2addr v0, p1
 +
-+    invoke-virtual {v3, v0}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v3, v0}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
 +
 +    move-result-object p1
 +
@@ -43788,11 +44247,11 @@ index 717ead6e..2102d906 100644
 +
 +    check-cast p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
 +
-+    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-virtual {p1}, Landroid/widget/ListView;->getFirstVisiblePosition()I
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
 +
-+    move-result p1
++    const/4 p1, 0x0
 +
 +    .line 56
 +    iget-object v2, p0, Lcom/innioasis/music/FilesActivity$handler$1;->this$0:Lcom/innioasis/music/FilesActivity;
@@ -43803,7 +44262,7 @@ index 717ead6e..2102d906 100644
 +
 +    check-cast v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
 +
-+    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    iget-object v3, p0, Lcom/innioasis/music/FilesActivity$handler$1;->this$0:Lcom/innioasis/music/FilesActivity;
 +
@@ -43827,7 +44286,7 @@ index 717ead6e..2102d906 100644
 +
 +    sub-int/2addr v0, p1
 +
-+    invoke-virtual {v2, v0}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v2, v0}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
 +
 +    move-result-object p1
 +
@@ -43847,14 +44306,60 @@ index 717ead6e..2102d906 100644
 +    :goto_2
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2.smali
+index 84de12bc..19073613 100644
+--- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2.smali
++++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2.smali
+@@ -186,7 +186,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2;->this$0:Lcom/innioasis/music/FilesActivity;
+ 
+@@ -209,7 +209,9 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 237
+     iget-object p1, p0, Lcom/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1$2;->this$0:Lcom/innioasis/music/FilesActivity;
+diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1.smali
+index 76779e19..74078d02 100644
+--- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1.smali
++++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$isDeleteCallback$1$confirm$1.smali
+@@ -316,6 +316,9 @@
+     move-object p1, v3
+ 
+     :cond_5
++    # ipp: the first ticked row, for SongRows.kept
++    invoke-static {p1}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
+     invoke-virtual {p1}, Lcom/innioasis/music/adapter/FileListAdapter;->removeItems()V
+ 
+     .line 233
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-index 67d99812..fdb9f225 100644
+index 67d99812..5185bf46 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1$6.smali
-@@ -283,6 +283,19 @@
+@@ -279,9 +279,24 @@
  
-     invoke-virtual {p1, v2}, Landroid/widget/ListView;->setSelection(I)V
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
  
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    invoke-virtual {p1, v2}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v2}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
++
 +    # ipp: the cursor starts on the first real row, not on the "Show all songs"/"Shuffle" row
 +    # above it -- that row is a button, and a folder is opened to look at its contents. The list
 +    # itself stays at the top (stock's setSelection(0) above), so the button is on screen.
@@ -43867,10 +44372,9 @@ index 67d99812..fdb9f225 100644
 +    invoke-static {p1}, Lcom/innioasis/ipp/Folders;->startRow(Ljava/lang/Object;)V
 +
 +    invoke-static {}, Lcom/innioasis/ipp/Lab;->f5()V
-+
+ 
      .line 118
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
- 
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
 index d8dc6b04..d2e671f1 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$refresh$1.smali
@@ -43996,7 +44500,7 @@ index d8dc6b04..d2e671f1 100644
      invoke-static {}, Lkotlinx/coroutines/Dispatchers;->getMain()Lkotlinx/coroutines/MainCoroutineDispatcher;
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
-index 64fce4ec..a052fd5f 100644
+index 64fce4ec..d2947ad7 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity$subMenuSelectCallback$1.smali
 @@ -68,6 +68,75 @@
@@ -44031,9 +44535,9 @@ index 64fce4ec..a052fd5f 100644
 +
 +    check-cast v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
 +
-+    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-static {v1}, Lcom/innioasis/ipp/Queue;->addFromListView(Landroid/widget/ListView;)V
++    invoke-static {v1}, Lcom/innioasis/ipp/Queue;->addFromList(Landroid/view/View;)V
 +
 +    return v0
 +
@@ -44076,7 +44580,7 @@ index 64fce4ec..a052fd5f 100644
  
      if-eq p1, v0, :cond_6
 diff --git a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
-index d3742cc2..e5c90b12 100644
+index d3742cc2..1f038028 100644
 --- a/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/FilesActivity.smali
 @@ -293,7 +293,9 @@
@@ -44090,35 +44594,79 @@ index d3742cc2..e5c90b12 100644
      .locals 8
  
      .line 70
-@@ -380,6 +382,13 @@
+@@ -370,7 +372,7 @@
  
-     invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
  
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -378,7 +380,16 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
++
 +    # ipp: in multi-select the cursor does not stop on a marker row at all
 +    iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
 +
 +    iget-boolean v1, p0, Lcom/innioasis/music/FilesActivity;->isMultiSelect:Z
 +
 +    invoke-static {v0, v1}, Lcom/innioasis/ipp/Folders;->skipMark(Ljava/lang/Object;Z)V
-+
+ 
      return-void
  .end method
+@@ -395,7 +406,7 @@
  
-@@ -405,6 +414,13 @@
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
  
-     invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
  
+     const-string v2, "vb.lv"
+ 
+@@ -403,7 +414,16 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
++
 +    # ipp: in multi-select the cursor does not stop on a marker row at all
 +    iget-object v0, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
 +
 +    iget-boolean v1, p0, Lcom/innioasis/music/FilesActivity;->isMultiSelect:Z
 +
 +    invoke-static {v0, v1}, Lcom/innioasis/ipp/Folders;->skipMark(Ljava/lang/Object;Z)V
-+
+ 
      return-void
  .end method
+@@ -472,13 +492,15 @@
  
-@@ -540,6 +556,17 @@
+     check-cast v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
+ 
+-    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v3, "vb.lv"
+ 
+     invoke-static {v2, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {v0, v2, v1}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v2, v1}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_2
+ 
+@@ -540,6 +562,17 @@
  
      check-cast v0, Ljava/io/File;
  
@@ -44136,7 +44684,27 @@ index d3742cc2..e5c90b12 100644
      .line 271
      invoke-virtual {v0}, Ljava/io/File;->isFile()Z
  
-@@ -731,7 +758,9 @@
+@@ -642,7 +675,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -665,7 +698,9 @@
+ 
+     aput-object v2, v0, v1
+ 
+-    invoke-virtual {p0, p1, v0}, Lcom/innioasis/music/FilesActivity;->cancelMultiSelect(Landroid/widget/ListView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->cancel(Landroidx/recyclerview/widget/RecyclerView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
+ 
+     goto :goto_0
+ 
+@@ -731,7 +766,9 @@
  
      if-nez v0, :cond_0
  
@@ -44147,7 +44715,27 @@ index d3742cc2..e5c90b12 100644
  
      :cond_0
      iput-object v0, p0, Lcom/innioasis/music/FilesActivity;->nowPath:Ljava/lang/String;
-@@ -953,6 +982,40 @@
+@@ -834,7 +871,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v1, p0, Lcom/innioasis/music/FilesActivity;->adapter:Lcom/innioasis/music/adapter/FileListAdapter;
+ 
+@@ -849,7 +886,9 @@
+     :cond_6
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 133
+     sget-object v0, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
+@@ -953,6 +992,40 @@
      :goto_2
      move-object v6, v0
  
@@ -44188,7 +44776,7 @@ index d3742cc2..e5c90b12 100644
      .line 139
      sget-object v0, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
  
-@@ -1027,7 +1090,12 @@
+@@ -1027,7 +1100,12 @@
      move-object v3, v0
  
      :goto_3
@@ -44202,7 +44790,7 @@ index d3742cc2..e5c90b12 100644
  
      return-void
  .end method
-@@ -1035,6 +1103,19 @@
+@@ -1035,6 +1113,19 @@
  .method public longConfirm()V
      .locals 5
  
@@ -50851,10 +51439,48 @@ index ff3e0fc0..600c530c 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f6278..ca7f2aa7 100644
+index 132f6278..6bf49654 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-@@ -123,7 +123,7 @@
+@@ -84,7 +84,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -92,7 +92,9 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -109,7 +111,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -117,13 +119,15 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
  .end method
  
  .method public confirm()V
@@ -50863,7 +51489,7 @@ index 132f6278..ca7f2aa7 100644
  
      .line 51
      invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
-@@ -134,9 +134,20 @@
+@@ -134,9 +138,20 @@
  
      move-result v0
  
@@ -50885,7 +51511,7 @@ index 132f6278..ca7f2aa7 100644
  
      .line 80
      :pswitch_0
-@@ -153,7 +164,7 @@
+@@ -153,7 +168,7 @@
      .line 81
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -50894,7 +51520,7 @@ index 132f6278..ca7f2aa7 100644
  
      .line 74
      :pswitch_1
-@@ -169,7 +180,12 @@
+@@ -169,7 +184,12 @@
  
      const-string v1, "now_path"
  
@@ -50908,7 +51534,7 @@ index 132f6278..ca7f2aa7 100644
  
      .line 75
      invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-@@ -262,9 +278,12 @@
+@@ -262,9 +282,12 @@
      .line 55
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -50921,7 +51547,7 @@ index 132f6278..ca7f2aa7 100644
      :pswitch_data_0
      .packed-switch 0x0
          :pswitch_6
-@@ -489,6 +508,12 @@
+@@ -489,6 +512,12 @@
  
      move-result-object v1
  
@@ -50934,6 +51560,26 @@ index 132f6278..ca7f2aa7 100644
      invoke-virtual {v0, v1}, Lcom/innioasis/music/objects/Constant;->setMainList(Ljava/util/List;)V
  
      .line 30
+@@ -566,7 +595,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
+ 
+@@ -574,7 +603,9 @@
+ 
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
 index 943028f8..827303d2 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicPlayerActivity.smali
@@ -57356,7 +58002,7 @@ index 2b24d8d3..3a4ea9a2 100644
  .end method
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
-index 7ba7ed05..0b2778c5 100644
+index 7ba7ed05..04a857b4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4.smali
 @@ -196,6 +196,16 @@
@@ -57376,8 +58022,28 @@ index 7ba7ed05..0b2778c5 100644
      .line 60
      iget-object p1, p0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4;->this$0:Lcom/innioasis/y1/activity/AllAudiobooksActivity;
  
+@@ -249,7 +259,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$initView$1$4;->this$0:Lcom/innioasis/y1/activity/AllAudiobooksActivity;
+ 
+@@ -259,7 +269,9 @@
+ 
+     check-cast v0, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 65
+     sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
-index 2ae02d9c..da3a63e0 100644
+index 2ae02d9c..aba78fc9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1.smali
 @@ -1,293 +1,295 @@
@@ -57902,7 +58568,7 @@ index 2ae02d9c..da3a63e0 100644
 +
 +    check-cast v3, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
 +
-+    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    iget-object v4, p0, Lcom/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$1;->this$0:Lcom/innioasis/y1/activity/AllAudiobooksActivity;
 +
@@ -57912,15 +58578,15 @@ index 2ae02d9c..da3a63e0 100644
 +
 +    check-cast v4, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
 +
-+    iget-object v4, v4, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v4, v4, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-virtual {v4}, Landroid/widget/ListView;->getFirstVisiblePosition()I
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
 +
-+    move-result v4
++    const/4 v4, 0x0
 +
 +    sub-int/2addr v2, v4
 +
-+    invoke-virtual {v3, v2}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v3, v2}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
 +
 +    move-result-object v2
 +
@@ -57969,6 +58635,42 @@ index 2ae02d9c..da3a63e0 100644
 +    :cond_2
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$2$2$confirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$2$2$confirm$1.smali
+index f1e38a5f..b39ae79e 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$2$2$confirm$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1$select$2$2$confirm$1.smali
+@@ -88,7 +88,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {p0}, Lcom/innioasis/y1/activity/AllAudiobooksActivity;->access$getAudioAdapter$p(Lcom/innioasis/y1/activity/AllAudiobooksActivity;)Lcom/innioasis/y1/adapter/AudiobookAdapter;
+ 
+@@ -100,7 +100,9 @@
+ 
+     move-result v1
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 163
+     invoke-static {p0}, Lcom/innioasis/y1/activity/AllAudiobooksActivity;->access$getAudioAdapter$p(Lcom/innioasis/y1/activity/AllAudiobooksActivity;)Lcom/innioasis/y1/adapter/AudiobookAdapter;
+@@ -282,6 +284,11 @@
+ 
+     invoke-static {v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
+ 
++    # ipp: the first ticked row, for SongRows.kept
++
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
++
+     invoke-virtual {v0}, Lcom/innioasis/y1/adapter/AudiobookAdapter;->removeItems()V
+ 
+     .line 159
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
 index c4ec82ef..da1a96e8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity$longConfirm$1.smali
@@ -58024,10 +58726,70 @@ index c4ec82ef..da1a96e8 100644
  
      .line 141
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
-index f8a19b28..9d3a3587 100644
+index f8a19b28..235ec88c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/AllAudiobooksActivity.smali
-@@ -732,6 +732,21 @@
+@@ -148,7 +148,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvAudiobooks"
+ 
+@@ -156,7 +156,9 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 80
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/AllAudiobooksActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -186,7 +188,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvAudiobooks"
+ 
+@@ -194,7 +196,9 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 75
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/AllAudiobooksActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+@@ -250,7 +254,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvAudiobooks"
+ 
+@@ -258,7 +262,9 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto/16 :goto_2
+ 
+@@ -732,6 +738,21 @@
  
      move-result-object v6
  
@@ -58564,8 +59326,48 @@ index e9751b96..da6175f9 100644
  
      return-void
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1.smali
+index 2050f8c9..3a968d97 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1.smali
+@@ -179,7 +179,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1;->this$0:Lcom/innioasis/y1/activity/BookMarkActivity;
+ 
+@@ -191,7 +191,9 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 116
+     iget-object p1, p0, Lcom/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1$1;->this$0:Lcom/innioasis/y1/activity/BookMarkActivity;
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1.smali
+index 776c4308..f24bec97 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$isDeleteCallback$1$confirm$1.smali
+@@ -290,6 +290,11 @@
+ 
+     move-result-object p1
+ 
++    # ipp: the first ticked row, for SongRows.kept
++
++    invoke-static {p1}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
++
+     invoke-virtual {p1}, Lcom/innioasis/y1/adapter/BookmarkAdapter;->removeItems()V
+ 
+     .line 113
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
-index 7352ca07..af695f2d 100644
+index 7352ca07..bc182787 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1.smali
 @@ -1,276 +1,278 @@
@@ -59056,7 +59858,7 @@ index 7352ca07..af695f2d 100644
 +
 +    check-cast v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
 +
-+    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    iget-object v3, p0, Lcom/innioasis/y1/activity/BookMarkActivity$submenuDialogCallBack$1$select$1;->this$0:Lcom/innioasis/y1/activity/BookMarkActivity;
 +
@@ -59066,15 +59868,15 @@ index 7352ca07..af695f2d 100644
 +
 +    check-cast v3, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
 +
-+    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-virtual {v3}, Landroid/widget/ListView;->getFirstVisiblePosition()I
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
 +
-+    move-result v3
++    const/4 v3, 0x0
 +
 +    sub-int/2addr v1, v3
 +
-+    invoke-virtual {v2, v1}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v2, v1}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
 +
 +    move-result-object v1
 +
@@ -59123,6 +59925,88 @@ index 7352ca07..af695f2d 100644
 +    :cond_1
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity.smali
+index 00d3c28d..94b47452 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/BookMarkActivity.smali
+@@ -203,7 +203,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvBookmark"
+ 
+@@ -211,7 +211,9 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -228,7 +230,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvBookmark"
+ 
+@@ -236,7 +238,9 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -283,13 +287,15 @@
+ 
+     check-cast v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
+ 
+-    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v3, "vb.lvBookmark"
+ 
+     invoke-static {v2, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {v0, v2, v1}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v2, v1}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 139
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/BookMarkActivity;->getAdapter()Lcom/innioasis/y1/adapter/BookmarkAdapter;
+@@ -707,7 +713,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/BookMarkActivity;->getAdapter()Lcom/innioasis/y1/adapter/BookmarkAdapter;
+ 
+@@ -715,7 +721,9 @@
+ 
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 33
+     sget-object v0, Lcom/innioasis/music/objects/Constant;->INSTANCE:Lcom/innioasis/music/objects/Constant;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali
 index 08850ebc..4971de11 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/BrightnessActivity.smali
@@ -59179,10 +60063,50 @@ index a97af096..7665521d 100644
      invoke-static {p1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
-index c90de289..534c67e1 100644
+index c90de289..2ed56d01 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
-@@ -388,7 +388,11 @@
+@@ -102,7 +102,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -110,7 +110,9 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -127,7 +129,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lv"
+ 
+@@ -135,7 +137,9 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -388,7 +392,11 @@
  
      check-cast v1, Landroid/content/Context;
  
@@ -59195,7 +60119,7 @@ index c90de289..534c67e1 100644
  
      new-array v2, v2, [Ljava/lang/String;
  
-@@ -467,21 +471,6 @@
+@@ -467,21 +475,6 @@
  
      aput-object v3, v2, v4
  
@@ -59217,6 +60141,26 @@ index c90de289..534c67e1 100644
      .line 28
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
+@@ -498,7 +491,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v1, p0, Lcom/innioasis/y1/activity/EbookActivity;->adapter:Lcom/innioasis/music/adapter/MainAdapter;
+ 
+@@ -513,7 +506,9 @@
+     :cond_0
+     check-cast v1, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali
 index f7859218..f196ee68 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EqActivity$listAdapter$2$1.smali
@@ -63746,7 +64690,7 @@ index 0688aa89..4414430f 100644
      iget-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->nowPath:Ljava/lang/String;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
-index e34359a1..c96b4ab1 100644
+index e34359a1..11d4e4ff 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 @@ -196,6 +196,18 @@
@@ -63768,8 +64712,28 @@ index e34359a1..c96b4ab1 100644
      .line 55
      iget-object p1, p0, Lcom/innioasis/y1/activity/PlayerActivity$initView$1$3;->this$0:Lcom/innioasis/y1/activity/PlayerActivity;
  
+@@ -261,7 +273,7 @@
+ 
+     check-cast p1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     iget-object v0, p0, Lcom/innioasis/y1/activity/PlayerActivity$initView$1$3;->this$0:Lcom/innioasis/y1/activity/PlayerActivity;
+ 
+@@ -271,7 +283,9 @@
+ 
+     check-cast v0, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 61
+     sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
-index c952c2fd..940bd910 100644
+index c952c2fd..e5b6a64d 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1.smali
 @@ -1,293 +1,295 @@
@@ -64294,7 +65258,7 @@ index c952c2fd..940bd910 100644
 +
 +    check-cast v3, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
 +
-+    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v3, v3, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    iget-object v4, p0, Lcom/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$1;->this$0:Lcom/innioasis/y1/activity/PlayerActivity;
 +
@@ -64304,15 +65268,15 @@ index c952c2fd..940bd910 100644
 +
 +    check-cast v4, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
 +
-+    iget-object v4, v4, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v4, v4, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
 +
-+    invoke-virtual {v4}, Landroid/widget/ListView;->getFirstVisiblePosition()I
++    # ipp: the list is a RecyclerView (SongRows), asked by the adapter's own position
 +
-+    move-result v4
++    const/4 v4, 0x0
 +
 +    sub-int/2addr v2, v4
 +
-+    invoke-virtual {v3, v2}, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
++    invoke-static {v3, v2}, Lcom/innioasis/ipp/SongRows;->row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
 +
 +    move-result-object v2
 +
@@ -64361,6 +65325,42 @@ index c952c2fd..940bd910 100644
 +    :cond_2
 +    return-void
 +.end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$2$2$confirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$2$2$confirm$1.smali
+index 6e149173..7e8471bb 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$2$2$confirm$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1$select$2$2$confirm$1.smali
+@@ -92,7 +92,7 @@
+ 
+     check-cast v0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {p0}, Lcom/innioasis/y1/activity/PlayerActivity;->access$getAdapter$p(Lcom/innioasis/y1/activity/PlayerActivity;)Lcom/innioasis/music/adapter/MainAdapter;
+ 
+@@ -104,7 +104,9 @@
+ 
+     move-result v1
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: after a delete, the cursor and the list stay -- see SongRows.kept
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->kept(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 183
+     invoke-static {p0}, Lcom/innioasis/y1/activity/PlayerActivity;->access$getAdapter$p(Lcom/innioasis/y1/activity/PlayerActivity;)Lcom/innioasis/music/adapter/MainAdapter;
+@@ -422,6 +424,11 @@
+ 
+     invoke-static {v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
+ 
++    # ipp: the first ticked row, for SongRows.kept
++
++    invoke-static {v0}, Lcom/innioasis/ipp/SongRows;->deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
++
++
+     invoke-virtual {v0}, Lcom/innioasis/music/adapter/MainAdapter;->removeItems()V
+ 
+     .line 179
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali
 index a2a27d57..b307be03 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$longConfirm$1.smali
@@ -64391,10 +65391,89 @@ index a2a27d57..b307be03 100644
  
      if-eqz p1, :cond_1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
-index 5afe8455..2abe448a 100644
+index 5afe8455..e3ecf1a0 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity.smali
-@@ -642,6 +642,11 @@
+@@ -71,7 +71,7 @@
+ 
+ .field private isMultiSelect:Z
+ 
+-.field private lv_audiobooks:Landroid/widget/ListView;
++.field private lv_audiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private title:Ljava/lang/String;
+ 
+@@ -138,7 +138,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvAudiobooks"
+ 
+@@ -146,7 +146,9 @@
+ 
+     const/4 v2, -0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -163,7 +165,7 @@
+ 
+     check-cast v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v1, v1, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v2, "vb.lvAudiobooks"
+ 
+@@ -171,7 +173,9 @@
+ 
+     const/4 v2, 0x1
+ 
+-    invoke-virtual {v0, v1, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     return-void
+ .end method
+@@ -237,13 +241,15 @@
+ 
+     check-cast v2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object v2, v2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     const-string v3, "vb.lvAudiobooks"
+ 
+     invoke-static {v2, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {v0, v2, v1}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v2, v1}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_0
+ 
+@@ -469,9 +475,9 @@
+ 
+     move-result-object v0
+ 
+-    check-cast v0, Landroid/widget/ListView;
++    check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
+ 
+-    iput-object v0, p0, Lcom/innioasis/y1/activity/PlayerActivity;->lv_audiobooks:Landroid/widget/ListView;
++    iput-object v0, p0, Lcom/innioasis/y1/activity/PlayerActivity;->lv_audiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 39
+     sget-object v1, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
+@@ -642,6 +648,11 @@
  
      move-result-object v6
  
@@ -64406,6 +65485,24 @@ index 5afe8455..2abe448a 100644
      .line 116
      new-instance v0, Lcom/innioasis/y1/activity/PlayerActivity$longConfirm$1;
  
+@@ -710,13 +721,15 @@
+ 
+     check-cast p2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;
+ 
+-    iget-object p2, p2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iget-object p2, p2, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-virtual {p1}, Lcom/innioasis/music/adapter/MainAdapter;->getPosition()I
+ 
+     move-result p1
+ 
+-    invoke-virtual {p2, p1}, Landroid/widget/ListView;->setSelection(I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p2, p1}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     :cond_0
+     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali
 index 601c490a..aaf19ad5 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/SetLanguageActivity.smali
@@ -70529,6 +71626,247 @@ index 00a261b3..720bf954 100644
  
      return-object v0
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityAllaudiobooksBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityAllaudiobooksBinding.smali
+index d706e51b..da997baa 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityAllaudiobooksBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityAllaudiobooksBinding.smali
+@@ -7,7 +7,7 @@
+ 
+ 
+ # instance fields
+-.field public final lvAudiobooks:Landroid/widget/ListView;
++.field public final lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+@@ -15,7 +15,7 @@
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -37,7 +37,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 32
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 33
+     iput-object p3, p0, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;->spv:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
+@@ -63,7 +63,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -83,7 +83,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
++    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityAllaudiobooksBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
+ 
+     return-object v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityArtistsBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityArtistsBinding.smali
+index e27a44f5..d7381430 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityArtistsBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityArtistsBinding.smali
+@@ -7,7 +7,7 @@
+ 
+ 
+ # instance fields
+-.field public final lv:Landroid/widget/ListView;
++.field public final lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+@@ -15,7 +15,7 @@
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -37,7 +37,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 32
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 33
+     iput-object p3, p0, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;->spv:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
+@@ -63,7 +63,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -83,7 +83,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
++    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityArtistsBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
+ 
+     return-object v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityBookmarkBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityBookmarkBinding.smali
+index a3009ce3..369e14e3 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityBookmarkBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityBookmarkBinding.smali
+@@ -7,7 +7,7 @@
+ 
+ 
+ # instance fields
+-.field public final lvBookmark:Landroid/widget/ListView;
++.field public final lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field public final none:Landroid/widget/TextView;
+ 
+@@ -15,7 +15,7 @@
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Landroid/widget/TextView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/TextView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -37,7 +37,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 32
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->lvBookmark:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 33
+     iput-object p3, p0, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;->none:Landroid/widget/TextView;
+@@ -63,7 +63,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -83,7 +83,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Landroid/widget/TextView;)V
++    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityBookmarkBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/TextView;)V
+ 
+     return-object v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityEbookBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityEbookBinding.smali
+index 2d1d90b4..15f45c0f 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityEbookBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityEbookBinding.smali
+@@ -7,13 +7,13 @@
+ 
+ 
+ # instance fields
+-.field public final lv:Landroid/widget/ListView;
++.field public final lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -33,7 +33,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 27
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-void
+ .end method
+@@ -56,7 +56,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -65,7 +65,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityEbookBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityEbookBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+ 
+     return-object v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityFilesBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityFilesBinding.smali
+index 98cc065d..ddf99f61 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityFilesBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityFilesBinding.smali
+@@ -7,13 +7,13 @@
+ 
+ 
+ # instance fields
+-.field public final lv:Landroid/widget/ListView;
++.field public final lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -33,7 +33,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 27
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityFilesBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-void
+ .end method
+@@ -56,7 +56,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -65,7 +65,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityFilesBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityFilesBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+ 
+     return-object v0
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityGenresBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityGenresBinding.smali
 index 3f5ca257..31008df7 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityGenresBinding.smali
@@ -70578,6 +71916,53 @@ index 3f5ca257..31008df7 100644
  
      return-object v0
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityMusicmainBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityMusicmainBinding.smali
+index e40c6da3..537e157e 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityMusicmainBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityMusicmainBinding.smali
+@@ -7,13 +7,13 @@
+ 
+ 
+ # instance fields
+-.field public final lv:Landroid/widget/ListView;
++.field public final lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -33,7 +33,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 27
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;->lv:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-void
+ .end method
+@@ -56,7 +56,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -65,7 +65,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+ 
+     return-object v0
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayListBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayListBinding.smali
 index aab87dde..6f2fc8a7 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayListBinding.smali
@@ -70624,6 +72009,53 @@ index aab87dde..6f2fc8a7 100644
  
 -    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityPlayListBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
 +    invoke-direct {v0, p0, v1, v2}, Lcom/innioasis/y1/databinding/ActivityPlayListBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
+ 
+     return-object v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayerBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayerBinding.smali
+index 0172f8a9..af61a956 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayerBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/ActivityPlayerBinding.smali
+@@ -7,13 +7,13 @@
+ 
+ 
+ # instance fields
+-.field public final lvAudiobooks:Landroid/widget/ListView;
++.field public final lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ .field private final rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++.method private constructor <init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -33,7 +33,7 @@
+     iput-object p1, p0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->rootView:Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+     .line 28
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;->lvAudiobooks:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-void
+ .end method
+@@ -56,7 +56,7 @@
+ 
+     move-result-object v1
+ 
+-    check-cast v1, Landroid/widget/ListView;
++    check-cast v1, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     if-eqz v1, :cond_0
+ 
+@@ -65,7 +65,7 @@
+ 
+     check-cast p0, Landroidx/constraintlayout/widget/ConstraintLayout;
+ 
+-    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroid/widget/ListView;)V
++    invoke-direct {v0, p0, v1}, Lcom/innioasis/y1/databinding/ActivityPlayerBinding;-><init>(Landroidx/constraintlayout/widget/ConstraintLayout;Landroidx/recyclerview/widget/RecyclerView;)V
  
      return-object v0
  

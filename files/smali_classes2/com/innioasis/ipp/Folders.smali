@@ -305,7 +305,7 @@
 .end method
 
 .method private static clearTicks(Landroid/app/Activity;)V
-  .catchall { :L0 .. :L4 } :L6
+  .catchall { :L0 .. :L5 } :L7
   .registers 3
   .line 670
     const v0, 2131362180
@@ -313,54 +313,50 @@
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
   .line 671
-    instance-of v0, p0, Landroid/widget/ListView;
-    if-nez v0, :L1
-    return-void
+    if-nez p0, :L1
+    const/4 p0, 0
+    goto :L2
   :L1
-  .line 672
-    check-cast p0, Landroid/widget/ListView;
-    invoke-virtual { p0 }, Landroid/widget/ListView;->getAdapter()Landroid/widget/ListAdapter;
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->model(Landroid/view/View;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object p0
-  .line 673
-    instance-of v0, p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-    if-nez v0, :L2
-    return-void
   :L2
-  .line 674
-    check-cast p0, Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 675
+  .line 672
+    if-nez p0, :L3
+    return-void
+  :L3
+  .line 673
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object v0
-  .line 676
-    if-eqz v0, :L5
+  .line 674
+    if-eqz v0, :L6
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
-    if-eqz v1, :L3
-    goto :L5
-  :L3
-  .line 677
-    invoke-interface { v0 }, Ljava/util/List;->clear()V
-  .line 678
-    invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
+    if-eqz v1, :L4
+    goto :L6
   :L4
-  .line 680
-    goto :L7
-  :L5
+  .line 675
+    invoke-interface { v0 }, Ljava/util/List;->clear()V
   .line 676
-    return-void
+    invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
+  :L5
+  .line 678
+    goto :L8
   :L6
-  .line 679
-    move-exception p0
+  .line 674
+    return-void
   :L7
-  .line 681
+  .line 677
+    move-exception p0
+  :L8
+  .line 679
     return-void
 .end method
 
 .method private static currentPath(Landroid/app/Activity;)Ljava/lang/String;
   .registers 3
-  .line 693
+  .line 691
     nop
-  .line 694
+  .line 692
     if-eqz p0, :L0
     invoke-virtual { p0 }, Landroid/app/Activity;->getIntent()Landroid/content/Intent;
     move-result-object v0
@@ -372,7 +368,7 @@
     move-result-object v0
     goto :L1
   :L0
-  .line 695
+  .line 693
     const/4 v0, 0
   :L1
     if-nez v0, :L2
@@ -380,7 +376,7 @@
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->defaultFolderPath(Landroid/content/Context;)Ljava/lang/String;
     move-result-object v0
   :L2
-  .line 696
+  .line 694
     return-object v0
 .end method
 
@@ -871,22 +867,22 @@
 
 .method private static relist(Landroid/app/Activity;)V
   .registers 2
-  .line 685
+  .line 683
     instance-of v0, p0, Lcom/innioasis/music/FilesActivity;
     if-nez v0, :L0
     return-void
   :L0
-  .line 686
+  .line 684
     invoke-static { p0 }, Lcom/innioasis/ipp/Folders;->currentPath(Landroid/app/Activity;)Ljava/lang/String;
     move-result-object v0
-  .line 687
+  .line 685
     if-nez v0, :L1
     return-void
   :L1
-  .line 688
+  .line 686
     check-cast p0, Lcom/innioasis/music/FilesActivity;
     invoke-virtual { p0, v0 }, Lcom/innioasis/music/FilesActivity;->refresh(Ljava/lang/String;)V
-  .line 689
+  .line 687
     return-void
 .end method
 

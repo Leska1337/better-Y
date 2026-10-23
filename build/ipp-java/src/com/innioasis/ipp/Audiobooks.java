@@ -2,7 +2,6 @@ package com.innioasis.ipp;
 
 import android.app.Activity;
 import android.view.View;
-import android.widget.ListView;
 
 import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.music.adapter.SubmenuAdapter;
@@ -154,18 +153,15 @@ public final class Audiobooks {
      */
     private static void resort(Activity a) {
         View v = a.findViewById(R.id.lv_audiobooks);
-        if (!(v instanceof ListView)) return;
-        ListView lv = (ListView) v;
-        Object ad = lv.getAdapter();
-        if (!(ad instanceof MyBaseAdapter)) return;
-        MyBaseAdapter m = (MyBaseAdapter) ad;
+        MyBaseAdapter m = v == null ? null : Lv.model(v);
+        if (m == null) return;
         List items = m.getItemList();
         if (items == null || items.size() < 2) return;
         ArrayList out = new ArrayList(items);
         if (a instanceof AllAudiobooksActivity) sortSongs(out); else sortNames(a, out);
         m.setItems(out);
         m.setPosition(0);
-        lv.setSelection(0);
+        Lv.select(v, 0);
         List sel = m.getSelectedIndexList();
         if (sel != null && !sel.isEmpty()) sel.clear();
         m.notifyDataSetChanged();
