@@ -2,23 +2,23 @@ package com.innioasis.ipp;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.innioasis.music.adapter.MainAdapter;
+import com.innioasis.music.adapter.MyBaseAdapter;
 import com.innioasis.y1.R;
 import com.innioasis.y1.base.BaseActivity;
-import com.innioasis.y1.theme.ThemeManager;
 import com.innioasis.y1_eBook.ui.main.MainActivity;
 
 /**
  * The e-book Library as a section of its own: the same {@code MainActivity} opened again with
- * {@link #EXTRA}, so every stock function stays where it was. Menu mode shows rows 0..2 (Continue
- * Reading / Local files / Library); library mode shows the list alone and keeps the cursor at or
- * above {@code fixedSum}, so every book keeps stock's numbering. {@link #minMark} and
+ * {@link #EXTRA}, so every stock function stays where it was. Menu mode shows a Music-menu list of
+ * marks 0..2 (Continue Reading / Local files / Library); library mode shows the list alone and
+ * keeps the cursor at or above {@code fixedSum}, so every book keeps stock's numbering. {@link #minMark} and
  * {@link #maxMark} are the only places that know the mode.
  */
 public final class Ebook {
@@ -44,14 +44,15 @@ public final class Ebook {
             boolean lib = library(a);
             View cont = a.findViewById(R.id.continue_reading);
             View local = a.findViewById(R.id.local_files);
-            View row = a.findViewById(R.id.ipp_library_row);
+            View menu = a.findViewById(R.id.ipp_book_menu);
             View caption = a.findViewById(R.id.book_library);
             View divider = a.findViewById(R.id.ipp_book_divider);
             View list = a.findViewById(R.id.recyclerView);
 
-            show(cont, !lib);
-            show(local, !lib);
-            show(row, !lib);
+            // stock's two rows stay for the binding; the menu is the list of three
+            show(cont, false);
+            show(local, false);
+            show(menu, !lib);
             show(list, lib);
             // The row replaces them in the menu; in the Library the state bar says it.
             show(caption, false);
@@ -60,8 +61,12 @@ public final class Ebook {
             if (lib) {
                 ((BaseActivity) a).setStateBarLeftText(a.getString(R.string.book_library));
                 ((BaseActivity) a).setMark(LIBRARY_ROW);
-            } else {
-                label(row, a.getString(R.string.book_library));
+            } else if (menu instanceof RecyclerView) {
+                java.util.ArrayList items = new java.util.ArrayList();
+                items.add(a.getString(R.string.book_continue_read));
+                items.add(a.getString(R.string.book_local_file));
+                items.add(a.getString(R.string.book_library));
+                SongRows.set((RecyclerView) menu, new MainAdapter(a, items));
             }
         } catch (Throwable t) {
         }
@@ -69,12 +74,6 @@ public final class Ebook {
 
     private static void show(View v, boolean on) {
         if (v != null) v.setVisibility(on ? View.VISIBLE : View.GONE);
-    }
-
-    private static void label(View row, String text) {
-        if (row == null) return;
-        View tv = row.findViewById(R.id.tv_item);
-        if (tv instanceof TextView) ((TextView) tv).setText(text);
     }
 
     public static int minMark(Activity a, int fixedSum) {
@@ -132,37 +131,57 @@ public final class Ebook {
 
     /**
      * Top of {@code showItem}: clamps the mark into this mode's range (stock's delete path sets it
-     * below the Library's floor) and paints the Library row, which stock never touches.
+     * below the Library's floor) and, in the menu, moves the list's cursor to it.
      */
     public static void beforeShow(Activity a, int fixedSum) {
         try {
             if (a == null) return;
+            fixed = fixedSum;
             BaseActivity b = (BaseActivity) a;
             int mark = b.getMark();
             int lo = minMark(a, fixedSum);
             if (mark < lo) { b.setMark(lo); mark = lo; }
             if (library(a)) return;
-            paint(a.findViewById(R.id.ipp_library_row), mark == LIBRARY_ROW);
+            View v = a.findViewById(R.id.ipp_book_menu);
+            if (!(v instanceof RecyclerView)) return;
+            RecyclerView rv = (RecyclerView) v;
+            ListAdapter la = SongRows.adapter(rv);
+            if (!(la instanceof MyBaseAdapter)) return;
+            // the model's cursor follows the mark without a notify: three rows, a step or two
+            MyBaseAdapter m = (MyBaseAdapter) la;
+            while (m.getPosition() > mark && m.getPosition() > 0) m.toPrevious();
+            while (m.getPosition() < mark && m.getPosition() < m.getCount() - 1) m.toNext();
+            Wheel.follow(rv, mark, rv.getAdapter());
         } catch (Throwable t) {
         }
     }
 
-    /** Stock's private {@code selItem}, call for call — keep them identical. */
-    private static void paint(View row, boolean sel) {
-        if (row == null) return;
-        View tv = row.findViewById(R.id.tv_item);
-        View arrow = row.findViewById(R.id.iv_arrow);
-        View box = row.findViewById(R.id.layout);
-        if (box == null) box = row;
-        if (tv instanceof TextView) {
-            ThemeManager.INSTANCE.itemSetTextColor((TextView) tv,
-                    sel ? Color.parseColor("#3CFFDE") : -1, sel);
+    /** {@code fixedSum} as {@code showItem} last passed it: the mark of the Library's first book. */
+    private static int fixed = 2;
+
+    static int firstMark() {
+        return fixed;
+    }
+
+    /**
+     * In place of stock's scroll after a wheel step in the Library and Local files: the list
+     * follows the cursor as every other list does ({@code Wheel.follow}). {@code pos} is a row.
+     */
+    public static void step(RecyclerView rv, int pos) {
+        if (rv == null || !rv.isShown() || pos < 0) return;
+        Wheel.follow(rv, pos, rv.getAdapter());
+    }
+
+    /** {@link #librarySub} for a row the travelling bar has just recoloured. */
+    static void librarySub(View row) {
+        View p = row == null ? null : row.findViewById(R.id.progress);
+        View t = row == null ? null : row.findViewById(R.id.time);
+        if (!(p instanceof TextView) || !(p.getParent() instanceof android.view.ViewGroup)) return;
+        android.view.ViewGroup line = (android.view.ViewGroup) p.getParent();
+        for (int i = 0; i < line.getChildCount(); i++) {
+            View v = line.getChildAt(i);
+            if (v instanceof TextView && v != p && v != t) Rows.subLine((TextView) p, (TextView) v);
         }
-        if (arrow instanceof ImageView) {
-            arrow.setVisibility(sel ? View.VISIBLE : View.GONE);
-            if (sel) ThemeManager.INSTANCE.itemSetRightArrow((ImageView) arrow, R.mipmap.right_arrow);
-        }
-        ThemeManager.INSTANCE.itemSetBackground(box, sel ? R.drawable.bg_fm_menu_sel : 0, sel);
     }
 
     /** Size and date under a Local files row take the name's colour (stock left them white). */

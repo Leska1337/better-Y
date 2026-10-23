@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.innioasis.ipp.Anim;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.Diag;
@@ -30,6 +31,7 @@ import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
 import com.innioasis.ipp.Frames;
 import com.innioasis.ipp.Lit;
+import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
 import com.innioasis.ipp.Rows;
@@ -642,6 +644,10 @@ public final class IppFlowActivity extends BaseActivity {
         private float nameX = 8;
         private int sel;
         private int first;
+        /** The bar's top and the window's top as drawn, in px from the first row: they travel to sel and first. */
+        private float barY;
+        private float scrollY;
+        private long frameAt;
 
         /** Carries the menu's row highlight, colour or theme bitmap, for onDraw to paint with. */
         private final View hl;
@@ -698,6 +704,7 @@ public final class IppFlowActivity extends BaseActivity {
             names = null;
             sel = 0;
             first = 0;
+            settle();
             invalidate();
         }
 
@@ -715,7 +722,15 @@ public final class IppFlowActivity extends BaseActivity {
             first = 0;
             if (song.length > 0 && song[0] < 0) sel = 1;   // the cursor never stands on a divider
             if (sel >= song.length) sel = 0;
+            settle();
             restart();
+        }
+
+        /** The bar and the window stand where they belong, no travel. */
+        private void settle() {
+            barY = sel * ROW;
+            scrollY = first * ROW;
+            frameAt = 0;
         }
 
         /** The song under the cursor, as an index into {@link #songs}; -1 when there is none. */
@@ -729,14 +744,71 @@ public final class IppFlowActivity extends BaseActivity {
             do {
                 s += d;
             } while (s >= 0 && s < song.length && song[s] < 0);
-            if (s < 0 || s >= song.length) return;
+            boolean wrap = false;
+            if (s < 0 || s >= song.length) {
+                if (!Loop.on()) return;
+                // round the end (Loop scrolling): the first or the last track, past its dividers
+                s = d > 0 ? 0 : song.length - 1;
+                while (s >= 0 && s < song.length && song[s] < 0) s += d > 0 ? 1 : -1;
+                if (s < 0 || s >= song.length || s == sel) return;
+                wrap = true;
+            }
             sel = s;
             int rows = rows();
             // a divider right above the cursor comes into view with it
             int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
             if (top < first) first = top;
             if (sel >= first + rows) first = sel - rows + 1;
+            // the lists' rule: a step glides; going round the end and a jump further than JUMP rows
+            // stand at once
+            if (!Anim.on() || wrap || Math.abs(sel * ROW - barY) > JUMP * ROW) settle();
             restart();
+        }
+
+        // The travel: the bar by Bar's law, the window by the lists' Glider — a share of what is
+        // left per second, between a floor and a ceiling of speed.
+        private static final int JUMP = 4;
+        private static final float BAR_RATE = 22f, BAR_MIN = 700f, BAR_MAX = 6000f;
+        private static final float LIST_RATE = 14f, LIST_MIN = 400f, LIST_MAX = 6000f;
+
+        /** One frame of travel; true while either has a way to go. */
+        private boolean travel() {
+            float barT = sel * ROW, scrollT = first * ROW;
+            if (!Anim.on()) {
+                barY = barT;
+                scrollY = scrollT;
+                return false;
+            }
+            long now = SystemClock.uptimeMillis();
+            long dt = frameAt == 0 ? 16 : Math.min(50, now - frameAt);
+            frameAt = now;
+            barY = approach(barY, barT, dt, BAR_RATE, BAR_MIN, BAR_MAX);
+            scrollY = approach(scrollY, scrollT, dt, LIST_RATE, LIST_MIN, LIST_MAX);
+            boolean going = barY != barT || scrollY != scrollT;
+            if (!going) frameAt = 0;
+            return going;
+        }
+
+        private static float approach(float cur, float to, long dt, float rate, float min, float max) {
+            float d = to - cur;
+            float ad = Math.abs(d);
+            if (ad < 0.5f) return to;
+            float v = Math.max(min, Math.min(max, ad * rate));
+            float step = v * dt / 1000f;
+            if (step >= ad) return to;
+            return cur + (d > 0 ? step : -step);
+        }
+
+        /** {@code a} to {@code b} by {@code f}, channel by channel. */
+        private static int blend(int a, int b, float f) {
+            if (f <= 0) return a;
+            if (f >= 1) return b;
+            int r = 0;
+            for (int s = 0; s < 32; s += 8) {
+                int ca = (a >>> s) & 0xFF, cb = (b >>> s) & 0xFF;
+                r |= ((int) (ca + (cb - ca) * f + 0.5f) & 0xFF) << s;
+            }
+            return r;
         }
 
         // The marquee of the row under the cursor, at the pace of the mod's other marquees (Scroll).
@@ -797,20 +869,26 @@ public final class IppFlowActivity extends BaseActivity {
                     8, 43, sub);
             c.drawRect(6, HEAD - 3, w - 6, HEAD - 2, line);
             if (names == null) return;
+            boolean going = travel();
             int rows = rows();
-            for (int r = 0; r < rows && first + r < names.length; r++) {
-                int i = first + r;
-                int top = HEAD + r * ROW;
+            c.save();
+            // at rest exactly the whole rows stock showed; in travel the next one slides in under the clip
+            c.clipRect(1, HEAD, w - 1, HEAD + rows * ROW);
+            float barTop = HEAD + barY - scrollY;
+            Drawable d = hl.getBackground();
+            if (d != null) {
+                d.setBounds(1, (int) barTop, w - 1, (int) barTop + ROW);
+                d.draw(c);
+            } else {
+                c.drawRect(1, barTop, w - 1, barTop + ROW, bar);
+            }
+            int from = Math.max(0, (int) (scrollY / ROW));
+            for (int i = from; i < names.length; i++) {
+                int top = HEAD + Math.round(i * ROW - scrollY);
+                if (top >= HEAD + rows * ROW) break;
                 boolean on = i == sel;
-                if (on) {
-                    Drawable d = hl.getBackground();
-                    if (d != null) {
-                        d.setBounds(1, top, w - 1, top + ROW);
-                        d.draw(c);
-                    } else {
-                        c.drawRect(1, top, w - 1, top + ROW, bar);
-                    }
-                }
+                // the text takes the cursor's colour as far as the bar covers its row
+                float cover = (Math.min(barTop + ROW, top + ROW) - Math.max(barTop, top)) / ROW;
                 String s = names[i];
                 if (nums[i] == null) {
                     // a disc or side divider: the label in the artist's colour, never under the cursor
@@ -818,7 +896,7 @@ public final class IppFlowActivity extends BaseActivity {
                             8, top + 19, sub);
                     continue;
                 }
-                text.setColor(on ? fgSel : fg);
+                text.setColor(blend(fg, fgSel, cover));
                 c.drawText(nums[i], nameX - text.measureText(" ") - text.measureText(nums[i]), top + 19, text);
                 float room = w - 8 - nameX;
                 if (on && text.measureText(s) > room) {
@@ -834,6 +912,8 @@ public final class IppFlowActivity extends BaseActivity {
                 c.drawText(TextUtils.ellipsize(s, text, room, TextUtils.TruncateAt.END).toString(),
                         nameX, top + 19, text);
             }
+            c.restore();
+            if (going) postInvalidateOnAnimation();
         }
     }
 

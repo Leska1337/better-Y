@@ -6,6 +6,16 @@
 
 .field private final static LIBRARY_ROW:I = 2
 
+.field private static fixed:I
+
+.method static constructor <clinit>()V
+  .registers 1
+  .line 160
+    const/4 v0, 2
+    sput v0, Lcom/innioasis/ipp/Ebook;->fixed:I
+    return-void
+.end method
+
 .method private constructor <init>()V
   .registers 1
   .line 26
@@ -14,12 +24,14 @@
 .end method
 
 .method public static beforeShow(Landroid/app/Activity;I)V
-  .catchall { :L0 .. :L5 } :L6
-  .registers 4
-  .line 139
+  .catchall { :L0 .. :L8 } :L9
+  .registers 5
+  .line 138
     if-nez p0, :L0
     return-void
   :L0
+  .line 139
+    sput p1, Lcom/innioasis/ipp/Ebook;->fixed:I
   .line 140
     move-object v0, p0
     check-cast v0, Lcom/innioasis/y1/base/BaseActivity;
@@ -44,28 +56,65 @@
     const p1, 2131362552
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-    const/4 p1, 2
-    if-ne v1, p1, :L3
-    const/4 p1, 1
-    goto :L4
-  :L3
-    const/4 p1, 0
-  :L4
-    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Ebook;->paint(Landroid/view/View;Z)V
-  :L5
-  .line 147
-    goto :L7
-  :L6
   .line 146
-    move-exception p0
-  :L7
+    instance-of p1, p0, Landroidx/recyclerview/widget/RecyclerView;
+    if-nez p1, :L3
+    return-void
+  :L3
+  .line 147
+    check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
   .line 148
+    invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->adapter(Landroidx/recyclerview/widget/RecyclerView;)Landroid/widget/ListAdapter;
+    move-result-object p1
+  .line 149
+    instance-of v0, p1, Lcom/innioasis/music/adapter/MyBaseAdapter;
+    if-nez v0, :L4
+    return-void
+  :L4
+  .line 151
+    check-cast p1, Lcom/innioasis/music/adapter/MyBaseAdapter;
+  :L5
+  .line 152
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
+    move-result v0
+    if-le v0, v1, :L6
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
+    move-result v0
+    if-lez v0, :L6
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->toPrevious()V
+    goto :L5
+  :L6
+  .line 153
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
+    move-result v0
+    if-ge v0, v1, :L7
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
+    move-result v0
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
+    move-result v2
+    add-int/lit8 v2, v2, -1
+    if-ge v0, v2, :L7
+    invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->toNext()V
+    goto :L6
+  :L7
+  .line 154
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
+    move-result-object p1
+    invoke-static { p0, v1, p1 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+  :L8
+  .line 156
+    goto :L10
+  :L9
+  .line 155
+    move-exception p0
+  :L10
+  .line 157
     return-void
 .end method
 
 .method public static belowFirst(Landroid/app/Activity;III)I
   .registers 5
-  .line 93
+  .line 92
     invoke-static { }, Lcom/innioasis/ipp/Loop;->on()Z
     move-result v0
     if-eqz v0, :L0
@@ -77,21 +126,21 @@
 
 .method private static books(Landroid/app/Activity;)I
   .registers 3
-  .line 127
+  .line 126
     const v0, 2131362311
     invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 128
+  .line 127
     instance-of v0, p0, Landroidx/recyclerview/widget/RecyclerView;
     const/4 v1, 0
     if-nez v0, :L0
     return v1
   :L0
-  .line 129
+  .line 128
     check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object p0
-  .line 130
+  .line 129
     if-nez p0, :L1
     goto :L2
   :L1
@@ -104,35 +153,35 @@
 .method public static confirm(Landroid/app/Activity;I)Z
   .catchall { :L1 .. :L4 } :L6
   .registers 5
-  .line 112
+  .line 111
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 113
+  .line 112
     const/4 v1, 1
   :L1
     invoke-static { p0 }, Lcom/innioasis/ipp/Ebook;->library(Landroid/app/Activity;)Z
     move-result v2
     if-nez v2, :L3
-  .line 114
+  .line 113
     const/4 v2, 2
     if-eq p1, v2, :L2
     return v0
   :L2
-  .line 115
+  .line 114
     new-instance p1, Landroid/content/Intent;
     const-class v0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;
     invoke-direct { p1, p0, v0 }, Landroid/content/Intent;-><init>(Landroid/content/Context;Ljava/lang/Class;)V
-  .line 116
+  .line 115
     const-string v0, "ipp_library"
     invoke-virtual { p1, v0, v1 }, Landroid/content/Intent;->putExtra(Ljava/lang/String;Z)Landroid/content/Intent;
-  .line 117
+  .line 116
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->startActivity(Landroid/content/Intent;)V
-  .line 118
+  .line 117
     return v1
   :L3
-  .line 120
+  .line 119
     invoke-static { p0 }, Lcom/innioasis/ipp/Ebook;->books(Landroid/app/Activity;)I
     move-result p0
   :L4
@@ -141,24 +190,31 @@
   :L5
     return v0
   :L6
-  .line 121
+  .line 120
     move-exception p0
-  .line 122
+  .line 121
     return v1
+.end method
+
+.method static firstMark()I
+  .registers 1
+  .line 163
+    sget v0, Lcom/innioasis/ipp/Ebook;->fixed:I
+    return v0
 .end method
 
 .method public static hidden(Ljava/io/File;)Z
   .catchall { :L0 .. :L1 } :L3
   .registers 3
-  .line 199
+  .line 218
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
-  .line 200
+  .line 219
     invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
     move-result-object v1
-  .line 201
+  .line 220
     if-eqz v1, :L2
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
@@ -172,30 +228,10 @@
   :L2
     return v0
   :L3
-  .line 202
+  .line 221
     move-exception p0
-  .line 203
+  .line 222
     return v0
-.end method
-
-.method private static label(Landroid/view/View;Ljava/lang/String;)V
-  .registers 3
-  .line 75
-    if-nez p0, :L0
-    return-void
-  :L0
-  .line 76
-    const v0, 2131362491
-    invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object p0
-  .line 77
-    instance-of v0, p0, Landroid/widget/TextView;
-    if-eqz v0, :L1
-    check-cast p0, Landroid/widget/TextView;
-    invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  :L1
-  .line 78
-    return-void
 .end method
 
 .method public static library(Landroid/app/Activity;)Z
@@ -227,70 +263,133 @@
     return v0
 .end method
 
+.method static librarySub(Landroid/view/View;)V
+  .registers 6
+  .line 177
+    const/4 v0, 0
+    if-nez p0, :L0
+    move-object v1, v0
+    goto :L1
+  :L0
+    const v1, 2131362301
+    invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object v1
+  :L1
+  .line 178
+    if-nez p0, :L2
+    goto :L3
+  :L2
+    const v0, 2131362455
+    invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object v0
+  :L3
+  .line 179
+    instance-of p0, v1, Landroid/widget/TextView;
+    if-eqz p0, :L8
+    invoke-virtual { v1 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
+    move-result-object p0
+    instance-of p0, p0, Landroid/view/ViewGroup;
+    if-nez p0, :L4
+    goto :L8
+  :L4
+  .line 180
+    invoke-virtual { v1 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
+    move-result-object p0
+    check-cast p0, Landroid/view/ViewGroup;
+  .line 181
+    const/4 v2, 0
+  :L5
+    invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
+    move-result v3
+    if-ge v2, v3, :L7
+  .line 182
+    invoke-virtual { p0, v2 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
+    move-result-object v3
+  .line 183
+    instance-of v4, v3, Landroid/widget/TextView;
+    if-eqz v4, :L6
+    if-eq v3, v1, :L6
+    if-eq v3, v0, :L6
+    move-object v4, v1
+    check-cast v4, Landroid/widget/TextView;
+    check-cast v3, Landroid/widget/TextView;
+    invoke-static { v4, v3 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
+  :L6
+  .line 181
+    add-int/lit8 v2, v2, 1
+    goto :L5
+  :L7
+  .line 185
+    return-void
+  :L8
+  .line 179
+    return-void
+.end method
+
 .method public static librarySub(Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;)V
   .registers 5
-  .line 181
+  .line 200
     if-eqz p0, :L5
     iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
     if-nez v0, :L0
     goto :L5
   :L0
-  .line 182
+  .line 201
     iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getParent()Landroid/view/ViewParent;
     move-result-object v0
-  .line 183
+  .line 202
     instance-of v1, v0, Landroid/view/ViewGroup;
     if-nez v1, :L1
     return-void
   :L1
-  .line 184
+  .line 203
     check-cast v0, Landroid/view/ViewGroup;
-  .line 185
+  .line 204
     const/4 v1, 0
   :L2
     invoke-virtual { v0 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v2
     if-ge v1, v2, :L4
-  .line 186
+  .line 205
     invoke-virtual { v0, v1 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v2
-  .line 187
+  .line 206
     instance-of v3, v2, Landroid/widget/TextView;
     if-eqz v3, :L3
     iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
     if-eq v2, v3, :L3
     iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->time:Landroid/widget/TextView;
     if-eq v2, v3, :L3
-  .line 188
+  .line 207
     iget-object v3, p0, Lcom/innioasis/y1/databinding/ItemBookLibraryBinding;->progress:Landroid/widget/TextView;
     check-cast v2, Landroid/widget/TextView;
     invoke-static { v3, v2 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
   :L3
-  .line 185
+  .line 204
     add-int/lit8 v1, v1, 1
     goto :L2
   :L4
-  .line 191
+  .line 210
     return-void
   :L5
-  .line 181
+  .line 200
     return-void
 .end method
 
 .method public static maxMark(Landroid/app/Activity;II)I
   .registers 3
-  .line 86
+  .line 85
     invoke-static { p0 }, Lcom/innioasis/ipp/Ebook;->library(Landroid/app/Activity;)Z
     move-result p0
     if-nez p0, :L0
     const/4 p0, 2
     return p0
   :L0
-  .line 87
+  .line 86
     add-int/lit8 p1, p1, -1
     add-int/2addr p1, p2
-  .line 88
+  .line 87
     if-ge p1, p2, :L1
     goto :L2
   :L1
@@ -301,7 +400,7 @@
 
 .method public static menuFloor(Landroid/app/Activity;I)I
   .registers 2
-  .line 103
+  .line 102
     invoke-static { p0 }, Lcom/innioasis/ipp/Ebook;->library(Landroid/app/Activity;)Z
     move-result p0
     if-eqz p0, :L0
@@ -314,7 +413,7 @@
 
 .method public static minMark(Landroid/app/Activity;I)I
   .registers 2
-  .line 81
+  .line 80
     invoke-static { p0 }, Lcom/innioasis/ipp/Ebook;->library(Landroid/app/Activity;)Z
     move-result p0
     if-eqz p0, :L0
@@ -325,80 +424,9 @@
     return p1
 .end method
 
-.method private static paint(Landroid/view/View;Z)V
-  .registers 6
-  .line 152
-    if-nez p0, :L0
-    return-void
-  :L0
-  .line 153
-    const v0, 2131362491
-    invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v0
-  .line 154
-    const v1, 2131362144
-    invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v1
-  .line 155
-    const v2, 2131362152
-    invoke-virtual { p0, v2 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
-    move-result-object v2
-  .line 156
-    if-nez v2, :L1
-    goto :L2
-  :L1
-    move-object p0, v2
-  :L2
-  .line 157
-    instance-of v2, v0, Landroid/widget/TextView;
-    if-eqz v2, :L5
-  .line 158
-    sget-object v2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    check-cast v0, Landroid/widget/TextView;
-  .line 159
-    if-eqz p1, :L3
-    const-string v3, "#3CFFDE"
-    invoke-static { v3 }, Landroid/graphics/Color;->parseColor(Ljava/lang/String;)I
-    move-result v3
-    goto :L4
-  :L3
-    const/4 v3, -1
-  :L4
-  .line 158
-    invoke-virtual { v2, v0, v3, p1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  :L5
-  .line 161
-    instance-of v0, v1, Landroid/widget/ImageView;
-    const/4 v2, 0
-    if-eqz v0, :L8
-  .line 162
-    if-eqz p1, :L6
-    const/4 v0, 0
-    goto :L7
-  :L6
-    const/16 v0, 8
-  :L7
-    invoke-virtual { v1, v0 }, Landroid/view/View;->setVisibility(I)V
-  .line 163
-    if-eqz p1, :L8
-    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    check-cast v1, Landroid/widget/ImageView;
-    const v3, 2131623981
-    invoke-virtual { v0, v1, v3 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetRightArrow(Landroid/widget/ImageView;I)V
-  :L8
-  .line 165
-    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    if-eqz p1, :L9
-    const v2, 2131230823
-  :L9
-    invoke-virtual { v0, p0, v2, p1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 166
-    return-void
-.end method
-
 .method public static pastLast(Landroid/app/Activity;I)I
   .registers 3
-  .line 98
+  .line 97
     invoke-static { }, Lcom/innioasis/ipp/Loop;->on()Z
     move-result v0
     if-eqz v0, :L0
@@ -413,25 +441,25 @@
 
 .method public static searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
   .registers 3
-  .line 170
+  .line 189
     if-nez p0, :L0
     return-void
   :L0
-  .line 171
+  .line 190
     iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
     iget-object v1, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->size:Landroid/widget/TextView;
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
-  .line 172
+  .line 191
     iget-object v0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
     iget-object p0, p0, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->time:Landroid/widget/TextView;
     invoke-static { v0, p0 }, Lcom/innioasis/ipp/Rows;->subLine(Landroid/widget/TextView;Landroid/widget/TextView;)V
-  .line 173
+  .line 192
     return-void
 .end method
 
 .method public static setup(Landroid/app/Activity;)V
-  .catchall { :L0 .. :L8 } :L9
-  .registers 11
+  .catchall { :L0 .. :L4 } :L5
+  .registers 9
   .line 43
     if-nez p0, :L0
     return-void
@@ -463,70 +491,79 @@
     const v6, 2131362311
     invoke-virtual { p0, v6 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object v6
-  .line 52
-    const/4 v7, 1
-    const/4 v8, 0
+  .line 53
+    const/4 v7, 0
+    invoke-static { v1, v7 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
+  .line 54
+    invoke-static { v2, v7 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
+  .line 55
     if-nez v0, :L1
-    const/4 v9, 1
+    const/4 v1, 1
     goto :L2
   :L1
-    const/4 v9, 0
-  :L2
-    invoke-static { v1, v9 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
-  .line 53
-    if-nez v0, :L3
-    const/4 v1, 1
-    goto :L4
-  :L3
     const/4 v1, 0
-  :L4
-    invoke-static { v2, v1 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
-  .line 54
-    if-nez v0, :L5
-    goto :L6
-  :L5
-    const/4 v7, 0
-  :L6
-    invoke-static { v3, v7 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
-  .line 55
+  :L2
+    invoke-static { v3, v1 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
+  .line 56
     invoke-static { v6, v0 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
-  .line 57
-    invoke-static { v4, v8 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
   .line 58
-    invoke-static { v5, v8 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
-  .line 60
-    const v1, 2131820617
-    if-eqz v0, :L7
+    invoke-static { v4, v7 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
+  .line 59
+    invoke-static { v5, v7 }, Lcom/innioasis/ipp/Ebook;->show(Landroid/view/View;Z)V
   .line 61
+    const v1, 2131820617
+    if-eqz v0, :L3
+  .line 62
     move-object v0, p0
     check-cast v0, Lcom/innioasis/y1/base/BaseActivity;
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/base/BaseActivity;->setStateBarLeftText(Ljava/lang/String;)V
-  .line 62
+  .line 63
     check-cast p0, Lcom/innioasis/y1/base/BaseActivity;
     const/4 v0, 2
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/base/BaseActivity;->setMark(I)V
-    goto :L8
-  :L7
+    goto :L4
+  :L3
   .line 64
-    invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
-    move-result-object p0
-    invoke-static { v3, p0 }, Lcom/innioasis/ipp/Ebook;->label(Landroid/view/View;Ljava/lang/String;)V
-  :L8
-  .line 67
-    goto :L10
-  :L9
+    instance-of v0, v3, Landroidx/recyclerview/widget/RecyclerView;
+    if-eqz v0, :L4
+  .line 65
+    new-instance v0, Ljava/util/ArrayList;
+    invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
   .line 66
-    move-exception p0
-  :L10
+    const v2, 2131820611
+    invoke-virtual { p0, v2 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 67
+    const v2, 2131820618
+    invoke-virtual { p0, v2 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v2
+    invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   .line 68
+    invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v1
+    invoke-virtual { v0, v1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 69
+    check-cast v3, Landroidx/recyclerview/widget/RecyclerView;
+    new-instance v1, Lcom/innioasis/music/adapter/MainAdapter;
+    invoke-direct { v1, p0, v0 }, Lcom/innioasis/music/adapter/MainAdapter;-><init>(Landroid/content/Context;Ljava/util/List;)V
+    invoke-static { v3, v1 }, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+  :L4
+  .line 72
+    goto :L6
+  :L5
+  .line 71
+    move-exception p0
+  :L6
+  .line 73
     return-void
 .end method
 
 .method private static show(Landroid/view/View;Z)V
   .registers 2
-  .line 71
+  .line 76
     if-eqz p0, :L2
     if-eqz p1, :L0
     const/4 p1, 0
@@ -536,6 +573,27 @@
   :L1
     invoke-virtual { p0, p1 }, Landroid/view/View;->setVisibility(I)V
   :L2
-  .line 72
+  .line 77
+    return-void
+.end method
+
+.method public static step(Landroidx/recyclerview/widget/RecyclerView;I)V
+  .registers 3
+  .line 171
+    if-eqz p0, :L1
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->isShown()Z
+    move-result v0
+    if-eqz v0, :L1
+    if-gez p1, :L0
+    goto :L1
+  :L0
+  .line 172
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
+    move-result-object v0
+    invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;ILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
+  .line 173
+    return-void
+  :L1
+  .line 171
     return-void
 .end method

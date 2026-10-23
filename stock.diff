@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..76ab8338 100644
+index 01b1f730..e95a0577 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..76ab8338 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100416
++  versionCode: 10100419
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -230,17 +230,18 @@ index 3fff8427..32bbd5af 100644
          </LinearLayout>
      </androidx.core.widget.NestedScrollView>
 diff --git a/build/src/res/layout/activity_book_main.xml b/build/src/res/layout/activity_book_main.xml
-index cf5ce73a..4c396309 100644
+index cf5ce73a..271c8730 100644
 --- a/build/src/res/layout/activity_book_main.xml
 +++ b/build/src/res/layout/activity_book_main.xml
-@@ -3,7 +3,11 @@
+@@ -3,7 +3,12 @@
    xmlns:android="http://schemas.android.com/apk/res/android">
      <include android:id="@id/continue_reading" layout="@layout/item_book_main" />
      <include android:id="@id/local_files" layout="@layout/item_book_main" />
 +    <!-- ipp: the Library is a section of its own, reached by a row of the same name.
-+         Both are in the layout and one of them is hidden: this screen serves the menu (the three
-+         rows, no list) and the Library itself (the list, no rows). See Ebook. -->
-+    <include android:id="@id/ipp_library_row" layout="@layout/item_book_main" />
++         This screen serves the menu (this list of three rows, drawn as the Music menu's; the two
++         stock rows above stay for the binding and are hidden) and the Library itself (the list
++         below). See Ebook. -->
++    <com.innioasis.ipp.Fixed android:id="@id/ipp_book_menu" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" />
      <TextView android:textSize="22.0sp" android:textStyle="bold" android:textColor="@color/white" android:id="@id/book_library" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/book_library" />
 -    <View android:background="#ff2a2a2a" android:layout_width="fill_parent" android:layout_height="1.0dip" />
 +    <View android:id="@id/ipp_book_divider" android:background="#ff2a2a2a" android:layout_width="fill_parent" android:layout_height="1.0dip" />
@@ -8894,7 +8895,7 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..b08fd3f9 100644
+index 803c1e7a..37cdff4d 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
 @@ -1,5519 +1,5675 @@
@@ -18059,7 +18060,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="id" name="tv_disc_header" id="0x7f0a02f5" />
 +    <public type="id" name="ipp_file_play" id="0x7f0a02f6" />
 +    <public type="id" name="ipp_song_mark" id="0x7f0a02f7" />
-+    <public type="id" name="ipp_library_row" id="0x7f0a02f8" />
++    <public type="id" name="ipp_book_menu" id="0x7f0a02f8" />
 +    <public type="id" name="ipp_book_divider" id="0x7f0a02f9" />
 +    <public type="id" name="ipp_speed" id="0x7f0a02fa" />
 +    <public type="id" name="ipp_timer" id="0x7f0a02fb" />
@@ -20093,7 +20094,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..eaf9e9bb 100644
+index 71fe29d0..312288fd 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21042,7 +21043,7 @@ index 71fe29d0..eaf9e9bb 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev416</string>
++    <string name="ipp_version">v1.1.0-dev419</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -74852,7 +74853,7 @@ index 858b0ba9..732b981f 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
-index 27f20fbd..b9de7b12 100644
+index 27f20fbd..6eb9956a 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/main/MainActivity.smali
 @@ -507,6 +507,12 @@
@@ -74868,7 +74869,17 @@ index 27f20fbd..b9de7b12 100644
      .line 291
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -971,10 +977,33 @@
+@@ -599,7 +605,8 @@
+ 
+     sub-int/2addr v1, v2
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++    # ipp: the list follows the cursor as every list does -- see Ebook.step
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Ebook;->step(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_0
+ 
+@@ -971,10 +978,33 @@
  
      move-result p1
  
@@ -74904,7 +74915,7 @@ index 27f20fbd..b9de7b12 100644
  
      .line 191
      :cond_1
-@@ -1005,14 +1034,33 @@
+@@ -1005,14 +1035,33 @@
  
      move-result v0
  
@@ -74941,7 +74952,7 @@ index 27f20fbd..b9de7b12 100644
      .line 179
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/main/MainActivity$adapter$2$1;
  
-@@ -1022,11 +1070,12 @@
+@@ -1022,11 +1071,12 @@
  
      move-result p1
  
@@ -74957,7 +74968,7 @@ index 27f20fbd..b9de7b12 100644
  
      invoke-virtual {p0, p1}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->setMark(I)V
  
-@@ -1095,6 +1144,12 @@
+@@ -1095,6 +1145,12 @@
  
      iget v0, p0, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->fixedSum:I
  
@@ -74970,7 +74981,7 @@ index 27f20fbd..b9de7b12 100644
      if-ge p1, v0, :cond_5
  
      return v1
-@@ -1111,6 +1166,18 @@
+@@ -1111,6 +1167,18 @@
  
      move-result p1
  
@@ -74989,7 +75000,7 @@ index 27f20fbd..b9de7b12 100644
      if-eqz p1, :cond_8
  
      if-eq p1, v2, :cond_7
-@@ -1389,6 +1456,10 @@
+@@ -1389,6 +1457,10 @@
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
  
@@ -75001,7 +75012,7 @@ index 27f20fbd..b9de7b12 100644
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/main/MainActivity;->showItem()V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
-index b6833eac..fb5411b9 100644
+index b6833eac..66ce7a68 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchActivity.smali
 @@ -275,17 +275,22 @@
@@ -75041,15 +75052,15 @@ index b6833eac..fb5411b9 100644
  
 -    .line 191
 -    iget-object p2, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
+-
+-    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
 +    # ipp: the unselected state too -- rows are recycled.
 +    invoke-static {v1}, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
  
--    sget-object v0, Landroid/text/TextUtils$TruncateAt;->END:Landroid/text/TextUtils$TruncateAt;
+-    invoke-virtual {p2, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
 +    # ipp: the unselected half of the same thing.
 +    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->searchSub(Lcom/innioasis/y1/databinding/ItemBookSearchBinding;)V
  
--    invoke-virtual {p2, v0}, Landroid/widget/TextView;->setEllipsize(Landroid/text/TextUtils$TruncateAt;)V
--
 -    .line 192
 -    iget-object p1, p1, Lcom/innioasis/y1/databinding/ItemBookSearchBinding;->name:Landroid/widget/TextView;
 +    .line 191
@@ -75092,7 +75103,17 @@ index b6833eac..fb5411b9 100644
      .line 130
      invoke-virtual {p0, v1}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->setMark(I)V
  
-@@ -688,6 +717,18 @@
+@@ -659,7 +688,8 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
++    # ipp: the list follows the cursor as every list does -- see Ebook.step
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/Ebook;->step(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto/16 :goto_1
+ 
+@@ -688,6 +718,18 @@
  
      if-lt p1, v0, :cond_3
  
@@ -75110,6 +75131,16 @@ index b6833eac..fb5411b9 100644
 +    :cond_ipp_clamp2
      .line 120
      invoke-direct {p0}, Lcom/innioasis/y1_eBook/ui/search/SearchActivity;->getAdapter()Lcom/innioasis/y1_eBook/ui/search/SearchActivity$adapter$2$1;
+ 
+@@ -722,7 +764,8 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p1, v0}, Landroidx/recyclerview/widget/RecyclerView;->scrollToPosition(I)V
++    # ipp: the list follows the cursor as every list does -- see Ebook.step
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/Ebook;->step(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
 index 44054e1a..e68f9019 100644

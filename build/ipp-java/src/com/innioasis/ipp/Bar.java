@@ -41,6 +41,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         /** A second arrow id, for a screen whose lists draw different rows (Genres). */
         int arrow2;
         boolean byAdapter;
+        /** Subtracted from the screen's mark: the mark of the list's first row (E-book's Library). */
+        int markBase;
         /** A row ABOVE the list that the cursor stands on as position -1 (Search's input line). */
         int head;
         /** That row's own look when no bar stands on it: its highlight, its plain text (0 = the rows'). */
@@ -145,9 +147,23 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.byAdapter = true;
             return s;
         }
+        if (a instanceof com.innioasis.y1_eBook.ui.main.MainActivity && Ebook.library(a)
+                || a instanceof com.innioasis.y1_eBook.ui.search.SearchActivity) {
+            // the Library and Local files: the cursor is the screen's mark, past the menu's rows
+            boolean lib = a instanceof com.innioasis.y1_eBook.ui.main.MainActivity;
+            Spec s = new Spec(R.id.recyclerView, R.drawable.bg_fm_menu_sel, 0, ACCENT, WHITE,
+                    lib ? new int[] {R.id.name, R.id.progress, R.id.time} : new int[] {R.id.name, R.id.size, R.id.time},
+                    lib ? R.id.iv_arrow : 0);
+            s.bgs = new int[] {R.id.layout};
+            if (lib) s.markBase = Ebook.firstMark();
+            return s;
+        }
         if (a instanceof com.innioasis.music.MusicMainActivity
-                || a instanceof com.innioasis.y1.activity.EbookActivity) {
-            Spec s = plain(a, R.id.lv, new int[] {R.id.tv_item});
+                || a instanceof com.innioasis.y1.activity.EbookActivity
+                || a instanceof com.innioasis.y1_eBook.ui.main.MainActivity) {
+            // the E-book menu is a Music menu list of its own id (Ebook)
+            boolean book = a instanceof com.innioasis.y1_eBook.ui.main.MainActivity;
+            Spec s = plain(a, book ? R.id.ipp_book_menu : R.id.lv, new int[] {R.id.tv_item});
             s.byAdapter = true;
             return s;
         }
@@ -651,7 +667,7 @@ public final class Bar extends RecyclerView.ItemDecoration
             return -1;
         }
         BaseActivity a = (BaseActivity) activity.get();
-        return a == null ? -1 : a.getMark();
+        return a == null ? -1 : a.getMark() - spec.markBase;
     }
 
     /** The cursor on a row of the list: off it (Search's input line) there is no bar. */
@@ -930,6 +946,8 @@ public final class Bar extends RecyclerView.ItemDecoration
     private static void followText(View row, Object a, int color) {
         if (a instanceof com.innioasis.music.PlaylistsActivity) {
             PlGrid.listRow(row);
+        } else if (a instanceof com.innioasis.y1_eBook.ui.main.MainActivity) {
+            Ebook.librarySub(row);
         } else if (a instanceof com.innioasis.y1.activity.IppQueueActivity) {
             ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
         } else if (a instanceof com.innioasis.music.SongListActivity
