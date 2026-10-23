@@ -23,6 +23,8 @@ public final class AlbumInfo {
 
     private static final Hashtable map = new Hashtable();
     private static boolean loaded;
+    /** Inside "Cache library": the file is written once at the end, not per album. */
+    private static boolean passing, dirty;
 
     /** A tab or newline would break the line format. */
     private static boolean bad(String s) {
@@ -96,7 +98,26 @@ public final class AlbumInfo {
 
     private static void save() {
         synchronized (map) {
+            if (passing) {
+                dirty = true;
+                return;
+            }
+            dirty = false;
             saveLocked();
+        }
+    }
+
+    /** A save per put rewrites the whole file each time: quadratic on a library of 3 000 albums. */
+    public static void beginCache() {
+        synchronized (map) {
+            passing = true;
+        }
+    }
+
+    public static void endCache() {
+        synchronized (map) {
+            passing = false;
+            if (dirty) save();
         }
     }
 

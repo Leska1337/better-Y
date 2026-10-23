@@ -1326,6 +1326,8 @@ public final class IppActivity extends BaseActivity {
                     return;
                 }
                 BigCover.beginCache();              // the cover notes saved once, at the end
+                AlbumInfo.beginCache();
+                HashMap byDir = new HashMap();      // the album folder once per directory
 
                 // replaced external artwork first: nothing else here can notice it
                 if (covers) {
@@ -1333,7 +1335,7 @@ public final class IppActivity extends BaseActivity {
                         Song s = (Song) songs.get(i);
                         if (s == null || s.getPath() == null) continue;
                         if (!Art.coverChanged(s.getPath())) continue;
-                        CoverCache.forget(Albums.keyOf(s));
+                        CoverCache.forget(Albums.keyOf(s, byDir));
                         BigCover.forget(s.getPath());
                         BigCover.forget(Albums.trackFolder(s.getPath()));
                     }
@@ -1344,7 +1346,7 @@ public final class IppActivity extends BaseActivity {
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
-                    String key = Albums.keyOf(s);
+                    String key = Albums.keyOf(s, byDir);
                     if (key == null) continue;
                     Song cur = (Song) reps.get(key);
                     if (cur == null || s.getPath().compareTo(cur.getPath()) < 0) reps.put(key, s);
@@ -1462,6 +1464,7 @@ public final class IppActivity extends BaseActivity {
             } finally {
                 // a pass that died half way still writes down what it learned
                 try { BigCover.endCache(); } catch (Throwable t) { }
+                try { AlbumInfo.endCache(); } catch (Throwable t) { }
                 try { Art.flushStamps(); } catch (Throwable t) { }
                 if (done != -1) {
                     synchronized (touched) {
