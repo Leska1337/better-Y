@@ -372,7 +372,7 @@ public final class IppActivity extends BaseActivity {
 
     /** A list moved by Wheel.follow: rows rebound in place, never notified (ipp-wheel-scroll). */
     private RecyclerView newList(int id) {
-        RecyclerView rv = new RecyclerView(this);
+        RecyclerView rv = new com.innioasis.ipp.Fixed(this);
         rv.setId(id);
         LinearLayoutManager lm = new LinearLayoutManager(this);
         rv.setLayoutManager(lm);

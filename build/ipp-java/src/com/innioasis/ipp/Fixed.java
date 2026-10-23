@@ -2,7 +2,9 @@ package com.innioasis.ipp;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -10,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
  * A RecyclerView of a fixed size that lays itself out when a row asks, instead of passing the
  * request up: a row's request otherwise re-lays out the whole window, the ConstraintLayout root
  * with the panel beside the list, on every wheel click. Its size depends on nothing inside it, so
- * nothing above it needs the pass. Its own layout params changed, or not laid out yet — the
- * request goes up as usual. Used from the layout XML.
+ * nothing above it needs the pass. Its own layout params changed, wrap_content, or not laid out
+ * yet — the request goes up as usual. Used from the layout XML; {@link FixedList} is the ListView.
  */
 public class Fixed extends RecyclerView {
 
@@ -27,144 +29,155 @@ public class Fixed extends RecyclerView {
         super(c, a, style);
     }
 
-    private final Self self = new Self(this);
-    private boolean posted, laying;
-    /** The layout params at the last layout: a change in them is a change of OUR size or place. */
-    private int lw, lh, ml, mt, mr, mb;
+    private final Box box = new Box(this);
 
     public void requestLayout() {
-        if (laying || !contained()) {
-            super.requestLayout();
-            return;
-        }
-        forceLayout();
-        if (!posted) {
-            posted = true;
-            postOnAnimation(self);
-        }
-    }
-
-    private boolean contained() {
-        if (getWidth() == 0 || getHeight() == 0 || getParent() == null || getWindowToken() == null) return false;
-        ViewGroup.LayoutParams lp = getLayoutParams();
-        if (lp == null || lp.width != lw || lp.height != lh) return false;
-        if (lp instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
-            if (m.leftMargin != ml || m.topMargin != mt || m.rightMargin != mr || m.bottomMargin != mb) return false;
-        }
-        return true;
+        // null while the base constructor runs
+        if (box == null || !box.take()) super.requestLayout();
     }
 
     protected void onMeasure(int w, int h) {
-        laying = true;
+        box.laying = true;
         try {
             super.onMeasure(w, h);
         } finally {
-            laying = false;
+            box.laying = false;
         }
     }
 
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        laying = true;
+        box.laying = true;
         try {
             super.onLayout(changed, l, t, r, b);
         } finally {
-            laying = false;
+            box.laying = false;
         }
-        if (!selfLaying) healDue = true;   // inside the window's pass: the panel was measured before the binds
-        ViewGroup.LayoutParams lp = getLayoutParams();
-        if (lp == null) return;
-        lw = lp.width;
-        lh = lp.height;
-        if (lp instanceof ViewGroup.MarginLayoutParams) {
-            ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
-            ml = m.leftMargin;
-            mt = m.topMargin;
-            mr = m.rightMargin;
-            mb = m.bottomMargin;
-        }
+        box.laid();
     }
-
-    /** Before the frame's traversal: the pass the window would have run, for this list alone. */
-    static final class Self implements Runnable {
-        private final Fixed rv;
-
-        Self(Fixed rv) { this.rv = rv; }
-
-        public void run() {
-            rv.posted = false;
-            if (!rv.isLayoutRequested()) return;
-            // the window lays out anyway this frame: it will reach the list
-            if (rv.getParent() != null && rv.getParent().isLayoutRequested()) return;
-            if (!rv.contained()) {
-                rv.passUp();
-                return;
-            }
-            rv.selfLaying = true;
-            try {
-                rv.measure(MeasureSpec.makeMeasureSpec(rv.getWidth(), MeasureSpec.EXACTLY),
-                        MeasureSpec.makeMeasureSpec(rv.getHeight(), MeasureSpec.EXACTLY));
-                rv.layout(rv.getLeft(), rv.getTop(), rv.getRight(), rv.getBottom());
-            } finally {
-                rv.selfLaying = false;
-            }
-            rv.invalidate();
-        }
-    }
-
-    private void passUp() {
-        super.requestLayout();
-    }
-
-    private final Heal heal = new Heal(this);
-    private boolean healDue, selfLaying;
-    private long healAt;
 
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        getViewTreeObserver().addOnPreDrawListener(heal);
+        box.attachedAt = android.os.SystemClock.uptimeMillis();
+        getViewTreeObserver().addOnPreDrawListener(box);
     }
 
     protected void onDetachedFromWindow() {
-        getViewTreeObserver().removeOnPreDrawListener(heal);
+        getViewTreeObserver().removeOnPreDrawListener(box);
         super.onDetachedFromWindow();
     }
 
-
     /**
-     * The window's pass measures the panel beside the list BEFORE it lays the list out, and the
-     * rows' binds repaint the panel: its new text and picture are drawn in the old measure, and
-     * the layout clears the request they made. The rows' own requests used to carry the window
-     * into a second pass; they stop here now, so after such a pass the neighbours are measured
-     * again and that draw is cancelled. Our own passes run outside the window's: not needed then.
+     * The logic both lists share. {@code take} answers a request: true when the list lays itself
+     * out (before the frame's traversal), false when it goes up. The layout params at the last
+     * layout are kept: a change in them is a change of the list's own size or place.
      */
-    static final class Heal implements android.view.ViewTreeObserver.OnPreDrawListener {
-        private final Fixed rv;
+    static final class Box implements Runnable, ViewTreeObserver.OnPreDrawListener {
+        private final ViewGroup v;
+        boolean laying;
+        private boolean posted, selfLaying, healDue, passing;
+        private long healAt;
+        long attachedAt;
+        private int lw, lh, ml, mt, mr, mb;
 
-        Heal(Fixed rv) { this.rv = rv; }
+        Box(ViewGroup v) { this.v = v; }
 
+        boolean take() {
+            if (laying || passing || !contained()) return false;
+            v.forceLayout();
+            if (!posted) {
+                posted = true;
+                v.postOnAnimation(this);
+            }
+            return true;
+        }
+
+        private boolean contained() {
+            if (v.getWidth() == 0 || v.getHeight() == 0 || v.getParent() == null || v.getWindowToken() == null) {
+                return false;
+            }
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
+            if (lp == null || lp.width != lw || lp.height != lh) return false;
+            if (lp.width == ViewGroup.LayoutParams.WRAP_CONTENT || lp.height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+                return false;
+            }
+            if (lp instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
+                if (m.leftMargin != ml || m.topMargin != mt || m.rightMargin != mr || m.bottomMargin != mb) return false;
+            }
+            return true;
+        }
+
+        /** End of the list's onLayout. */
+        void laid() {
+            // the window's first passes: the neighbours were measured before the rows were bound
+            if (!selfLaying && android.os.SystemClock.uptimeMillis() - attachedAt < 1000) healDue = true;
+            ViewGroup.LayoutParams lp = v.getLayoutParams();
+            if (lp == null) return;
+            lw = lp.width;
+            lh = lp.height;
+            if (lp instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams m = (ViewGroup.MarginLayoutParams) lp;
+                ml = m.leftMargin;
+                mt = m.topMargin;
+                mr = m.rightMargin;
+                mb = m.bottomMargin;
+            }
+        }
+
+        /** Before the frame's traversal: the pass the window would have run, for this list alone. */
+        public void run() {
+            posted = false;
+            if (!v.isLayoutRequested()) return;
+            // the window lays out anyway this frame: it will reach the list
+            if (v.getParent() != null && v.getParent().isLayoutRequested()) return;
+            if (!contained()) {
+                passing = true;
+                try {
+                    v.requestLayout();
+                } finally {
+                    passing = false;
+                }
+                return;
+            }
+            selfLaying = true;
+            try {
+                v.measure(View.MeasureSpec.makeMeasureSpec(v.getWidth(), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(v.getHeight(), View.MeasureSpec.EXACTLY));
+                v.layout(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+            } finally {
+                selfLaying = false;
+            }
+            v.invalidate();
+        }
+
+        /**
+         * The window's pass measures a panel beside the list BEFORE it lays the list out, and the
+         * rows' binds repaint the panel: the new text and picture are drawn in the old measure and
+         * the layout clears their request. The rows' requests used to carry the window into a
+         * second pass; they stop here, so after such a pass on opening the neighbours are measured
+         * again and that draw is cancelled — once per 300 ms at most, a draw cancelled every frame
+         * shows nothing.
+         */
         public boolean onPreDraw() {
-            if (!rv.healDue) return true;
-            rv.healDue = false;
-            // once per pass that needs it: a draw cancelled every frame would never show anything
+            if (!healDue) return true;
+            healDue = false;
             long now = android.os.SystemClock.uptimeMillis();
-            if (now - rv.healAt < 300) return true;
-            rv.healAt = now;
-            if (!(rv.getParent() instanceof ViewGroup)) return true;
-            ViewGroup g = (ViewGroup) rv.getParent();
+            if (now - healAt < 300 || !(v.getParent() instanceof ViewGroup)) return true;
+            healAt = now;
+            ViewGroup g = (ViewGroup) v.getParent();
             for (int i = 0; i < g.getChildCount(); i++) {
-                android.view.View c = g.getChildAt(i);
-                if (c != rv) force(c);
+                View c = g.getChildAt(i);
+                if (c != v) force(c);
             }
             g.requestLayout();
             return false;
         }
 
-        private static void force(android.view.View v) {
-            if (v == null || v.getVisibility() == GONE) return;
-            v.forceLayout();
-            if (v instanceof ViewGroup) {
-                ViewGroup g = (ViewGroup) v;
+        private static void force(View c) {
+            if (c == null || c.getVisibility() == View.GONE) return;
+            c.forceLayout();
+            if (c instanceof ViewGroup) {
+                ViewGroup g = (ViewGroup) c;
                 for (int i = 0; i < g.getChildCount(); i++) force(g.getChildAt(i));
             }
         }

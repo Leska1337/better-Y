@@ -29,30 +29,30 @@
 
 .method constructor <init>()V
   .registers 2
-  .line 329
+  .line 351
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 330
+  .line 352
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Lab$Stacks;->binder:Ljava/util/HashMap;
-  .line 331
+  .line 353
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakMain:Ljava/util/HashMap;
-  .line 332
+  .line 354
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakBinder:Ljava/util/HashMap;
-  .line 333
+  .line 355
     const/4 v0, 0
     new-array v0, v0, [Ljava/lang/Thread;
     iput-object v0, p0, Lcom/innioasis/ipp/Lab$Stacks;->binders:[Ljava/lang/Thread;
     return-void
 .end method
 
-.method static synthetic access$100(Ljava/util/HashMap;I)Ljava/lang/String;
+.method static synthetic access$000(Ljava/util/HashMap;I)Ljava/lang/String;
   .registers 2
-  .line 329
+  .line 351
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Lab$Stacks;->sorted(Ljava/util/HashMap;I)Ljava/lang/String;
     move-result-object p0
     return-object p0
@@ -60,20 +60,20 @@
 
 .method static synthetic access$200(Ljava/util/HashMap;Ljava/lang/String;)V
   .registers 2
-  .line 329
+  .line 351
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Lab$Stacks;->count(Ljava/util/HashMap;Ljava/lang/String;)V
     return-void
 .end method
 
 .method private static binderThreads()[Ljava/lang/Thread;
   .registers 6
-  .line 386
+  .line 408
     invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Thread;->getThreadGroup()Ljava/lang/ThreadGroup;
     move-result-object v0
   :L0
-  .line 387
+  .line 409
     invoke-virtual { v0 }, Ljava/lang/ThreadGroup;->getParent()Ljava/lang/ThreadGroup;
     move-result-object v1
     if-eqz v1, :L1
@@ -81,23 +81,23 @@
     move-result-object v0
     goto :L0
   :L1
-  .line 388
+  .line 410
     invoke-virtual { v0 }, Ljava/lang/ThreadGroup;->activeCount()I
     move-result v1
     add-int/lit8 v1, v1, 16
     new-array v1, v1, [Ljava/lang/Thread;
-  .line 389
+  .line 411
     const/4 v2, 1
     invoke-virtual { v0, v1, v2 }, Ljava/lang/ThreadGroup;->enumerate([Ljava/lang/Thread;Z)I
     move-result v0
-  .line 390
+  .line 412
     new-instance v2, Ljava/util/ArrayList;
     invoke-direct { v2 }, Ljava/util/ArrayList;-><init>()V
-  .line 391
+  .line 413
     const/4 v3, 0
   :L2
     if-ge v3, v0, :L4
-  .line 392
+  .line 414
     aget-object v4, v1, v3
     if-eqz v4, :L3
     invoke-virtual { v4 }, Ljava/lang/Thread;->getName()Ljava/lang/String;
@@ -109,11 +109,11 @@
     aget-object v4, v1, v3
     invoke-virtual { v2, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L3
-  .line 391
+  .line 413
     add-int/lit8 v3, v3, 1
     goto :L2
   :L4
-  .line 394
+  .line 416
     invoke-virtual { v2 }, Ljava/util/ArrayList;->size()I
     move-result v0
     new-array v0, v0, [Ljava/lang/Thread;
@@ -125,11 +125,11 @@
 
 .method private static count(Ljava/util/HashMap;Ljava/lang/String;)V
   .registers 4
-  .line 419
+  .line 441
     invoke-virtual { p0, p1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, [I
-  .line 420
+  .line 442
     const/4 v1, 1
     if-nez v0, :L0
     filled-new-array { v1 }, [I
@@ -137,31 +137,31 @@
     invoke-virtual { p0, p1, v0 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
     goto :L1
   :L0
-  .line 421
+  .line 443
     const/4 p0, 0
     aget p1, v0, p0
     add-int/2addr p1, v1
     aput p1, v0, p0
   :L1
-  .line 422
+  .line 444
     return-void
 .end method
 
 .method private static sorted(Ljava/util/HashMap;I)Ljava/lang/String;
   .registers 8
-  .line 425
+  .line 447
     new-instance v0, Ljava/util/ArrayList;
     invoke-virtual { p0 }, Ljava/util/HashMap;->entrySet()Ljava/util/Set;
     move-result-object p0
     invoke-direct { v0, p0 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-  .line 426
+  .line 448
     new-instance p0, Lcom/innioasis/ipp/Lab$ByCount;
     invoke-direct { p0 }, Lcom/innioasis/ipp/Lab$ByCount;-><init>()V
     invoke-static { v0, p0 }, Ljava/util/Collections;->sort(Ljava/util/List;Ljava/util/Comparator;)V
-  .line 427
+  .line 449
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 428
+  .line 450
     const/4 v1, 0
     const/4 v2, 0
   :L0
@@ -169,11 +169,11 @@
     move-result v3
     if-ge v2, v3, :L1
     if-ge v2, p1, :L1
-  .line 429
+  .line 451
     invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Ljava/util/Map$Entry;
-  .line 430
+  .line 452
     const-string v4, " ["
     invoke-virtual { p0, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v4
@@ -189,11 +189,11 @@
     invoke-interface { v3 }, Ljava/util/Map$Entry;->getKey()Ljava/lang/Object;
     move-result-object v3
     invoke-virtual { v4, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
-  .line 428
+  .line 450
     add-int/lit8 v2, v2, 1
     goto :L0
   :L1
-  .line 432
+  .line 454
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     return-object p0
@@ -201,24 +201,24 @@
 
 .method private static top([Ljava/lang/StackTraceElement;II)Ljava/lang/String;
   .registers 8
-  .line 409
+  .line 431
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 410
+  .line 432
     move v1, p1
   :L0
     array-length v2, p0
     if-ge v1, v2, :L2
     add-int v2, p1, p2
     if-ge v1, v2, :L2
-  .line 411
+  .line 433
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->length()I
     move-result v2
     if-lez v2, :L1
     const-string v2, " < "
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
   :L1
-  .line 412
+  .line 434
     aget-object v2, p0, v1
     invoke-virtual { v2 }, Ljava/lang/StackTraceElement;->getClassName()Ljava/lang/String;
     move-result-object v2
@@ -232,7 +232,7 @@
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
     move-result-object v2
     aget-object v3, p0, v1
-  .line 413
+  .line 435
     invoke-virtual { v3 }, Ljava/lang/StackTraceElement;->getMethodName()Ljava/lang/String;
     move-result-object v3
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -244,11 +244,11 @@
     invoke-virtual { v3 }, Ljava/lang/StackTraceElement;->getLineNumber()I
     move-result v3
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-  .line 410
+  .line 432
     add-int/lit8 v1, v1, 1
     goto :L0
   :L2
-  .line 415
+  .line 437
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     return-object p0
@@ -256,13 +256,13 @@
 
 .method private static transact([Ljava/lang/StackTraceElement;)Ljava/lang/String;
   .registers 5
-  .line 399
+  .line 421
     const/4 v0, 0
     const/4 v1, 0
   :L0
     array-length v2, p0
     if-ge v1, v2, :L4
-  .line 400
+  .line 422
     aget-object v2, p0, v1
     invoke-virtual { v2 }, Ljava/lang/StackTraceElement;->getMethodName()Ljava/lang/String;
     move-result-object v2
@@ -270,7 +270,7 @@
     invoke-virtual { v3, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v2
     if-eqz v2, :L3
-  .line 401
+  .line 423
     if-lez v1, :L1
     add-int/lit8 v2, v1, -1
     aget-object v2, p0, v2
@@ -280,7 +280,7 @@
   :L1
     const-string v2, "?"
   :L2
-  .line 402
+  .line 424
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v3, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -303,11 +303,11 @@
     move-result-object p0
     return-object p0
   :L3
-  .line 399
+  .line 421
     add-int/lit8 v1, v1, 1
     goto :L0
   :L4
-  .line 405
+  .line 427
     const/4 p0, 0
     return-object p0
 .end method
@@ -315,45 +315,45 @@
 .method public run()V
   .catch Ljava/lang/InterruptedException; { :L1 .. :L2 } :L15
   .registers 12
-  .line 337
+  .line 359
     invoke-static { }, Landroid/os/Looper;->getMainLooper()Landroid/os/Looper;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/os/Looper;->getThread()Ljava/lang/Thread;
     move-result-object v0
-  .line 338
+  .line 360
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     iput-wide v1, p0, Lcom/innioasis/ipp/Lab$Stacks;->lastDump:J
   :L0
-  .line 341
+  .line 363
     const-wide/16 v1, 15
   :L1
     invoke-static { v1, v2 }, Ljava/lang/Thread;->sleep(J)V
   :L2
-  .line 344
+  .line 366
     nop
-  .line 345
+  .line 367
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
-  .line 346
+  .line 368
     iget-wide v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->lastEnum:J
     sub-long v3, v1, v3
     const-wide/16 v5, 2000
     cmp-long v7, v3, v5
     if-lez v7, :L3
-  .line 347
+  .line 369
     invoke-static { }, Lcom/innioasis/ipp/Lab$Stacks;->binderThreads()[Ljava/lang/Thread;
     move-result-object v3
     iput-object v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->binders:[Ljava/lang/Thread;
-  .line 348
+  .line 370
     iput-wide v1, p0, Lcom/innioasis/ipp/Lab$Stacks;->lastEnum:J
   :L3
-  .line 350
+  .line 372
     iget-wide v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->samples:J
     const-wide/16 v5, 1
     add-long/2addr v3, v5
     iput-wide v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->samples:J
-  .line 351
+  .line 373
     const/4 v3, 0
     const/4 v4, 0
   :L4
@@ -361,38 +361,38 @@
     array-length v6, v5
     const-wide/16 v7, 0
     if-ge v4, v6, :L7
-  .line 352
+  .line 374
     aget-object v5, v5, v4
     invoke-virtual { v5 }, Ljava/lang/Thread;->getStackTrace()[Ljava/lang/StackTraceElement;
     move-result-object v5
     invoke-static { v5 }, Lcom/innioasis/ipp/Lab$Stacks;->transact([Ljava/lang/StackTraceElement;)Ljava/lang/String;
     move-result-object v5
-  .line 353
+  .line 375
     if-nez v5, :L5
     goto :L6
   :L5
-  .line 354
+  .line 376
     iget-object v6, p0, Lcom/innioasis/ipp/Lab$Stacks;->binder:Ljava/util/HashMap;
     invoke-static { v6, v5 }, Lcom/innioasis/ipp/Lab$Stacks;->count(Ljava/util/HashMap;Ljava/lang/String;)V
-  .line 355
+  .line 377
     iget-wide v9, p0, Lcom/innioasis/ipp/Lab$Stacks;->busySince:J
     cmp-long v6, v9, v7
     if-eqz v6, :L6
     iget-object v6, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakBinder:Ljava/util/HashMap;
     invoke-static { v6, v5 }, Lcom/innioasis/ipp/Lab$Stacks;->count(Ljava/util/HashMap;Ljava/lang/String;)V
   :L6
-  .line 351
+  .line 373
     add-int/lit8 v4, v4, 1
     goto :L4
   :L7
-  .line 357
+  .line 379
     invoke-virtual { v0 }, Ljava/lang/Thread;->getStackTrace()[Ljava/lang/StackTraceElement;
     move-result-object v4
-  .line 358
+  .line 380
     array-length v5, v4
     if-eqz v5, :L9
     aget-object v5, v4, v3
-  .line 359
+  .line 381
     invoke-virtual { v5 }, Ljava/lang/StackTraceElement;->getMethodName()Ljava/lang/String;
     move-result-object v5
     const-string v6, "nativePollOnce"
@@ -406,23 +406,23 @@
   :L9
     const/4 v5, 1
   :L10
-  .line 360
+  .line 382
     const-string v6, "ipplab"
     if-nez v5, :L12
-  .line 361
+  .line 383
     iget-wide v9, p0, Lcom/innioasis/ipp/Lab$Stacks;->busySince:J
     cmp-long v5, v9, v7
     if-nez v5, :L11
-  .line 362
+  .line 384
     iput-wide v1, p0, Lcom/innioasis/ipp/Lab$Stacks;->busySince:J
-  .line 363
+  .line 385
     iget-object v5, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakMain:Ljava/util/HashMap;
     invoke-virtual { v5 }, Ljava/util/HashMap;->clear()V
-  .line 364
+  .line 386
     iget-object v5, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakBinder:Ljava/util/HashMap;
     invoke-virtual { v5 }, Ljava/util/HashMap;->clear()V
   :L11
-  .line 366
+  .line 388
     iget-object v5, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakMain:Ljava/util/HashMap;
     const/4 v9, 6
     invoke-static { v4, v3, v9 }, Lcom/innioasis/ipp/Lab$Stacks;->top([Ljava/lang/StackTraceElement;II)Ljava/lang/String;
@@ -430,19 +430,19 @@
     invoke-static { v5, v3 }, Lcom/innioasis/ipp/Lab$Stacks;->count(Ljava/util/HashMap;Ljava/lang/String;)V
     goto :L13
   :L12
-  .line 367
+  .line 389
     iget-wide v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->busySince:J
     cmp-long v5, v3, v7
     if-eqz v5, :L13
-  .line 368
+  .line 390
     sub-long v3, v1, v3
-  .line 369
+  .line 391
     iput-wide v7, p0, Lcom/innioasis/ipp/Lab$Stacks;->busySince:J
-  .line 370
+  .line 392
     const-wide/16 v9, 250
     cmp-long v5, v3, v9
     if-ltz v5, :L13
-  .line 371
+  .line 393
     new-instance v5, Ljava/lang/StringBuilder;
     invoke-direct { v5 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v9, "stall "
@@ -463,23 +463,23 @@
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
     iget-object v4, p0, Lcom/innioasis/ipp/Lab$Stacks;->streakBinder:Ljava/util/HashMap;
-  .line 372
+  .line 394
     invoke-static { v4, v5 }, Lcom/innioasis/ipp/Lab$Stacks;->sorted(Ljava/util/HashMap;I)Ljava/lang/String;
     move-result-object v4
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v3
-  .line 371
+  .line 393
     invoke-static { v6, v3 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L13
-  .line 375
+  .line 397
     iget-wide v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->lastDump:J
     sub-long v3, v1, v3
     const-wide/16 v9, 30000
     cmp-long v5, v3, v9
     if-lez v5, :L14
-  .line 376
+  .line 398
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v4, "binder in "
@@ -501,7 +501,7 @@
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
     iget-object v4, p0, Lcom/innioasis/ipp/Lab$Stacks;->binder:Ljava/util/HashMap;
-  .line 377
+  .line 399
     const/16 v5, 8
     invoke-static { v4, v5 }, Lcom/innioasis/ipp/Lab$Stacks;->sorted(Ljava/util/HashMap;I)Ljava/lang/String;
     move-result-object v4
@@ -509,21 +509,21 @@
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v3
-  .line 376
+  .line 398
     invoke-static { v6, v3 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 378
+  .line 400
     iget-object v3, p0, Lcom/innioasis/ipp/Lab$Stacks;->binder:Ljava/util/HashMap;
     invoke-virtual { v3 }, Ljava/util/HashMap;->clear()V
-  .line 379
+  .line 401
     iput-wide v7, p0, Lcom/innioasis/ipp/Lab$Stacks;->samples:J
-  .line 380
+  .line 402
     iput-wide v1, p0, Lcom/innioasis/ipp/Lab$Stacks;->lastDump:J
   :L14
-  .line 382
+  .line 404
     goto/16 :L0
   :L15
-  .line 342
+  .line 364
     move-exception v0
-  .line 343
+  .line 365
     return-void
 .end method

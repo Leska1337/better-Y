@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..2494f465 100644
+index 01b1f730..84110923 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..2494f465 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100406
++  versionCode: 10100410
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -113,7 +113,7 @@ index 031c1794..ff86ecc8 100644
 +    <com.innioasis.ipp.Outline android:textColor="@color/white" android:gravity="left" android:id="@id/info_state_tv2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" app:layout_constraintLeft_toRightOf="@id/info_state_tv1" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="@id/info_state_tv1" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_albums.xml b/build/src/res/layout/activity_albums.xml
-index a65785d4..00417df8 100644
+index a65785d4..018dd5f1 100644
 --- a/build/src/res/layout/activity_albums.xml
 +++ b/build/src/res/layout/activity_albums.xml
 @@ -1,6 +1,26 @@
@@ -135,7 +135,7 @@ index a65785d4..00417df8 100644
 +         The list spans the whole screen and reserves the space above it as paddingTop with
 +         clipToPadding="false", so the Shuffle row has somewhere to ride into. See
 +         activity_song_list.xml for the mechanism. -->
-+    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.FixedList android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <!-- 49dip = exactly one list row, so a downward step scrolls by the same amount whether it is
 +         consuming the Shuffle row or a track. It was a pinned 60 before, and for a while a 54 picked
 +         so that 45 (status bar) + 54 + 16 (disc bar) + 5*49 (rows) came to exactly 360 — five whole
@@ -165,7 +165,7 @@ index 83c18457..38192792 100644
 +    <ListView android:id="@id/lv_audiobooks" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_artists.xml b/build/src/res/layout/activity_artists.xml
-index a65785d4..88d40e93 100644
+index a65785d4..f436993a 100644
 --- a/build/src/res/layout/activity_artists.xml
 +++ b/build/src/res/layout/activity_artists.xml
 @@ -1,6 +1,8 @@
@@ -177,7 +177,7 @@ index a65785d4..88d40e93 100644
 +    <!-- ipp: 49dip (one list row) and NOT pinned — the row rides away with the list, which the
 +         ListView makes room for as paddingTop + clipToPadding="false". See activity_song_list.xml. -->
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.FixedList android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" android:clipToPadding="false" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_base.xml b/build/src/res/layout/activity_base.xml
 index dd92a115..d05efa91 100644
@@ -321,7 +321,7 @@ index b2b33afe..377513d2 100644
 +    </androidx.constraintlayout.widget.ConstraintLayout>
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_eq.xml b/build/src/res/layout/activity_eq.xml
-index a23161fa..aa312ee4 100644
+index a23161fa..b9604c92 100644
 --- a/build/src/res/layout/activity_eq.xml
 +++ b/build/src/res/layout/activity_eq.xml
 @@ -1,10 +1,17 @@
@@ -338,7 +338,7 @@ index a23161fa..aa312ee4 100644
 +    <!-- ipp: the list as wide as Settings' (227), the preview built as the Settings panel is, so
 +         it centres its text the same way: 179 wide, 22 from the right edge. This screen starts
 +         under the status bar, so the caption's 58 from the screen's top is 13 here. -->
-+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler_list" android:layout_width="227.0dip" android:layout_height="fill_parent" />
++    <com.innioasis.ipp.Fixed android:id="@id/recycler_list" android:layout_width="227.0dip" android:layout_height="fill_parent" />
 +    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
 +        <androidx.constraintlayout.widget.ConstraintLayout android:layout_gravity="right" android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip">
 +            <!-- ipp: the panel's caption, not shown: it only holds the room the Settings panel
@@ -349,6 +349,17 @@ index a23161fa..aa312ee4 100644
 +        </androidx.constraintlayout.widget.ConstraintLayout>
 +    </FrameLayout>
  </LinearLayout>
+diff --git a/build/src/res/layout/activity_files.xml b/build/src/res/layout/activity_files.xml
+index 9f9d0dc0..e9b1a5ec 100644
+--- a/build/src/res/layout/activity_files.xml
++++ b/build/src/res/layout/activity_files.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <ListView android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.FixedList android:id="@id/lv" android:layout_width="fill_parent" android:layout_height="fill_parent" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_genres.xml b/build/src/res/layout/activity_genres.xml
 index a65785d4..d5d673a8 100644
 --- a/build/src/res/layout/activity_genres.xml
@@ -468,7 +479,7 @@ index e5699c0f..d40b04ed 100644
 +    <androidx.recyclerview.widget.RecyclerView android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_search.xml b/build/src/res/layout/activity_search.xml
-index 8592ee3d..22b9bb96 100644
+index 8592ee3d..f96f0905 100644
 --- a/build/src/res/layout/activity_search.xml
 +++ b/build/src/res/layout/activity_search.xml
 @@ -4,8 +4,8 @@
@@ -480,7 +491,8 @@ index 8592ee3d..22b9bb96 100644
 +        <TextView android:textSize="20.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="center_vertical" android:id="@id/title" android:layout_width="0.0dip" android:layout_height="39.0dip" android:layout_marginLeft="20.0dip" android:layout_marginRight="100.0dip" android:text="@string/music_search" android:singleLine="true" android:maxLines="1" app:layout_constraintLeft_toRightOf="@id/icon_bg" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +        <TextView android:textSize="10.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:id="@id/info" android:layout_width="0.0dip" android:layout_height="wrap_content" android:singleLine="true" android:maxLines="1" app:layout_constraintLeft_toLeftOf="@id/title" app:layout_constraintRight_toRightOf="@id/title" app:layout_constraintTop_toBottomOf="@id/title" />
      </androidx.constraintlayout.widget.ConstraintLayout>
-     <androidx.recyclerview.widget.RecyclerView android:id="@id/search_list" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/search_head" />
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/search_list" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/search_head" />
++    <com.innioasis.ipp.Fixed android:id="@id/search_list" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/search_head" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_setting.xml b/build/src/res/layout/activity_setting.xml
 index 0ed053cd..f8052ddb 100644
@@ -543,6 +555,17 @@ index 03493954..e1f6c7b7 100644
          <ImageView android:id="@id/imgFull" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginBottom="10.0dip" android:scaleType="fitCenter" app:layout_constraintBottom_toTopOf="@id/imgIcon" app:layout_constraintTop_toTopOf="parent" />
          <ImageView android:id="@id/imgIcon" android:layout_width="32.0dip" android:layout_height="32.0dip" android:src="@drawable/icon_as_theme_selected" app:layout_constraintBottom_toTopOf="@id/tv" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
          <TextView android:textSize="15.0sp" android:textColor="#cc00fff5" android:id="@id/tv" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginBottom="5.0dip" android:text="@string/theme_as_theme" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" />
+diff --git a/build/src/res/layout/activity_video_list.xml b/build/src/res/layout/activity_video_list.xml
+index 8024cbe8..3ae5f3a8 100644
+--- a/build/src/res/layout/activity_video_list.xml
++++ b/build/src/res/layout/activity_video_list.xml
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android">
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="fill_parent" android:layout_height="fill_parent" />
++    <com.innioasis.ipp.Fixed android:id="@id/recycler" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_wallpaper_list.xml b/build/src/res/layout/activity_wallpaper_list.xml
 index cd1cd8c2..fc89192a 100644
 --- a/build/src/res/layout/activity_wallpaper_list.xml
@@ -20012,7 +20035,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b60a3337 100644
+index 71fe29d0..aa50c791 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20984,7 @@ index 71fe29d0..b60a3337 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev406</string>
++    <string name="ipp_version">v1.1.0-dev410</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -54683,10 +54706,10 @@ index b9220ba5..05cae465 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9f..3db20d5e 100644
+index 4ed7ef9f..178b4328 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-@@ -135,358 +135,279 @@
+@@ -135,358 +135,282 @@
  
  # virtual methods
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
@@ -54818,7 +54841,10 @@ index 4ed7ef9f..3db20d5e 100644
 +    if-nez v0, :L7
 +    invoke-virtual { v1 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
 +    move-result-object v0
-+    invoke-static { v0 }, Lcom/innioasis/ipp/CoverCache;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
++    # ipp: an album known to have no art gets the placeholder, so the bind starts no thread
++    invoke-direct { v7 }, Lcom/innioasis/music/adapter/AlbumListAdapter;->getDefaultBitmap()Landroid/graphics/Bitmap;
++    move-result-object v2
++    invoke-static { v0, v2 }, Lcom/innioasis/ipp/CoverCache;->rowPeek(Ljava/lang/String;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
 +    move-result-object v2
 +    invoke-virtual { v1 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
 +    move-result-object v0
@@ -55242,7 +55268,7 @@ index 4ed7ef9f..3db20d5e 100644
      return-object v9
  .end method
  
-@@ -588,4 +509,4 @@
+@@ -588,4 +512,4 @@
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/AlbumListAdapter;->notifyDataSetChanged()V
  
      return-void

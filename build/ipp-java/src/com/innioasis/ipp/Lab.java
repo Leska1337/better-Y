@@ -145,27 +145,49 @@ public final class Lab {
     static final class Layouts implements Choreographer.FrameCallback {
         private final java.util.HashMap seen = new java.util.HashMap();
         private long lastDump = SystemClock.uptimeMillis();
-        private int frames, laid;
+        private final java.util.HashMap perScreen = new java.util.HashMap();   // name -> {ticks, laid}
 
         public void doFrame(long nanos) {
             try {
-                android.app.Activity a = topScreen == null ? null : (android.app.Activity) topScreen.get();
-                View root = a == null || a.isFinishing() ? null : a.getWindow().peekDecorView();
-                frames++;
-                if (root != null && root.isLayoutRequested()) {
-                    laid++;
-                    origins(root, a.getClass().getSimpleName());
+                android.app.Activity a = focused();
+                View root = a == null ? null : a.getWindow().peekDecorView();
+                if (root != null) {
+                    String name = a.getClass().getSimpleName();
+                    int[] c = (int[]) perScreen.get(name);
+                    if (c == null) perScreen.put(name, c = new int[2]);
+                    c[0]++;
+                    if (root.isLayoutRequested()) {
+                        c[1]++;
+                        origins(root, name);
+                    }
                 }
                 long now = SystemClock.uptimeMillis();
                 if (now - lastDump >= 20000) {
-                    Log.i("ipplab", "layouts: " + laid + " of " + frames + " frames:" + Stacks.sorted(seen, 15));
+                    StringBuilder b = new StringBuilder("layouts:");
+                    java.util.Iterator it = perScreen.entrySet().iterator();
+                    while (it.hasNext()) {
+                        java.util.Map.Entry e = (java.util.Map.Entry) it.next();
+                        int[] c = (int[]) e.getValue();
+                        b.append(' ').append(e.getKey()).append(' ').append(c[1]).append('/').append(c[0]);
+                    }
+                    Log.i("ipplab", b.append(" |").append(Stacks.sorted(seen, 15)).toString());
                     seen.clear();
-                    frames = laid = 0;
+                    perScreen.clear();
                     lastDump = now;
                 }
             } catch (Throwable t) {
             }
             Choreographer.getInstance().postFrameCallback(this);
+        }
+
+        /** The screen whose window has the focus: the one on top, wherever it came from. */
+        private static android.app.Activity focused() {
+            Object[] all = screensEver.keySet().toArray();
+            for (int i = 0; i < all.length; i++) {
+                android.app.Activity a = (android.app.Activity) all[i];
+                if (a != null && !a.isFinishing() && a.hasWindowFocus()) return a;
+            }
+            return null;
         }
 
         private void origins(View v, String screen) {
@@ -174,7 +196,7 @@ public final class Lab {
                 ViewGroup g = (ViewGroup) v;
                 for (int i = 0; i < g.getChildCount(); i++) {
                     View c = g.getChildAt(i);
-                    if (c != null && c.isLayoutRequested()) {
+                    if (c != null && c.getVisibility() != View.GONE && c.isLayoutRequested()) {
                         deeper = true;
                         origins(c, screen);
                     }

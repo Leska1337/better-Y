@@ -986,8 +986,8 @@
 .method private newList(I)Landroidx/recyclerview/widget/RecyclerView;
   .registers 4
   .line 375
-    new-instance v0, Landroidx/recyclerview/widget/RecyclerView;
-    invoke-direct { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;-><init>(Landroid/content/Context;)V
+    new-instance v0, Lcom/innioasis/ipp/Fixed;
+    invoke-direct { v0, p0 }, Lcom/innioasis/ipp/Fixed;-><init>(Landroid/content/Context;)V
   .line 376
     invoke-virtual { v0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->setId(I)V
   .line 377
