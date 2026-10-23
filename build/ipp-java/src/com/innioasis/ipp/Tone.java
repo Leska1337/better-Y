@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.KeyEvent;
@@ -199,15 +200,62 @@ public final class Tone {
 
     private static int previewStream;
 
-    /** A candidate cuts the one before it short, so a fast wheel never stacks them. */
+    // Everything SoundPool runs on ipp-tone. play() on 4.2 creates and starts an AudioTrack in
+    // mediaserver over binder, synchronously: 100–370 ms per click, which the main thread waited
+    // out on every wheel click. The pool is created there too, so
+    // its load callback arrives there and these fields live on one thread.
+
+    private static Handler worker;
+
+    private static synchronized Handler worker() {
+        if (worker == null) {
+            HandlerThread t = new HandlerThread("ipp-tone");
+            t.start();
+            worker = new Handler(t.getLooper());
+        }
+        return worker;
+    }
+
+    private static final int PLAY = 0, PREVIEW = 1, PRELOAD = 2;
+
+    static final class Job implements Runnable {
+        private final int kind;
+        private final String path;
+        private final float gain;
+
+        Job(int kind, String path, float gain) {
+            this.kind = kind;
+            this.path = path;
+            this.gain = gain;
+        }
+
+        public void run() {
+            try {
+                if (kind == PREVIEW) previewNow(path, gain);
+                else playNow(path, gain);
+                if (kind == PRELOAD) pending = 0;
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    private static void play(String path, float gain) {
+        if (path != null) worker().post(new Job(PLAY, path, gain));
+    }
+
     private static void preview(String path, float gain) {
+        if (path != null) worker().post(new Job(PREVIEW, path, gain));
+    }
+
+    /** A candidate cuts the one before it short, so a fast wheel never stacks them. */
+    private static void previewNow(String path, float gain) {
         if (pool != null && previewStream != 0) pool.stop(previewStream);
         previewStream = 0;
-        play(path, gain);
+        playNow(path, gain);
     }
 
     /** Now if loaded; otherwise loads it and plays it on arrival. */
-    private static void play(String path, float gain) {
+    private static void playNow(String path, float gain) {
         if (path == null) return;
         if (pool == null) {
             pool = new SoundPool(4, AudioManager.STREAM_SYSTEM, 0);
@@ -271,8 +319,7 @@ public final class Tone {
         }
         if (!p.equals(path)) {
             path = p;
-            play(path, 0.0f);                // nothing heard: it only gets the file loaded
-            pending = 0;
+            worker().post(new Job(PRELOAD, path, 0.0f));    // nothing heard: it only gets the file loaded
         }
         return path;
     }

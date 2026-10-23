@@ -13,35 +13,35 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 229
+  .line 277
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public onLoadComplete(Landroid/media/SoundPool;II)V
   .registers 11
-  .line 232
+  .line 280
     if-eqz p3, :L0
     return-void
   :L0
-  .line 233
-    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$000()Ljava/util/HashMap;
+  .line 281
+    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$300()Ljava/util/HashMap;
     move-result-object p3
     invoke-static { p2 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v0
     sget-object v1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
     invoke-virtual { p3, v0, v1 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  .line 234
-    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$100()I
+  .line 282
+    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$200()I
     move-result p3
     if-ne p2, p3, :L1
-  .line 235
+  .line 283
     const/4 p3, 0
-    invoke-static { p3 }, Lcom/innioasis/ipp/Tone;->access$102(I)I
-  .line 236
-    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$300()F
+    invoke-static { p3 }, Lcom/innioasis/ipp/Tone;->access$202(I)I
+  .line 284
+    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$500()F
     move-result v2
-    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$300()F
+    invoke-static { }, Lcom/innioasis/ipp/Tone;->access$500()F
     move-result v3
     const/4 v4, 1
     const/4 v5, 0
@@ -50,8 +50,8 @@
     move v1, p2
     invoke-virtual/range { v0 .. v6 }, Landroid/media/SoundPool;->play(IFFIIF)I
     move-result p1
-    invoke-static { p1 }, Lcom/innioasis/ipp/Tone;->access$202(I)I
+    invoke-static { p1 }, Lcom/innioasis/ipp/Tone;->access$402(I)I
   :L1
-  .line 238
+  .line 286
     return-void
 .end method
