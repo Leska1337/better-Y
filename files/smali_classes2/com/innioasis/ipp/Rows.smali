@@ -12,6 +12,8 @@
 
 .field public final static FLAT:Ljava/lang/String; = "ipp_flat"
 
+.field private final static IMG_SPARE:Ljava/util/WeakHashMap;
+
 .field private final static INDEX_GAP_DIP:I = 8
 
 .field private final static INDEX_MAX_DIP:I = 120
@@ -27,6 +29,15 @@
 .field private static indexHash:F
 
 .field private static indexSize:F
+
+.method static constructor <clinit>()V
+  .registers 1
+  .line 552
+    new-instance v0, Ljava/util/WeakHashMap;
+    invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
+    sput-object v0, Lcom/innioasis/ipp/Rows;->IMG_SPARE:Ljava/util/WeakHashMap;
+    return-void
+.end method
 
 .method public constructor <init>()V
   .registers 1
@@ -61,19 +72,19 @@
 .end method
 
 .method public static bg(Landroid/view/View;Landroid/graphics/Bitmap;)V
-  .catchall { :L0 .. :L4 } :L5
-  .registers 4
+  .catchall { :L0 .. :L8 } :L9
+  .registers 5
   .line 502
-    if-eqz p0, :L7
+    if-eqz p0, :L11
     if-nez p1, :L0
-    goto :L7
+    goto :L11
   :L0
   .line 504
     invoke-virtual { p0 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v0
   .line 505
     instance-of v1, v0, Lcom/innioasis/ipp/Rows$Flat;
-    if-eqz v1, :L2
+    if-eqz v1, :L6
   .line 506
     check-cast v0, Lcom/innioasis/ipp/Rows$Flat;
   .line 507
@@ -82,41 +93,59 @@
     if-eqz v1, :L1
     return-void
   :L1
-  .line 508
+  .line 509
+    iget v1, v0, Lcom/innioasis/ipp/Rows$Flat;->res:I
+    const/4 v2, -1
+    if-ne v1, v2, :L2
+    invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->owns(Landroid/view/View;)Z
+    move-result v1
+    if-eqz v1, :L2
+    return-void
+  :L2
+  .line 510
+    invoke-virtual { v0, p1 }, Lcom/innioasis/ipp/Rows$Flat;->spareFor(Landroid/graphics/Bitmap;)Landroid/graphics/drawable/BitmapDrawable;
+    move-result-object v1
+  .line 511
+    if-eqz v1, :L4
+  :L3
+    goto :L5
+  :L4
     new-instance v1, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object p0
     invoke-direct { v1, p0, p1 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
+    goto :L3
+  :L5
     const/4 p0, 0
     invoke-virtual { v0, v1, p0 }, Lcom/innioasis/ipp/Rows$Flat;->swap(Landroid/graphics/drawable/Drawable;I)V
-  .line 509
+  .line 512
     return-void
-  :L2
-  .line 511
+  :L6
+  .line 514
     instance-of v1, v0, Landroid/graphics/drawable/BitmapDrawable;
-    if-eqz v1, :L3
+    if-eqz v1, :L7
     check-cast v0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { v0 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
     move-result-object v0
-    if-ne v0, p1, :L3
+    if-ne v0, p1, :L7
     return-void
-  :L3
-  .line 512
+  :L7
+  .line 515
     new-instance v0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     invoke-direct { v0, v1, p1 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
     invoke-virtual { p0, v0 }, Landroid/view/View;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
-  :L4
-  .line 514
-    goto :L6
-  :L5
-  .line 513
+  :L8
+  .line 517
+    goto :L10
+  :L9
+  .line 516
     move-exception p0
-  :L6
-  .line 515
+  :L10
+  .line 518
     return-void
-  :L7
+  :L11
   .line 502
     return-void
 .end method
@@ -124,16 +153,16 @@
 .method public static bgRes(Landroid/view/View;I)V
   .catchall { :L0 .. :L6 } :L7
   .registers 4
-  .line 521
+  .line 524
     if-nez p0, :L0
     return-void
   :L0
-  .line 523
+  .line 526
     invoke-virtual { p0 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
     move-result-object v0
-  .line 526
+  .line 529
     if-nez p1, :L3
-  .line 528
+  .line 531
     instance-of p1, v0, Lcom/innioasis/ipp/Rows$Flat;
     if-eqz p1, :L1
     move-object p1, v0
@@ -143,46 +172,46 @@
     if-ne p1, v1, :L1
     return-void
   :L1
-  .line 529
+  .line 532
     if-eqz v0, :L2
     const/4 p1, 0
     invoke-virtual { p0, p1 }, Landroid/view/View;->setBackgroundResource(I)V
   :L2
-  .line 530
+  .line 533
     return-void
   :L3
-  .line 532
+  .line 535
     instance-of v1, v0, Lcom/innioasis/ipp/Rows$Flat;
     if-eqz v1, :L5
-  .line 533
+  .line 536
     check-cast v0, Lcom/innioasis/ipp/Rows$Flat;
-  .line 534
+  .line 537
     iget v1, v0, Lcom/innioasis/ipp/Rows$Flat;->res:I
     if-ne v1, p1, :L4
     return-void
   :L4
-  .line 535
+  .line 538
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     invoke-virtual { v1, p1 }, Landroid/content/res/Resources;->getDrawable(I)Landroid/graphics/drawable/Drawable;
     move-result-object v1
-  .line 536
+  .line 539
     if-eqz v1, :L5
-  .line 537
+  .line 540
     invoke-virtual { v0, v1, p1 }, Lcom/innioasis/ipp/Rows$Flat;->swap(Landroid/graphics/drawable/Drawable;I)V
-  .line 538
+  .line 541
     return-void
   :L5
-  .line 541
+  .line 544
     invoke-virtual { p0, p1 }, Landroid/view/View;->setBackgroundResource(I)V
   :L6
-  .line 543
+  .line 546
     goto :L8
   :L7
-  .line 542
+  .line 545
     move-exception p0
   :L8
-  .line 544
+  .line 547
     return-void
 .end method
 
@@ -822,38 +851,62 @@
 .end method
 
 .method public static img(Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
-  .catchall { :L0 .. :L2 } :L3
-  .registers 4
-  .line 551
-    if-eqz p0, :L5
+  .catchall { :L0 .. :L4 } :L5
+  .registers 6
+  .line 556
+    if-eqz p0, :L7
     if-nez p1, :L0
-    goto :L5
+    goto :L7
   :L0
-  .line 553
+  .line 558
     invoke-virtual { p0 }, Landroid/widget/ImageView;->getDrawable()Landroid/graphics/drawable/Drawable;
     move-result-object v0
-  .line 554
+  .line 559
     instance-of v1, v0, Landroid/graphics/drawable/BitmapDrawable;
     if-eqz v1, :L1
+    move-object v1, v0
+    check-cast v1, Landroid/graphics/drawable/BitmapDrawable;
+    invoke-virtual { v1 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
+    move-result-object v1
+    if-ne v1, p1, :L1
+    return-void
+  :L1
+  .line 561
+    sget-object v1, Lcom/innioasis/ipp/Rows;->IMG_SPARE:Ljava/util/WeakHashMap;
+    invoke-virtual { v1, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v2
+  .line 562
+    instance-of v3, v0, Landroid/graphics/drawable/BitmapDrawable;
+    if-eqz v3, :L2
+    invoke-virtual { v1, p0, v0 }, Ljava/util/WeakHashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  :L2
+  .line 563
+    instance-of v0, v2, Landroid/graphics/drawable/BitmapDrawable;
+    if-eqz v0, :L3
+    move-object v0, v2
     check-cast v0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { v0 }, Landroid/graphics/drawable/BitmapDrawable;->getBitmap()Landroid/graphics/Bitmap;
     move-result-object v0
-    if-ne v0, p1, :L1
+    if-ne v0, p1, :L3
+  .line 564
+    check-cast v2, Landroid/graphics/drawable/Drawable;
+    invoke-virtual { p0, v2 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
+  .line 565
     return-void
-  :L1
-  .line 555
-    invoke-virtual { p0, p1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  :L2
-  .line 557
-    goto :L4
   :L3
-  .line 556
-    move-exception p0
+  .line 567
+    invoke-virtual { p0, p1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   :L4
-  .line 558
-    return-void
+  .line 569
+    goto :L6
   :L5
-  .line 551
+  .line 568
+    move-exception p0
+  :L6
+  .line 570
+    return-void
+  :L7
+  .line 556
     return-void
 .end method
 

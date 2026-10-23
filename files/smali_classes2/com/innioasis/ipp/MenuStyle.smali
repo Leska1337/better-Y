@@ -865,7 +865,12 @@
     add-int/lit8 v2, v2, 1
     goto :L4
   :L6
-  .line 402
+  .line 404
+    sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    new-instance v1, Landroid/widget/ImageView;
+    invoke-direct { v1, p0 }, Landroid/widget/ImageView;-><init>(Landroid/content/Context;)V
+    invoke-virtual { v0, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->setSettingMask(Landroid/widget/ImageView;)V
+  .line 405
     return-void
   :L7
   .line 389
@@ -1024,32 +1029,32 @@
 
 .method private static widen(Landroid/view/View;Z)V
   .registers 6
-  .line 406
+  .line 409
     if-nez p0, :L0
     return-void
   :L0
-  .line 407
+  .line 410
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 408
+  .line 411
     if-nez v0, :L1
     return-void
   :L1
-  .line 409
+  .line 412
     const v1, 2131362152
     invoke-virtual { p0, v1 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object v2
-  .line 410
+  .line 413
     instance-of v3, v2, Ljava/lang/Integer;
     if-nez v3, :L2
-  .line 411
+  .line 414
     iget v2, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
     invoke-static { v2 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
     move-result-object v2
-  .line 412
+  .line 415
     invoke-virtual { p0, v1, v2 }, Landroid/view/View;->setTag(ILjava/lang/Object;)V
   :L2
-  .line 414
+  .line 417
     if-eqz p1, :L3
     const/4 p1, -1
     goto :L4
@@ -1058,16 +1063,16 @@
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result p1
   :L4
-  .line 415
+  .line 418
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
     if-ne v1, p1, :L5
     return-void
   :L5
-  .line 416
+  .line 419
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->width:I
-  .line 417
+  .line 420
     invoke-virtual { p0, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 418
+  .line 421
     return-void
 .end method
 

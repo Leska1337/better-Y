@@ -399,6 +399,9 @@ public final class MenuStyle {
                 ThemeManager.INSTANCE.commonSetIcon(p, MAIN_PICS[i]);
             }
         }
+        // Settings' background, decoded in the background on first use: without this its first
+        // two frames were drawn with no background at all
+        ThemeManager.INSTANCE.setSettingMask(new ImageView(a));
     }
 
     /** The layout's own width is kept in a tag, to go back to. */

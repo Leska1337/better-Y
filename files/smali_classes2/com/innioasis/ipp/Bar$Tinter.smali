@@ -15,27 +15,27 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/Bar;)V
   .registers 3
-  .line 947
+  .line 954
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 948
+  .line 955
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Bar$Tinter;->bar:Ljava/lang/ref/WeakReference;
-  .line 949
+  .line 956
     return-void
 .end method
 
 .method public onPreDraw()Z
   .catchall { :L0 .. :L10 } :L12
   .registers 7
-  .line 953
+  .line 960
     const/4 v0, 1
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/Bar$Tinter;->bar:Ljava/lang/ref/WeakReference;
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/Bar;
-  .line 954
+  .line 961
     if-nez v1, :L1
     const/4 v2, 0
     goto :L2
@@ -46,14 +46,14 @@
     move-result-object v2
     check-cast v2, Landroidx/recyclerview/widget/RecyclerView;
   :L2
-  .line 955
+  .line 962
     if-eqz v2, :L11
     invoke-static { v2 }, Lcom/innioasis/ipp/Bar;->access$900(Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v3
     if-nez v3, :L3
     goto :L11
   :L3
-  .line 957
+  .line 964
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->isShown()Z
     move-result v3
     if-nez v3, :L4
@@ -64,33 +64,33 @@
     if-nez v3, :L4
     return v0
   :L4
-  .line 958
+  .line 965
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v3
     if-nez v3, :L6
-  .line 960
+  .line 967
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$1100(Lcom/innioasis/ipp/Bar;)Z
     move-result v2
     if-nez v2, :L5
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$1200(Lcom/innioasis/ipp/Bar;)V
   :L5
-  .line 961
+  .line 968
     return v0
   :L6
-  .line 963
+  .line 970
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$1300(Lcom/innioasis/ipp/Bar;)V
-  .line 964
+  .line 971
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Bar;->access$1400(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;)I
     move-result v3
-  .line 965
+  .line 972
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Bar;->access$500(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;)Z
     move-result v4
     if-eqz v4, :L7
     invoke-static { v1, v2, v3 }, Lcom/innioasis/ipp/Bar;->access$1500(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;I)Z
   :L7
-  .line 966
+  .line 973
     invoke-static { v1, v2, v3 }, Lcom/innioasis/ipp/Bar;->access$1600(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;I)V
-  .line 967
+  .line 974
     const/4 v4, 0
   :L8
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
@@ -102,28 +102,28 @@
     add-int/lit8 v4, v4, 1
     goto :L8
   :L9
-  .line 968
+  .line 975
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$1000(Lcom/innioasis/ipp/Bar;)Ljava/lang/ref/WeakReference;
     move-result-object v4
     invoke-virtual { v4 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v4
     if-eqz v4, :L10
-  .line 969
+  .line 976
     invoke-static { v1 }, Lcom/innioasis/ipp/Bar;->access$1800(Lcom/innioasis/ipp/Bar;)V
-  .line 970
+  .line 977
     invoke-static { v1, v2, v3 }, Lcom/innioasis/ipp/Bar;->access$1900(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;I)V
-  .line 971
+  .line 978
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Bar;->access$2000(Lcom/innioasis/ipp/Bar;Landroidx/recyclerview/widget/RecyclerView;)V
   :L10
-  .line 974
+  .line 981
     goto :L13
   :L11
-  .line 955
+  .line 962
     return v0
   :L12
-  .line 973
+  .line 980
     move-exception v1
   :L13
-  .line 975
+  .line 982
     return v0
 .end method

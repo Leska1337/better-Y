@@ -194,6 +194,8 @@ public final class Bar extends RecyclerView.ItemDecoration
     /** The bar's height as drawn: it changes on its way between rows of different heights. */
     private float hb = Float.NaN;
     private final WeakReference head;
+    /** The one reference ROWS maps this bar's rows to. */
+    private final WeakReference self = new WeakReference(this);
     private final HeadPaint headPaint = new HeadPaint(this);
     /** What the input line last showed of the bar; it is redrawn only when that changes. */
     private long headKey = NO_KEY;
@@ -214,7 +216,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         this.spec = spec;
         View hv = spec.head == 0 ? null : ((android.app.Activity) a).findViewById(spec.head);
         head = new WeakReference(hv);
-        if (hv != null) ROWS.put(hv, new WeakReference(this));
+        if (hv != null) ROWS.put(hv, self);
         Context c = rv.getContext().getApplicationContext();
         selProbe = new View(c);
         rowProbe = new View(c);
@@ -384,8 +386,8 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     private void clean(View row) {
         if (caption(row)) return;
-        WeakReference me = new WeakReference(this);
-        ROWS.put(row, me);
+        WeakReference me = self;
+        if (ROWS.get(row) != me) ROWS.put(row, me);
         if (spec.bgs.length == 0) {
             blank(row);
         } else {
@@ -454,11 +456,16 @@ public final class Bar extends RecyclerView.ItemDecoration
      * The bar a row belongs to. By its parent — and by memory, for a list rebuilding in place
      * (a preset picked): its rows are re-bound DETACHED, parent null, and kept the old colour.
      */
+    /** The row is painted by a bar, so its own background stays empty. */
+    static boolean owns(View row) {
+        return row != null && of(row) != null;
+    }
+
     private static Bar of(View row) {
         ViewParent p = row.getParent();
         Bar b = p instanceof RecyclerView ? (Bar) BARS.get(p) : null;
         if (b != null) {
-            ROWS.put(row, new WeakReference(b));
+            if (ROWS.get(row) != b.self) ROWS.put(row, b.self);
             return b;
         }
         Object w = ROWS.get(row);

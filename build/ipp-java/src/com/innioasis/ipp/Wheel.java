@@ -250,8 +250,13 @@ public final class Wheel {
      * The wheel is moving: the panel beside the list is painted by {@link Now} after the key event
      * (throttled to {@link #PANEL_MS}), and by {@link Rest} at the end of the burst.
      */
+    /** {@code w} when it already holds {@code o}: these are set on every click. */
+    private static WeakReference same(WeakReference w, Object o) {
+        return w != null && w.get() == o ? w : new WeakReference(o);
+    }
+
     private static void postRest(RecyclerView rv, int pos) {
-        restRv = new WeakReference(rv);
+        restRv = same(restRv, rv);
         restPos = pos;
         busy = true;
         rv.removeCallbacks(REST);
@@ -420,8 +425,8 @@ public final class Wheel {
     /** {@link #follow} for a caller that KNOWS which row loses the cursor (a jump, a new list). */
     public static void follow(RecyclerView rv, int prev, int pos, RecyclerView.Adapter adapter) {
         if (rv == null) return;
-        lastRv = new WeakReference(rv);
-        lastAdapter = new WeakReference(adapter);
+        lastRv = same(lastRv, rv);
+        lastAdapter = same(lastAdapter, adapter);
         lastPos = prev;
         follow(rv, pos, adapter);
     }
@@ -526,7 +531,7 @@ public final class Wheel {
     private static void stepRows(RecyclerView rv, int from) {
         if (stepOn && stepRv != null && stepRv.get() == rv) return;   // drawn from the first one
         flushRows();
-        stepRv = new WeakReference(rv);
+        stepRv = same(stepRv, rv);
         stepFrom = from;
         stepOn = true;
         android.view.Choreographer.getInstance().postFrameCallback(STEP);
@@ -605,8 +610,8 @@ public final class Wheel {
             } else {
                 wrapping = false;
             }
-            lastRv = new WeakReference(rv);
-            lastAdapter = new WeakReference(adapter);
+            lastRv = same(lastRv, rv);
+            lastAdapter = same(lastAdapter, adapter);
             lastPos = pos;
 
             scrollTo(rv, pos);

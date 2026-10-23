@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..577dc404 100644
+index 01b1f730..2494f465 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..577dc404 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100396
++  versionCode: 10100406
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -483,7 +483,7 @@ index 8592ee3d..22b9bb96 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/search_list" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/search_head" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_setting.xml b/build/src/res/layout/activity_setting.xml
-index 0ed053cd..7e8bc4e7 100644
+index 0ed053cd..f8052ddb 100644
 --- a/build/src/res/layout/activity_setting.xml
 +++ b/build/src/res/layout/activity_setting.xml
 @@ -2,9 +2,19 @@
@@ -494,7 +494,7 @@ index 0ed053cd..7e8bc4e7 100644
 +    <!-- ipp: same as activity_main — the list starts at the screen's left edge and runs to its
 +         bottom (305 -> 315 = 360 - the 45px status bar), the width grew by exactly the margin that
 +         went away so a row's RIGHT edge is unchanged (9+218 = 0+227). -->
-+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="315.0dip" android:layout_marginLeft="0.0dip" android:layout_marginTop="45.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.Fixed android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="315.0dip" android:layout_marginLeft="0.0dip" android:layout_marginTop="45.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
      <androidx.constraintlayout.widget.ConstraintLayout android:gravity="center" android:orientation="vertical" android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip" android:layout_weight="1.0" app:layout_constraintRight_toRightOf="parent">
 -        <TextView android:textSize="18.0sp" android:textStyle="bold" android:textColor="@color/white" android:layout_gravity="center" android:id="@id/right_title" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="58.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +        <!-- ipp: the caption always takes TWO lines' worth of height, whether it needs them or not.
@@ -20012,7 +20012,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..76049e4a 100644
+index 71fe29d0..b60a3337 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -20961,7 +20961,7 @@ index 71fe29d0..76049e4a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev396</string>
++    <string name="ipp_version">v1.1.0-dev406</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

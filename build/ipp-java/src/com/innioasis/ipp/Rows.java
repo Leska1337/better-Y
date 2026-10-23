@@ -505,7 +505,10 @@ public final class Rows {
             if (cur instanceof Flat) {
                 Flat f = (Flat) cur;
                 if (f.holds(b)) return;
-                f.swap(new BitmapDrawable(v.getResources(), b), 0);
+                // a bar's row: the bar blanks it again right after, so nothing is built for it
+                if (f.res == BLANK && Bar.owns(v)) return;
+                Drawable d = f.spareFor(b);
+                f.swap(d != null ? d : new BitmapDrawable(v.getResources(), b), 0);
                 return;
             }
             if (cur instanceof BitmapDrawable && ((BitmapDrawable) cur).getBitmap() == b) return;
@@ -546,12 +549,21 @@ public final class Rows {
     /** {@link Flat#res} of a row a {@link Bar} paints: the wrapper holds nothing. */
     static final int BLANK = -1;
 
+    private static final java.util.WeakHashMap IMG_SPARE = new java.util.WeakHashMap();
+
     /** Same idea for an ImageView fed a theme bitmap (the row's right arrow). */
     public static void img(ImageView iv, Bitmap b) {
         if (iv == null || b == null) return;
         try {
             Drawable cur = iv.getDrawable();
             if (cur instanceof BitmapDrawable && ((BitmapDrawable) cur).getBitmap() == b) return;
+            // the arrow alternates between two bitmaps, cursor and plain: keep the other one
+            Object sp = IMG_SPARE.get(iv);
+            if (cur instanceof BitmapDrawable) IMG_SPARE.put(iv, cur);
+            if (sp instanceof BitmapDrawable && ((BitmapDrawable) sp).getBitmap() == b) {
+                iv.setImageDrawable((Drawable) sp);
+                return;
+            }
             iv.setImageBitmap(b);
         } catch (Throwable t) {
         }
@@ -580,8 +592,16 @@ public final class Rows {
             return d instanceof BitmapDrawable && ((BitmapDrawable) d).getBitmap() == b;
         }
 
+        /** The theme bitmap drawn before the current one: a row's cursor and plain look alternate. */
+        private BitmapDrawable spare;
+
+        BitmapDrawable spareFor(Bitmap b) {
+            return spare != null && spare.getBitmap() == b ? spare : null;
+        }
+
         /** Draw something else, NOT via {@code setBackgroundDrawable}, which requests a layout. */
         void swap(Drawable nd, int resid) {
+            if (d instanceof BitmapDrawable && d != nd) spare = (BitmapDrawable) d;
             d = nd;
             res = resid;
             onBoundsChange(getBounds());

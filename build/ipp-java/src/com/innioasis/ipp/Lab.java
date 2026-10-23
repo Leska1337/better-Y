@@ -6,8 +6,11 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Choreographer;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 /** Temporary: phase timings of Albums and Folders and trial reads of the song table, to logcat "ipplab". */
 public final class Lab {
@@ -52,6 +55,140 @@ public final class Lab {
         screensEver.put(a, Integer.valueOf(++screenNo));
         stacks();
         allocs();
+        layouts(a);
+    }
+
+    // ---- who asks for a layout ----------------------------------------------------------------
+
+    private static WeakReference topScreen;
+    private static boolean layoutsOn, layoutsAsked;
+
+    /** Only while /data/local/tmp/ipplayout exists: every frame, the views that requested a layout. */
+    private static void layouts(android.app.Activity a) {
+        topScreen = new WeakReference(a);
+        if (layoutsOn) {
+            try {
+                a.getWindow().getDecorView().getViewTreeObserver().addOnPreDrawListener(new Draws(a));
+            } catch (Throwable t) {
+            }
+        }
+        if (!layoutsAsked) {
+            layoutsAsked = true;
+            try {
+                layoutsOn = new File("/data/local/tmp/ipplayout").exists();
+            } catch (Throwable t) {
+            }
+            if (layoutsOn) Choreographer.getInstance().postFrameCallback(new Layouts());
+        }
+    }
+
+    /** The first 40 draws of a screen: what the background and the panel picture look like when drawn. */
+    static final class Draws implements android.view.ViewTreeObserver.OnPreDrawListener {
+        private final WeakReference screen;
+        private final long t0 = SystemClock.uptimeMillis();
+        private int n;
+
+        Draws(android.app.Activity a) { screen = new WeakReference(a); }
+
+        public boolean onPreDraw() {
+            android.app.Activity a = (android.app.Activity) screen.get();
+            if (a == null || ++n > 40) return true;
+            try {
+                StringBuilder b = new StringBuilder("draw ").append(a.getClass().getSimpleName())
+                        .append(" #").append(n).append(" +").append(SystemClock.uptimeMillis() - t0).append("ms");
+                View d = a.getWindow().getDecorView();
+                b.append(" decorReq=").append(d.isLayoutRequested());
+                backs(b, d);
+                b.append(" winBg=").append(d.getBackground() == null ? "-" : Integer.toHexString(System.identityHashCode(d.getBackground()) & 0xffff));
+                view(b, " img", a.findViewById(com.innioasis.y1.R.id.right_image));
+                view(b, " cl", a.findViewById(com.innioasis.y1.R.id.cl));
+                view(b, " title", a.findViewById(com.innioasis.y1.R.id.right_title));
+                Log.i("ipplab", b.toString());
+            } catch (Throwable t) {
+            }
+            return true;
+        }
+
+        private static void backs(StringBuilder b, View v) {
+            if (v.getId() == com.innioasis.y1.R.id.back) {
+                view(b, " back", v);
+                if (v.getBackground() != null) b.append(" bg").append(Integer.toHexString(System.identityHashCode(v.getBackground()) & 0xffff));
+            }
+            if (v instanceof ViewGroup) {
+                ViewGroup g = (ViewGroup) v;
+                for (int i = 0; i < g.getChildCount(); i++) backs(b, g.getChildAt(i));
+            }
+        }
+
+        private static void view(StringBuilder b, String name, View v) {
+            b.append(name);
+            if (v == null) { b.append("=-"); return; }
+            b.append('=').append(v.getVisibility() == View.VISIBLE ? "" : "v" + v.getVisibility() + ",")
+                    .append(v.getLeft()).append(',').append(v.getTop()).append(' ')
+                    .append(v.getWidth()).append('x').append(v.getHeight())
+                    .append(v.isLayoutRequested() ? " REQ" : "");
+            android.graphics.drawable.Drawable dr = v instanceof android.widget.ImageView
+                    ? ((android.widget.ImageView) v).getDrawable() : v.getBackground();
+            if (dr != null) {
+                b.append(" d").append(Integer.toHexString(System.identityHashCode(dr) & 0xffff))
+                        .append(':').append(dr.getIntrinsicWidth()).append('x').append(dr.getIntrinsicHeight());
+            }
+            if (v instanceof android.widget.TextView) b.append(" '").append(((android.widget.TextView) v).getText()).append('\'');
+        }
+    }
+
+    /**
+     * Before each traversal: the deepest views of the top screen with a layout requested — a
+     * request walks up to the root, so the deepest flagged view is where it started. Counts by
+     * class and id, the 15 most frequent every 20 s.
+     */
+    static final class Layouts implements Choreographer.FrameCallback {
+        private final java.util.HashMap seen = new java.util.HashMap();
+        private long lastDump = SystemClock.uptimeMillis();
+        private int frames, laid;
+
+        public void doFrame(long nanos) {
+            try {
+                android.app.Activity a = topScreen == null ? null : (android.app.Activity) topScreen.get();
+                View root = a == null || a.isFinishing() ? null : a.getWindow().peekDecorView();
+                frames++;
+                if (root != null && root.isLayoutRequested()) {
+                    laid++;
+                    origins(root, a.getClass().getSimpleName());
+                }
+                long now = SystemClock.uptimeMillis();
+                if (now - lastDump >= 20000) {
+                    Log.i("ipplab", "layouts: " + laid + " of " + frames + " frames:" + Stacks.sorted(seen, 15));
+                    seen.clear();
+                    frames = laid = 0;
+                    lastDump = now;
+                }
+            } catch (Throwable t) {
+            }
+            Choreographer.getInstance().postFrameCallback(this);
+        }
+
+        private void origins(View v, String screen) {
+            boolean deeper = false;
+            if (v instanceof ViewGroup) {
+                ViewGroup g = (ViewGroup) v;
+                for (int i = 0; i < g.getChildCount(); i++) {
+                    View c = g.getChildAt(i);
+                    if (c != null && c.isLayoutRequested()) {
+                        deeper = true;
+                        origins(c, screen);
+                    }
+                }
+            }
+            if (deeper) return;
+            String id = "";
+            try {
+                if (v.getId() != View.NO_ID) id = "/" + v.getResources().getResourceEntryName(v.getId());
+            } catch (Throwable t) {
+            }
+            String parent = v.getParent() == null ? "" : " in " + v.getParent().getClass().getSimpleName();
+            Stacks.count(seen, screen + " " + v.getClass().getSimpleName() + id + parent);
+        }
     }
 
     // ---- recent allocations ----------------------------------------------------------------
@@ -97,7 +234,13 @@ public final class Lab {
                     Thread.sleep(850);
                     long now = SystemClock.uptimeMillis();
                     if (now - lastDump >= 20000) {
-                        Log.i("ipplab", "allocs " + (total >> 10) + " KB: " + Stacks.sorted(bytes, 15));
+                        Log.i("ipplab", "allocs " + (total >> 10) + " KB");
+                        java.util.ArrayList l = new java.util.ArrayList(bytes.entrySet());
+                        java.util.Collections.sort(l, new ByCount());
+                        for (int i = 0; i < l.size() && i < 20; i++) {
+                            java.util.Map.Entry e = (java.util.Map.Entry) l.get(i);
+                            Log.i("ipplab", "alloc " + ((int[]) e.getValue())[0] + " " + e.getKey());
+                        }
                         bytes.clear();
                         total = 0;
                         lastDump = now;
@@ -123,17 +266,18 @@ public final class Lab {
                 int type = b.getShort() & 0xffff;
                 int depth = b.get() & 0xff;
                 b.position(at + entryLen);
-                String where = "?", top = null;
+                String where = "?";
+                StringBuilder all = new StringBuilder();
                 for (int f = 0; f < depth; f++) {
                     int fa = b.position();
                     int c = b.getShort() & 0xffff, m = b.getShort() & 0xffff;
                     b.position(fa + frameLen);
                     String name = cls[c] + "." + meth[m];
-                    if (top == null) top = name;
+                    all.append(" < ").append(name.substring(name.lastIndexOf('.', name.lastIndexOf('.') - 1) + 1));
                     if ("?".equals(where) && !platform(cls[c])) where = name;
                 }
-                String k = cls[type] + " @ " + where.replace("com.innioasis.", "")
-                        + ("?".equals(where) ? " top " + top : "");
+                // platform-only: the whole stack, it is the only clue
+                String k = cls[type] + " @ " + ("?".equals(where) ? "?" + all : where.replace("com.innioasis.", ""));
                 int[] v = (int[]) bytes.get(k);
                 if (v == null) bytes.put(k, new int[] {size});
                 else v[0] += size;

@@ -468,6 +468,7 @@ public final class Scan {
      */
     static synchronized void done() {
         labEnd();
+        Tone.recheck();
         paths = null;
         added = 0;
         met = new HashSet();

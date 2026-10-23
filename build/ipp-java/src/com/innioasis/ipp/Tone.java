@@ -289,8 +289,15 @@ public final class Tone {
     private static String soundFor = null;
     private static String themeFor = null;
     private static String path;
-    private static boolean missing;      // the setting names a file that was not there
+    private static boolean missing;      // the setting names a file that was not there, card not up yet
     private static long triedAt;
+    /** Set by the end of a scan: the card was lent over USB, a sound may have been copied. */
+    private static volatile boolean recheck;
+
+    /** From the end of a scan. */
+    static void recheck() {
+        recheck = true;
+    }
     private static boolean told;
 
     /** A named file found missing is looked for again this often: at boot the card may not be up. */
@@ -298,22 +305,25 @@ public final class Tone {
 
     /**
      * The file the setting names, resolved once per (setting, theme) pair — except a named file
-     * that was missing, which is retried: Default must not stick for the whole session.
+     * that was missing while the card was not up, which is retried: Default must not stick for the
+     * whole session. With the card up a sound can only arrive over USB, and a scan follows that.
      */
     private static String sound(Context c) {
         String s = Prefs.getString(c, KEY_SOUND, "");
         String theme = ThemeManager.INSTANCE.getThemeName();
         long now = SystemClock.uptimeMillis();
         if (path != null && s.equals(soundFor) && eq(theme, themeFor)
-                && !(missing && now - triedAt >= RETRY_MS)) {
+                && !recheck && !(missing && now - triedAt >= RETRY_MS)) {
             return path;
         }
         soundFor = s;
         themeFor = theme;
         triedAt = now;
+        recheck = false;
         String p = resolve(s, theme);
-        missing = s.length() > 0 && DEFAULT_PATH.equals(p);
-        if (missing && !told) {
+        boolean absent = s.length() > 0 && DEFAULT_PATH.equals(p);
+        missing = absent && !Theme.cardMounted();
+        if (absent && !told) {
             told = true;
             Diag.note("key tone: " + (THEME.equals(s) ? "theme's sound" : s) + " not found, Default for now");
         }

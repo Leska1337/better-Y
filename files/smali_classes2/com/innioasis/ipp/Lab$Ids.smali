@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 427
+  .line 571
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -22,7 +22,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 3
   :L0
-  .line 492
+  .line 636
     new-instance v0, Ljava/lang/String;
     const/4 v1, 0
     invoke-static { p0, v1 }, Landroid/util/Base64;->decode(Ljava/lang/String;I)[B
@@ -32,16 +32,16 @@
   :L1
     return-object v0
   :L2
-  .line 493
+  .line 637
     move-exception p0
-  .line 494
+  .line 638
     const/4 p0, 0
     return-object p0
 .end method
 
 .method private static refs(Landroidx/room/RoomDatabase;Ljava/lang/String;)V
   .registers 12
-  .line 471
+  .line 615
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "select count(*) from "
@@ -54,7 +54,7 @@
     const/4 v1, 0
     invoke-virtual { p0, v0, v1 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
     move-result-object v0
-  .line 472
+  .line 616
     invoke-interface { v0 }, Landroid/database/Cursor;->moveToFirst()Z
     move-result v2
     const/4 v3, 0
@@ -65,9 +65,9 @@
   :L0
     const-wide/16 v4, -1
   :L1
-  .line 473
+  .line 617
     invoke-interface { v0 }, Landroid/database/Cursor;->close()V
-  .line 474
+  .line 618
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "select songId from "
@@ -82,33 +82,33 @@
     move-result-object v0
     invoke-virtual { p0, v0, v1 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
     move-result-object p0
-  .line 475
+  .line 619
     const/4 v0, 0
     const/4 v1, 0
     const/4 v2, 0
   :L2
-  .line 476
+  .line 620
     invoke-interface { p0 }, Landroid/database/Cursor;->moveToNext()Z
     move-result v6
     const-string v7, "ids "
     const-string v8, "ipplab"
     if-eqz v6, :L5
-  .line 477
+  .line 621
     add-int/lit8 v0, v0, 1
-  .line 478
+  .line 622
     invoke-interface { p0, v3 }, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
     move-result-object v6
     invoke-static { v6 }, Lcom/innioasis/ipp/Lab$Ids;->decode(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v6
-  .line 479
+  .line 623
     if-eqz v6, :L3
     const-string v9, "/storage/"
     invoke-virtual { v6, v9 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v9
     if-eqz v9, :L3
-  .line 480
+  .line 624
     add-int/lit8 v1, v1, 1
-  .line 481
+  .line 625
     new-instance v9, Ljava/io/File;
     invoke-direct { v9, v6 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v9 }, Ljava/io/File;->exists()Z
@@ -116,7 +116,7 @@
     if-eqz v9, :L3
     add-int/lit8 v2, v2, 1
   :L3
-  .line 483
+  .line 627
     const/4 v9, 3
     if-gt v0, v9, :L4
     new-instance v9, Ljava/lang/StringBuilder;
@@ -144,12 +144,12 @@
     move-result-object v6
     invoke-static { v8, v6 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L4
-  .line 484
+  .line 628
     goto :L2
   :L5
-  .line 485
+  .line 629
     invoke-interface { p0 }, Landroid/database/Cursor;->close()V
-  .line 486
+  .line 630
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { p0, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -182,28 +182,28 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { v8, p0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 488
+  .line 632
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L13 } :L14
   .registers 23
-  .line 430
+  .line 574
     const-string v1, "ipplab"
   :L0
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->db()Landroidx/room/RoomDatabase;
     move-result-object v0
-  .line 431
+  .line 575
     sget-object v2, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
-  .line 432
+  .line 576
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v3
-  .line 433
+  .line 577
     nop
-  .line 434
+  .line 578
     nop
-  .line 435
+  .line 579
     const-string v5, "select songId, path from song"
     const/4 v6, 0
     invoke-virtual { v0, v5, v6 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
@@ -218,11 +218,11 @@
     const/16 v16, 0
     const/16 v17, 0
   :L1
-  .line 436
+  .line 580
     invoke-interface { v5 }, Landroid/database/Cursor;->moveToNext()Z
     move-result v18
     if-eqz v18, :L11
-  .line 437
+  .line 581
     move-object/from16 v19, v0
     const/4 v9, 0
     invoke-interface { v5, v9 }, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
@@ -230,53 +230,53 @@
     const/4 v9, 1
     invoke-interface { v5, v9 }, Landroid/database/Cursor;->getString(I)Ljava/lang/String;
     move-result-object v9
-  .line 438
+  .line 582
     add-int/lit8 v12, v12, 1
-  .line 439
+  .line 583
     move/from16 v18, v12
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v12
     move-wide/from16 v20, v3
     int-to-long v3, v12
     add-long/2addr v7, v3
-  .line 440
+  .line 584
     invoke-virtual { v9 }, Ljava/lang/String;->length()I
     move-result v3
     int-to-long v3, v3
     add-long/2addr v10, v3
-  .line 441
+  .line 585
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v3
     if-le v3, v13, :L2
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v13
   :L2
-  .line 442
+  .line 586
     const/16 v3, 10
     invoke-virtual { v0, v3 }, Ljava/lang/String;->indexOf(I)I
     move-result v3
     if-ltz v3, :L3
     add-int/lit8 v14, v14, 1
   :L3
-  .line 443
+  .line 587
     invoke-virtual { v0, v9 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L4
-  .line 444
+  .line 588
     add-int/lit8 v15, v15, 1
     goto/16 :L10
   :L4
-  .line 445
+  .line 589
     invoke-virtual { v2, v9 }, Lcom/innioasis/music/util/Other;->toBase64(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v3
     invoke-virtual { v0, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L5
-  .line 446
+  .line 590
     add-int/lit8 v6, v6, 1
     goto :L10
   :L5
-  .line 447
+  .line 591
     const-string v3, "/storage/sdcard0/audiobooks"
     invoke-virtual { v9, v3 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v3
@@ -286,7 +286,7 @@
     const-string v4, "/storage/sdcard0/Audiobooks"
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
-  .line 448
+  .line 592
     const/16 v4, 27
     invoke-virtual { v9, v4 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
     move-result-object v4
@@ -299,19 +299,19 @@
     invoke-virtual { v0, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-eqz v3, :L6
-  .line 449
+  .line 593
     move/from16 v3, v16
     add-int/lit8 v16, v3, 1
     goto :L10
   :L6
-  .line 448
+  .line 592
     move/from16 v3, v16
     goto :L8
   :L7
-  .line 447
+  .line 591
     move/from16 v3, v16
   :L8
-  .line 451
+  .line 595
     move/from16 v4, v17
     add-int/lit8 v17, v4, 1
     const/4 v12, 5
@@ -334,7 +334,7 @@
     move-result-object v0
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L9
-  .line 453
+  .line 597
     move/from16 v16, v3
   :L10
     move/from16 v12, v18
@@ -342,13 +342,13 @@
     move-wide/from16 v3, v20
     goto/16 :L1
   :L11
-  .line 454
+  .line 598
     move-object/from16 v19, v0
     move-wide/from16 v20, v3
     move/from16 v3, v16
     move/from16 v4, v17
     invoke-interface { v5 }, Landroid/database/Cursor;->close()V
-  .line 455
+  .line 599
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "ids song: "
@@ -399,7 +399,7 @@
     const-string v2, ", "
     invoke-virtual { v0, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v0
-  .line 457
+  .line 601
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     sub-long v2, v2, v20
@@ -410,15 +410,15 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 455
+  .line 599
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 458
+  .line 602
     const-string v0, "select count(*), count(distinct path), count(distinct lower(path)) from song"
     move-object/from16 v2, v19
     const/4 v3, 0
     invoke-virtual { v2, v0, v3 }, Landroidx/room/RoomDatabase;->query(Ljava/lang/String;[Ljava/lang/Object;)Landroid/database/Cursor;
     move-result-object v0
-  .line 459
+  .line 603
     invoke-interface { v0 }, Landroid/database/Cursor;->moveToFirst()Z
     move-result v3
     if-eqz v3, :L12
@@ -443,7 +443,7 @@
     const-string v4, " distinct, "
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
-  .line 460
+  .line 604
     const/4 v4, 2
     invoke-interface { v0, v4 }, Landroid/database/Cursor;->getLong(I)J
     move-result-wide v4
@@ -454,27 +454,27 @@
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v3
-  .line 459
+  .line 603
     invoke-static { v1, v3 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L12
-  .line 461
+  .line 605
     invoke-interface { v0 }, Landroid/database/Cursor;->close()V
-  .line 462
+  .line 606
     const-string v0, "songCatPlaylist"
     invoke-static { v2, v0 }, Lcom/innioasis/ipp/Lab$Ids;->refs(Landroidx/room/RoomDatabase;Ljava/lang/String;)V
-  .line 463
+  .line 607
     const-string v0, "Progress"
     invoke-static { v2, v0 }, Lcom/innioasis/ipp/Lab$Ids;->refs(Landroidx/room/RoomDatabase;Ljava/lang/String;)V
-  .line 464
+  .line 608
     const-string v0, "Bookmark"
     invoke-static { v2, v0 }, Lcom/innioasis/ipp/Lab$Ids;->refs(Landroidx/room/RoomDatabase;Ljava/lang/String;)V
   :L13
-  .line 467
+  .line 611
     goto :L15
   :L14
-  .line 465
+  .line 609
     move-exception v0
-  .line 466
+  .line 610
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "ids failed "
@@ -486,6 +486,6 @@
     move-result-object v0
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L15
-  .line 468
+  .line 612
     return-void
 .end method
