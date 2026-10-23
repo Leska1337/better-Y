@@ -228,7 +228,7 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         View v = model.getView(0, null, parent);
         ViewGroup.LayoutParams lp = v.getLayoutParams();
         if (!(lp instanceof RecyclerView.LayoutParams)) {
-            // inflated without a parent the row has none, and ListView made it full width
+            // inflated without a parent the row has none: full width, its own height
             v.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     lp != null ? lp.height : ViewGroup.LayoutParams.WRAP_CONTENT));
         }

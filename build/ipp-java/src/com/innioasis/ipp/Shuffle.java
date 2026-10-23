@@ -23,10 +23,8 @@ public final class Shuffle {
     public static void style(ShufflePlaylistItemView row) {
         if (row == null) return;
         last = new WeakReference(row);
-        Head.attach(row);
         // Here rather than in the wheel code: every route that selects the row ends up in style().
         if (row.isSelect()) {
-            Head.reveal(row);
             SongRows.reveal(row);
         }
         View v = row.findViewById(R.id.tv_song_name);

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d57f7baa 100644
+index 01b1f730..76ab8338 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..d57f7baa 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100415
++  versionCode: 10100416
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20093,7 +20093,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..9bb2d438 100644
+index 71fe29d0..eaf9e9bb 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21042,7 +21042,7 @@ index 71fe29d0..9bb2d438 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev415</string>
++    <string name="ipp_version">v1.1.0-dev416</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21297,7 +21297,7 @@ index e27fbd47..74bffde9 100644
      return-void
  .end method
 diff --git a/build/src/smali/com/innioasis/music/util/Other.smali b/build/src/smali/com/innioasis/music/util/Other.smali
-index e5eeb74a..73445d31 100644
+index e5eeb74a..35f2be2f 100644
 --- a/build/src/smali/com/innioasis/music/util/Other.smali
 +++ b/build/src/smali/com/innioasis/music/util/Other.smali
 @@ -412,7 +412,16 @@
@@ -21332,20 +21332,6 @@ index e5eeb74a..73445d31 100644
  
      return-object p1
  
-@@ -903,6 +917,13 @@
- 
-     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
- 
-+    # ipp: same behaviour, but the highlight moves without making the ListView re-fill itself --
-+    # see Wheel.list. The stock body below is left in place, unreachable, as documentation of what
-+    # it did (adapter.toNext/toPrevious + notifyDataSetChanged + an unconditional setSelection).
-+    invoke-static {p1, p2}, Lcom/innioasis/ipp/Wheel;->list(Landroid/widget/ListView;I)V
-+
-+    return-void
-+
-     .line 37
-     :try_start_0
-     invoke-virtual {p1}, Landroid/widget/ListView;->getFirstVisiblePosition()I
 diff --git a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali b/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali
 index 516036f6..3edfb649 100644
 --- a/build/src/smali/com/innioasis/y1/Y1Application$TimberTree.smali

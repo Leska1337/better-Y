@@ -3,7 +3,6 @@ package com.innioasis.ipp;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,8 +27,8 @@ import com.innioasis.y1.view.ShufflePlaylistItemView;
  * Loop scrolling ("loop_scroll"): past either end of any list the wheel goes round to the other.
  * Going round ends the wheel's acceleration, so the other end is reached, never flown past. The
  * Shuffle row is part of the circle. Entry points, one per way a cursor steps: {@link #list} for
- * ListViews, {@link #on} in the RecyclerView adapters' toNext/toPrevious, {@link #mark} for
- * mark-driven menu screens, {@link #step} for our own screens.
+ * the music lists, {@link #on} in the other RecyclerView adapters' toNext/toPrevious,
+ * {@link #mark} for mark-driven menu screens, {@link #step} for our own screens.
  */
 public final class Loop {
 
@@ -160,7 +159,7 @@ public final class Loop {
         return true;
     }
 
-    /** From {@code Wheel.list}/{@code Wheel.rows} after a step clamped at {@code old}. True when the cursor went round. */
+    /** From {@code Wheel.rows} after a step clamped at {@code old}. True when the cursor went round. */
     static boolean list(View lv, MyBaseAdapter a, int type, int old) {
         if (!on()) return false;
         int n = a.getCount();
@@ -181,7 +180,6 @@ public final class Loop {
                 kept = spv;
                 a.notifyDataSetChanged();
                 if (lv instanceof RecyclerView) Wheel.follow((RecyclerView) lv, from, 0, ((RecyclerView) lv).getAdapter());
-                else Head.rest((ListView) lv);
                 return true;
             }
             toRow(lv, a, 0, from);
@@ -194,7 +192,7 @@ public final class Loop {
         return true;
     }
 
-    /** The cursor as a row of a RecyclerView ({@code SongRows}); unused for a ListView. */
+    /** The cursor as a row of the list: the Shuffle row is its row 0 ({@code SongRows}). */
     private static int cursorRow(View lv, MyBaseAdapter a) {
         return a.getPosition() + (lv instanceof RecyclerView ? SongRows.heads((RecyclerView) lv) : 0);
     }
@@ -203,13 +201,9 @@ public final class Loop {
         wrap();
         a.setPosition(pos);
         a.notifyDataSetChanged();
+        // round the end: Wheel.follow stands the rows and the bar on it at once
         if (lv instanceof RecyclerView) {
-            // round the end: Wheel.follow stands the rows and the bar on it at once
             Wheel.follow((RecyclerView) lv, from, pos + SongRows.heads((RecyclerView) lv), ((RecyclerView) lv).getAdapter());
-        } else if (pos == 0) {
-            Head.rest((ListView) lv);      // the start of the list, Shuffle row showing
-        } else {
-            Head.selectPinned((ListView) lv, pos);   // the list clamps it to its bottom edge
         }
     }
 

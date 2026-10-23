@@ -3,8 +3,6 @@ package com.innioasis.ipp;
 import android.os.SystemClock;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,7 +14,7 @@ import com.innioasis.y1.activity.SettingActivity;
 import java.lang.ref.WeakReference;
 
 /**
- * Wheel navigation: ListView lists ({@link #list}) and RecyclerView ones ({@link #follow}). Stock
+ * Wheel navigation of every list ({@link #follow}; the music lists through {@link #rows}). Stock
  * notified the adapter (and smooth-scrolled) on every step; here a step inside the visible window
  * rebinds just the two rows whose highlight changes, in place, and scrolls only when the row is
  * cut off — instantly.
@@ -52,188 +50,6 @@ public final class Wheel {
     /** ...and its layout manager: the prefetch flag is the manager's. */
     private static WeakReference tunedLm;
 
-    // ListView lists: replaces the body of Other.listViewScroll. Stock notified the adapter per
-    // step, so ListView re-filled every visible row to move a highlight. Inside the window nothing
-    // is notified: the two rows are rebound in place, POSTED, so a burst repaints twice, not 2N
-    // times. What a click still costs is the rows' measure and layout — profiled, and the rejected
-    // alternatives: skill ipp-perf-profiling.
-
-    private static WeakReference pendLv;
-    private static int pendFrom;
-    // A flag of its own, NOT pendFrom < 0: the adapter is parked at -1 on the Shuffle row, a valid
-    // "previous row".
-    private static boolean pendOn;
-    private static final Repaint REPAINT = new Repaint();
-
-    public static void list(ListView lv, int type) {
-        try {
-            if (lv == null) return;
-            ListAdapter la = lv.getAdapter();
-            if (!(la instanceof MyBaseAdapter)) return;
-            MyBaseAdapter a = (MyBaseAdapter) la;
-
-            // The cursor is the user's now (Follow) — here, where it moves, not in the key handler
-            // (in the player the wheel is volume); before both early returns below.
-            Follow.touched(lv, a);
-
-            // fast spin: by letter. drop() first, so a pending repaint cannot land on the jump
-            if (Alpha.step(lv, a, type)) {
-                drop();
-                return;
-            }
-
-            // the one thing every list has, for screens that swap adapters (see Status)
-            Status.check(lv);
-
-            int first = lv.getFirstVisiblePosition();
-            int last = lv.getLastVisiblePosition();
-            int old = a.getPosition();
-
-            // Loop scrolling: up from the Shuffle row goes round to the last track...
-            if (Loop.fromShuffle(lv, a, type)) {
-                drop();
-                return;
-            }
-            if (type == 1) a.toNext(); else a.toPrevious();
-            int now = a.getPosition();
-            if (now == old) {                              // clamped at an end
-                // ...and a step past either end comes back at the other one.
-                if (Loop.list(lv, a, type, old)) drop();
-                return;
-            }
-
-            // first/last visible both count PARTIAL rows: down scrolls at `now >= last`, up only
-            // when the row landed on is actually cut off. Landing on track 1 does NOT bring the
-            // Shuffle row back — it returns when it becomes the cursor (Head.reveal).
-            boolean scroll = (type == 1)
-                    ? (now >= last)
-                    : (now < first || cutAtTop(lv, now, first));
-            if (scroll) {
-                drop();
-                // Stock scrolls down by whole rows, right only while rows are equal. A multi-disc
-                // album's are not, and there alone the window moves by PIXELS.
-                boolean vary = type == 1 && Disc.variableRows(a);
-                int h = vary ? rowHeight(lv, now, first) : 0;
-                // the top edge is Head.top, not paddingTop
-                int lt = Head.top(lv);
-                int lb = lv.getHeight() - lv.getPaddingBottom();
-                a.notifyDataSetChanged();
-                if (vary && h > 0 && h <= lb - lt) {
-                    // exact, so no correcting pass: a second placement flickers
-                    Head.place(lv, now, lb - h);
-                } else if (type == 1) {
-                    // the Shuffle row, while showing, is the first row's worth to go
-                    int target = now - last + firstShown(lv, first, lt) + 1;
-                    if (Head.headerShowing(lv)) target--;
-                    if (target < 0) target = 0;
-                    Head.selectPinned(lv, target);
-                    if (vary) postFit(lv, now);
-                } else {
-                    Head.selectPinned(lv, now);
-                    if (vary) postFit(lv, now);
-                }
-                return;
-            }
-
-            if (skipFast(a)) {                             // cannot be rebound in place
-                a.notifyDataSetChanged();
-                return;
-            }
-
-            arm(lv, old);
-        } catch (Throwable t) {
-        }
-    }
-
-    /** Rebind the burst's first and last rows once; {@code old} is kept from the first step. */
-    private static void arm(ListView lv, int old) {
-        if (!pendOn || pendLv == null || pendLv.get() != lv) {
-            pendLv = new WeakReference(lv);
-            pendFrom = old;                                // where this burst started
-            pendOn = true;
-            lv.post(REPAINT);
-        }
-    }
-
-    private static void drop() {
-        pendLv = null;
-        pendFrom = 0;
-        pendOn = false;
-    }
-
-    /**
-     * The first row with anything of it on screen — not {@code getFirstVisiblePosition()}: a row
-     * wholly above the edge stays attached, and counting it leaves every step one row short.
-     */
-    static int firstShown(ListView lv, int first, int edge) {
-        int n = lv.getChildCount();
-        for (int i = 0; i < n; i++) {
-            View c = lv.getChildAt(i);
-            if (c != null && c.getBottom() > edge) return first + i;
-        }
-        return first;
-    }
-
-    /** The row at {@code pos} is clipped by the top edge; an unknown row is false. */
-    static boolean cutAtTop(ListView lv, int pos, int first) {
-        int i = pos - first;
-        if (i < 0 || i >= lv.getChildCount()) return false;
-        View child = lv.getChildAt(i);
-        if (child == null) return false;
-        return child.getTop() < Head.top(lv);
-    }
-
-    /**
-     * The landed row's height in a list of unequal rows: read off it, or for a row below the window
-     * worked out from the bottom row — rows differ only by the disc strip, so that is exact.
-     */
-    private static int rowHeight(ListView lv, int pos, int first) {
-        View c = lv.getChildAt(pos - first);
-        if (c != null) return c.getHeight();
-        int n = lv.getChildCount();
-        if (n == 0) return 0;
-        View bottom = lv.getChildAt(n - 1);
-        if (bottom == null) return 0;
-        int strip = Disc.stripPx(bottom);
-        int base = bottom.getHeight() - (Disc.startsDisc(first + n - 1) ? strip : 0);
-        return base + (Disc.startsDisc(pos) ? strip : 0);
-    }
-
-    private static WeakReference fitLv;
-    private static int fitPos = -1;
-    private static final Fit FIT = new Fit();
-
-    private static void postFit(ListView lv, int pos) {
-        fitLv = new WeakReference(lv);
-        fitPos = pos;
-        lv.removeCallbacks(FIT);
-        lv.post(FIT);
-    }
-
-    /** Checks the landing after the layout and corrects it only when it is actually wrong. */
-    static final class Fit implements Runnable {
-        public void run() {
-            try {
-                Object o = fitLv == null ? null : fitLv.get();
-                int pos = fitPos;
-                fitLv = null;
-                fitPos = -1;
-                if (!(o instanceof ListView) || pos < 0) return;
-                ListView lv = (ListView) o;
-                View c = lv.getChildAt(pos - lv.getFirstVisiblePosition());
-                if (c == null) return;
-                int top = Head.top(lv);
-                int bottom = lv.getHeight() - lv.getPaddingBottom();
-                if (c.getHeight() > bottom - top) return;
-                if (c.getBottom() > bottom) {
-                    Head.place(lv, pos, bottom - c.getHeight());
-                } else if (c.getTop() < top) {
-                    Head.place(lv, pos, top);
-                }
-            } catch (Throwable t) {
-            }
-        }
-    }
 
     private static WeakReference restRv;
     private static int restPos = -1;
@@ -361,51 +177,6 @@ public final class Wheel {
         }
     }
 
-    /** Rebinds just the row the burst left and the row it landed on. */
-    static final class Repaint implements Runnable {
-        public void run() {
-            try {
-                if (!pendOn) return;
-                WeakReference w = pendLv;
-                int from = pendFrom;                       // may legitimately be -1 (see pendOn)
-                drop();
-                if (w == null) return;
-                Object o = w.get();
-                if (!(o instanceof ListView)) return;
-                ListView lv = (ListView) o;
-                ListAdapter la = lv.getAdapter();
-                if (!(la instanceof MyBaseAdapter)) return;
-                MyBaseAdapter a = (MyBaseAdapter) la;
-                int first = lv.getFirstVisiblePosition();
-                int last = lv.getLastVisiblePosition();
-                int now = a.getPosition();
-                if (!bind(lv, a, from, first, last) || !bind(lv, a, now, first, last)) {
-                    a.notifyDataSetChanged();
-                }
-            } catch (Throwable t) {
-            }
-        }
-    }
-
-    /**
-     * Off screen, or rebound IN PLACE. An adapter that ignores {@code convertView} returns an
-     * orphan view; that is the test, and such an adapter is remembered.
-     */
-    private static boolean bind(ListView lv, MyBaseAdapter a, int pos, int first, int last) {
-        if (pos < first || pos > last) return true;
-        if (pos < 0 || pos >= a.getCount()) return false;
-        View child = lv.getChildAt(pos - first);
-        if (child == null) return false;
-        if (a.getView(pos, child, lv) == child) return true;
-        noFast = new WeakReference(a);
-        return false;
-    }
-
-    private static WeakReference noFast;
-
-    private static boolean skipFast(MyBaseAdapter a) {
-        return noFast != null && noFast.get() == a;
-    }
 
     /**
      * The cursor moved again right after {@link #follow}, by a screen's own rule: the same
@@ -432,8 +203,8 @@ public final class Wheel {
     }
 
     /**
-     * A song list on a RecyclerView ({@link SongRows}), in place of {@code Other.listViewScroll}:
-     * what {@link #list} does for a ListView, with the step drawn by {@link #follow}.
+     * A music list ({@link SongRows}), in place of {@code Other.listViewScroll}: the step drawn by
+     * {@link #follow}, once per frame.
      */
     public static void rows(RecyclerView rv, int type) {
         try {
@@ -594,8 +365,8 @@ public final class Wheel {
                 // the remembered row counts only for the same ADAPTER; unknown = full repaint
                 int prev = (lastRv != null && lastRv.get() == rv
                         && lastAdapter != null && lastAdapter.get() == adapter) ? lastPos : -1;
-                // In place, not notifyItemChanged (a full layout pass). Synchronous here, so a
-                // burst repaints every row it passes — unlike the posted ListView path.
+                // In place, not notifyItemChanged (a full layout pass). Synchronous, so a burst
+                // repaints every row it passes.
                 if (prev < 0 || !paint(rv, adapter, prev, n) || !paint(rv, adapter, pos, n)) {
                     adapter.notifyDataSetChanged();
                 }
@@ -1077,22 +848,6 @@ public final class Wheel {
     private static final java.util.WeakHashMap level = new java.util.WeakHashMap();
 
     /** Called where the user descends a level: remember where THIS list stands. */
-    public static void noteLevel(ListView lv) {
-        try {
-            if (lv == null) return;
-            Object a = lv.getAdapter();
-            if (!(a instanceof MyBaseAdapter)) return;
-            View top = lv.getChildAt(0);
-            level.put(a, new int[] {
-                    lv.getFirstVisiblePosition(),
-                    top == null ? 0 : top.getTop(),        // absolute; see Head.restore
-                    ((MyBaseAdapter) a).getPosition()
-            });
-        } catch (Throwable t) {
-        }
-    }
-
-    /** The same for a screen whose lists are on one RecyclerView ({@link SongRows}). */
     public static void noteLevel(RecyclerView rv) {
         try {
             MyBaseAdapter a = Lv.model(rv);
@@ -1103,6 +858,7 @@ public final class Wheel {
         }
     }
 
+    /** In place of {@code Other.gotoAdapter(lv, a, -1)} on the way back up. */
     public static void gotoLevel(RecyclerView rv, MyBaseAdapter a) {
         if (rv == null || a == null) return;
         SongRows.set(rv, a);
@@ -1116,18 +872,4 @@ public final class Wheel {
         }
     }
 
-    /** In place of {@code Other.gotoAdapter(lv, a, -1)} on the way back up. */
-    public static void gotoLevel(ListView lv, MyBaseAdapter a) {
-        if (lv == null || a == null) return;
-        lv.setAdapter(a);
-        int pos = a.getPosition();
-        Object o = level.remove(a);                       // one restore per note
-        int[] st = (o instanceof int[]) ? (int[]) o : null;
-        if (st != null && st[0] >= 0 && st[0] < a.getCount() && st[2] == pos) {
-            // Head.restore: the padding may be about to change underneath
-            Head.restore(lv, st[0], st[1]);
-        } else {
-            lv.setSelection(pos);
-        }
-    }
 }

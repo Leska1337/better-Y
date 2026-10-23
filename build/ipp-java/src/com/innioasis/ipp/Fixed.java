@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
  * request up: a row's request otherwise re-lays out the whole window, the ConstraintLayout root
  * with the panel beside the list, on every wheel click. Its size depends on nothing inside it, so
  * nothing above it needs the pass. Its own layout params changed, wrap_content, or not laid out
- * yet — the request goes up as usual. Used from the layout XML; {@link FixedList} is the ListView.
+ * yet — the request goes up as usual. Used from the layout XML.
  */
 public class Fixed extends RecyclerView {
 
@@ -67,7 +67,7 @@ public class Fixed extends RecyclerView {
     }
 
     /**
-     * The logic both lists share. {@code take} answers a request: true when the list lays itself
+     * The list's own layout. {@code take} answers a request: true when the list lays itself
      * out (before the frame's traversal), false when it goes up. The layout params at the last
      * layout are kept: a change in them is a change of the list's own size or place.
      */

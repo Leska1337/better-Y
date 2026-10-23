@@ -17,13 +17,13 @@
 
 .method constructor <init>(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
   .registers 3
-  .line 549
+  .line 532
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 550
+  .line 533
     iput-object p1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
-  .line 551
+  .line 534
     iput-object p2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/view/View;
-  .line 552
+  .line 535
     return-void
 .end method
 
@@ -31,42 +31,42 @@
   .catchall { :L0 .. :L4 } :L5
   .registers 4
   :L0
-  .line 557
+  .line 540
     invoke-static { }, Lcom/innioasis/ipp/Follow;->access$300()Ljava/lang/String;
     move-result-object v0
-  .line 558
+  .line 541
     if-nez v0, :L1
     return-void
   :L1
-  .line 559
+  .line 542
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Follow;->access$400(Lcom/innioasis/music/adapter/MyBaseAdapter;Ljava/lang/String;)I
     move-result v0
-  .line 560
+  .line 543
     if-gez v0, :L2
     return-void
   :L2
-  .line 561
+  .line 544
     const-wide/16 v1, 0
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Follow;->access$502(J)J
-  .line 562
+  .line 545
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v1
     if-ne v0, v1, :L3
     return-void
   :L3
-  .line 563
+  .line 546
     iget-object v1, p0, Lcom/innioasis/ipp/Follow$Jump;->a:Lcom/innioasis/music/adapter/MyBaseAdapter;
     iget-object v2, p0, Lcom/innioasis/ipp/Follow$Jump;->lv:Landroid/view/View;
     invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Follow;->land(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;I)V
   :L4
-  .line 565
+  .line 548
     goto :L6
   :L5
-  .line 564
+  .line 547
     move-exception v0
   :L6
-  .line 566
+  .line 549
     return-void
 .end method

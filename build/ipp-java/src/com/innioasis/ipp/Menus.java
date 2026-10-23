@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -503,14 +502,6 @@ public final class Menus {
 
     private static int ticksIn(View v) {
         if (v == null) return 0;
-        if (v instanceof AbsListView) {
-            Object ad = ((AbsListView) v).getAdapter();
-            if (ad instanceof MyBaseAdapter) {
-                List s = ((MyBaseAdapter) ad).getSelectedIndexList();
-                return (s == null) ? 0 : s.size();
-            }
-            return 0;
-        }
         if (v instanceof RecyclerView) {
             Object ad = ((RecyclerView) v).getAdapter();
             if (ad instanceof SongRows) ad = ((SongRows) ad).model();

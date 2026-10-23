@@ -2,36 +2,28 @@ package com.innioasis.ipp;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.innioasis.music.adapter.MyBaseAdapter;
-import com.innioasis.music.util.Other;
-import com.innioasis.y1.R;
 import com.innioasis.y1.view.ShufflePlaylistItemView;
 
 /**
- * A song list asked the same questions whether it is a ListView or a RecyclerView on
- * {@link SongRows}. Positions are always the ADAPTER's ({@code MyBaseAdapter}), so the Shuffle
- * row a RecyclerView carries as its row 0 is position -1 here.
+ * A list of a music screen (a RecyclerView on {@link SongRows}) asked in the positions of the
+ * ADAPTER ({@code MyBaseAdapter}), so the Shuffle row the list carries as its row 0 is position -1
+ * here. Anything that is not such a list answers as an empty one.
  */
 final class Lv {
 
     private Lv() { }
 
-    /** A song list of either kind; anything else is not one. */
+    /** A list on SongRows; anything else is not one. */
     static boolean is(View v) {
-        return v instanceof ListView || v instanceof RecyclerView && SongRows.of((RecyclerView) v) != null;
+        return rows(v) != null;
     }
 
     static MyBaseAdapter model(View v) {
-        if (v instanceof ListView) {
-            ListAdapter la = ((ListView) v).getAdapter();
-            return la instanceof MyBaseAdapter ? (MyBaseAdapter) la : null;
-        }
         SongRows r = rows(v);
         return r == null ? null : r.model();
     }
@@ -41,20 +33,21 @@ final class Lv {
     }
 
     private static LinearLayoutManager lm(View v) {
+        if (!(v instanceof RecyclerView)) return null;
         RecyclerView.LayoutManager m = ((RecyclerView) v).getLayoutManager();
         return m instanceof LinearLayoutManager ? (LinearLayoutManager) m : null;
     }
 
     /** The first row attached (it may be wholly above the edge); -1 = the Shuffle row. */
     static int first(View v) {
-        if (v instanceof ListView) return ((ListView) v).getFirstVisiblePosition();
+        if (!(v instanceof RecyclerView)) return 0;
         RecyclerView rv = (RecyclerView) v;
         if (rv.getChildCount() == 0) return 0;
         return rv.getChildLayoutPosition(rv.getChildAt(0)) - SongRows.heads(rv);
     }
 
     static int last(View v) {
-        if (v instanceof ListView) return ((ListView) v).getLastVisiblePosition();
+        if (!(v instanceof RecyclerView)) return -1;
         RecyclerView rv = (RecyclerView) v;
         int n = rv.getChildCount();
         if (n == 0) return -1;
@@ -63,18 +56,13 @@ final class Lv {
 
     /** The row of position {@code pos} if it is attached, else null. */
     static View row(View v, int pos) {
-        if (v instanceof ListView) {
-            ListView lv = (ListView) v;
-            int i = pos - lv.getFirstVisiblePosition();
-            return i < 0 || i >= lv.getChildCount() ? null : lv.getChildAt(i);
-        }
         LinearLayoutManager l = lm(v);
         return l == null ? null : l.findViewByPosition(pos + SongRows.heads((RecyclerView) v));
     }
 
     /** Where the visible list begins. */
     static int top(View v) {
-        if (v instanceof ListView) return Head.top((ListView) v);
+        if (!(v instanceof RecyclerView)) return v.getPaddingTop();
         RecyclerView rv = (RecyclerView) v;
         return SongRows.top(rv, SongRows.heads(rv));
     }
@@ -85,13 +73,9 @@ final class Lv {
 
     /** The row's top at {@code y}. */
     static void place(View v, int pos, int y) {
-        if (v instanceof ListView) {
-            Head.place((ListView) v, pos, y);
-            return;
-        }
-        RecyclerView rv = (RecyclerView) v;
         LinearLayoutManager l = lm(v);
         if (l == null) return;
+        RecyclerView rv = (RecyclerView) v;
         Wheel.Glider.stop();
         rv.stopScroll();
         int h = SongRows.heads(rv);
@@ -101,22 +85,17 @@ final class Lv {
 
     /** Against the top edge with the Shuffle row scrolled off. */
     static void pin(View v, int pos) {
-        if (v instanceof ListView) Head.selectPinned((ListView) v, pos);
-        else place(v, pos, SongRows.pinTop((RecyclerView) v));
+        if (v instanceof RecyclerView) place(v, pos, SongRows.pinTop((RecyclerView) v));
     }
 
     /** The list at its start, the Shuffle row fully shown. */
     static void rest(View v) {
-        if (v instanceof ListView) Head.rest((ListView) v);
-        else place(v, -SongRows.heads((RecyclerView) v), v.getPaddingTop());
+        if (v instanceof RecyclerView) place(v, -SongRows.heads((RecyclerView) v), v.getPaddingTop());
     }
 
     /** The first row with anything of it below {@code edge}; the Shuffle row does not count. */
     static int firstShown(View v, int edge) {
-        if (v instanceof ListView) {
-            ListView lv = (ListView) v;
-            return Wheel.firstShown(lv, lv.getFirstVisiblePosition(), edge);
-        }
+        if (!(v instanceof RecyclerView)) return 0;
         RecyclerView rv = (RecyclerView) v;
         int h = SongRows.heads(rv);
         for (int i = 0; i < rv.getChildCount(); i++) {
@@ -127,39 +106,27 @@ final class Lv {
         return first(v);
     }
 
-    /** {@code Other.gotoAdapter}, for either kind. */
+    /** {@code Other.gotoAdapter}. */
     static void go(View v, MyBaseAdapter a, int to) {
-        if (v instanceof ListView) Other.INSTANCE.gotoAdapter((ListView) v, a, to);
-        else if (v instanceof RecyclerView) SongRows.go((RecyclerView) v, a, to);
+        if (v instanceof RecyclerView) SongRows.go((RecyclerView) v, a, to);
     }
 
-    /** {@code setSelection}, for either kind. */
+    /** {@code setSelection}. */
     static void select(View v, int pos) {
-        if (v instanceof ListView) ((ListView) v).setSelection(pos);
-        else if (v instanceof RecyclerView) SongRows.select((RecyclerView) v, pos);
+        if (v instanceof RecyclerView) SongRows.select((RecyclerView) v, pos);
     }
 
     /** How far the list stands from its start, in px; -1 = its start is not attached. */
     static int scrolled(View v) {
-        if (v instanceof ListView) {
-            ListView lv = (ListView) v;
-            if (lv.getFirstVisiblePosition() != 0 || lv.getChildCount() == 0) return -1;
-            View c0 = lv.getChildAt(0);
-            return c0 == null ? -1 : Math.max(0, lv.getPaddingTop() - c0.getTop());
-        }
         LinearLayoutManager l = lm(v);
         View c0 = l == null ? null : l.findViewByPosition(0);
         return c0 == null ? -1 : Math.max(0, v.getPaddingTop() - c0.getTop());
     }
 
-    /** The screen's Shuffle row: a sibling of a ListView, row 0 of a RecyclerView. */
+    /** The screen's Shuffle row: row 0 of the list. */
     static ShufflePlaylistItemView shuffle(View v) {
         SongRows r = rows(v);
-        if (r != null) return r.shuffle();
-        Object p = v.getParent();
-        if (!(p instanceof View)) return null;
-        View s = ((View) p).findViewById(R.id.spv);
-        return s instanceof ShufflePlaylistItemView ? (ShufflePlaylistItemView) s : null;
+        return r == null ? null : r.shuffle();
     }
 
     /** The first song list of a screen. */

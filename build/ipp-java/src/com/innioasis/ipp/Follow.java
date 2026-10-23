@@ -5,7 +5,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ListView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -66,7 +65,7 @@ public final class Follow {
     }
 
     /**
-     * The wheel has just moved this list's cursor. From {@code Wheel.list}/{@code rows}, NOT the
+     * The wheel has just moved this list's cursor. From {@code Wheel.rows}, NOT the
      * key event: in the player the wheel is volume. At its TOP, before Alpha's branch and the
      * clamped-at-an-end return — both are the user turning the wheel.
      */
@@ -264,12 +263,11 @@ public final class Follow {
      * The placement, then a check of where it landed: the first pass can only ESTIMATE (the row is
      * not attached and disc rows differ in height). Corrective passes cancel their frame, so only
      * the finished placement is drawn. It watches on until {@link #SETTLED} quiet passes — the disc
-     * bar arriving grows the padding and pushes the row off — bounded by passes and time, since
-     * {@code Head.place} can defer too.
+     * plate arriving pushes the row off — bounded by passes and time.
      */
     private static final class Land implements ViewTreeObserver.OnPreDrawListener {
         /**
-         * The list this row number belongs to: Albums and Genres swap adapters in one ListView,
+         * The list this row number belongs to: Albums and Genres swap adapters in one list,
          * and leaving with the top button never reaches {@link #touched}.
          */
         private final MyBaseAdapter a;
@@ -367,32 +365,17 @@ public final class Follow {
     }
 
     /**
-     * A STEP onto row {@code pos}, scrolled by exactly the wheel's rule ({@code Wheel.list}), so it
+     * A STEP onto row {@code pos}, scrolled by exactly the wheel's rule ({@code Wheel.rows}), so it
      * sits as if scrolled there by hand. A jump is {@link #land}.
      */
     private static void moveTo(MyBaseAdapter a, View v, int pos) {
-        if (v instanceof RecyclerView) {
-            // the wheel's own step: Wheel.follow draws and scrolls it
-            int from = a.getPosition() + SongRows.heads((RecyclerView) v);
-            leaveShuffleRow(v);
-            a.setPosition(pos);
-            RecyclerView rv = (RecyclerView) v;
-            Wheel.follow(rv, from, pos + SongRows.heads(rv), rv.getAdapter());
-            return;
-        }
-        ListView lv = (ListView) v;
-        int first = lv.getFirstVisiblePosition();
-        int last = lv.getLastVisiblePosition();
-        leaveShuffleRow(lv);                                 // before setPosition
+        if (!(v instanceof RecyclerView)) return;
+        // the wheel's own step: Wheel.follow draws and scrolls it
+        RecyclerView rv = (RecyclerView) v;
+        int from = a.getPosition() + SongRows.heads(rv);
+        leaveShuffleRow(v);
         a.setPosition(pos);
-        if (pos >= last) {
-            int target = pos - last + Wheel.firstShown(lv, first, Head.top(lv)) + 1;
-            if (Head.headerShowing(lv)) target--;            // the Shuffle row is a slot of its own
-            if (target < 0) target = 0;
-            Head.selectPinned(lv, target);
-        } else if (pos < first || Wheel.cutAtTop(lv, pos, first)) {
-            Head.selectPinned(lv, pos);
-        }
+        Wheel.follow(rv, from, pos + SongRows.heads(rv), rv.getAdapter());
     }
 
     /**

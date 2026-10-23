@@ -671,9 +671,9 @@
   .line 274
     if-nez v0, :L3
   .line 275
-    new-instance v0, Landroid/widget/AbsListView$LayoutParams;
+    new-instance v0, Landroidx/recyclerview/widget/RecyclerView$LayoutParams;
     const/4 v1, -1
-    invoke-direct { v0, v1, p1 }, Landroid/widget/AbsListView$LayoutParams;-><init>(II)V
+    invoke-direct { v0, v1, p1 }, Landroidx/recyclerview/widget/RecyclerView$LayoutParams;-><init>(II)V
     invoke-virtual { p0, v0 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
   .line 277
     return-void

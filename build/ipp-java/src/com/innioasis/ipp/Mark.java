@@ -5,7 +5,7 @@ import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -272,7 +272,7 @@ public final class Mark {
                     : (int) (MARK_ROW_DIP * row.getResources().getDisplayMetrics().density + 0.5f);
             ViewGroup.LayoutParams lp = row.getLayoutParams();
             if (lp == null) {
-                row.setLayoutParams(new AbsListView.LayoutParams(
+                row.setLayoutParams(new RecyclerView.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, want));
                 return;
             }
