@@ -11,7 +11,6 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AbsListView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -115,25 +114,25 @@ public final class Menus {
         try {
             Window w = d.getWindow();
             View v = d.findViewById(R.id.submenu);
-            if (w == null || !(v instanceof ListView)) return;
+            if (w == null || !(v instanceof ViewGroup) || !Lv.is(v)) return;
             int base = (int) d.getContext().getResources().getDimension(R.dimen.submenu_width);
             WindowManager.LayoutParams p = w.getAttributes();
             if (p.width != base) {
                 p.width = base;
                 w.setAttributes(p);
             }
-            v.getViewTreeObserver().addOnPreDrawListener(new Fit(w, (ListView) v, base));
+            v.getViewTreeObserver().addOnPreDrawListener(new Fit(w, (ViewGroup) v, base));
         } catch (Throwable t) {
         }
     }
 
     private static final class Fit implements ViewTreeObserver.OnPreDrawListener {
         private final Window w;
-        private final ListView lv;
+        private final ViewGroup lv;
         private final int base;
         private int passes;
 
-        Fit(Window w, ListView lv, int base) {
+        Fit(Window w, ViewGroup lv, int base) {
             this.w = w;
             this.lv = lv;
             this.base = base;
@@ -149,9 +148,9 @@ public final class Menus {
                     return true;
                 }
                 lv.getViewTreeObserver().removeOnPreDrawListener(this);
-                Object ad = lv.getAdapter();
-                if (!(ad instanceof MyBaseAdapter)) return true;
-                List items = ((MyBaseAdapter) ad).getItemList();
+                MyBaseAdapter ad = Lv.model(lv);
+                if (ad == null) return true;
+                List items = ad.getItemList();
                 if (items == null) return true;
                 Paint paint = tv.getPaint();
                 float widest = 0;
@@ -189,10 +188,8 @@ public final class Menus {
         try {
             if (d == null || CHOOSERS.containsKey(d)) return;
             View v = d.findViewById(R.id.submenu);
-            if (!(v instanceof ListView)) return;
-            Object ad = ((ListView) v).getAdapter();
-            if (!(ad instanceof MyBaseAdapter)) return;
-            MyBaseAdapter a = (MyBaseAdapter) ad;
+            MyBaseAdapter a = v == null ? null : Lv.model(v);
+            if (a == null) return;
             List items = a.getItemList();
             if (items == null || items.isEmpty()) return;
 

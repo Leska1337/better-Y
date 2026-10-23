@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..cfbb81bd 100644
+index 01b1f730..d57f7baa 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..cfbb81bd 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100414
++  versionCode: 10100415
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -669,6 +669,17 @@ index 21c1e9d8..2ada0cb4 100644
          </LinearLayout>
      </androidx.cardview.widget.CardView>
      <androidx.recyclerview.widget.RecyclerView android:id="@id/rv" android:background="#ff0a214b" android:layout_width="fill_parent" android:layout_height="70.0dip" app:layout_constraintBottom_toBottomOf="parent" />
+diff --git a/build/src/res/layout/dialog_submenu.xml b/build/src/res/layout/dialog_submenu.xml
+index c5f081f4..0d7e36c5 100644
+--- a/build/src/res/layout/dialog_submenu.xml
++++ b/build/src/res/layout/dialog_submenu.xml
+@@ -1,3 +1,5 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<ListView android:id="@id/submenu" android:background="@drawable/bg_submenu" android:layout_width="fill_parent" android:layout_height="wrap_content" android:listSelector="@android:color/transparent" android:divider="@null"
++<!-- ipp: the menus of the whole app (SubMenuDialog, SubMenuVideoDialog): rows drawn by SongRows.
++     wrap_content, so a Fixed passes a row's request up and the window follows the row count. -->
++<com.innioasis.ipp.Fixed android:id="@id/submenu" android:background="@drawable/bg_submenu" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android" />
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
 index 4b9d1219..566e3208 100644
 --- a/build/src/res/layout/item_album.xml
@@ -20082,7 +20093,7 @@ index 803c1e7a..b08fd3f9 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d95c498a 100644
+index 71fe29d0..9bb2d438 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21031,7 +21042,7 @@ index 71fe29d0..d95c498a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev414</string>
++    <string name="ipp_version">v1.1.0-dev415</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -57930,10 +57941,55 @@ index 6681baa9..54fa1dec 100644
 +    return-object p1
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
-index 3f62d183..7ed88eb4 100644
+index 3f62d183..c8326272 100644
 --- a/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/util/SubMenuDialog.smali
-@@ -662,6 +662,10 @@
+@@ -510,7 +510,7 @@
+ 
+     move-result-object p1
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/music/util/SubMenuDialog;->getAdapter()Lcom/innioasis/music/adapter/SubmenuAdapter;
+ 
+@@ -518,7 +518,9 @@
+ 
+     check-cast v0, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 52
+     sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -534,13 +536,13 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-virtual {p1}, Ljava/lang/Integer;->intValue()I
+ 
+     move-result p1
+ 
+-    invoke-virtual {v0, p1}, Landroid/widget/ListView;->setBackgroundColor(I)V
++    invoke-virtual {v0, p1}, Landroid/view/View;->setBackgroundColor(I)V
+ 
+     .line 54
+     :cond_0
+@@ -548,7 +550,7 @@
+ 
+     move-result-object p1
+ 
+-    invoke-virtual {p1}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroid/widget/ListView;
++    invoke-virtual {p1}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroidx/recyclerview/widget/RecyclerView;
+ 
+     move-result-object p1
+ 
+@@ -662,6 +664,10 @@
      .line 129
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseDialog;->onStart()V
  
@@ -57944,7 +58000,21 @@ index 3f62d183..7ed88eb4 100644
      .line 130
      invoke-direct {p0}, Lcom/innioasis/music/util/SubMenuDialog;->getAdapter()Lcom/innioasis/music/adapter/SubmenuAdapter;
  
-@@ -691,11 +695,17 @@
+@@ -676,9 +682,11 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
++
++    # ipp: the lists are on a RecyclerView -- see SongRows
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 132
+     invoke-direct {p0}, Lcom/innioasis/music/util/SubMenuDialog;->getAdapter()Lcom/innioasis/music/adapter/SubmenuAdapter;
+@@ -691,11 +699,17 @@
  .end method
  
  .method protected onStop()V
@@ -57963,7 +58033,41 @@ index 3f62d183..7ed88eb4 100644
      return-void
  .end method
  
-@@ -921,6 +931,20 @@
+@@ -834,13 +848,15 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+     const/4 v1, -0x1
+ 
+-    invoke-virtual {p1, v0, v1}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_4
+ 
+@@ -881,11 +897,13 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p1, v0, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_4
+ 
+@@ -921,6 +939,20 @@
  
      check-cast v1, Lcom/innioasis/music/adapter/SubmenuAdapter$Item;
  
@@ -66812,10 +66916,55 @@ index dfaa4043..89dec7f5 100644
      :cond_2
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
-index c16ca965..34d97a5b 100644
+index c16ca965..2cbdf45f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/SubMenuVideoDialog.smali
-@@ -663,6 +663,10 @@
+@@ -511,7 +511,7 @@
+ 
+     move-result-object p1
+ 
+-    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;->getAdapter()Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter;
+ 
+@@ -519,7 +519,9 @@
+ 
+     check-cast v0, Landroid/widget/ListAdapter;
+ 
+-    invoke-virtual {p1, v0}, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+ 
+     .line 51
+     sget-object p1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+@@ -535,13 +537,13 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-virtual {p1}, Ljava/lang/Integer;->intValue()I
+ 
+     move-result p1
+ 
+-    invoke-virtual {v0, p1}, Landroid/widget/ListView;->setBackgroundColor(I)V
++    invoke-virtual {v0, p1}, Landroid/view/View;->setBackgroundColor(I)V
+ 
+     .line 53
+     :cond_0
+@@ -549,7 +551,7 @@
+ 
+     move-result-object p1
+ 
+-    invoke-virtual {p1}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroid/widget/ListView;
++    invoke-virtual {p1}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroidx/recyclerview/widget/RecyclerView;
+ 
+     move-result-object p1
+ 
+@@ -663,6 +665,10 @@
      .line 131
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseDialog;->onStart()V
  
@@ -66826,7 +66975,55 @@ index c16ca965..34d97a5b 100644
      .line 132
      invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;->getAdapter()Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter;
  
-@@ -922,6 +926,19 @@
+@@ -677,9 +683,11 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
++
++    # ipp: the lists are on a RecyclerView -- see SongRows
+ 
+-    invoke-virtual {v0, v1}, Landroid/widget/ListView;->setSelection(I)V
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     .line 134
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/video/SubMenuVideoDialog;->getAdapter()Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter;
+@@ -835,13 +843,15 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+     const/4 v1, -0x1
+ 
+-    invoke-virtual {p1, v0, v1}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v1}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_4
+ 
+@@ -882,11 +892,13 @@
+ 
+     move-result-object v0
+ 
+-    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iget-object v0, v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     invoke-static {v0, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    invoke-virtual {p1, v0, v2}, Lcom/innioasis/music/util/Other;->listViewScroll(Landroid/widget/ListView;I)V
++    # ipp: the lists are on a RecyclerView -- see SongRows
++
++    invoke-static {v0, v2}, Lcom/innioasis/ipp/Wheel;->rows(Landroidx/recyclerview/widget/RecyclerView;I)V
+ 
+     goto :goto_4
+ 
+@@ -922,6 +934,19 @@
  
      check-cast v1, Lcom/innioasis/y1/activity/video/SubmenuVideoAdapter$Item;
  
@@ -72108,6 +72305,77 @@ index 11e80c24..23a1cfb6 100644
  
      return-object v0
  
+diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/DialogSubmenuBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/DialogSubmenuBinding.smali
+index f8a1f8f0..6e25fe39 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/databinding/DialogSubmenuBinding.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/databinding/DialogSubmenuBinding.smali
+@@ -7,13 +7,13 @@
+ 
+ 
+ # instance fields
+-.field private final rootView:Landroid/widget/ListView;
++.field private final rootView:Landroidx/recyclerview/widget/RecyclerView;
+ 
+-.field public final submenu:Landroid/widget/ListView;
++.field public final submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+ 
+ # direct methods
+-.method private constructor <init>(Landroid/widget/ListView;Landroid/widget/ListView;)V
++.method private constructor <init>(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView;)V
+     .locals 0
+     .annotation system Ldalvik/annotation/MethodParameters;
+         accessFlags = {
+@@ -30,10 +30,10 @@
+     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
+ 
+     .line 23
+-    iput-object p1, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->rootView:Landroid/widget/ListView;
++    iput-object p1, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->rootView:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 24
+-    iput-object p2, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroid/widget/ListView;
++    iput-object p2, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->submenu:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-void
+ .end method
+@@ -52,12 +52,12 @@
+     if-eqz p0, :cond_0
+ 
+     .line 54
+-    check-cast p0, Landroid/widget/ListView;
++    check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
+ 
+     .line 56
+     new-instance v0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;
+ 
+-    invoke-direct {v0, p0, p0}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;-><init>(Landroid/widget/ListView;Landroid/widget/ListView;)V
++    invoke-direct {v0, p0, p0}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;-><init>(Landroidx/recyclerview/widget/RecyclerView;Landroidx/recyclerview/widget/RecyclerView;)V
+ 
+     return-object v0
+ 
+@@ -139,18 +139,18 @@
+     .locals 1
+ 
+     .line 15
+-    invoke-virtual {p0}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroid/widget/ListView;
++    invoke-virtual {p0}, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->getRoot()Landroidx/recyclerview/widget/RecyclerView;
+ 
+     move-result-object v0
+ 
+     return-object v0
+ .end method
+ 
+-.method public getRoot()Landroid/widget/ListView;
++.method public getRoot()Landroidx/recyclerview/widget/RecyclerView;
+     .locals 1
+ 
+     .line 30
+-    iget-object v0, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->rootView:Landroid/widget/ListView;
++    iget-object v0, p0, Lcom/innioasis/y1/databinding/DialogSubmenuBinding;->rootView:Landroidx/recyclerview/widget/RecyclerView;
+ 
+     return-object v0
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali b/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
 index 09aab2a9..aa0afecf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/databinding/ItemSonglistBinding.smali
