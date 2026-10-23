@@ -77,39 +77,123 @@ public final class Pick {
         }
     }
 
-    /** Ours only: stock's "Clearing cache…" dialog over a background delete. */
+    /** Ours only: stock's "Clearing cache…" dialog, counting, over a background delete. */
     private static void clearWithDialog(SettingActivity a, int mask) {
         LoadingDialog d = null;
         try {
             d = new LoadingDialog(a, a.getString(R.string.add_req_clearing_cache), "",
                     R.style.Dialog_Common, new Noop());
+            Loading.counter(d);
             d.show();
         } catch (Throwable t) {
             d = null;
         }
-        new Thread(new ClearTask(a, mask, d)).start();
+        begin(a, d);
+        expect(0);
+        clearAsync(mask);
     }
 
-    static final class ClearTask implements Runnable {
-        private final SettingActivity a;
-        private final int mask;
-        private final LoadingDialog dialog;
+    // Stock counts its per-package callbacks with a bare clearFlag++ on binder threads: two at
+    // once lose one, the count never reaches the total and its dialog never closes. So the
+    // callbacks are counted here, and the dialog closes when the packages AND our half are done.
 
-        ClearTask(SettingActivity a, int mask, LoadingDialog dialog) {
-            this.a = a;
-            this.mask = mask;
-            this.dialog = dialog;
+    private static final Object RUN = new Object();
+    private static SettingActivity runHost;
+    private static LoadingDialog runDialog;
+    private static int runPackages, runRemoved, runSteps, runShown;
+    private static boolean runOwnDone, runFinished;
+    /** {@link #clearLocked}'s parts plus the rest of our cache dir. */
+    private static final int STEPS = 5;
+    /** The packages' share of the percent: they are done in a second or two. */
+    private static final int PACKAGES_PCT = 20;
+
+    /** From {@code ippClearCache} once its dialog is up, before anything is cleared. */
+    public static void begin(SettingActivity a, LoadingDialog d) {
+        synchronized (RUN) {
+            runHost = a;
+            runDialog = d;
+            runPackages = -1;           // not known until stock has listed them
+            runRemoved = 0;
+            runSteps = 0;
+            runShown = 0;
+            runOwnDone = false;
+            runFinished = false;
+        }
+        if (a != null) Loading.show(d, Loading.percent(a.getString(R.string.add_req_clearing_cache), 0));
+    }
+
+    /** The number of packages stock is about to clear. */
+    public static void expect(int packages) {
+        synchronized (RUN) {
+            runPackages = packages;
+        }
+        advance();
+    }
+
+    /** One package's callback, from any binder thread. */
+    public static void removedOne(SettingActivity a) {
+        synchronized (RUN) {
+            runRemoved++;
+        }
+        advance();
+    }
+
+    private static void step() {
+        synchronized (RUN) {
+            if (runHost == null) return;
+            runSteps++;
+        }
+        advance();
+    }
+
+    private static void ownDone() {
+        synchronized (RUN) {
+            runOwnDone = true;
+        }
+        advance();
+    }
+
+    private static void advance() {
+        SettingActivity a;
+        LoadingDialog d;
+        int p;
+        boolean finish;
+        synchronized (RUN) {
+            a = runHost;
+            d = runDialog;
+            if (a == null || runFinished) return;
+            boolean packagesDone = runPackages >= 0 && runRemoved >= runPackages;
+            int pk = runPackages < 0 ? 0 : packagesDone ? PACKAGES_PCT : runRemoved * PACKAGES_PCT / runPackages;
+            int own = runOwnDone ? 100 - PACKAGES_PCT : Math.min(runSteps, STEPS) * (100 - PACKAGES_PCT) / STEPS;
+            p = pk + own;
+            finish = packagesDone && runOwnDone;
+            if (finish) {
+                runFinished = true;
+                runHost = null;
+                runDialog = null;
+            } else if (p <= runShown) {
+                return;
+            }
+            runShown = p;
+        }
+        try {
+            if (finish) a.runOnUiThread(new Done(a, d));
+            else a.runOnUiThread(new Tick(d, Loading.percent(a.getString(R.string.add_req_clearing_cache), p)));
+        } catch (Throwable t) {
+        }
+    }
+
+    static final class Tick implements Runnable {
+        private final LoadingDialog d;
+        private final String text;
+
+        Tick(LoadingDialog d, String text) {
+            this.d = d;
+            this.text = text;
         }
 
         public void run() {
-            try {
-                clear(mask);
-            } catch (Throwable t) {
-            }
-            try {
-                a.runOnUiThread(new Done(a, dialog));
-            } catch (Throwable t) {
-            }
+            Loading.show(d, text);
         }
     }
     static final class Done implements Runnable {
@@ -163,28 +247,45 @@ public final class Pick {
                 }
             } catch (Throwable t) {
             }
+            ownDone();                      // always: the dialog waits for it
         }
     }
 
+    /** Held by a clear and by "Cache library": a pass started during a clear would fill what it then drops. */
+    public static final Object LOCK = new Object();
+
     /** Memory and files. {@link #SYSTEM} is ignored here. */
     public static void clear(int mask) {
+        // first: "already cached" must not be answered while the clear is still running
+        Albums.cacheCleared((mask & COVERS) != 0 ? (mask | FLOW) & CACHE_ALL : mask & CACHE_ALL);
+        synchronized (LOCK) {
+            clearLocked(mask);
+        }
+    }
+
+    private static void clearLocked(int mask) {
         if ((mask & STALE) != 0) Stale.clear();
+        step();
         if ((mask & COVERS) != 0) {
             CoverCache.clear();
+            step();
             BigCover.clear();
             // the stamps vouch for the pictures, so they go with them
             Art.clearStamps();
             // and with the stamps gone nothing would notice Cover Flow's copies going stale
             mask |= FLOW;
+        } else {
+            step();
         }
+        step();
         if ((mask & FLOW) != 0) FlowCache.clear();
+        step();
         if ((mask & TAGS) != 0) {
             Schema.clearTags();
             AlbumInfo.clear();
             GenreInfo.clear();
         }
-        // "Already cached" is answered from a signature stored outside the caches.
-        Albums.cacheCleared(mask & CACHE_ALL);
+        step();
     }
 
     /**

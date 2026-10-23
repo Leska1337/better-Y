@@ -175,35 +175,39 @@ public final class Schema {
 
     /**
      * "Clear cache": every row back to "never read", so the next "Cache library" or the screens
-     * read the files again. Background thread: it rewrites the whole table.
+     * read the files again. One UPDATE: rewriting the rows one by one took ~50 s on 25 000 songs.
+     * No {@code Ipp.libraryChanged}, as in {@link #write}: the list in memory is cleared in place,
+     * and a re-read of a big library under the picker held two copies of it in the heap.
      */
     static void clearTags() {
         synchronized (Schema.class) {
             written.clear();
         }
-        Y1Repository repo = Y1Application.Companion.getY1Repository();
-        if (repo == null) return;
-        SongDao dao = repo.ippSongDao();
-        int n = clearList(dao, Albums.allSongs()) + clearList(dao, repo.getSongsSync(1));
-        if (n > 0) Ipp.libraryChanged();
+        List mem = Albums.loaded();
+        if (mem != null) {
+            for (int k = 0; k < mem.size(); k++) {
+                Song s = (Song) mem.get(k);
+                if (s == null) continue;
+                s.setAlbumArtist(null);
+                s.setTrack(null);
+                s.setDisc(null);
+                s.setYear(null);
+            }
+        }
+        synchronized (Schema.class) {
+            gen++;                          // the album artists are grouped again
+        }
+        try {
+            RoomDatabase db = PlGrid.db();
+            SupportSQLiteStatement st = db.getOpenHelper().getWritableDatabase().compileStatement(SQL_CLEAR);
+            st.executeUpdateDelete();
+        } catch (Throwable t) {
+        }
     }
 
-    private static int clearList(SongDao dao, List songs) {
-        if (songs == null) return 0;
-        ArrayList out = new ArrayList();
-        int n = 0;
-        for (int k = 0; k < songs.size(); k++) {
-            Song s = (Song) songs.get(k);
-            if (unread(s)) continue;
-            s.setAlbumArtist(null);
-            s.setTrack(null);
-            s.setDisc(null);
-            s.setYear(null);
-            out.add(s);
-            if (out.size() >= BATCH) n += flush(dao, out);
-        }
-        return n + flush(dao, out);
-    }
+    private static final String SQL_CLEAR = "UPDATE `Song` SET `albumArtist` = NULL, `track` = NULL,"
+            + " `disc` = NULL, `year` = NULL WHERE `albumArtist` IS NOT NULL OR `track` IS NOT NULL"
+            + " OR `disc` IS NOT NULL OR `year` IS NOT NULL";
 
     /** The files the tags were kept in before the columns; nothing reads them. */
     private static void dropFiles() {

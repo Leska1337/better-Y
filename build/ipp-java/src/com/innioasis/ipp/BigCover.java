@@ -312,12 +312,15 @@ public final class BigCover {
         private String extPath;
         private long extLen, extMod;
         private byte[] extBytes;
+        // the answer for the last directory, none included: a miss on FAT scans the whole directory
+        private String extDir;
+        private byte[] extDirBytes;
 
         // Where the time went, for the pass's log line. Counts by where the picture came from and
         // which way it was settled; times in ns.
         public long embedded, external, none;
         public long sameBytes, sigOnDisk, verbatim, encoded, samePixels, own, failed;
-        public long externalNs, decodeNs, storeNs;
+        public long externalNs, decodeNs, storeNs, extLookups;
         // storeNs split: the source's decode for a re-encode, the encodes (and their count), the writes
         public long srcDecodeNs, encodeNs, probes, writeNs;
 
@@ -457,27 +460,39 @@ public final class BigCover {
     /**
      * {@link #external(String)} for a pass: a folder's songs share one cover file, so the bytes
      * read for the last song are handed back while the file's path, length and date are the same.
+     * A directory is looked up once; what changed under the pass was dropped at its start.
      */
     private static byte[] external(Walk w, String path) {
+        int cut = path.lastIndexOf('/');
+        String dir = cut > 0 ? path.substring(0, cut) : "";
+        if (dir.equals(w.extDir)) return w.extDirBytes;
         try {
-            File f = Art.file(path);
-            if (f == null) return null;
-            Art.stampRead(path);
-            String p = f.getPath();
-            long len = f.length();
-            long mod = f.lastModified();
-            if (w.extBytes != null && p.equals(w.extPath) && len == w.extLen && mod == w.extMod) {
-                return w.extBytes;
-            }
-            byte[] b = readAll(f);
-            w.extPath = p;
-            w.extLen = len;
-            w.extMod = mod;
-            w.extBytes = b;
+            byte[] b = externalFile(w, path);
+            w.extDir = dir;
+            w.extDirBytes = b;
+            w.extLookups++;
             return b;
         } catch (Throwable t) {
-            return null;
+            return null;                    // not remembered: the next song of the folder tries again
         }
+    }
+
+    private static byte[] externalFile(Walk w, String path) throws IOException {
+        File f = Art.file(path);
+        if (f == null) return null;
+        Art.stampRead(path);
+        String p = f.getPath();
+        long len = f.length();
+        long mod = f.lastModified();
+        if (w.extBytes != null && p.equals(w.extPath) && len == w.extLen && mod == w.extMod) {
+            return w.extBytes;
+        }
+        byte[] b = readAll(f);
+        w.extPath = p;
+        w.extLen = len;
+        w.extMod = mod;
+        w.extBytes = b;
+        return b;
     }
 
     private static final int STORED = 0;

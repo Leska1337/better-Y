@@ -39,56 +39,56 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity$CacheTask;Ljava/util/List;Lcom/innioasis/y1/activity/IppActivity$Blocks;ZZLjava/util/Map;Ljava/util/HashSet;)V
   .registers 9
-  .line 1725
+  .line 1801
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1715
+  .line 1791
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
-  .line 1716
+  .line 1792
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
-  .line 1721
+  .line 1797
     new-instance v0, Lcom/innioasis/y1/activity/IppActivity$Steps;
     invoke-direct { v0 }, Lcom/innioasis/y1/activity/IppActivity$Steps;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->steps:Lcom/innioasis/y1/activity/IppActivity$Steps;
-  .line 1722
+  .line 1798
     new-instance v0, Lcom/innioasis/ipp/BigCover$Walk;
     invoke-direct { v0 }, Lcom/innioasis/ipp/BigCover$Walk;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->walk:Lcom/innioasis/ipp/BigCover$Walk;
-  .line 1726
+  .line 1802
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-  .line 1727
+  .line 1803
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->byPath:Ljava/util/List;
-  .line 1728
+  .line 1804
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
-  .line 1729
+  .line 1805
     iput-boolean p4, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->tags:Z
-  .line 1730
+  .line 1806
     iput-boolean p5, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->covers:Z
-  .line 1731
+  .line 1807
     iput-object p6, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->thumbs:Ljava/util/Map;
-  .line 1732
+  .line 1808
     iput-object p7, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->slides:Ljava/util/HashSet;
-  .line 1733
+  .line 1809
     return-void
 .end method
 
 .method private one(Lcom/innioasis/ipp/BigCover$Walk;Lcom/innioasis/y1/database/Song;)V
   .catchall { :L7 .. :L8 } :L9
   .registers 14
-  .line 1753
+  .line 1829
     if-eqz p2, :L13
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
     if-nez v0, :L0
     goto/16 :L13
   :L0
-  .line 1754
+  .line 1830
     invoke-virtual { p2 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
-  .line 1755
+  .line 1831
     iget-boolean v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->tags:Z
     const/4 v2, 0
     const/4 v3, 1
@@ -101,7 +101,7 @@
   :L1
     const/4 v1, 0
   :L2
-  .line 1756
+  .line 1832
     iget-boolean v4, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->covers:Z
     if-eqz v4, :L3
     invoke-static { v0 }, Lcom/innioasis/ipp/BigCover;->needs(Ljava/lang/String;)Z
@@ -109,43 +109,43 @@
     if-eqz v4, :L3
     const/4 v2, 1
   :L3
-  .line 1757
+  .line 1833
     if-nez v1, :L4
     if-nez v2, :L4
     return-void
   :L4
-  .line 1758
+  .line 1834
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/DiscCache;->read(Ljava/lang/String;ZZ)Lcom/innioasis/ipp/DiscCache$Tags;
     move-result-object v4
-  .line 1759
+  .line 1835
     iget-object v5, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->steps:Lcom/innioasis/y1/activity/IppActivity$Steps;
     invoke-virtual { v5, v0, v4 }, Lcom/innioasis/y1/activity/IppActivity$Steps;->read(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
-  .line 1760
+  .line 1836
     iget-boolean v5, v4, Lcom/innioasis/ipp/DiscCache$Tags;->ok:Z
     if-nez v5, :L5
-  .line 1761
+  .line 1837
     iget p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->failed:I
     add-int/2addr p1, v3
     iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->failed:I
-  .line 1762
+  .line 1838
     return-void
   :L5
-  .line 1764
+  .line 1840
     iget-object v5, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
     invoke-static { p2 }, Lcom/innioasis/ipp/Albums;->keyOf(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p2
     invoke-virtual { v5, p2 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->touch(Ljava/lang/String;)V
-  .line 1765
+  .line 1841
     const/4 p2, 0
     if-eqz v2, :L11
-  .line 1766
+  .line 1842
     invoke-static { }, Ljava/lang/System;->nanoTime()J
     move-result-wide v5
-  .line 1767
+  .line 1843
     iget-object v2, v4, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
     invoke-static { p1, v0, v2 }, Lcom/innioasis/ipp/BigCover;->cache(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;[B)Z
     move-result p1
-  .line 1768
+  .line 1844
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->steps:Lcom/innioasis/y1/activity/IppActivity$Steps;
     iget-wide v7, v2, Lcom/innioasis/y1/activity/IppActivity$Steps;->coverNs:J
     invoke-static { }, Ljava/lang/System;->nanoTime()J
@@ -153,39 +153,39 @@
     sub-long/2addr v9, v5
     add-long/2addr v7, v9
     iput-wide v7, v2, Lcom/innioasis/y1/activity/IppActivity$Steps;->coverNs:J
-  .line 1769
+  .line 1845
     if-nez p1, :L6
-  .line 1770
+  .line 1846
     iget p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->unwritten:I
     add-int/2addr p1, v3
     iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->unwritten:I
     goto :L11
   :L6
-  .line 1773
+  .line 1849
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->thumbs:Ljava/util/Map;
     invoke-interface { p1, v0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;
-  .line 1774
+  .line 1850
     if-eqz p1, :L10
-  .line 1775
+  .line 1851
     invoke-static { }, Ljava/lang/System;->nanoTime()J
     move-result-wide v5
-  .line 1776
+  .line 1852
     iget-object v2, v4, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
   :L7
-  .line 1778
+  .line 1854
     iget-object v2, p1, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->key:Ljava/lang/String;
     invoke-static { v2, v0 }, Lcom/innioasis/ipp/CoverCache;->get(Ljava/lang/String;Ljava/lang/String;)Landroid/graphics/Bitmap;
   :L8
-  .line 1780
+  .line 1856
     invoke-static { p2, p2 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
-  .line 1781
+  .line 1857
     nop
-  .line 1782
+  .line 1858
     iput-boolean v3, p1, Lcom/innioasis/y1/activity/IppActivity$AlbumJob;->done:Z
-  .line 1783
+  .line 1859
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->steps:Lcom/innioasis/y1/activity/IppActivity$Steps;
     iget-wide v2, p1, Lcom/innioasis/y1/activity/IppActivity$Steps;->thumbNs:J
     invoke-static { }, Ljava/lang/System;->nanoTime()J
@@ -193,31 +193,28 @@
     sub-long/2addr v7, v5
     add-long/2addr v2, v7
     iput-wide v2, p1, Lcom/innioasis/y1/activity/IppActivity$Steps;->thumbNs:J
-  .line 1784
-    iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-    invoke-virtual { p1 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick()V
     goto :L10
   :L9
-  .line 1780
+  .line 1856
     move-exception p1
     invoke-static { p2, p2 }, Lcom/innioasis/ipp/Art;->hint(Ljava/lang/String;[B)V
-  .line 1781
+  .line 1857
     throw p1
   :L10
-  .line 1786
+  .line 1861
     iget-object p1, v4, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
     if-eqz p1, :L11
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->slides:Ljava/util/HashSet;
     invoke-virtual { p1, v0 }, Ljava/util/HashSet;->contains(Ljava/lang/Object;)Z
     move-result p1
     if-eqz p1, :L11
-  .line 1787
+  .line 1862
     invoke-static { }, Ljava/lang/System;->nanoTime()J
     move-result-wide v2
-  .line 1788
+  .line 1863
     iget-object p1, v4, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
     invoke-static { v0, p1 }, Lcom/innioasis/ipp/Flow;->slideFrom(Ljava/lang/String;[B)Z
-  .line 1789
+  .line 1864
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->steps:Lcom/innioasis/y1/activity/IppActivity$Steps;
     iget-wide v5, p1, Lcom/innioasis/y1/activity/IppActivity$Steps;->slideNs:J
     invoke-static { }, Ljava/lang/System;->nanoTime()J
@@ -226,56 +223,79 @@
     add-long/2addr v5, v7
     iput-wide v5, p1, Lcom/innioasis/y1/activity/IppActivity$Steps;->slideNs:J
   :L11
-  .line 1794
+  .line 1869
     iput-object p2, v4, Lcom/innioasis/ipp/DiscCache$Tags;->art:[B
-  .line 1795
+  .line 1870
     if-eqz v1, :L12
-  .line 1796
+  .line 1871
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
     invoke-virtual { p1, v0 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
-  .line 1797
+  .line 1872
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
     invoke-virtual { p1, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L12
-  .line 1799
+  .line 1874
     return-void
   :L13
-  .line 1753
+  .line 1829
     return-void
 .end method
 
 .method commit()V
-  .registers 4
-  .line 1803
+  .registers 6
+  .line 1878
+    nop
+  .line 1879
     const/4 v0, 0
+    const/4 v1, 0
+    const/4 v2, 0
   :L0
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
-    invoke-virtual { v1 }, Ljava/util/ArrayList;->size()I
-    move-result v1
-    if-ge v0, v1, :L1
-  .line 1804
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
-    invoke-virtual { v1, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
-    move-result-object v1
-    check-cast v1, Ljava/lang/String;
-    iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
-    invoke-virtual { v2, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
-    move-result-object v2
-    check-cast v2, Lcom/innioasis/ipp/DiscCache$Tags;
-    invoke-static { v1, v2 }, Lcom/innioasis/ipp/DiscCache;->commit(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
-  .line 1803
-    add-int/lit8 v0, v0, 1
-    goto :L0
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
+    invoke-virtual { v3 }, Ljava/util/ArrayList;->size()I
+    move-result v3
+    if-ge v1, v3, :L2
+  .line 1880
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->paths:Ljava/util/ArrayList;
+    invoke-virtual { v3, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
+    move-result-object v3
+    check-cast v3, Ljava/lang/String;
+    iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
+    invoke-virtual { v4, v1 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
+    move-result-object v4
+    check-cast v4, Lcom/innioasis/ipp/DiscCache$Tags;
+    invoke-static { v3, v4 }, Lcom/innioasis/ipp/DiscCache;->commit(Ljava/lang/String;Lcom/innioasis/ipp/DiscCache$Tags;)V
+  .line 1881
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->read:Ljava/util/ArrayList;
+    const/4 v4, 0
+    invoke-virtual { v3, v1, v4 }, Ljava/util/ArrayList;->set(ILjava/lang/Object;)Ljava/lang/Object;
+  .line 1882
+    add-int/lit8 v2, v2, 1
+    const/16 v3, 1000
+    if-ne v2, v3, :L1
+  .line 1883
+    invoke-static { }, Lcom/innioasis/ipp/DiscCache;->flush()V
+  .line 1884
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
+    invoke-virtual { v3, v2 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->committed(I)V
+  .line 1885
+    const/4 v2, 0
   :L1
-  .line 1806
+  .line 1879
+    add-int/lit8 v1, v1, 1
+    goto :L0
+  :L2
+  .line 1888
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
+    invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->committed(I)V
+  .line 1889
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
   .catchall { :L6 .. :L7 } :L8
-  .registers 5
-  .line 1736
+  .registers 6
+  .line 1812
     const/4 v0, 5
   :L0
     invoke-static { v0 }, Landroid/os/Process;->setThreadPriority(I)V
@@ -284,15 +304,15 @@
   :L2
     move-exception v0
   :L3
-  .line 1737
+  .line 1813
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->walk:Lcom/innioasis/ipp/BigCover$Walk;
   :L4
-  .line 1739
+  .line 1815
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->take()I
     move-result v1
     if-ltz v1, :L11
-  .line 1740
+  .line 1816
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-virtual { v2, v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from(I)I
     move-result v2
@@ -302,34 +322,35 @@
     move-result v3
     if-ge v2, v3, :L10
   :L6
-  .line 1742
+  .line 1818
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->byPath:Ljava/util/List;
     invoke-interface { v3, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
     check-cast v3, Lcom/innioasis/y1/database/Song;
     invoke-direct { p0, v0, v3 }, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->one(Lcom/innioasis/ipp/BigCover$Walk;Lcom/innioasis/y1/database/Song;)V
   :L7
-  .line 1745
+  .line 1821
     goto :L9
   :L8
-  .line 1743
+  .line 1819
     move-exception v3
-  .line 1744
+  .line 1820
     iget v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->failed:I
     add-int/lit8 v3, v3, 1
     iput v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->failed:I
   :L9
-  .line 1746
+  .line 1822
     iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$SongWorker;->task:Lcom/innioasis/y1/activity/IppActivity$CacheTask;
-    invoke-virtual { v3 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick()V
-  .line 1740
+    const/4 v4, 2
+    invoke-virtual { v3, v4 }, Lcom/innioasis/y1/activity/IppActivity$CacheTask;->tick(I)V
+  .line 1816
     add-int/lit8 v2, v2, 1
     goto :L5
   :L10
-  .line 1748
+  .line 1824
     invoke-virtual { v0 }, Lcom/innioasis/ipp/BigCover$Walk;->done()V
     goto :L4
   :L11
-  .line 1750
+  .line 1826
     return-void
 .end method

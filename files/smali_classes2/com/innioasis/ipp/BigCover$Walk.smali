@@ -20,7 +20,13 @@
 
 .field private extBytes:[B
 
+.field private extDir:Ljava/lang/String;
+
+.field private extDirBytes:[B
+
 .field private extLen:J
+
+.field public extLookups:J
 
 .field private extMod:J
 
@@ -107,56 +113,84 @@
     return-object p1
 .end method
 
-.method static synthetic access$400(Lcom/innioasis/ipp/BigCover$Walk;)[B
+.method static synthetic access$400(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
+  .registers 1
+  .line 307
+    iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDir:Ljava/lang/String;
+    return-object p0
+.end method
+
+.method static synthetic access$402(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
+  .registers 2
+  .line 307
+    iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDir:Ljava/lang/String;
+    return-object p1
+.end method
+
+.method static synthetic access$500(Lcom/innioasis/ipp/BigCover$Walk;)[B
+  .registers 1
+  .line 307
+    iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDirBytes:[B
+    return-object p0
+.end method
+
+.method static synthetic access$502(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
+  .registers 2
+  .line 307
+    iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDirBytes:[B
+    return-object p1
+.end method
+
+.method static synthetic access$600(Lcom/innioasis/ipp/BigCover$Walk;)[B
   .registers 1
   .line 307
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extBytes:[B
     return-object p0
 .end method
 
-.method static synthetic access$402(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
+.method static synthetic access$602(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
   .registers 2
   .line 307
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extBytes:[B
     return-object p1
 .end method
 
-.method static synthetic access$500(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
+.method static synthetic access$700(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
   .registers 1
   .line 307
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extPath:Ljava/lang/String;
     return-object p0
 .end method
 
-.method static synthetic access$502(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
+.method static synthetic access$702(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
   .line 307
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extPath:Ljava/lang/String;
     return-object p1
 .end method
 
-.method static synthetic access$600(Lcom/innioasis/ipp/BigCover$Walk;)J
+.method static synthetic access$800(Lcom/innioasis/ipp/BigCover$Walk;)J
   .registers 3
   .line 307
     iget-wide v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extLen:J
     return-wide v0
 .end method
 
-.method static synthetic access$602(Lcom/innioasis/ipp/BigCover$Walk;J)J
+.method static synthetic access$802(Lcom/innioasis/ipp/BigCover$Walk;J)J
   .registers 3
   .line 307
     iput-wide p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extLen:J
     return-wide p1
 .end method
 
-.method static synthetic access$700(Lcom/innioasis/ipp/BigCover$Walk;)J
+.method static synthetic access$900(Lcom/innioasis/ipp/BigCover$Walk;)J
   .registers 3
   .line 307
     iget-wide v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extMod:J
     return-wide v0
 .end method
 
-.method static synthetic access$702(Lcom/innioasis/ipp/BigCover$Walk;J)J
+.method static synthetic access$902(Lcom/innioasis/ipp/BigCover$Walk;J)J
   .registers 3
   .line 307
     iput-wide p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extMod:J
@@ -165,7 +199,7 @@
 
 .method public done()V
   .registers 3
-  .line 326
+  .line 329
     iget-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     if-eqz v0, :L0
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->access$000()Ljava/util/Map;
@@ -173,13 +207,13 @@
     iget-object v1, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     invoke-interface { v0, v1 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   :L0
-  .line 327
+  .line 330
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
-  .line 328
+  .line 331
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
-  .line 329
+  .line 332
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
-  .line 330
+  .line 333
     return-void
 .end method

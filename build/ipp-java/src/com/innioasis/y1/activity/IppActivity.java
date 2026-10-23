@@ -1261,8 +1261,18 @@ public final class IppActivity extends BaseActivity {
         private final Object lock = new Object();
         private String label = "";
         private int total = 1;
-        private int tickEvery = 1;
         private int progress;
+        private int shown;                  // the percent on screen: never goes back
+        // The scale's units, ~3 ms each on 25 000 songs: an album prepared is 1, a song read 2, a
+        // thumbnail from a cover file (a big picture decoded for 50 px) 9, a Cover Flow slide 2, and
+        // COMMIT_ROWS rows of tags written are COMMIT_UNITS.
+        static final int SONG_COST = 2;
+        static final int ALBUM_COST = 9;
+        static final int FLOW_COST = 2;
+        static final int COMMIT_UNITS = 2;
+        static final int COMMIT_ROWS = 5;
+        /** Rows staged and written per portion, so the write moves the scale. */
+        static final int COMMIT_BATCH = 1000;
 
         CacheTask(IppActivity a, int mask) {
             this.a = a;
@@ -1279,14 +1289,55 @@ public final class IppActivity extends BaseActivity {
             }
         }
 
-        /** One item done, from any worker; the dialog re-texted every 1/60 of the work. */
         void tick() {
-            int v;
+            tick(1);
+        }
+
+        /** {@code units} of work done, from any worker; the dialog is re-texted when the percent grows. */
+        void tick(int units) {
+            int p;
             synchronized (lock) {
-                v = ++progress;
-                if (v % tickEvery != 0) return;
+                progress += units;
+                p = (int) (progress * 100L / total);
+                if (p > 100) p = 100;
+                if (p <= shown) return;
+                shown = p;
             }
-            a.scanTick(Loading.percent(label, v * 100 / total));
+            a.scanTick(Loading.percent(label, p));
+        }
+
+        private int committed, commitTicked;
+
+        /** Rows of tags written, counted together so no portion's remainder is lost. */
+        void committed(int rows) {
+            int c;
+            synchronized (lock) {
+                c = committed += rows;
+            }
+            commitUpTo(c);
+        }
+
+        /** The write's whole share, as if all {@code n} songs had had tags to write. */
+        void committedAll(int n) {
+            commitUpTo(n);
+        }
+
+        private void commitUpTo(int rows) {
+            int u;
+            synchronized (lock) {
+                int want = (int) ((long) rows * COMMIT_UNITS / COMMIT_ROWS);
+                u = want - commitTicked;
+                if (u <= 0) return;
+                commitTicked = want;
+            }
+            tick(u);
+        }
+
+        /** The scale, in song units; it may grow once the albums' own cost is known. */
+        void scale(int units) {
+            synchronized (lock) {
+                total = units <= 0 ? 1 : units;
+            }
         }
 
         /** Album thumbnails on the pool; each job ticks once. */
@@ -1300,10 +1351,19 @@ public final class IppActivity extends BaseActivity {
 
         @Override
         public void run() {
+            synchronized (Pick.LOCK) {      // a clear still running finishes first
+                pass();
+            }
+        }
+
+        private void pass() {
             int done = 0;
             int unread = 0;
             int unwritten = 0;
             long tAlbums = 0L, tSongs = 0L, tFlow = 0L;
+            long tPrep = 0L;
+            long tCommit = 0L;
+            int earlyFiles = 0;
             long heap = 0L;
             Steps steps = new Steps();
             boolean covers = (mask & Pick.COVERS) != 0;
@@ -1328,18 +1388,8 @@ public final class IppActivity extends BaseActivity {
                 BigCover.beginCache();              // the cover notes saved once, at the end
                 AlbumInfo.beginCache();
                 HashMap byDir = new HashMap();      // the album folder once per directory
-
-                // replaced external artwork first: nothing else here can notice it
-                if (covers) {
-                    for (int i = 0; i < n; i++) {
-                        Song s = (Song) songs.get(i);
-                        if (s == null || s.getPath() == null) continue;
-                        if (!Art.coverChanged(s.getPath())) continue;
-                        CoverCache.forget(Albums.keyOf(s, byDir));
-                        BigCover.forget(s.getPath());
-                        BigCover.forget(Albums.trackFolder(s.getPath()));
-                    }
-                }
+                label = a.getString(R.string.ipp_cache_running);
+                long tPrep0 = SystemClock.uptimeMillis();
 
                 // one representative per album: the lowest path, as the row reads it
                 LinkedHashMap reps = new LinkedHashMap();
@@ -1354,12 +1404,24 @@ public final class IppActivity extends BaseActivity {
 
                 ArrayList keys = new ArrayList(reps.keySet());
                 int m = keys.size();
-                label = a.getString(R.string.ipp_cache_running);
-                // one scale over both halves, or it sits at 100% through the long one
-                total = m + n + (flow ? m : 0);
-                if (total <= 0) total = 1;
-                tickEvery = total / 60;
-                if (tickEvery < 1) tickEvery = 1;
+                // ONE scale over everything, in the units above. The thumbnails from cover files are
+                // known after the preparation, so the scale grows then; the percent shown never goes back.
+                int rest = n * SONG_COST + (tags ? n * COMMIT_UNITS / COMMIT_ROWS : 0) + (flow ? m * FLOW_COST : 0);
+                scale(m + rest);
+
+                // replaced external artwork first: nothing else here can notice it
+                long tStale = SystemClock.uptimeMillis();
+                if (covers) {
+                    for (int i = 0; i < n; i++) {
+                        Song s = (Song) songs.get(i);
+                        if (s == null || s.getPath() == null) continue;
+                        if (!Art.coverChanged(s.getPath())) continue;
+                        CoverCache.forget(Albums.keyOf(s, byDir));
+                        BigCover.forget(s.getPath());
+                        BigCover.forget(Albums.trackFolder(s.getPath()));
+                    }
+                }
+                tStale = SystemClock.uptimeMillis() - tStale;
 
                 // Albums: the thumbnails. What each needs is decided HERE, so workers never touch
                 // the caches' lazy loading.
@@ -1367,6 +1429,7 @@ public final class IppActivity extends BaseActivity {
                 // a thumbnail out of the tags is made by the song half from the picture it reads
                 // anyway; one from a cover file needs no song opened and is made up front
                 ArrayList early = new ArrayList();
+                int fromFiles = 0;
                 HashMap fromSongs = new HashMap();      // representative path -> AlbumJob
                 for (int i = 0; i < m; i++) {
                     String key = (String) keys.get(i);
@@ -1384,7 +1447,12 @@ public final class IppActivity extends BaseActivity {
                     jobs.add(j);
                     if (j.art) fromSongs.put(path, j);
                     else early.add(j);
+                    if (j.thumb && !j.art) fromFiles++;
+                    tick();
                 }
+                scale(m + rest + fromFiles * ALBUM_COST);
+                tPrep = SystemClock.uptimeMillis() - tPrep0;
+                earlyFiles = fromFiles;
                 // Cover Flow's slides, too, from the picture the song half holds
                 HashSet slides = new HashSet();
                 if (flow) {
@@ -1421,8 +1489,11 @@ public final class IppActivity extends BaseActivity {
                         steps.cover(w[i].walk);
                     }
                     if (tags) {
+                        long tc = SystemClock.uptimeMillis();
                         for (int i = 0; i < w.length; i++) w[i].commit();
                         DiscCache.flush();
+                        tCommit = SystemClock.uptimeMillis() - tc;
+                        committedAll(n);      // songs with no tags to write had their share too
                     }
                 }
                 tSongs = SystemClock.uptimeMillis() - t0;
@@ -1447,15 +1518,19 @@ public final class IppActivity extends BaseActivity {
                         boolean fresh = had != null && !had.exists();
                         if (!Flow.cacheSlide(p)) unwritten++;
                         else if (fresh) touch((String) keys.get(i));
-                        tick();
+                        tick(FLOW_COST);
                     }
                 }
                 tFlow = SystemClock.uptimeMillis() - t0;
 
                 // a pass that left anything out is not "already cached": the next press finishes it
+                tick(total);                    // the shares are estimates: end on 100%
                 if (unread == 0 && unwritten == 0) Albums.noteCached(a, n, stamp, mask);
-                Diag.note("cache library: albums " + tAlbums + " ms (" + late.size() + " late), songs "
-                        + tSongs + " ms, flow " + tFlow + " ms, " + workers() + " workers, heap "
+                Diag.note("cache library: prepare " + tPrep + " ms (replaced covers " + tStale + " ms), "
+                        + earlyFiles + " thumbnail(s) from cover files; albums " + tAlbums
+                        + " ms (" + late.size() + " late), songs "
+                        + tSongs + " ms (tags written " + tCommit + " ms), flow " + tFlow + " ms, "
+                        + workers() + " workers, heap "
                         + (heap >> 20) + " MB; "
                         + unread + " file(s) did not read, " + unwritten + " cover(s) not written");
                 Diag.note("cache library steps: " + steps.line());
@@ -1599,7 +1674,7 @@ public final class IppActivity extends BaseActivity {
 
         // BigCover.cache's own breakdown, one Walk per worker
         long embedded, external, none, sameBytes, verbatim, encoded, samePixels, own, coverFailed;
-        long externalNs, decodeNs, storeNs, srcDecodeNs, encodeNs, probes, writeNs;
+        long externalNs, extLookups, decodeNs, storeNs, srcDecodeNs, encodeNs, probes, writeNs;
 
         void cover(BigCover.Walk w) {
             srcDecodeNs += w.srcDecodeNs;
@@ -1616,6 +1691,7 @@ public final class IppActivity extends BaseActivity {
             own += w.own;
             coverFailed += w.failed;
             externalNs += w.externalNs;
+            extLookups += w.extLookups;
             decodeNs += w.decodeNs;
             storeNs += w.storeNs;
         }
@@ -1625,7 +1701,7 @@ public final class IppActivity extends BaseActivity {
                     + "; same bytes " + sameBytes + ", new album stored as is " + verbatim
                     + ", re-encoded " + encoded + ", same pixels " + samePixels + ", own " + own
                     + ", failed " + coverFailed + "; cover file read " + externalNs / 1000000L
-                    + " ms, decode " + decodeNs / 1000000L + " ms, encode+write " + storeNs / 1000000L
+                    + " ms (" + extLookups + " folders looked up), decode " + decodeNs / 1000000L + " ms, encode+write " + storeNs / 1000000L
                     + " ms (source decode " + srcDecodeNs / 1000000L + " ms, " + probes + " encodes "
                     + encodeNs / 1000000L + " ms, write " + writeNs / 1000000L + " ms)";
         }
@@ -1699,7 +1775,7 @@ public final class IppActivity extends BaseActivity {
                         album(j);
                     } catch (Throwable t) {
                     }
-                    task.tick();
+                    task.tick(j.thumb && !j.art ? CacheTask.ALBUM_COST : 0);   // late ones ride the songs' share
                 }
             }
         }
@@ -1743,7 +1819,7 @@ public final class IppActivity extends BaseActivity {
                     } catch (Throwable t) {
                         failed++;
                     }
-                    task.tick();
+                    task.tick(CacheTask.SONG_COST);
                 }
                 w.done();          // end of this folder: let go of its representative
             }
@@ -1781,7 +1857,6 @@ public final class IppActivity extends BaseActivity {
                         }
                         j.done = true;
                         steps.thumbNs += System.nanoTime() - t0;
-                        task.tick();
                     }
                     if (t.art != null && slides.contains(path)) {
                         t0 = System.nanoTime();
@@ -1798,11 +1873,19 @@ public final class IppActivity extends BaseActivity {
             }
         }
 
-        /** On the pass thread, after every worker has finished. */
+        /** On the pass thread, after every worker has finished; written in portions that move the scale. */
         void commit() {
+            int k = 0;
             for (int i = 0; i < paths.size(); i++) {
                 DiscCache.commit((String) paths.get(i), (DiscCache.Tags) read.get(i));
+                read.set(i, null);
+                if (++k == CacheTask.COMMIT_BATCH) {
+                    DiscCache.flush();
+                    task.committed(k);
+                    k = 0;
+                }
             }
+            task.committed(k);
         }
     }
 
