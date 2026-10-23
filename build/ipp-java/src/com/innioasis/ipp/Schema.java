@@ -150,9 +150,13 @@ public final class Schema {
 
     /** The tag columns' text in UTF-8: what "Clear cache" shows as the metadata's weight. */
     static long tagBytes() {
+        return tagBytes(Albums.allSongs());
+    }
+
+    /** Over a list already in hand; null counts nothing. */
+    static long tagBytes(List l) {
         long n = 0;
         try {
-            List l = Albums.allSongs();
             if (l == null) return 0;
             for (int k = 0; k < l.size(); k++) {
                 Song s = (Song) l.get(k);
@@ -164,13 +168,18 @@ public final class Schema {
         return n;
     }
 
+    /** Counted, not encoded: getBytes per field was ~1.3 s and 100 000 arrays on 25 000 songs. */
     private static int utf8(String v) {
         if (v == null) return 0;
-        try {
-            return v.getBytes("UTF-8").length;
-        } catch (Throwable t) {
-            return v.length();
+        int n = 0;
+        for (int i = 0; i < v.length(); i++) {
+            char c = v.charAt(i);
+            if (c < 0x80) n += 1;
+            else if (c < 0x800) n += 2;
+            else if (Character.isHighSurrogate(c)) { n += 4; i++; }
+            else n += 3;
         }
+        return n;
     }
 
     /**

@@ -57,7 +57,7 @@
 
 .method static dirSize(Ljava/io/File;)J
   .registers 6
-  .line 104
+  .line 106
     const-wide/16 v0, 0
     if-eqz p0, :L5
     invoke-virtual { p0 }, Ljava/io/File;->exists()Z
@@ -65,7 +65,7 @@
     if-nez v2, :L0
     goto :L5
   :L0
-  .line 105
+  .line 107
     invoke-virtual { p0 }, Ljava/io/File;->isFile()Z
     move-result v2
     if-eqz v2, :L1
@@ -73,16 +73,16 @@
     move-result-wide v0
     return-wide v0
   :L1
-  .line 106
+  .line 108
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
-  .line 107
+  .line 109
     if-nez p0, :L2
     return-wide v0
   :L2
-  .line 108
+  .line 110
     nop
-  .line 109
+  .line 111
     const/4 v2, 0
   :L3
     array-length v3, p0
@@ -94,19 +94,19 @@
     add-int/lit8 v2, v2, 1
     goto :L3
   :L4
-  .line 110
+  .line 112
     return-wide v0
   :L5
-  .line 104
+  .line 106
     return-wide v0
 .end method
 
 .method static format(J)Ljava/lang/String;
   .registers 10
-  .line 115
+  .line 117
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 116
+  .line 118
     const-wide/16 v1, 1024
     cmp-long v3, p0, v1
     if-gez v3, :L0
@@ -119,25 +119,25 @@
     move-result-object p0
     return-object p0
   :L0
-  .line 119
+  .line 121
     const-wide/32 v3, 1048576
     const-wide/16 v5, 10
     cmp-long v7, p0, v3
     if-gez v7, :L1
-  .line 120
+  .line 122
     mul-long p0, p0, v5
     div-long/2addr p0, v1
-  .line 121
+  .line 123
     const-string v1, " KB"
     goto :L2
   :L1
-  .line 123
+  .line 125
     mul-long p0, p0, v5
     div-long/2addr p0, v3
-  .line 124
+  .line 126
     const-string v1, " MB"
   :L2
-  .line 126
+  .line 128
     div-long v2, p0, v5
     invoke-virtual { v0, v2, v3 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
     move-result-object v0
@@ -219,18 +219,18 @@
 
 .method static total(Landroid/content/Context;)J
   .registers 8
-  .line 91
+  .line 93
     nop
-  .line 92
+  .line 94
     new-instance v0, Ljava/io/File;
     const-string v1, "/data/data"
     invoke-direct { v0, v1 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
-  .line 93
+  .line 95
     const-wide/16 v1, 0
     if-eqz v0, :L1
-  .line 94
+  .line 96
     const/4 v3, 0
   :L0
     array-length v4, v0
@@ -245,9 +245,9 @@
     add-int/lit8 v3, v3, 1
     goto :L0
   :L1
-  .line 97
+  .line 99
     if-eqz p0, :L2
-  .line 98
+  .line 100
     new-instance v0, Ljava/io/File;
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
@@ -269,6 +269,6 @@
     move-result-wide v3
     add-long/2addr v1, v3
   :L2
-  .line 100
+  .line 102
     return-wide v1
 .end method

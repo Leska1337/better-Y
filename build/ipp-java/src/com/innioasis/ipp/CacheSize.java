@@ -56,7 +56,9 @@ public final class CacheSize {
         public void run() {
             String s = null;
             try {
-                s = format(total(a));
+                // as "Select all" in Clear cache: the tags too, which are database columns, not files;
+                // the list only if it is in memory, a read here would be the whole table
+                s = format(total(a) + Schema.tagBytes(Albums.loaded()));
             } catch (Throwable t) {
             }
             if (s != null) {
