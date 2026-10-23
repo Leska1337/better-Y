@@ -289,6 +289,7 @@ public final class Lab {
                 int depth = b.get() & 0xff;
                 b.position(at + entryLen);
                 String where = "?";
+                int ours = 0;
                 StringBuilder all = new StringBuilder();
                 for (int f = 0; f < depth; f++) {
                     int fa = b.position();
@@ -296,7 +297,10 @@ public final class Lab {
                     b.position(fa + frameLen);
                     String name = cls[c] + "." + meth[m];
                     all.append(" < ").append(name.substring(name.lastIndexOf('.', name.lastIndexOf('.') - 1) + 1));
-                    if ("?".equals(where) && !platform(cls[c])) where = name;
+                    if (platform(cls[c]) || ours >= 3) continue;
+                    // the first three of ours: who called the allocating method
+                    where = ours == 0 ? name : where + " < " + name.replace("com.innioasis.", "");
+                    ours++;
                 }
                 // platform-only: the whole stack, it is the only clue
                 String k = cls[type] + " @ " + ("?".equals(where) ? "?" + all : where.replace("com.innioasis.", ""));
@@ -385,12 +389,12 @@ public final class Lab {
                         streakMain.clear();
                         streakBinder.clear();
                     }
-                    count(streakMain, top(ms, 0, 6));
+                    count(streakMain, top(ms, 0, 14));
                 } else if (busySince != 0) {
                     long len = now - busySince;
                     busySince = 0;
                     if (len >= 250) {
-                        Log.i("ipplab", "stall " + len + " ms main: " + sorted(streakMain, 4)
+                        Log.i("ipplab", "stall " + len + " ms main: " + sorted(streakMain, 8)
                                 + " || binder: " + sorted(streakBinder, 4));
                     }
                 }

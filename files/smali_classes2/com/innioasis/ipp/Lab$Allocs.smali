@@ -28,19 +28,19 @@
 
 .method private static names(Ljava/nio/ByteBuffer;I)[Ljava/lang/String;
   .registers 9
-  .line 317
+  .line 321
     new-array v0, p1, [Ljava/lang/String;
-  .line 318
+  .line 322
     const/4 v1, 0
     const/4 v2, 0
   :L0
     if-ge v2, p1, :L5
-  .line 319
+  .line 323
     invoke-virtual { p0 }, Ljava/nio/ByteBuffer;->getInt()I
     move-result v3
-  .line 320
+  .line 324
     new-array v4, v3, [C
-  .line 321
+  .line 325
     const/4 v5, 0
   :L1
     if-ge v5, v3, :L2
@@ -50,7 +50,7 @@
     add-int/lit8 v5, v5, 1
     goto :L1
   :L2
-  .line 322
+  .line 326
     if-lez v3, :L3
     aget-char v5, v4, v1
     const/16 v6, 76
@@ -69,16 +69,16 @@
     invoke-direct { v3, v4 }, Ljava/lang/String;-><init>([C)V
   :L4
     aput-object v3, v0, v2
-  .line 318
+  .line 322
     add-int/lit8 v2, v2, 1
     goto :L0
   :L5
-  .line 324
+  .line 328
     return-object v0
 .end method
 
 .method private parse([B)V
-  .registers 24
+  .registers 29
   .line 277
     move-object/from16 v0, p0
     invoke-static/range { p1 .. p1 }, Ljava/nio/ByteBuffer;->wrap([B)Ljava/nio/ByteBuffer;
@@ -99,205 +99,251 @@
   .line 279
     const/4 v7, 3
     invoke-virtual { v1, v7 }, Ljava/nio/ByteBuffer;->getShort(I)S
-    move-result v7
-    const v8, 65535
-    and-int/2addr v7, v8
-    const/4 v9, 5
-    invoke-virtual { v1, v9 }, Ljava/nio/ByteBuffer;->getInt(I)I
-    move-result v9
-  .line 280
-    const/16 v10, 9
-    invoke-virtual { v1, v10 }, Ljava/nio/ByteBuffer;->getShort(I)S
+    move-result v8
+    const v9, 65535
+    and-int/2addr v8, v9
+    const/4 v10, 5
+    invoke-virtual { v1, v10 }, Ljava/nio/ByteBuffer;->getInt(I)I
     move-result v10
-    and-int/2addr v10, v8
-    const/16 v11, 11
+  .line 280
+    const/16 v11, 9
     invoke-virtual { v1, v11 }, Ljava/nio/ByteBuffer;->getShort(I)S
     move-result v11
-    and-int/2addr v11, v8
+    and-int/2addr v11, v9
+    const/16 v12, 11
+    invoke-virtual { v1, v12 }, Ljava/nio/ByteBuffer;->getShort(I)S
+    move-result v12
+    and-int/2addr v12, v9
   .line 281
-    invoke-virtual { v1, v9 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
+    invoke-virtual { v1, v10 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
   .line 282
-    invoke-static { v1, v10 }, Lcom/innioasis/ipp/Lab$Allocs;->names(Ljava/nio/ByteBuffer;I)[Ljava/lang/String;
-    move-result-object v9
     invoke-static { v1, v11 }, Lcom/innioasis/ipp/Lab$Allocs;->names(Ljava/nio/ByteBuffer;I)[Ljava/lang/String;
     move-result-object v10
+    invoke-static { v1, v12 }, Lcom/innioasis/ipp/Lab$Allocs;->names(Ljava/nio/ByteBuffer;I)[Ljava/lang/String;
+    move-result-object v11
   .line 283
     invoke-virtual { v1, v3 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
   .line 284
     const/4 v3, 0
   :L0
-    if-ge v3, v7, :L9
+    if-ge v3, v8, :L13
   .line 285
     invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->position()I
-    move-result v11
+    move-result v12
   .line 286
     invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getInt()I
-    move-result v12
+    move-result v13
   .line 287
     invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
   .line 288
     invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
-    move-result v13
-    and-int/2addr v13, v8
+    move-result v14
+    and-int/2addr v14, v9
   .line 289
     invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->get()B
-    move-result v14
-    and-int/lit16 v14, v14, 255
+    move-result v15
+    and-int/lit16 v15, v15, 255
   .line 290
-    add-int/2addr v11, v5
-    invoke-virtual { v1, v11 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
+    add-int/2addr v12, v5
+    invoke-virtual { v1, v12 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
   .line 291
     nop
   .line 292
+    nop
+  .line 293
+    new-instance v12, Ljava/lang/StringBuilder;
+    invoke-direct { v12 }, Ljava/lang/StringBuilder;-><init>()V
+  .line 294
+    const-string v2, "?"
+    move-object/from16 v16, v2
+    const/4 v7, 0
+    const/16 v17, 0
+  :L1
+    const-string v4, ""
+    const-string v9, "com.innioasis."
+    if-ge v7, v15, :L8
+  .line 295
+    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->position()I
+    move-result v20
+  .line 296
+    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
+    move-result v21
+    const v19, 65535
+    and-int v21, v21, v19
+    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
+    move-result v22
+    and-int v22, v22, v19
+  .line 297
+    move/from16 v23, v5
+    add-int v5, v20, v6
+    invoke-virtual { v1, v5 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
+  .line 298
+    new-instance v5, Ljava/lang/StringBuilder;
+    invoke-direct { v5 }, Ljava/lang/StringBuilder;-><init>()V
+    move-object/from16 v20, v1
+    aget-object v1, v10, v21
+    invoke-virtual { v5, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    const-string v5, "."
+    invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    aget-object v5, v11, v22
+    invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
+  .line 299
+    const-string v5, " < "
+    move/from16 v22, v6
+    invoke-virtual { v12, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v6
+    move/from16 v24, v8
+    const/16 v8, 46
+    invoke-virtual { v1, v8 }, Ljava/lang/String;->lastIndexOf(I)I
+    move-result v25
+    move-object/from16 v26, v11
+    const/16 v18, 1
+    add-int/lit8 v11, v25, -1
+    invoke-virtual { v1, v8, v11 }, Ljava/lang/String;->lastIndexOf(II)I
+    move-result v8
+    add-int/lit8 v8, v8, 1
+    invoke-virtual { v1, v8 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
+    move-result-object v8
+    invoke-virtual { v6, v8 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+  .line 300
+    aget-object v6, v10, v21
+    invoke-static { v6 }, Lcom/innioasis/ipp/Lab$Allocs;->platform(Ljava/lang/String;)Z
+    move-result v6
+    if-nez v6, :L5
+    move/from16 v6, v17
+    const/4 v8, 3
+    if-lt v6, v8, :L2
+    move-object/from16 v8, v16
+    goto :L6
+  :L2
+  .line 302
+    if-nez v6, :L3
+    goto :L4
+  :L3
     new-instance v11, Ljava/lang/StringBuilder;
     invoke-direct { v11 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 293
-    const-string v15, "?"
-    move-object/from16 v16, v15
-  :L1
-    if-ge v2, v14, :L4
-  .line 294
-    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->position()I
-    move-result v17
-  .line 295
-    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
-    move-result v18
-    and-int v18, v18, v8
-    invoke-virtual { v1 }, Ljava/nio/ByteBuffer;->getShort()S
-    move-result v19
-    and-int v19, v19, v8
-  .line 296
-    add-int v8, v17, v6
-    invoke-virtual { v1, v8 }, Ljava/nio/ByteBuffer;->position(I)Ljava/nio/Buffer;
-  .line 297
-    new-instance v8, Ljava/lang/StringBuilder;
-    invoke-direct { v8 }, Ljava/lang/StringBuilder;-><init>()V
-    aget-object v4, v9, v18
-    invoke-virtual { v8, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v4
-    const-string v8, "."
-    invoke-virtual { v4, v8 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v4
-    aget-object v8, v10, v19
-    invoke-virtual { v4, v8 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v4
-    invoke-virtual { v4 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v4
-  .line 298
-    const-string v8, " < "
+    move-object/from16 v8, v16
     invoke-virtual { v11, v8 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v8
-    move-object/from16 v19, v1
-    const/16 v1, 46
-    invoke-virtual { v4, v1 }, Ljava/lang/String;->lastIndexOf(I)I
-    move-result v20
-    move/from16 v21, v5
-    const/16 v17, 1
-    add-int/lit8 v5, v20, -1
-    invoke-virtual { v4, v1, v5 }, Ljava/lang/String;->lastIndexOf(II)I
-    move-result v1
-    add-int/lit8 v1, v1, 1
-    invoke-virtual { v4, v1 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
+    invoke-virtual { v8, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual { v1, v9, v4 }, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
     move-result-object v1
-    invoke-virtual { v8, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-  .line 299
-    move-object/from16 v1, v16
-    invoke-virtual { v15, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v5
-    if-eqz v5, :L2
-    aget-object v5, v9, v18
-    invoke-static { v5 }, Lcom/innioasis/ipp/Lab$Allocs;->platform(Ljava/lang/String;)Z
-    move-result v5
-    if-nez v5, :L2
-    move-object/from16 v16, v4
-    goto :L3
-  :L2
-  .line 293
-    move-object/from16 v16, v1
-  :L3
-    add-int/lit8 v2, v2, 1
-    move-object/from16 v1, v19
-    move/from16 v5, v21
-    const/4 v4, 1
-    const v8, 65535
-    goto :L1
+    invoke-virtual { v5, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v1
   :L4
-  .line 302
-    move-object/from16 v19, v1
-    move/from16 v21, v5
-    move-object/from16 v1, v16
-    const/16 v17, 1
-    new-instance v2, Ljava/lang/StringBuilder;
-    invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
-    aget-object v4, v9, v13
-    invoke-virtual { v2, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v2
-    const-string v4, " @ "
-    invoke-virtual { v2, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v2
-    invoke-virtual { v15, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v4
-    if-eqz v4, :L5
+    move-object/from16 v16, v1
+  .line 303
+    add-int/lit8 v17, v6, 1
+    goto :L7
+  :L5
+  .line 300
+    move-object/from16 v8, v16
+    move/from16 v6, v17
+  :L6
+  .line 294
+    move/from16 v17, v6
+    move-object/from16 v16, v8
+  :L7
+    add-int/lit8 v7, v7, 1
+    move-object/from16 v1, v20
+    move/from16 v6, v22
+    move/from16 v5, v23
+    move/from16 v8, v24
+    move-object/from16 v11, v26
+    const/4 v4, 1
+    const v9, 65535
+    goto/16 :L1
+  :L8
+  .line 306
+    move-object/from16 v20, v1
+    move/from16 v23, v5
+    move/from16 v22, v6
+    move/from16 v24, v8
+    move-object/from16 v26, v11
+    move-object/from16 v8, v16
+    const/16 v18, 1
+    const v19, 65535
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
-    invoke-virtual { v1, v15 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    aget-object v5, v10, v14
+    invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v1
-    invoke-virtual { v1, v11 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+    const-string v5, " @ "
+    invoke-virtual { v1, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v1
+    invoke-virtual { v2, v8 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v5
+    if-eqz v5, :L9
+    new-instance v4, Ljava/lang/StringBuilder;
+    invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual { v4, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual { v2, v12 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+    move-result-object v2
+    invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v2
+    goto :L10
+  :L9
+    invoke-virtual { v8, v9, v4 }, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
+    move-result-object v2
+  :L10
+    invoke-virtual { v1, v2 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v1
     invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v1
-    goto :L6
-  :L5
-    const-string v4, "com.innioasis."
-    const-string v5, ""
-    invoke-virtual { v1, v4, v5 }, Ljava/lang/String;->replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;
-    move-result-object v1
-  :L6
-    invoke-virtual { v2, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v1
-    invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v1
-  .line 303
+  .line 307
     iget-object v2, v0, Lcom/innioasis/ipp/Lab$Allocs;->bytes:Ljava/util/HashMap;
     invoke-virtual { v2, v1 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v2
     check-cast v2, [I
-  .line 304
-    if-nez v2, :L7
+  .line 308
+    if-nez v2, :L11
     iget-object v2, v0, Lcom/innioasis/ipp/Lab$Allocs;->bytes:Ljava/util/HashMap;
-    filled-new-array { v12 }, [I
+    filled-new-array { v13 }, [I
     move-result-object v4
     invoke-virtual { v2, v1, v4 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
     const/4 v1, 0
-    goto :L8
-  :L7
-  .line 305
+    goto :L12
+  :L11
+  .line 309
     const/4 v1, 0
     aget v4, v2, v1
-    add-int/2addr v4, v12
+    add-int/2addr v4, v13
     aput v4, v2, v1
-  :L8
-  .line 306
+  :L12
+  .line 310
     iget-wide v4, v0, Lcom/innioasis/ipp/Lab$Allocs;->total:J
-    int-to-long v11, v12
-    add-long/2addr v4, v11
+    int-to-long v6, v13
+    add-long/2addr v4, v6
     iput-wide v4, v0, Lcom/innioasis/ipp/Lab$Allocs;->total:J
   .line 284
     add-int/lit8 v3, v3, 1
-    move-object/from16 v1, v19
-    move/from16 v5, v21
+    move-object/from16 v1, v20
+    move/from16 v6, v22
+    move/from16 v5, v23
+    move/from16 v8, v24
+    move-object/from16 v11, v26
     const/4 v2, 0
     const/4 v4, 1
-    const v8, 65535
+    const/4 v7, 3
+    const v9, 65535
     goto/16 :L0
-  :L9
-  .line 308
+  :L13
+  .line 312
     return-void
 .end method
 
 .method private static platform(Ljava/lang/String;)Z
   .registers 2
-  .line 311
+  .line 315
     const-string v0, "java."
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v0
@@ -310,7 +356,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v0
     if-nez v0, :L1
-  .line 312
+  .line 316
     const-string v0, "libcore."
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v0
@@ -323,7 +369,7 @@
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v0
     if-nez v0, :L1
-  .line 313
+  .line 317
     const-string v0, "kotlin"
     invoke-virtual { p0, v0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result p0
@@ -335,7 +381,7 @@
   :L1
     const/4 p0, 1
   :L2
-  .line 311
+  .line 315
     return p0
 .end method
 

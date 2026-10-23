@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..e95a0577 100644
+index 01b1f730..bb210498 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..e95a0577 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100419
++  versionCode: 10100422
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20094,7 +20094,7 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..312288fd 100644
+index 71fe29d0..9e78fdd1 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21043,7 +21043,7 @@ index 71fe29d0..312288fd 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev419</string>
++    <string name="ipp_version">v1.1.0-dev422</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55634,10 +55634,10 @@ index b9220ba5..05cae465 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9f..178b4328 100644
+index 4ed7ef9f..523ea540 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-@@ -135,358 +135,282 @@
+@@ -135,358 +135,284 @@
  
  # virtual methods
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
@@ -55794,7 +55794,9 @@ index 4ed7ef9f..178b4328 100644
 +    invoke-virtual { v4, v0 }, Lcom/innioasis/music/util/Other;->unNamed(Ljava/lang/String;)Ljava/lang/String;
 +    move-result-object v0
 +    check-cast v0, Ljava/lang/CharSequence;
-+    invoke-virtual { v11, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
++    # ipp: setText only when the string is not already on the row -- setText re-lays the text
++    # out every call, and a wheel step rebinds rows whose text has not changed (see Rows.text)
++    invoke-static { v11, v0 }, Lcom/innioasis/ipp/Rows;->text(Landroid/widget/TextView;Ljava/lang/CharSequence;)V
 +    if-eqz v3, :L4
 +    move-object v0, v3
 +    goto :L5
@@ -55812,7 +55814,7 @@ index 4ed7ef9f..178b4328 100644
 +    invoke-virtual { v4, v0 }, Lcom/innioasis/music/util/Other;->unNamed(Ljava/lang/String;)Ljava/lang/String;
 +    move-result-object v0
 +    check-cast v0, Ljava/lang/CharSequence;
-+    invoke-virtual { v10, v0 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
++    invoke-static { v10, v0 }, Lcom/innioasis/ipp/Rows;->text(Landroid/widget/TextView;Ljava/lang/CharSequence;)V
 +    if-eqz v2, :L6
 +    if-eqz v3, :L6
 +    # ipp: an album whose ALBUM ARTIST tag has never been looked at still needs the background
@@ -56196,7 +56198,7 @@ index 4ed7ef9f..178b4328 100644
      return-object v9
  .end method
  
-@@ -588,4 +512,4 @@
+@@ -588,4 +514,4 @@
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/AlbumListAdapter;->notifyDataSetChanged()V
  
      return-void
