@@ -370,11 +370,38 @@ public final class Schema {
             }
         }
         try {
-            Y1Repository repo = Y1Application.Companion.getY1Repository();
-            if (repo == null) return;
-            repo.ippSongDao().insert(rows);
+            update(rows);
         } catch (Throwable t) {
             Diag.note("schema: " + rows.length + " row(s) not written: " + t);
+        }
+    }
+
+    // Only our columns, by the key. An INSERT OR REPLACE of the whole row deletes and re-inserts it
+    // with every column and index, ~1.2 ms a row (30 s of a pass over 25 000 songs). This way the
+    // row keeps its rowid, and a row deleted meanwhile is not brought back.
+    private static final String SQL_TAGS = "UPDATE `Song` SET `albumArtist` = ?, `track` = ?,"
+            + " `disc` = ?, `year` = ?, `lyrics` = ? WHERE `songId` = ?";
+
+    private static void update(Song[] rows) throws Exception {
+        RoomDatabase db = PlGrid.db();
+        db.beginTransaction();
+        try {
+            SupportSQLiteStatement st = db.getOpenHelper().getWritableDatabase().compileStatement(SQL_TAGS);
+            for (int k = 0; k < rows.length; k++) {
+                Song s = rows[k];
+                String id = s.getSongId();
+                if (id == null) continue;
+                text(st, 1, s.getAlbumArtist());
+                text(st, 2, s.getTrack());
+                text(st, 3, s.getDisc());
+                text(st, 4, s.getYear());
+                st.bindLong(5, s.getLyrics());
+                st.bindString(6, id);
+                st.executeUpdateDelete();
+            }
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
         }
     }
 
