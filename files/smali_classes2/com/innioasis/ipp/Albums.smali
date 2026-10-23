@@ -1644,7 +1644,7 @@
     return-object v1
 .end method
 
-.method public static focus(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/widget/ListView;)V
+.method public static focus(Lcom/innioasis/music/adapter/MyBaseAdapter;Landroid/view/View;)V
   .registers 6
   .line 1505
     sget-object v0, Lcom/innioasis/ipp/Albums;->pendingFocus:Ljava/lang/String;
@@ -3000,9 +3000,9 @@
     return-void
 .end method
 
-.method public static noteListScroll(Landroid/widget/ListView;Ljava/lang/Object;)V
+.method public static noteListScroll(Landroid/view/View;Ljava/lang/Object;)V
   .catchall { :L0 .. :L4 } :L5
-  .registers 5
+  .registers 4
   .line 1529
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/Albums;->listFirst:I
@@ -3014,36 +3014,37 @@
     goto :L7
   :L1
   .line 1532
-    const/4 v1, 0
-    invoke-virtual { p0, v1 }, Landroid/widget/ListView;->getChildAt(I)Landroid/view/View;
-    move-result-object v2
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->first(Landroid/view/View;)I
+    move-result v1
   .line 1533
-    if-nez v2, :L2
+    invoke-static { p0, v1 }, Lcom/innioasis/ipp/Lv;->row(Landroid/view/View;I)Landroid/view/View;
+    move-result-object p0
+  .line 1534
+    if-nez p0, :L2
+    const/4 p0, 0
     goto :L3
   :L2
-    invoke-virtual { v2 }, Landroid/view/View;->getTop()I
-    move-result v1
-  :L3
-    sput v1, Lcom/innioasis/ipp/Albums;->listTop:I
-  .line 1534
-    invoke-virtual { p0 }, Landroid/widget/ListView;->getFirstVisiblePosition()I
+    invoke-virtual { p0 }, Landroid/view/View;->getTop()I
     move-result p0
-    sput p0, Lcom/innioasis/ipp/Albums;->listFirst:I
+  :L3
+    sput p0, Lcom/innioasis/ipp/Albums;->listTop:I
   .line 1535
+    sput v1, Lcom/innioasis/ipp/Albums;->listFirst:I
+  .line 1536
     check-cast p1, Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Albums;->listPos:I
   :L4
-  .line 1538
+  .line 1539
     goto :L6
   :L5
-  .line 1536
-    move-exception p0
   .line 1537
+    move-exception p0
+  .line 1538
     sput v0, Lcom/innioasis/ipp/Albums;->listFirst:I
   :L6
-  .line 1539
+  .line 1540
     return-void
   :L7
   .line 1531
@@ -4732,24 +4733,24 @@
     return-void
 .end method
 
-.method public static restoreList(Landroid/widget/ListView;Lcom/innioasis/music/adapter/MyBaseAdapter;)V
+.method public static restoreList(Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 5
-  .line 1543
+  .line 1544
     if-eqz p0, :L3
     if-nez p1, :L0
     goto :L3
   :L0
-  .line 1544
-    invoke-virtual { p0, p1 }, Landroid/widget/ListView;->setAdapter(Landroid/widget/ListAdapter;)V
   .line 1545
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/SongRows;->set(Landroidx/recyclerview/widget/RecyclerView;Landroid/widget/ListAdapter;)V
+  .line 1546
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v0
-  .line 1546
-    sget v1, Lcom/innioasis/ipp/Albums;->listFirst:I
   .line 1547
+    sget v1, Lcom/innioasis/ipp/Albums;->listFirst:I
+  .line 1548
     const/4 v2, -1
     sput v2, Lcom/innioasis/ipp/Albums;->listFirst:I
-  .line 1548
+  .line 1549
     if-ltz v1, :L1
     invoke-virtual { p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
     move-result p1
@@ -4758,16 +4759,16 @@
     if-ne p1, v0, :L1
   .line 1550
     sget p1, Lcom/innioasis/ipp/Albums;->listTop:I
-    invoke-static { p0, v1, p1 }, Lcom/innioasis/ipp/Head;->restore(Landroid/widget/ListView;II)V
+    invoke-static { p0, v1, p1 }, Lcom/innioasis/ipp/Lv;->place(Landroid/view/View;II)V
     goto :L2
   :L1
   .line 1552
-    invoke-virtual { p0, v0 }, Landroid/widget/ListView;->setSelection(I)V
+    invoke-static { p0, v0 }, Lcom/innioasis/ipp/SongRows;->select(Landroidx/recyclerview/widget/RecyclerView;I)V
   :L2
   .line 1554
     return-void
   :L3
-  .line 1543
+  .line 1544
     return-void
 .end method
 

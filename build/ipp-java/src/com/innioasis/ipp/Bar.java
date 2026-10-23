@@ -121,8 +121,9 @@ public final class Bar extends RecyclerView.ItemDecoration
             s.byAdapter = true;
             return s;
         }
-        if (a instanceof com.innioasis.music.GenresActivity) {
-            // four lists through one RecyclerView (SongRows): genres, artists, albums, songs
+        if (a instanceof com.innioasis.music.GenresActivity
+                || a instanceof com.innioasis.music.AlbumsActivity) {
+            // several lists through one RecyclerView (SongRows): genres, artists, albums, songs
             Spec s = new Spec(R.id.lv, R.drawable.item_selected_no_arrow, R.drawable.item_no_selected,
                     a.getResources().getColor(R.color.selected_text_color),
                     a.getResources().getColor(R.color.white),
@@ -900,7 +901,8 @@ public final class Bar extends RecyclerView.ItemDecoration
             ((com.innioasis.y1.activity.IppQueueActivity) a).tinted(row);
         } else if (a instanceof com.innioasis.music.SongListActivity
                 || a instanceof com.innioasis.music.PlayListActivity
-                || a instanceof com.innioasis.music.GenresActivity) {
+                || a instanceof com.innioasis.music.GenresActivity
+                || a instanceof com.innioasis.music.AlbumsActivity) {
             SongRows.tinted(row);
         } else if (a instanceof com.innioasis.y1.activity.video.VideoListActivity) {
             View v = row.findViewById(R.id.file_img);

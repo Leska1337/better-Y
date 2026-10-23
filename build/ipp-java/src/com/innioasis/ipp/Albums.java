@@ -10,7 +10,7 @@ import android.os.SystemClock;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.innioasis.music.adapter.MyBaseAdapter;
@@ -1501,7 +1501,7 @@ public final class Albums {
     }
 
     /** After the album's song list has been filled: put the cursor on the song we came for. */
-    public static void focus(MyBaseAdapter songs, ListView lv) {
+    public static void focus(MyBaseAdapter songs, View lv) {
         String p = pendingFocus;
         pendingFocus = null;
         if (p == null || songs == null) return;
@@ -1525,13 +1525,14 @@ public final class Albums {
     private static int listPos = -1;
 
     /** {@code AlbumsActivity.confirm}, just before an album is opened from the album list. */
-    public static void noteListScroll(ListView lv, Object albums) {
+    public static void noteListScroll(View lv, Object albums) {
         listFirst = -1;
         try {
             if (lv == null || !(albums instanceof MyBaseAdapter)) return;
-            View top = lv.getChildAt(0);
+            int first = Lv.first(lv);
+            View top = Lv.row(lv, first);
             listTop = top == null ? 0 : top.getTop();       // absolute: the album list has no padding
-            listFirst = lv.getFirstVisiblePosition();
+            listFirst = first;
             listPos = ((MyBaseAdapter) albums).getPosition();
         } catch (Throwable t) {
             listFirst = -1;
@@ -1539,17 +1540,16 @@ public final class Albums {
     }
 
     /** In place of stock's {@code Other.gotoAdapter(lv, a, -1)}: the album list as it was left. */
-    public static void restoreList(ListView lv, MyBaseAdapter albums) {
+    public static void restoreList(RecyclerView lv, MyBaseAdapter albums) {
         if (lv == null || albums == null) return;
-        lv.setAdapter(albums);
+        SongRows.set(lv, albums);
         int pos = albums.getPosition();
         int first = listFirst;
         listFirst = -1;
         if (first >= 0 && first < albums.getCount() && listPos == pos) {
-            // Through Head: the song list's padding is about to drop away underneath.
-            Head.restore(lv, first, listTop);
+            Lv.place(lv, first, listTop);
         } else {
-            lv.setSelection(pos);
+            SongRows.select(lv, pos);
         }
     }
 
