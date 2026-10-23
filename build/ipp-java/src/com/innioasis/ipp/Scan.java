@@ -380,8 +380,9 @@ public final class Scan {
 
     /**
      * In place of the clean-up's {@code getSongsSync()}: only the rows whose files the walk has not
-     * met, each read by its path — every other row the clean-up would keep anyway. Usually none.
-     * No paths from this scan: the query, as stock asks it.
+     * met — every other row the clean-up would keep anyway. Usually none; those there are, are
+     * dropped here in bulk ({@link #drop}) and stock's loop gets nothing left to do. No paths from
+     * this scan: the query, as stock asks it.
      */
     public static List rows(SongDao dao) {
         labTail = SystemClock.uptimeMillis();
@@ -395,6 +396,14 @@ public final class Scan {
                 if (!met.contains(p)) unmet.add(p);
             }
         }
+        if (unmet.isEmpty()) return unmet;
+        try {
+            drop(unmet);
+            return new ArrayList();
+        } catch (Throwable t) {
+            Diag.note("library scan: batch clean-up failed, row by row: " + t);
+        }
+        // what the batch did not delete, as stock asks it
         ArrayList out = new ArrayList(unmet.size());
         for (int i = 0; i < unmet.size(); i++) {
             Song s = dao.getSongByPathSyncDB((String) unmet.get(i));
@@ -403,10 +412,73 @@ public final class Scan {
         return out;
     }
 
+    /**
+     * The clean-up in bulk: the unmet rows found in one pass by rowid (path has no index, and a
+     * query per path read the whole table each time), each kept or dropped by {@link #stays}
+     * exactly as stock's loop decides, deleted in transactions of {@link #DROP_BATCH}.
+     */
+    private static void drop(List unmet) throws Exception {
+        HashSet want = new HashSet(unmet);
+        ArrayList ids = new ArrayList();
+        long after = -1L;
+        while (true) {
+            android.database.Cursor c = PlGrid.db().query("select rowid, path from song where rowid > " + after
+                    + " order by rowid limit " + PORTION, null);
+            int n = 0;
+            try {
+                while (c.moveToNext()) {
+                    after = c.getLong(0);
+                    n++;
+                    if (c.isNull(1)) continue;
+                    String path = c.getString(1);
+                    if (!want.contains(path)) continue;
+                    Song probe = new Song();
+                    probe.setPath(path);
+                    if (!stays(probe)) ids.add(Long.valueOf(after));
+                }
+            } finally {
+                c.close();
+            }
+            if (n < PORTION) break;
+        }
+        androidx.room.RoomDatabase db = PlGrid.db();
+        int gone = 0;
+        for (int from = 0; from < ids.size(); from += DROP_BATCH) {
+            while (com.innioasis.music.objects.Global.INSTANCE.getScanLock()) Thread.sleep(100L);
+            if (!com.innioasis.music.util.Other.INSTANCE.sdCardIsReady()) break;
+            int to = Math.min(ids.size(), from + DROP_BATCH);
+            db.beginTransaction();
+            try {
+                androidx.sqlite.db.SupportSQLiteStatement st = db.compileStatement("delete from song where rowid = ?");
+                for (int i = from; i < to; i++) {
+                    st.bindLong(1, ((Long) ids.get(i)).longValue());
+                    st.executeUpdateDelete();
+                    st.clearBindings();
+                }
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
+            }
+            gone += to - from;
+            synchronized (Scan.class) {
+                dropped += to - from;
+            }
+            com.innioasis.music.objects.Global g = com.innioasis.music.objects.Global.INSTANCE;
+            g.setScanDeletedCount(g.getScanDeletedCount() + (to - from));
+        }
+        Diag.note("library scan: " + gone + " row(s) of missing files dropped in bulk");
+        if (gone > 0) Ipp.libraryChanged();
+    }
+
+    private static final int DROP_BATCH = 500;
+
+    /** Rows {@link #drop} deleted: the dialog's total no longer counts them. */
+    private static int dropped;
+
     /** The clean-up's "total" for the scan dialog: what {@code getSongsSync().size()} would say. */
     public static int total(List rows) {
         synchronized (Scan.class) {
-            if (paths != null) return paths.size() + added;
+            if (paths != null) return paths.size() + added - dropped;
         }
         return rows == null ? 0 : rows.size();
     }
@@ -471,6 +543,7 @@ public final class Scan {
         Tone.recheck();
         paths = null;
         added = 0;
+        dropped = 0;
         met = new HashSet();
         marked = false;
         wrote = false;
