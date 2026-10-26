@@ -2,6 +2,7 @@ package com.innioasis.ipp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -140,5 +141,16 @@ public final class TopBar {
         lp.rightMargin = m;
         lp.setMarginEnd(m);
         v.setLayoutParams(lp);
+    }
+
+    /**
+     * The battery percentage, from stock's {@code updateBattery}, which runs on every battery
+     * broadcast (voltage, temperature) whatever the level: a wrap_content text set again
+     * re-lays out the whole window, so the same text is not set.
+     */
+    public static void percent(TextView tv, CharSequence s) {
+        if (tv == null) return;
+        if (s != null && TextUtils.equals(tv.getText(), s)) return;
+        tv.setText(s);
     }
 }
