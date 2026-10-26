@@ -163,11 +163,9 @@ public final class Saved {
         public void run() {
             try {
                 if (list.size() != was.length) return;
-                int n = 0;
                 for (int i = 0; i < was.length; i++) {
-                    if (was[i] != null && list.get(i) == was[i]) { list.set(i, row[i]); n++; }
+                    if (was[i] != null && list.get(i) == was[i]) list.set(i, row[i]);
                 }
-                android.util.Log.i("ipplab", "saved: " + n + " of " + was.length + " swapped");
             } catch (Throwable t) {
             }
         }

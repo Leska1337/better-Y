@@ -410,10 +410,7 @@ public final class PickDialog extends BaseDialog {
             long total = 0L;
             for (int i = 0; i < d.cats.length; i++) {
                 if (!Pick.inTotal(d.cats[i])) continue;
-                long t0 = android.os.SystemClock.uptimeMillis();
                 long n = Pick.size(d.cats[i]);
-                android.util.Log.i("ipplab", "pick size " + d.cats[i] + ": " + n + " bytes +"
-                        + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
                 out[i + 1] = n;
                 total += n;
             }
@@ -423,10 +420,7 @@ public final class PickDialog extends BaseDialog {
             boolean more = false;
             for (int i = 0; i < d.cats.length; i++) {
                 if (Pick.inTotal(d.cats[i]) || !d.isShowing()) continue;
-                long t0 = android.os.SystemClock.uptimeMillis();
                 out[i + 1] = Pick.size(d.cats[i]);
-                android.util.Log.i("ipplab", "pick size " + d.cats[i] + ": " + out[i + 1] + " bytes +"
-                        + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
                 more = true;
             }
             if (more) post(out);

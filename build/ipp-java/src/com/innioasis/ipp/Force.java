@@ -209,12 +209,8 @@ public final class Force {
     public static void saveState() {
         try {
             PlayerService ps = Y1Application.Companion.getPlayerService();
-            long t0 = android.os.SystemClock.uptimeMillis();
             if (ps != null) ps.saveState();
-            if (ps != null) android.util.Log.i("ipplab", "saveState +" + (android.os.SystemClock.uptimeMillis() - t0)
-                    + " ms, file " + new java.io.File(ps.getFilesDir(), "save_state").length());
         } catch (Throwable t) {
-            android.util.Log.i("ipplab", "saveState failed " + t);
         }
     }
 

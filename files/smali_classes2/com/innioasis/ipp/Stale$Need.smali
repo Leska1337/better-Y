@@ -26,25 +26,25 @@
 
 .method private constructor <init>()V
   .registers 2
-  .line 82
+  .line 75
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 83
+  .line 76
     new-instance v0, Ljava/util/HashSet;
     invoke-direct { v0 }, Ljava/util/HashSet;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->folders:Ljava/util/HashSet;
-  .line 84
+  .line 77
     new-instance v0, Ljava/util/HashSet;
     invoke-direct { v0 }, Ljava/util/HashSet;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->albums:Ljava/util/HashSet;
-  .line 86
+  .line 79
     new-instance v0, Lcom/innioasis/ipp/Stale$Keys;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Stale$Keys;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->big:Lcom/innioasis/ipp/Stale$Keys;
-  .line 88
+  .line 81
     new-instance v0, Lcom/innioasis/ipp/Stale$Keys;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Stale$Keys;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->flow:Lcom/innioasis/ipp/Stale$Keys;
-  .line 89
+  .line 82
     new-instance v0, Ljava/util/HashMap;
     invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->byDir:Ljava/util/HashMap;
@@ -53,35 +53,35 @@
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Stale$1;)V
   .registers 2
-  .line 82
+  .line 75
     invoke-direct { p0 }, Lcom/innioasis/ipp/Stale$Need;-><init>()V
     return-void
 .end method
 
 .method private add(Lcom/innioasis/y1/database/Song;Z)V
   .registers 12
-  .line 102
+  .line 95
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
-  .line 103
+  .line 96
     if-nez v0, :L0
     return-void
   :L0
-  .line 104
+  .line 97
     invoke-virtual { v0 }, Ljava/lang/String;->hashCode()I
     move-result v1
-  .line 105
+  .line 98
     iget-object v2, p0, Lcom/innioasis/ipp/Stale$Need;->big:Lcom/innioasis/ipp/Stale$Keys;
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v3
     invoke-static { v1, v3 }, Lcom/innioasis/ipp/Stale$Keys;->of(II)J
     move-result-wide v3
     invoke-virtual { v2, v3, v4 }, Lcom/innioasis/ipp/Stale$Keys;->add(J)V
-  .line 106
+  .line 99
     const/16 v2, 47
     invoke-virtual { v0, v2 }, Ljava/lang/String;->lastIndexOf(I)I
     move-result v2
-  .line 107
+  .line 100
     iget-object v3, p0, Lcom/innioasis/ipp/Stale$Need;->last:Ljava/lang/String;
     const-string v4, ""
     if-eqz v3, :L1
@@ -93,7 +93,7 @@
     move-result v3
     if-nez v3, :L4
   :L1
-  .line 108
+  .line 101
     if-gez v2, :L2
     move-object v0, v4
     goto :L3
@@ -103,11 +103,11 @@
     move-result-object v0
   :L3
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->last:Ljava/lang/String;
-  .line 109
+  .line 102
     invoke-virtual { v0 }, Ljava/lang/String;->hashCode()I
     move-result v0
     iput v0, p0, Lcom/innioasis/ipp/Stale$Need;->lastHash:I
-  .line 110
+  .line 103
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->folders:Ljava/util/HashSet;
     iget-object v2, p0, Lcom/innioasis/ipp/Stale$Need;->last:Ljava/lang/String;
     invoke-virtual { v0, v2 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
@@ -122,7 +122,7 @@
     move-result-wide v2
     invoke-virtual { v0, v2, v3 }, Lcom/innioasis/ipp/Stale$Keys;->add(J)V
   :L4
-  .line 112
+  .line 105
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->flow:Lcom/innioasis/ipp/Stale$Keys;
     iget v2, p0, Lcom/innioasis/ipp/Stale$Need;->lastHash:I
     int-to-long v2, v2
@@ -133,7 +133,7 @@
     and-long/2addr v5, v7
     or-long/2addr v2, v5
     invoke-virtual { v0, v2, v3 }, Lcom/innioasis/ipp/Stale$Keys;->add(J)V
-  .line 113
+  .line 106
     if-eqz p2, :L5
     iget-object p2, p0, Lcom/innioasis/ipp/Stale$Need;->albums:Ljava/util/HashSet;
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Need;->byDir:Ljava/util/HashMap;
@@ -141,7 +141,7 @@
     move-result-object v0
     invoke-virtual { p2, v0 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
   :L5
-  .line 114
+  .line 107
     iget-object p2, p0, Lcom/innioasis/ipp/Stale$Need;->albums:Ljava/util/HashSet;
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Song;->getAlbum()Ljava/lang/String;
     move-result-object v0
@@ -152,35 +152,35 @@
     move-result-object v4
   :L7
     invoke-virtual { p2, v4 }, Ljava/util/HashSet;->add(Ljava/lang/Object;)Z
-  .line 115
+  .line 108
     return-void
 .end method
 
 .method addAll(Ljava/util/List;Z)V
   .registers 6
-  .line 94
+  .line 87
     if-nez p1, :L0
     return-void
   :L0
-  .line 95
+  .line 88
     const/4 v0, 0
   :L1
     invoke-interface { p1 }, Ljava/util/List;->size()I
     move-result v1
     if-ge v0, v1, :L3
-  .line 96
+  .line 89
     invoke-interface { p1, v0 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
-  .line 97
+  .line 90
     instance-of v2, v1, Lcom/innioasis/y1/database/Song;
     if-eqz v2, :L2
     check-cast v1, Lcom/innioasis/y1/database/Song;
     invoke-direct { p0, v1, p2 }, Lcom/innioasis/ipp/Stale$Need;->add(Lcom/innioasis/y1/database/Song;Z)V
   :L2
-  .line 95
+  .line 88
     add-int/lit8 v0, v0, 1
     goto :L1
   :L3
-  .line 99
+  .line 92
     return-void
 .end method

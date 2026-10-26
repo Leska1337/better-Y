@@ -165,7 +165,6 @@ public final class CoverCache {
                 for (int i = 0; i < keys.length; i++) {
                     if (keys[i].length() > 0) miss.put(keys[i], keys[i]);
                 }
-                android.util.Log.i("ipplab", "cover miss loaded " + miss.size());
             } catch (Throwable t) {
             }
         }
@@ -196,7 +195,6 @@ public final class CoverCache {
     private static void saveLocked() {
         if (!missDirty) return;
         missDirty = false;
-        long t0 = android.os.SystemClock.uptimeMillis();
         try {
             File f = missFile();
             if (f == null) return;
@@ -224,8 +222,6 @@ public final class CoverCache {
                 w.close();
             }
             if (!tmp.renameTo(f)) tmp.delete();
-            android.util.Log.i("ipplab", "cover miss saved " + keys.length + ", " + f.length() + " bytes, "
-                    + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
         } catch (Throwable t) {
         }
     }
@@ -334,10 +330,7 @@ public final class CoverCache {
 
     /** Forgets only the "no cover" answers, keeping the covers found. */
     public static void clearMiss() {
-        if (Scan.keepsMisses()) {
-            android.util.Log.i("ipplab", "cover miss kept by a clean scan: " + miss.size());
-            return;
-        }
+        if (Scan.keepsMisses()) return;
         dropMiss();
     }
 
@@ -359,7 +352,6 @@ public final class CoverCache {
 
     /** The end of a scan that wrote nothing: still dropped when the card was away (USB). */
     static void scanEnded(boolean cardAway) {
-        android.util.Log.i("ipplab", "cover miss at scan end: card away " + cardAway + ", " + miss.size());
         if (cardAway) dropMiss();
     }
 

@@ -188,7 +188,6 @@ public final class Albums {
 
     /** Drop the cached library. Called once per file during a scan, so it must stay trivial. */
     public static void invalidate() {
-        Lab.who("invalidate");
         synchronized (SONGS) {
             if (Thread.currentThread() != scanThread) foreign++;
             if (songCache != null) {
@@ -248,7 +247,6 @@ public final class Albums {
         long t0 = SystemClock.uptimeMillis();
         Object order = orderNow();
         String sig = tableSig();
-        Lab.who("full read");
         List all = null;
         // a tag write during the read moves a row (INSERT OR REPLACE): read again, not stock's
         // query — that one is ~20 s and another copy of the library in a heap that holds two already
@@ -256,12 +254,9 @@ public final class Albums {
             if (i > 0) sig = tableSig();
             all = readTable((Y1Repository.SongSortType) order, sig);
         }
-        android.util.Log.i("ipplab", "portions " + (all != null) + " " + (SystemClock.uptimeMillis() - t0) + " ms");
-        if (all != null) Lab.compareRead(all);
         if (all == null) all = repo.getSongsSync(0);
         if (order != orderNow()) order = null;
         Diag.slow("library read", t0);
-        android.util.Log.i("ipplab", "full read " + (all == null ? 0 : all.size()) + " rows " + (SystemClock.uptimeMillis() - t0) + " ms");
         if (all == null) return null;
         List read = all;
         synchronized (SONGS) {
@@ -395,13 +390,11 @@ public final class Albums {
                 if (System.identityHashCode(c) - at > 0) {
                     cap = c;
                     Diag.note("heap reserve: " + (RESERVE >> 20) + " MB under the cap, try " + (i + 1));
-                    android.util.Log.i("ipplab", "heap reserve ok, try " + (i + 1));
                     return;
                 }
                 tries.add(c);
             }
             Diag.note("heap reserve: no cap above the block");
-            android.util.Log.i("ipplab", "heap reserve failed");
         } catch (Throwable t) {
         } finally {
             block = null;
@@ -437,7 +430,6 @@ public final class Albums {
         String line = "library share: " + all.size() + " songs, " + seen.size() + " texts, "
                 + bad + " odd, " + (SystemClock.uptimeMillis() - t0) + " ms";
         Diag.note(line);
-        android.util.Log.i("ippshare", line);
     }
 
     private static int odd(String shared, String own) {
@@ -536,8 +528,6 @@ public final class Albums {
             if (index != null) YearCache.prepare(new ArrayList(index.keySet()));
         }
         synchronized (SONGS) { preparedFor = all; }
-        Lab.reads();
-        Lab.ids();
     }
 
     private static boolean byDate(int sort) {
@@ -716,10 +706,8 @@ public final class Albums {
             else if (pair != null && sorted != null && pair == sortedType) src = sorted;
             gen = songGen;
         }
-        long tq = SystemClock.uptimeMillis();
         List l = src == null ? null : mirror(src, type);
         if (l != null) {
-            android.util.Log.i("ipplab", "mirror " + type + " " + (SystemClock.uptimeMillis() - tq) + " ms");
             synchronized (SONGS) {
                 if (gen == songGen) {
                     sorted = l;
@@ -729,9 +717,7 @@ public final class Albums {
             return l;
         }
         l = ordered(type);
-        android.util.Log.i("ipplab", "path order " + type + " " + (l != null) + " " + (SystemClock.uptimeMillis() - tq) + " ms");
         if (l == null) l = shared(repo.getSongsList(type));
-        android.util.Log.i("ipplab", "sorted query " + type + " " + (SystemClock.uptimeMillis() - tq) + " ms");
         synchronized (SONGS) {
             if (l != null && gen == songGen) {
                 sorted = l;
@@ -813,7 +799,6 @@ public final class Albums {
             c = PlGrid.db().query("select lower('ПРИВЕТ')", null);
             if (!c.moveToFirst()) return 0;
             int r = "привет".equals(c.getString(0)) ? 1 : 0;
-            android.util.Log.i("ipplab", "sqlite lower() folds cyrillic: " + (r == 1));
             return r;
         } catch (Throwable t) {
             return 0;
@@ -1027,7 +1012,6 @@ public final class Albums {
         }
         LinkedHashMap m = new LinkedHashMap();
         HashMap bySongs = new HashMap();
-        long t0 = SystemClock.uptimeMillis();
         // No string is built per song: the directory is found by its region of the path, and the
         // album key is made once per album and folder.
         Dirs dirs = new Dirs();
@@ -1075,9 +1059,6 @@ public final class Albums {
             foldersMemo = m;
             albumSongsMemo = bySongs;
         }
-        android.util.Log.i("ipplab", "foldersOf " + all.size() + " songs, " + dirs.size + " dirs, "
-                + folders.size() + " folders, " + bySongs.size() + " albums, "
-                + (SystemClock.uptimeMillis() - t0) + " ms");
         return m;
     }
 
@@ -1180,10 +1161,8 @@ public final class Albums {
         // Not getSongsByArtist: the row is a name derived from a tag, and only forMenu matches
         // by the test the row was drawn by.
         List asongs = Artists.forMenu(artist, null);
-        Lab.s("artist forMenu " + (asongs == null ? -1 : asongs.size()));
         if (asongs == null || asongs.isEmpty()) return new ArrayList();
         LinkedHashMap byName = foldersByName(asongs);
-        Lab.s("artist folders " + byName.size() + " names of " + names.size());
         ArrayList out = new ArrayList();
         if (!asongs.isEmpty()) out.add(allMark(artist));   // first row = "Show all songs"
         for (int i = 0; i < names.size(); i++) {
@@ -1194,7 +1173,6 @@ public final class Albums {
             Collections.sort(folders, STR_CMP);
             for (int j = 0; j < folders.size(); j++) out.add(enc(name, (String) folders.get(j)));
         }
-        Lab.s("artist rows " + out.size());
         return byYear(out);
     }
 
@@ -1650,14 +1628,10 @@ public final class Albums {
     /** From {@link #lists}: the main Albums view's names and rows, so its first entry needs neither. */
     private static void prepareAlbums(Y1Repository repo, List all) {
         try {
-            long t0 = SystemClock.uptimeMillis();
             boolean rev = SharedPreferencesUtils.INSTANCE.getSortAlbum() == Y1Repository.SortAlbumType.Z_A.getType();
             List names = rev ? repo.ippSongDao().getAlbumsReverseSync(0) : repo.ippSongDao().getAlbumsSync(0);
-            long t1 = SystemClock.uptimeMillis();
             keepNames(all, rev, names);
             if (names != null) splitRows(names, all);
-            android.util.Log.i("ipplab", "prepare albums: names " + (t1 - t0) + " ms, split "
-                    + (SystemClock.uptimeMillis() - t1) + " ms");
         } catch (Throwable t) {
         }
     }
@@ -1665,12 +1639,9 @@ public final class Albums {
     public static List split(List names) {
         if (names == null) return names;
         List all = allSongs();
-        Lab.s("split allSongs");
         if (all == null) return names;
         ArrayList out = splitRows(names, all);
-        Lab.s("split loop");
         List r = byYear(out);
-        Lab.s("split byYear");
         return r;
     }
 

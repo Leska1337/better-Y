@@ -32,7 +32,6 @@ public final class Stale {
     }
 
     private static long run(boolean drop) {
-        Lab.b("stale");
         List music = Albums.allSongs();
         // an unread library is not an empty one: nothing is known to be unneeded
         if (music == null || music.isEmpty()) return 0L;
@@ -57,19 +56,13 @@ public final class Stale {
         need.addAll(books, true);
         need.big.seal();
         need.flow.seal();
-        Lab.s("library");
 
         long n = 0L;
         try { n += CoverCache.prune(need.albums, drop); } catch (Throwable t) { }
-        Lab.s("covers");
         try { n += BigCover.prune(need.big, need.folders, drop); } catch (Throwable t) { }
-        Lab.s("big");
         try { n += FlowCache.prune(need.flow, drop); } catch (Throwable t) { }
-        Lab.s("flow");
         try { n += Art.prune(need.folders, drop); } catch (Throwable t) { }
-        Lab.s("art");
         try { n += AlbumInfo.prune(need.albums, need.big, drop); } catch (Throwable t) { }
-        Lab.s("albuminfo");
         return n;
     }
 

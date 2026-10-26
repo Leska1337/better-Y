@@ -21,23 +21,23 @@
 
 .method constructor <init>(ZZZZ)V
   .registers 5
-  .line 520
+  .line 515
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 521
+  .line 516
     iput-boolean p1, p0, Lcom/innioasis/ipp/Folders$KeySort;->sorted:Z
     iput-boolean p2, p0, Lcom/innioasis/ipp/Folders$KeySort;->byName:Z
     iput-boolean p3, p0, Lcom/innioasis/ipp/Folders$KeySort;->asc:Z
     iput-boolean p4, p0, Lcom/innioasis/ipp/Folders$KeySort;->dirsFirst:Z
-  .line 522
+  .line 517
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 11
-  .line 525
+  .line 520
     check-cast p1, Lcom/innioasis/ipp/Folders$Key;
     check-cast p2, Lcom/innioasis/ipp/Folders$Key;
-  .line 527
+  .line 522
     iget-boolean v0, p0, Lcom/innioasis/ipp/Folders$KeySort;->dirsFirst:Z
     const/4 v1, -1
     const/4 v2, 1
@@ -53,23 +53,23 @@
   :L1
     return v1
   :L2
-  .line 528
+  .line 523
     iget-boolean v0, p0, Lcom/innioasis/ipp/Folders$KeySort;->sorted:Z
     const/4 v3, 0
     if-nez v0, :L3
     return v3
   :L3
-  .line 530
+  .line 525
     iget-boolean v0, p0, Lcom/innioasis/ipp/Folders$KeySort;->byName:Z
     if-eqz v0, :L4
-  .line 531
+  .line 526
     iget-object p1, p1, Lcom/innioasis/ipp/Folders$Key;->name:Ljava/lang/String;
     iget-object p2, p2, Lcom/innioasis/ipp/Folders$Key;->name:Ljava/lang/String;
     invoke-virtual { p1, p2 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result p1
     goto :L9
   :L4
-  .line 533
+  .line 528
     iget-wide v4, p1, Lcom/innioasis/ipp/Folders$Key;->time:J
     iget-wide v6, p2, Lcom/innioasis/ipp/Folders$Key;->time:J
     cmp-long v0, v4, v6
@@ -85,7 +85,7 @@
   :L6
     const/4 v1, 0
   :L7
-  .line 536
+  .line 531
     if-nez v1, :L8
     iget-object p1, p1, Lcom/innioasis/ipp/Folders$Key;->name:Ljava/lang/String;
     iget-object p2, p2, Lcom/innioasis/ipp/Folders$Key;->name:Ljava/lang/String;
@@ -95,7 +95,7 @@
   :L8
     move p1, v1
   :L9
-  .line 538
+  .line 533
     iget-boolean p2, p0, Lcom/innioasis/ipp/Folders$KeySort;->asc:Z
     if-eqz p2, :L10
     goto :L11

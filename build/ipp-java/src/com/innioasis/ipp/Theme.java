@@ -111,7 +111,6 @@ public final class Theme {
     /** From {@code BaseActivity.onCreate}. */
     public static void created(Activity a) {
         SCREENS.put(a, Boolean.TRUE);
-        Lab.screen(a);
     }
 
     /**
@@ -137,7 +136,6 @@ public final class Theme {
                 if (a != null && !(a instanceof SplashActivity) && !a.isFinishing()) a.finish();
             }
             Diag.note("theme: " + ThemeManager.INSTANCE.getThemeName() + ", screens restarted");
-            Lab.screensLater();
         } catch (Throwable t) {
             Diag.note("Theme.relaunch: " + t);
             AppUtils.relaunchApp(true);

@@ -37,44 +37,16 @@ public final class Scan {
      * table itself, both halves, reloaded after a {@link #GAP_MS} pause (a new scan).
      */
     public static Song known(String path) {
-        long lt = SystemClock.uptimeMillis();
         if (!marked) mark();
         boolean in = inDb(path);
         meet(path);
         count(in);
-        labKnown += SystemClock.uptimeMillis() - lt;
         return in ? MARKER : null;
     }
 
     // Whether this scan wrote a row: every song built is inserted, every row not staying is deleted.
     private static boolean marked;
     private static boolean wrote;
-
-    // Temporary: where a scan's time goes, one ipplab line at its end.
-    private static long labStart, labLook, labList, labSong, labTail, labLoad, labKnown, labListed, labCpu, labCpuTail;
-    private static int labNodes, labDirs, labSongs;
-
-    /** In place of the walk's {@code listFiles}: timed. */
-    public static File[] list(File f) {
-        long t = SystemClock.uptimeMillis();
-        File[] r = f.listFiles();
-        labList += SystemClock.uptimeMillis() - t;
-        labDirs++;
-        return r;
-    }
-
-    private static void labEnd() {
-        if (labStart == 0L) return;
-        long now = SystemClock.uptimeMillis();
-        android.util.Log.i("ipplab", "scan: total " + (now - labStart) + " ms, walk "
-                + ((labTail == 0L ? now : labTail) - labStart) + " ms, tail " +(labTail == 0L ? 0 : now - labTail)
-                + " ms; " + labNodes + " nodes looked " + labLook + " ms; " + labDirs + " dirs listFiles " + labList
-                + " ms; " + labSongs + " songs built " + labSong + " ms; paths load " + labLoad + " ms; wrote " + wrote
-                + "; known " + labKnown + " ms (incl. load), listed " + labListed + " ms; walk cpu "
-                + (labCpuTail - labCpu) + " ms");
-        labStart = labLook = labList = labSong = labTail = labLoad = labKnown = labListed = labCpu = labCpuTail = 0L;
-        labNodes = labDirs = labSongs = 0;
-    }
 
     /**
      * The scan's own invalidation (its tail's empty insert) while it has written nothing: no row
@@ -110,8 +82,6 @@ public final class Scan {
     }
 
     private static synchronized void mark() {
-        labStart = SystemClock.uptimeMillis();
-        labCpu = SystemClock.currentThreadTimeMillis();
         walker = Thread.currentThread();
         marked = true;
         py = new HashMap();
@@ -369,13 +339,10 @@ public final class Scan {
 
     private static int kind(File f) {
         if (f != node) {
-            long t = SystemClock.uptimeMillis();
             int k = 0;
             if (f.isFile()) k = EXISTS;
             else if (f.isDirectory()) k = EXISTS | DIR;
             else if (f.exists()) k = EXISTS;
-            labLook += SystemClock.uptimeMillis() - t;
-            labNodes++;
             ext = extOf(f);
             kind = k;
             node = f;
@@ -405,7 +372,6 @@ public final class Scan {
     public static void listed(File[] children) {
         listedDir();
         if (children == null || children.length == 0) return;
-        long lt = SystemClock.uptimeMillis();
         queue(children);
         synchronized (AHEAD) {
             AHEAD.addLast(children);
@@ -415,7 +381,6 @@ public final class Scan {
             }
             AHEAD.notifyAll();
         }
-        labListed += SystemClock.uptimeMillis() - lt;
     }
 
     private static final java.util.LinkedList AHEAD = new java.util.LinkedList();
@@ -504,8 +469,6 @@ public final class Scan {
      * this scan: the query, as stock asks it.
      */
     public static List rows(SongDao dao) {
-        labTail = SystemClock.uptimeMillis();
-        labCpuTail = SystemClock.currentThreadTimeMillis();
         ArrayList unmet = new ArrayList();
         synchronized (Scan.class) {
             if (paths == null) return dao.getSongsSync();
@@ -660,7 +623,6 @@ public final class Scan {
      * nothing — the next scan reads it again anyway, and a missing set only means reading it.
      */
     static synchronized void done() {
-        labEnd();
         Tone.recheck();
         paths = null;
         added = 0;
@@ -687,9 +649,7 @@ public final class Scan {
             Artists.ensureExceptions();
             Y1Repository r = Y1Application.Companion.getY1Repository();
             if (r == null) return paths;
-            long lt = SystemClock.uptimeMillis();
             HashSet p = pathsOnly();
-            labLoad += SystemClock.uptimeMillis() - lt;
             if (p == null) {
                 p = new HashSet();
                 fill(p, r.ippSongDao().getSongsSync());
@@ -823,7 +783,6 @@ public final class Scan {
 
     /** In place of {@code fileToSong} in the scan's per-file lambda. */
     public static Song song(Y1Repository r, File f) {
-        long lt = SystemClock.uptimeMillis();
         Song s = null;
         try {
             s = take(r, f);
@@ -831,8 +790,6 @@ public final class Scan {
             s = null;
         }
         if (s == null) s = r.fileToSong(f);
-        labSong += SystemClock.uptimeMillis() - lt;
-        labSongs++;
         built(s);
         return s;
     }

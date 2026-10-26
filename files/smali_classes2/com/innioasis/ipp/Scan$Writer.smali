@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 173
+  .line 143
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -33,7 +33,7 @@
   .catchall { :L19 .. :L20 } :L20
   .catchall { :L21 .. :L23 } :L22
   .registers 10
-  .line 178
+  .line 148
     nop
   :L0
     const/4 v0, 0
@@ -42,135 +42,135 @@
     move-result-object v1
     monitor-enter v1
   :L2
-  .line 179
+  .line 149
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
     const-wide/16 v4, 5000
     add-long/2addr v2, v4
   :L3
-  .line 180
+  .line 150
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v4
     invoke-virtual { v4 }, Ljava/util/LinkedList;->isEmpty()Z
     move-result v4
     if-eqz v4, :L5
-  .line 181
+  .line 151
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v4
     sub-long v4, v2, v4
-  .line 182
+  .line 152
     const-wide/16 v6, 0
     cmp-long v8, v4, v6
     if-gtz v8, :L4
-  .line 183
+  .line 153
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$102(Z)Z
-  .line 184
+  .line 154
     monitor-exit v1
     return-void
   :L4
-  .line 186
+  .line 156
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v6
     invoke-virtual { v6, v4, v5 }, Ljava/lang/Object;->wait(J)V
-  .line 187
+  .line 157
     goto :L3
   :L5
-  .line 188
+  .line 158
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v2
     invoke-virtual { v2 }, Ljava/util/LinkedList;->removeFirst()Ljava/lang/Object;
     move-result-object v2
     check-cast v2, [Ljava/lang/Object;
-  .line 189
+  .line 159
     const/4 v3, 1
     invoke-static { v3 }, Lcom/innioasis/ipp/Scan;->access$202(Z)Z
-  .line 190
+  .line 160
     monitor-exit v1
   :L6
-  .line 192
+  .line 162
     aget-object v1, v2, v0
     check-cast v1, Lcom/innioasis/y1/database/SongDao;
     aget-object v2, v2, v3
     check-cast v2, [Lcom/innioasis/y1/database/Song;
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Scan;->access$300(Lcom/innioasis/y1/database/SongDao;[Lcom/innioasis/y1/database/Song;)V
   :L7
-  .line 194
+  .line 164
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v1
     monitor-enter v1
   :L8
-  .line 195
+  .line 165
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$202(Z)Z
-  .line 196
+  .line 166
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v2
     invoke-virtual { v2 }, Ljava/lang/Object;->notifyAll()V
-  .line 197
+  .line 167
     monitor-exit v1
-  .line 198
+  .line 168
     nop
-  .line 199
+  .line 169
     goto :L0
   :L9
-  .line 197
+  .line 167
     move-exception v2
     monitor-exit v1
   :L10
     throw v2
   :L11
-  .line 194
+  .line 164
     move-exception v1
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v2
     monitor-enter v2
   :L12
-  .line 195
+  .line 165
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$202(Z)Z
-  .line 196
+  .line 166
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/Object;->notifyAll()V
-  .line 197
+  .line 167
     monitor-exit v2
   :L13
-  .line 198
+  .line 168
     throw v1
   :L14
-  .line 197
+  .line 167
     move-exception v1
   :L15
     monitor-exit v2
   :L16
     throw v1
   :L17
-  .line 190
+  .line 160
     move-exception v2
   :L18
     monitor-exit v1
   :L19
     throw v2
   :L20
-  .line 200
+  .line 170
     move-exception v1
-  .line 201
+  .line 171
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v1
     monitor-enter v1
   :L21
-  .line 202
+  .line 172
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$102(Z)Z
-  .line 203
+  .line 173
     invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->access$202(Z)Z
-  .line 204
+  .line 174
     invoke-static { }, Lcom/innioasis/ipp/Scan;->access$000()Ljava/util/LinkedList;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/Object;->notifyAll()V
-  .line 205
+  .line 175
     monitor-exit v1
-  .line 207
+  .line 177
     return-void
   :L22
-  .line 205
+  .line 175
     move-exception v0
     monitor-exit v1
   :L23

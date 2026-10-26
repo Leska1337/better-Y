@@ -240,7 +240,6 @@ public final class Folders {
         String prefix = dir.getPath();
         if (prefix == null) return out;
         if (!prefix.endsWith("/")) prefix = prefix + "/";
-        long t0 = android.os.SystemClock.uptimeMillis();
         String[] paths = new String[all.size()];
         int n = 0;
         for (int i = 0; i < all.size(); i++) {
@@ -248,13 +247,9 @@ public final class Folders {
             String path = s == null ? null : s.getPath();
             if (path != null && path.startsWith(prefix)) paths[n++] = path;
         }
-        long t1 = android.os.SystemClock.uptimeMillis();
         Arrays.sort(paths, 0, n);
-        long t2 = android.os.SystemClock.uptimeMillis();
         out.ensureCapacity(n);
         for (int i = 0; i < n; i++) out.add(new File(paths[i]));
-        android.util.Log.i("ipplab", "songsUnder " + n + " songs, filter " + (t1 - t0) + " ms, sort "
-                + (t2 - t1) + " ms, files " + (android.os.SystemClock.uptimeMillis() - t2) + " ms");
         return out;
     }
 

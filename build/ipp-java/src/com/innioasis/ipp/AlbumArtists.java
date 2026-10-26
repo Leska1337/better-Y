@@ -109,14 +109,12 @@ public final class AlbumArtists {
     }
 
     public static String title(Activity a, String stock) {
-        if (screen(a)) Lab.b("album artists");
         return screen(a) ? a.getString(R.string.ipp_album_artists) : stock;
     }
 
     /** ArtistsActivity's two list builds (first fill on IO, sort change), in stock's artist sort. */
     public static List screenList(List stock, Activity a) {
         if (!screen(a)) return stock;
-        Lab.s("stock list");
         try {
             boolean desc = SharedPreferencesUtils.INSTANCE.getSortArtist()
                     == Y1Repository.SortArtistsType.Z_A.getType();
@@ -175,9 +173,7 @@ public final class AlbumArtists {
             }
             if (r != null) reps.put(e.getKey(), r);
         }
-        Lab.s("index " + index.size() + " albums");
         readMissing(reps);
-        Lab.s("read missing");
 
         HashMap k2n = new HashMap();
         HashMap counts = new HashMap();    // group -> (spelling -> albums)
@@ -211,7 +207,6 @@ public final class AlbumArtists {
         }
         albumSongs = index;
         keyToNorm = k2n;
-        Lab.s("grouped");
         names = shown;
         memoAll = all;
         memoGen = AlbumArtist.gen();

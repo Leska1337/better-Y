@@ -183,7 +183,6 @@ public final class Flow {
                     it.artist = artistOf(it.key, it.rep, AlbumArtist.get(it.key));
                 }
             }
-            android.util.Log.i("ipplab", "flow albums kept " + kept.size() + " " + (SystemClock.uptimeMillis() - t0) + " ms");
             return kept;
         }
         List built = build(all);
@@ -194,7 +193,6 @@ public final class Flow {
                 row = built;
             }
         }
-        android.util.Log.i("ipplab", "flow albums " + built.size() + " built " + (SystemClock.uptimeMillis() - t0) + " ms");
         return built;
     }
 
