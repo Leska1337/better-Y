@@ -23,7 +23,8 @@ import java.util.List;
 
 /**
  * The Cover Flow row. PictureFlow's geometry (Ariya Hidayat, MIT): side slides turned 70 degrees
- * and pushed back, the centre one flat at its own size, applied continuously in
+ * and pushed back (further turned and packed closer with five or seven albums on screen), the
+ * centre one flat at its own size, applied continuously in
  * {@code d = i - pos} so a slide is where it is because of pos alone and the animation is only
  * pos moving toward the target. Each slide is one bitmap under a perspective matrix, drawn twice:
  * as the cover and, turned over, as its reflection. On this device the row costs ~0.4 ms of main
@@ -31,9 +32,19 @@ import java.util.List;
  */
 public final class FlowView extends View {
 
-    private static final float ANGLE = (float) Math.toRadians(70);
-    private static final float SPACING = 40f;
+    // Per albums on screen (Flow.COUNTS): the side covers' angle and the step between them; five
+    // and seven turn the covers further and pack them closer.
+    private static final float[] ANGLES = { 70f, 75f, 80f };
+    private static final float[] STEPS = { 40f, 64f, 40f };
+    /** Covers drawn on each side; the outermost pair fades out. */
     private static final int SIDE = 6;
+    /** How far past the screen's edge the outermost cover shown reaches: the filtered edge is soft. */
+    private static final float EDGE_OUT = 2f;
+
+    private float angle;
+    private float spacing;
+    /** Covers on each side at rest: the last of them reaches the screen's edge and hides the rest. */
+    private int side;
     /** Screen row of the cover's bottom edge at rest. */
     private static final int BASE = 202;
     /** The row depth scales toward: two thirds down the cover, as in PictureFlow. */
@@ -51,8 +62,8 @@ public final class FlowView extends View {
     public static final int FADE_MS = 200;
     private boolean fading;
 
-    private final float offX;
-    private final float offY;
+    private float offX;
+    private float offY;
 
     private List items;
     private Flow.Loader loader;
@@ -80,21 +91,20 @@ public final class FlowView extends View {
 
     public FlowView(Context c) {
         super(c);
-        offX = Flow.S / 2f * (1f - (float) Math.cos(ANGLE)) + Flow.S;
-        offY = Flow.S / 2f * (float) Math.sin(ANGLE) + Flow.S / 4f;
+        setCount(Flow.count(c));
         // the slides erase what stands behind them, which needs a layer of their own over the wallpaper
         setLayerType(LAYER_TYPE_HARDWARE, null);
         erase.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
         int fg = textColor(c);
         shadow = lum(fg) > 128 ? 0xC0000000 : 0x80FFFFFF;
         name.setColor(fg);
-        name.setTextSize(20);
+        name.setTextSize(22);
         name.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
         name.setFakeBoldText(true);
         name.setTextAlign(Paint.Align.CENTER);
         name.setShadowLayer(2, 0, 1, shadow);
         artist.setColor(fg);
-        artist.setTextSize(17);
+        artist.setTextSize(19);
         artist.setTypeface(Typeface.MONOSPACE);
         artist.setTextAlign(Paint.Align.CENTER);
         artist.setShadowLayer(2, 0, 1, shadow);
@@ -117,6 +127,33 @@ public final class FlowView extends View {
 
     private static int lum(int p) {
         return (((p >> 16) & 0xFF) * 299 + ((p >> 8) & 0xFF) * 587 + (p & 0xFF) * 114) / 1000;
+    }
+
+    /** Albums on screen at rest: 3, 5 or 7. */
+    public void setCount(int n) {
+        int i = n <= 3 ? 0 : n <= 5 ? 1 : 2;
+        side = (n - 1) / 2;
+        angle = (float) Math.toRadians(ANGLES[i]);
+        spacing = STEPS[i];
+        float half = Flow.S / 2f;
+        offX = half * (1f - (float) Math.cos(angle)) + Flow.S;
+        offY = half * (float) Math.sin(angle) + Flow.S / 4f;
+        fit();
+        invalidate();
+    }
+
+    /**
+     * Moves the side covers out until the outer edge of the last one shown at rest is past the
+     * screen's: the covers behind it are then hidden by it, not faded out. The picture's edge, not
+     * the slide's transparent frame round it, or a sliver of the next cover shows beside it.
+     */
+    private void fit() {
+        if (w <= 0 || h <= 0) return;
+        float u = Flow.S / 2f;
+        float cos = (float) Math.cos(angle), sin = (float) Math.sin(angle);
+        // corner() solved for the centre x that projects the edge u to w + EDGE_OUT
+        float cx = (w / 2f + EDGE_OUT) * (h + offY - u * sin) / h - u * cos;
+        offX = cx - spacing * (side - 1);
     }
 
     public void setItems(List items, Flow.Loader loader, int start) {
@@ -154,13 +191,6 @@ public final class FlowView extends View {
         if (t == target) return;
         target = t;
         hurry = false;
-        if (!stepPending) {
-            long now = SystemClock.uptimeMillis();
-            long k = Open.lastKey();
-            stepKey = k > 0 && k <= now && now - k < 1000 ? k : now;
-            stepAt = now;
-            stepPending = true;
-        }
         loader.aim(t);
         last = 0;
         postInvalidateOnAnimation();
@@ -201,6 +231,7 @@ public final class FlowView extends View {
     protected void onSizeChanged(int nw, int nh, int ow, int oh) {
         w = nw;
         h = nh;
+        fit();
     }
 
     private boolean advance() {
@@ -218,88 +249,9 @@ public final class FlowView extends View {
         return pos != target;
     }
 
-    // ---- measurement: frames of the row's own animation -------------------------------------
-
-    /** What runs in the background meanwhile, set by the screen (measurement). */
-    public static volatile boolean busyTracks, busyPic, busyGc;
-    private static final long SLOW_FRAME = 40L;
-    private long prevDraw, fStart, fWorst;
-    private boolean prevAnim;
-    private int fFrames, fSlow;
-    // from the wheel's key event to the first frame that moves
-    private long stepKey, stepAt, latMax, latSum;
-    private boolean stepPending;
-    private int fSteps, fLate;
-
-    /** To the app's log and to logcat, beside the collector's own lines. */
-    private static void say(String s) {
-        Diag.note(s);
-        android.util.Log.i("ippflow", s);
-    }
-
-    private String busy() {
-        StringBuilder b = new StringBuilder();
-        if (loader != null) {
-            if (loader.busy) b.append(", slide").append(loader.how);
-            long ago = SystemClock.uptimeMillis() - loader.doneAt;
-            if (loader.doneAt > 0 && ago < 300) b.append(", last slide ").append(ago).append(" ms ago").append(loader.doneHow);
-        }
-        if (busyTracks) b.append(", tracks");
-        if (busyPic) b.append(", picture");
-        if (busyGc) b.append(", gc");
-        return b.toString();
-    }
-
     @Override
     protected void onDraw(Canvas c) {
-        long now = SystemClock.uptimeMillis();
-        if (prevAnim) {
-            long gap = now - prevDraw;
-            fFrames++;
-            if (gap > fWorst) fWorst = gap;
-            if (gap >= SLOW_FRAME) {
-                fSlow++;
-                say("flow frame " + gap + " ms" + busy());
-            }
-        } else {
-            fStart = now;
-            fFrames = 0;
-            fSlow = 0;
-            fWorst = 0;
-            fSteps = 0;
-            fLate = 0;
-            latMax = 0;
-            latSum = 0;
-        }
-        if (stepPending) {
-            stepPending = false;
-            long lat = now - stepKey;
-            fSteps++;
-            latSum += lat;
-            if (lat > latMax) latMax = lat;
-            if (lat >= 60) {
-                fLate++;
-                say("flow step late " + lat + " ms, key to step " + (stepAt - stepKey) + busy());
-            }
-        }
-        prevDraw = now;
-        draw0(c);
-        long end = SystemClock.uptimeMillis();
-        if (end - now >= 15) say("flow draw " + (end - now) + " ms");
-        boolean anim = moving0 || fading;
-        if (prevAnim && !anim) {
-            say("frames flow scroll worst " + fWorst + " ms, " + fFrames + " frames in "
-                    + (now - fStart) + " ms, slow " + fSlow + "; steps " + fSteps + ", key to frame max "
-                    + latMax + " mean " + (fSteps > 0 ? latSum / fSteps : 0) + ", late " + fLate);
-        }
-        prevAnim = anim;
-    }
-
-    private boolean moving0;
-
-    private void draw0(Canvas c) {
         boolean moving = advance();
-        moving0 = moving;
         fading = false;
         int n = count();
         if (n > 0 && w > 0) {
@@ -317,9 +269,9 @@ public final class FlowView extends View {
             name.setShadowLayer(2, 0, 1, faded(shadow, ta));
             artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
             c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),
-                    cx, h - 40, name);
+                    cx, h - 46, name);
             c.drawText(TextUtils.ellipsize(it.artist, artist, w - 24, TextUtils.TruncateAt.END).toString(),
-                    cx, h - 14, artist);
+                    cx, h - 19, artist);
         }
         if (moving || fading) postInvalidateOnAnimation();
         if (wasMoving && !moving && onRest != null) post(onRest);
@@ -334,12 +286,12 @@ public final class FlowView extends View {
         float ad = Math.abs(d);
         float sg = d < 0 ? -1f : 1f;
         if (ad <= 1f) {
-            sAngle = -sg * ANGLE * ad;
+            sAngle = -sg * angle * ad;
             sCx = sg * offX * ad;
             sCy = offY * ad;
         } else {
-            sAngle = -sg * ANGLE;
-            sCx = sg * (offX + SPACING * (ad - 1f));
+            sAngle = -sg * angle;
+            sCx = sg * (offX + spacing * (ad - 1f));
             sCy = offY;
         }
         float b = (SIDE - ad) / 2f;

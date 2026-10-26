@@ -315,3 +315,10 @@ Wird die Einstellung ausgeschaltet, werden die Wiedergabeliste und die vergebene
 Fügt der Bildschirmtastatur eine zweite Belegung hinzu.
 
 Zum Umschalten die obere Taste halten.
+
+[[coverflow]] Cover Flow
+
+[flow_count] Alben auf dem Bildschirm
+* 3
+* 5
+* 7

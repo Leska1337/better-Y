@@ -99,6 +99,15 @@ public final class Flow {
     /** The cover's curve coming out of the closed list's edge: equal speed there. */
     public static final float BACK_EASE = LEAVE_EASE * CARD_MS / LEAVE_MS;
 
+    /** Albums on screen at rest, the screen's own setting: an index into {@link #COUNTS}. */
+    public static final String KEY_COUNT = "flow_count";
+    public static final int[] COUNTS = { 3, 5, 7 };
+
+    public static int count(Context c) {
+        int i = Prefs.val(c, KEY_COUNT);
+        return COUNTS[i >= 0 && i < COUNTS.length ? i : COUNTS.length - 1];
+    }
+
     private Flow() {}
 
     // ---- the Music menu ---------------------------------------------------------------------
@@ -445,7 +454,7 @@ public final class Flow {
     public static final class Loader implements Runnable {
         public static final int AHEAD = 7;
         /**
-         * Kept around the target. Wider than what is drawn (SIDE + 1 from pos, and pos trails the
+         * Kept around the target. Wider than what is drawn (seven covers each side of pos, and pos trails the
          * target by up to a few slides on a fast spin), because what falls out is refilled for the
          * next slide in place: it must not be one the row still draws.
          */
@@ -492,11 +501,6 @@ public final class Flow {
         }
 
         private volatile boolean held;
-        /** A slide is being made right now, and what of it allocated (measurement). */
-        public volatile boolean busy;
-        public volatile String how = "";
-        public volatile String doneHow = "";
-        public volatile long doneAt;
 
         /**
          * Held while the screen animates: a slide's decode can still allocate (a cover not cached,
@@ -595,8 +599,6 @@ public final class Flow {
                     }
                     continue;
                 }
-                how = pool.isEmpty() ? " new-slide" : "";
-                busy = true;
                 Item it = (Item) items.get(want);
                 if (AlbumArtist.needsRead(it.key)) {
                     it.artist = artistOf(it.key, it.rep, AlbumArtist.read(it.key, it.rep.getPath()));
@@ -612,9 +614,6 @@ public final class Flow {
                 }
                 born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
                 slides.put(Integer.valueOf(want), s);
-                doneHow = how;
-                doneAt = SystemClock.uptimeMillis();
-                busy = false;
                 ui.post(onSlide);
             }
         }
@@ -683,9 +682,7 @@ public final class Flow {
             o.inMutable = true;
             o.inBitmap = flowBuf;
             try {
-                Bitmap b = BitmapFactory.decodeByteArray(file, 0, n, o);
-                if (b != flowBuf) how += " new-flow";
-                return b;
+                return BitmapFactory.decodeByteArray(file, 0, n, o);
             } catch (IllegalArgumentException e) {
                 return null;
             } finally {
@@ -696,21 +693,15 @@ public final class Flow {
         /** The cover scaled into slide {@code s} from the big cover; false when it has none. */
         private boolean slideSize(String path, Bitmap s) {
             try {
-                how += " no-flow";
                 Bitmap src = null;
                 File f = BigCover.cachedFile(path);
                 if (f != null) src = decode(f);
-                if (src == null) {
-                    how += " uncached";
-                    src = BigCover.trackFree(path);
-                }
+                if (src == null) src = BigCover.trackFree(path);
                 if (src == null) return false;
                 int w = src.getWidth(), h = src.getHeight();
                 int m = Math.min(w, h);
-                if (w != 300 || h != 300) how += " " + w + "x" + h;
                 canvas.setBitmap(s);
                 if (m > 2 * S) {
-                    how += " square";
                     // past 2x one bilinear pass skips pixels: Cover.square halves in steps
                     Bitmap sq = Cover.square(src, S);
                     canvas.drawBitmap(sq, F, F, filter);
@@ -776,7 +767,6 @@ public final class Flow {
                 o.inBitmap = null;
                 b = BitmapFactory.decodeByteArray(file, 0, n, o);
             }
-            if (b != null && b != o.inBitmap) how += " new-decode";
             if (b != null && o.inSampleSize == 1) decoded = b;
             return b;
         }

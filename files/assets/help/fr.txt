@@ -315,3 +315,10 @@ Lorsque ce réglage est désactivé, la playlist et les favoris donnés ne sont 
 Ajoute une deuxième disposition au clavier à l'écran.
 
 Maintenez le bouton du haut pour changer.
+
+[[coverflow]] Cover Flow
+
+[flow_count] Albums à l'écran
+* 3
+* 5
+* 7

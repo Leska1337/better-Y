@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 2
-  .line 948
+  .line 1170
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Repaint;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
@@ -23,7 +23,7 @@
 
 .method public run()V
   .registers 2
-  .line 950
+  .line 1172
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Repaint;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$100(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/FlowView;
     move-result-object v0

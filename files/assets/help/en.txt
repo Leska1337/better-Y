@@ -318,3 +318,10 @@ When you turn off this setting, the playlist and the likes you've given aren't d
 Adds a second layout to the on-screen keyboard.
 
 Hold top button to switch.
+
+[[coverflow]] Cover Flow
+
+[flow_count] Albums on screen
+* 3
+* 5
+* 7

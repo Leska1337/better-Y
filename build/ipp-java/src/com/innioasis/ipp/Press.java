@@ -14,6 +14,7 @@ import com.innioasis.fm.configs.KeyMap;
 import com.innioasis.music.MusicPlayerActivity;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
+import com.innioasis.y1.activity.IppFlowActivity;
 import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.base.BasePlayerActivity;
 import com.innioasis.y1.service.PlayerService;
@@ -72,11 +73,16 @@ public final class Press {
 
     /**
      * Pressed once: play/pause, posted 250 ms ahead. Pressed again inside that window: cancel it and
-     * open the player. On the player itself the button stays stock's.
+     * open the player. On the player itself the button stays stock's; in Cover Flow, which opens
+     * the player with its own flight, every press is play/pause at once.
      */
     public static boolean bottomPressed(BaseActivity a) {
         if (a == null || a instanceof BasePlayerActivity) {
             return false;
+        }
+        if (a instanceof IppFlowActivity) {
+            new Run(a).run();
+            return true;
         }
         Runnable p = pending;
         if (p != null) {

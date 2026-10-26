@@ -318,3 +318,10 @@ Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번�
 화면 키보드에 두 번째 자판을 추가합니다.
 
 전환하려면 위쪽 버튼을 길게 누르십시오.
+
+[[coverflow]] Cover Flow
+
+[flow_count] 화면의 앨범 수
+* 3
+* 5
+* 7

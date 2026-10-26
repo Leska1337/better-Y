@@ -62,6 +62,8 @@ public final class Prefs {
         def("delete_folder", 0);             // stock leaves the folder; taking it is opt-in
         def("keep_awake", 1);
         def("likes", 1);
+        // Cover Flow's own settings
+        def(Flow.KEY_COUNT, 2);              // seven albums, as the iPod shows them
         // Settings -> Key tone
         def(Tone.KEY_ON, 1);                 // stock's own default
         def(Tone.KEY_VOLUME, Tone.VOLUME_DEFAULT);

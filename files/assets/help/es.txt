@@ -315,3 +315,10 @@ Al desactivar esta opción, la lista y los Me gusta que haya dado no se eliminan
 Añade una segunda distribución al teclado en pantalla.
 
 Mantenga pulsado el botón superior para cambiar.
+
+[[coverflow]] Cover Flow
+
+[flow_count] Álbumes en pantalla
+* 3
+* 5
+* 7

@@ -12,6 +12,7 @@ import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.activity.AllAudiobooksActivity;
+import com.innioasis.y1.activity.IppFlowActivity;
 import com.innioasis.y1.activity.PlayerActivity;
 
 import java.io.File;
@@ -157,7 +158,7 @@ public final class Del {
     private static boolean songScreen(Activity a) {
         return a instanceof SongListActivity || a instanceof AlbumsActivity
                 || a instanceof ArtistsActivity || a instanceof GenresActivity
-                || a instanceof SearchActivity
+                || a instanceof SearchActivity || a instanceof IppFlowActivity
                 || a instanceof AllAudiobooksActivity || a instanceof PlayerActivity;
     }
 }

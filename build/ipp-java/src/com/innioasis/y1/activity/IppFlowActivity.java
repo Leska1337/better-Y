@@ -14,15 +14,18 @@ import android.os.Handler;
 import android.os.SystemClock;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Anim;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
@@ -30,28 +33,35 @@ import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
 import com.innioasis.ipp.Frames;
+import com.innioasis.ipp.Help;
 import com.innioasis.ipp.Lit;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
+import com.innioasis.ipp.Queue;
 import com.innioasis.ipp.Rows;
 import com.innioasis.ipp.Theme;
 import com.innioasis.music.MusicPlayerActivity;
+import com.innioasis.music.adapter.SubmenuAdapter;
+import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.database.Song;
+import com.innioasis.y1.database.Y1Repository;
 import com.innioasis.y1.databinding.ActivityAboutBinding;
 import com.innioasis.y1.service.PlayerService;
 import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.utils.DialogUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Cover Flow: the library's albums as a row of covers ({@link FlowView}) over the theme's
  * global wallpaper. The wheel moves along the row, centre turns the cover over to its track list, centre
  * on a track plays the album from it and carries the cover into Now Playing, top turns back and
- * then leaves.
+ * then leaves, a long top press on the row opens the album's menu.
  */
 public final class IppFlowActivity extends BaseActivity {
 
@@ -68,11 +78,15 @@ public final class IppFlowActivity extends BaseActivity {
     /** The player's own picture, travelling between this screen and the player. */
     private ImageView trip;
     private Panel panel;
+    private Opts opts;
     private Flow.Loader loader;
     private Handler ui;
     private List items;
 
-    /** 0 the row, 1 turning over, 2 the track list, 3 turning back, 4 at the player, 5 back from it. */
+    /**
+     * 0 the row, 1 turning over, 2 the track list, 3 turning back, 4 at the player, 5 back from it,
+     * 6 the settings over the row.
+     */
     private int state;
     private int flipped = -1;
 
@@ -101,6 +115,9 @@ public final class IppFlowActivity extends BaseActivity {
         panel = new Panel(this);
         panel.setVisibility(View.INVISIBLE);   // laid out from the start: the flip needs its size
         box.addView(panel, new FrameLayout.LayoutParams(PANEL_W, -1));
+        opts = new Opts(this);
+        opts.setVisibility(View.GONE);
+        box.addView(opts, new FrameLayout.LayoutParams(-1, -1));
         root.addView(box, -1, -1);
         Rows.watchFlat(new Highlight(panel));
         new Thread(new Load(this), "ipp-flow-list").start();
@@ -111,9 +128,9 @@ public final class IppFlowActivity extends BaseActivity {
         items = l;
         if (l.isEmpty()) {
             Toast.makeText(this, getString(R.string.no_content), Toast.LENGTH_SHORT).show();
+            if (loader == null && flow.count() > 0) finish();    // the last album deleted
             return;
         }
-        mode(mode);
         int start = Math.max(0, Math.min(l.size() - 1, Prefs.getInt(this, KEY_POS, 0)));
         loader = new Flow.Loader(l, ui, new Repaint(this));
         Thread t = new Thread(loader, "ipp-flow-covers");
@@ -150,6 +167,8 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 2) {
             panel.move(1);
             armAhead();
+        } else if (state == 6) {
+            opts.move(1);
         }
     }
 
@@ -162,6 +181,8 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 2) {
             panel.move(-1);
             armAhead();
+        } else if (state == 6) {
+            opts.move(-1);
         }
     }
 
@@ -178,28 +199,68 @@ public final class IppFlowActivity extends BaseActivity {
             }
         } else if (state == 2) {
             play();
+        } else if (state == 6) {
+            opts.change();
+            flow.setCount(Flow.count(this));
         }
     }
 
     /** The centre was pressed while the row moved: flip when it rests (Rested). */
     boolean flipPending;
 
-    /** Measurement: long top cycles normal → no System.gc → no build ahead, shown in the status bar. */
-    private static int mode;
-    private static final String[] MODES = { "normal", "nogc", "nodwell" };
-
-    private void mode(int m) {
-        mode = m;
-        noGc = m == 1;
-        noDwell = m == 2;
-        if (noDwell) ui.removeCallbacks(backDwell);
-        setStateBarLeftText(getString(R.string.ipp_coverflow) + " [" + MODES[m] + "]");
-        Diag.note("flow measure: " + MODES[m]);
-    }
-
+    /** The long top press: the album's menu, on the row only. */
     @Override
     public void longConfirm() {
-        if (state == 0) mode((mode + 1) % MODES.length);
+        if (state != 0 || items == null || items.isEmpty()) return;
+        List l = new ArrayList();
+        l.add(getString(R.string.ipp_queue_add));
+        l.add(getString(R.string.album_menu_delete));
+        l.add(getString(R.string.main_setting));
+        // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
+        new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common).show();
+    }
+
+    boolean pick(int at, SubmenuAdapter.Item item) {
+        String s = item == null ? null : item.getString();
+        if (s == null || at < 0 || at >= items.size()) return true;
+        Flow.Item it = (Flow.Item) items.get(at);
+        if (s.equals(getString(R.string.ipp_queue_add))) {
+            Thread t = new Thread(new Enqueue(this, it), "ipp-flow-queue");
+            t.setDaemon(true);
+            t.start();
+        } else if (s.equals(getString(R.string.album_menu_delete))) {
+            DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
+            d.setDialogTitle(getString(R.string.is_delete), "", new DeleteAlbum(this, it), false, true);
+        } else if (s.equals(getString(R.string.main_setting))) {
+            state = 6;
+            opts.open();
+            flow.setVisibility(View.INVISIBLE);
+            setStateBarLeftText(opts.title());
+        }
+        return true;
+    }
+
+    /** The album's songs off the main thread, then into the queue in the order its back lists them. */
+    void enqueued(List songs) {
+        if (songs != null && !songs.isEmpty()) Queue.addAllFromMusic(songs);
+    }
+
+    /** Every song of the album, files and all, as the Albums screen deletes one; then the row again. */
+    void delete(Flow.Item it) {
+        Thread t = new Thread(new Delete(this, it), "ipp-flow-delete");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /** The library changed under the row: built again, standing where it stood. */
+    void reload() {
+        if (isFinishing()) return;
+        if (loader != null) loader.quit();
+        loader = null;
+        if (items != null && flow != null) Prefs.setInt(this, KEY_POS, flow.target());
+        backFor = null;
+        backReady = null;
+        new Thread(new Load(this), "ipp-flow-list").start();
     }
 
     @Override
@@ -207,6 +268,12 @@ public final class IppFlowActivity extends BaseActivity {
         if (d == BaseActivity.Direction.TOP) {
             if (state == 2) flipBack();
             else if (state == 0) finish();
+            else if (state == 6) {
+                opts.setVisibility(View.GONE);
+                flow.setVisibility(View.VISIBLE);
+                setStateBarLeftText(getString(R.string.ipp_coverflow));
+                state = 0;
+            }
         }
     }
 
@@ -516,12 +583,8 @@ public final class IppFlowActivity extends BaseActivity {
     private Flow.Item backBusy;
     private Flow.Item backNext;     // flipped while another album's list was being built
 
-    /** Measurement switches: no build ahead on the row's rest; no System.gc after a build. */
-    static boolean noDwell, noGc;
-
     private void armBack() {
         ui.removeCallbacks(backDwell);
-        if (noDwell) return;
         ui.postDelayed(backDwell, DWELL_MS);
     }
 
@@ -620,6 +683,165 @@ public final class IppFlowActivity extends BaseActivity {
         i.putExtra(Flow.EXTRA_FLIP, true);
         startActivity(i);
         overridePendingTransition(0, 0);
+    }
+
+    /**
+     * Cover Flow's own settings, drawn as the better-Y menu draws a group's rows (IppActivity's
+     * newRow and bindRow): five rows to the screen, the theme's setting bar under the cursor, the
+     * group's name in the status bar. A layer of this screen, so it opens at once; the row of covers
+     * is hidden under it. Its words are the help asset's Cover Flow group, eight languages.
+     */
+    static final class Opts extends LinearLayout {
+        private static final String GROUP = "coverflow";
+        private static final String[] KEYS = { Flow.KEY_COUNT };
+        /** Each row's values when the asset names none. */
+        private static final int[][] NUMS = { Flow.COUNTS };
+        // the better-Y menu's own numbers
+        private static final int ROWS = 5;
+        private static final int ACCENT = 0xFF3CFFDE;
+        private static final float TEXT_SP = 22f, TEXT_MIN_SP = 14f;
+        private static final int TEXT_START = 10;
+        private static final int HAIR_ALPHA = 0x1F000000;
+
+        private String title;
+        private final String[] labels = new String[KEYS.length];
+        private final String[][] values = new String[KEYS.length][];
+        private final LinearLayout[] lines = new LinearLayout[KEYS.length];
+        private final TextView[] names = new TextView[KEYS.length];
+        private final TextView[] vals = new TextView[KEYS.length];
+        private int sel;
+        private boolean fitted;
+
+        Opts(Context c) {
+            super(c);
+            setOrientation(VERTICAL);
+            names(c);
+            TextView probe = new TextView(c);
+            ThemeManager.INSTANCE.itemSetTextColor(probe, c.getResources().getColor(R.color.selected_text_color), false);
+            int hair = (probe.getCurrentTextColor() & 0x00FFFFFF) | HAIR_ALPHA;
+            for (int k = 0; k < KEYS.length; k++) {
+                LinearLayout line = new LinearLayout(c);
+                line.setOrientation(HORIZONTAL);
+                line.setBaselineAligned(false);
+                line.setGravity(Gravity.CENTER_VERTICAL);
+                line.setPadding(TEXT_START, 0, 5, 0);
+                TextView label = new TextView(c);
+                label.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                label.setIncludeFontPadding(false);
+                label.setGravity(Gravity.CENTER_VERTICAL);
+                label.setText(labels[k]);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1);
+                lp.weight = 1f;
+                line.addView(label, lp);
+                TextView value = new TextView(c);
+                value.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+                value.setIncludeFontPadding(false);
+                value.setGravity(Gravity.CENTER_VERTICAL);
+                value.setPadding(6, 0, 6, 0);
+                line.addView(value, -2, -2);
+                addView(line, new LinearLayout.LayoutParams(-1, 0));
+                View h = new View(c);
+                h.setBackgroundColor(hair);
+                addView(h, new LinearLayout.LayoutParams(-1, 1));
+                lines[k] = line;
+                names[k] = label;
+                vals[k] = value;
+            }
+        }
+
+        /** The menu's rule: 22sp, smaller until every label fits two lines beside its widest value. */
+        private void fit() {
+            int h = ((View) getParent()).getHeight();
+            int width = ((View) getParent()).getWidth();
+            if (fitted || h <= 0) return;
+            fitted = true;
+            int row = h / ROWS - 1;
+            float scaled = getResources().getDisplayMetrics().scaledDensity;
+            float sp = TEXT_SP;
+            TextPaint p = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+            p.setTypeface(Typeface.create(Typeface.MONOSPACE, Typeface.BOLD));
+            for (; sp > TEXT_MIN_SP; sp -= 1f) {
+                p.setTextSize(sp * scaled);
+                boolean all = true;
+                for (int k = 0; k < KEYS.length && all; k++) {
+                    float widest = 0;
+                    for (int v = 0; v < values[k].length; v++) widest = Math.max(widest, p.measureText(values[k][v]));
+                    int room = width - TEXT_START - 5 - 6 - 6 - (int) Math.ceil(widest);
+                    android.text.StaticLayout l = new android.text.StaticLayout(labels[k], p, Math.max(1, room),
+                            android.text.Layout.Alignment.ALIGN_NORMAL, 1f, 0f, false);
+                    all = room > 0 && l.getLineCount() <= 2 && l.getHeight() <= row;
+                }
+                if (all) break;
+            }
+            for (int k = 0; k < KEYS.length; k++) {
+                names[k].setTextSize(sp);
+                vals[k].setTextSize(sp);
+                lines[k].getLayoutParams().height = row;
+            }
+            requestLayout();
+        }
+
+        /** The rows painted as bindRow paints them: the setting bar and the accent under the cursor. */
+        private void paint() {
+            Context c = getContext();
+            for (int k = 0; k < KEYS.length; k++) {
+                boolean on = k == sel;
+                int v = Prefs.val(c, KEYS[k]);
+                vals[k].setText(v >= 0 && v < values[k].length ? values[k][v] : "");
+                int fg = on ? ACCENT : -1;
+                ThemeManager.INSTANCE.itemSetBackground(lines[k], on ? R.drawable.item_setting_sel : 0, on);
+                ThemeManager.INSTANCE.itemSetTextColor(names[k], fg, on);
+                ThemeManager.INSTANCE.itemSetTextColor(vals[k], fg, on);
+            }
+        }
+
+        String title() { return title; }
+
+        private void names(Context c) {
+            title = c.getString(R.string.ipp_coverflow);
+            List rows = Help.rows(c);
+            boolean in = false;
+            for (int i = 0; i < rows.size(); i++) {
+                Help.Row r = (Help.Row) rows.get(i);
+                if (r.group) {
+                    in = GROUP.equals(r.key);
+                    if (in && r.label != null) title = r.label;
+                    continue;
+                }
+                for (int k = 0; in && k < KEYS.length; k++) {
+                    if (!KEYS[k].equals(r.key)) continue;
+                    labels[k] = r.label;
+                    if (r.values != null && r.values.length == NUMS[k].length) values[k] = r.values;
+                }
+            }
+            for (int k = 0; k < KEYS.length; k++) {
+                if (labels[k] == null) labels[k] = KEYS[k];
+                if (values[k] != null) continue;
+                values[k] = new String[NUMS[k].length];
+                for (int v = 0; v < NUMS[k].length; v++) values[k][v] = String.valueOf(NUMS[k][v]);
+            }
+        }
+
+        void open() {
+            sel = 0;
+            fit();
+            paint();
+            setVisibility(View.VISIBLE);
+        }
+
+        void move(int d) {
+            int s = Math.max(0, Math.min(KEYS.length - 1, sel + d));
+            if (s == sel) return;
+            sel = s;
+            paint();
+        }
+
+        /** The value under the cursor to the next one, round the end. */
+        void change() {
+            int v = Prefs.val(getContext(), KEYS[sel]);
+            Prefs.setInt(getContext(), KEYS[sel], (v + 1) % values[sel].length);
+            paint();
+        }
     }
 
     /** The album's name and artist over its tracks, a cursor bar on the track under the wheel. */
@@ -958,9 +1180,7 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             long t0 = SystemClock.uptimeMillis();
-            FlowView.busyTracks = true;
             Flow.Back b = Flow.back(it);
-            FlowView.busyTracks = false;
             // No picture for the player here: ~1 MB of bitmaps on every rest of the row, and the
             // collection after it, cost the scrolling row its frames. The open list builds it once
             // the cursor rests on a track (armAhead).
@@ -1069,9 +1289,7 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             Object[] src = new Object[2];
-            FlowView.busyPic = true;
             Bitmap b = Flow.tripAhead(track, rep, src);
-            FlowView.busyPic = false;
             a.ui.post(new AheadDone(a, track.getPath(), b, src));
             IppFlowActivity.tidy();
         }
@@ -1096,10 +1314,83 @@ public final class IppFlowActivity extends BaseActivity {
      * next flip's first allocation.
      */
     static void tidy() {
-        if (noGc) return;
-        FlowView.busyGc = true;
         System.gc();
-        FlowView.busyGc = false;
+    }
+
+    static final class AlbumMenu implements SubMenuDialog.Callback {
+        private final IppFlowActivity a;
+        private final int at;
+
+        AlbumMenu(IppFlowActivity a, int at) { this.a = a; this.at = at; }
+
+        @Override
+        public boolean select(int index, SubmenuAdapter.Item item) { return a.pick(at, item); }
+    }
+
+    static final class Enqueue implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+
+        Enqueue(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
+
+        public void run() {
+            Flow.Back b = Flow.back(it);
+            a.ui.post(new Enqueued(a, b == null ? null : b.songs));
+        }
+    }
+
+    static final class Enqueued implements Runnable {
+        private final IppFlowActivity a;
+        private final List songs;
+
+        Enqueued(IppFlowActivity a, List songs) { this.a = a; this.songs = songs; }
+
+        public void run() { a.enqueued(songs); }
+    }
+
+    static final class DeleteAlbum extends DialogUtil.DialogCallback {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+
+        DeleteAlbum(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
+
+        @Override
+        public void confirm() { a.delete(it); }
+
+        @Override
+        public void cancel() {
+        }
+    }
+
+    static final class Delete implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+
+        Delete(IppFlowActivity a, Flow.Item it) { this.a = a; this.it = it; }
+
+        public void run() {
+            try {
+                // deleteSong takes the FILE off the card, and invalidates the caches itself
+                Y1Repository r = Y1Application.Companion.getY1Repository();
+                List l = new ArrayList(Albums.songsOf(it.key));
+                r.startDeleteSongs();
+                try {
+                    for (int i = 0; i < l.size(); i++) r.deleteSong((Song) l.get(i));
+                } finally {
+                    r.endDeleteSongs();
+                }
+            } catch (Throwable t) {
+            }
+            a.ui.post(new Reload(a));
+        }
+    }
+
+    static final class Reload implements Runnable {
+        private final IppFlowActivity a;
+
+        Reload(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.reload(); }
     }
 
     static final class ToPlayer implements Runnable {
