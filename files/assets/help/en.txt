@@ -327,3 +327,5 @@ Hold top button to switch.
 * 7
 
 [flow_group] Group by artist
+
+[flow_year] Show release year

@@ -270,12 +270,37 @@ public final class FlowView extends View {
             artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
             c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 46, name);
-            c.drawText(TextUtils.ellipsize(it.artist, artist, w - 24, TextUtils.TruncateAt.END).toString(),
+            c.drawText(TextUtils.ellipsize(artistLine(it), artist, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 19, artist);
         }
         if (moving || fading) postInvalidateOnAnimation();
         if (wasMoving && !moving && onRest != null) post(onRest);
         wasMoving = moving;
+    }
+
+    private boolean years;
+    // the last line built, so a frame of an unchanged label allocates nothing
+    private Flow.Item lineOf;
+    private String lineArtist, lineYear, line;
+
+    /** The release year after the artist, the screen's setting. */
+    public void setYears(boolean on) {
+        if (years == on) return;
+        years = on;
+        lineOf = null;
+        invalidate();
+    }
+
+    private String artistLine(Flow.Item it) {
+        String a = it.artist, y = it.year;
+        if (!years || y == null || y.length() == 0) return a;
+        if (it != lineOf || a != lineArtist || y != lineYear) {
+            lineOf = it;
+            lineArtist = a;
+            lineYear = y;
+            line = a == null || a.length() == 0 ? y : a + " • " + y;
+        }
+        return line;
     }
 
     private float sAngle, sCx, sCy;

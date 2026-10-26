@@ -324,3 +324,5 @@ Zum Umschalten die obere Taste halten.
 * 7
 
 [flow_group] Nach Künstler gruppieren
+
+[flow_year] Erscheinungsjahr anzeigen

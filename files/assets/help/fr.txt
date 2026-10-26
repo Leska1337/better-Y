@@ -324,3 +324,5 @@ Maintenez le bouton du haut pour changer.
 * 7
 
 [flow_group] Grouper par artiste
+
+[flow_year] Afficher l'année de sortie

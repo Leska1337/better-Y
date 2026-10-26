@@ -104,6 +104,7 @@ public final class IppFlowActivity extends BaseActivity {
         root.setBackgroundDrawable(null);
         FrameLayout box = new FrameLayout(this);
         flow = new FlowView(this);
+        flow.setYears(Flow.years(this));
         box.addView(flow, new FrameLayout.LayoutParams(-1, -1));
         card = new FlowView.Card(this);
         card.setVisibility(View.GONE);
@@ -206,6 +207,7 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 6) {
             opts.change();
             flow.setCount(Flow.count(this));
+            flow.setYears(Flow.years(this));
         }
     }
 
@@ -734,9 +736,9 @@ public final class IppFlowActivity extends BaseActivity {
      */
     static final class Opts extends LinearLayout {
         private static final String GROUP = "coverflow";
-        private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP };
+        private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP, Flow.KEY_YEAR };
         /** Each row's values when the asset names none; null is an Off/On row. */
-        private static final int[][] NUMS = { Flow.COUNTS, null };
+        private static final int[][] NUMS = { Flow.COUNTS, null, null };
         // the better-Y menu's own numbers
         private static final int ROWS = 5;
         private static final int ACCENT = 0xFF3CFFDE;
@@ -972,7 +974,8 @@ public final class IppFlowActivity extends BaseActivity {
         }
 
         void show(Flow.Item it) {
-            title = it.name;
+            String y = it.year;
+            title = Flow.years(getContext()) && y != null && y.length() > 0 ? it.name + " (" + y + ")" : it.name;
             artist = it.artist;
             songs = null;
             names = null;

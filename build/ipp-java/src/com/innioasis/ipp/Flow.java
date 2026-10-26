@@ -113,6 +113,13 @@ public final class Flow {
     public static final int A_Z = 0, Z_A = 1, OLDEST = 2, NEWEST = 3;
     /** Albums of one artist together, artists A to Z, Sort by inside each; nothing marks the groups. */
     public static final String KEY_GROUP = "flow_group";
+    /** The year after the artist under the cover and after the album's name over its tracks. */
+    public static final String KEY_YEAR = "flow_year";
+
+    /** The window stores every row as a number, so a toggle is read as one. */
+    public static boolean years(Context c) {
+        return Prefs.val(c, KEY_YEAR) != 0;
+    }
 
     private Flow() {}
 
@@ -152,6 +159,8 @@ public final class Flow {
         public final String name;
         public final Song rep;
         public volatile String artist;
+        /** Four digits, "" when the tag has none, null while never read. */
+        public volatile String year;
         /** What the row is ordered by. */
         final String sort;
 
@@ -162,7 +171,17 @@ public final class Flow {
             this.name = name;
             this.rep = rep;
             this.artist = artistOf(key, rep, AlbumArtist.get(key));
+            this.year = yearOf(key, rep);
         }
+    }
+
+    /** The representative's own year, else the one the Albums screen found for the album. */
+    static String yearOf(String key, Song rep) {
+        String y = rep.getYear();
+        if (y == null) y = YearCache.get(key);
+        if (y == null) return null;
+        String d = YearCache.digits4(y);
+        return d == null ? "" : d;
     }
 
     /** Music → Album Artists' rule: the album artist as written, else the track's first artist. */
@@ -196,6 +215,7 @@ public final class Flow {
                 for (int i = 0; i < kept.size(); i++) {
                     Item it = (Item) kept.get(i);
                     it.artist = artistOf(it.key, it.rep, AlbumArtist.get(it.key));
+                    it.year = yearOf(it.key, it.rep);
                 }
             }
             return kept;
@@ -265,6 +285,7 @@ public final class Flow {
                 if (AlbumArtist.needsRead(it.key)) {
                     aa = AlbumArtist.read(it.key, it.rep.getPath());
                     it.artist = artistOf(it.key, it.rep, aa);
+                    it.year = yearOf(it.key, it.rep);
                     read = true;
                 } else {
                     aa = AlbumArtist.get(it.key);
@@ -673,8 +694,9 @@ public final class Flow {
                     continue;
                 }
                 Item it = (Item) items.get(want);
-                if (AlbumArtist.needsRead(it.key)) {
+                if (AlbumArtist.needsRead(it.key) || it.year == null) {
                     it.artist = artistOf(it.key, it.rep, AlbumArtist.read(it.key, it.rep.getPath()));
+                    it.year = yearOf(it.key, it.rep);
                     readArtist = true;
                 }
                 Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
