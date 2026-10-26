@@ -769,7 +769,7 @@
     move-result-object v0
   .line 430
     if-nez v0, :L2
-    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->track(Ljava/lang/String;)Landroid/graphics/Bitmap;
+    invoke-static { p0 }, Lcom/innioasis/ipp/BigCover;->trackFree(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L2
   .line 431

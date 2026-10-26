@@ -427,7 +427,7 @@ public final class Flow {
             File f = FlowCache.file(path);
             if (f == null || f.exists()) return true;
             Bitmap src = BigCover.peekTrackFree(path);
-            if (src == null) src = BigCover.track(path);
+            if (src == null) src = BigCover.trackFree(path);
             if (src == null) return BigCover.knownNone(path);
             return FlowCache.write(path, Cover.square(src, S));
         } catch (Throwable t) {
@@ -639,7 +639,7 @@ public final class Flow {
          * The album's cover drawn into slide {@code s}; false when it has none. From Cover Flow's
          * own cache when it has the cover; otherwise from the big cover's JPEG, into one reused
          * buffer when the size allows; only a cover never cached goes through
-         * {@code BigCover.track}, which reads it and writes it down for good.
+         * {@code BigCover.trackFree}, which reads it and writes it down for good.
          */
         private boolean cover(Item it, Bitmap s) {
             try {
@@ -702,7 +702,7 @@ public final class Flow {
                 if (f != null) src = decode(f);
                 if (src == null) {
                     how += " uncached";
-                    src = BigCover.track(path);
+                    src = BigCover.trackFree(path);
                 }
                 if (src == null) return false;
                 int w = src.getWidth(), h = src.getHeight();

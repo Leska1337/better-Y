@@ -80,14 +80,26 @@ public final class BigCover {
 
     /** The cover of one track, reading and caching it if needed. Off the main thread only. */
     public static Bitmap track(String path) {
+        return track(path, true);
+    }
+
+    /**
+     * {@link #track} that leaves memory as it was: for a reader that walks many albums, as Cover
+     * Flow does after the cache was cleared. The file and the note are written as usual.
+     */
+    public static Bitmap trackFree(String path) {
+        return track(path, false);
+    }
+
+    private static Bitmap track(String path, boolean store) {
         if (path == null) return null;
-        Bitmap hit = peekTrack(path);
+        Bitmap hit = store ? peekTrack(path) : peekTrackFree(path);
         if (hit != null) return hit;
         if (miss.containsKey(path)) return null;
 
         // the prefetch and the player's own load: the second finds the answer in memory
         synchronized (LOCK) {
-            hit = peekTrack(path);
+            hit = store ? peekTrack(path) : peekTrackFree(path);
             if (hit != null) return hit;
             if (miss.containsKey(path)) return null;
 
@@ -111,21 +123,21 @@ public final class BigCover {
             Bitmap fresh = src.bmp;
 
             // noted only once the JPEG is on disk: a note without its file is never read again
-            Bitmap rep = peek(folder);
+            Bitmap rep = peek(folder, store);
             if (rep == null) {
-                mem.put(path, fresh);
-                if (!store(folder, src, null)) return fresh;
+                if (store) mem.put(path, fresh);
+                if (!store(folder, src, null, store)) return fresh;
                 sigSet(folder, src.raw);
                 noteSet(path, SHARED);
                 return fresh;
             }
             if (sigIs(folder, src.raw) || same(rep, fresh)) {
-                mem.put(path, rep);
+                if (store) mem.put(path, rep);
                 noteSet(path, SHARED);
                 return rep;
             }
-            mem.put(path, fresh);
-            if (store(path, src, null)) noteSet(path, OWN);
+            if (store) mem.put(path, fresh);
+            if (store(path, src, null, store)) noteSet(path, OWN);
             return fresh;
         }
     }
@@ -769,6 +781,11 @@ public final class BigCover {
 
     /** False when nothing reached the disk — an encode that ran out of memory included. */
     private static boolean store(String key, Src s, Walk w) {
+        return store(key, s, w, true);
+    }
+
+    /** {@code keep} false writes the file and leaves memory as it was, for {@link #trackFree}. */
+    private static boolean store(String key, Src s, Walk w, boolean keep) {
         try {
             if (s == null || s.bmp == null) return false;
             byte[] out = fit(s, w);
@@ -777,7 +794,7 @@ public final class BigCover {
             boolean ok = write(key, out);
             if (w != null) w.writeNs += System.nanoTime() - t0;
             if (!ok) return false;
-            mem.put(key, s.bmp);
+            if (keep) mem.put(key, s.bmp);
             return true;
         } catch (Throwable t) {
             return false;

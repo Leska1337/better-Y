@@ -66,140 +66,140 @@
 
 .method public constructor <init>()V
   .registers 1
-  .line 307
+  .line 319
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$100(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     return-object p0
 .end method
 
 .method static synthetic access$102(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     return-object p1
 .end method
 
 .method static synthetic access$200(Lcom/innioasis/ipp/BigCover$Walk;)[B
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
     return-object p0
 .end method
 
 .method static synthetic access$202(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
     return-object p1
 .end method
 
 .method static synthetic access$300(Lcom/innioasis/ipp/BigCover$Walk;)Landroid/graphics/Bitmap;
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
     return-object p0
 .end method
 
 .method static synthetic access$302(Lcom/innioasis/ipp/BigCover$Walk;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
     return-object p1
 .end method
 
 .method static synthetic access$400(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDir:Ljava/lang/String;
     return-object p0
 .end method
 
 .method static synthetic access$402(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDir:Ljava/lang/String;
     return-object p1
 .end method
 
 .method static synthetic access$500(Lcom/innioasis/ipp/BigCover$Walk;)[B
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDirBytes:[B
     return-object p0
 .end method
 
 .method static synthetic access$502(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extDirBytes:[B
     return-object p1
 .end method
 
 .method static synthetic access$600(Lcom/innioasis/ipp/BigCover$Walk;)[B
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extBytes:[B
     return-object p0
 .end method
 
 .method static synthetic access$602(Lcom/innioasis/ipp/BigCover$Walk;[B)[B
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extBytes:[B
     return-object p1
 .end method
 
 .method static synthetic access$700(Lcom/innioasis/ipp/BigCover$Walk;)Ljava/lang/String;
   .registers 1
-  .line 307
+  .line 319
     iget-object p0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extPath:Ljava/lang/String;
     return-object p0
 .end method
 
 .method static synthetic access$702(Lcom/innioasis/ipp/BigCover$Walk;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 307
+  .line 319
     iput-object p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extPath:Ljava/lang/String;
     return-object p1
 .end method
 
 .method static synthetic access$800(Lcom/innioasis/ipp/BigCover$Walk;)J
   .registers 3
-  .line 307
+  .line 319
     iget-wide v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extLen:J
     return-wide v0
 .end method
 
 .method static synthetic access$802(Lcom/innioasis/ipp/BigCover$Walk;J)J
   .registers 3
-  .line 307
+  .line 319
     iput-wide p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extLen:J
     return-wide p1
 .end method
 
 .method static synthetic access$900(Lcom/innioasis/ipp/BigCover$Walk;)J
   .registers 3
-  .line 307
+  .line 319
     iget-wide v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->extMod:J
     return-wide v0
 .end method
 
 .method static synthetic access$902(Lcom/innioasis/ipp/BigCover$Walk;J)J
   .registers 3
-  .line 307
+  .line 319
     iput-wide p1, p0, Lcom/innioasis/ipp/BigCover$Walk;->extMod:J
     return-wide p1
 .end method
 
 .method public done()V
   .registers 3
-  .line 329
+  .line 341
     iget-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     if-eqz v0, :L0
     invoke-static { }, Lcom/innioasis/ipp/BigCover;->access$000()Ljava/util/Map;
@@ -207,13 +207,13 @@
     iget-object v1, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
     invoke-interface { v0, v1 }, Ljava/util/Map;->remove(Ljava/lang/Object;)Ljava/lang/Object;
   :L0
-  .line 330
+  .line 342
     const/4 v0, 0
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->folder:Ljava/lang/String;
-  .line 331
+  .line 343
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->raw:[B
-  .line 332
+  .line 344
     iput-object v0, p0, Lcom/innioasis/ipp/BigCover$Walk;->rep:Landroid/graphics/Bitmap;
-  .line 333
+  .line 345
     return-void
 .end method
