@@ -278,10 +278,13 @@ public final class Albums {
             songCacheAt = System.currentTimeMillis();
             songSig = sig;
         }
+        Scan.loaded(550);
         if (all == read) {
             share(all);
+            Scan.loaded(580);
             reserve();
         }
+        Scan.loaded(670);
         return all;
     }
 
@@ -333,6 +336,7 @@ public final class Albums {
                 }
                 c.close();
                 c = null;
+                Scan.loaded(k * 500 / Math.max(n, 1));
                 if (got < PORTION) break;
             }
             if (k != n) return null;
@@ -463,6 +467,8 @@ public final class Albums {
             lists();
             Schema.backfill();
         } catch (Throwable t) {
+        } finally {
+            Scan.tailEnds();
         }
     }
 
@@ -514,12 +520,15 @@ public final class Albums {
         List all = allSongs();
         if (all == null) return;
         foldersOf(all);
+        Scan.loaded(720);
         Artists.index(all);
         Y1Repository repo = Y1Application.Companion.getY1Repository();
         if (repo == null) return;
         prepareAlbums(repo, all);
+        Scan.loaded(800);
         songsIn(repo, Y1Repository.SongSortType.Companion.fromType(
                 SharedPreferencesUtils.INSTANCE.getSortAllSong()));
+        Scan.loaded(960);
         if (byDate(sortValue(false))) {
             HashMap index = albumSongsOf(all);
             if (index != null) YearCache.prepare(new ArrayList(index.keySet()));

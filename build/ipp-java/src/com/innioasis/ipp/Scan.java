@@ -41,7 +41,7 @@ public final class Scan {
         if (!marked) mark();
         boolean in = inDb(path);
         meet(path);
-        count();
+        count(in);
         labKnown += SystemClock.uptimeMillis() - lt;
         return in ? MARKER : null;
     }
@@ -214,17 +214,101 @@ public final class Scan {
         return marked && !wrote;
     }
 
-    // the scan window's progress: music files met against the rows the table held before
+    // The scan window's progress, in tenths of a millisecond of the walk. The walk lists the folders
+    // the table's paths lie in and meets the rows the table held plus the new files queued (a level's
+    // files are all listed before the walk reaches the first of them); when any is new, the list
+    // read after the walk has its share too. The tail fills what the walk left, so it never goes back.
+    private static final int FOLDER = 30;
+    private static final int KNOWN = 4;
+    private static final int NEW = 22;
+    private static final int LOAD = 6;      // per row of the list read after the walk
+    private static final int DROP = 7;      // per row of missing files the clean-up looks at
     private static int seen;
+    private static long units;
     private static int expected;
+    private static int dirsExpected;
+    private static int dirs;
+    private static int queued;
     private static int shown = -1;
+    private static Thread tailThread;
+    private static long tailWork, tailDone, tailLoad;
+    private static int tailFrom;
 
-    private static synchronized void count() {
+    private static synchronized void count(boolean in) {
         int n = ++seen;
-        int step = expected > 0 ? n * 100 / expected : n / 16;
-        if (step == shown) return;
-        shown = step;
-        Loading.scanned(n, expected);
+        units += in ? KNOWN : NEW;
+        if (expected == 0) {
+            int step = n / 16;
+            if (step == shown) return;
+            shown = step;
+            Loading.scanned(n);
+            return;
+        }
+        walkShown();
+    }
+
+    /** Under the class lock. */
+    private static void walkShown() {
+        if (expected == 0) return;
+        long all = (long) FOLDER * Math.max(dirsExpected, dirs) + (long) KNOWN * expected + (long) NEW * queued;
+        if (queued > 0) all += (long) LOAD * (expected + queued);
+        show((int) (units * 100 / Math.max(all, units + 1)));
+    }
+
+    private static synchronized void listedDir() {
+        dirs++;
+        units += FOLDER;
+        walkShown();
+    }
+
+    /** The folders holding the table's paths, and theirs up to the card: what the walk will list. */
+    private static int dirsOf(HashSet p) {
+        HashSet d = new HashSet();
+        java.util.Iterator it = p.iterator();
+        while (it.hasNext()) {
+            String s = (String) it.next();
+            int cut = s.lastIndexOf('/');
+            while (cut > 0 && d.add(s.substring(0, cut))) cut = s.lastIndexOf('/', cut - 1);
+        }
+        return d.size();
+    }
+
+    /** Under the class lock: a percent of the whole scan, never below the one shown. */
+    private static void show(int pct) {
+        if (pct > 99) pct = 99;
+        if (pct <= shown) return;
+        shown = pct;
+        Loading.scannedPercent(pct);
+    }
+
+    /** The walk is over: the clean-up of {@code missing} rows and, when anything was written, the list read. */
+    private static synchronized void tailStarts(int missing) {
+        if (expected == 0) return;
+        tailThread = Thread.currentThread();
+        tailFrom = Math.max(shown, 0);
+        tailDone = 0L;
+        tailLoad = wrote || missing > 0 ? (long) LOAD * Math.max(1, expected + added - missing) : 0L;
+        tailWork = (long) DROP * missing + tailLoad;
+    }
+
+    private static synchronized void tailStep(long work) {
+        if (Thread.currentThread() != tailThread || tailWork <= 0L) return;
+        tailDone += work;
+        show(tailFrom + (int) ((100 - tailFrom) * Math.min(tailDone, tailWork) / tailWork));
+    }
+
+    /** From the list's read after the scan, on its thread: {@code part} of 1000 of that work is done. */
+    static synchronized void loaded(int part) {
+        if (Thread.currentThread() != tailThread || tailLoad <= 0L) return;
+        long base = tailWork - tailLoad;
+        tailDone = Math.max(tailDone, base + tailLoad * part / 1000);
+        show(tailFrom + (int) ((100 - tailFrom) * Math.min(tailDone, tailWork) / tailWork));
+    }
+
+    /** The list is built and the window is about to close. */
+    static synchronized void tailEnds() {
+        tailThread = null;
+        tailWork = tailDone = tailLoad = 0L;
     }
 
     // The walk's checks of one node, in place of stock's File.exists / endIsAudiobook / endIsMusic /
@@ -285,6 +369,7 @@ public final class Scan {
      * cached. The same look, sooner, on the second core; nothing is answered from here.
      */
     public static void listed(File[] children) {
+        listedDir();
         if (children == null || children.length == 0) return;
         long lt = SystemClock.uptimeMillis();
         queue(children);
@@ -396,6 +481,7 @@ public final class Scan {
                 if (!met.contains(p)) unmet.add(p);
             }
         }
+        tailStarts(unmet.size());
         if (unmet.isEmpty()) return unmet;
         try {
             drop(unmet);
@@ -435,6 +521,7 @@ public final class Scan {
                     Song probe = new Song();
                     probe.setPath(path);
                     if (!stays(probe)) ids.add(Long.valueOf(after));
+                    tailStep(DROP);
                 }
             } finally {
                 c.close();
@@ -575,7 +662,11 @@ public final class Scan {
             Diag.note("library scan: " + p.size() + " path(s) already known");
             synchronized (Scan.class) {
                 seen = 0;
+                units = 0L;
                 expected = p.size();
+                dirsExpected = dirsOf(p);
+                dirs = 0;
+                queued = 0;
                 shown = -1;
                 added = 0;
             }
@@ -677,6 +768,9 @@ public final class Scan {
             fresh.add(f);
         }
         if (fresh == null) return;
+        synchronized (Scan.class) {
+            queued += fresh.size();
+        }
         synchronized (LOCK) {
             boolean any = false;
             for (int i = 0; i < fresh.size(); i++) {

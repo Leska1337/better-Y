@@ -224,12 +224,19 @@ public final class Loading {
     }
 
     /** From the scan's thread: {@code seen} music files met, of {@code known} in the table before. */
-    static void scanned(int seen, int known) {
+    /** Files found by a scan of an empty table, which has no total to measure against. */
+    static void scanned(int seen) {
+        scanLine(seen + "\n" + scanTitle);
+    }
+
+    static void scannedPercent(int pct) {
+        scanLine(percent(scanTitle, pct));
+    }
+
+    private static void scanLine(String line) {
         WeakReference r = scanDialog;
         LoadingDialog d = r == null ? null : (LoadingDialog) r.get();
         if (d == null) return;
-        String line = known > 0 ? percent(scanTitle, Math.min(99, seen * 100 / known))
-                : seen + "\n" + scanTitle;
         MAIN.post(new ScanText(d, line));
     }
 
