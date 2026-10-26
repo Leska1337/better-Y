@@ -26,6 +26,7 @@ public final class Ipp {
         BigCover.clearMiss();
         Art.clear();
         GenreInfo.invalidate();
+        Prefs.forgetLabels();
     }
 
     /**

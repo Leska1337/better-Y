@@ -4,6 +4,8 @@
 
 .field private final static DEFAULTS:Ljava/util/HashMap;
 
+.field private final static LABELS:Ljava/util/HashMap;
+
 .method static constructor <clinit>()V
   .registers 4
   .line 23
@@ -126,7 +128,10 @@
     const-string v0, "key_tone_volume"
     const/4 v1, 7
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 69
+  .line 118
+    new-instance v0, Ljava/util/HashMap;
+    invoke-direct { v0 }, Ljava/util/HashMap;-><init>()V
+    sput-object v0, Lcom/innioasis/ipp/Prefs;->LABELS:Ljava/util/HashMap;
     return-void
 .end method
 
@@ -138,58 +143,146 @@
 .end method
 
 .method public static albumLabel(Ljava/lang/String;)Ljava/lang/String;
-  .registers 3
+  .catchall { :L3 .. :L9 } :L16
+  .catchall { :L11 .. :L15 } :L14
+  .catchall { :L17 .. :L18 } :L16
+  .registers 10
   .line 97
-    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object v0
-  .line 98
-    if-eqz p0, :L3
-    invoke-static { }, Lcom/innioasis/ipp/Prefs;->albumYearEnabled()Z
-    move-result v1
-    if-nez v1, :L0
-    goto :L3
-  :L0
-  .line 101
-    invoke-static { p0 }, Lcom/innioasis/ipp/YearCache;->get(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object p0
-  .line 102
-    if-eqz p0, :L2
-    invoke-virtual { p0 }, Ljava/lang/String;->length()I
-    move-result v1
-    if-gtz v1, :L1
-    goto :L2
-  :L1
-  .line 105
-    new-instance v1, Ljava/lang/StringBuilder;
-    invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
-    invoke-virtual { v1, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v0
-    const-string v1, " ("
-    invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v0
-    invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object p0
-    const-string v0, ")"
-    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object p0
-    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    const/4 v0, 0
+    if-nez p0, :L0
+    invoke-static { v0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     return-object p0
+  :L0
+  .line 99
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isAllSongs(Ljava/lang/String;)Z
+    move-result v1
+    if-nez v1, :L19
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->isGenreAll(Ljava/lang/String;)Z
+    move-result v1
+    if-eqz v1, :L1
+    goto/16 :L19
+  :L1
+  .line 100
+    invoke-static { }, Lcom/innioasis/ipp/Prefs;->albumYearEnabled()Z
+    move-result v1
+  .line 101
+    if-eqz v1, :L2
+    invoke-static { p0 }, Lcom/innioasis/ipp/YearCache;->get(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
   :L2
   .line 103
-    return-object v0
+    sget-object v2, Lcom/innioasis/ipp/Prefs;->LABELS:Ljava/util/HashMap;
+    monitor-enter v2
   :L3
+  .line 104
+    invoke-virtual { v2, p0 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v3
+    check-cast v3, [Ljava/lang/Object;
+  .line 105
+    const/4 v4, 2
+    const/4 v5, 0
+    const/4 v6, 1
+    if-eqz v3, :L8
+    aget-object v7, v3, v5
+    if-eqz v1, :L4
+    sget-object v8, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
+    goto :L5
+  :L4
+    sget-object v8, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+  :L5
+    if-ne v7, v8, :L8
+    if-nez v0, :L6
+    aget-object v7, v3, v6
+    if-nez v7, :L8
+    goto :L7
+  :L6
+    aget-object v7, v3, v6
+  .line 106
+    invoke-virtual { v0, v7 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v7
+    if-eqz v7, :L8
+  :L7
+  .line 107
+    aget-object p0, v3, v4
+    check-cast p0, Ljava/lang/String;
+    monitor-exit v2
+    return-object p0
+  :L8
+  .line 109
+    monitor-exit v2
+  :L9
+  .line 110
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v3
+  .line 111
+    if-eqz v1, :L10
+    if-eqz v0, :L10
+    invoke-virtual { v0 }, Ljava/lang/String;->length()I
+    move-result v7
+    if-lez v7, :L10
+    new-instance v7, Ljava/lang/StringBuilder;
+    invoke-direct { v7 }, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual { v7, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const-string v7, " ("
+    invoke-virtual { v3, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    invoke-virtual { v3, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    const-string v7, ")"
+    invoke-virtual { v3, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v3
+    invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v3
+  :L10
+  .line 112
+    monitor-enter v2
+  .line 113
+    const/4 v7, 3
+  :L11
+    new-array v7, v7, [Ljava/lang/Object;
+    if-eqz v1, :L12
+    sget-object v1, Ljava/lang/Boolean;->TRUE:Ljava/lang/Boolean;
+    goto :L13
+  :L12
+    sget-object v1, Ljava/lang/Boolean;->FALSE:Ljava/lang/Boolean;
+  :L13
+    aput-object v1, v7, v5
+    aput-object v0, v7, v6
+    aput-object v3, v7, v4
+    invoke-virtual { v2, p0, v7 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  .line 114
+    monitor-exit v2
+  .line 115
+    return-object v3
+  :L14
+  .line 114
+    move-exception p0
+    monitor-exit v2
+  :L15
+    throw p0
+  :L16
+  .line 109
+    move-exception p0
+  :L17
+    monitor-exit v2
+  :L18
+    throw p0
+  :L19
   .line 99
-    return-object v0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
+    return-object p0
 .end method
 
 .method public static albumYearEnabled()Z
   .registers 2
-  .line 109
+  .line 128
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 110
+  .line 129
     const-string v1, "album_year"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v0
@@ -198,7 +291,7 @@
 
 .method static all(Landroid/content/Context;)Ljava/util/Map;
   .registers 1
-  .line 146
+  .line 165
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -213,7 +306,7 @@
 
 .method public static artistAlbumsEnabled()Z
   .registers 1
-  .line 115
+  .line 134
     const/4 v0, 1
     return v0
 .end method
@@ -272,7 +365,7 @@
 
 .method public static defaultFolderPath(Landroid/content/Context;)Ljava/lang/String;
   .registers 2
-  .line 120
+  .line 139
     const-string p0, "/storage/sdcard0/Music"
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->isDir(Ljava/lang/String;)Z
     move-result v0
@@ -286,11 +379,11 @@
 
 .method static file()Landroid/content/SharedPreferences;
   .registers 1
-  .line 140
+  .line 159
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
     move-result-object v0
-  .line 141
+  .line 160
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
@@ -301,9 +394,30 @@
     return-object v0
 .end method
 
+.method static forgetLabels()V
+  .catchall { :L0 .. :L2 } :L1
+  .registers 2
+  .line 122
+    sget-object v0, Lcom/innioasis/ipp/Prefs;->LABELS:Ljava/util/HashMap;
+    monitor-enter v0
+  :L0
+  .line 123
+    invoke-virtual { v0 }, Ljava/util/HashMap;->clear()V
+  .line 124
+    monitor-exit v0
+  .line 125
+    return-void
+  :L1
+  .line 124
+    move-exception v1
+    monitor-exit v0
+  :L2
+    throw v1
+.end method
+
 .method public static getBool(Landroid/content/Context;Ljava/lang/String;Z)Z
   .registers 3
-  .line 127
+  .line 146
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences;->getBoolean(Ljava/lang/String;Z)Z
@@ -313,7 +427,7 @@
 
 .method public static getInt(Landroid/content/Context;Ljava/lang/String;I)I
   .registers 3
-  .line 154
+  .line 173
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences;->getInt(Ljava/lang/String;I)I
@@ -323,7 +437,7 @@
 
 .method public static getString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 3
-  .line 162
+  .line 181
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
@@ -333,7 +447,7 @@
 
 .method public static has(Landroid/content/Context;Ljava/lang/String;)Z
   .registers 2
-  .line 170
+  .line 189
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0, p1 }, Landroid/content/SharedPreferences;->contains(Ljava/lang/String;)Z
@@ -343,7 +457,7 @@
 
 .method private static isDir(Ljava/lang/String;)Z
   .registers 2
-  .line 131
+  .line 150
     new-instance v0, Ljava/io/File;
     invoke-direct { v0, p0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v0 }, Ljava/io/File;->isDirectory()Z
@@ -369,7 +483,7 @@
 
 .method private static prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
   .registers 3
-  .line 135
+  .line 154
     const-string v0, "innioasis_plus"
     const/4 v1, 0
     invoke-virtual { p0, v0, v1 }, Landroid/content/Context;->getSharedPreferences(Ljava/lang/String;I)Landroid/content/SharedPreferences;
@@ -379,7 +493,7 @@
 
 .method public static setBool(Landroid/content/Context;Ljava/lang/String;Z)V
   .registers 3
-  .line 150
+  .line 169
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -387,13 +501,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 151
+  .line 170
     return-void
 .end method
 
 .method public static setInt(Landroid/content/Context;Ljava/lang/String;I)V
   .registers 3
-  .line 158
+  .line 177
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -401,13 +515,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 159
+  .line 178
     return-void
 .end method
 
 .method public static setString(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;)V
   .registers 3
-  .line 166
+  .line 185
     invoke-static { p0 }, Lcom/innioasis/ipp/Prefs;->prefs(Landroid/content/Context;)Landroid/content/SharedPreferences;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
@@ -415,13 +529,13 @@
     invoke-interface { p0, p1, p2 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
     move-result-object p0
     invoke-interface { p0 }, Landroid/content/SharedPreferences$Editor;->apply()V
-  .line 167
+  .line 186
     return-void
 .end method
 
 .method public static trackSortEnabled()Z
   .registers 1
-  .line 175
+  .line 194
     const/4 v0, 1
     return v0
 .end method
@@ -444,7 +558,7 @@
 
 .method public static videoFolderPath()Ljava/lang/String;
   .registers 2
-  .line 123
+  .line 142
     const-string v0, "/storage/sdcard0/Videos"
     invoke-static { v0 }, Lcom/innioasis/ipp/Prefs;->isDir(Ljava/lang/String;)Z
     move-result v1

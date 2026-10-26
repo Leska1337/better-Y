@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -535,7 +536,9 @@ public final class Rows {
             if (cur instanceof Flat) {
                 Flat f = (Flat) cur;
                 if (f.res == resid) return;
-                Drawable d = v.getResources().getDrawable(resid);
+                // a new GradientDrawable per bind is a Paint with a finalizer each time
+                Drawable d = f.spareFor(resid);
+                if (d == null) d = v.getResources().getDrawable(resid);
                 if (d != null) {
                     f.swap(d, resid);
                     return;
@@ -570,6 +573,73 @@ public final class Rows {
     }
 
     /**
+     * The album row's cover, in place of {@code setImageBitmap}: that call builds a BitmapDrawable,
+     * its Paint, bounds and callback reference on every bind. The row keeps one {@link Pic} and
+     * only its bitmap changes; a new size goes through the ImageView again, as it must be refitted.
+     */
+    public static void thumb(ImageView iv, Bitmap b) {
+        if (iv == null) return;
+        try {
+            Drawable cur = iv.getDrawable();
+            if (b != null && cur instanceof Pic) {
+                Pic p = (Pic) cur;
+                if (p.b == b) return;
+                if (p.b != null && p.b.getWidth() == b.getWidth() && p.b.getHeight() == b.getHeight()) {
+                    p.b = b;
+                    p.invalidateSelf();
+                    return;
+                }
+            }
+            if (b == null) {
+                iv.setImageBitmap(null);
+                return;
+            }
+            Pic p = cur instanceof Pic ? (Pic) cur : new Pic();
+            p.b = b;
+            p.density = iv.getResources().getDisplayMetrics().densityDpi;
+            if (cur == p) iv.setImageDrawable(null);
+            iv.setImageDrawable(p);
+        } catch (Throwable t) {
+            iv.setImageBitmap(b);
+        }
+    }
+
+    /** A bitmap drawn filtered, as BitmapDrawable draws it, that can be handed another one. */
+    static final class Pic extends Drawable {
+        Bitmap b;
+        // the resources' density, as setImageBitmap's BitmapDrawable scales the bitmap to it
+        int density;
+        private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG);
+
+        public void draw(Canvas c) {
+            Bitmap x = b;
+            if (x != null && !x.isRecycled()) c.drawBitmap(x, null, getBounds(), paint);
+        }
+
+        public void setAlpha(int a) {
+            paint.setAlpha(a);
+            invalidateSelf();
+        }
+
+        public void setColorFilter(ColorFilter f) {
+            paint.setColorFilter(f);
+            invalidateSelf();
+        }
+
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
+
+        public int getIntrinsicWidth() {
+            return b == null ? -1 : b.getScaledWidth(density);
+        }
+
+        public int getIntrinsicHeight() {
+            return b == null ? -1 : b.getScaledHeight(density);
+        }
+    }
+
+    /**
      * The wrapped background: draws exactly as before, but claims no size of its own and can be
      * kept off the top {@code top} pixels of the row (the disc strip — see {@link #flat}).
      */
@@ -599,9 +669,20 @@ public final class Rows {
             return spare != null && spare.getBitmap() == b ? spare : null;
         }
 
+        /** The APK resource drawn before the current one, kept for the same reason as {@link #spare}. */
+        private Drawable spareRes;
+        private int spareResId;
+
+        Drawable spareFor(int resid) {
+            return spareRes != null && spareResId == resid ? spareRes : null;
+        }
+
         /** Draw something else, NOT via {@code setBackgroundDrawable}, which requests a layout. */
         void swap(Drawable nd, int resid) {
-            if (d instanceof BitmapDrawable && d != nd) spare = (BitmapDrawable) d;
+            if (d != nd && res > 0) {
+                spareRes = d;
+                spareResId = res;
+            } else if (d instanceof BitmapDrawable && d != nd) spare = (BitmapDrawable) d;
             d = nd;
             res = resid;
             onBoundsChange(getBounds());

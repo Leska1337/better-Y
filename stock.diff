@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3460a148 100644
+index 01b1f730..6feac97f 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..3460a148 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100429
++  versionCode: 10100430
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20094,7 +20094,7 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..a014d23e 100644
+index 71fe29d0..d398c758 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21043,7 +21043,7 @@ index 71fe29d0..a014d23e 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev429</string>
++    <string name="ipp_version">v1.1.0-dev430</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55634,10 +55634,10 @@ index b9220ba5..05cae465 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9f..523ea540 100644
+index 4ed7ef9f..bb4ee15f 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-@@ -135,358 +135,284 @@
+@@ -135,358 +135,285 @@
  
  # virtual methods
  .method public getView(ILandroid/view/View;Landroid/view/ViewGroup;)Landroid/view/View;
@@ -55785,7 +55785,8 @@ index 4ed7ef9f..523ea540 100644
 +    invoke-direct { v7 }, Lcom/innioasis/music/adapter/AlbumListAdapter;->getDefaultBitmap()Landroid/graphics/Bitmap;
 +    move-result-object v0
 +  :L3
-+    invoke-virtual { v6, v0 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
++    # ipp: one drawable per row, its bitmap swapped -- setImageBitmap builds a new one per bind
++    invoke-static { v6, v0 }, Lcom/innioasis/ipp/Rows;->thumb(Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
 +    sget-object v4, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
 +    invoke-virtual { v1 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
 +    move-result-object v0
@@ -56198,7 +56199,7 @@ index 4ed7ef9f..523ea540 100644
      return-object v9
  .end method
  
-@@ -588,4 +514,4 @@
+@@ -588,4 +515,4 @@
      invoke-virtual {p0}, Lcom/innioasis/music/adapter/AlbumListAdapter;->notifyDataSetChanged()V
  
      return-void
@@ -74612,10 +74613,46 @@ index 8ef242b7..2e47ed1c 100644
  
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
-index 5308bc70..e81e18f0 100644
+index 5308bc70..f6a26190 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/view/ShufflePlaylistItemView.smali
-@@ -235,6 +235,9 @@
+@@ -179,34 +179,7 @@
+     .line 30
+     iput-boolean p1, p0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->isSelect:Z
+ 
+-    .line 31
+-    sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+-
+-    const-string v1, "ShufflePlaylistItemView"
+-
+-    invoke-virtual {v0, v1}, Ltimber/log/Timber$Forest;->tag(Ljava/lang/String;)Ltimber/log/Timber$Tree;
+-
+-    move-result-object v0
+-
+-    new-instance v1, Ljava/lang/StringBuilder;
+-
+-    invoke-direct {v1}, Ljava/lang/StringBuilder;-><init>()V
+-
+-    const-string v2, "set isSelect: "
+-
+-    invoke-virtual {v1, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v1, p1}, Ljava/lang/StringBuilder;->append(Z)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v1}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+-
+-    move-result-object p1
+-
+-    const/4 v1, 0x0
+-
+-    new-array v1, v1, [Ljava/lang/Object;
+-
+-    invoke-virtual {v0, p1, v1}, Ltimber/log/Timber$Tree;->d(Ljava/lang/String;[Ljava/lang/Object;)V
++    # ipp: no Timber line here: it built a string on every wheel click
+ 
+     return-void
+ .end method
+@@ -235,6 +208,9 @@
      :goto_0
      invoke-virtual {v0, v1, v3, v2}, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
  
@@ -74625,7 +74662,7 @@ index 5308bc70..e81e18f0 100644
      return-void
  .end method
  
-@@ -268,6 +271,9 @@
+@@ -268,6 +244,9 @@
  
      invoke-virtual {p1, v0}, Lcom/innioasis/music/adapter/MyBaseAdapter;->setOnSetItems(Lkotlin/jvm/functions/Function1;)V
  
@@ -74635,7 +74672,7 @@ index 5308bc70..e81e18f0 100644
      return-void
  .end method
  
-@@ -433,6 +439,16 @@
+@@ -433,6 +412,16 @@
  .method public final onClockwise()V
      .locals 2
  
@@ -74652,7 +74689,7 @@ index 5308bc70..e81e18f0 100644
      const/4 v0, 0x0
  
      .line 35
-@@ -476,5 +492,8 @@
+@@ -476,5 +465,8 @@
      .line 80
      invoke-virtual {p0, v0}, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->setVisibility(I)V
  

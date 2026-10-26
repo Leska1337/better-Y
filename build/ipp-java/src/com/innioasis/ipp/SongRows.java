@@ -287,7 +287,14 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
 
     public boolean ticked(int p) {
         List s = model.getSelectedIndexList();
-        return p >= heads() && s != null && s.contains(Integer.valueOf(p - heads()));
+        if (p < heads() || s == null || s.isEmpty()) return false;
+        // compared, not boxed: asked per row per frame by the Bar, and an Integer past 127 is new
+        int v = p - heads();
+        for (int i = 0; i < s.size(); i++) {
+            Object o = s.get(i);
+            if (o instanceof Integer && ((Integer) o).intValue() == v) return true;
+        }
+        return false;
     }
 
     /** {@code SongListAdapter.getView}, row for row. */

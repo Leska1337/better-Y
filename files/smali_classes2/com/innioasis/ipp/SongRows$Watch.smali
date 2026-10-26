@@ -14,35 +14,35 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/SongRows;)V
   .registers 3
-  .line 606
+  .line 613
     invoke-direct { p0 }, Landroid/database/DataSetObserver;-><init>()V
-  .line 607
+  .line 614
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/SongRows$Watch;->rows:Ljava/lang/ref/WeakReference;
-  .line 608
+  .line 615
     return-void
 .end method
 
 .method public onChanged()V
   .registers 2
-  .line 611
+  .line 618
     iget-object v0, p0, Lcom/innioasis/ipp/SongRows$Watch;->rows:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Lcom/innioasis/ipp/SongRows;
-  .line 612
+  .line 619
     if-eqz v0, :L0
     invoke-virtual { v0 }, Lcom/innioasis/ipp/SongRows;->notifyDataSetChanged()V
   :L0
-  .line 613
+  .line 620
     return-void
 .end method
 
 .method public onInvalidated()V
   .registers 1
-  .line 616
+  .line 623
     invoke-virtual { p0 }, Lcom/innioasis/ipp/SongRows$Watch;->onChanged()V
-  .line 617
+  .line 624
     return-void
 .end method

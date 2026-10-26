@@ -94,15 +94,34 @@ public final class Prefs {
 
     /** Decoded name plus " (year)"; {@link YearCache} is keyed by the encoded name. */
     public static String albumLabel(String album) {
+        if (album == null) return Albums.realName(null);
+        // the marker rows name an album artist, which is not the key's to answer
+        if (Albums.isAllSongs(album) || Albums.isGenreAll(album)) return Albums.realName(album);
+        boolean on = albumYearEnabled();
+        String year = on ? YearCache.get(album) : null;
+        // the bind asks on every row: the name and the year are cut and joined once per album
+        synchronized (LABELS) {
+            Object[] m = (Object[]) LABELS.get(album);
+            if (m != null && m[0] == (on ? Boolean.TRUE : Boolean.FALSE)
+                    && (year == null ? m[1] == null : year.equals(m[1]))) {
+                return (String) m[2];
+            }
+        }
         String out = Albums.realName(album);
-        if (album == null || !albumYearEnabled()) {
-            return out;
+        if (on && year != null && year.length() > 0) out = out + " (" + year + ")";
+        synchronized (LABELS) {
+            LABELS.put(album, new Object[] { on ? Boolean.TRUE : Boolean.FALSE, year, out });
         }
-        String year = YearCache.get(album);
-        if (year == null || year.length() <= 0) {
-            return out;
+        return out;
+    }
+
+    private static final java.util.HashMap LABELS = new java.util.HashMap();
+
+    /** From {@code Ipp.libraryChanged}: the albums and their names are read anew. */
+    static void forgetLabels() {
+        synchronized (LABELS) {
+            LABELS.clear();
         }
-        return out + " (" + year + ")";
     }
 
     public static boolean albumYearEnabled() {
