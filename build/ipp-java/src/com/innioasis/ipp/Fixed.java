@@ -29,7 +29,7 @@ public class Fixed extends RecyclerView {
         super(c, a, style);
     }
 
-    private final Box box = new Box(this);
+    private final Box box = new Box(this, true);
 
     public void requestLayout() {
         // null while the base constructor runs
@@ -73,13 +73,18 @@ public class Fixed extends RecyclerView {
      */
     static final class Box implements Runnable, ViewTreeObserver.OnPreDrawListener {
         private final ViewGroup v;
+        private final boolean heal;
         boolean laying;
         private boolean posted, selfLaying, healDue, passing;
         private long healAt;
         long attachedAt;
         private int lw, lh, ml, mt, mr, mb;
 
-        Box(ViewGroup v) { this.v = v; }
+        /** {@code heal}: re-measure the neighbours after the window's first passes (a list's rows paint them). */
+        Box(ViewGroup v, boolean heal) {
+            this.v = v;
+            this.heal = heal;
+        }
 
         boolean take() {
             if (laying || passing || !contained()) return false;
@@ -110,7 +115,7 @@ public class Fixed extends RecyclerView {
         /** End of the list's onLayout. */
         void laid() {
             // the window's first passes: the neighbours were measured before the rows were bound
-            if (!selfLaying && android.os.SystemClock.uptimeMillis() - attachedAt < 1000) healDue = true;
+            if (heal && !selfLaying && android.os.SystemClock.uptimeMillis() - attachedAt < 1000) healDue = true;
             ViewGroup.LayoutParams lp = v.getLayoutParams();
             if (lp == null) return;
             lw = lp.width;

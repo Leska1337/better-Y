@@ -11,12 +11,13 @@
 .field private final box:Lcom/innioasis/ipp/Fixed$Box;
 
 .method public constructor <init>(Landroid/content/Context;)V
-  .registers 2
+  .registers 3
   .line 21
     invoke-direct { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;-><init>(Landroid/content/Context;)V
   .line 32
     new-instance p1, Lcom/innioasis/ipp/Fixed$Box;
-    invoke-direct { p1, p0 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;)V
+    const/4 v0, 1
+    invoke-direct { p1, p0, v0 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;Z)V
     iput-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
   .line 22
     return-void
@@ -28,7 +29,8 @@
     invoke-direct { p0, p1, p2 }, Landroidx/recyclerview/widget/RecyclerView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;)V
   .line 32
     new-instance p1, Lcom/innioasis/ipp/Fixed$Box;
-    invoke-direct { p1, p0 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;)V
+    const/4 p2, 1
+    invoke-direct { p1, p0, p2 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;Z)V
     iput-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
   .line 26
     return-void
@@ -40,7 +42,8 @@
     invoke-direct { p0, p1, p2, p3 }, Landroidx/recyclerview/widget/RecyclerView;-><init>(Landroid/content/Context;Landroid/util/AttributeSet;I)V
   .line 32
     new-instance p1, Lcom/innioasis/ipp/Fixed$Box;
-    invoke-direct { p1, p0 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;)V
+    const/4 p2, 1
+    invoke-direct { p1, p0, p2 }, Lcom/innioasis/ipp/Fixed$Box;-><init>(Landroid/view/ViewGroup;Z)V
     iput-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
   .line 30
     return-void

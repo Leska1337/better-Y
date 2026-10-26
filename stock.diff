@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..d5af572c 100644
+index 01b1f730..4528c48f 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..d5af572c 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100433
++  versionCode: 10100434
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -343,7 +343,7 @@ index c12a14ad..ee1e4254 100644
 +    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_eq.xml b/build/src/res/layout/activity_eq.xml
-index a23161fa..b9604c92 100644
+index a23161fa..3f376ce8 100644
 --- a/build/src/res/layout/activity_eq.xml
 +++ b/build/src/res/layout/activity_eq.xml
 @@ -1,10 +1,17 @@
@@ -362,13 +362,13 @@ index a23161fa..b9604c92 100644
 +         under the status bar, so the caption's 58 from the screen's top is 13 here. -->
 +    <com.innioasis.ipp.Fixed android:id="@id/recycler_list" android:layout_width="227.0dip" android:layout_height="fill_parent" />
 +    <FrameLayout android:layout_width="fill_parent" android:layout_height="fill_parent">
-+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_gravity="right" android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip">
++        <com.innioasis.ipp.FixedPanel android:layout_gravity="right" android:layout_width="179.0dip" android:layout_height="fill_parent" android:layout_marginRight="22.0dip">
 +            <!-- ipp: the panel's caption, not shown: it only holds the room the Settings panel
 +                 gives its title, so the picture stands where it stands there. -->
 +            <TextView android:textSize="18.0sp" android:textStyle="bold" android:gravity="top|center_horizontal" android:id="@id/right_title" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="13.0dip" android:minLines="@integer/ipp_title_lines" android:maxLines="2" android:text="@string/setting_eq" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +            <ImageView android:id="@id/image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_marginTop="12.0dip" android:adjustViewBounds="true" app:layout_constraintTop_toBottomOf="@id/right_title" />
 +            <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/text" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/ipp_state_top" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/image" />
-+        </androidx.constraintlayout.widget.ConstraintLayout>
++        </com.innioasis.ipp.FixedPanel>
 +    </FrameLayout>
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_files.xml b/build/src/res/layout/activity_files.xml
@@ -20094,7 +20094,7 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..c6204b76 100644
+index 71fe29d0..f9464d1d 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21043,7 +21043,7 @@ index 71fe29d0..c6204b76 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev433</string>
++    <string name="ipp_version">v1.1.0-dev434</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
