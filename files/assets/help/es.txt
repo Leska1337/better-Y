@@ -322,3 +322,5 @@ Mantenga pulsado el botón superior para cambiar.
 * 3
 * 5
 * 7
+
+[flow_group] Agrupar por artista

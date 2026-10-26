@@ -322,3 +322,5 @@ Zum Umschalten die obere Taste halten.
 * 3
 * 5
 * 7
+
+[flow_group] Nach Künstler gruppieren

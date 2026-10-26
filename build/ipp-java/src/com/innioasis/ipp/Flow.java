@@ -108,6 +108,12 @@ public final class Flow {
         return COUNTS[i >= 0 && i < COUNTS.length ? i : COUNTS.length - 1];
     }
 
+    /** The row's order, the album menu's Sort by: one of A_Z..NEWEST. */
+    public static final String KEY_SORT = "flow_sort";
+    public static final int A_Z = 0, Z_A = 1, OLDEST = 2, NEWEST = 3;
+    /** Albums of one artist together, artists A to Z, Sort by inside each; nothing marks the groups. */
+    public static final String KEY_GROUP = "flow_group";
+
     private Flow() {}
 
     // ---- the Music menu ---------------------------------------------------------------------
@@ -232,6 +238,73 @@ public final class Flow {
         Collections.sort(out, BY_NAME);
         Diag.slow("flow albums " + out.size(), t0);
         return out;
+    }
+
+    /**
+     * The row in the order the screen's settings ask for: a copy, the kept row stays A to Z. Reads
+     * the years, or the album artists when grouping, of albums never read — not on the UI thread.
+     */
+    public static List ordered(Context c, List row) {
+        int sort = Prefs.val(c, KEY_SORT);
+        boolean group = Prefs.val(c, KEY_GROUP) != 0;   // the window stores every row as a number
+        if (row == null || row.isEmpty() || (sort == A_Z && !group)) return row;
+        long t0 = SystemClock.uptimeMillis();
+        ArrayList out = new ArrayList(row);
+        if (sort == OLDEST || sort == NEWEST) {
+            ArrayList keys = new ArrayList(out.size());
+            for (int i = 0; i < out.size(); i++) keys.add(((Item) out.get(i)).key);
+            YearCache.warm(keys);
+        }
+        HashMap groups = null;
+        if (group) {
+            groups = new HashMap();
+            boolean read = false;
+            for (int i = 0; i < out.size(); i++) {
+                Item it = (Item) out.get(i);
+                String aa;
+                if (AlbumArtist.needsRead(it.key)) {
+                    aa = AlbumArtist.read(it.key, it.rep.getPath());
+                    it.artist = artistOf(it.key, it.rep, aa);
+                    read = true;
+                } else {
+                    aa = AlbumArtist.get(it.key);
+                }
+                // as written, so an unknown artist keeps its sort-last prefix
+                String g = AlbumArtists.of(aa, it.rep.getArtist());
+                groups.put(it, g == null ? "" : g.toLowerCase(Locale.ROOT));
+            }
+            if (read) AlbumArtist.flush();
+        }
+        Collections.sort(out, new Order(sort, groups));
+        Diag.slow("flow order " + out.size(), t0);
+        return out;
+    }
+
+    private static final class Order implements Comparator {
+        private final int sort;
+        private final HashMap groups;
+        private final YearComparator years;
+
+        Order(int sort, HashMap groups) {
+            this.sort = sort;
+            this.groups = groups;
+            this.years = sort == OLDEST || sort == NEWEST ? new YearComparator(sort == NEWEST) : null;
+        }
+
+        public int compare(Object a, Object b) {
+            Item x = (Item) a, y = (Item) b;
+            int c;
+            if (groups != null) {
+                c = ((String) groups.get(x)).compareTo((String) groups.get(y));
+                if (c != 0) return c;
+            }
+            if (years != null) {
+                c = years.compare(x.key, y.key);
+                if (c != 0) return c;
+            }
+            c = BY_NAME.compare(x, y);
+            return sort == Z_A ? -c : c;
+        }
     }
 
     private static final Comparator BY_NAME = new ByName();

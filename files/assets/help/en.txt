@@ -325,3 +325,5 @@ Hold top button to switch.
 * 3
 * 5
 * 7
+
+[flow_group] Group by artist

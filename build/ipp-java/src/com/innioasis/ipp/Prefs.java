@@ -64,6 +64,8 @@ public final class Prefs {
         def("likes", 1);
         // Cover Flow's own settings
         def(Flow.KEY_COUNT, 2);              // seven albums, as the iPod shows them
+        def(Flow.KEY_SORT, Flow.A_Z);
+        def(Flow.KEY_GROUP, 0);
         // Settings -> Key tone
         def(Tone.KEY_ON, 1);                 // stock's own default
         def(Tone.KEY_VOLUME, Tone.VOLUME_DEFAULT);

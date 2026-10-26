@@ -132,6 +132,10 @@ public final class IppFlowActivity extends BaseActivity {
             return;
         }
         int start = Math.max(0, Math.min(l.size() - 1, Prefs.getInt(this, KEY_POS, 0)));
+        for (int i = 0; keepKey != null && i < l.size(); i++) {
+            if (keepKey.equals(((Flow.Item) l.get(i)).key)) start = i;
+        }
+        keepKey = null;
         loader = new Flow.Loader(l, ui, new Repaint(this));
         Thread t = new Thread(loader, "ipp-flow-covers");
         t.setDaemon(true);
@@ -213,17 +217,33 @@ public final class IppFlowActivity extends BaseActivity {
     public void longConfirm() {
         if (state != 0 || items == null || items.isEmpty()) return;
         List l = new ArrayList();
+        l.add(getString(R.string.song_menu_sort_by));
         l.add(getString(R.string.ipp_queue_add));
         l.add(getString(R.string.album_menu_delete));
         l.add(getString(R.string.main_setting));
         // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
-        new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common).show();
+        menu = new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common);
+        menu.show();
     }
+
+    /** The album menu while it is up, for the Sort by dialog to close with it. */
+    private SubMenuDialog menu;
+    /** The album the row stood on before it was built again in another order. */
+    private String keepKey;
 
     boolean pick(int at, SubmenuAdapter.Item item) {
         String s = item == null ? null : item.getString();
         if (s == null || at < 0 || at >= items.size()) return true;
         Flow.Item it = (Flow.Item) items.get(at);
+        if (s.equals(getString(R.string.song_menu_sort_by))) {
+            List l = new ArrayList();
+            l.add(getString(R.string.sort_a_z));
+            l.add(getString(R.string.sort_z_a));
+            l.add(getString(R.string.ipp_sort_date_asc));
+            l.add(getString(R.string.ipp_sort_date_desc));
+            new SubMenuDialog(getActivity(), l, new SortMenu(this), R.style.Dialog_Common).show();
+            return false;                       // the album menu stays behind the sort dialog
+        }
         if (s.equals(getString(R.string.ipp_queue_add))) {
             Thread t = new Thread(new Enqueue(this, it), "ipp-flow-queue");
             t.setDaemon(true);
@@ -236,6 +256,22 @@ public final class IppFlowActivity extends BaseActivity {
             opts.open();
             flow.setVisibility(View.INVISIBLE);
             setStateBarLeftText(opts.title());
+        }
+        return true;
+    }
+
+    boolean sort(SubmenuAdapter.Item item) {
+        String s = item == null ? null : item.getString();
+        int v = -1;
+        if (getString(R.string.sort_a_z).equals(s)) v = Flow.A_Z;
+        else if (getString(R.string.sort_z_a).equals(s)) v = Flow.Z_A;
+        else if (getString(R.string.ipp_sort_date_asc).equals(s)) v = Flow.OLDEST;
+        else if (getString(R.string.ipp_sort_date_desc).equals(s)) v = Flow.NEWEST;
+        if (menu != null) menu.dismiss();      // the pick closes both levels
+        menu = null;
+        if (v >= 0 && v != Prefs.val(this, Flow.KEY_SORT)) {
+            Prefs.setInt(this, Flow.KEY_SORT, v);
+            reload();
         }
         return true;
     }
@@ -257,7 +293,11 @@ public final class IppFlowActivity extends BaseActivity {
         if (isFinishing()) return;
         if (loader != null) loader.quit();
         loader = null;
-        if (items != null && flow != null) Prefs.setInt(this, KEY_POS, flow.target());
+        if (items != null && flow != null) {
+            int at = flow.target();
+            Prefs.setInt(this, KEY_POS, at);
+            if (at >= 0 && at < items.size()) keepKey = ((Flow.Item) items.get(at)).key;
+        }
         backFor = null;
         backReady = null;
         new Thread(new Load(this), "ipp-flow-list").start();
@@ -273,6 +313,7 @@ public final class IppFlowActivity extends BaseActivity {
                 flow.setVisibility(View.VISIBLE);
                 setStateBarLeftText(getString(R.string.ipp_coverflow));
                 state = 0;
+                if (opts.regrouped()) reload();
             }
         }
     }
@@ -693,9 +734,9 @@ public final class IppFlowActivity extends BaseActivity {
      */
     static final class Opts extends LinearLayout {
         private static final String GROUP = "coverflow";
-        private static final String[] KEYS = { Flow.KEY_COUNT };
-        /** Each row's values when the asset names none. */
-        private static final int[][] NUMS = { Flow.COUNTS };
+        private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP };
+        /** Each row's values when the asset names none; null is an Off/On row. */
+        private static final int[][] NUMS = { Flow.COUNTS, null };
         // the better-Y menu's own numbers
         private static final int ROWS = 5;
         private static final int ACCENT = 0xFF3CFFDE;
@@ -811,18 +852,29 @@ public final class IppFlowActivity extends BaseActivity {
                 for (int k = 0; in && k < KEYS.length; k++) {
                     if (!KEYS[k].equals(r.key)) continue;
                     labels[k] = r.label;
-                    if (r.values != null && r.values.length == NUMS[k].length) values[k] = r.values;
+                    if (r.values != null && NUMS[k] != null && r.values.length == NUMS[k].length) values[k] = r.values;
                 }
             }
             for (int k = 0; k < KEYS.length; k++) {
                 if (labels[k] == null) labels[k] = KEYS[k];
                 if (values[k] != null) continue;
+                if (NUMS[k] == null) {
+                    values[k] = new String[] { c.getString(R.string.ipp_off), c.getString(R.string.ipp_on) };
+                    continue;
+                }
                 values[k] = new String[NUMS[k].length];
                 for (int v = 0; v < NUMS[k].length; v++) values[k][v] = String.valueOf(NUMS[k][v]);
             }
         }
 
+        /** Grouping as it stood when the window opened. */
+        private int group;
+
+        /** Grouping was switched while the window was open: the row needs building again. */
+        boolean regrouped() { return Prefs.val(getContext(), Flow.KEY_GROUP) != group; }
+
         void open() {
+            group = Prefs.val(getContext(), Flow.KEY_GROUP);
             sel = 0;
             fit();
             paint();
@@ -1146,7 +1198,7 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             long t0 = SystemClock.uptimeMillis();
-            List l = Flow.albums();
+            List l = Flow.ordered(a, Flow.albums());
             a.ui.post(new Loaded(a, l, t0));
         }
     }
@@ -1325,6 +1377,15 @@ public final class IppFlowActivity extends BaseActivity {
 
         @Override
         public boolean select(int index, SubmenuAdapter.Item item) { return a.pick(at, item); }
+    }
+
+    static final class SortMenu implements SubMenuDialog.Callback {
+        private final IppFlowActivity a;
+
+        SortMenu(IppFlowActivity a) { this.a = a; }
+
+        @Override
+        public boolean select(int index, SubmenuAdapter.Item item) { return a.sort(item); }
     }
 
     static final class Enqueue implements Runnable {
