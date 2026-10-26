@@ -133,54 +133,54 @@
 .method public static clear()V
   .catchall { :L0 .. :L3 } :L4
   .registers 4
-  .line 359
+  .line 367
     sget-object v0, Lcom/innioasis/ipp/CoverCache;->mem:Ljava/util/Hashtable;
     invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 360
+  .line 368
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->dropMiss()V
   :L0
-  .line 362
+  .line 370
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->dir()Ljava/io/File;
     move-result-object v0
-  .line 363
+  .line 371
     if-eqz v0, :L3
-  .line 364
+  .line 372
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v1
-  .line 365
+  .line 373
     if-eqz v1, :L3
-  .line 366
+  .line 374
     const/4 v2, 0
   :L1
     array-length v3, v1
     if-ge v2, v3, :L2
-  .line 367
+  .line 375
     aget-object v3, v1, v2
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
-  .line 366
+  .line 374
     add-int/lit8 v2, v2, 1
     goto :L1
   :L2
-  .line 369
+  .line 377
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
   :L3
-  .line 373
+  .line 381
     goto :L5
   :L4
-  .line 372
+  .line 380
     move-exception v0
   :L5
-  .line 374
+  .line 382
     return-void
 .end method
 
 .method public static clearMiss()V
   .registers 2
-  .line 329
+  .line 337
     invoke-static { }, Lcom/innioasis/ipp/Scan;->keepsMisses()Z
     move-result v0
     if-eqz v0, :L0
-  .line 330
+  .line 338
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "cover miss kept by a clean scan: "
@@ -195,12 +195,12 @@
     move-result-object v0
     const-string v1, "ipplab"
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 331
+  .line 339
     return-void
   :L0
-  .line 333
+  .line 341
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->dropMiss()V
-  .line 334
+  .line 342
     return-void
 .end method
 
@@ -286,52 +286,52 @@
   .catchall { :L6 .. :L8 } :L7
   .catchall { :L10 .. :L11 } :L9
   .registers 2
-  .line 337
+  .line 345
     const-class v0, Lcom/innioasis/ipp/CoverCache;
     monitor-enter v0
-  .line 338
+  .line 346
     const/4 v1, 1
   :L0
     sput-boolean v1, Lcom/innioasis/ipp/CoverCache;->missLoaded:Z
-  .line 339
+  .line 347
     monitor-exit v0
   :L1
-  .line 341
+  .line 349
     sget-object v1, Lcom/innioasis/ipp/CoverCache;->FILE:Ljava/lang/Object;
     monitor-enter v1
   :L2
-  .line 342
+  .line 350
     sget-object v0, Lcom/innioasis/ipp/CoverCache;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
-  .line 343
+  .line 351
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/CoverCache;->missDirty:Z
   :L3
-  .line 345
+  .line 353
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->missFile()Ljava/io/File;
     move-result-object v0
-  .line 346
+  .line 354
     if-eqz v0, :L4
     invoke-virtual { v0 }, Ljava/io/File;->delete()Z
   :L4
-  .line 348
+  .line 356
     goto :L6
   :L5
-  .line 347
+  .line 355
     move-exception v0
   :L6
-  .line 349
+  .line 357
     monitor-exit v1
-  .line 350
+  .line 358
     return-void
   :L7
-  .line 349
+  .line 357
     move-exception v0
     monitor-exit v1
   :L8
     throw v0
   :L9
-  .line 339
+  .line 347
     move-exception v1
   :L10
     monitor-exit v0
@@ -361,122 +361,122 @@
 .method public static forget(Ljava/lang/String;)V
   .catchall { :L1 .. :L2 } :L3
   .registers 2
-  .line 312
+  .line 320
     if-nez p0, :L0
-  .line 313
+  .line 321
     return-void
   :L0
-  .line 315
+  .line 323
     sget-object v0, Lcom/innioasis/ipp/CoverCache;->mem:Ljava/util/Hashtable;
     invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
-  .line 316
+  .line 324
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->loadMiss()V
-  .line 317
+  .line 325
     sget-object v0, Lcom/innioasis/ipp/CoverCache;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->remove(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     if-eqz v0, :L1
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->askSave()V
   :L1
-  .line 319
+  .line 327
     invoke-static { p0 }, Lcom/innioasis/ipp/CoverCache;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p0
-  .line 320
+  .line 328
     if-eqz p0, :L2
-  .line 321
+  .line 329
     invoke-virtual { p0 }, Ljava/io/File;->delete()Z
   :L2
-  .line 324
+  .line 332
     goto :L4
   :L3
-  .line 323
+  .line 331
     move-exception p0
   :L4
-  .line 325
+  .line 333
     return-void
 .end method
 
 .method public static get(Ljava/lang/String;Ljava/lang/String;)Landroid/graphics/Bitmap;
   .catchall { :L4 .. :L6 } :L7
   .registers 7
-  .line 270
+  .line 278
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 271
+  .line 279
     const/4 v0, 0
     if-nez p0, :L0
-  .line 272
+  .line 280
     return-object v0
   :L0
-  .line 274
+  .line 282
     invoke-static { p0 }, Lcom/innioasis/ipp/CoverCache;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 275
+  .line 283
     if-eqz v1, :L1
-  .line 276
+  .line 284
     return-object v1
   :L1
-  .line 278
+  .line 286
     sget-object v2, Lcom/innioasis/ipp/CoverCache;->miss:Ljava/util/Hashtable;
     invoke-virtual { v2, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
     move-result v2
     if-eqz v2, :L2
-  .line 279
+  .line 287
     return-object v0
   :L2
-  .line 281
+  .line 289
     const/4 v2, 0
     if-nez p1, :L3
-  .line 282
+  .line 290
     invoke-static { p0, v0, v2 }, Lcom/innioasis/ipp/CoverCache;->remember(Ljava/lang/String;Landroid/graphics/Bitmap;Z)V
-  .line 283
+  .line 291
     return-object v0
   :L3
-  .line 285
+  .line 293
     nop
-  .line 288
+  .line 296
     const/4 v0, 1
     const/16 v3, 50
   :L4
     invoke-static { p0, p1, v3 }, Lcom/innioasis/ipp/Art;->thumb(Ljava/lang/String;Ljava/lang/String;I)Landroid/graphics/Bitmap;
     move-result-object p1
-  .line 289
+  .line 297
     if-eqz p1, :L6
-  .line 290
+  .line 298
     invoke-static { p1, v3 }, Lcom/innioasis/ipp/Cover;->square(Landroid/graphics/Bitmap;I)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 291
+  .line 299
     if-nez v1, :L5
-  .line 292
+  .line 300
     move-object v1, p1
   :L5
-  .line 294
+  .line 302
     invoke-static { p0 }, Lcom/innioasis/ipp/CoverCache;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object p1
-  .line 295
+  .line 303
     if-eqz p1, :L6
-  .line 296
+  .line 304
     new-instance v3, Ljava/io/FileOutputStream;
     invoke-direct { v3, p1 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
-  .line 299
+  .line 307
     sget-object p1, Landroid/graphics/Bitmap$CompressFormat;->JPEG:Landroid/graphics/Bitmap$CompressFormat;
     const/16 v4, 85
     invoke-virtual { v1, p1, v4, v3 }, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
-  .line 300
+  .line 308
     invoke-virtual { v3 }, Ljava/io/FileOutputStream;->close()V
   :L6
-  .line 305
+  .line 313
     goto :L8
   :L7
-  .line 303
+  .line 311
     move-exception p1
-  .line 304
+  .line 312
     const/4 v2, 1
   :L8
-  .line 306
+  .line 314
     xor-int/lit8 p1, v2, 1
     invoke-static { p0, v1, p1 }, Lcom/innioasis/ipp/CoverCache;->remember(Ljava/lang/String;Landroid/graphics/Bitmap;Z)V
-  .line 307
+  .line 315
     return-object v1
 .end method
 
@@ -678,66 +678,66 @@
 .method public static peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
   .catchall { :L3 .. :L4 } :L5
   .registers 4
-  .line 230
+  .line 238
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 231
+  .line 239
     const/4 v0, 0
     if-nez p0, :L0
-  .line 232
+  .line 240
     return-object v0
   :L0
-  .line 234
+  .line 242
     sget-object v1, Lcom/innioasis/ipp/CoverCache;->mem:Ljava/util/Hashtable;
     invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Landroid/graphics/Bitmap;
-  .line 235
+  .line 243
     if-eqz v1, :L1
-  .line 236
+  .line 244
     return-object v1
   :L1
-  .line 238
+  .line 246
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->loadMiss()V
-  .line 239
+  .line 247
     sget-object v1, Lcom/innioasis/ipp/CoverCache;->miss:Ljava/util/Hashtable;
     invoke-virtual { v1, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L2
-  .line 240
+  .line 248
     return-object v0
   :L2
-  .line 242
+  .line 250
     nop
   :L3
-  .line 244
+  .line 252
     invoke-static { p0 }, Lcom/innioasis/ipp/CoverCache;->file(Ljava/lang/String;)Ljava/io/File;
     move-result-object v1
-  .line 245
+  .line 253
     if-eqz v1, :L4
     invoke-virtual { v1 }, Ljava/io/File;->exists()Z
     move-result v2
     if-eqz v2, :L4
-  .line 246
+  .line 254
     invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object v1
     invoke-static { v1 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L4
-  .line 250
+  .line 258
     goto :L6
   :L5
-  .line 248
+  .line 256
     move-exception v1
-  .line 249
+  .line 257
     nop
   :L6
-  .line 251
+  .line 259
     if-eqz v0, :L7
-  .line 252
+  .line 260
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/CoverCache;->remember(Ljava/lang/String;Landroid/graphics/Bitmap;)V
   :L7
-  .line 254
+  .line 262
     return-object v0
 .end method
 
@@ -859,17 +859,17 @@
 
 .method public static rowPeek(Ljava/lang/String;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   .registers 3
-  .line 262
+  .line 270
     invoke-static { p0 }, Lcom/innioasis/ipp/CoverCache;->peek(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 263
+  .line 271
     if-eqz v0, :L0
     return-object v0
   :L0
-  .line 264
+  .line 272
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 265
+  .line 273
     if-eqz p0, :L1
     sget-object v0, Lcom/innioasis/ipp/CoverCache;->miss:Ljava/util/Hashtable;
     invoke-virtual { v0, p0 }, Ljava/util/Hashtable;->containsKey(Ljava/lang/Object;)Z
@@ -883,12 +883,14 @@
 .end method
 
 .method private static saveLocked()V
-  .catchall { :L1 .. :L3 } :L13
-  .catchall { :L3 .. :L4 } :L10
-  .catchall { :L4 .. :L9 } :L13
-  .catchall { :L11 .. :L12 } :L10
-  .catchall { :L12 .. :L13 } :L13
-  .registers 9
+  .catchall { :L1 .. :L3 } :L16
+  .catchall { :L3 .. :L4 } :L13
+  .catchall { :L4 .. :L6 } :L16
+  .catchall { :L7 .. :L9 } :L12
+  .catchall { :L10 .. :L13 } :L16
+  .catchall { :L14 .. :L15 } :L13
+  .catchall { :L15 .. :L16 } :L16
+  .registers 10
   .line 197
     sget-boolean v0, Lcom/innioasis/ipp/CoverCache;->missDirty:Z
     if-nez v0, :L0
@@ -913,82 +915,100 @@
     monitor-enter v4
   :L3
   .line 205
-    new-instance v5, Ljava/util/ArrayList;
     invoke-virtual { v4 }, Ljava/util/Hashtable;->keySet()Ljava/util/Set;
-    move-result-object v6
-    invoke-direct { v5, v6 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
+    move-result-object v5
+    invoke-interface { v5 }, Ljava/util/Set;->toArray()[Ljava/lang/Object;
+    move-result-object v5
   .line 206
     monitor-exit v4
   :L4
   .line 207
-    invoke-virtual { v5 }, Ljava/util/ArrayList;->isEmpty()Z
-    move-result v4
-    if-eqz v4, :L5
+    array-length v4, v5
+    if-nez v4, :L5
   .line 208
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
   .line 209
     return-void
   :L5
-  .line 211
+  .line 213
+    new-instance v4, Ljava/io/File;
+    new-instance v6, Ljava/lang/StringBuilder;
+    invoke-direct { v6 }, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual { v3 }, Ljava/io/File;->getPath()Ljava/lang/String;
+    move-result-object v7
+    invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v6
+    const-string v7, ".tmp"
+    invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v6
+    invoke-virtual { v6 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v6
+    invoke-direct { v4, v6 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
+  .line 214
+    new-instance v6, Ljava/io/BufferedWriter;
+    new-instance v7, Ljava/io/OutputStreamWriter;
+    new-instance v8, Ljava/io/FileOutputStream;
+    invoke-direct { v8, v4 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
+    const-string v9, "UTF-8"
+    invoke-direct { v7, v8, v9 }, Ljava/io/OutputStreamWriter;-><init>(Ljava/io/OutputStream;Ljava/lang/String;)V
+    const/16 v8, 8192
+    invoke-direct { v6, v7, v8 }, Ljava/io/BufferedWriter;-><init>(Ljava/io/Writer;I)V
+  :L6
+  .line 217
+    nop
+  :L7
+    array-length v7, v5
+    if-ge v0, v7, :L10
+  .line 218
+    aget-object v7, v5, v0
+    check-cast v7, Ljava/lang/String;
+  .line 219
+    const/16 v8, 10
+    invoke-virtual { v7, v8 }, Ljava/lang/String;->indexOf(I)I
+    move-result v9
+    if-ltz v9, :L8
+    goto :L9
+  :L8
+  .line 220
+    invoke-virtual { v6, v7 }, Ljava/io/Writer;->write(Ljava/lang/String;)V
+  .line 221
+    invoke-virtual { v6, v8 }, Ljava/io/Writer;->write(I)V
+  :L9
+  .line 217
+    add-int/lit8 v0, v0, 1
+    goto :L7
+  :L10
+  .line 224
+    invoke-virtual { v6 }, Ljava/io/Writer;->close()V
+  .line 225
+    nop
+  .line 226
+    invoke-virtual { v4, v3 }, Ljava/io/File;->renameTo(Ljava/io/File;)Z
+    move-result v0
+    if-nez v0, :L11
+    invoke-virtual { v4 }, Ljava/io/File;->delete()Z
+  :L11
+  .line 227
+    const-string v0, "ipplab"
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
-  .line 212
-    nop
-  :L6
-    invoke-virtual { v5 }, Ljava/util/ArrayList;->size()I
-    move-result v6
-    if-ge v0, v6, :L8
-  .line 213
-    invoke-virtual { v5, v0 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
-    move-result-object v6
-    check-cast v6, Ljava/lang/String;
-  .line 214
-    const/16 v7, 10
-    invoke-virtual { v6, v7 }, Ljava/lang/String;->indexOf(I)I
-    move-result v8
-    if-gez v8, :L7
-    invoke-virtual { v4, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v6
-    invoke-virtual { v6, v7 }, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
-  :L7
-  .line 212
-    add-int/lit8 v0, v0, 1
-    goto :L6
-  :L8
-  .line 216
-    new-instance v0, Ljava/io/FileOutputStream;
-    invoke-direct { v0, v3 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
-  .line 217
-    invoke-virtual { v4 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v3
-    const-string v6, "UTF-8"
-    invoke-virtual { v3, v6 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
-    move-result-object v3
-    invoke-virtual { v0, v3 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 218
-    invoke-virtual { v0 }, Ljava/io/FileOutputStream;->close()V
-  .line 219
-    const-string v0, "ipplab"
-    new-instance v3, Ljava/lang/StringBuilder;
-    invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v6, "cover miss saved "
-    invoke-virtual { v3, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    invoke-virtual { v5 }, Ljava/util/ArrayList;->size()I
-    move-result v5
-    invoke-virtual { v3, v5 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-    move-result-object v3
+    invoke-virtual { v4, v6 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    array-length v5, v5
+    invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object v4
     const-string v5, ", "
-    invoke-virtual { v3, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    invoke-virtual { v3 }, Ljava/io/File;->length()J
+    move-result-wide v5
+    invoke-virtual { v4, v5, v6 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
     move-result-object v3
-    invoke-virtual { v4 }, Ljava/lang/StringBuilder;->length()I
-    move-result v4
-    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
-    move-result-object v3
-    const-string v4, " chars, "
+    const-string v4, " bytes, "
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v3
-  .line 220
+  .line 228
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v4
     sub-long/2addr v4, v1
@@ -999,23 +1019,28 @@
     move-result-object v1
     invoke-virtual { v1 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v1
-  .line 219
+  .line 227
     invoke-static { v0, v1 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  :L9
-  .line 222
-    goto :L14
-  :L10
-  .line 206
-    move-exception v0
-  :L11
-    monitor-exit v4
+  .line 230
+    goto :L17
   :L12
+  .line 224
+    move-exception v0
+    invoke-virtual { v6 }, Ljava/io/Writer;->close()V
+  .line 225
     throw v0
   :L13
-  .line 221
+  .line 206
     move-exception v0
   :L14
-  .line 223
+    monitor-exit v4
+  :L15
+    throw v0
+  :L16
+  .line 229
+    move-exception v0
+  :L17
+  .line 231
     return-void
 .end method
 
@@ -1042,7 +1067,7 @@
 
 .method static scanEnded(Z)V
   .registers 3
-  .line 354
+  .line 362
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "cover miss at scan end: card away "
@@ -1062,10 +1087,10 @@
     move-result-object v0
     const-string v1, "ipplab"
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 355
+  .line 363
     if-eqz p0, :L0
     invoke-static { }, Lcom/innioasis/ipp/CoverCache;->dropMiss()V
   :L0
-  .line 356
+  .line 364
     return-void
 .end method

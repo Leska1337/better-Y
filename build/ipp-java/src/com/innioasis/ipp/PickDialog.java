@@ -365,7 +365,24 @@ public final class PickDialog extends BaseDialog {
         } else {
             on[i] = !on[i];
         }
+        tie(i);
         paintAll();
+    }
+
+    /**
+     * Clearing the covers clears Cover Flow's copies too ({@code Pick.clearLocked}), so the dialog
+     * says so: their row follows the covers' both ways, and cannot be unticked while those are.
+     */
+    private void tie(int changed) {
+        if (!sizes) return;
+        int covers = -1, flow = -1;
+        for (int j = 0; j < cats.length; j++) {
+            if (cats[j] == Pick.COVERS) covers = j + 1;
+            if (cats[j] == Pick.FLOW) flow = j + 1;
+        }
+        if (covers <= 0 || flow <= 0) return;
+        if (on[covers]) on[flow] = true;
+        else if (changed == covers) on[flow] = false;
     }
 
     private void close() {

@@ -90,20 +90,25 @@ public final class AlbumInfo {
                 if (f == null) {
                     return;
                 }
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < keys.length; i++) {
-                    String[] v = (String[]) vals[i];
-                    if (v == null) continue;
-                    sb.append((String) keys[i]);
-                    sb.append("\t");
-                    sb.append(v[0]);
-                    sb.append("\t");
-                    sb.append(v[1]);
-                    sb.append("\n");
+                // streamed: the whole file as one string is megabytes of garbage on a large library
+                File tmp = new File(f.getPath() + ".tmp");
+                java.io.Writer w = new java.io.BufferedWriter(new java.io.OutputStreamWriter(
+                        new FileOutputStream(tmp), "UTF-8"), 8192);
+                try {
+                    for (int i = 0; i < keys.length; i++) {
+                        String[] v = (String[]) vals[i];
+                        if (v == null) continue;
+                        w.write((String) keys[i]);
+                        w.write('\t');
+                        w.write(v[0]);
+                        w.write('\t');
+                        w.write(v[1]);
+                        w.write('\n');
+                    }
+                } finally {
+                    w.close();
                 }
-                FileOutputStream out = new FileOutputStream(f);
-                out.write(sb.toString().getBytes());
-                out.close();
+                if (!tmp.renameTo(f)) tmp.delete();
             } catch (Throwable t) {
             }
         }

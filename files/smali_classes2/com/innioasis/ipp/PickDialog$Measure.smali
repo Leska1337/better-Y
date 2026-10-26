@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/PickDialog;)V
   .registers 2
-  .line 388
+  .line 405
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     return-void
@@ -25,7 +25,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 420
+  .line 437
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v0 }, Lcom/innioasis/ipp/PickDialog;->access$300(Lcom/innioasis/ipp/PickDialog;)Landroid/app/Activity;
     move-result-object v0
@@ -34,19 +34,19 @@
     invoke-direct { v1, v2, p1 }, Lcom/innioasis/ipp/PickDialog$Apply;-><init>(Lcom/innioasis/ipp/PickDialog;[J)V
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->runOnUiThread(Ljava/lang/Runnable;)V
   :L1
-  .line 422
+  .line 439
     goto :L3
   :L2
-  .line 421
+  .line 438
     move-exception p1
   :L3
-  .line 423
+  .line 440
     return-void
 .end method
 
 .method public run()V
   .registers 18
-  .line 391
+  .line 408
     move-object/from16 v0, p0
     iget-object v1, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v1 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
@@ -55,12 +55,12 @@
     const/4 v2, 1
     add-int/2addr v1, v2
     new-array v1, v1, [J
-  .line 392
+  .line 409
     const-wide/16 v3, -1
     invoke-static { v1, v3, v4 }, Ljava/util/Arrays;->fill([JJ)V
-  .line 393
+  .line 410
     nop
-  .line 394
+  .line 411
     const-wide/16 v3, 0
     const/4 v5, 0
     const/4 v6, 0
@@ -75,7 +75,7 @@
     const-string v11, "pick size "
     const-string v12, "ipplab"
     if-ge v6, v7, :L3
-  .line 395
+  .line 412
     iget-object v7, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v7 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v7
@@ -85,10 +85,10 @@
     if-nez v7, :L1
     goto :L2
   :L1
-  .line 396
+  .line 413
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v13
-  .line 397
+  .line 414
     iget-object v7, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v7 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v7
@@ -96,7 +96,7 @@
     move-wide v15, v3
     invoke-static { v7 }, Lcom/innioasis/ipp/Pick;->size(I)J
     move-result-wide v2
-  .line 398
+  .line 415
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v4, v11 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -113,7 +113,7 @@
     move-result-object v4
     invoke-virtual { v4, v9 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v4
-  .line 399
+  .line 416
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v9
     sub-long/2addr v9, v13
@@ -123,32 +123,32 @@
     move-result-object v4
     invoke-virtual { v4 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v4
-  .line 398
+  .line 415
     invoke-static { v12, v4 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 400
+  .line 417
     add-int/lit8 v4, v6, 1
     aput-wide v2, v1, v4
-  .line 401
+  .line 418
     add-long/2addr v2, v15
     move-wide v3, v2
   :L2
-  .line 394
+  .line 411
     add-int/lit8 v6, v6, 1
     const/4 v2, 1
     goto :L0
   :L3
-  .line 403
+  .line 420
     move-wide v15, v3
     aput-wide v15, v1, v5
-  .line 404
+  .line 421
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/PickDialog$Measure;->post([J)V
-  .line 405
+  .line 422
     invoke-virtual { v1 }, [J->clone()Ljava/lang/Object;
     move-result-object v1
     check-cast v1, [J
-  .line 406
+  .line 423
     nop
-  .line 407
+  .line 424
     const/4 v2, 0
   :L4
     iget-object v3, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
@@ -156,7 +156,7 @@
     move-result-object v3
     array-length v3, v3
     if-ge v5, v3, :L7
-  .line 408
+  .line 425
     iget-object v3, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v3 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v3
@@ -170,10 +170,10 @@
     if-nez v3, :L5
     goto :L6
   :L5
-  .line 409
+  .line 426
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
-  .line 410
+  .line 427
     add-int/lit8 v4, v5, 1
     iget-object v6, v0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v6 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
@@ -182,7 +182,7 @@
     invoke-static { v6 }, Lcom/innioasis/ipp/Pick;->size(I)J
     move-result-wide v6
     aput-wide v6, v1, v4
-  .line 411
+  .line 428
     new-instance v6, Ljava/lang/StringBuilder;
     invoke-direct { v6 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v6, v11 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -200,7 +200,7 @@
     move-result-object v4
     invoke-virtual { v4, v9 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v4
-  .line 412
+  .line 429
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v6
     sub-long/2addr v6, v2
@@ -210,19 +210,19 @@
     move-result-object v2
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
-  .line 411
+  .line 428
     invoke-static { v12, v2 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
-  .line 413
+  .line 430
     const/4 v2, 1
   :L6
-  .line 407
+  .line 424
     add-int/lit8 v5, v5, 1
     goto :L4
   :L7
-  .line 415
+  .line 432
     if-eqz v2, :L8
     invoke-direct { v0, v1 }, Lcom/innioasis/ipp/PickDialog$Measure;->post([J)V
   :L8
-  .line 416
+  .line 433
     return-void
 .end method

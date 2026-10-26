@@ -200,23 +200,31 @@ public final class CoverCache {
         try {
             File f = missFile();
             if (f == null) return;
-            java.util.ArrayList keys;
+            Object[] keys;
             synchronized (miss) {
-                keys = new java.util.ArrayList(miss.keySet());
+                keys = miss.keySet().toArray();
             }
-            if (keys.isEmpty()) {
+            if (keys.length == 0) {
                 f.delete();
                 return;
             }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < keys.size(); i++) {
-                String k = (String) keys.get(i);
-                if (k.indexOf('\n') < 0) sb.append(k).append('\n');
+            // streamed through a small buffer: the whole file as one string was ~1.5 MB of garbage
+            // and a collection that stops every thread, the main one included
+            File tmp = new File(f.getPath() + ".tmp");
+            java.io.Writer w = new java.io.BufferedWriter(new java.io.OutputStreamWriter(
+                    new FileOutputStream(tmp), "UTF-8"), 8192);
+            try {
+                for (int i = 0; i < keys.length; i++) {
+                    String k = (String) keys[i];
+                    if (k.indexOf('\n') >= 0) continue;
+                    w.write(k);
+                    w.write('\n');
+                }
+            } finally {
+                w.close();
             }
-            FileOutputStream o = new FileOutputStream(f);
-            o.write(sb.toString().getBytes("UTF-8"));
-            o.close();
-            android.util.Log.i("ipplab", "cover miss saved " + keys.size() + ", " + sb.length() + " chars, "
+            if (!tmp.renameTo(f)) tmp.delete();
+            android.util.Log.i("ipplab", "cover miss saved " + keys.length + ", " + f.length() + " bytes, "
                     + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
         } catch (Throwable t) {
         }
