@@ -71,43 +71,77 @@ public final class AlbumInfo {
         }
     }
 
-    private static void saveLocked() {
-        try {
-            File f = file();
-            if (f == null) {
-                return;
+    /**
+     * The whole file, written outside the map's monitor: the bind reads the map on the main thread,
+     * and building 3 000 lines under it stalled every row. A copy of the entries is all it holds.
+     */
+    private static void write() {
+        synchronized (FILE) {
+            Object[] keys, vals;
+            synchronized (map) {
+                if (!dirty) return;
+                dirty = false;
+                keys = map.keySet().toArray();
+                vals = new Object[keys.length];
+                for (int i = 0; i < keys.length; i++) vals[i] = map.get(keys[i]);
             }
-            StringBuilder sb = new StringBuilder();
-            Iterator it = map.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry) it.next();
-                String[] v = (String[]) e.getValue();
-                sb.append((String) e.getKey());
-                sb.append("\t");
-                sb.append(v[0]);
-                sb.append("\t");
-                sb.append(v[1]);
-                sb.append("\n");
+            try {
+                File f = file();
+                if (f == null) {
+                    return;
+                }
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < keys.length; i++) {
+                    String[] v = (String[]) vals[i];
+                    if (v == null) continue;
+                    sb.append((String) keys[i]);
+                    sb.append("\t");
+                    sb.append(v[0]);
+                    sb.append("\t");
+                    sb.append(v[1]);
+                    sb.append("\n");
+                }
+                FileOutputStream out = new FileOutputStream(f);
+                out.write(sb.toString().getBytes());
+                out.close();
+            } catch (Throwable t) {
             }
-            FileOutputStream out = new FileOutputStream(f);
-            out.write(sb.toString().getBytes());
-            out.close();
-        } catch (Throwable t) {
         }
     }
 
+    private static final Object FILE = new Object();
+    private static boolean saveAsked;
+    private static long lastPut;
+    private static final long SAVE_DELAY_MS = 5000L;
+
+    /** Once the puts stop, on the library's thread: rows fill this one album at a time while a list scrolls. */
     private static void save() {
+        boolean ask;
         synchronized (map) {
-            if (passing) {
-                dirty = true;
-                return;
+            dirty = true;
+            if (passing) return;
+            lastPut = android.os.SystemClock.uptimeMillis();
+            ask = !saveAsked;
+            saveAsked = true;
+        }
+        if (ask) Albums.later(new Save(), SAVE_DELAY_MS);
+    }
+
+    static final class Save implements Runnable {
+        public void run() {
+            synchronized (map) {
+                long quiet = android.os.SystemClock.uptimeMillis() - lastPut;
+                if (quiet < SAVE_DELAY_MS) {
+                    Albums.later(this, SAVE_DELAY_MS - quiet);
+                    return;
+                }
+                saveAsked = false;
             }
-            dirty = false;
-            saveLocked();
+            write();
         }
     }
 
-    /** A save per put rewrites the whole file each time: quadratic on a library of 3 000 albums. */
+    /** Inside "Cache library" the file is written once, at the end. */
     public static void beginCache() {
         synchronized (map) {
             passing = true;
@@ -117,8 +151,8 @@ public final class AlbumInfo {
     public static void endCache() {
         synchronized (map) {
             passing = false;
-            if (dirty) save();
         }
+        write();
     }
 
     /**
@@ -202,21 +236,26 @@ public final class AlbumInfo {
             }
             if (drop && !gone.isEmpty()) {
                 for (int i = 0; i < gone.size(); i++) map.remove(gone.get(i));
-                saveLocked();
+                dirty = true;
             }
         }
+        if (drop) write();
         return n;
     }
 
     public static void clear() {
-        map.clear();
-        loaded = false;
-        try {
-            File f = file();
-            if (f != null) {
-                f.delete();
+        // under the file's lock: a write under way would otherwise put the lines back
+        synchronized (FILE) {
+            map.clear();
+            dirty = false;
+            loaded = false;
+            try {
+                File f = file();
+                if (f != null) {
+                    f.delete();
+                }
+            } catch (Throwable t) {
             }
-        } catch (Throwable t) {
         }
     }
 }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -81,14 +82,143 @@ public final class CoverCache {
         HashSet keep = new HashSet();
         Iterator it = albums.iterator();
         while (it.hasNext()) keep.add(name((String) it.next()));
+        if (drop) {
+            loadMiss();
+            boolean gone = false;
+            synchronized (miss) {
+                Iterator m = miss.keySet().iterator();
+                while (m.hasNext()) {
+                    if (!albums.contains(m.next())) {
+                        m.remove();
+                        gone = true;
+                    }
+                }
+            }
+            if (gone) askSave();
+        }
         return Stale.files(dir(), keep, drop);
     }
 
     private static void remember(String key, Bitmap b) {
-        if (b == null) {
-            miss.put(key, key);
-        } else {
+        remember(key, b, true);
+    }
+
+    /** {@code kept}: a "no cover" that was read, not one a failure left — only that one is saved. */
+    private static void remember(String key, Bitmap b, boolean kept) {
+        if (b != null) {
             mem.put(key, b);
+            return;
+        }
+        loadMiss();
+        if (miss.put(key, key) == null && kept && key.indexOf('\n') < 0) askSave();
+    }
+
+    /** Written once the answers stop coming, on the library's thread: never while a list scrolls. */
+    private static void askSave() {
+        boolean ask;
+        synchronized (SAVE) {
+            missDirty = true;
+            lastMiss = android.os.SystemClock.uptimeMillis();
+            ask = !saveAsked;
+            saveAsked = true;
+        }
+        if (ask) Albums.later(new Save(), SAVE_DELAY_MS);
+    }
+
+    // "No cover" outlives the process: the first pass after a boot would otherwise read every
+    // coverless album again. Dropped by every real write to the library and after a USB session
+    // (Scan.keepsMisses), never by the clean scan of a boot. The bind asks loadMiss on every row,
+    // so neither it nor the save may take a lock the main thread waits on.
+    private static volatile boolean missLoaded;
+    private static volatile boolean missDirty;
+    private static boolean saveAsked;
+    private static long lastMiss;
+    private static final long SAVE_DELAY_MS = 5000L;
+    private static final Object SAVE = new Object();
+
+    private static File missFile() {
+        Context c = Y1Application.Companion.getAppContext();
+        File d = c == null ? null : c.getCacheDir();
+        // NOT inside ipp_covers/, which dir() sweeps
+        return d == null ? null : new File(d, "ipp_covers_none.txt");
+    }
+
+    /** Once per process; from the library's preparation, so the first row does not wait for it. */
+    static void loadMiss() {
+        if (missLoaded) return;
+        synchronized (CoverCache.class) {
+            if (missLoaded) return;
+            missLoaded = true;
+            try {
+                File f = missFile();
+                if (f == null || !f.exists()) return;
+                FileInputStream in = new FileInputStream(f);
+                byte[] b = new byte[(int) f.length()];
+                int got = 0;
+                while (got < b.length) {
+                    int n = in.read(b, got, b.length - got);
+                    if (n < 0) break;
+                    got += n;
+                }
+                in.close();
+                String[] keys = new String(b, 0, got, "UTF-8").split("\n");
+                for (int i = 0; i < keys.length; i++) {
+                    if (keys[i].length() > 0) miss.put(keys[i], keys[i]);
+                }
+                android.util.Log.i("ipplab", "cover miss loaded " + miss.size());
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    static final class Save implements Runnable {
+        public void run() {
+            synchronized (SAVE) {
+                long quiet = android.os.SystemClock.uptimeMillis() - lastMiss;
+                if (quiet < SAVE_DELAY_MS) {
+                    Albums.later(this, SAVE_DELAY_MS - quiet);
+                    return;
+                }
+                saveAsked = false;
+            }
+            saveMiss();
+        }
+    }
+
+    private static void saveMiss() {
+        synchronized (FILE) {
+            saveLocked();
+        }
+    }
+
+    private static final Object FILE = new Object();
+
+    private static void saveLocked() {
+        if (!missDirty) return;
+        missDirty = false;
+        long t0 = android.os.SystemClock.uptimeMillis();
+        try {
+            File f = missFile();
+            if (f == null) return;
+            java.util.ArrayList keys;
+            synchronized (miss) {
+                keys = new java.util.ArrayList(miss.keySet());
+            }
+            if (keys.isEmpty()) {
+                f.delete();
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < keys.size(); i++) {
+                String k = (String) keys.get(i);
+                if (k.indexOf('\n') < 0) sb.append(k).append('\n');
+            }
+            FileOutputStream o = new FileOutputStream(f);
+            o.write(sb.toString().getBytes("UTF-8"));
+            o.close();
+            android.util.Log.i("ipplab", "cover miss saved " + keys.size() + ", " + sb.length() + " chars, "
+                    + (android.os.SystemClock.uptimeMillis() - t0) + " ms");
+        } catch (Throwable t) {
         }
     }
 
@@ -105,6 +235,7 @@ public final class CoverCache {
         if (b != null) {
             return b;
         }
+        loadMiss();
         if (miss.containsKey(album)) {
             return null;
         }
@@ -148,9 +279,10 @@ public final class CoverCache {
             return null;
         }
         if (songPath == null) {
-            remember(album, null);
+            remember(album, null, false);
             return null;
         }
+        boolean failed = false;
         try {
             // Takes the album key: a "Set as album thumbnail" pick must beat folder.*/cover.*.
             Bitmap raw = Art.thumb(album, songPath, 50);
@@ -169,8 +301,9 @@ public final class CoverCache {
                 }
             }
         } catch (Throwable t) {
+            failed = true;
         }
-        remember(album, out);
+        remember(album, out, !failed);
         return out;
     }
 
@@ -180,7 +313,8 @@ public final class CoverCache {
             return;
         }
         mem.remove(album);
-        miss.remove(album);
+        loadMiss();
+        if (miss.remove(album) != null) askSave();
         try {
             File f = file(album);
             if (f != null) {
@@ -192,12 +326,38 @@ public final class CoverCache {
 
     /** Forgets only the "no cover" answers, keeping the covers found. */
     public static void clearMiss() {
-        miss.clear();
+        if (Scan.keepsMisses()) {
+            android.util.Log.i("ipplab", "cover miss kept by a clean scan: " + miss.size());
+            return;
+        }
+        dropMiss();
+    }
+
+    private static void dropMiss() {
+        synchronized (CoverCache.class) {
+            missLoaded = true;      // the file goes too: nothing left to load
+        }
+        // under the file's lock: a save under way would otherwise write the dropped answers back
+        synchronized (FILE) {
+            miss.clear();
+            missDirty = false;
+            try {
+                File f = missFile();
+                if (f != null) f.delete();
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    /** The end of a scan that wrote nothing: still dropped when the card was away (USB). */
+    static void scanEnded(boolean cardAway) {
+        android.util.Log.i("ipplab", "cover miss at scan end: card away " + cardAway + ", " + miss.size());
+        if (cardAway) dropMiss();
     }
 
     public static void clear() {
         mem.clear();
-        miss.clear();
+        dropMiss();
         try {
             File d = dir();
             if (d != null) {

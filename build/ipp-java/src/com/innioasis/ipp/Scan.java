@@ -76,9 +76,43 @@ public final class Scan {
         labNodes = labDirs = labSongs = 0;
     }
 
+    /**
+     * The scan's own invalidation (its tail's empty insert) while it has written nothing: no row
+     * changed, so the albums' "no cover" answers stand. Other threads' writes are not the scan's.
+     */
+    static synchronized boolean keepsMisses() {
+        return marked && !wrote && Thread.currentThread() == walker;
+    }
+
+    private static Thread walker;
+
+    // The card left while this process ran: a USB session (or the card out), so a cover file may
+    // have been put in. An unmount early in the boot, before the card was ever mounted, is not one.
+    private static boolean cardAway;
+    private static boolean cardSeen;
+    private static final long BOOT_MS = 120000L;
+
+    /** From {@code SDReceiver}'s MEDIA_UNMOUNTED branch. */
+    public static synchronized void cardLeft() {
+        if (cardSeen || SystemClock.uptimeMillis() > BOOT_MS) cardAway = true;
+    }
+
+    /** From {@code SDReceiver.delayRunRefreshDB}: the card is mounted. */
+    public static synchronized void cardMounted() {
+        cardSeen = true;
+    }
+
+    /** From the scan's end: whether the card left since the last one; asking resets it. */
+    static synchronized boolean takeCardAway() {
+        boolean a = cardAway;
+        cardAway = false;
+        return a;
+    }
+
     private static synchronized void mark() {
         labStart = SystemClock.uptimeMillis();
         labCpu = SystemClock.currentThreadTimeMillis();
+        walker = Thread.currentThread();
         marked = true;
         py = new HashMap();
         Albums.scanStarts();
@@ -634,6 +668,7 @@ public final class Scan {
         met = new HashSet();
         marked = false;
         wrote = false;
+        walker = null;
         py = null;
         forgetQueue();
     }

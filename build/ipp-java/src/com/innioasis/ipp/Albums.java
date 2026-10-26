@@ -463,6 +463,7 @@ public final class Albums {
         try {
             boolean clean = Scan.clean();
             Scan.done();
+            CoverCache.scanEnded(Scan.takeCardAway());
             keep(clean);
             lists();
             Schema.backfill();
@@ -517,6 +518,7 @@ public final class Albums {
 
     /** The song list and what the first screens build from it: album folders, the All songs order. */
     private static void lists() {
+        CoverCache.loadMiss();
         List all = allSongs();
         if (all == null) return;
         foldersOf(all);

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..35a33c39 100644
+index 01b1f730..3460a148 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..35a33c39 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100426
++  versionCode: 10100429
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20094,7 +20094,7 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..6cebdb3b 100644
+index 71fe29d0..a014d23e 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,585 @@
@@ -21043,7 +21043,7 @@ index 71fe29d0..6cebdb3b 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev426</string>
++    <string name="ipp_version">v1.1.0-dev429</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -74163,6 +74163,30 @@ index 1e05f275..668ad554 100644
 +    move-result v2
  
      int-to-float v3, v3
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
+index b1762e18..c6c8caf0 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/utils/SDReceiver.smali
+@@ -128,6 +128,9 @@
+ .method private final delayRunRefreshDB()V
+     .locals 10
+ 
++    # ipp: the card is mounted in this process (the scan tells a USB session from a boot)
++    invoke-static {}, Lcom/innioasis/ipp/Scan;->cardMounted()V
++
+     .line 56
+     sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
+ 
+@@ -243,6 +246,9 @@
+ 
+     invoke-virtual {p1, v4}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->setWasUnmounted(Z)V
+ 
++    # ipp: the card left while we ran
++    invoke-static {}, Lcom/innioasis/ipp/Scan;->cardLeft()V
++
+     .line 43
+     sget-object p1, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 index 97739f51..5f13fa79 100644

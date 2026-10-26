@@ -344,6 +344,7 @@ public final class Pick {
                 return CacheSize.dirSize(new File(d, "ipp_covers"))
                         + CacheSize.dirSize(new File(d, "ipp_big"))
                         + CacheSize.dirSize(new File(d, "ipp_bigcover.txt"))
+                        + CacheSize.dirSize(new File(d, "ipp_covers_none.txt"))
                         + CacheSize.dirSize(new File(d, "ipp_art.txt"));
             }
             if (cat == FLOW) return CacheSize.dirSize(new File(d, "ipp_flow"));
