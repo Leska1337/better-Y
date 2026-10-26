@@ -208,7 +208,7 @@ public final class CoverCache {
                 f.delete();
                 return;
             }
-            // streamed through a small buffer: the whole file as one string was ~1.5 MB of garbage
+            // streamed through a small buffer: the whole file as one string is ~1.5 MB of garbage
             // and a collection that stops every thread, the main one included
             File tmp = new File(f.getPath() + ".tmp");
             java.io.Writer w = new java.io.BufferedWriter(new java.io.OutputStreamWriter(
