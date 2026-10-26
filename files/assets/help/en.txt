@@ -329,3 +329,6 @@ Hold top button to switch.
 [flow_group] Group by artist
 
 [flow_year] Show release year
+* Off
+* Next to the artist
+* Next to the album

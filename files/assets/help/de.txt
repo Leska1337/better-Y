@@ -326,3 +326,6 @@ Zum Umschalten die obere Taste halten.
 [flow_group] Nach Künstler gruppieren
 
 [flow_year] Erscheinungsjahr anzeigen
+* Aus
+* Neben dem Künstler
+* Neben dem Album

@@ -326,3 +326,6 @@ Maintenez le bouton du haut pour changer.
 [flow_group] Grouper par artiste
 
 [flow_year] Afficher l'année de sortie
+* Désactivé
+* À côté de l'artiste
+* À côté de l'album

@@ -67,6 +67,8 @@
     aput-object v1, v0, v3
     const/4 v1, 0
     aput-object v1, v0, v4
+    filled-new-array { v3, v4, v5 }, [I
+    move-result-object v1
     aput-object v1, v0, v5
     sput-object v0, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->NUMS:[[I
     return-void

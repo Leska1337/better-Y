@@ -104,7 +104,7 @@ public final class IppFlowActivity extends BaseActivity {
         root.setBackgroundDrawable(null);
         FrameLayout box = new FrameLayout(this);
         flow = new FlowView(this);
-        flow.setYears(Flow.years(this));
+        flow.setYears(Flow.yearAt(this));
         box.addView(flow, new FrameLayout.LayoutParams(-1, -1));
         card = new FlowView.Card(this);
         card.setVisibility(View.GONE);
@@ -207,7 +207,7 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 6) {
             opts.change();
             flow.setCount(Flow.count(this));
-            flow.setYears(Flow.years(this));
+            flow.setYears(Flow.yearAt(this));
         }
     }
 
@@ -738,7 +738,7 @@ public final class IppFlowActivity extends BaseActivity {
         private static final String GROUP = "coverflow";
         private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP, Flow.KEY_YEAR };
         /** Each row's values when the asset names none; null is an Off/On row. */
-        private static final int[][] NUMS = { Flow.COUNTS, null, null };
+        private static final int[][] NUMS = { Flow.COUNTS, null, { 0, 1, 2 } };
         // the better-Y menu's own numbers
         private static final int ROWS = 5;
         private static final int ACCENT = 0xFF3CFFDE;
@@ -975,8 +975,9 @@ public final class IppFlowActivity extends BaseActivity {
 
         void show(Flow.Item it) {
             String y = it.year;
-            title = Flow.years(getContext()) && y != null && y.length() > 0 ? it.name + " (" + y + ")" : it.name;
-            artist = it.artist;
+            int at = Flow.yearAt(getContext());
+            title = Flow.albumLine(it.name, y, at);
+            artist = Flow.artistLine(it.artist, y, at);
             songs = null;
             names = null;
             sel = 0;

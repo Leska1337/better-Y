@@ -17,7 +17,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Z)V
   .registers 3
-  .line 1313
+  .line 1314
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-boolean p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;->over:Z
@@ -26,17 +26,17 @@
 
 .method public run()V
   .registers 2
-  .line 1316
+  .line 1317
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;->over:Z
     if-eqz v0, :L0
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->halfOver()V
     goto :L1
   :L0
-  .line 1317
+  .line 1318
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->halfBack()V
   :L1
-  .line 1318
+  .line 1319
     return-void
 .end method

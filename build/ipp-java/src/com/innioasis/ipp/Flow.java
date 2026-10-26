@@ -113,12 +113,24 @@ public final class Flow {
     public static final int A_Z = 0, Z_A = 1, OLDEST = 2, NEWEST = 3;
     /** Albums of one artist together, artists A to Z, Sort by inside each; nothing marks the groups. */
     public static final String KEY_GROUP = "flow_group";
-    /** The year after the artist under the cover and after the album's name over its tracks. */
+    /** Where the release year goes, under the cover and over the tracks alike: one of YEAR_*. */
     public static final String KEY_YEAR = "flow_year";
+    public static final int YEAR_OFF = 0, YEAR_ARTIST = 1, YEAR_ALBUM = 2;
 
-    /** The window stores every row as a number, so a toggle is read as one. */
-    public static boolean years(Context c) {
-        return Prefs.val(c, KEY_YEAR) != 0;
+    public static int yearAt(Context c) {
+        return Prefs.val(c, KEY_YEAR);
+    }
+
+    /** "Artist • 2017"; the artist alone when the year is off, elsewhere or unknown. */
+    public static String artistLine(String artist, String year, int at) {
+        if (at != YEAR_ARTIST || year == null || year.length() == 0) return artist;
+        return artist == null || artist.length() == 0 ? year : artist + " • " + year;
+    }
+
+    /** "Album (2017)"; the name alone when the year is off, elsewhere or unknown. */
+    public static String albumLine(String name, String year, int at) {
+        if (at != YEAR_ALBUM || year == null || year.length() == 0) return name;
+        return name + " (" + year + ")";
     }
 
     private Flow() {}

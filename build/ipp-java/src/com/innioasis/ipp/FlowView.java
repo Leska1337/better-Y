@@ -268,9 +268,10 @@ public final class FlowView extends View {
             artist.setAlpha(ta * ARTIST_ALPHA / 255);
             name.setShadowLayer(2, 0, 1, faded(shadow, ta));
             artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
-            c.drawText(TextUtils.ellipsize(it.name, name, w - 24, TextUtils.TruncateAt.END).toString(),
+            lines(it);
+            c.drawText(TextUtils.ellipsize(nameLine, name, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 46, name);
-            c.drawText(TextUtils.ellipsize(artistLine(it), artist, w - 24, TextUtils.TruncateAt.END).toString(),
+            c.drawText(TextUtils.ellipsize(artistLine, artist, w - 24, TextUtils.TruncateAt.END).toString(),
                     cx, h - 19, artist);
         }
         if (moving || fading) postInvalidateOnAnimation();
@@ -278,29 +279,27 @@ public final class FlowView extends View {
         wasMoving = moving;
     }
 
-    private boolean years;
-    // the last line built, so a frame of an unchanged label allocates nothing
+    private int yearAt;
+    // the last lines built, so a frame of an unchanged label allocates nothing
     private Flow.Item lineOf;
-    private String lineArtist, lineYear, line;
+    private String lineArtist, lineYear, nameLine, artistLine;
 
-    /** The release year after the artist, the screen's setting. */
-    public void setYears(boolean on) {
-        if (years == on) return;
-        years = on;
+    /** Where the release year goes, the screen's setting: one of Flow.YEAR_*. */
+    public void setYears(int at) {
+        if (yearAt == at) return;
+        yearAt = at;
         lineOf = null;
         invalidate();
     }
 
-    private String artistLine(Flow.Item it) {
+    private void lines(Flow.Item it) {
         String a = it.artist, y = it.year;
-        if (!years || y == null || y.length() == 0) return a;
-        if (it != lineOf || a != lineArtist || y != lineYear) {
-            lineOf = it;
-            lineArtist = a;
-            lineYear = y;
-            line = a == null || a.length() == 0 ? y : a + " • " + y;
-        }
-        return line;
+        if (it == lineOf && a == lineArtist && y == lineYear) return;
+        lineOf = it;
+        lineArtist = a;
+        lineYear = y;
+        nameLine = Flow.albumLine(it.name, y, yearAt);
+        artistLine = Flow.artistLine(a, y, yearAt);
     }
 
     private float sAngle, sCx, sCy;

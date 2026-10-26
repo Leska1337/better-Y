@@ -1104,9 +1104,9 @@
 
 .method static tidy()V
   .registers 0
-  .line 1372
-    invoke-static { }, Ljava/lang/System;->gc()V
   .line 1373
+    invoke-static { }, Ljava/lang/System;->gc()V
+  .line 1374
     return-void
 .end method
 
@@ -1413,9 +1413,9 @@
     invoke-virtual { v0, v1 }, Lcom/innioasis/ipp/FlowView;->setCount(I)V
   .line 210
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
-    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->years(Landroid/content/Context;)Z
+    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->yearAt(Landroid/content/Context;)I
     move-result v1
-    invoke-virtual { v0, v1 }, Lcom/innioasis/ipp/FlowView;->setYears(Z)V
+    invoke-virtual { v0, v1 }, Lcom/innioasis/ipp/FlowView;->setYears(I)V
   :L4
   .line 212
     return-void
@@ -1672,9 +1672,9 @@
     invoke-direct { v2, p0 }, Lcom/innioasis/ipp/FlowView;-><init>(Landroid/content/Context;)V
     iput-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
   .line 107
-    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->years(Landroid/content/Context;)Z
+    invoke-static { p0 }, Lcom/innioasis/ipp/Flow;->yearAt(Landroid/content/Context;)I
     move-result v3
-    invoke-virtual { v2, v3 }, Lcom/innioasis/ipp/FlowView;->setYears(Z)V
+    invoke-virtual { v2, v3 }, Lcom/innioasis/ipp/FlowView;->setYears(I)V
   .line 108
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     new-instance v3, Landroid/widget/FrameLayout$LayoutParams;
