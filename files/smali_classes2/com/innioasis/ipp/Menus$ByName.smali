@@ -15,31 +15,31 @@
 
 .method constructor <init>(Ljava/util/List;)V
   .registers 2
-  .line 387
+  .line 402
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 388
+  .line 403
     iput-object p1, p0, Lcom/innioasis/ipp/Menus$ByName;->entries:Ljava/util/List;
-  .line 389
+  .line 404
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 4
-  .line 392
+  .line 407
     iget-object v0, p0, Lcom/innioasis/ipp/Menus$ByName;->entries:Ljava/util/List;
     check-cast p1, Ljava/lang/Integer;
     invoke-virtual { p1 }, Ljava/lang/Integer;->intValue()I
     move-result p1
     invoke-interface { v0, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
-  .line 393
+  .line 408
     iget-object v0, p0, Lcom/innioasis/ipp/Menus$ByName;->entries:Ljava/util/List;
     check-cast p2, Ljava/lang/Integer;
     invoke-virtual { p2 }, Ljava/lang/Integer;->intValue()I
     move-result p2
     invoke-interface { v0, p2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p2
-  .line 394
+  .line 409
     invoke-static { p1 }, Lcom/innioasis/ipp/Menus;->access$300(Ljava/lang/Object;)Ljava/lang/String;
     move-result-object p1
     invoke-static { p2 }, Lcom/innioasis/ipp/Menus;->access$300(Ljava/lang/Object;)Ljava/lang/String;

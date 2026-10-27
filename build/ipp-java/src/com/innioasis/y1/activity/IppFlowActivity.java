@@ -37,6 +37,7 @@ import com.innioasis.ipp.Frames;
 import com.innioasis.ipp.Help;
 import com.innioasis.ipp.Lists;
 import com.innioasis.ipp.Lit;
+import com.innioasis.ipp.Menus;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Photos;
 import com.innioasis.ipp.Prefs;
@@ -326,11 +327,11 @@ public final class IppFlowActivity extends BaseActivity {
         l.add(getString(R.string.song_menu_sort_by));
         l.add(getString(R.string.ipp_queue_add));
         l.add(getString(R.string.album_menu_delete));
-        l.add(getString(R.string.main_setting));
         // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
         menu = new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common);
         menu.addPlaylistsToOptions();           // Favorites and "Add to playlist" (Menus.collapse)
         menu.show();
+        Menus.append(menu, getString(R.string.main_setting));
     }
 
     /** The long top press on the open list: the track under the cursor's menu. */

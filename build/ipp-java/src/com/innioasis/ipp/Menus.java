@@ -183,6 +183,21 @@ public final class Menus {
         return null;
     }
 
+    /**
+     * An entry under the playlists, which addPlaylistsToOptions always appends last. Right after
+     * {@code show()}: the shown list is collapsed by then and its first frame not yet drawn.
+     */
+    public static void append(Dialog d, String s) {
+        try {
+            View v = d.findViewById(R.id.submenu);
+            MyBaseAdapter a = v == null ? null : Lv.model(v);
+            if (a == null) return;
+            a.getItemList().add(new SubmenuAdapter.Item(s, null));
+            a.notifyDataSetChanged();
+        } catch (Throwable t) {
+        }
+    }
+
     private static void filter(Dialog d) {
         try {
             if (d == null || CHOOSERS.containsKey(d)) return;

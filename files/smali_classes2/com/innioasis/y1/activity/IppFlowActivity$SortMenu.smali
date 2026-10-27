@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 2
-  .line 1692
+  .line 1693
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$SortMenu;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
@@ -23,7 +23,7 @@
 
 .method public select(ILcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
   .registers 3
-  .line 1695
+  .line 1696
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$SortMenu;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-virtual { p1, p2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->sort(Lcom/innioasis/music/adapter/SubmenuAdapter$Item;)Z
     move-result p1

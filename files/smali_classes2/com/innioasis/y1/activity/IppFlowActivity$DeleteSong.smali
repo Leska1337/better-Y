@@ -21,14 +21,14 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/y1/database/Song;Lcom/innioasis/ipp/Flow$Item;I)V
   .registers 5
-  .line 1836
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 1837
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 1838
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->s:Lcom/innioasis/y1/database/Song;
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->it:Lcom/innioasis/ipp/Flow$Item;
     iput p4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->row:I
-  .line 1838
+  .line 1839
     return-void
 .end method
 
@@ -37,42 +37,42 @@
   .catchall { :L1 .. :L2 } :L3
   .catchall { :L2 .. :L4 } :L4
   .registers 7
-  .line 1841
+  .line 1842
     nop
   :L0
-  .line 1844
+  .line 1845
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
-  .line 1845
+  .line 1846
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->startDeleteSongs()V
   :L1
-  .line 1847
+  .line 1848
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->s:Lcom/innioasis/y1/database/Song;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/database/Y1Repository;->deleteSong(Lcom/innioasis/y1/database/Song;)V
   :L2
-  .line 1849
-    invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->endDeleteSongs()V
   .line 1850
-    nop
+    invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->endDeleteSongs()V
   .line 1851
+    nop
+  .line 1852
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->it:Lcom/innioasis/ipp/Flow$Item;
     invoke-static { v0 }, Lcom/innioasis/ipp/Flow;->back(Lcom/innioasis/ipp/Flow$Item;)Lcom/innioasis/ipp/Flow$Back;
     move-result-object v0
-  .line 1853
+  .line 1854
     goto :L5
   :L3
-  .line 1849
+  .line 1850
     move-exception v1
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->endDeleteSongs()V
-  .line 1850
+  .line 1851
     throw v1
   :L4
-  .line 1852
+  .line 1853
     move-exception v0
     const/4 v0, 0
   :L5
-  .line 1854
+  .line 1855
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v1
@@ -82,6 +82,6 @@
     iget v5, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteSong;->row:I
     invoke-direct { v2, v3, v4, v0, v5 }, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;Lcom/innioasis/ipp/Flow$Back;I)V
     invoke-virtual { v1, v2 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 1855
+  .line 1856
     return-void
 .end method
