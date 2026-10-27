@@ -196,6 +196,22 @@ public final class FlowView extends View {
         postInvalidateOnAnimation();
     }
 
+    /** Slides a far trip starts short of its end: at the row's top speed a long one took seconds. */
+    private static final int FAR = 10;
+
+    /** Travels to slide {@code t}; from further than FAR it starts FAR slides short of it. */
+    public void goTo(int t) {
+        if (items == null || items.isEmpty()) return;
+        t = Math.max(0, Math.min(items.size() - 1, t));
+        if (t == target && pos == target) return;
+        if (Math.abs(t - pos) > FAR) pos = t > pos ? t - FAR : t + FAR;
+        target = t;
+        hurry = false;
+        loader.aim(t);
+        last = 0;
+        postInvalidateOnAnimation();
+    }
+
     /** The centre slide, reflection and all, is drawn by the card on top while it turns. */
     public void hide(int i) {
         hidden = i;

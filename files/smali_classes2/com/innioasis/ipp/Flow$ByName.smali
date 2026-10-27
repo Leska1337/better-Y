@@ -13,28 +13,28 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 345
+  .line 348
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Flow$1;)V
   .registers 2
-  .line 345
+  .line 348
     invoke-direct { p0 }, Lcom/innioasis/ipp/Flow$ByName;-><init>()V
     return-void
 .end method
 
 .method public compare(Ljava/lang/Object;Ljava/lang/Object;)I
   .registers 5
-  .line 347
+  .line 350
     check-cast p1, Lcom/innioasis/ipp/Flow$Item;
     iget-object v0, p1, Lcom/innioasis/ipp/Flow$Item;->sort:Ljava/lang/String;
     check-cast p2, Lcom/innioasis/ipp/Flow$Item;
     iget-object v1, p2, Lcom/innioasis/ipp/Flow$Item;->sort:Ljava/lang/String;
     invoke-virtual { v0, v1 }, Ljava/lang/String;->compareTo(Ljava/lang/String;)I
     move-result v0
-  .line 348
+  .line 351
     if-eqz v0, :L0
     goto :L1
   :L0

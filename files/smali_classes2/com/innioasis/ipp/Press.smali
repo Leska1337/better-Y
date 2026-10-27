@@ -39,26 +39,25 @@
     goto :L3
   :L0
   .line 83
-    instance-of v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;
-    const/4 v1, 1
-    if-eqz v0, :L1
+    sget-object v0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
   .line 84
-    new-instance v0, Lcom/innioasis/ipp/Press$Run;
-    invoke-direct { v0, p0 }, Lcom/innioasis/ipp/Press$Run;-><init>(Lcom/innioasis/y1/base/BaseActivity;)V
-    invoke-virtual { v0 }, Lcom/innioasis/ipp/Press$Run;->run()V
+    const/4 v1, 1
+    if-eqz v0, :L2
   .line 85
+    const/4 v2, 0
+    sput-object v2, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
+  .line 86
+    sget-object v2, Lcom/innioasis/ipp/Press;->h:Landroid/os/Handler;
+    invoke-virtual { v2, v0 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
+  .line 87
+    instance-of v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;
+    if-eqz v0, :L1
+  .line 88
+    check-cast p0, Lcom/innioasis/y1/activity/IppFlowActivity;
+    invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->toPlaying()V
+  .line 89
     return v1
   :L1
-  .line 87
-    sget-object v0, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
-  .line 88
-    if-eqz v0, :L2
-  .line 89
-    const/4 v1, 0
-    sput-object v1, Lcom/innioasis/ipp/Press;->pending:Ljava/lang/Runnable;
-  .line 90
-    sget-object v1, Lcom/innioasis/ipp/Press;->h:Landroid/os/Handler;
-    invoke-virtual { v1, v0 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
   .line 91
     invoke-static { p0 }, Lcom/innioasis/ipp/Press;->openPlayer(Landroid/app/Activity;)Z
     move-result p0

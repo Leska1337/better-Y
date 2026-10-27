@@ -116,6 +116,9 @@ public final class Flow {
     /** Where the release year goes, under the cover and over the tracks alike: one of YEAR_*. */
     public static final String KEY_YEAR = "flow_year";
     public static final int YEAR_OFF = 0, YEAR_ARTIST = 1, YEAR_ALBUM = 2;
+    /** What the row stands on when the screen opens: one of START_*. */
+    public static final String KEY_START = "flow_start";
+    public static final int START_LAST = 0, START_PLAYING = 1;
 
     public static int yearAt(Context c) {
         return Prefs.val(c, KEY_YEAR);

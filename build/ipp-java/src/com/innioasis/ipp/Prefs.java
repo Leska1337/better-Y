@@ -67,6 +67,7 @@ public final class Prefs {
         def(Flow.KEY_SORT, Flow.A_Z);
         def(Flow.KEY_GROUP, 0);
         def(Flow.KEY_YEAR, 0);
+        def(Flow.KEY_START, Flow.START_LAST);
         // Settings -> Key tone
         def(Tone.KEY_ON, 1);                 // stock's own default
         def(Tone.KEY_VOLUME, Tone.VOLUME_DEFAULT);

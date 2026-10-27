@@ -329,3 +329,7 @@ Mantenga pulsado el botón superior para cambiar.
 * Desactivado
 * Junto al artista
 * Junto al álbum
+
+[flow_start] Mostrar al iniciar
+* Última posición
+* Álbum en reproducción

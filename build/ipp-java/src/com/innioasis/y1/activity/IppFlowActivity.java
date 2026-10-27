@@ -34,6 +34,7 @@ import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.FlowView;
 import com.innioasis.ipp.Frames;
 import com.innioasis.ipp.Help;
+import com.innioasis.ipp.Lists;
 import com.innioasis.ipp.Lit;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Photos;
@@ -133,6 +134,10 @@ public final class IppFlowActivity extends BaseActivity {
             return;
         }
         int start = Math.max(0, Math.min(l.size() - 1, Prefs.getInt(this, KEY_POS, 0)));
+        if (keepKey == null && Prefs.val(this, Flow.KEY_START) == Flow.START_PLAYING) {
+            int at = playingAlbum(l);
+            if (at >= 0) start = at;
+        }
         for (int i = 0; keepKey != null && i < l.size(); i++) {
             if (keepKey.equals(((Flow.Item) l.get(i)).key)) start = i;
         }
@@ -146,6 +151,51 @@ public final class IppFlowActivity extends BaseActivity {
         flow.setLabels(0);
         labels(1, FlowView.FADE_MS);
         armBack();
+    }
+
+    /** The playing music's album as an index into the row, -1 when it is not there. */
+    private static int playingAlbum(List l) {
+        Song s = playingMusic();
+        String key = s == null ? null : Albums.keyOf(s);
+        for (int i = 0; key != null && i < l.size(); i++) {
+            if (key.equals(((Flow.Item) l.get(i)).key)) return i;
+        }
+        return -1;
+    }
+
+    private static Song playingMusic() {
+        try {
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            return ps == null ? null : ps.getPlayingMusic();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** Where the row goes once the list has turned back: the double bottom press from the list. */
+    private int goAfter = -1;
+
+    /**
+     * The double bottom press: the row travels to the playing album. In that album's open list
+     * the cursor goes to the track; another album's list turns back first.
+     */
+    public void toPlaying() {
+        if (items == null || items.isEmpty()) return;
+        int at = playingAlbum(items);
+        if (at < 0) return;
+        if (state == 0) {
+            flipPending = false;
+            flow.goTo(at);
+            armBack();
+        } else if (state == 2) {
+            if (at == flipped) {
+                Song s = playingMusic();
+                if (s != null && panel.select(s.getPath())) armAhead();
+            } else {
+                goAfter = at;
+                flipBack();
+            }
+        }
     }
 
     @Override
@@ -509,6 +559,10 @@ public final class IppFlowActivity extends BaseActivity {
             flow.hide(-1);
             flow.setLabels(1);
             flipped = -1;
+            if (goAfter >= 0) {
+                flow.goTo(goAfter);
+                goAfter = -1;
+            }
         }
     }
 
@@ -736,9 +790,9 @@ public final class IppFlowActivity extends BaseActivity {
      */
     static final class Opts extends LinearLayout {
         private static final String GROUP = "coverflow";
-        private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP, Flow.KEY_YEAR };
+        private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP, Flow.KEY_YEAR, Flow.KEY_START };
         /** Each row's values when the asset names none; null is an Off/On row. */
-        private static final int[][] NUMS = { Flow.COUNTS, null, { 0, 1, 2 } };
+        private static final int[][] NUMS = { Flow.COUNTS, null, { 0, 1, 2 }, { 0, 1 } };
         // the better-Y menu's own numbers
         private static final int ROWS = 5;
         private static final int ACCENT = 0xFF3CFFDE;
@@ -941,6 +995,7 @@ public final class IppFlowActivity extends BaseActivity {
             text.setTypeface(Typeface.MONOSPACE);
             hl = new View(c);
             colours();
+            Lists.watch(this);      // a track change or play/pause repaints the marker
         }
 
         /** The long-press menu's colours: its background, its two text colours, its highlight. */
@@ -995,13 +1050,68 @@ public final class IppFlowActivity extends BaseActivity {
             for (int i = 0; i < nums.length; i++) {
                 if (nums[i] != null) wide = Math.max(wide, text.measureText(nums[i]));
             }
-            nameX = 8 + wide + text.measureText(" ");
+            nameX = 8 + Math.max(wide, MARK) + text.measureText(" ");
             sel = 0;
             first = 0;
             if (song.length > 0 && song[0] < 0) sel = 1;   // the cursor never stands on a divider
             if (sel >= song.length) sel = 0;
             settle();
+            if (Prefs.on(getContext(), "follow_playing")) {
+                String p = playingPath();
+                if (p != null) select(p);
+            }
             restart();
+        }
+
+        /** The cursor onto the track at {@code path}, the window centred on it; false when it is not here. */
+        boolean select(String path) {
+            if (names == null || path == null) return false;
+            int at = rowOf(path);
+            if (at < 0) return false;
+            sel = at;
+            int rows = rows();
+            first = Math.max(0, Math.min(song.length - rows, sel - rows / 2));
+            settle();
+            restart();
+            return true;
+        }
+
+        private int rowOf(String path) {
+            for (int i = 0; i < song.length; i++) {
+                if (song[i] >= 0 && path.equals(((Song) songs.get(song[i])).getPath())) return i;
+            }
+            return -1;
+        }
+
+        /** Whatever is playing, music or audiobook, as the lists' marker asks it. */
+        private static String playingPath() {
+            try {
+                PlayerService ps = Y1Application.Companion.getPlayerService();
+                Song s = ps == null ? null : ps.getPlayingSong();
+                return s == null ? null : s.getPath();
+            } catch (Throwable t) {
+                return null;
+            }
+        }
+
+        // The playing marker: the lists' state icon in the number's column, in the row's text colour.
+        private static final int MARK = 16;
+        private final Paint markPaint = new Paint(Paint.FILTER_BITMAP_FLAG);
+        private final android.graphics.Rect markTo = new android.graphics.Rect();
+        private int markRes;
+        private int markColour;
+        private Bitmap mark;
+
+        private Bitmap mark(int res) {
+            if (res != markRes) {
+                markRes = res;
+                mark = null;
+                try {
+                    mark = android.graphics.BitmapFactory.decodeResource(getResources(), res);
+                } catch (Throwable t) {
+                }
+            }
+            return mark;
         }
 
         /** The bar and the window stand where they belong, no travel. */
@@ -1161,6 +1271,10 @@ public final class IppFlowActivity extends BaseActivity {
                 c.drawRect(1, barTop, w - 1, barTop + ROW, bar);
             }
             int from = Math.max(0, (int) (scrollY / ROW));
+            String playing = playingPath();
+            int markAt = playing == null ? -1 : rowOf(playing);
+            int res = markAt < 0 ? 0 : Rows.stateIcon();
+            Bitmap m = res == 0 ? null : mark(res);
             for (int i = from; i < names.length; i++) {
                 int top = HEAD + Math.round(i * ROW - scrollY);
                 if (top >= HEAD + rows * ROW) break;
@@ -1175,7 +1289,19 @@ public final class IppFlowActivity extends BaseActivity {
                     continue;
                 }
                 text.setColor(blend(fg, fgSel, cover));
-                c.drawText(nums[i], nameX - text.measureText(" ") - text.measureText(nums[i]), top + 19, text);
+                float numEnd = nameX - text.measureText(" ");
+                if (i == markAt && m != null) {
+                    int mt = top + (ROW - MARK) / 2;
+                    markTo.set((int) numEnd - MARK, mt, (int) numEnd, mt + MARK);
+                    if (markColour != text.getColor()) {
+                        markColour = text.getColor();
+                        markPaint.setColorFilter(new android.graphics.PorterDuffColorFilter(
+                                markColour, android.graphics.PorterDuff.Mode.SRC_IN));
+                    }
+                    c.drawBitmap(m, null, markTo, markPaint);
+                } else {
+                    c.drawText(nums[i], numEnd - text.measureText(nums[i]), top + 19, text);
+                }
                 float room = w - 8 - nameX;
                 if (on && text.measureText(s) > room) {
                     // the title under the cursor runs when it does not fit, as a second copy after a gap

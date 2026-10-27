@@ -1334,7 +1334,7 @@
     return-void
 .end method
 
-.method private static stateIcon()I
+.method public static stateIcon()I
   .catchall { :L0 .. :L1 } :L8
   .registers 3
   .line 296

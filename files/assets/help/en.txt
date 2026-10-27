@@ -332,3 +332,7 @@ Hold top button to switch.
 * Off
 * Next to the artist
 * Next to the album
+
+[flow_start] Show on startup
+* Last position
+* Currently playing album

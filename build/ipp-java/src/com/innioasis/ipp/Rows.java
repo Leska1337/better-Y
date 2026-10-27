@@ -292,7 +292,7 @@ public final class Rows {
     }
 
     /** The state the status bar is showing, as the icon for a list row. */
-    private static int stateIcon() {
+    public static int stateIcon() {
         int state = 0;
         try {
             Object v = Static.INSTANCE.getPlayValue().getValue();

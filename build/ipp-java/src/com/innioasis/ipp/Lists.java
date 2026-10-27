@@ -1,5 +1,6 @@
 package com.innioasis.ipp;
 
+import android.view.View;
 import android.widget.BaseAdapter;
 
 import java.lang.ref.WeakReference;
@@ -37,8 +38,21 @@ public final class Lists {
         }
     }
 
+    // views that draw the marker themselves (Cover Flow's track list), weak as the adapters are
+    private static final ArrayList views = new ArrayList();
+
+    public static void watch(View v) {
+        if (v != null) views.add(new WeakReference(v));
+        ListWatch.register();
+    }
+
     public static void refresh() {
         try {
+            for (int i = views.size() - 1; i >= 0; i--) {
+                Object o = ((WeakReference) views.get(i)).get();
+                if (o == null) views.remove(i);
+                else ((View) o).postInvalidate();
+            }
             for (int i = refs.size() - 1; i >= 0; i--) {
                 Object o = ((WeakReference) refs.get(i)).get();
                 if (o == null) {

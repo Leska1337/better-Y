@@ -329,3 +329,7 @@ Maintenez le bouton du haut pour changer.
 * Désactivé
 * À côté de l'artiste
 * À côté de l'album
+
+[flow_start] Afficher au démarrage
+* Dernière position
+* Album en cours de lecture

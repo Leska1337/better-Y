@@ -329,3 +329,7 @@ Zum Umschalten die obere Taste halten.
 * Aus
 * Neben dem Künstler
 * Neben dem Album
+
+[flow_start] Beim Start anzeigen
+* Letzte Position
+* Aktuell gespieltes Album

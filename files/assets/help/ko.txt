@@ -332,3 +332,7 @@ Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번�
 * 꺼짐
 * 아티스트 옆
 * 앨범 옆
+
+[flow_start] 시작 시 표시
+* 마지막 위치
+* 재생 중인 앨범

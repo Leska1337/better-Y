@@ -23,7 +23,10 @@ public final class ListWatch extends BroadcastReceiver {
             return;
         }
         Lists.note(a);
+        register();
+    }
 
+    static void register() {
         if (registered) {
             return;
         }

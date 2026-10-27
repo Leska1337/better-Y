@@ -17,7 +17,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;)V
   .registers 3
-  .line 1434
+  .line 1560
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Delete;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Delete;->it:Lcom/innioasis/ipp/Flow$Item;
@@ -30,21 +30,21 @@
   .catchall { :L4 .. :L6 } :L6
   .registers 5
   :L0
-  .line 1439
+  .line 1565
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v0
-  .line 1440
+  .line 1566
     new-instance v1, Ljava/util/ArrayList;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Delete;->it:Lcom/innioasis/ipp/Flow$Item;
     iget-object v2, v2, Lcom/innioasis/ipp/Flow$Item;->key:Ljava/lang/String;
     invoke-static { v2 }, Lcom/innioasis/ipp/Albums;->songsOf(Ljava/lang/String;)Ljava/util/List;
     move-result-object v2
     invoke-direct { v1, v2 }, Ljava/util/ArrayList;-><init>(Ljava/util/Collection;)V
-  .line 1441
+  .line 1567
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->startDeleteSongs()V
   :L1
-  .line 1443
+  .line 1569
     const/4 v2, 0
   :L2
     invoke-interface { v1 }, Ljava/util/List;->size()I
@@ -58,23 +58,23 @@
     add-int/lit8 v2, v2, 1
     goto :L2
   :L4
-  .line 1445
+  .line 1571
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->endDeleteSongs()V
-  .line 1446
+  .line 1572
     nop
-  .line 1448
+  .line 1574
     goto :L7
   :L5
-  .line 1445
+  .line 1571
     move-exception v1
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Y1Repository;->endDeleteSongs()V
-  .line 1446
+  .line 1572
     throw v1
   :L6
-  .line 1447
+  .line 1573
     move-exception v0
   :L7
-  .line 1449
+  .line 1575
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Delete;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v0
@@ -82,6 +82,6 @@
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Delete;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-direct { v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Reload;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 1450
+  .line 1576
     return-void
 .end method

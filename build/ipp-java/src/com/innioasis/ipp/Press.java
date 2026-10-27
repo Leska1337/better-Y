@@ -73,21 +73,21 @@ public final class Press {
 
     /**
      * Pressed once: play/pause, posted 250 ms ahead. Pressed again inside that window: cancel it and
-     * open the player. On the player itself the button stays stock's; in Cover Flow, which opens
-     * the player with its own flight, every press is play/pause at once.
+     * open the player. On the player itself the button stays stock's; Cover Flow, which opens the
+     * player with its own flight, turns to the playing album instead.
      */
     public static boolean bottomPressed(BaseActivity a) {
         if (a == null || a instanceof BasePlayerActivity) {
             return false;
         }
-        if (a instanceof IppFlowActivity) {
-            new Run(a).run();
-            return true;
-        }
         Runnable p = pending;
         if (p != null) {
             pending = null;
             h.removeCallbacks(p);
+            if (a instanceof IppFlowActivity) {
+                ((IppFlowActivity) a).toPlaying();
+                return true;
+            }
             return openPlayer(a);
         }
         Runnable r = new Run(a);
