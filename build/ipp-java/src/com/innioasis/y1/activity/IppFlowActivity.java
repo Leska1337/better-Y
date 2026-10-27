@@ -1385,12 +1385,15 @@ public final class IppFlowActivity extends BaseActivity {
         private static final String GAP = "     ";
         private int offset;
         private int lead;
+        /** The line has started running: until then it rests ellipsised, as the lists' rows do. */
+        private boolean ran;
         private final Tick tick = new Tick(this);
 
         /** From the head of the line again, after its rest. */
         void restart() {
             offset = 0;
             lead = LEAD;
+            ran = false;
             removeCallbacks(tick);
             postDelayed(tick, TICK);
             invalidate();
@@ -1408,6 +1411,7 @@ public final class IppFlowActivity extends BaseActivity {
                 lead--;
             } else {
                 offset += STEP;
+                ran = true;
                 if (offset >= text.measureText(s + GAP)) {
                     offset = 0;
                     lead = LEAD;
@@ -1481,7 +1485,7 @@ public final class IppFlowActivity extends BaseActivity {
                     c.drawText(nums[i], numEnd - text.measureText(nums[i]), top + 19, text);
                 }
                 float room = w - 8 - nameX;
-                if (on && text.measureText(s) > room) {
+                if (on && ran && text.measureText(s) > room) {
                     // the title under the cursor runs when it does not fit, as a second copy after a gap
                     float period = text.measureText(s + GAP);
                     c.save();
