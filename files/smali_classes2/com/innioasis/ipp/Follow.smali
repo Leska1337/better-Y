@@ -462,7 +462,7 @@
     return-void
 .end method
 
-.method private static idleMs()J
+.method public static idleMs()J
   .registers 4
   .line 43
     sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;

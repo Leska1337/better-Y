@@ -31,6 +31,7 @@ import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.Diag;
 import com.innioasis.ipp.Flow;
+import com.innioasis.ipp.Follow;
 import com.innioasis.ipp.FlowView;
 import com.innioasis.ipp.Frames;
 import com.innioasis.ipp.Help;
@@ -48,6 +49,7 @@ import com.innioasis.music.util.SubMenuDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.base.BaseActivity;
+import com.innioasis.y1.database.Playlist;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 import com.innioasis.y1.databinding.ActivityAboutBinding;
@@ -57,6 +59,7 @@ import com.innioasis.y1.utils.DialogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Cover Flow: the library's albums as a row of covers ({@link FlowView}) over the theme's
@@ -122,7 +125,51 @@ public final class IppFlowActivity extends BaseActivity {
         box.addView(opts, new FrameLayout.LayoutParams(-1, -1));
         root.addView(box, -1, -1);
         Rows.watchFlat(new Highlight(panel));
+        Lists.watch(playChange);
         new Thread(new Load(this), "ipp-flow-list").start();
+    }
+
+    // The open list's cursor follows the playing track by the lists' rule (Follow): the user's
+    // while the wheel moved it within the return delay or a menu is up, playback's otherwise.
+    private final Runnable playChange = new PlayChange(this);
+    private final Runnable land = new Land(this);
+    private long wheelAt;
+    private SubMenuDialog trackMenu;
+
+    /** A track change or play/pause: the marker repaints, a free cursor steps to the track. */
+    void playChanged() {
+        panel.invalidate();
+        if (state == 2 && free() && follows()) {
+            String p = Panel.playingPath();
+            if (p != null && panel.follow(p)) armAhead();
+        }
+    }
+
+    private boolean follows() {
+        return Prefs.on(this, "follow_playing");
+    }
+
+    private boolean free() {
+        if (trackMenu != null && trackMenu.isShowing()) return false;
+        return !Lit.screenOn() || SystemClock.uptimeMillis() - wheelAt >= Follow.idleMs();
+    }
+
+    /** The wheel moved the cursor: the user's until the return delay runs out. */
+    private void wheeled() {
+        wheelAt = SystemClock.uptimeMillis();
+        ui.removeCallbacks(land);
+        if (follows()) ui.postDelayed(land, Follow.idleMs());
+    }
+
+    /** The return delay is over: the cursor catches up with the playing track. */
+    void landed() {
+        if (state != 2 || !follows()) return;
+        if (trackMenu != null && trackMenu.isShowing()) {
+            wheeled();                      // a menu up holds the delay
+            return;
+        }
+        String p = Panel.playingPath();
+        if (p != null && panel.follow(p)) armAhead();
     }
 
     void loaded(List l) {
@@ -222,6 +269,7 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 2) {
             panel.move(1);
             armAhead();
+            wheeled();
         } else if (state == 6) {
             opts.move(1);
         }
@@ -236,6 +284,7 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (state == 2) {
             panel.move(-1);
             armAhead();
+            wheeled();
         } else if (state == 6) {
             opts.move(-1);
         }
@@ -267,7 +316,12 @@ public final class IppFlowActivity extends BaseActivity {
     /** The long top press: the album's menu, on the row only. */
     @Override
     public void longConfirm() {
-        if (state != 0 || items == null || items.isEmpty()) return;
+        if (items == null || items.isEmpty()) return;
+        if (state == 2) {
+            trackMenu();
+            return;
+        }
+        if (state != 0) return;
         List l = new ArrayList();
         l.add(getString(R.string.song_menu_sort_by));
         l.add(getString(R.string.ipp_queue_add));
@@ -275,8 +329,81 @@ public final class IppFlowActivity extends BaseActivity {
         l.add(getString(R.string.main_setting));
         // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
         menu = new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common);
+        menu.addPlaylistsToOptions();           // Favorites and "Add to playlist" (Menus.collapse)
         menu.show();
     }
+
+    /** The long top press on the open list: the track under the cursor's menu. */
+    private void trackMenu() {
+        int at = panel.track();
+        if (panel.songs == null || at < 0) return;
+        Song s = (Song) panel.songs.get(at);
+        List l = new ArrayList();
+        l.add(getString(R.string.music_delete_file));
+        l.add(getString(R.string.ipp_queue_add));
+        trackMenu = new SubMenuDialog(getActivity(), l, new TrackMenu(this, s), R.style.Dialog_Common);
+        trackMenu.addPlaylistsToOptions();
+        trackMenu.show();
+        wheeled();                              // the menu holds the cursor where the user put it
+    }
+
+    boolean trackPick(Song s, SubmenuAdapter.Item item) {
+        if (item == null || s == null) return true;
+        List one = new ArrayList();
+        one.add(s);
+        Playlist pl = item.getPlaylist();
+        if (pl != null) {
+            addTo(one, pl);
+            return true;
+        }
+        String str = item.getString();
+        if (getString(R.string.ipp_queue_add).equals(str)) {
+            Queue.addAllFromMusic(one);
+        } else if (getString(R.string.music_delete_file).equals(str)) {
+            DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
+            d.setDialogTitle(getString(R.string.is_delete), "", new DeleteTrack(this, s), false, true);
+        }
+        return true;
+    }
+
+    /** Songs into a playlist off the main thread; the toast says whether any were new (Playlists.addMsg). */
+    private void addTo(List songs, Playlist pl) {
+        Thread t = new Thread(new AddTo(this, songs, null, pl.getPlaylistId()), "ipp-flow-playlist");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    void added() {
+        if (!isFinishing()) showToast(getString(R.string.added_successfully));
+    }
+
+    /** The open list's track off the card, then the list again; the album's last one turns it back. */
+    void deleteTrack(Song s) {
+        if (flipped < 0 || flipped >= items.size()) return;
+        Thread t = new Thread(new DeleteSong(this, s, (Flow.Item) items.get(flipped), panel.row()),
+                "ipp-flow-delete");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    void trackDeleted(Flow.Item it, Flow.Back b, int row) {
+        backFor = null;
+        backReady = null;
+        if (isFinishing() || state != 2 || flipped < 0 || items.get(flipped) != it) return;
+        if (b == null || b.songs == null || b.songs.isEmpty()) {
+            reloadAfter = true;
+            flipBack();
+            return;
+        }
+        backFor = it;
+        backReady = b;
+        panel.setSongs(b);
+        panel.near(row);
+        armAhead();
+    }
+
+    /** The row is built again once the list has turned back: its album is gone. */
+    private boolean reloadAfter;
 
     /** The album menu while it is up, for the Sort by dialog to close with it. */
     private SubMenuDialog menu;
@@ -287,6 +414,13 @@ public final class IppFlowActivity extends BaseActivity {
         String s = item == null ? null : item.getString();
         if (s == null || at < 0 || at >= items.size()) return true;
         Flow.Item it = (Flow.Item) items.get(at);
+        Playlist pl = item.getPlaylist();
+        if (pl != null) {
+            Thread t = new Thread(new AddTo(this, null, it, pl.getPlaylistId()), "ipp-flow-playlist");
+            t.setDaemon(true);
+            t.start();
+            return true;
+        }
         if (s.equals(getString(R.string.song_menu_sort_by))) {
             List l = new ArrayList();
             l.add(getString(R.string.sort_a_z));
@@ -562,6 +696,10 @@ public final class IppFlowActivity extends BaseActivity {
             if (goAfter >= 0) {
                 flow.goTo(goAfter);
                 goAfter = -1;
+            }
+            if (reloadAfter) {
+                reloadAfter = false;
+                reload();
             }
         }
     }
@@ -995,7 +1133,6 @@ public final class IppFlowActivity extends BaseActivity {
             text.setTypeface(Typeface.MONOSPACE);
             hl = new View(c);
             colours();
-            Lists.watch(this);      // a track change or play/pause repaints the marker
         }
 
         /** The long-press menu's colours: its background, its two text colours, its highlight. */
@@ -1076,6 +1213,46 @@ public final class IppFlowActivity extends BaseActivity {
             return true;
         }
 
+        /**
+         * The cursor onto the track at {@code path} as the wheel would bring it: the window moves
+         * only as far as it must, and a near step glides. False when the track is not here.
+         */
+        boolean follow(String path) {
+            if (names == null || path == null) return false;
+            int at = rowOf(path);
+            if (at < 0) return false;
+            if (at == sel) return true;
+            boolean far = Math.abs(at - sel) > JUMP;
+            sel = at;
+            int rows = rows();
+            int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
+            if (top < first) first = top;
+            if (sel >= first + rows) first = sel - rows + 1;
+            if (!Anim.on() || far) settle();
+            restart();
+            return true;
+        }
+
+        int row() { return sel; }
+
+        /** The cursor back near row {@code row}, on a track: after a deletion. */
+        void near(int row) {
+            if (song == null || song.length == 0) return;
+            int s = Math.max(0, Math.min(song.length - 1, row));
+            while (s < song.length && song[s] < 0) s++;
+            if (s >= song.length) {
+                s = song.length - 1;
+                while (s > 0 && song[s] < 0) s--;
+            }
+            sel = s;
+            int rows = rows();
+            first = Math.max(0, Math.min(Math.max(0, song.length - rows), first));
+            if (sel < first) first = sel;
+            if (sel >= first + rows) first = sel - rows + 1;
+            settle();
+            restart();
+        }
+
         private int rowOf(String path) {
             for (int i = 0; i < song.length; i++) {
                 if (song[i] >= 0 && path.equals(((Song) songs.get(song[i])).getPath())) return i;
@@ -1084,7 +1261,7 @@ public final class IppFlowActivity extends BaseActivity {
         }
 
         /** Whatever is playing, music or audiobook, as the lists' marker asks it. */
-        private static String playingPath() {
+        static String playingPath() {
             try {
                 PlayerService ps = Y1Application.Companion.getPlayerService();
                 Song s = ps == null ? null : ps.getPlayingSong();
@@ -1574,6 +1751,121 @@ public final class IppFlowActivity extends BaseActivity {
             }
             a.ui.post(new Reload(a));
         }
+    }
+
+    static final class PlayChange implements Runnable {
+        private final IppFlowActivity a;
+
+        PlayChange(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.playChanged(); }
+    }
+
+    static final class Land implements Runnable {
+        private final IppFlowActivity a;
+
+        Land(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.landed(); }
+    }
+
+    static final class TrackMenu implements SubMenuDialog.Callback {
+        private final IppFlowActivity a;
+        private final Song s;
+
+        TrackMenu(IppFlowActivity a, Song s) { this.a = a; this.s = s; }
+
+        @Override
+        public boolean select(int index, SubmenuAdapter.Item item) { return a.trackPick(s, item); }
+    }
+
+    /** The given songs, or the album's in the order its back lists them, into a playlist. */
+    static final class AddTo implements Runnable {
+        private final IppFlowActivity a;
+        private final List songs;
+        private final Flow.Item it;
+        private final UUID id;
+
+        AddTo(IppFlowActivity a, List songs, Flow.Item it, UUID id) {
+            this.a = a; this.songs = songs; this.it = it; this.id = id;
+        }
+
+        public void run() {
+            try {
+                List l = songs;
+                if (l == null) {
+                    Flow.Back b = Flow.back(it);
+                    l = b == null ? null : b.songs;
+                }
+                if (l == null || l.isEmpty()) return;
+                Y1Application.Companion.getY1Repository().addToPlayList(l, id);
+                a.ui.post(new Added(a));
+            } catch (Throwable t) {
+            }
+        }
+    }
+
+    static final class Added implements Runnable {
+        private final IppFlowActivity a;
+
+        Added(IppFlowActivity a) { this.a = a; }
+
+        public void run() { a.added(); }
+    }
+
+    static final class DeleteTrack extends DialogUtil.DialogCallback {
+        private final IppFlowActivity a;
+        private final Song s;
+
+        DeleteTrack(IppFlowActivity a, Song s) { this.a = a; this.s = s; }
+
+        @Override
+        public void confirm() { a.deleteTrack(s); }
+
+        @Override
+        public void cancel() {
+        }
+    }
+
+    static final class DeleteSong implements Runnable {
+        private final IppFlowActivity a;
+        private final Song s;
+        private final Flow.Item it;
+        private final int row;
+
+        DeleteSong(IppFlowActivity a, Song s, Flow.Item it, int row) {
+            this.a = a; this.s = s; this.it = it; this.row = row;
+        }
+
+        public void run() {
+            Flow.Back b = null;
+            try {
+                // deleteSong takes the FILE off the card, and invalidates the caches itself
+                Y1Repository r = Y1Application.Companion.getY1Repository();
+                r.startDeleteSongs();
+                try {
+                    r.deleteSong(s);
+                } finally {
+                    r.endDeleteSongs();
+                }
+                b = Flow.back(it);
+            } catch (Throwable t) {
+            }
+            a.ui.post(new TrackDeleted(a, it, b, row));
+        }
+    }
+
+    static final class TrackDeleted implements Runnable {
+        private final IppFlowActivity a;
+        private final Flow.Item it;
+        private final Flow.Back b;
+        private final int row;
+
+        TrackDeleted(IppFlowActivity a, Flow.Item it, Flow.Back b, int row) {
+            this.a = a; this.it = it; this.b = b; this.row = row;
+        }
+
+        public void run() { a.trackDeleted(it, b, row); }
     }
 
     static final class Reload implements Runnable {

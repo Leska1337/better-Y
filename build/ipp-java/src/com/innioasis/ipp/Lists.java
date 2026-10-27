@@ -1,6 +1,7 @@
 package com.innioasis.ipp;
 
-import android.view.View;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.BaseAdapter;
 
 import java.lang.ref.WeakReference;
@@ -38,20 +39,22 @@ public final class Lists {
         }
     }
 
-    // views that draw the marker themselves (Cover Flow's track list), weak as the adapters are
-    private static final ArrayList views = new ArrayList();
+    // screens that draw the marker themselves (Cover Flow's track list): run on the main thread,
+    // held weakly as the adapters are, so the caller keeps its Runnable in a field
+    private static final ArrayList watchers = new ArrayList();
+    private static final Handler main = new Handler(Looper.getMainLooper());
 
-    public static void watch(View v) {
-        if (v != null) views.add(new WeakReference(v));
+    public static void watch(Runnable r) {
+        if (r != null) watchers.add(new WeakReference(r));
         ListWatch.register();
     }
 
     public static void refresh() {
         try {
-            for (int i = views.size() - 1; i >= 0; i--) {
-                Object o = ((WeakReference) views.get(i)).get();
-                if (o == null) views.remove(i);
-                else ((View) o).postInvalidate();
+            for (int i = watchers.size() - 1; i >= 0; i--) {
+                Object o = ((WeakReference) watchers.get(i)).get();
+                if (o == null) watchers.remove(i);
+                else main.post((Runnable) o);
             }
             for (int i = refs.size() - 1; i >= 0; i--) {
                 Object o = ((WeakReference) refs.get(i)).get();

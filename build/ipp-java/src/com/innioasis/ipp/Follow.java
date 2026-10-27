@@ -39,7 +39,7 @@ public final class Follow {
     public static final int[] IDLES = { 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 30 };
     public static final int IDLE_DEFAULT = 5;                // = 7 seconds
 
-    private static long idleMs() {
+    public static long idleMs() {
         int i = Prefs.val(Y1Application.Companion.getAppContext(), KEY_IDLE);
         if (i < 0 || i >= IDLES.length) i = IDLE_DEFAULT;
         return IDLES[i] * 1000L;
