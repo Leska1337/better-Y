@@ -16,6 +16,8 @@
 
 .field private final static BASE:I = 202
 
+.field private final static DEPTH:F = 0.1F
+
 .field private final static EDGE_OUT:F = 2.0F
 
 .field public final static FADE_MS:I = 200
@@ -31,6 +33,8 @@
 .field private final static SIDE:I = 6
 
 .field private final static STEPS:[F
+
+.field private final static TUCK:F = 8.0F
 
 .field private final static VMAX:F = 30.0F
 
@@ -152,67 +156,67 @@
 
 .method public constructor <init>(Landroid/content/Context;)V
   .registers 13
-  .line 93
+  .line 97
     invoke-direct { p0, p1 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
-  .line 74
+  .line 78
     const/4 v0, -1
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->hidden:I
-  .line 79
+  .line 83
     new-instance v0, Landroid/graphics/Matrix;
     invoke-direct { v0 }, Landroid/graphics/Matrix;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
-  .line 80
+  .line 84
     const/16 v0, 8
     new-array v1, v0, [F
     iput-object v1, p0, Lcom/innioasis/ipp/FlowView;->src:[F
-  .line 81
+  .line 85
     new-array v0, v0, [F
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->dst:[F
-  .line 82
+  .line 86
     new-instance v0, Landroid/graphics/Paint;
     const/4 v1, 2
     invoke-direct { v0, v1 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
-  .line 83
+  .line 87
     new-instance v0, Landroid/graphics/Paint;
     invoke-direct { v0, v1 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
-  .line 85
+  .line 89
     new-instance v2, Landroid/text/TextPaint;
     const/4 v3, 1
     invoke-direct { v2, v3 }, Landroid/text/TextPaint;-><init>(I)V
     iput-object v2, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
-  .line 86
+  .line 90
     new-instance v4, Landroid/text/TextPaint;
     invoke-direct { v4, v3 }, Landroid/text/TextPaint;-><init>(I)V
     iput-object v4, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
-  .line 236
+  .line 248
     const/high16 v5, 0x3F800000
     iput v5, p0, Lcom/innioasis/ipp/FlowView;->labels:F
-  .line 405
+  .line 417
     new-instance v6, Landroid/graphics/Rect;
     const/4 v7, 0
     const/16 v8, 184
     invoke-direct { v6, v7, v7, v8, v8 }, Landroid/graphics/Rect;-><init>(IIII)V
     iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->slideFrom:Landroid/graphics/Rect;
-  .line 406
+  .line 418
     new-instance v9, Landroid/graphics/RectF;
     invoke-direct { v9, v6 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
     iput-object v9, p0, Lcom/innioasis/ipp/FlowView;->slideTo:Landroid/graphics/RectF;
-  .line 407
+  .line 419
     sget-object v6, Lcom/innioasis/ipp/Flow;->MIR:Landroid/graphics/Rect;
     iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->reflFrom:Landroid/graphics/Rect;
-  .line 408
+  .line 420
     new-instance v6, Landroid/graphics/Rect;
     const/16 v9, 180
     const/16 v10, 182
     invoke-direct { v6, v7, v9, v8, v10 }, Landroid/graphics/Rect;-><init>(IIII)V
     iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->seamFrom:Landroid/graphics/Rect;
-  .line 409
+  .line 421
     new-instance v7, Landroid/graphics/RectF;
     invoke-direct { v7, v6 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
     iput-object v7, p0, Lcom/innioasis/ipp/FlowView;->seamTo:Landroid/graphics/RectF;
-  .line 410
+  .line 422
     new-instance v6, Landroid/graphics/RectF;
     const/high16 v7, 0x43380000
     const/high16 v8, 0x43360000
@@ -220,26 +224,26 @@
     const/high16 v10, 0x42B80000
     invoke-direct { v6, v9, v10, v7, v8 }, Landroid/graphics/RectF;-><init>(FFFF)V
     iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
-  .line 411
+  .line 423
     invoke-static { }, Lcom/innioasis/ipp/FlowView;->fadePaint()Landroid/graphics/Paint;
     move-result-object v6
     iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->fade:Landroid/graphics/Paint;
-  .line 94
+  .line 98
     invoke-static { p1 }, Lcom/innioasis/ipp/Flow;->count(Landroid/content/Context;)I
     move-result v6
     invoke-virtual { p0, v6 }, Lcom/innioasis/ipp/FlowView;->setCount(I)V
-  .line 96
+  .line 100
     const/4 v6, 0
     invoke-virtual { p0, v1, v6 }, Lcom/innioasis/ipp/FlowView;->setLayerType(ILandroid/graphics/Paint;)V
-  .line 97
+  .line 101
     new-instance v1, Landroid/graphics/PorterDuffXfermode;
     sget-object v6, Landroid/graphics/PorterDuff$Mode;->DST_OUT:Landroid/graphics/PorterDuff$Mode;
     invoke-direct { v1, v6 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
     invoke-virtual { v0, v1 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
-  .line 98
+  .line 102
     invoke-static { p1 }, Lcom/innioasis/ipp/FlowView;->textColor(Landroid/content/Context;)I
     move-result p1
-  .line 99
+  .line 103
     invoke-static { p1 }, Lcom/innioasis/ipp/FlowView;->lum(I)I
     move-result v0
     const/16 v1, 128
@@ -250,40 +254,40 @@
     const v0, -2130706433
   :L1
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
-  .line 100
+  .line 104
     invoke-virtual { v2, p1 }, Landroid/text/TextPaint;->setColor(I)V
-  .line 101
+  .line 105
     const/high16 v0, 0x41B00000
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTextSize(F)V
-  .line 102
+  .line 106
     sget-object v0, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
     invoke-static { v0, v3 }, Landroid/graphics/Typeface;->create(Landroid/graphics/Typeface;I)Landroid/graphics/Typeface;
     move-result-object v0
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
-  .line 103
+  .line 107
     invoke-virtual { v2, v3 }, Landroid/text/TextPaint;->setFakeBoldText(Z)V
-  .line 104
+  .line 108
     sget-object v0, Landroid/graphics/Paint$Align;->CENTER:Landroid/graphics/Paint$Align;
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTextAlign(Landroid/graphics/Paint$Align;)V
-  .line 105
+  .line 109
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
     const/high16 v1, 0x40000000
     invoke-virtual { v2, v1, v9, v5, v0 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
-  .line 106
+  .line 110
     invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setColor(I)V
-  .line 107
+  .line 111
     const/high16 p1, 0x41980000
     invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTextSize(F)V
-  .line 108
+  .line 112
     sget-object p1, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
     invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
-  .line 109
+  .line 113
     sget-object p1, Landroid/graphics/Paint$Align;->CENTER:Landroid/graphics/Paint$Align;
     invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTextAlign(Landroid/graphics/Paint$Align;)V
-  .line 110
+  .line 114
     iget p1, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
     invoke-virtual { v4, v1, v9, v5, p1 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
-  .line 111
+  .line 115
     return-void
 .end method
 
@@ -297,10 +301,10 @@
 
 .method private advance()Z
   .registers 8
-  .line 254
+  .line 266
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 255
+  .line 267
     iget-wide v2, p0, Lcom/innioasis/ipp/FlowView;->last:J
     const-wide/16 v4, 0
     cmp-long v6, v2, v4
@@ -316,21 +320,21 @@
     invoke-static { v3, v2 }, Ljava/lang/Math;->min(FF)F
     move-result v2
   :L1
-  .line 256
+  .line 268
     iput-wide v0, p0, Lcom/innioasis/ipp/FlowView;->last:J
-  .line 257
+  .line 269
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->target:I
     int-to-float v0, v0
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     sub-float/2addr v0, v1
-  .line 258
+  .line 270
     const/4 v1, 0
     const/4 v3, 0
     cmpl-float v4, v0, v1
     if-nez v4, :L2
     return v3
   :L2
-  .line 259
+  .line 271
     iget-boolean v4, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
     if-eqz v4, :L3
     const/high16 v4, 0x40C00000
@@ -338,7 +342,7 @@
   :L3
     const/high16 v4, 0x40200000
   :L4
-  .line 260
+  .line 272
     invoke-static { v0 }, Ljava/lang/Math;->abs(F)F
     move-result v5
     iget-boolean v6, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
@@ -352,12 +356,12 @@
     const/high16 v6, 0x41F00000
     invoke-static { v6, v5 }, Ljava/lang/Math;->min(FF)F
     move-result v5
-  .line 259
+  .line 271
     invoke-static { v4, v5 }, Ljava/lang/Math;->max(FF)F
     move-result v4
-  .line 261
+  .line 273
     mul-float v4, v4, v2
-  .line 262
+  .line 274
     invoke-static { v0 }, Ljava/lang/Math;->abs(F)F
     move-result v2
     cmpl-float v2, v4, v2
@@ -367,7 +371,7 @@
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     goto :L10
   :L7
-  .line 263
+  .line 275
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     cmpl-float v0, v0, v1
     if-lez v0, :L8
@@ -378,7 +382,7 @@
     add-float/2addr v2, v4
     iput v2, p0, Lcom/innioasis/ipp/FlowView;->pos:F
   :L10
-  .line 264
+  .line 276
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->target:I
     int-to-float v2, v1
@@ -386,7 +390,7 @@
     if-nez v2, :L11
     iput-boolean v3, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
   :L11
-  .line 265
+  .line 277
     int-to-float v1, v1
     cmpl-float v0, v0, v1
     if-eqz v0, :L12
@@ -397,18 +401,18 @@
 
 .method private corner(IFFFF)V
   .registers 9
-  .line 479
+  .line 491
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->sCx:F
     mul-float p4, p4, p2
     add-float/2addr v0, p4
-  .line 480
+  .line 492
     iget p4, p0, Lcom/innioasis/ipp/FlowView;->h:I
     int-to-float v1, p4
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->sCy:F
     add-float/2addr v1, v2
     mul-float p2, p2, p5
     add-float/2addr v1, p2
-  .line 481
+  .line 493
     iget-object p2, p0, Lcom/innioasis/ipp/FlowView;->dst:[F
     iget p5, p0, Lcom/innioasis/ipp/FlowView;->w:I
     int-to-float p5, p5
@@ -419,7 +423,7 @@
     div-float/2addr v2, v1
     add-float/2addr p5, v2
     aput p5, p2, p1
-  .line 482
+  .line 494
     add-int/lit8 p1, p1, 1
     const/high16 p5, 0x430E0000
     sub-float/2addr p3, p5
@@ -428,28 +432,28 @@
     div-float/2addr p3, v1
     add-float/2addr p3, p5
     aput p3, p2, p1
-  .line 483
+  .line 495
     return-void
 .end method
 
 .method private static fadePaint()Landroid/graphics/Paint;
   .registers 3
-  .line 414
+  .line 426
     new-instance v0, Landroid/graphics/Paint;
     const/4 v1, 2
     invoke-direct { v0, v1 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 415
+  .line 427
     new-instance v1, Landroid/graphics/PorterDuffXfermode;
     sget-object v2, Landroid/graphics/PorterDuff$Mode;->DST_IN:Landroid/graphics/PorterDuff$Mode;
     invoke-direct { v1, v2 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
     invoke-virtual { v0, v1 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
-  .line 416
+  .line 428
     return-object v0
 .end method
 
 .method private static faded(II)I
   .registers 3
-  .line 125
+  .line 129
     ushr-int/lit8 v0, p0, 24
     mul-int v0, v0, p1
     div-int/lit16 v0, v0, 255
@@ -461,17 +465,17 @@
 .end method
 
 .method private fit()V
-  .registers 7
-  .line 151
+  .registers 8
+  .line 157
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->w:I
-    if-lez v0, :L1
+    if-lez v0, :L3
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->h:I
     if-gtz v0, :L0
-    goto :L1
+    goto :L3
   :L0
-  .line 152
+  .line 158
     nop
-  .line 153
+  .line 159
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->angle:F
     float-to-double v0, v0
     invoke-static { v0, v1 }, Ljava/lang/Math;->cos(D)D
@@ -482,7 +486,7 @@
     invoke-static { v1, v2 }, Ljava/lang/Math;->sin(D)D
     move-result-wide v1
     double-to-float v1, v1
-  .line 155
+  .line 161
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->w:I
     int-to-float v2, v2
     const/high16 v3, 0x40000000
@@ -492,35 +496,57 @@
     int-to-float v4, v3
     iget v5, p0, Lcom/innioasis/ipp/FlowView;->offY:F
     add-float/2addr v4, v5
-    const/high16 v5, 0x42B40000
-    mul-float v1, v1, v5
+    const/high16 v6, 0x42B40000
+    mul-float v1, v1, v6
     sub-float/2addr v4, v1
     mul-float v2, v2, v4
-    int-to-float v1, v3
-    div-float/2addr v2, v1
-    mul-float v0, v0, v5
+    int-to-float v4, v3
+    div-float/2addr v2, v4
+    mul-float v0, v0, v6
     sub-float/2addr v2, v0
-  .line 156
+  .line 162
+    iget v4, p0, Lcom/innioasis/ipp/FlowView;->side:I
+    const/4 v6, 3
+    if-lt v4, v6, :L1
+  .line 164
+    int-to-float v6, v3
+    add-float/2addr v6, v5
+    add-float/2addr v6, v1
+    const/high16 v1, 0x42A40000
+    mul-float v1, v1, v6
+    int-to-float v3, v3
+    div-float/2addr v1, v3
+    add-float/2addr v1, v0
+    iput v1, p0, Lcom/innioasis/ipp/FlowView;->offX:F
+  .line 165
+    sub-float/2addr v2, v1
+    add-int/lit8 v4, v4, -1
+    int-to-float v0, v4
+    div-float/2addr v2, v0
+    iput v2, p0, Lcom/innioasis/ipp/FlowView;->spacing:F
+    goto :L2
+  :L1
+  .line 167
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->spacing:F
-    iget v1, p0, Lcom/innioasis/ipp/FlowView;->side:I
-    add-int/lit8 v1, v1, -1
-    int-to-float v1, v1
+    add-int/lit8 v4, v4, -1
+    int-to-float v1, v4
     mul-float v0, v0, v1
     sub-float/2addr v2, v0
     iput v2, p0, Lcom/innioasis/ipp/FlowView;->offX:F
-  .line 157
+  :L2
+  .line 169
     return-void
-  :L1
-  .line 151
+  :L3
+  .line 157
     return-void
 .end method
 
 .method private lines(Lcom/innioasis/ipp/Flow$Item;)V
   .registers 5
-  .line 312
+  .line 324
     iget-object v0, p1, Lcom/innioasis/ipp/Flow$Item;->artist:Ljava/lang/String;
     iget-object v1, p1, Lcom/innioasis/ipp/Flow$Item;->year:Ljava/lang/String;
-  .line 313
+  .line 325
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView;->lineOf:Lcom/innioasis/ipp/Flow$Item;
     if-ne p1, v2, :L0
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView;->lineArtist:Ljava/lang/String;
@@ -529,30 +555,30 @@
     if-ne v1, v2, :L0
     return-void
   :L0
-  .line 314
+  .line 326
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->lineOf:Lcom/innioasis/ipp/Flow$Item;
-  .line 315
+  .line 327
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->lineArtist:Ljava/lang/String;
-  .line 316
+  .line 328
     iput-object v1, p0, Lcom/innioasis/ipp/FlowView;->lineYear:Ljava/lang/String;
-  .line 317
+  .line 329
     iget-object p1, p1, Lcom/innioasis/ipp/Flow$Item;->name:Ljava/lang/String;
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->yearAt:I
     invoke-static { p1, v1, v2 }, Lcom/innioasis/ipp/Flow;->albumLine(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->nameLine:Ljava/lang/String;
-  .line 318
+  .line 330
     iget p1, p0, Lcom/innioasis/ipp/FlowView;->yearAt:I
     invoke-static { v0, v1, p1 }, Lcom/innioasis/ipp/Flow;->artistLine(Ljava/lang/String;Ljava/lang/String;I)Ljava/lang/String;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->artistLine:Ljava/lang/String;
-  .line 319
+  .line 331
     return-void
 .end method
 
 .method private static lum(I)I
   .registers 3
-  .line 129
+  .line 133
     shr-int/lit8 v0, p0, 16
     and-int/lit16 v0, v0, 255
     mul-int/lit16 v0, v0, 299
@@ -569,10 +595,10 @@
 
 .method private place(F)V
   .registers 8
-  .line 326
+  .line 338
     invoke-static { p1 }, Ljava/lang/Math;->abs(F)F
     move-result v0
-  .line 327
+  .line 339
     const/high16 v1, 0x3F800000
     const/4 v2, 0
     cmpg-float p1, p1, v2
@@ -582,32 +608,32 @@
   :L0
     const/high16 p1, 0x3F800000
   :L1
-  .line 328
+  .line 340
     cmpg-float v3, v0, v1
     if-gtz v3, :L2
-  .line 329
+  .line 341
     neg-float v3, p1
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->angle:F
     mul-float v3, v3, v4
     mul-float v3, v3, v0
     iput v3, p0, Lcom/innioasis/ipp/FlowView;->sAngle:F
-  .line 330
+  .line 342
     iget v3, p0, Lcom/innioasis/ipp/FlowView;->offX:F
     mul-float p1, p1, v3
     mul-float p1, p1, v0
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->sCx:F
-  .line 331
+  .line 343
     iget p1, p0, Lcom/innioasis/ipp/FlowView;->offY:F
     mul-float p1, p1, v0
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->sCy:F
     goto :L3
   :L2
-  .line 333
+  .line 345
     neg-float v3, p1
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->angle:F
     mul-float v3, v3, v4
     iput v3, p0, Lcom/innioasis/ipp/FlowView;->sAngle:F
-  .line 334
+  .line 346
     iget v3, p0, Lcom/innioasis/ipp/FlowView;->offX:F
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->spacing:F
     sub-float v5, v0, v1
@@ -615,16 +641,16 @@
     add-float/2addr v3, v4
     mul-float p1, p1, v3
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->sCx:F
-  .line 335
+  .line 347
     iget p1, p0, Lcom/innioasis/ipp/FlowView;->offY:F
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->sCy:F
   :L3
-  .line 337
+  .line 349
     const/high16 p1, 0x40C00000
     sub-float/2addr p1, v0
     const/high16 v0, 0x40000000
     div-float/2addr p1, v0
-  .line 338
+  .line 350
     cmpl-float v0, p1, v1
     if-ltz v0, :L4
     const/16 p1, 255
@@ -640,38 +666,38 @@
     float-to-int p1, p1
   :L6
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->sAlpha:I
-  .line 339
+  .line 351
     return-void
 .end method
 
 .method private quad(FFF)V
   .registers 9
-  .line 424
+  .line 436
     nop
-  .line 425
+  .line 437
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->src:[F
     const/4 v1, 0
     const/4 v2, 0
     aput v2, v0, v1
     const/4 v3, 1
     aput p1, v0, v3
-  .line 426
+  .line 438
     const/4 v3, 2
     const/high16 v4, 0x43380000
     aput v4, v0, v3
     const/4 v3, 3
     aput p1, v0, v3
-  .line 427
+  .line 439
     const/4 p1, 4
     aput v4, v0, p1
     const/4 p1, 5
     aput p2, v0, p1
-  .line 428
+  .line 440
     const/4 p1, 6
     aput v2, v0, p1
     const/4 p1, 7
     aput p2, v0, p1
-  .line 429
+  .line 441
     cmpl-float p1, p3, v2
     if-eqz p1, :L1
   :L0
@@ -684,13 +710,13 @@
     add-int/lit8 v1, v1, 2
     goto :L0
   :L1
-  .line 430
+  .line 442
     return-void
 .end method
 
 .method private slide(Landroid/graphics/Canvas;II)V
   .registers 26
-  .line 342
+  .line 354
     move-object/from16 v6, p0
     move-object/from16 v7, p1
     move/from16 v0, p2
@@ -701,35 +727,35 @@
     if-ne v0, v1, :L0
     goto/16 :L13
   :L0
-  .line 343
+  .line 355
     int-to-float v1, v0
     iget v2, v6, Lcom/innioasis/ipp/FlowView;->pos:F
     sub-float v2, v1, v2
     invoke-direct { v6, v2 }, Lcom/innioasis/ipp/FlowView;->place(F)V
-  .line 344
+  .line 356
     iget v2, v6, Lcom/innioasis/ipp/FlowView;->sAlpha:I
     if-gtz v2, :L1
     return-void
   :L1
-  .line 345
+  .line 357
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->loader:Lcom/innioasis/ipp/Flow$Loader;
     invoke-virtual { v2, v0 }, Lcom/innioasis/ipp/Flow$Loader;->get(I)Landroid/graphics/Bitmap;
     move-result-object v8
-  .line 346
+  .line 358
     if-nez v8, :L2
     return-void
   :L2
-  .line 347
+  .line 359
     iget v2, v6, Lcom/innioasis/ipp/FlowView;->sAlpha:I
-  .line 348
+  .line 360
     iget-object v3, v6, Lcom/innioasis/ipp/FlowView;->loader:Lcom/innioasis/ipp/Flow$Loader;
     invoke-virtual { v3, v0 }, Lcom/innioasis/ipp/Flow$Loader;->age(I)J
     move-result-wide v3
-  .line 349
+  .line 361
     const-wide/16 v9, 200
     cmp-long v0, v3, v9
     if-gez v0, :L4
-  .line 350
+  .line 362
     int-to-long v11, v2
     const-wide/16 v13, 0
     cmp-long v0, v3, v13
@@ -739,16 +765,16 @@
     mul-long v11, v11, v3
     div-long/2addr v11, v9
     long-to-int v2, v11
-  .line 351
+  .line 363
     const/4 v0, 1
     iput-boolean v0, v6, Lcom/innioasis/ipp/FlowView;->fading:Z
     move v9, v2
     goto :L5
   :L4
-  .line 349
+  .line 361
     move v9, v2
   :L5
-  .line 353
+  .line 365
     iget v0, v6, Lcom/innioasis/ipp/FlowView;->sAngle:F
     float-to-double v2, v0
     invoke-static { v2, v3 }, Ljava/lang/Math;->cos(D)D
@@ -759,7 +785,7 @@
     invoke-static { v2, v3 }, Ljava/lang/Math;->sin(D)D
     move-result-wide v2
     double-to-float v11, v2
-  .line 354
+  .line 366
     iget v0, v6, Lcom/innioasis/ipp/FlowView;->spread:F
     const/4 v12, 0
     cmpl-float v2, v0, v12
@@ -777,14 +803,14 @@
   :L7
     const/4 v13, 0
   :L8
-  .line 355
+  .line 367
     nop
-  .line 356
+  .line 368
     nop
-  .line 358
+  .line 370
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
     invoke-virtual { v0, v9 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 362
+  .line 374
     const/4 v1, 0
     const/high16 v14, 0xC2B80000
     const/high16 v3, 0x43480000
@@ -793,25 +819,25 @@
     move v4, v10
     move v5, v11
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 363
+  .line 375
     const/4 v1, 2
     const/high16 v2, 0x42B80000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 364
+  .line 376
     const/4 v1, 4
     const/high16 v3, 0x434A0000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 365
+  .line 377
     const/4 v1, 6
     move v2, v14
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 366
+  .line 378
     const/16 v0, 180
     int-to-float v0, v0
     const/16 v1, 182
     int-to-float v15, v1
     invoke-direct { v6, v0, v15, v13 }, Lcom/innioasis/ipp/FlowView;->quad(FFF)V
-  .line 367
+  .line 379
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->src:[F
     const/16 v18, 0
@@ -826,30 +852,30 @@
     if-nez v0, :L9
     return-void
   :L9
-  .line 368
+  .line 380
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->save()I
-  .line 369
+  .line 381
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     invoke-virtual { v7, v0 }, Landroid/graphics/Canvas;->concat(Landroid/graphics/Matrix;)V
-  .line 370
+  .line 382
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->seamFrom:Landroid/graphics/Rect;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->seamTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 371
+  .line 383
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
     mul-int/lit8 v1, v9, 112
     const/16 v5, 255
     div-int/2addr v1, v5
     invoke-virtual { v0, v1 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 372
+  .line 384
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->seamFrom:Landroid/graphics/Rect;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->seamTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 373
+  .line 385
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->restore()V
-  .line 377
+  .line 389
     const/4 v1, 0
     const/high16 v3, 0x434A0000
     move-object/from16 v0, p0
@@ -857,23 +883,23 @@
     move v4, v10
     move v5, v11
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 378
+  .line 390
     const/4 v1, 2
     const/high16 v2, 0x42B80000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 379
+  .line 391
     const/4 v1, 4
     const/high16 v3, 0x43920000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 380
+  .line 392
     const/4 v1, 6
     move v2, v14
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 381
+  .line 393
     const/16 v0, 92
     int-to-float v0, v0
     invoke-direct { v6, v15, v0, v13 }, Lcom/innioasis/ipp/FlowView;->quad(FFF)V
-  .line 382
+  .line 394
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->src:[F
     const/16 v18, 0
@@ -888,34 +914,34 @@
     if-nez v0, :L10
     return-void
   :L10
-  .line 383
+  .line 395
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
     invoke-virtual { v0, v9 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 384
+  .line 396
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->save()I
-  .line 385
+  .line 397
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     invoke-virtual { v7, v0 }, Landroid/graphics/Canvas;->concat(Landroid/graphics/Matrix;)V
-  .line 386
+  .line 398
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->reflFrom:Landroid/graphics/Rect;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 387
+  .line 399
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->reflFrom:Landroid/graphics/Rect;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 388
+  .line 400
     invoke-static { }, Lcom/innioasis/ipp/Flow;->fade()Landroid/graphics/Bitmap;
     move-result-object v0
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->fade:Landroid/graphics/Paint;
     const/4 v3, 0
     invoke-virtual { v7, v0, v3, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 389
+  .line 401
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->restore()V
-  .line 392
+  .line 404
     const/4 v1, 0
     const/high16 v3, 0x41A00000
     move-object/from16 v0, p0
@@ -923,22 +949,22 @@
     move v4, v10
     move v5, v11
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 393
+  .line 405
     const/4 v1, 2
     const/high16 v2, 0x42B80000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 394
+  .line 406
     const/4 v1, 4
     const/high16 v3, 0x434C0000
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 395
+  .line 407
     const/4 v1, 6
     move v2, v14
     invoke-direct/range { v0 .. v5 }, Lcom/innioasis/ipp/FlowView;->corner(IFFFF)V
-  .line 396
+  .line 408
     const/high16 v0, 0x43380000
     invoke-direct { v6, v12, v0, v13 }, Lcom/innioasis/ipp/FlowView;->quad(FFF)V
-  .line 397
+  .line 409
     iget-object v14, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     iget-object v15, v6, Lcom/innioasis/ipp/FlowView;->src:[F
     const/16 v16, 0
@@ -951,12 +977,12 @@
     if-nez v0, :L11
     return-void
   :L11
-  .line 398
+  .line 410
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->save()I
-  .line 399
+  .line 411
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->m:Landroid/graphics/Matrix;
     invoke-virtual { v7, v0 }, Landroid/graphics/Canvas;->concat(Landroid/graphics/Matrix;)V
-  .line 400
+  .line 412
     const/16 v0, 255
     if-ge v9, v0, :L12
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->slideFrom:Landroid/graphics/Rect;
@@ -964,47 +990,47 @@
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
   :L12
-  .line 401
+  .line 413
     iget-object v0, v6, Lcom/innioasis/ipp/FlowView;->slideFrom:Landroid/graphics/Rect;
     iget-object v1, v6, Lcom/innioasis/ipp/FlowView;->slideTo:Landroid/graphics/RectF;
     iget-object v2, v6, Lcom/innioasis/ipp/FlowView;->bmpPaint:Landroid/graphics/Paint;
     invoke-virtual { v7, v8, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 402
+  .line 414
     invoke-virtual/range { p1 .. p1 }, Landroid/graphics/Canvas;->restore()V
-  .line 403
+  .line 415
     return-void
   :L13
-  .line 342
+  .line 354
     return-void
 .end method
 
 .method private static textColor(Landroid/content/Context;)I
   .catchall { :L0 .. :L1 } :L2
   .registers 4
-  .line 116
+  .line 120
     const/4 v0, -1
   :L0
     new-instance v1, Landroid/widget/TextView;
     invoke-direct { v1, p0 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
-  .line 117
+  .line 121
     sget-object p0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     const/4 v2, 0
     invoke-virtual { p0, v1, v0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetTextColor(Landroid/widget/TextView;IZ)V
-  .line 118
+  .line 122
     invoke-virtual { v1 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result p0
   :L1
     return p0
   :L2
-  .line 119
+  .line 123
     move-exception p0
-  .line 120
+  .line 124
     return v0
 .end method
 
 .method public count()I
   .registers 2
-  .line 186
+  .line 198
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     if-nez v0, :L0
     const/4 v0, 0
@@ -1018,7 +1044,7 @@
 
 .method public coverLeft()I
   .registers 2
-  .line 222
+  .line 234
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->w:I
     div-int/lit8 v0, v0, 2
     add-int/lit8 v0, v0, -90
@@ -1027,28 +1053,28 @@
 
 .method public coverTop()I
   .registers 2
-  .line 224
+  .line 236
     const/16 v0, 22
     return v0
 .end method
 
 .method public getLabels()F
   .registers 2
-  .line 244
+  .line 256
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->labels:F
     return v0
 .end method
 
 .method public getSpread()F
   .registers 2
-  .line 234
+  .line 246
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->spread:F
     return v0
 .end method
 
 .method public goTo(I)V
   .registers 6
-  .line 204
+  .line 216
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     if-eqz v0, :L5
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
@@ -1056,7 +1082,7 @@
     if-eqz v0, :L0
     goto :L5
   :L0
-  .line 205
+  .line 217
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v0
@@ -1066,7 +1092,7 @@
     const/4 v0, 0
     invoke-static { v0, p1 }, Ljava/lang/Math;->max(II)I
     move-result p1
-  .line 206
+  .line 218
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->target:I
     if-ne p1, v1, :L1
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->pos:F
@@ -1075,7 +1101,7 @@
     if-nez v1, :L1
     return-void
   :L1
-  .line 207
+  .line 219
     int-to-float v1, p1
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     sub-float v2, v1, v2
@@ -1095,38 +1121,38 @@
     int-to-float v1, v1
     iput v1, p0, Lcom/innioasis/ipp/FlowView;->pos:F
   :L4
-  .line 208
+  .line 220
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->target:I
-  .line 209
+  .line 221
     iput-boolean v0, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
-  .line 210
+  .line 222
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->loader:Lcom/innioasis/ipp/Flow$Loader;
     invoke-virtual { v0, p1 }, Lcom/innioasis/ipp/Flow$Loader;->aim(I)V
-  .line 211
+  .line 223
     const-wide/16 v0, 0
     iput-wide v0, p0, Lcom/innioasis/ipp/FlowView;->last:J
-  .line 212
+  .line 224
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->postInvalidateOnAnimation()V
-  .line 213
+  .line 225
     return-void
   :L5
-  .line 204
+  .line 216
     return-void
 .end method
 
 .method public hide(I)V
   .registers 2
-  .line 217
+  .line 229
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->hidden:I
-  .line 218
+  .line 230
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 219
+  .line 231
     return-void
 .end method
 
 .method public hurry()V
   .registers 3
-  .line 175
+  .line 187
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->target:I
     int-to-float v1, v1
@@ -1134,51 +1160,51 @@
     if-nez v0, :L0
     return-void
   :L0
-  .line 176
+  .line 188
     const/4 v0, 1
     iput-boolean v0, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
-  .line 177
+  .line 189
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->postInvalidateOnAnimation()V
-  .line 178
+  .line 190
     return-void
 .end method
 
 .method protected onDraw(Landroid/graphics/Canvas;)V
   .registers 11
-  .line 270
+  .line 282
     invoke-direct { p0 }, Lcom/innioasis/ipp/FlowView;->advance()Z
     move-result v0
-  .line 271
+  .line 283
     const/4 v1, 0
     iput-boolean v1, p0, Lcom/innioasis/ipp/FlowView;->fading:Z
-  .line 272
+  .line 284
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->count()I
     move-result v2
-  .line 273
+  .line 285
     if-lez v2, :L3
     iget v3, p0, Lcom/innioasis/ipp/FlowView;->w:I
     if-lez v3, :L3
-  .line 274
+  .line 286
     iget v3, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     invoke-static { v3 }, Ljava/lang/Math;->round(F)I
     move-result v3
-  .line 276
+  .line 288
     const/4 v4, 7
   :L0
     if-ltz v4, :L2
-  .line 277
+  .line 289
     sub-int v5, v3, v4
     invoke-direct { p0, p1, v5, v2 }, Lcom/innioasis/ipp/FlowView;->slide(Landroid/graphics/Canvas;II)V
-  .line 278
+  .line 290
     if-eqz v4, :L1
     add-int v5, v3, v4
     invoke-direct { p0, p1, v5, v2 }, Lcom/innioasis/ipp/FlowView;->slide(Landroid/graphics/Canvas;II)V
   :L1
-  .line 276
+  .line 288
     add-int/lit8 v4, v4, -1
     goto :L0
   :L2
-  .line 280
+  .line 292
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     add-int/lit8 v2, v2, -1
     invoke-static { v2, v3 }, Ljava/lang/Math;->min(II)I
@@ -1188,12 +1214,12 @@
     invoke-interface { v4, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/Flow$Item;
-  .line 281
+  .line 293
     iget v2, p0, Lcom/innioasis/ipp/FlowView;->w:I
     int-to-float v2, v2
     const/high16 v3, 0x40000000
     div-float/2addr v2, v3
-  .line 282
+  .line 294
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->spread:F
     mul-float v4, v4, v3
     const/high16 v5, 0x3F800000
@@ -1205,30 +1231,30 @@
     iget v6, p0, Lcom/innioasis/ipp/FlowView;->labels:F
     mul-float v4, v4, v6
     float-to-int v4, v4
-  .line 283
+  .line 295
     iget-object v6, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
     invoke-virtual { v6, v4 }, Landroid/text/TextPaint;->setAlpha(I)V
-  .line 284
+  .line 296
     iget-object v6, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
     mul-int/lit16 v7, v4, 176
     div-int/lit16 v7, v7, 255
     invoke-virtual { v6, v7 }, Landroid/text/TextPaint;->setAlpha(I)V
-  .line 285
+  .line 297
     iget-object v6, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
     iget v7, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
     invoke-static { v7, v4 }, Lcom/innioasis/ipp/FlowView;->faded(II)I
     move-result v7
     const/4 v8, 0
     invoke-virtual { v6, v3, v8, v5, v7 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
-  .line 286
+  .line 298
     iget-object v6, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
     iget v7, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
     invoke-static { v7, v4 }, Lcom/innioasis/ipp/FlowView;->faded(II)I
     move-result v4
     invoke-virtual { v6, v3, v8, v5, v4 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
-  .line 287
+  .line 299
     invoke-direct { p0, v1 }, Lcom/innioasis/ipp/FlowView;->lines(Lcom/innioasis/ipp/Flow$Item;)V
-  .line 288
+  .line 300
     iget-object v1, p0, Lcom/innioasis/ipp/FlowView;->nameLine:Ljava/lang/String;
     iget-object v3, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->w:I
@@ -1244,7 +1270,7 @@
     int-to-float v3, v3
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
     invoke-virtual { p1, v1, v2, v3, v4 }, Landroid/graphics/Canvas;->drawText(Ljava/lang/String;FFLandroid/graphics/Paint;)V
-  .line 290
+  .line 302
     iget-object v1, p0, Lcom/innioasis/ipp/FlowView;->artistLine:Ljava/lang/String;
     iget-object v3, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
     iget v4, p0, Lcom/innioasis/ipp/FlowView;->w:I
@@ -1261,14 +1287,14 @@
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
     invoke-virtual { p1, v1, v2, v3, v4 }, Landroid/graphics/Canvas;->drawText(Ljava/lang/String;FFLandroid/graphics/Paint;)V
   :L3
-  .line 293
+  .line 305
     if-nez v0, :L4
     iget-boolean p1, p0, Lcom/innioasis/ipp/FlowView;->fading:Z
     if-eqz p1, :L5
   :L4
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->postInvalidateOnAnimation()V
   :L5
-  .line 294
+  .line 306
     iget-boolean p1, p0, Lcom/innioasis/ipp/FlowView;->wasMoving:Z
     if-eqz p1, :L6
     if-nez v0, :L6
@@ -1276,27 +1302,27 @@
     if-eqz p1, :L6
     invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/FlowView;->post(Ljava/lang/Runnable;)Z
   :L6
-  .line 295
+  .line 307
     iput-boolean v0, p0, Lcom/innioasis/ipp/FlowView;->wasMoving:Z
-  .line 296
+  .line 308
     return-void
 .end method
 
 .method protected onSizeChanged(IIII)V
   .registers 5
-  .line 248
+  .line 260
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->w:I
-  .line 249
+  .line 261
     iput p2, p0, Lcom/innioasis/ipp/FlowView;->h:I
-  .line 250
+  .line 262
     invoke-direct { p0 }, Lcom/innioasis/ipp/FlowView;->fit()V
-  .line 251
+  .line 263
     return-void
 .end method
 
 .method public resting()Z
   .registers 3
-  .line 171
+  .line 183
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->pos:F
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->target:I
     int-to-float v1, v1
@@ -1312,7 +1338,7 @@
 
 .method public setCount(I)V
   .registers 5
-  .line 134
+  .line 138
     const/4 v0, 3
     const/4 v1, 1
     const/4 v2, 2
@@ -1327,11 +1353,11 @@
   :L1
     const/4 v0, 2
   :L2
-  .line 135
+  .line 139
     sub-int/2addr p1, v1
     div-int/2addr p1, v2
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->side:I
-  .line 136
+  .line 140
     sget-object p1, Lcom/innioasis/ipp/FlowView;->ANGLES:[F
     aget p1, p1, v0
     float-to-double v1, p1
@@ -1339,13 +1365,13 @@
     move-result-wide v1
     double-to-float p1, v1
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->angle:F
-  .line 137
+  .line 141
     sget-object v1, Lcom/innioasis/ipp/FlowView;->STEPS:[F
     aget v0, v1, v0
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->spacing:F
-  .line 138
+  .line 142
     nop
-  .line 139
+  .line 143
     float-to-double v0, p1
     invoke-static { v0, v1 }, Ljava/lang/Math;->cos(D)D
     move-result-wide v0
@@ -1357,91 +1383,91 @@
     const/high16 v1, 0x43340000
     add-float/2addr v0, v1
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->offX:F
-  .line 140
+  .line 144
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->angle:F
     float-to-double v0, v0
     invoke-static { v0, v1 }, Ljava/lang/Math;->sin(D)D
     move-result-wide v0
     double-to-float v0, v0
     mul-float v0, v0, p1
-    const/high16 p1, 0x42340000
+    const/high16 p1, 0x41900000
     add-float/2addr v0, p1
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->offY:F
-  .line 141
+  .line 145
     invoke-direct { p0 }, Lcom/innioasis/ipp/FlowView;->fit()V
-  .line 142
+  .line 146
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 143
+  .line 147
     return-void
 .end method
 
 .method public setItems(Ljava/util/List;Lcom/innioasis/ipp/Flow$Loader;I)V
   .registers 4
-  .line 160
+  .line 172
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
-  .line 161
+  .line 173
     iput-object p2, p0, Lcom/innioasis/ipp/FlowView;->loader:Lcom/innioasis/ipp/Flow$Loader;
-  .line 162
+  .line 174
     iput p3, p0, Lcom/innioasis/ipp/FlowView;->target:I
-  .line 163
+  .line 175
     int-to-float p1, p3
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->pos:F
-  .line 164
+  .line 176
     invoke-virtual { p2, p3 }, Lcom/innioasis/ipp/Flow$Loader;->aim(I)V
-  .line 165
+  .line 177
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 166
+  .line 178
     return-void
 .end method
 
 .method public setLabels(F)V
   .registers 2
-  .line 240
+  .line 252
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->labels:F
-  .line 241
+  .line 253
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 242
+  .line 254
     return-void
 .end method
 
 .method public setOnRest(Ljava/lang/Runnable;)V
   .registers 2
-  .line 184
+  .line 196
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->onRest:Ljava/lang/Runnable;
     return-void
 .end method
 
 .method public setSpread(F)V
   .registers 2
-  .line 230
+  .line 242
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->spread:F
-  .line 231
+  .line 243
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 232
+  .line 244
     return-void
 .end method
 
 .method public setYears(I)V
   .registers 3
-  .line 305
+  .line 317
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->yearAt:I
     if-ne v0, p1, :L0
     return-void
   :L0
-  .line 306
+  .line 318
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->yearAt:I
-  .line 307
+  .line 319
     const/4 p1, 0
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView;->lineOf:Lcom/innioasis/ipp/Flow$Item;
-  .line 308
+  .line 320
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->invalidate()V
-  .line 309
+  .line 321
     return-void
 .end method
 
 .method public step(I)V
   .registers 4
-  .line 189
+  .line 201
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     if-eqz v0, :L2
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
@@ -1449,7 +1475,7 @@
     if-eqz v0, :L0
     goto :L2
   :L0
-  .line 190
+  .line 202
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->items:Ljava/util/List;
     invoke-interface { v0 }, Ljava/util/List;->size()I
     move-result v0
@@ -1461,33 +1487,33 @@
     const/4 v0, 0
     invoke-static { v0, p1 }, Ljava/lang/Math;->max(II)I
     move-result p1
-  .line 191
+  .line 203
     iget v1, p0, Lcom/innioasis/ipp/FlowView;->target:I
     if-ne p1, v1, :L1
     return-void
   :L1
-  .line 192
+  .line 204
     iput p1, p0, Lcom/innioasis/ipp/FlowView;->target:I
-  .line 193
+  .line 205
     iput-boolean v0, p0, Lcom/innioasis/ipp/FlowView;->hurry:Z
-  .line 194
+  .line 206
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView;->loader:Lcom/innioasis/ipp/Flow$Loader;
     invoke-virtual { v0, p1 }, Lcom/innioasis/ipp/Flow$Loader;->aim(I)V
-  .line 195
+  .line 207
     const-wide/16 v0, 0
     iput-wide v0, p0, Lcom/innioasis/ipp/FlowView;->last:J
-  .line 196
+  .line 208
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView;->postInvalidateOnAnimation()V
-  .line 197
+  .line 209
     return-void
   :L2
-  .line 189
+  .line 201
     return-void
 .end method
 
 .method public target()I
   .registers 2
-  .line 168
+  .line 180
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->target:I
     return v0
 .end method

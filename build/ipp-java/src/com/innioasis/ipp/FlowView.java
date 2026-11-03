@@ -33,9 +33,13 @@ import java.util.List;
 public final class FlowView extends View {
 
     // Per albums on screen (Flow.COUNTS): the side covers' angle and the step between them; five
-    // and seven turn the covers further and pack them closer.
+    // and seven turn the covers further and pack them closer. Seven's step is worked out by fit.
     private static final float[] ANGLES = { 70f, 75f, 80f };
     private static final float[] STEPS = { 40f, 64f, 40f };
+    /** Seven: the first side cover tucks this far behind the centre one, as on the iPod (see fit). */
+    private static final float TUCK = 8f;
+    /** How far the side covers are pushed back past their own turn, in cover sizes: less, bigger. */
+    private static final float DEPTH = 0.1f;
     /** Covers drawn on each side; the outermost pair fades out. */
     private static final int SIDE = 6;
     /** How far past the screen's edge the outermost cover shown reaches: the filtered edge is soft. */
@@ -137,7 +141,7 @@ public final class FlowView extends View {
         spacing = STEPS[i];
         float half = Flow.S / 2f;
         offX = half * (1f - (float) Math.cos(angle)) + Flow.S;
-        offY = half * (float) Math.sin(angle) + Flow.S / 4f;
+        offY = half * (float) Math.sin(angle) + Flow.S * DEPTH;
         fit();
         invalidate();
     }
@@ -145,7 +149,9 @@ public final class FlowView extends View {
     /**
      * Moves the side covers out until the outer edge of the last one shown at rest is past the
      * screen's: the covers behind it are then hidden by it, not faded out. The picture's edge, not
-     * the slide's transparent frame round it, or a sliver of the next cover shows beside it.
+     * the slide's transparent frame round it, or a sliver of the next cover shows beside it. With
+     * seven the inner edge of the first is set too, TUCK behind the centre cover, and the step
+     * between the side covers follows from the two.
      */
     private void fit() {
         if (w <= 0 || h <= 0) return;
@@ -153,7 +159,13 @@ public final class FlowView extends View {
         float cos = (float) Math.cos(angle), sin = (float) Math.sin(angle);
         // corner() solved for the centre x that projects the edge u to w + EDGE_OUT
         float cx = (w / 2f + EDGE_OUT) * (h + offY - u * sin) / h - u * cos;
-        offX = cx - spacing * (side - 1);
+        if (side >= 3) {
+            // ...and for the centre x that projects the edge -u to the centre cover's edge less TUCK
+            offX = (u - TUCK) * (h + offY + u * sin) / h + u * cos;
+            spacing = (cx - offX) / (side - 1);
+        } else {
+            offX = cx - spacing * (side - 1);
+        }
     }
 
     public void setItems(List items, Flow.Loader loader, int start) {
