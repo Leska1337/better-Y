@@ -30,13 +30,13 @@
 
 .method private constructor <init>()V
   .registers 2
-  .line 1136
+  .line 1144
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1138
+  .line 1146
     new-instance v0, Ljava/util/LinkedList;
     invoke-direct { v0 }, Ljava/util/LinkedList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
-  .line 1139
+  .line 1147
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
@@ -45,14 +45,14 @@
 
 .method synthetic constructor <init>(Lcom/innioasis/y1/activity/IppActivity$1;)V
   .registers 2
-  .line 1136
+  .line 1144
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$400(Lcom/innioasis/y1/activity/IppActivity$Rescan;)Lcom/innioasis/y1/database/Y1Repository;
   .registers 1
-  .line 1136
+  .line 1144
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->repo:Lcom/innioasis/y1/database/Y1Repository;
     return-object p0
 .end method
@@ -62,21 +62,21 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 1160
+  .line 1168
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
     invoke-virtual { v0, p1 }, Ljava/util/LinkedList;->addLast(Ljava/lang/Object;)V
-  .line 1161
+  .line 1169
     iget p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
     add-int/lit8 p1, p1, 1
     iput p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
-  .line 1162
+  .line 1170
     invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
   :L1
-  .line 1163
+  .line 1171
     monitor-exit p0
     return-void
   :L2
-  .line 1159
+  .line 1167
     move-exception p1
     monitor-exit p0
     throw p1
@@ -87,28 +87,28 @@
   .registers 4
     monitor-enter p0
   :L0
-  .line 1214
+  .line 1222
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built:I
     const/4 v1, 1
     add-int/2addr v0, v1
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built:I
-  .line 1215
+  .line 1223
     if-eqz p1, :L1
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
     invoke-virtual { v0, p1 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
     goto :L2
   :L1
-  .line 1216
+  .line 1224
     iput-boolean v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->failed:Z
   :L2
-  .line 1217
+  .line 1225
     invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
   :L3
-  .line 1218
+  .line 1226
     monitor-exit p0
     return-void
   :L4
-  .line 1213
+  .line 1221
     move-exception p1
     monitor-exit p0
     throw p1
@@ -118,18 +118,18 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
     monitor-enter p0
-  .line 1166
+  .line 1174
     const/4 v0, 1
   :L0
     iput-boolean v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->closed:Z
-  .line 1167
+  .line 1175
     invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
   :L1
-  .line 1168
+  .line 1176
     monitor-exit p0
     return-void
   :L2
-  .line 1165
+  .line 1173
     move-exception v0
     monitor-exit p0
     throw v0
@@ -143,7 +143,7 @@
   .registers 5
     monitor-enter p0
   :L0
-  .line 1172
+  .line 1180
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
   :L1
     const/4 v1, 1
@@ -151,15 +151,15 @@
     monitor-exit p0
     return v1
   :L2
-  .line 1174
+  .line 1182
     const-wide/16 v2, 200
   :L3
     invoke-virtual { p0, v2, v3 }, Ljava/lang/Object;->wait(J)V
   :L4
-  .line 1177
+  .line 1185
     nop
   :L5
-  .line 1178
+  .line 1186
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
   :L6
     if-nez v0, :L7
@@ -170,13 +170,13 @@
     monitor-exit p0
     return v1
   :L9
-  .line 1175
+  .line 1183
     move-exception v0
-  .line 1176
+  .line 1184
     monitor-exit p0
     return v1
   :L10
-  .line 1171
+  .line 1179
     move-exception v0
     monitor-exit p0
     throw v0
@@ -192,7 +192,7 @@
   .registers 2
     monitor-enter p0
   :L0
-  .line 1209
+  .line 1217
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
     invoke-virtual { v0 }, Ljava/util/LinkedList;->isEmpty()Z
     move-result v0
@@ -202,7 +202,7 @@
     invoke-virtual { p0 }, Ljava/lang/Object;->wait()V
     goto :L0
   :L1
-  .line 1210
+  .line 1218
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->todo:Ljava/util/LinkedList;
     invoke-virtual { v0 }, Ljava/util/LinkedList;->isEmpty()Z
     move-result v0
@@ -218,7 +218,7 @@
     monitor-exit p0
     return-object v0
   :L4
-  .line 1208
+  .line 1216
     move-exception v0
     monitor-exit p0
     goto :L6
@@ -233,10 +233,10 @@
   .registers 4
     monitor-enter p0
   :L0
-  .line 1183
+  .line 1191
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->queued:I
     add-int/2addr p2, v0
-  .line 1184
+  .line 1192
     if-nez p2, :L1
     const/4 p1, 0
     goto :L2
@@ -249,7 +249,7 @@
     monitor-exit p0
     return p1
   :L3
-  .line 1182
+  .line 1190
     move-exception p1
     monitor-exit p0
     throw p1
@@ -260,18 +260,18 @@
   .registers 2
     monitor-enter p0
   :L0
-  .line 1221
+  .line 1229
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
     add-int/lit8 v0, v0, -1
     iput v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
-  .line 1222
+  .line 1230
     invoke-virtual { p0 }, Ljava/lang/Object;->notifyAll()V
   :L1
-  .line 1223
+  .line 1231
     monitor-exit p0
     return-void
   :L2
-  .line 1220
+  .line 1228
     move-exception v0
     monitor-exit p0
     throw v0
@@ -280,47 +280,47 @@
 .method start(Lcom/innioasis/y1/database/Y1Repository;)V
   .catchall { :L2 .. :L5 } :L4
   .registers 6
-  .line 1148
+  .line 1156
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->repo:Lcom/innioasis/y1/database/Y1Repository;
-  .line 1149
+  .line 1157
     invoke-static { }, Ljava/lang/Runtime;->getRuntime()Ljava/lang/Runtime;
     move-result-object p1
     invoke-virtual { p1 }, Ljava/lang/Runtime;->availableProcessors()I
     move-result p1
     add-int/lit8 p1, p1, 1
-  .line 1150
+  .line 1158
     const/4 v0, 3
     if-le p1, v0, :L0
     const/4 p1, 3
   :L0
-  .line 1151
+  .line 1159
     monitor-enter p0
-  .line 1152
+  .line 1160
     const/4 v0, 0
   :L1
     if-ge v0, p1, :L3
   :L2
-  .line 1153
+  .line 1161
     iget v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
     add-int/lit8 v1, v1, 1
     iput v1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->live:I
-  .line 1154
+  .line 1162
     new-instance v1, Ljava/lang/Thread;
     new-instance v2, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;
     invoke-direct { v2, p0 }, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;-><init>(Lcom/innioasis/y1/activity/IppActivity$Rescan;)V
     const-string v3, "ipp-rescan"
     invoke-direct { v1, v2, v3 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
     invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
-  .line 1152
+  .line 1160
     add-int/lit8 v0, v0, 1
     goto :L1
   :L3
-  .line 1156
+  .line 1164
     monitor-exit p0
-  .line 1157
+  .line 1165
     return-void
   :L4
-  .line 1156
+  .line 1164
     move-exception p1
     monitor-exit p0
   :L5
@@ -337,10 +337,10 @@
   .catchall { :L5 .. :L7 } :L6
   .catchall { :L8 .. :L10 } :L9
   .registers 5
-  .line 1190
+  .line 1198
     monitor-enter p0
   :L0
-  .line 1191
+  .line 1199
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
     invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
     move-result v0
@@ -354,7 +354,7 @@
     if-ge p2, v0, :L1
     goto :L8
   :L1
-  .line 1192
+  .line 1200
     iget-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
     invoke-virtual { p2 }, Ljava/util/ArrayList;->size()I
     move-result v0
@@ -362,49 +362,49 @@
     invoke-virtual { p2, v0 }, Ljava/util/ArrayList;->toArray([Ljava/lang/Object;)[Ljava/lang/Object;
     move-result-object p2
     check-cast p2, [Lcom/innioasis/y1/database/Song;
-  .line 1193
+  .line 1201
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->done:Ljava/util/ArrayList;
     invoke-virtual { v0 }, Ljava/util/ArrayList;->clear()V
-  .line 1194
+  .line 1202
     monitor-exit p0
   :L2
-  .line 1196
+  .line 1204
     invoke-virtual { p1 }, Lcom/innioasis/y1/database/Y1Repository;->ippSongDao()Lcom/innioasis/y1/database/SongDao;
     move-result-object p1
     invoke-interface { p1, p2 }, Lcom/innioasis/y1/database/SongDao;->insert([Lcom/innioasis/y1/database/Song;)V
   :L3
-  .line 1202
+  .line 1210
     nop
-  .line 1203
+  .line 1211
     invoke-static { p2 }, Lcom/innioasis/ipp/Ipp;->songsChanged([Lcom/innioasis/y1/database/Song;)V
-  .line 1204
+  .line 1212
     array-length p1, p2
     return p1
   :L4
-  .line 1197
+  .line 1205
     move-exception p1
-  .line 1198
+  .line 1206
     monitor-enter p0
-  .line 1199
+  .line 1207
     const/4 p1, 1
   :L5
     iput-boolean p1, p0, Lcom/innioasis/y1/activity/IppActivity$Rescan;->failed:Z
-  .line 1200
+  .line 1208
     monitor-exit p0
-  .line 1201
+  .line 1209
     return v1
   :L6
-  .line 1200
+  .line 1208
     move-exception p1
     monitor-exit p0
   :L7
     throw p1
   :L8
-  .line 1191
+  .line 1199
     monitor-exit p0
     return v1
   :L9
-  .line 1194
+  .line 1202
     move-exception p1
     monitor-exit p0
   :L10

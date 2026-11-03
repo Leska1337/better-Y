@@ -196,6 +196,11 @@ public final class Theme {
         }
     }
 
+    /** The unfocused row's background when it is opaque, else null. */
+    public static android.graphics.drawable.Drawable rowBackground() {
+        return rowsPainted() && probe != null ? probe.getBackground() : null;
+    }
+
     /** Kept: a bitmap still decoding arrives later on THIS view ({@link #landed}). */
     private static View probe;
 
@@ -389,6 +394,10 @@ public final class Theme {
             int c = sel ? ACCENT : 0xFFFFFFFF;
             ThemeManager.INSTANCE.itemSetTextColor(vb.title, c, sel);
             ThemeManager.INSTANCE.itemSetTextColor(vb.text, c, sel);
+            // the arrow only under the cursor, as in Settings; INVISIBLE keeps the label's width
+            if (!sel && vb.arrow.getVisibility() == android.view.View.VISIBLE) {
+                vb.arrow.setVisibility(android.view.View.INVISIBLE);
+            }
         } catch (Throwable t) {
         }
     }

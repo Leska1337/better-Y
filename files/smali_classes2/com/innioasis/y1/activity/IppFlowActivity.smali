@@ -1282,9 +1282,9 @@
 
 .method static tidy()V
   .registers 0
-  .line 1771
-    invoke-static { }, Ljava/lang/System;->gc()V
   .line 1772
+    invoke-static { }, Ljava/lang/System;->gc()V
+  .line 1773
     return-void
 .end method
 

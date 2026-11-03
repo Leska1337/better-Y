@@ -17,20 +17,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.innioasis.music.MusicMainActivity;
 import com.innioasis.y1.R;
 import com.innioasis.y1.activity.DateOneLevelActivity;
+import com.innioasis.y1.activity.EbookActivity;
 import com.innioasis.y1.activity.EqActivity;
+import com.innioasis.y1.activity.IppActivity;
 import com.innioasis.y1.activity.LanguageActivity;
 import com.innioasis.y1.activity.MainActivity;
 import com.innioasis.y1.activity.SettingActivity;
 import com.innioasis.y1.activity.WallpaperListActivity;
+import com.innioasis.y1.activity.video.VideoListActivity;
 import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.base.BaseBindingAdapter;
 import com.innioasis.y1.databinding.ActivitySettingBinding;
 import com.innioasis.y1.theme.ThemeManager;
+import com.innioasis.y1.utils.WallpaperUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -84,10 +91,214 @@ public final class MenuStyle {
                 hide(a.findViewById(R.id.show_date), s);
                 dateIcon(a.findViewById(R.id.imageView));
             }
+            section(a);
             backdrop(a, s);
             Preview.apply(a);
             Bar.apply(a);
+            Fill.apply(a);
         } catch (Throwable t) {
+        }
+    }
+
+    // the main menu's list and iv_now (activity_main.xml); better-Y takes Settings' list and panel
+    // (activity_setting.xml). Every layout here spans the whole screen.
+    private static final int SPLIT_W = 213;
+    private static final int SET_W = 227;
+    private static final int PIC_W = 179;
+    private static final int PIC_TOP = 86;
+    private static final int PIC_RIGHT = 23;
+
+    /**
+     * Default style: the first level of Music, Audiobooks, E-book, Videos and better-Y is laid out
+     * as the main menu, its list on the left and the section's own main-menu picture on the right
+     * for every row. Deeper levels of the same screen, and Simple, take the whole width.
+     */
+    public static void section(Activity a) {
+        try {
+            View list;
+            int pic;
+            boolean root = true;
+            if (a instanceof MusicMainActivity) {
+                list = a.findViewById(R.id.lv);
+                pic = R.drawable.main_music;
+            } else if (a instanceof EbookActivity) {
+                list = a.findViewById(R.id.lv);
+                pic = R.drawable.main_audiobook;
+            } else if (a instanceof com.innioasis.y1_eBook.ui.main.MainActivity) {
+                list = a.findViewById(R.id.ipp_book_menu);
+                pic = R.drawable.main_book;
+                root = !Ebook.library(a);
+            } else if (a instanceof VideoListActivity) {
+                list = a.findViewById(R.id.recycler);
+                pic = R.drawable.main_video;
+                root = videoRoot(a);
+                watchVideos(a, list);
+            } else if (a instanceof IppActivity) {
+                list = a.findViewById(R.id.rc_list);
+                pic = R.drawable.plus_logo;
+                root = ((IppActivity) a).atRoot();
+            } else {
+                return;
+            }
+            boolean set = a instanceof IppActivity;
+            boolean on = root && !simple(a);
+            split(a, list, pic, on, set);
+            wallpaper(a, on, set);
+        } catch (Throwable t) {
+        }
+    }
+
+    private static void split(Activity a, View list, int pic, boolean on, boolean set) {
+        if (list == null) return;
+        ViewGroup.LayoutParams lp = list.getLayoutParams();
+        if (lp == null) return;
+        Object tag = list.getTag(R.id.layoutContent);
+        if (!(tag instanceof Integer)) {
+            tag = Integer.valueOf(lp.width);
+            list.setTag(R.id.layoutContent, tag);
+        }
+        int w = on ? px(a, set ? SET_W : SPLIT_W) : ((Integer) tag).intValue();
+        if (lp.width != w) {
+            lp.width = w;
+            list.setLayoutParams(lp);
+        }
+        View box = sectionPic(a, on, set);
+        if (box == null) return;
+        box.setVisibility(on ? View.VISIBLE : View.GONE);
+        if (!on) return;
+        ImageView iv = (ImageView) (box instanceof ImageView ? box : box.findViewById(R.id.right_image));
+        if (!Integer.valueOf(pic).equals(iv.getTag(R.id.layoutContent))) {
+            iv.setTag(R.id.layoutContent, Integer.valueOf(pic));
+            ThemeManager.INSTANCE.commonSetIcon(iv, pic);
+        }
+        View info = box.findViewById(R.id.info_state_tv);
+        if (info instanceof TextView) ((TextView) info).setTextColor(Preview.fg(a));
+    }
+
+    /**
+     * Added to the base layout's root beside {@code layoutContent}: the main menu's iv_now, or for
+     * better-Y Settings' own panel out of activity_setting.xml — its caption written but invisible,
+     * so the picture stands to the pixel where Settings has it, and the version under the picture.
+     * Both picture ids are ones {@link #res} caches a stock picture for.
+     */
+    private static View sectionPic(Activity a, boolean create, boolean set) {
+        View content = a.findViewById(R.id.layoutContent);
+        ViewParent p = content == null ? null : content.getParent();
+        if (!(p instanceof ConstraintLayout)) return null;
+        ConstraintLayout root = (ConstraintLayout) p;
+        Object had = root.getTag(R.id.iv_now);
+        if (had instanceof View) return (View) had;
+        if (!create) return null;
+        View box;
+        ConstraintLayout.LayoutParams lp;
+        if (set) {
+            ViewGroup page = (ViewGroup) android.view.LayoutInflater.from(a)
+                    .inflate(R.layout.activity_setting, root, false);
+            box = (View) page.findViewById(R.id.right_title).getParent();
+            lp = Pad.copy((ConstraintLayout.LayoutParams) box.getLayoutParams());
+            page.removeView(box);
+            TextView title = (TextView) box.findViewById(R.id.right_title);
+            title.setText(R.string.ipp_settings_title);
+            title.setTextColor(0);
+            ((ImageView) box.findViewById(R.id.right_image)).setImageDrawable(null);
+            ((TextView) box.findViewById(R.id.info_state_tv)).setText(R.string.ipp_version);
+        } else {
+            ImageView iv = new ImageView(a);
+            iv.setId(R.id.iv_now);
+            iv.setAdjustViewBounds(true);
+            box = iv;
+            lp = new ConstraintLayout.LayoutParams(px(a, PIC_W), ViewGroup.LayoutParams.WRAP_CONTENT);
+            lp.topToTop = ConstraintLayout.LayoutParams.PARENT_ID;
+            lp.rightToRight = ConstraintLayout.LayoutParams.PARENT_ID;
+            lp.topMargin = px(a, PIC_TOP);
+            lp.rightMargin = px(a, PIC_RIGHT);
+            lp.setMarginEnd(px(a, PIC_RIGHT));
+        }
+        root.addView(box, root.indexOfChild(content) + 1, lp);
+        root.setTag(R.id.iv_now, box);
+        return box;
+    }
+
+    /**
+     * The split level's background: the main menu's (desktop wallpaper under the theme's deskMask)
+     * for the sections it opens, Settings' (settingMask over the window's wallpaper) for better-Y.
+     * Elsewhere, and in Simple, the window's own wallpaper as stock sets it.
+     */
+    private static void wallpaper(Activity a, boolean on, boolean set) {
+        if (!(a instanceof BaseActivity)) return;
+        if (!set) {
+            View decor = a.getWindow().getDecorView();
+            Bitmap desk = WallpaperUtils.INSTANCE.getDesktopBitmap();
+            Object had = decor.getTag(R.id.back);
+            if (on && desk != null && had != desk) {
+                decor.setBackgroundDrawable(new BitmapDrawable(a.getResources(), desk));
+                decor.setTag(R.id.back, desk);
+            } else if (!on && had != null) {
+                Bitmap g = WallpaperUtils.INSTANCE.getGlobalBitmap();
+                if (g != null) decor.setBackgroundDrawable(new BitmapDrawable(a.getResources(), g));
+                decor.setTag(R.id.back, null);
+            }
+        }
+        ImageView back = ((BaseActivity) a).getBackImageView();
+        if (back == null) return;
+        if (!on) {
+            back.setVisibility(View.GONE);
+            return;
+        }
+        if (back.getTag(R.id.back) == null) {
+            back.setTag(R.id.back, Boolean.TRUE);
+            // the layout fills it black
+            back.setBackgroundDrawable(null);
+            if (set) {
+                ThemeManager.INSTANCE.setSettingMask(back);
+            } else {
+                ThemeManager.INSTANCE.setDeskMask(back);
+            }
+        }
+        back.setVisibility(View.VISIBLE);
+    }
+
+    private static int px(Context c, int dip) {
+        return (int) (dip * c.getResources().getDisplayMetrics().density + 0.5f);
+    }
+
+    private static java.lang.reflect.Field videoStack;
+
+    /** Videos keeps every level in one list; the first is the one with no history behind it. */
+    private static boolean videoRoot(Activity a) {
+        try {
+            if (videoStack == null) {
+                java.lang.reflect.Field f = VideoListActivity.class.getDeclaredField("browseHistoryStack");
+                f.setAccessible(true);
+                videoStack = f;
+            }
+            Object s = videoStack.get(a);
+            return s instanceof java.util.Collection && ((java.util.Collection) s).isEmpty();
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
+    /** Every change of level in Videos is a setList on the same adapter, after the history moved. */
+    private static void watchVideos(Activity a, View list) {
+        if (!(list instanceof RecyclerView) || list.getTag(R.id.iv_now) != null) return;
+        RecyclerView.Adapter ad = ((RecyclerView) list).getAdapter();
+        if (ad == null) return;
+        list.setTag(R.id.iv_now, Boolean.TRUE);
+        ad.registerAdapterDataObserver(new VideoLevel(a));
+    }
+
+    static final class VideoLevel extends RecyclerView.AdapterDataObserver {
+        private final WeakReference act;
+
+        VideoLevel(Activity a) {
+            act = new WeakReference(a);
+        }
+
+        @Override
+        public void onChanged() {
+            Activity a = (Activity) act.get();
+            if (a != null) section(a);
         }
     }
 

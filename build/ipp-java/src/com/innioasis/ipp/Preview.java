@@ -49,6 +49,12 @@ public final class Preview {
         return 0;
     }
 
+    /** The colour itself, LIGHT included. */
+    static int fg(Context c) {
+        int v = color(c);
+        return v == 0 ? WHITE : v;
+    }
+
     /** From {@code MenuStyle.apply}, i.e. the end of every {@code BaseActivity.onResume}. */
     static void apply(Activity a) {
         try {

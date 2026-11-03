@@ -370,6 +370,11 @@ public final class IppActivity extends BaseActivity {
         show(-1, -1);
     }
 
+    /** The list of groups is open, the level {@link MenuStyle#section} lays out as the main menu. */
+    public boolean atRoot() {
+        return group < 0;
+    }
+
     /** A list moved by Wheel.follow: rows rebound in place, never notified (ipp-wheel-scroll). */
     private RecyclerView newList(int id) {
         RecyclerView rv = new com.innioasis.ipp.Fixed(this);
@@ -407,6 +412,7 @@ public final class IppActivity extends BaseActivity {
             Bar.relist(rowList);
             rowLm.scrollToPosition(cursor >= 0 ? posOf(sel) : 0);
         }
+        MenuStyle.section(this);
     }
 
     /** The open group's visible rows, the cursor among them, the list rebound. */
@@ -456,8 +462,10 @@ public final class IppActivity extends BaseActivity {
      * label of this language fits two lines beside its widest value. Once, at the first group.
      */
     private void fitRows() {
-        int visible = catList.getHeight();
-        int width = catList.getWidth();
+        // the box's: the list of groups is narrower beside the picture in Default
+        View box = (View) catList.getParent();
+        int visible = box.getHeight();
+        int width = box.getWidth();
         if (rowsFitted || visible <= 0 || width <= 0) return;
         rowsFitted = true;
         int h = visible / ROWS - HAIR_H;

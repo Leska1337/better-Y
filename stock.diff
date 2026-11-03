@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..9522b986 100644
+index 01b1f730..09b8f65b 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..9522b986 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100470
++  versionCode: 10100476
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -437,6 +437,18 @@ index 08bc3833..80f241b3 100644
 +    <androidx.recyclerview.widget.RecyclerView android:id="@id/rc_list" android:focusable="true" android:focusableInTouchMode="true" android:layout_width="213.0dip" android:layout_height="315.0dip" android:layout_marginLeft="0.0dip" android:layout_marginTop="45.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
      <ImageView android:id="@id/iv_now" android:layout_width="179.0dip" android:layout_height="wrap_content" android:layout_marginTop="86.0dip" android:layout_marginRight="23.0dip" android:adjustViewBounds="true" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
+diff --git a/build/src/res/layout/activity_menu.xml b/build/src/res/layout/activity_menu.xml
+index 19a22056..6a1ca038 100644
+--- a/build/src/res/layout/activity_menu.xml
++++ b/build/src/res/layout/activity_menu.xml
+@@ -1,5 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+-    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:focusable="true" android:layout_width="0.0dip" android:layout_height="wrap_content" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <!-- ipp: down to the bottom, so a short list has room for Fill's empty rows. -->
++    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:focusable="true" android:layout_width="0.0dip" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_music_player.xml b/build/src/res/layout/activity_music_player.xml
 index 4fcc1b5f..831d3b8a 100644
 --- a/build/src/res/layout/activity_music_player.xml
@@ -615,15 +627,16 @@ index 8024cbe8..3ae5f3a8 100644
 +    <com.innioasis.ipp.Fixed android:id="@id/recycler" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_wallpaper_list.xml b/build/src/res/layout/activity_wallpaper_list.xml
-index cd1cd8c2..fc89192a 100644
+index cd1cd8c2..66662e0e 100644
 --- a/build/src/res/layout/activity_wallpaper_list.xml
 +++ b/build/src/res/layout/activity_wallpaper_list.xml
-@@ -1,7 +1,7 @@
+@@ -1,7 +1,8 @@
  <?xml version="1.0" encoding="utf-8"?>
  <LinearLayout android:orientation="horizontal" android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android">
 -    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="260.0dip" android:layout_height="wrap_content" />
-+    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="wrap_content" />
++    <!-- ipp: down to the bottom, so a short list has room for Fill's empty rows. -->
++    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:layout_width="227.0dip" android:layout_height="fill_parent" />
      <LinearLayout android:gravity="center" android:layout_gravity="center" android:orientation="vertical" android:layout_width="fill_parent" android:layout_height="wrap_content">
          <ImageView android:id="@id/img" android:layout_width="160.0dip" android:layout_height="120.0dip" android:scaleType="centerCrop" android:maxWidth="160.0dip" android:maxHeight="120.0dip" />
          <TextView android:textSize="18.0sp" android:textColor="@color/white" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="10.0dip" android:text="@string/setting_wallpaper_current" />
@@ -20126,7 +20139,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..0c9b1418 100644
+index 71fe29d0..c6f6c66f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21075,7 +21088,7 @@ index 71fe29d0..0c9b1418 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev470</string>
++    <string name="ipp_version">v1.1.0-dev476</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

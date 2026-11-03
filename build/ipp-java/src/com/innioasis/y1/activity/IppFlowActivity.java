@@ -1007,6 +1007,7 @@ public final class IppFlowActivity extends BaseActivity {
                 names[k] = label;
                 vals[k] = value;
             }
+            com.innioasis.ipp.Fill.rows(this);
         }
 
         /** The menu's rule: 22sp, smaller until every label fits two lines beside its widest value. */
