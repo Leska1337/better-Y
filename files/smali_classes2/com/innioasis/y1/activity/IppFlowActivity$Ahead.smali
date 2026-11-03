@@ -19,7 +19,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)V
   .registers 4
-  .line 1652
+  .line 1718
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->track:Lcom/innioasis/y1/database/Song;
@@ -29,15 +29,15 @@
 
 .method public run()V
   .registers 7
-  .line 1655
+  .line 1721
     const/4 v0, 2
     new-array v0, v0, [Ljava/lang/Object;
-  .line 1656
+  .line 1722
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->track:Lcom/innioasis/y1/database/Song;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->rep:Lcom/innioasis/y1/database/Song;
     invoke-static { v1, v2, v0 }, Lcom/innioasis/ipp/Flow;->tripAhead(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;[Ljava/lang/Object;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 1657
+  .line 1723
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Ahead;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v2
@@ -48,8 +48,8 @@
     move-result-object v5
     invoke-direct { v3, v4, v5, v1, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/lang/String;Landroid/graphics/Bitmap;[Ljava/lang/Object;)V
     invoke-virtual { v2, v3 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 1658
+  .line 1724
     invoke-static { }, Lcom/innioasis/y1/activity/IppFlowActivity;->tidy()V
-  .line 1659
+  .line 1725
     return-void
 .end method

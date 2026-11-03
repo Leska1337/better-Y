@@ -1109,6 +1109,40 @@ public final class IppFlowActivity extends BaseActivity {
         private String[] nums;
         private String[] names;
         private int[] song;
+        /**
+         * Per row, the title cut to its room, where its number starts, and both as alpha masks
+         * drawn in the row's colour. The whole window is redrawn on every step, and a drawText
+         * cost ~0.6 ms here: a frame of text was ~14 ms, of masks a bitmap each.
+         */
+        private String[] fitted;
+        private Bitmap[] nameMask, numMask;
+        private float[] numAt;
+        private int fitW;
+        private String titleFit, artistFit;
+        private Bitmap titleMask, artistMask;
+        private final Paint maskPaint = new Paint();
+
+        /** {@code s} drawn once into an ALPHA_8 bitmap, opaque: the colour comes at drawing. */
+        private static Bitmap mask(String s, TextPaint p, int width, int height, int baseline) {
+            if (s == null || s.length() == 0 || width <= 0) return null;
+            try {
+                Bitmap b = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
+                int col = p.getColor();
+                p.setColor(0xFF000000);
+                new Canvas(b).drawText(s, 0, baseline, p);
+                p.setColor(col);
+                return b;
+            } catch (Throwable t) {
+                return null;
+            }
+        }
+
+        private void drawMask(Canvas c, Bitmap b, float x, float y, int colour) {
+            if (b == null) return;
+            maskPaint.setColor(colour);
+            c.drawBitmap(b, x, y, maskPaint);
+        }
+
         /** Where a track's title starts: past the widest number. */
         private float nameX = 8;
         private int sel;
@@ -1171,6 +1205,8 @@ public final class IppFlowActivity extends BaseActivity {
             int at = Flow.yearAt(getContext());
             title = Flow.albumLine(it.name, y, at);
             artist = Flow.artistLine(it.artist, y, at);
+            titleFit = null;
+            artistFit = null;
             songs = null;
             names = null;
             sel = 0;
@@ -1189,6 +1225,14 @@ public final class IppFlowActivity extends BaseActivity {
                 if (nums[i] != null) wide = Math.max(wide, text.measureText(nums[i]));
             }
             nameX = 8 + Math.max(wide, MARK) + text.measureText(" ");
+            fitted = new String[names.length];
+            nameMask = new Bitmap[names.length];
+            numMask = new Bitmap[names.length];
+            numAt = new float[names.length];
+            float numEnd = nameX - text.measureText(" ");
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] != null) numAt[i] = numEnd - text.measureText(nums[i]);
+            }
             sel = 0;
             first = 0;
             if (song.length > 0 && song[0] < 0) sel = 1;   // the cursor never stands on a divider
@@ -1428,15 +1472,30 @@ public final class IppFlowActivity extends BaseActivity {
         @Override
         protected void onDraw(Canvas c) {
             int w = getWidth(), h = getHeight();
+            if (w != fitW) {
+                fitW = w;
+                titleFit = null;
+                artistFit = null;
+                if (fitted != null) {
+                    fitted = new String[fitted.length];
+                    nameMask = new Bitmap[fitted.length];
+                }
+            }
+            if (titleFit == null) {
+                titleFit = TextUtils.ellipsize(title, head, w - 16, TextUtils.TruncateAt.END).toString();
+                titleMask = mask(titleFit, head, w - 16, 30, 22);
+            }
+            if (artistFit == null) {
+                artistFit = TextUtils.ellipsize(artist, sub, w - 16, TextUtils.TruncateAt.END).toString();
+                artistMask = mask(artistFit, sub, w - 16, 30, 22);
+            }
             c.drawRect(0, 0, w, h, bg);
             c.drawRect(0, 0, w, 1, line);
             c.drawRect(0, h - 1, w, h, line);
             c.drawRect(0, 0, 1, h, line);
             c.drawRect(w - 1, 0, w, h, line);
-            c.drawText(TextUtils.ellipsize(title, head, w - 16, TextUtils.TruncateAt.END).toString(),
-                    8, 22, head);
-            c.drawText(TextUtils.ellipsize(artist, sub, w - 16, TextUtils.TruncateAt.END).toString(),
-                    8, 43, sub);
+            drawMask(c, titleMask, 8, 0, head.getColor());
+            drawMask(c, artistMask, 8, 21, sub.getColor());
             c.drawRect(6, HEAD - 3, w - 6, HEAD - 2, line);
             if (names == null) return;
             boolean going = travel();
@@ -1466,8 +1525,11 @@ public final class IppFlowActivity extends BaseActivity {
                 String s = names[i];
                 if (nums[i] == null) {
                     // a disc or side divider: the label in the artist's colour, never under the cursor
-                    c.drawText(TextUtils.ellipsize(s, sub, w - 16, TextUtils.TruncateAt.END).toString(),
-                            8, top + 19, sub);
+                    if (fitted[i] == null) {
+                        fitted[i] = TextUtils.ellipsize(s, sub, w - 16, TextUtils.TruncateAt.END).toString();
+                        nameMask[i] = mask(fitted[i], sub, w - 16, ROW, 19);
+                    }
+                    drawMask(c, nameMask[i], 8, top, sub.getColor());
                     continue;
                 }
                 text.setColor(blend(fg, fgSel, cover));
@@ -1482,11 +1544,16 @@ public final class IppFlowActivity extends BaseActivity {
                     }
                     c.drawBitmap(m, null, markTo, markPaint);
                 } else {
-                    c.drawText(nums[i], numEnd - text.measureText(nums[i]), top + 19, text);
+                    if (numMask[i] == null) numMask[i] = mask(nums[i], text, (int) Math.ceil(nameX - numAt[i]), ROW, 19);
+                    drawMask(c, numMask[i], numAt[i], top, text.getColor());
                 }
                 float room = w - 8 - nameX;
-                if (on && ran && text.measureText(s) > room) {
-                    // the title under the cursor runs when it does not fit, as a second copy after a gap
+                if (fitted[i] == null) {
+                    fitted[i] = TextUtils.ellipsize(s, text, room, TextUtils.TruncateAt.END).toString();
+                    nameMask[i] = mask(fitted[i], text, (int) room, ROW, 19);
+                }
+                if (on && ran && fitted[i] != s) {
+                    // cut = it does not fit: the title under the cursor runs, as a second copy after a gap
                     float period = text.measureText(s + GAP);
                     c.save();
                     c.clipRect(nameX, top, w - 8, top + ROW);
@@ -1495,8 +1562,7 @@ public final class IppFlowActivity extends BaseActivity {
                     c.restore();
                     continue;
                 }
-                c.drawText(TextUtils.ellipsize(s, text, room, TextUtils.TruncateAt.END).toString(),
-                        nameX, top + 19, text);
+                drawMask(c, nameMask[i], nameX, top, text.getColor());
             }
             c.restore();
             if (going) postInvalidateOnAnimation();
