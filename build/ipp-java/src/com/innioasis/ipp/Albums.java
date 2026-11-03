@@ -1252,10 +1252,11 @@ public final class Albums {
         if (tv instanceof TextView) blankRow(iv, ((TextView) tv).getCurrentTextColor());
     }
 
-    // The no-art placeholder in the label's colour, as the rows' icons are. A recoloured COPY, not a
+    // The no-art placeholder: "Show all albums"' icon in the label's colour. A recoloured COPY, not a
     // filter on the view: a cover read later lands on this same view and would come out tinted.
     private static final HashMap BLANKS = new HashMap();
     private static android.graphics.Bitmap blanksOf;
+    private static android.graphics.Bitmap blankIcon;
 
     private static void blankRow(ImageView cover, int color) {
         try {
@@ -1270,12 +1271,20 @@ public final class Albums {
             Integer k = Integer.valueOf(color);
             android.graphics.Bitmap t = (android.graphics.Bitmap) BLANKS.get(k);
             if (t == null) {
-                t = android.graphics.Bitmap.createBitmap(blank.getWidth(), blank.getHeight(),
+                // the drawing is "Show all albums"' icon, not stock's placeholder
+                if (blankIcon == null) {
+                    android.graphics.BitmapFactory.Options o = new android.graphics.BitmapFactory.Options();
+                    o.inScaled = false;
+                    blankIcon = android.graphics.BitmapFactory.decodeResource(cover.getResources(),
+                            R.mipmap.ipp_show_all_albums, o);
+                }
+                android.graphics.Bitmap src = blankIcon != null ? blankIcon : blank;
+                t = android.graphics.Bitmap.createBitmap(src.getWidth(), src.getHeight(),
                         android.graphics.Bitmap.Config.ARGB_8888);
                 android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG);
                 p.setColorFilter(new android.graphics.PorterDuffColorFilter(color,
                         android.graphics.PorterDuff.Mode.SRC_IN));
-                new android.graphics.Canvas(t).drawBitmap(blank, 0, 0, p);
+                new android.graphics.Canvas(t).drawBitmap(src, 0, 0, p);
                 BLANKS.put(k, t);
             }
             Rows.thumb(cover, t);
