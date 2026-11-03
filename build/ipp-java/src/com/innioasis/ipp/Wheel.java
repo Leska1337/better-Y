@@ -466,6 +466,45 @@ public final class Wheel {
         }
         // the step is drawn from a frame callback: a layout posted from here misses this frame
         Fixed.layNow(rv);
+        // h is another row's height: rows differ (a disc strip), so the row is put to the edge by its own
+        if (down && !horiz) Settle.at(rv, pos, bottom);
+    }
+
+    /** After the layout that brought the row in, before its draw: its bottom against {@code bottom}. */
+    private static final class Settle implements android.view.ViewTreeObserver.OnPreDrawListener {
+        private final RecyclerView rv;
+        private final int pos, bottom;
+
+        private Settle(RecyclerView rv, int pos, int bottom) {
+            this.rv = rv;
+            this.pos = pos;
+            this.bottom = bottom;
+        }
+
+        static void at(RecyclerView rv, int pos, int bottom) {
+            Settle s = new Settle(rv, pos, bottom);
+            if (!rv.isLayoutRequested() && s.fix()) return;
+            rv.getViewTreeObserver().addOnPreDrawListener(s);
+        }
+
+        /** False while the row is not laid out yet. */
+        private boolean fix() {
+            RecyclerView.LayoutManager lm = rv.getLayoutManager();
+            View v = lm == null ? null : lm.findViewByPosition(pos);
+            if (v == null) return false;
+            int d = end(v, false) - bottom;
+            if (d != 0) rv.scrollBy(0, d);
+            return true;
+        }
+
+        public boolean onPreDraw() {
+            try {
+                rv.getViewTreeObserver().removeOnPreDrawListener(this);
+                fix();
+            } catch (Throwable t) {
+            }
+            return true;
+        }
     }
 
     /**
