@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Anim;
+import com.innioasis.ipp.Art;
 import com.innioasis.ipp.BigCover;
 import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.Diag;
@@ -327,6 +328,8 @@ public final class IppFlowActivity extends BaseActivity {
         l.add(getString(R.string.song_menu_sort_by));
         l.add(getString(R.string.ipp_queue_add));
         l.add(getString(R.string.album_menu_delete));
+        // only on an album with a pick, made here or in Albums: it is the one pick
+        if (Art.hasPick(((Flow.Item) items.get(flow.target())).key)) l.add(getString(R.string.ipp_reset_cover));
         // the trailing int is the dialog THEME; 0 sizes the window for twice the rows
         menu = new SubMenuDialog(getActivity(), l, new AlbumMenu(this, flow.target()), R.style.Dialog_Common);
         menu.addPlaylistsToOptions();           // Favorites and "Add to playlist" (Menus.collapse)
@@ -342,6 +345,7 @@ public final class IppFlowActivity extends BaseActivity {
         List l = new ArrayList();
         l.add(getString(R.string.music_delete_file));
         l.add(getString(R.string.ipp_queue_add));
+        l.add(getString(R.string.ipp_set_cover));
         trackMenu = new SubMenuDialog(getActivity(), l, new TrackMenu(this, s), R.style.Dialog_Common);
         trackMenu.addPlaylistsToOptions();
         trackMenu.show();
@@ -363,8 +367,26 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (getString(R.string.music_delete_file).equals(str)) {
             DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
             d.setDialogTitle(getString(R.string.is_delete), "", new DeleteTrack(this, s), false, true);
+        } else if (getString(R.string.ipp_set_cover).equals(str)) {
+            if (flipped >= 0 && flipped < items.size()) pin(flipped, s.getPath(), R.string.ipp_cover_set);
         }
         return true;
+    }
+
+    /** The album's pick set or cleared (null), its slide redrawn; Albums' thumbnail follows (Art.pin). */
+    private void pin(int at, String path, int said) {
+        if (!Art.pin(((Flow.Item) items.get(at)).key, path)) return;
+        if (loader != null) loader.renew(at);
+        showToast(getString(said));
+    }
+
+    /** A slide is in: the row repaints, and a renewed one of the open album goes onto the card. */
+    void slid() {
+        flow.invalidate();
+        if (flipped >= 0 && loader != null) {
+            Bitmap b = loader.get(flipped);
+            if (b != null) card.setSlide(b);
+        }
     }
 
     /** Songs into a playlist off the main thread; the toast says whether any were new (Playlists.addMsg). */
@@ -438,6 +460,8 @@ public final class IppFlowActivity extends BaseActivity {
         } else if (s.equals(getString(R.string.album_menu_delete))) {
             DialogUtil d = new DialogUtil(getActivity(), false, R.style.Dialog_Common);
             d.setDialogTitle(getString(R.string.is_delete), "", new DeleteAlbum(this, it), false, true);
+        } else if (s.equals(getString(R.string.ipp_reset_cover))) {
+            pin(at, null, R.string.ipp_cover_reset);
         } else if (s.equals(getString(R.string.main_setting))) {
             state = 6;
             opts.open();
@@ -620,7 +644,7 @@ public final class IppFlowActivity extends BaseActivity {
         }
         // it lands as the album's slide, so a track's own cover turns into the album's on the way
         if (flipped >= 0 && flipped < items.size()) {
-            Bitmap album = Flow.trip(null, ((Flow.Item) items.get(flipped)).rep);
+            Bitmap album = Flow.trip(null, Flow.coverOf((Flow.Item) items.get(flipped)));
             Drawable was = trip.getDrawable();
             // only when the two differ: half way through a cross-fade both are see-through, and
             // a picture faded into itself visibly dims
@@ -1599,7 +1623,7 @@ public final class IppFlowActivity extends BaseActivity {
 
         Repaint(IppFlowActivity a) { this.a = a; }
 
-        public void run() { a.flow.invalidate(); }
+        public void run() { a.slid(); }
     }
 
     static final class Tracks implements Runnable {

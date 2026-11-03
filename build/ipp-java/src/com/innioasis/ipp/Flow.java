@@ -191,6 +191,19 @@ public final class Flow {
     }
 
     /** The representative's own year, else the one the Albums screen found for the album. */
+    /**
+     * The song the album's cover is drawn from: the one pinned as its thumbnail (Art), else the
+     * representative. The slide, its FlowCache file and the picture landing from the player all
+     * ask this, so a pick made in Albums shows here and the other way round.
+     */
+    public static Song coverOf(Item it) {
+        String p = Art.pickedPath(it.key);
+        if (p == null || p.equals(it.rep.getPath())) return it.rep;
+        Song s = new Song();
+        s.setPath(p);
+        return s;
+    }
+
     static String yearOf(String key, Song rep) {
         String y = rep.getYear();
         if (y == null) y = YearCache.get(key);
@@ -692,6 +705,17 @@ public final class Flow {
                     }
                     continue;
                 }
+                int r = renewAt;
+                if (r >= 0) {
+                    renewAt = -1;
+                    Object old = slides.get(Integer.valueOf(r));
+                    if (old != null && r < items.size()) {
+                        // built in place of the old one, which goes back to the pool once replaced
+                        build(r);
+                        if (old != blank && old != slides.get(Integer.valueOf(r))) pool.add(old);
+                    }
+                    continue;
+                }
                 int t = target;
                 // every round, not only when idle: a long fast run would otherwise keep every slide passed
                 evict(t);
@@ -702,7 +726,7 @@ public final class Flow {
                 }
                 if (want < 0) {
                     synchronized (wake) {
-                        if (target == t && !stop) {
+                        if (target == t && renewAt < 0 && !stop) {
                             try { wake.wait(); } catch (InterruptedException e) { return; }
                         }
                     }
@@ -714,18 +738,31 @@ public final class Flow {
                     it.year = yearOf(it.key, it.rep);
                     readArtist = true;
                 }
-                Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
-                if (cover(it, s)) {
-                    mirror(canvas, s, mirrorPaint);
-                } else {
-                    pool.add(s);
-                    if (blank == null) blank = blank();
-                    s = blank;
-                }
                 born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
-                slides.put(Integer.valueOf(want), s);
-                ui.post(onSlide);
+                build(want);
             }
+        }
+
+        private void build(int at) {
+            Item it = (Item) items.get(at);
+            Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
+            if (cover(it, s)) {
+                mirror(canvas, s, mirrorPaint);
+            } else {
+                pool.add(s);
+                if (blank == null) blank = blank();
+                s = blank;
+            }
+            slides.put(Integer.valueOf(at), s);
+            ui.post(onSlide);
+        }
+
+        private volatile int renewAt = -1;
+
+        /** Slide {@code i} built again, with no fade-in: its album's cover was pinned or reset. */
+        public void renew(int i) {
+            renewAt = i;
+            synchronized (wake) { wake.notifyAll(); }
         }
 
         private boolean has(int i) {
@@ -752,7 +789,7 @@ public final class Flow {
          */
         private boolean cover(Item it, Bitmap s) {
             try {
-                String path = it.rep.getPath();
+                String path = coverOf(it).getPath();
                 File ff = FlowCache.file(path);
                 if (ff != null && ff.exists()) {
                     Bitmap fb = decodeSlide(ff);

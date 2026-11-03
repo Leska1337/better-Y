@@ -416,6 +416,29 @@ public final class Art {
         }
     }
 
+    /** The pinned song's path, null when none: Cover Flow draws the album from it too. */
+    public static String pickedPath(String albumKey) {
+        return picked(albumKey);
+    }
+
+    /**
+     * Cover Flow's "Set as album cover" and "Reset cover": the very pick the thumbnail has, so
+     * either menu changes both pictures and either "Reset" clears it. Null path resets.
+     */
+    public static boolean pin(String albumKey, String path) {
+        try {
+            String key = Albums.coverKey(albumKey);
+            SharedPreferences p = Prefs.file();
+            if (key == null || p == null) return false;
+            if (path == null) p.edit().remove(PICK + key).commit();
+            else p.edit().putString(PICK + key, path).commit();
+            CoverCache.forget(key);
+            return true;
+        } catch (Throwable t) {
+            return false;
+        }
+    }
+
     public static boolean hasPick(String albumKey) {
         try {
             String key = Albums.coverKey(albumKey);

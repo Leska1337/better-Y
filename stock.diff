@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c2d330e3 100644
+index 01b1f730..9522b986 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..c2d330e3 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100469
++  versionCode: 10100470
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -1190,10 +1190,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..b63c7a01 100644
+index 50446006..986fcf80 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,526 @@
+@@ -1,417 +1,530 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -2084,6 +2084,10 @@ index 50446006..b63c7a01 100644
 +    <string name="ipp_set_thumb">Als Album-Miniaturbild festlegen</string>
 +    <string name="ipp_thumb_set">Album-Miniaturbild aktualisiert</string>
 +    <string name="ipp_reset_thumb">Miniaturbild zurücksetzen</string>
++    <string name="ipp_set_cover">Als Album-Cover festlegen</string>
++    <string name="ipp_cover_set">Album-Cover aktualisiert</string>
++    <string name="ipp_reset_cover">Cover zurücksetzen</string>
++    <string name="ipp_cover_reset">Album-Cover zurückgesetzt</string>
 +    <string name="ipp_open_album">Album öffnen</string>
 +    <string name="ipp_open_source">Quelle öffnen</string>
 +    <string name="ipp_delete_genre">Genre lösch.</string>
@@ -2456,10 +2460,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..e3885e16 100644
+index 6f5a555d..63bf9d4e 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,526 @@
+@@ -1,417 +1,530 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3350,6 +3354,10 @@ index 6f5a555d..e3885e16 100644
 +    <string name="ipp_set_thumb">Usar como miniatura del álbum</string>
 +    <string name="ipp_thumb_set">Miniatura del álbum actualizada</string>
 +    <string name="ipp_reset_thumb">Restablecer miniatura</string>
++    <string name="ipp_set_cover">Usar como portada del álbum</string>
++    <string name="ipp_cover_set">Portada del álbum actualizada</string>
++    <string name="ipp_reset_cover">Restablecer portada</string>
++    <string name="ipp_cover_reset">Portada del álbum restablecida</string>
 +    <string name="ipp_open_album">Abrir álbum</string>
 +    <string name="ipp_open_source">Abrir origen</string>
 +    <string name="ipp_delete_genre">Eliminar género</string>
@@ -3404,10 +3412,10 @@ index 6f5a555d..e3885e16 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..f1ceed0d 100644
+index c242cee4..4ac28ce0 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,526 @@
+@@ -1,417 +1,530 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4298,6 +4306,10 @@ index c242cee4..f1ceed0d 100644
 +    <string name="ipp_set_thumb">Définir comme vignette d\'album</string>
 +    <string name="ipp_thumb_set">Vignette d\'album mise à jour</string>
 +    <string name="ipp_reset_thumb">Réinitialiser la vignette</string>
++    <string name="ipp_set_cover">Définir comme pochette d\'album</string>
++    <string name="ipp_cover_set">Pochette d\'album mise à jour</string>
++    <string name="ipp_reset_cover">Réinitialiser la pochette</string>
++    <string name="ipp_cover_reset">Pochette d\'album réinitialisée</string>
 +    <string name="ipp_open_album">Ouvrir l\'album</string>
 +    <string name="ipp_open_source">Ouvrir la source</string>
 +    <string name="ipp_delete_genre">Suppr. Genre</string>
@@ -4352,10 +4364,10 @@ index c242cee4..f1ceed0d 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..11e6c5e7 100644
+index d82ac6bb..a85febe5 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,526 @@
+@@ -1,417 +1,530 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -5246,6 +5258,10 @@ index d82ac6bb..11e6c5e7 100644
 +    <string name="ipp_set_thumb">הגדר כתמונה ממוזערת של האלבום</string>
 +    <string name="ipp_thumb_set">התמונה הממוזערת של האלבום עודכנה</string>
 +    <string name="ipp_reset_thumb">אפס תמונה ממוזערת</string>
++    <string name="ipp_set_cover">הגדר כעטיפת האלבום</string>
++    <string name="ipp_cover_set">עטיפת האלבום עודכנה</string>
++    <string name="ipp_reset_cover">אפס עטיפה</string>
++    <string name="ipp_cover_reset">עטיפת האלבום אופסה</string>
 +    <string name="ipp_open_album">פתח אלבום</string>
 +    <string name="ipp_open_source">פתיחת המקור</string>
 +    <string name="ipp_delete_genre">מחק ז\'אנר</string>
@@ -5300,10 +5316,10 @@ index d82ac6bb..11e6c5e7 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..d8298d2a 100644
+index f71d0cb1..bb4671af 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,443 @@
+@@ -1,334 +1,447 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -6028,6 +6044,10 @@ index f71d0cb1..d8298d2a 100644
 +    <string name="ipp_set_thumb">앨범 썸네일로 설정</string>
 +    <string name="ipp_thumb_set">앨범 썸네일이 변경되었습니다</string>
 +    <string name="ipp_reset_thumb">썸네일 초기화</string>
++    <string name="ipp_set_cover">앨범 커버로 설정</string>
++    <string name="ipp_cover_set">앨범 커버가 변경되었습니다</string>
++    <string name="ipp_reset_cover">커버 초기화</string>
++    <string name="ipp_cover_reset">앨범 커버가 초기화되었습니다</string>
 +    <string name="ipp_open_album">앨범 열기</string>
 +    <string name="ipp_open_source">출처 열기</string>
 +    <string name="ipp_delete_genre">장르 삭제</string>
@@ -6337,10 +6357,10 @@ index d79cf0f6..7b6930fd 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..9ec77b0f 100644
+index 4c84fd2b..e9492525 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,195 @@
+@@ -1,86 +1,199 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6569,6 +6589,10 @@ index 4c84fd2b..9ec77b0f 100644
 +    <string name="ipp_set_thumb">Сделать обложкой альбома</string>
 +    <string name="ipp_thumb_set">Обложка альбома обновлена</string>
 +    <string name="ipp_reset_thumb">Сбросить обложку</string>
++    <string name="ipp_set_cover">Сделать обложкой альбома</string>
++    <string name="ipp_cover_set">Обложка альбома обновлена</string>
++    <string name="ipp_reset_cover">Сбросить обложку</string>
++    <string name="ipp_cover_reset">Обложка альбома сброшена</string>
 +    <string name="ipp_open_album">Открыть альбом</string>
 +    <string name="ipp_open_source">Открыть источник</string>
 +    <string name="ipp_delete_genre">Удалить жанр</string>
@@ -6623,10 +6647,10 @@ index 4c84fd2b..9ec77b0f 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..b89ecda7 100644
+index 5665bdd9..4e57e829 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,535 @@
+@@ -1,426 +1,539 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7535,6 +7559,10 @@ index 5665bdd9..b89ecda7 100644
 +    <string name="ipp_set_thumb">设为专辑缩略图</string>
 +    <string name="ipp_thumb_set">专辑缩略图已更新</string>
 +    <string name="ipp_reset_thumb">重置缩略图</string>
++    <string name="ipp_set_cover">设为专辑封面</string>
++    <string name="ipp_cover_set">专辑封面已更新</string>
++    <string name="ipp_reset_cover">重置封面</string>
++    <string name="ipp_cover_reset">专辑封面已重置</string>
 +    <string name="ipp_open_album">打开专辑</string>
 +    <string name="ipp_open_source">打开来源</string>
 +    <string name="ipp_delete_genre">删除流派</string>
@@ -8895,10 +8923,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..37cdff4d 100644
+index 803c1e7a..d18a6dff 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5675 @@
+@@ -1,5519 +1,5679 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -19011,6 +19039,10 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="string" name="ipp_theme_saved" id="0x7f110273" />
 +    <public type="string" name="ipp_theme_save_failed" id="0x7f110274" />
 +    <public type="string" name="ipp_pick_stale" id="0x7f110275" />
++    <public type="string" name="ipp_set_cover" id="0x7f110276" />
++    <public type="string" name="ipp_cover_set" id="0x7f110277" />
++    <public type="string" name="ipp_reset_cover" id="0x7f110278" />
++    <public type="string" name="ipp_cover_reset" id="0x7f110279" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -20094,10 +20126,10 @@ index 803c1e7a..37cdff4d 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..f8254e4f 100644
+index 71fe29d0..0c9b1418 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,585 @@
+@@ -1,473 +1,589 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -21043,7 +21075,7 @@ index 71fe29d0..f8254e4f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev469</string>
++    <string name="ipp_version">v1.1.0-dev470</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21102,6 +21134,10 @@ index 71fe29d0..f8254e4f 100644
 +    <string name="ipp_set_thumb">Set as album thumbnail</string>
 +    <string name="ipp_thumb_set">Album thumbnail updated</string>
 +    <string name="ipp_reset_thumb">Reset thumbnail</string>
++    <string name="ipp_set_cover">Set as album cover</string>
++    <string name="ipp_cover_set">Album cover updated</string>
++    <string name="ipp_reset_cover">Reset cover</string>
++    <string name="ipp_cover_reset">Album cover reset</string>
 +    <string name="ipp_open_album">Open album</string>
 +    <string name="ipp_open_source">Open source</string>
 +    <string name="ipp_delete_genre">Delete genre</string>
