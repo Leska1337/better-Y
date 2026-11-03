@@ -31,6 +31,15 @@ public class Fixed extends RecyclerView {
 
     private final Box box = new Box(this, true);
 
+    /**
+     * The pending self-layout run at once. For a caller already inside a frame callback (the
+     * wheel's step): a posted one lands a frame late, and that frame shows the rows without the
+     * cursor's row — the highlight blinked at the list's edge.
+     */
+    public static void layNow(View v) {
+        if (v instanceof Fixed) ((Fixed) v).box.now();
+    }
+
     public void requestLayout() {
         // null while the base constructor runs
         if (box == null || !box.take()) super.requestLayout();
@@ -127,6 +136,12 @@ public class Fixed extends RecyclerView {
                 mr = m.rightMargin;
                 mb = m.bottomMargin;
             }
+        }
+
+        void now() {
+            if (!posted) return;
+            v.removeCallbacks(this);
+            run();
         }
 
         /** Before the frame's traversal: the pass the window would have run, for this list alone. */

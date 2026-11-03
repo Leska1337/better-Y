@@ -49,40 +49,84 @@
     return-void
 .end method
 
+.method public static layNow(Landroid/view/View;)V
+  .registers 2
+  .line 40
+    instance-of v0, p0, Lcom/innioasis/ipp/Fixed;
+    if-eqz v0, :L0
+    check-cast p0, Lcom/innioasis/ipp/Fixed;
+    iget-object p0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
+    invoke-virtual { p0 }, Lcom/innioasis/ipp/Fixed$Box;->now()V
+  :L0
+  .line 41
+    return-void
+.end method
+
 .method protected onAttachedToWindow()V
   .registers 4
-  .line 59
+  .line 68
     invoke-super { p0 }, Landroidx/recyclerview/widget/RecyclerView;->onAttachedToWindow()V
-  .line 60
+  .line 69
     iget-object v0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     iput-wide v1, v0, Lcom/innioasis/ipp/Fixed$Box;->attachedAt:J
-  .line 61
+  .line 70
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Fixed;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
     invoke-virtual { v0, v1 }, Landroid/view/ViewTreeObserver;->addOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  .line 62
+  .line 71
     return-void
 .end method
 
 .method protected onDetachedFromWindow()V
   .registers 3
-  .line 65
+  .line 74
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Fixed;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
     iget-object v1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
     invoke-virtual { v0, v1 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  .line 66
+  .line 75
     invoke-super { p0 }, Landroidx/recyclerview/widget/RecyclerView;->onDetachedFromWindow()V
-  .line 67
+  .line 76
     return-void
 .end method
 
 .method protected onLayout(ZIIII)V
   .catchall { :L0 .. :L1 } :L2
   .registers 8
+  .line 58
+    iget-object v0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
+    const/4 v1, 1
+    iput-boolean v1, v0, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
+  .line 60
+    const/4 v0, 0
+  :L0
+    invoke-super/range { p0 .. p5 }, Landroidx/recyclerview/widget/RecyclerView;->onLayout(ZIIII)V
+  :L1
+  .line 62
+    iget-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
+    iput-boolean v0, p1, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
+  .line 63
+    nop
+  .line 64
+    iget-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
+    invoke-virtual { p1 }, Lcom/innioasis/ipp/Fixed$Box;->laid()V
+  .line 65
+    return-void
+  :L2
+  .line 62
+    move-exception p1
+    iget-object p2, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
+    iput-boolean v0, p2, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
+  .line 63
+    throw p1
+.end method
+
+.method protected onMeasure(II)V
+  .catchall { :L0 .. :L1 } :L2
+  .registers 5
   .line 49
     iget-object v0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
     const/4 v1, 1
@@ -90,7 +134,7 @@
   .line 51
     const/4 v0, 0
   :L0
-    invoke-super/range { p0 .. p5 }, Landroidx/recyclerview/widget/RecyclerView;->onLayout(ZIIII)V
+    invoke-super { p0, p1, p2 }, Landroidx/recyclerview/widget/RecyclerView;->onMeasure(II)V
   :L1
   .line 53
     iget-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
@@ -98,9 +142,6 @@
   .line 54
     nop
   .line 55
-    iget-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
-    invoke-virtual { p1 }, Lcom/innioasis/ipp/Fixed$Box;->laid()V
-  .line 56
     return-void
   :L2
   .line 53
@@ -111,37 +152,9 @@
     throw p1
 .end method
 
-.method protected onMeasure(II)V
-  .catchall { :L0 .. :L1 } :L2
-  .registers 5
-  .line 40
-    iget-object v0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
-    const/4 v1, 1
-    iput-boolean v1, v0, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
-  .line 42
-    const/4 v0, 0
-  :L0
-    invoke-super { p0, p1, p2 }, Landroidx/recyclerview/widget/RecyclerView;->onMeasure(II)V
-  :L1
-  .line 44
-    iget-object p1, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
-    iput-boolean v0, p1, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
-  .line 45
-    nop
-  .line 46
-    return-void
-  :L2
-  .line 44
-    move-exception p1
-    iget-object p2, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
-    iput-boolean v0, p2, Lcom/innioasis/ipp/Fixed$Box;->laying:Z
-  .line 45
-    throw p1
-.end method
-
 .method public requestLayout()V
   .registers 2
-  .line 36
+  .line 45
     iget-object v0, p0, Lcom/innioasis/ipp/Fixed;->box:Lcom/innioasis/ipp/Fixed$Box;
     if-eqz v0, :L0
     invoke-virtual { v0 }, Lcom/innioasis/ipp/Fixed$Box;->take()Z
@@ -150,6 +163,6 @@
   :L0
     invoke-super { p0 }, Landroidx/recyclerview/widget/RecyclerView;->requestLayout()V
   :L1
-  .line 37
+  .line 46
     return-void
 .end method

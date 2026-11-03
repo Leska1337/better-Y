@@ -15,7 +15,14 @@ public final class Anim {
 
     public static final String KEY = "animations";
 
+    /**
+     * The animations are in this build at all. False: off everywhere, whatever the setting says,
+     * and the menu has no row for it (its line in the help assets stays and is skipped).
+     */
+    public static final boolean BUILT = false;
+
     public static boolean on() {
+        if (!BUILT) return false;
         Context c = Y1Application.Companion.getAppContext();
         return Prefs.on(c, KEY);
     }

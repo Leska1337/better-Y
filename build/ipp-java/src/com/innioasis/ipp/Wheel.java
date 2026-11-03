@@ -464,6 +464,8 @@ public final class Wheel {
         } else {
             rv.scrollToPosition(pos);
         }
+        // the step is drawn from a frame callback: a layout posted from here misses this frame
+        Fixed.layNow(rv);
     }
 
     /**
