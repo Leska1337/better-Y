@@ -141,6 +141,14 @@ public final class Icons {
         else paint(iv, c);
     }
 
+    /** An "on" drawing the layout already put on the view, coloured as the buttons are. */
+    public static void on(ImageView iv, int tint) {
+        if (iv == null) return;
+        int c = stateColor(true, tint);
+        if (c == ON_LIGHT) reset(iv);
+        else paint(iv, c);
+    }
+
     public static void apply(ImageView iv, int light) {
         apply(iv, light, NO_COLOR);
     }

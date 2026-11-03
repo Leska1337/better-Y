@@ -55,11 +55,32 @@ public final class Preview {
         return v == 0 ? WHITE : v;
     }
 
+    /** The colour and outline Brightness's text has. */
+    static void nothing(TextView tv) {
+        try {
+            Context c = tv.getContext();
+            int fg = fg(c);
+            tv.setTextColor(fg);
+            edge(tv, outline(c, fg));
+        } catch (Throwable t) {
+        }
+    }
+
+    private static void nothings(View v) {
+        if (v instanceof Nothing) {
+            nothing((TextView) v);
+        } else if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) nothings(g.getChildAt(i));
+        }
+    }
+
     /** From {@code MenuStyle.apply}, i.e. the end of every {@code BaseActivity.onResume}. */
     static void apply(Activity a) {
         try {
             int c = color(a);
             int fg = c == 0 ? WHITE : c;
+            nothings(a.getWindow().getDecorView());
             if (a instanceof SettingActivity) {
                 text(a, R.id.right_title, fg);
                 text(a, R.id.info_state_tv, fg);

@@ -1208,8 +1208,10 @@ public final class Albums {
         if (!mine) {
             Icons.reset(cover);
             pendingIcon = null;
+            pendingCover = cover;
             return false;
         }
+        pendingCover = null;
         String label = "Show all songs";
         Context c = Y1Application.Companion.getAppContext();
         if (c != null) label = c.getString(R.string.ipp_show_all_songs);
@@ -1225,11 +1227,60 @@ public final class Albums {
      */
     private static ImageView pendingIcon;
 
+    /** An album row's cover, parked the same way for {@link #blankRow}. */
+    private static ImageView pendingCover;
+
     public static void tintAllSongsRow(TextView albumTv) {
         ImageView iv = pendingIcon;
+        ImageView cover = pendingCover;
         pendingIcon = null;
-        if (iv == null || albumTv == null) return;
-        Icons.menu(iv, albumTv.getCurrentTextColor());
+        pendingCover = null;
+        if (albumTv == null) return;
+        if (iv != null) Icons.menu(iv, albumTv.getCurrentTextColor());
+        else blankRow(cover, albumTv.getCurrentTextColor());
+    }
+
+    /** The row's read came back: stock's setImageBitmap, but a placeholder takes the label's colour. */
+    public static void lateCover(ImageView iv, android.graphics.Bitmap b) {
+        if (iv == null) return;
+        if (b == null || b != CoverCache.rowBlank || !(iv.getParent() instanceof View)) {
+            iv.setImageBitmap(b);
+            return;
+        }
+        Rows.thumb(iv, b);
+        View tv = ((View) iv.getParent()).findViewById(R.id.album_name);
+        if (tv instanceof TextView) blankRow(iv, ((TextView) tv).getCurrentTextColor());
+    }
+
+    // The no-art placeholder in the label's colour, as the rows' icons are. A recoloured COPY, not a
+    // filter on the view: a cover read later lands on this same view and would come out tinted.
+    private static final HashMap BLANKS = new HashMap();
+    private static android.graphics.Bitmap blanksOf;
+
+    private static void blankRow(ImageView cover, int color) {
+        try {
+            android.graphics.Bitmap blank = CoverCache.rowBlank;
+            if (cover == null || blank == null || !(cover.getDrawable() instanceof Rows.Pic)) return;
+            android.graphics.Bitmap b = ((Rows.Pic) cover.getDrawable()).b;
+            if (blanksOf != blank) {
+                BLANKS.clear();
+                blanksOf = blank;
+            }
+            if (b != blank && !BLANKS.containsValue(b)) return;
+            Integer k = Integer.valueOf(color);
+            android.graphics.Bitmap t = (android.graphics.Bitmap) BLANKS.get(k);
+            if (t == null) {
+                t = android.graphics.Bitmap.createBitmap(blank.getWidth(), blank.getHeight(),
+                        android.graphics.Bitmap.Config.ARGB_8888);
+                android.graphics.Paint p = new android.graphics.Paint(android.graphics.Paint.FILTER_BITMAP_FLAG);
+                p.setColorFilter(new android.graphics.PorterDuffColorFilter(color,
+                        android.graphics.PorterDuff.Mode.SRC_IN));
+                new android.graphics.Canvas(t).drawBitmap(blank, 0, 0, p);
+                BLANKS.put(k, t);
+            }
+            Rows.thumb(cover, t);
+        } catch (Throwable t) {
+        }
     }
 
     // An artist's album list keeps a sort of its own. Which one applies is noted from the SCREEN

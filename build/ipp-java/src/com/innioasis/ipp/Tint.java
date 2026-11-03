@@ -67,7 +67,21 @@ public final class Tint {
             back(a, R.id.tv_index_of_songs, box);
             back(a, R.id.layout_status_icon, box);
             lyrics(a);
+            volume(a);
         } catch (Throwable t) {
+        }
+    }
+
+    /** The quieter/louder icons beside the volume bar: "Icon color", as the buttons. */
+    private static void volume(Activity a) {
+        View v = a.findViewById(R.id.ll_volume);
+        if (!(v instanceof android.view.ViewGroup)) return;
+        android.view.ViewGroup g = (android.view.ViewGroup) v;
+        int tint = Icons.timelineColor(a);
+        for (int i = 0; i < g.getChildCount(); i++) {
+            if (g.getChildAt(i) instanceof android.widget.ImageView) {
+                Icons.on((android.widget.ImageView) g.getChildAt(i), tint);
+            }
         }
     }
 

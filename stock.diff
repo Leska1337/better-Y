@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..09b8f65b 100644
+index 01b1f730..f08b398e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..09b8f65b 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100476
++  versionCode: 10100477
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -177,10 +177,10 @@ index a65785d4..da0408d5 100644
 +    <com.innioasis.ipp.Fixed android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_base.xml b/build/src/res/layout/activity_base.xml
-index dd92a115..d05efa91 100644
+index dd92a115..065694f8 100644
 --- a/build/src/res/layout/activity_base.xml
 +++ b/build/src/res/layout/activity_base.xml
-@@ -9,8 +9,10 @@
+@@ -9,11 +9,13 @@
          <ImageView android:layout_gravity="center_vertical" android:id="@id/play" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_play" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
          <ImageView android:layout_gravity="center_vertical" android:id="@id/headset" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_headset_1" android:layout_marginEnd="6.0dip" />
          <ImageView android:layout_gravity="center_vertical" android:id="@id/bluetooth" android:visibility="gone" android:layout_width="25.0dip" android:layout_height="25.0dip" android:src="@mipmap/icon_bluetooth_0" android:layout_marginEnd="6.0dip" />
@@ -193,6 +193,10 @@ index dd92a115..d05efa91 100644
          <ImageView android:layout_gravity="center_vertical" android:id="@id/battery" android:layout_width="wrap_content" android:layout_height="25.0dip" android:src="@drawable/icon_statusbar_battery_0" android:adjustViewBounds="true" android:layout_marginEnd="6.0dip" />
          <TextView android:textSize="16.0sp" android:textColor="@color/white" android:gravity="center" android:layout_gravity="center_vertical" android:id="@id/battery_num" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="70%" android:singleLine="true" android:layout_marginEnd="5.0dip" />
      </LinearLayout>
+-    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.Nothing android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
+     <ImageView android:id="@id/photos_image" android:background="@color/black" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" />
+ </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_blutooth.xml b/build/src/res/layout/activity_blutooth.xml
 index 3fff8427..32bbd5af 100644
 --- a/build/src/res/layout/activity_blutooth.xml
@@ -248,14 +252,16 @@ index cf5ce73a..271c8730 100644
      <androidx.recyclerview.widget.RecyclerView android:id="@id/recyclerView" android:layout_width="fill_parent" android:layout_height="fill_parent" />
  </LinearLayout>
 diff --git a/build/src/res/layout/activity_bookmark.xml b/build/src/res/layout/activity_bookmark.xml
-index 7b6fe12d..204ea19d 100644
+index 7b6fe12d..7aaf4b4b 100644
 --- a/build/src/res/layout/activity_bookmark.xml
 +++ b/build/src/res/layout/activity_bookmark.xml
-@@ -2,5 +2,6 @@
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
  <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
-     <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 -    <ListView android:id="@id/lv_bookmark" android:scrollbars="none" android:layout_width="fill_parent" android:layout_height="0.0dip" android:listSelector="#00000000" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.Nothing android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <!-- ipp: rows drawn by SongRows; a Fixed so a row's request lays out the list alone. -->
 +    <com.innioasis.ipp.Fixed android:id="@id/lv_bookmark" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
@@ -581,7 +587,7 @@ index 0ed053cd..f8052ddb 100644
              <ImageView android:layout_gravity="center" android:id="@id/right_image" android:layout_width="fill_parent" android:layout_height="wrap_content" android:src="@drawable/icon_setting_brightness" android:adjustViewBounds="true" app:layout_constraintTop_toTopOf="parent" />
              <com.innioasis.y1.utils.AboutView android:layout_gravity="center" android:id="@id/bzt_view" android:visibility="gone" android:layout_width="130.0dip" android:layout_height="130.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
 diff --git a/build/src/res/layout/activity_song_list.xml b/build/src/res/layout/activity_song_list.xml
-index d1f9fb86..f98ee6ae 100644
+index d1f9fb86..6706326f 100644
 --- a/build/src/res/layout/activity_song_list.xml
 +++ b/build/src/res/layout/activity_song_list.xml
 @@ -1,7 +1,10 @@
@@ -599,7 +605,7 @@ index d1f9fb86..f98ee6ae 100644
 +<androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
 +  xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 +    <com.innioasis.y1.view.ShufflePlaylistItemView android:id="@id/spv" android:layout_width="fill_parent" android:layout_height="49.0dip" app:layout_constraintTop_toTopOf="parent" />
-+    <TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <com.innioasis.ipp.Nothing android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:id="@id/none" android:visibility="invisible" android:layout_width="fill_parent" android:layout_height="wrap_content" android:text="@string/none" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <androidx.recyclerview.widget.RecyclerView android:id="@id/lv" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="0.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +</androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_theme_list.xml b/build/src/res/layout/activity_theme_list.xml
@@ -693,6 +699,15 @@ index c5f081f4..0d7e36c5 100644
 +<!-- ipp: the menus of the whole app (SubMenuDialog, SubMenuVideoDialog): rows drawn by SongRows.
 +     wrap_content, so a Fixed passes a row's request up and the window follows the row count. -->
 +<com.innioasis.ipp.Fixed android:id="@id/submenu" android:background="@drawable/bg_submenu" android:focusable="false" android:scrollbars="none" android:overScrollMode="never" android:layout_width="fill_parent" android:layout_height="wrap_content"
+   xmlns:android="http://schemas.android.com/apk/res/android" />
+diff --git a/build/src/res/layout/empty_book_record.xml b/build/src/res/layout/empty_book_record.xml
+index 88e06868..9c051800 100644
+--- a/build/src/res/layout/empty_book_record.xml
++++ b/build/src/res/layout/empty_book_record.xml
+@@ -1,3 +1,3 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<TextView android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:orientation="horizontal" android:id="@id/item_video_layout" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="@string/none"
++<com.innioasis.ipp.Nothing android:textSize="20.0sp" android:textColor="@color/white" android:gravity="center" android:orientation="horizontal" android:id="@id/item_video_layout" android:layout_width="fill_parent" android:layout_height="fill_parent" android:text="@string/none"
    xmlns:android="http://schemas.android.com/apk/res/android" />
 diff --git a/build/src/res/layout/item_album.xml b/build/src/res/layout/item_album.xml
 index 4b9d1219..566e3208 100644
@@ -20139,7 +20154,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..c6f6c66f 100644
+index 71fe29d0..78491fd3 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21088,7 +21103,7 @@ index 71fe29d0..c6f6c66f 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev476</string>
++    <string name="ipp_version">v1.1.0-dev477</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55538,7 +55553,7 @@ index 2ffd8b91..c5ec1f76 100644
  
      .line 193
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
-index b9220ba5..05cae465 100644
+index b9220ba5..d300a957 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter$getView$1.smali
 @@ -107,10 +107,22 @@
@@ -55579,7 +55594,17 @@ index b9220ba5..05cae465 100644
  
      move-result-object p1
  
-@@ -261,6 +271,25 @@
+@@ -166,7 +176,8 @@
+     move-result-object p1
+ 
+     :cond_0
+-    invoke-virtual {p0, p1}, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
++    # ipp: the placeholder in the label's colour, as getView paints it (Albums.blankRow)
++    invoke-static {p0, p1}, Lcom/innioasis/ipp/Albums;->lateCover(Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
+ 
+     return-void
+ .end method
+@@ -261,6 +272,25 @@
  
      invoke-virtual {v2, v0}, Lcom/innioasis/music/data/Album;->setCoverFlag(Ljava/lang/String;)V
  
@@ -55605,7 +55630,7 @@ index b9220ba5..05cae465 100644
      .line 49
      iget-object v0, p0, Lcom/innioasis/music/adapter/AlbumListAdapter$getView$1;->$artistName:Landroid/widget/TextView;
  
-@@ -284,32 +313,22 @@
+@@ -284,32 +314,22 @@
      if-nez v0, :cond_0
  
      .line 54

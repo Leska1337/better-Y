@@ -258,11 +258,15 @@ public final class CoverCache {
         return out;
     }
 
+    /** The album rows' placeholder, as their adapter hands it in: Albums recolours it. */
+    static volatile Bitmap rowBlank;
+
     /**
      * {@link #peek} for an album row: an album known to have no art answers the row's placeholder,
      * not null — null makes the row start a thread that reads the album again on every bind.
      */
     public static Bitmap rowPeek(String album, Bitmap placeholder) {
+        rowBlank = placeholder;
         Bitmap b = peek(album);
         if (b != null) return b;
         String key = Albums.coverKey(album);
