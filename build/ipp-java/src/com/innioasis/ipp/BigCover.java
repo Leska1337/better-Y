@@ -637,7 +637,19 @@ public final class BigCover {
         noteLoad();
         boolean had = notes.remove(key) != null;
         if (notes.remove(SIG + key) != null) had = true;
-        if (had) { notesDirty = true; noteSave(); }
+        if (had) { notesDirty = true; if (forgetting == 0) noteSave(); }
+    }
+
+    // a batch of forgets writes the notes once, at its end, not the whole file per forget
+    private static int forgetting;
+
+    public static synchronized void beginForget() {
+        forgetting++;
+    }
+
+    public static synchronized void endForget() {
+        if (forgetting > 0) forgetting--;
+        if (forgetting == 0 && !passing) noteSave();
     }
 
     /** {@link #clearMiss} on disk. */

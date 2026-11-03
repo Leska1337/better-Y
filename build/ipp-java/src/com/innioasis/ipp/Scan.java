@@ -254,12 +254,18 @@ public final class Scan {
     /** Under the class lock. */
     private static void walkShown() {
         if (expected == 0) return;
-        long all = (long) FOLDER * Math.max(dirsExpected, dirs) + (long) KNOWN * expected + (long) NEW * queued;
+        // children listed but not reached yet, whose names are not a file's: the folders still
+        // to list, which the table cannot foresee when they hold only new files
+        int ahead = Math.max(0, othersListed - othersSeen);
+        long all = (long) FOLDER * Math.max(dirsExpected, dirs + ahead) + (long) KNOWN * expected + (long) NEW * queued;
         if (queued > 0) all += (long) LOAD * (expected + queued);
         show((int) (units * 100 / Math.max(all, units + 1)));
     }
 
-    private static synchronized void listedDir() {
+    private static int othersListed, othersSeen;
+
+    private static synchronized void listedDir(int others) {
+        othersListed += others;
         dirs++;
         units += FOLDER;
         walkShown();
@@ -344,6 +350,7 @@ public final class Scan {
             else if (f.isDirectory()) k = EXISTS | DIR;
             else if (f.exists()) k = EXISTS;
             ext = extOf(f);
+            if (!fileExt(ext)) othersSeen++;
             kind = k;
             node = f;
         }
@@ -354,6 +361,16 @@ public final class Scan {
         String name = f.getName();
         int dot = name.lastIndexOf('.');
         return dot < 0 ? "" : name.substring(dot + 1).toLowerCase(Locale.ROOT);
+    }
+
+    private static final HashSet otherExt = new HashSet(java.util.Arrays.asList(new String[] {
+        "txt", "epub", "lrc", "jpg", "jpeg", "png", "bmp", "gif", "webp", "cue", "m3u", "m3u8",
+        "nfo", "log", "pdf", "json", "ini", "db", "zip"}));
+
+    /** An extension, lower case, that names a file: media, pictures, texts. Folders rarely carry one. */
+    public static boolean fileExt(String ext) {
+        return musicExt.contains(ext) || bookExt.contains(ext) || videoExt.contains(ext)
+                || otherExt.contains(ext);
     }
 
     public static boolean exists(File f) {
@@ -370,7 +387,11 @@ public final class Scan {
      * cached. The same look, sooner, on the second core; nothing is answered from here.
      */
     public static void listed(File[] children) {
-        listedDir();
+        int others = 0;
+        for (int i = 0; children != null && i < children.length; i++) {
+            if (children[i] != null && !fileExt(extOf(children[i]))) others++;
+        }
+        listedDir(others);
         if (children == null || children.length == 0) return;
         queue(children);
         synchronized (AHEAD) {
@@ -661,6 +682,8 @@ public final class Scan {
                 expected = p.size();
                 dirsExpected = dirsOf(p);
                 dirs = 0;
+                othersListed = 0;
+                othersSeen = 0;
                 queued = 0;
                 shown = -1;
                 added = 0;

@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..355c3040 100644
+index 01b1f730..98ba6188 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..355c3040 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100478
++  versionCode: 10100483
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20154,7 +20154,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..1ddbdd10 100644
+index 71fe29d0..ce1ed015 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21103,7 +21103,7 @@ index 71fe29d0..1ddbdd10 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev478</string>
++    <string name="ipp_version">v1.1.0-dev483</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -75232,10 +75232,10 @@ index b6833eac..66ce7a68 100644
      goto :goto_1
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
-index 44054e1a..e68f9019 100644
+index 44054e1a..dd1d28be 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2$1$1.smali
-@@ -71,6 +71,19 @@
+@@ -71,8 +71,21 @@
  .method public final invoke(Ljava/io/File;)Ljava/lang/Boolean;
      .locals 2
  
@@ -75253,8 +75253,52 @@ index 44054e1a..e68f9019 100644
 +
 +    :cond_ipp_ours
      .line 51
-     invoke-virtual {p1}, Ljava/io/File;->isDirectory()Z
+-    invoke-virtual {p1}, Ljava/io/File;->isDirectory()Z
++    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->dir(Ljava/io/File;)Z
  
+     move-result v0
+ 
+diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2.smali
+index 64617b39..3bf0bafa 100644
+--- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2.smali
++++ b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/search/SearchViewModel$searchBook$2.smali
+@@ -184,6 +184,9 @@
+ 
+     invoke-static {p1}, Lkotlin/ResultKt;->throwOnFailure(Ljava/lang/Object;)V
+ 
++    # ipp: the walk's cost goes to the log (Ebook.walkStart/list/walkEnd)
++    invoke-static {}, Lcom/innioasis/ipp/Ebook;->walkStart()V
++
+     .line 44
+     new-instance p1, Ljava/util/ArrayList;
+ 
+@@ -222,7 +225,7 @@
+     check-cast v1, Ljava/io/File;
+ 
+     .line 49
+-    invoke-virtual {v1}, Ljava/io/File;->listFiles()[Ljava/io/File;
++    invoke-static {v1}, Lcom/innioasis/ipp/Ebook;->list(Ljava/io/File;)[Ljava/io/File;
+ 
+     move-result-object v1
+ 
+@@ -265,7 +268,7 @@
+     check-cast v2, Ljava/io/File;
+ 
+     .line 53
+-    invoke-virtual {v2}, Ljava/io/File;->isDirectory()Z
++    invoke-static {v2}, Lcom/innioasis/ipp/Ebook;->dir(Ljava/io/File;)Z
+ 
+     move-result v3
+ 
+@@ -288,6 +291,8 @@
+     goto :goto_0
+ 
+     :cond_2
++    invoke-static {p1}, Lcom/innioasis/ipp/Ebook;->walkEnd(Ljava/util/List;)V
++
+     return-object p1
+ 
+     .line 58
 diff --git a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali b/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali
 index d349a428..76c04a86 100644
 --- a/build/src/smali_classes2/com/innioasis/y1_eBook/ui/text/TextAdapter.smali

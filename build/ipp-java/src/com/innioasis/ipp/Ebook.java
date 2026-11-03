@@ -216,10 +216,62 @@ public final class Ebook {
     public static boolean hidden(java.io.File f) {
         try {
             if (f == null) return false;
-            java.io.File dir = Panel.card();
+            walkNodes++;
+            // the name first: both full paths for every node of the card cost seconds on a big one
+            java.io.File dir = ours;
+            if (dir == null) ours = dir = Panel.card();
+            if (!f.getName().equals(dir.getName())) return false;
             return dir != null && f.getAbsolutePath().equals(dir.getAbsolutePath());
         } catch (Throwable t) {
             return false;
         }
+    }
+
+    private static java.io.File ours;
+
+    // the Local files walk, one at a time on its IO thread: what it cost goes to the log
+    private static long walkT0, walkListMs;
+    private static int walkDirs, walkNodes;
+
+    public static void walkStart() {
+        walkT0 = android.os.SystemClock.uptimeMillis();
+        walkListMs = 0;
+        walkDirs = 0;
+        walkNodes = 0;
+    }
+
+    /** {@code listFiles} of the walk, timed apart from the looks at each child. */
+    public static java.io.File[] list(java.io.File dir) {
+        long t0 = android.os.SystemClock.uptimeMillis();
+        java.io.File[] r = dir.listFiles();
+        walkListMs += android.os.SystemClock.uptimeMillis() - t0;
+        walkDirs++;
+        return r;
+    }
+
+    private static java.io.File lastNode;
+    private static boolean lastDir;
+
+    /**
+     * {@code isDirectory} for the walk, which asks it twice per child (the filter, then the loop)
+     * one right after the other: the second answer is the first one's. A name with a media, picture
+     * or text extension is a file without asking the card: a folder named like that is not walked.
+     */
+    public static boolean dir(java.io.File f) {
+        if (f != lastNode) {
+            String name = f.getName();
+            int dot = name.lastIndexOf('.');
+            String ext = dot < 0 ? "" : name.substring(dot + 1).toLowerCase(java.util.Locale.ROOT);
+            lastDir = !Scan.fileExt(ext) && f.isDirectory();
+            lastNode = f;
+        }
+        return lastDir;
+    }
+
+    public static void walkEnd(java.util.List found) {
+        lastNode = null;
+        Diag.note("local files: " + (found == null ? 0 : found.size()) + " found, " + walkDirs
+                + " dirs, " + walkNodes + " nodes, " + (android.os.SystemClock.uptimeMillis() - walkT0)
+                + " ms, listFiles " + walkListMs + " ms");
     }
 }

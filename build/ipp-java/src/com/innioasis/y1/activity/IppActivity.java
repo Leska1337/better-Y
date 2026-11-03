@@ -1096,11 +1096,13 @@ public final class IppActivity extends BaseActivity {
                 String label = a.getString(R.string.ipp_scan_running);
                 // once per library: re-read rows the platform's tag limit truncated (Meta)
                 boolean migrate = !Meta.libraryRead(a);
-                q.start(repo);
+                q.show(a, label, n);
+                // every row is checked before any file is read: the reads would hold the card
+                // and stall the checks, and the scale only knows the reads once the checks end
                 for (int i = 0; i < n; i++) {
                     Song s = (Song) songs.get(i);
                     if (s == null || s.getPath() == null) continue;
-                    if ((i & 15) == 0) a.scanTick(Loading.percent(label, q.percent(i, n)));
+                    if ((i & 15) == 0) q.checked(i);
                     String path = s.getPath();
                     File f = new File(path);
                     // one look at the card: 0 is what a missing file answers
@@ -1118,10 +1120,12 @@ public final class IppActivity extends BaseActivity {
 
                     if (date == s.getFileDate() && !(migrate && Meta.reread(path))) continue;
                     q.add(f);
-                    updated += q.write(repo, false);
                 }
                 q.close();
-                while (!q.idle()) a.scanTick(Loading.percent(label, q.percent(n, n)));
+                q.checkMs = SystemClock.uptimeMillis() - t0;
+                q.checked(n);
+                q.start(repo);
+                while (!q.idle()) updated += q.write(repo, false);
                 updated += q.write(repo, true);
                 // only on a pass that ran to the end and read every file it meant to
                 if (!q.failed) Meta.noteLibraryRead(a);
@@ -1130,14 +1134,16 @@ public final class IppActivity extends BaseActivity {
                 q.close();
                 Art.flushStamps();
                 Diag.note("update library: " + n + " row(s), " + q.built + " re-read, "
-                        + (SystemClock.uptimeMillis() - t0) + " ms");
+                        + (SystemClock.uptimeMillis() - t0) + " ms: checks " + q.checkMs
+                        + ", reads " + q.readMs + " over the workers, slowest " + q.slowMs + " "
+                        + q.slowName + ", writes " + q.insertMs + " + invalidation " + q.dropMs);
                 a.scanFinished(updated);
             }
         }
     }
 
     /**
-     * The files "Update library" re-reads: the checking thread queues them and goes on, workers
+     * The files "Update library" re-reads: the checking thread queues them, workers then
      * read them ({@code fileToSong} is thread-safe, see Scan), and the songs are written a batch
      * at a time with one invalidation per batch.
      */
@@ -1151,6 +1157,9 @@ public final class IppActivity extends BaseActivity {
         int queued;
         int built;
         boolean failed;
+        // where the time went, for the log
+        long checkMs, readMs, slowMs, insertMs, dropMs;
+        String slowName = "";
 
         void start(Y1Repository r) {
             repo = r;
@@ -1186,10 +1195,40 @@ public final class IppActivity extends BaseActivity {
             return live == 0;
         }
 
-        /** The checked rows and the files re-read, over everything there is to do. */
-        synchronized int percent(int checked, int rows) {
-            int all = rows + queued;
-            return all == 0 ? 0 : (checked + built) * 100 / all;
+        // A row checked is ~0.1 ms; a file re-read ~5 ms of the three workers, and as much again to
+        // write it and drop what was cached for it.
+        private static final int READ_COST = 50;
+        private static final int WRITE_COST = 50;
+        private IppActivity ui;
+        private String label;
+        private int rows, checked, written;
+        private int shown;                  // the percent on screen: never goes back
+
+        void show(IppActivity a, String text, int n) {
+            ui = a;
+            label = text;
+            rows = n;
+        }
+
+        void checked(int i) {
+            synchronized (this) {
+                checked = i;
+            }
+            tick();
+        }
+
+        /** Checks, reads and writes, weighted; from any thread, re-texted when the percent grows. */
+        void tick() {
+            int p;
+            synchronized (this) {
+                long all = rows + (long) queued * (READ_COST + WRITE_COST);
+                p = all == 0 ? 0 : (int) ((checked + (long) built * READ_COST
+                        + (long) written * WRITE_COST) * 100 / all);
+                if (p > 99) p = 99;
+                if (p <= shown) return;
+                shown = p;
+            }
+            ui.scanTick(Loading.percent(label, p));
         }
 
         /** Writes the songs read so far, when a batch is full or {@code all}; how many were written. */
@@ -1200,6 +1239,7 @@ public final class IppActivity extends BaseActivity {
                 b = (Song[]) done.toArray(new Song[done.size()]);
                 done.clear();
             }
+            long t0 = SystemClock.uptimeMillis();
             try {
                 r.ippSongDao().insert(b);
             } catch (Throwable t) {
@@ -1208,7 +1248,14 @@ public final class IppActivity extends BaseActivity {
                 }
                 return 0;
             }
+            long t1 = SystemClock.uptimeMillis();
             Ipp.songsChanged(b);
+            insertMs += t1 - t0;
+            dropMs += SystemClock.uptimeMillis() - t1;
+            synchronized (this) {
+                written += b.length;
+            }
+            tick();
             return b.length;
         }
 
@@ -1218,7 +1265,12 @@ public final class IppActivity extends BaseActivity {
             return todo.isEmpty() ? null : (File) todo.removeFirst();
         }
 
-        synchronized void built(Song s) {
+        synchronized void built(Song s, File f, long ms) {
+            readMs += ms;
+            if (ms > slowMs) {
+                slowMs = ms;
+                slowName = f.getName();
+            }
             built++;
             if (s != null) done.add(s);
             else failed = true;
@@ -1245,12 +1297,15 @@ public final class IppActivity extends BaseActivity {
                     File f = q.next();
                     if (f == null) break;
                     Song s = null;
+                    long t0 = SystemClock.uptimeMillis();
                     try {
                         s = q.repo.fileToSong(f);
                     } catch (Throwable t) {
                         s = null;
                     }
-                    q.built(s);
+                    Diag.slow("update library " + f.getName(), t0);
+                    q.built(s, f, SystemClock.uptimeMillis() - t0);
+                    q.tick();
                 }
             } catch (Throwable t) {
             } finally {

@@ -6,6 +6,10 @@
 
 .field private final static SUFFIX:Ljava/lang/String; = "-180.jpg"
 
+.field private static byFolder:Ljava/util/HashMap;
+
+.field private static holder:Ljava/lang/Thread;
+
 .method private constructor <init>()V
   .registers 1
   .line 19
@@ -13,14 +17,87 @@
     return-void
 .end method
 
+.method public static beginForget()V
+  .catchall { :L0 .. :L8 } :L9
+  .registers 6
+  :L0
+  .line 108
+    invoke-static { }, Lcom/innioasis/ipp/FlowCache;->dir()Ljava/io/File;
+    move-result-object v0
+  .line 109
+    if-nez v0, :L1
+    const/4 v0, 0
+    goto :L2
+  :L1
+    invoke-virtual { v0 }, Ljava/io/File;->list()[Ljava/lang/String;
+    move-result-object v0
+  :L2
+  .line 110
+    new-instance v1, Ljava/util/HashMap;
+    invoke-direct { v1 }, Ljava/util/HashMap;-><init>()V
+  .line 111
+    const/4 v2, 0
+    const/4 v3, 0
+  :L3
+    if-eqz v0, :L7
+    array-length v4, v0
+    if-ge v3, v4, :L7
+  .line 112
+    aget-object v4, v0, v3
+    const/16 v5, 45
+    invoke-virtual { v4, v5 }, Ljava/lang/String;->indexOf(I)I
+    move-result v4
+  .line 113
+    if-gtz v4, :L4
+    goto :L6
+  :L4
+  .line 114
+    aget-object v5, v0, v3
+    invoke-virtual { v5, v2, v4 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
+    move-result-object v4
+  .line 115
+    invoke-virtual { v1, v4 }, Ljava/util/HashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v5
+    check-cast v5, Ljava/util/ArrayList;
+  .line 116
+    if-nez v5, :L5
+    new-instance v5, Ljava/util/ArrayList;
+    invoke-direct { v5 }, Ljava/util/ArrayList;-><init>()V
+    invoke-virtual { v1, v4, v5 }, Ljava/util/HashMap;->put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+  :L5
+  .line 117
+    aget-object v4, v0, v3
+    invoke-virtual { v5, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  :L6
+  .line 111
+    add-int/lit8 v3, v3, 1
+    goto :L3
+  :L7
+  .line 119
+    sput-object v1, Lcom/innioasis/ipp/FlowCache;->byFolder:Ljava/util/HashMap;
+  .line 120
+    invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/FlowCache;->holder:Ljava/lang/Thread;
+  :L8
+  .line 122
+    goto :L10
+  :L9
+  .line 121
+    move-exception v0
+  :L10
+  .line 123
+    return-void
+.end method
+
 .method public static clear()V
   .catchall { :L0 .. :L5 } :L7
   .registers 3
   :L0
-  .line 96
+  .line 133
     invoke-static { }, Lcom/innioasis/ipp/FlowCache;->dir()Ljava/io/File;
     move-result-object v0
-  .line 97
+  .line 134
     if-nez v0, :L1
     const/4 v0, 0
     goto :L2
@@ -28,11 +105,11 @@
     invoke-virtual { v0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object v0
   :L2
-  .line 98
+  .line 135
     if-nez v0, :L3
     return-void
   :L3
-  .line 99
+  .line 136
     const/4 v1, 0
   :L4
     array-length v2, v0
@@ -43,13 +120,13 @@
     add-int/lit8 v1, v1, 1
     goto :L4
   :L6
-  .line 101
+  .line 138
     goto :L8
   :L7
-  .line 100
+  .line 137
     move-exception v0
   :L8
-  .line 102
+  .line 139
     return-void
 .end method
 
@@ -86,6 +163,24 @@
     return-object v1
 .end method
 
+.method public static endForget()V
+  .registers 2
+  .line 126
+    invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
+    move-result-object v0
+    sget-object v1, Lcom/innioasis/ipp/FlowCache;->holder:Ljava/lang/Thread;
+    if-eq v0, v1, :L0
+    return-void
+  :L0
+  .line 127
+    const/4 v0, 0
+    sput-object v0, Lcom/innioasis/ipp/FlowCache;->holder:Ljava/lang/Thread;
+  .line 128
+    sput-object v0, Lcom/innioasis/ipp/FlowCache;->byFolder:Ljava/util/HashMap;
+  .line 129
+    return-void
+.end method
+
 .method public static file(Ljava/lang/String;)Ljava/io/File;
   .registers 4
   .line 40
@@ -112,8 +207,8 @@
 .end method
 
 .method public static forget(Ljava/lang/String;)V
-  .catchall { :L0 .. :L4 } :L6
-  .registers 6
+  .catchall { :L0 .. :L10 } :L12
+  .registers 7
   .line 79
     const-string v0, "-"
     if-nez p0, :L0
@@ -150,49 +245,88 @@
     invoke-direct { v2, v1, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-virtual { v2 }, Ljava/io/File;->delete()Z
   .line 84
-    new-instance v2, Ljava/lang/StringBuilder;
-    invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-static { p0 }, Lcom/innioasis/ipp/FlowCache;->hex(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-    invoke-virtual { v2, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object p0
-    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object p0
-    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object p0
   .line 85
-    invoke-virtual { v1 }, Ljava/io/File;->list()[Ljava/lang/String;
-    move-result-object v0
-  .line 86
-    if-nez v0, :L2
-    return-void
+    invoke-static { }, Ljava/lang/Thread;->currentThread()Ljava/lang/Thread;
+    move-result-object v2
+    sget-object v3, Lcom/innioasis/ipp/FlowCache;->holder:Ljava/lang/Thread;
+    if-ne v2, v3, :L2
+    sget-object v2, Lcom/innioasis/ipp/FlowCache;->byFolder:Ljava/util/HashMap;
+    goto :L3
   :L2
-  .line 87
     const/4 v2, 0
   :L3
-    array-length v3, v0
-    if-ge v2, v3, :L5
-  .line 88
-    aget-object v3, v0, v2
-    invoke-virtual { v3, p0 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
-    move-result v3
-    if-eqz v3, :L4
-    new-instance v3, Ljava/io/File;
-    aget-object v4, v0, v2
-    invoke-direct { v3, v1, v4 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-    invoke-virtual { v3 }, Ljava/io/File;->delete()Z
-  :L4
+  .line 86
+    const/4 v3, 0
+    if-eqz v2, :L7
   .line 87
-    add-int/lit8 v2, v2, 1
-    goto :L3
+    invoke-virtual { v2, p0 }, Ljava/util/HashMap;->remove(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object p0
+    check-cast p0, Ljava/util/ArrayList;
+  .line 88
+    if-nez p0, :L4
+    return-void
+  :L4
+  .line 89
+    nop
   :L5
-  .line 91
-    goto :L7
+    invoke-virtual { p0 }, Ljava/util/ArrayList;->size()I
+    move-result v0
+    if-ge v3, v0, :L6
+    new-instance v0, Ljava/io/File;
+    invoke-virtual { p0, v3 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
+    move-result-object v2
+    check-cast v2, Ljava/lang/String;
+    invoke-direct { v0, v1, v2 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+    invoke-virtual { v0 }, Ljava/io/File;->delete()Z
+    add-int/lit8 v3, v3, 1
+    goto :L5
   :L6
   .line 90
-    move-exception p0
+    return-void
   :L7
   .line 92
+    invoke-virtual { v1 }, Ljava/io/File;->list()[Ljava/lang/String;
+    move-result-object v2
+  .line 93
+    if-nez v2, :L8
+    return-void
+  :L8
+  .line 94
+    nop
+  :L9
+    array-length v4, v2
+    if-ge v3, v4, :L11
+  .line 95
+    aget-object v4, v2, v3
+    new-instance v5, Ljava/lang/StringBuilder;
+    invoke-direct { v5 }, Ljava/lang/StringBuilder;-><init>()V
+    invoke-virtual { v5, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual { v5, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v5
+    invoke-virtual { v5 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v5
+    invoke-virtual { v4, v5 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
+    move-result v4
+    if-eqz v4, :L10
+    new-instance v4, Ljava/io/File;
+    aget-object v5, v2, v3
+    invoke-direct { v4, v1, v5 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
+    invoke-virtual { v4 }, Ljava/io/File;->delete()Z
+  :L10
+  .line 94
+    add-int/lit8 v3, v3, 1
+    goto :L9
+  :L11
+  .line 98
+    goto :L13
+  :L12
+  .line 97
+    move-exception p0
+  :L13
+  .line 99
     return-void
 .end method
 

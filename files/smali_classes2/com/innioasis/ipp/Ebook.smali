@@ -8,6 +8,20 @@
 
 .field private static fixed:I
 
+.field private static lastDir:Z
+
+.field private static lastNode:Ljava/io/File;
+
+.field private static ours:Ljava/io/File;
+
+.field private static walkDirs:I
+
+.field private static walkListMs:J
+
+.field private static walkNodes:I
+
+.field private static walkT0:J
+
 .method static constructor <clinit>()V
   .registers 1
   .line 160
@@ -196,6 +210,51 @@
     return v1
 .end method
 
+.method public static dir(Ljava/io/File;)Z
+  .registers 4
+  .line 261
+    sget-object v0, Lcom/innioasis/ipp/Ebook;->lastNode:Ljava/io/File;
+    if-eq p0, v0, :L4
+  .line 262
+    invoke-virtual { p0 }, Ljava/io/File;->getName()Ljava/lang/String;
+    move-result-object v0
+  .line 263
+    const/16 v1, 46
+    invoke-virtual { v0, v1 }, Ljava/lang/String;->lastIndexOf(I)I
+    move-result v1
+  .line 264
+    const/4 v2, 1
+    if-gez v1, :L0
+    const-string v0, ""
+    goto :L1
+  :L0
+    add-int/2addr v1, v2
+    invoke-virtual { v0, v1 }, Ljava/lang/String;->substring(I)Ljava/lang/String;
+    move-result-object v0
+    sget-object v1, Ljava/util/Locale;->ROOT:Ljava/util/Locale;
+    invoke-virtual { v0, v1 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
+    move-result-object v0
+  :L1
+  .line 265
+    invoke-static { v0 }, Lcom/innioasis/ipp/Scan;->fileExt(Ljava/lang/String;)Z
+    move-result v0
+    if-nez v0, :L2
+    invoke-virtual { p0 }, Ljava/io/File;->isDirectory()Z
+    move-result v0
+    if-eqz v0, :L2
+    goto :L3
+  :L2
+    const/4 v2, 0
+  :L3
+    sput-boolean v2, Lcom/innioasis/ipp/Ebook;->lastDir:Z
+  .line 266
+    sput-object p0, Lcom/innioasis/ipp/Ebook;->lastNode:Ljava/io/File;
+  :L4
+  .line 268
+    sget-boolean p0, Lcom/innioasis/ipp/Ebook;->lastDir:Z
+    return p0
+.end method
+
 .method static firstMark()I
   .registers 1
   .line 163
@@ -204,33 +263,53 @@
 .end method
 
 .method public static hidden(Ljava/io/File;)Z
-  .catchall { :L0 .. :L1 } :L3
-  .registers 3
+  .catchall { :L0 .. :L3 } :L5
+  .registers 6
   .line 218
     const/4 v0, 0
     if-nez p0, :L0
     return v0
   :L0
   .line 219
+    sget v1, Lcom/innioasis/ipp/Ebook;->walkNodes:I
+    const/4 v2, 1
+    add-int/2addr v1, v2
+    sput v1, Lcom/innioasis/ipp/Ebook;->walkNodes:I
+  .line 221
+    sget-object v1, Lcom/innioasis/ipp/Ebook;->ours:Ljava/io/File;
+  .line 222
+    if-nez v1, :L1
     invoke-static { }, Lcom/innioasis/ipp/Panel;->card()Ljava/io/File;
     move-result-object v1
-  .line 220
-    if-eqz v1, :L2
+    sput-object v1, Lcom/innioasis/ipp/Ebook;->ours:Ljava/io/File;
+  :L1
+  .line 223
+    invoke-virtual { p0 }, Ljava/io/File;->getName()Ljava/lang/String;
+    move-result-object v3
+    invoke-virtual { v1 }, Ljava/io/File;->getName()Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual { v3, v4 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v3
+    if-nez v3, :L2
+    return v0
+  :L2
+  .line 224
+    if-eqz v1, :L4
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
     invoke-virtual { v1 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object v1
     invoke-virtual { p0, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p0
-  :L1
-    if-eqz p0, :L2
-    const/4 v0, 1
-  :L2
-    return v0
   :L3
-  .line 221
+    if-eqz p0, :L4
+    const/4 v0, 1
+  :L4
+    return v0
+  :L5
+  .line 225
     move-exception p0
-  .line 222
+  .line 226
     return v0
 .end method
 
@@ -375,6 +454,29 @@
   :L5
   .line 200
     return-void
+.end method
+
+.method public static list(Ljava/io/File;)[Ljava/io/File;
+  .registers 7
+  .line 245
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+  .line 246
+    invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
+    move-result-object p0
+  .line 247
+    sget-wide v2, Lcom/innioasis/ipp/Ebook;->walkListMs:J
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v4
+    sub-long/2addr v4, v0
+    add-long/2addr v2, v4
+    sput-wide v2, Lcom/innioasis/ipp/Ebook;->walkListMs:J
+  .line 248
+    sget v0, Lcom/innioasis/ipp/Ebook;->walkDirs:I
+    add-int/lit8 v0, v0, 1
+    sput v0, Lcom/innioasis/ipp/Ebook;->walkDirs:I
+  .line 249
+    return-object p0
 .end method
 
 .method public static maxMark(Landroid/app/Activity;II)I
@@ -595,5 +697,82 @@
     return-void
   :L1
   .line 171
+    return-void
+.end method
+
+.method public static walkEnd(Ljava/util/List;)V
+  .registers 5
+  .line 272
+    const/4 v0, 0
+    sput-object v0, Lcom/innioasis/ipp/Ebook;->lastNode:Ljava/io/File;
+  .line 273
+    new-instance v0, Ljava/lang/StringBuilder;
+    invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v1, "local files: "
+    invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v0
+    if-nez p0, :L0
+    const/4 p0, 0
+    goto :L1
+  :L0
+    invoke-interface { p0 }, Ljava/util/List;->size()I
+    move-result p0
+  :L1
+    invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v0, " found, "
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    sget v0, Lcom/innioasis/ipp/Ebook;->walkDirs:I
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v0, " dirs, "
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    sget v0, Lcom/innioasis/ipp/Ebook;->walkNodes:I
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v0, " nodes, "
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+  .line 274
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+    sget-wide v2, Lcom/innioasis/ipp/Ebook;->walkT0:J
+    sub-long/2addr v0, v2
+    invoke-virtual { p0, v0, v1 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v0, " ms, listFiles "
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    sget-wide v0, Lcom/innioasis/ipp/Ebook;->walkListMs:J
+    invoke-virtual { p0, v0, v1 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
+    move-result-object p0
+    const-string v0, " ms"
+    invoke-virtual { p0, v0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object p0
+    invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object p0
+  .line 273
+    invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
+  .line 276
+    return-void
+.end method
+
+.method public static walkStart()V
+  .registers 2
+  .line 237
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v0
+    sput-wide v0, Lcom/innioasis/ipp/Ebook;->walkT0:J
+  .line 238
+    const-wide/16 v0, 0
+    sput-wide v0, Lcom/innioasis/ipp/Ebook;->walkListMs:J
+  .line 239
+    const/4 v0, 0
+    sput v0, Lcom/innioasis/ipp/Ebook;->walkDirs:I
+  .line 240
+    sput v0, Lcom/innioasis/ipp/Ebook;->walkNodes:I
+  .line 241
     return-void
 .end method

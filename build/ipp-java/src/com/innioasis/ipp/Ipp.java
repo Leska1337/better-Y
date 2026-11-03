@@ -43,7 +43,14 @@ public final class Ipp {
     public static void songsChanged(Song[] songs) {
         libraryChanged();
         if (songs == null) return;
-        for (int i = 0; i < songs.length; i++) forget(songs[i]);
+        BigCover.beginForget();
+        FlowCache.beginForget();
+        try {
+            for (int i = 0; i < songs.length; i++) forget(songs[i]);
+        } finally {
+            FlowCache.endForget();
+            BigCover.endForget();
+        }
     }
 
     private static void forget(Song song) {

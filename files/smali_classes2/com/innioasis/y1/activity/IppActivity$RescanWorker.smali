@@ -15,63 +15,84 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity$Rescan;)V
   .registers 2
-  .line 1237
+  .line 1289
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1238
+  .line 1290
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
-  .line 1239
+  .line 1291
     return-void
 .end method
 
 .method public run()V
-  .catchall { :L0 .. :L1 } :L8
-  .catchall { :L3 .. :L4 } :L5
-  .catchall { :L6 .. :L7 } :L8
-  .registers 3
-  .line 1245
+  .catchall { :L0 .. :L2 } :L7
+  .catchall { :L2 .. :L3 } :L4
+  .catchall { :L5 .. :L6 } :L7
+  .registers 8
+  .line 1297
     nop
   :L0
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->next()Ljava/io/File;
     move-result-object v0
+  .line 1298
+    if-nez v0, :L1
+    goto :L8
   :L1
-  .line 1246
-    if-nez v0, :L2
-    goto :L9
-  :L2
-  .line 1247
+  .line 1299
     nop
+  .line 1300
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v1
+  :L2
+  .line 1302
+    iget-object v3, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
+    invoke-static { v3 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->access$400(Lcom/innioasis/y1/activity/IppActivity$Rescan;)Lcom/innioasis/y1/database/Y1Repository;
+    move-result-object v3
+    invoke-virtual { v3, v0 }, Lcom/innioasis/y1/database/Y1Repository;->fileToSong(Ljava/io/File;)Lcom/innioasis/y1/database/Song;
+    move-result-object v3
   :L3
-  .line 1249
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
-    invoke-static { v1 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->access$400(Lcom/innioasis/y1/activity/IppActivity$Rescan;)Lcom/innioasis/y1/database/Y1Repository;
-    move-result-object v1
-    invoke-virtual { v1, v0 }, Lcom/innioasis/y1/database/Y1Repository;->fileToSong(Ljava/io/File;)Lcom/innioasis/y1/database/Song;
-    move-result-object v0
+  .line 1305
+    goto :L5
   :L4
-  .line 1252
-    goto :L6
+  .line 1303
+    move-exception v3
+  .line 1304
+    const/4 v3, 0
   :L5
-  .line 1250
-    move-exception v0
-  .line 1251
-    const/4 v0, 0
+  .line 1306
+    new-instance v4, Ljava/lang/StringBuilder;
+    invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
+    const-string v5, "update library "
+    invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    invoke-virtual { v0 }, Ljava/io/File;->getName()Ljava/lang/String;
+    move-result-object v5
+    invoke-virtual { v4, v5 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    move-result-object v4
+    invoke-virtual { v4 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+    move-result-object v4
+    invoke-static { v4, v1, v2 }, Lcom/innioasis/ipp/Diag;->slow(Ljava/lang/String;J)V
+  .line 1307
+    iget-object v4, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
+    invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
+    move-result-wide v5
+    sub-long/2addr v5, v1
+    invoke-virtual { v4, v3, v0, v5, v6 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built(Lcom/innioasis/y1/database/Song;Ljava/io/File;J)V
+  .line 1308
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->tick()V
   :L6
-  .line 1253
-    iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
-    invoke-virtual { v1, v0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->built(Lcom/innioasis/y1/database/Song;)V
-  :L7
-  .line 1254
+  .line 1309
     goto :L0
-  :L8
-  .line 1255
+  :L7
+  .line 1310
     move-exception v0
-  :L9
-  .line 1257
+  :L8
+  .line 1312
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$RescanWorker;->q:Lcom/innioasis/y1/activity/IppActivity$Rescan;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppActivity$Rescan;->quit()V
-  .line 1258
+  .line 1313
     nop
-  .line 1259
+  .line 1314
     return-void
 .end method

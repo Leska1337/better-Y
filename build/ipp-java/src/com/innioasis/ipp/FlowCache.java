@@ -81,14 +81,51 @@ public final class FlowCache {
             File d = dir();
             if (d == null) return;
             new File(d, hex(Albums.trackFolder(key)) + "-" + hex(key) + SUFFIX).delete();
-            String folder = hex(key) + "-";
+            String folder = hex(key);
+            java.util.HashMap held = Thread.currentThread() == holder ? byFolder : null;
+            if (held != null) {
+                java.util.ArrayList names = (java.util.ArrayList) held.remove(folder);
+                if (names == null) return;
+                for (int i = 0; i < names.size(); i++) new File(d, (String) names.get(i)).delete();
+                return;
+            }
             String[] names = d.list();
             if (names == null) return;
             for (int i = 0; i < names.length; i++) {
-                if (names[i].startsWith(folder)) new File(d, names[i]).delete();
+                if (names[i].startsWith(folder + "-")) new File(d, names[i]).delete();
             }
         } catch (Throwable t) {
         }
+    }
+
+    // A batch of forgets lists the folder once, not every slide on disk twice per song.
+    private static Thread holder;
+    private static java.util.HashMap byFolder;
+
+    /** The calling thread's forgets until {@link #endForget} use one listing, by folder hash. */
+    public static void beginForget() {
+        try {
+            File d = dir();
+            String[] names = d == null ? null : d.list();
+            java.util.HashMap m = new java.util.HashMap();
+            for (int i = 0; names != null && i < names.length; i++) {
+                int cut = names[i].indexOf('-');
+                if (cut <= 0) continue;
+                String k = names[i].substring(0, cut);
+                java.util.ArrayList l = (java.util.ArrayList) m.get(k);
+                if (l == null) m.put(k, l = new java.util.ArrayList());
+                l.add(names[i]);
+            }
+            byFolder = m;
+            holder = Thread.currentThread();
+        } catch (Throwable t) {
+        }
+    }
+
+    public static void endForget() {
+        if (Thread.currentThread() != holder) return;
+        holder = null;
+        byFolder = null;
     }
 
     public static void clear() {
