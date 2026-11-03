@@ -351,19 +351,23 @@ public final class FlowView extends View {
     }
 
     private void slide(Canvas c, int i, int n) {
-        if (i < 0 || i >= n || i == hidden) return;
+        // Hidden under the turning card or the picture flying to or from the player, the slide
+        // still erases its place: their reflections are see-through, and the neighbours tucked
+        // behind the centre showed through them.
+        boolean ghost = i == hidden;
+        if (i < 0 || i >= n) return;
         place(i - pos);
         if (sAlpha <= 0) return;
         Bitmap b = loader.get(i);
         if (b == null) return;
         int a = sAlpha;
         long age = loader.age(i);
-        if (age < FADE_MS) {
+        if (age < FADE_MS && !ghost) {
             a = (int) (a * (age < 0 ? 0 : age) / FADE_MS);
             fading = true;
         }
         float cos = (float) Math.cos(sAngle), sin = (float) Math.sin(sAngle);
-        float off = spread > 0f ? (i < pos ? -spread : spread) * w : 0f;
+        float off = ghost || spread <= 0f ? 0f : (i < pos ? -spread : spread) * w;
         float half = Flow.S / 2f + Flow.F;
         int edge = Flow.F + Flow.S;     // the cover's bottom row in the slide
 
@@ -381,7 +385,7 @@ public final class FlowView extends View {
         c.concat(m);
         c.drawBitmap(b, seamFrom, seamTo, erase);
         bmpPaint.setAlpha(a * Flow.REFL_ALPHA / 255);
-        c.drawBitmap(b, seamFrom, seamTo, bmpPaint);
+        if (!ghost) c.drawBitmap(b, seamFrom, seamTo, bmpPaint);
         c.restore();
 
         // The reflection: the slide's small mirror stretched and turned over under the cover, as the
@@ -396,8 +400,10 @@ public final class FlowView extends View {
         c.save();
         c.concat(m);
         c.drawBitmap(b, reflFrom, reflTo, erase);
-        c.drawBitmap(b, reflFrom, reflTo, bmpPaint);
-        c.drawBitmap(Flow.fade(), null, reflTo, fade);
+        if (!ghost) {
+            c.drawBitmap(b, reflFrom, reflTo, bmpPaint);
+            c.drawBitmap(Flow.fade(), null, reflTo, fade);
+        }
         c.restore();
 
         // the cover over it: the whole slide, frame and all
@@ -409,8 +415,8 @@ public final class FlowView extends View {
         if (!m.setPolyToPoly(src, 0, dst, 0, 4)) return;
         c.save();
         c.concat(m);
-        if (a < 255) c.drawBitmap(b, slideFrom, slideTo, erase);
-        c.drawBitmap(b, slideFrom, slideTo, bmpPaint);
+        if (a < 255 || ghost) c.drawBitmap(b, slideFrom, slideTo, erase);
+        if (!ghost) c.drawBitmap(b, slideFrom, slideTo, bmpPaint);
         c.restore();
     }
 
