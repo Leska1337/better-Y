@@ -640,15 +640,10 @@
 .method move(I)V
   .registers 4
   .line 1080
-    sget-object v0, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->KEYS:[Ljava/lang/String;
-    array-length v0, v0
-    add-int/lit8 v0, v0, -1
-    iget v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->sel:I
-    add-int/2addr v1, p1
-    invoke-static { v0, v1 }, Ljava/lang/Math;->min(II)I
-    move-result p1
-    const/4 v0, 0
-    invoke-static { v0, p1 }, Ljava/lang/Math;->max(II)I
+    iget v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->sel:I
+    sget-object v1, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->KEYS:[Ljava/lang/String;
+    array-length v1, v1
+    invoke-static { v0, p1, v1 }, Lcom/innioasis/ipp/Loop;->step(III)I
     move-result p1
   .line 1081
     iget v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Opts;->sel:I

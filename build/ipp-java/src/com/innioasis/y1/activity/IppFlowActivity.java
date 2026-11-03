@@ -1077,7 +1077,7 @@ public final class IppFlowActivity extends BaseActivity {
         }
 
         void move(int d) {
-            int s = Math.max(0, Math.min(KEYS.length - 1, sel + d));
+            int s = Loop.step(sel, d, KEYS.length);
             if (s == sel) return;
             sel = s;
             paint();
