@@ -30,7 +30,7 @@
 
 .method private static be32([BI)I
   .registers 4
-  .line 374
+  .line 378
     aget-byte v0, p0, p1
     and-int/lit16 v0, v0, 255
     shl-int/lit8 v0, v0, 24
@@ -54,21 +54,21 @@
 .method private static close(Ljava/io/RandomAccessFile;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 1
-  .line 379
+  .line 383
     if-eqz p0, :L3
   :L0
     invoke-virtual { p0 }, Ljava/io/RandomAccessFile;->close()V
   :L1
     goto :L3
   :L2
-  .line 380
+  .line 384
     move-exception p0
     goto :L4
   :L3
-  .line 381
+  .line 385
     nop
   :L4
-  .line 382
+  .line 386
     return-void
 .end method
 
@@ -521,7 +521,7 @@
 
 .method private static le32([BI)I
   .registers 4
-  .line 370
+  .line 374
     aget-byte v0, p0, p1
     and-int/lit16 v0, v0, 255
     add-int/lit8 v1, p1, 1
@@ -913,51 +913,51 @@
 
 .method private static picture([BIILcom/innioasis/ipp/Vorbis$Pic;)V
   .registers 7
-  .line 339
+  .line 343
     add-int/lit8 v0, p1, 8
     if-le v0, p2, :L0
     return-void
   :L0
-  .line 340
+  .line 344
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result v0
-  .line 341
+  .line 345
     add-int/lit8 p1, p1, 4
-  .line 342
+  .line 346
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result v1
-  .line 343
+  .line 347
     add-int/lit8 p1, p1, 4
-  .line 344
+  .line 348
     if-ltz v1, :L10
     add-int/2addr p1, v1
     add-int/lit8 v1, p1, 4
     if-le v1, p2, :L1
     goto :L10
   :L1
-  .line 345
+  .line 349
     nop
-  .line 346
+  .line 350
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result p1
-  .line 347
+  .line 351
     nop
-  .line 348
+  .line 352
     if-ltz p1, :L9
     add-int v2, v1, p1
     add-int/lit8 v2, v2, 20
     if-le v2, p2, :L2
     goto :L9
   :L2
-  .line 349
+  .line 353
     add-int/lit8 p1, p1, 16
     add-int/2addr v1, p1
-  .line 350
+  .line 354
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Vorbis;->be32([BI)I
     move-result p1
-  .line 351
+  .line 355
     add-int/lit8 v1, v1, 4
-  .line 352
+  .line 356
     if-lez p1, :L8
     const/high16 v2, 0x00800000
     if-gt p1, v2, :L8
@@ -965,7 +965,7 @@
     if-le v2, p2, :L3
     goto :L8
   :L3
-  .line 353
+  .line 357
     const/4 p2, 3
     const/4 v2, 0
     if-ne v0, p2, :L4
@@ -974,7 +974,7 @@
   :L4
     const/4 p2, 0
   :L5
-  .line 354
+  .line 358
     iget-object v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
     if-eqz v0, :L7
     iget-boolean v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->front:Z
@@ -983,24 +983,24 @@
   :L6
     return-void
   :L7
-  .line 355
-    new-array v0, p1, [B
-  .line 356
-    invoke-static { p0, v1, v0, v2, p1 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
-  .line 357
-    iput-object v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
-  .line 358
-    iput-boolean p2, p3, Lcom/innioasis/ipp/Vorbis$Pic;->front:Z
   .line 359
+    new-array v0, p1, [B
+  .line 360
+    invoke-static { p0, v1, v0, v2, p1 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+  .line 361
+    iput-object v0, p3, Lcom/innioasis/ipp/Vorbis$Pic;->data:[B
+  .line 362
+    iput-boolean p2, p3, Lcom/innioasis/ipp/Vorbis$Pic;->front:Z
+  .line 363
     return-void
   :L8
-  .line 352
+  .line 356
     return-void
   :L9
-  .line 348
+  .line 352
     return-void
   :L10
-  .line 344
+  .line 348
     return-void
 .end method
 
@@ -1016,7 +1016,7 @@
     move-result v0
     if-eqz v0, :L1
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
-    goto :L9
+    goto/16 :L11
   :L1
   .line 328
     const-string v0, "ARTIST"
@@ -1024,18 +1024,18 @@
     move-result v0
     if-eqz v0, :L2
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
-    goto :L9
+    goto/16 :L11
   :L2
   .line 329
     const-string v0, "ALBUMARTIST"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
-    if-nez v0, :L8
+    if-nez v0, :L10
     const-string v0, "ALBUM ARTIST"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
     if-eqz v0, :L3
-    goto :L8
+    goto :L10
   :L3
   .line 330
     const-string v0, "ALBUM"
@@ -1043,7 +1043,7 @@
     move-result v0
     if-eqz v0, :L4
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
-    goto :L9
+    goto :L11
   :L4
   .line 331
     const-string v0, "GENRE"
@@ -1051,7 +1051,7 @@
     move-result v0
     if-eqz v0, :L5
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
-    goto :L9
+    goto :L11
   :L5
   .line 332
     const-string v0, "TRACKNUMBER"
@@ -1059,7 +1059,7 @@
     move-result v0
     if-eqz v0, :L6
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
-    goto :L9
+    goto :L11
   :L6
   .line 333
     const-string v0, "DISCNUMBER"
@@ -1067,20 +1067,45 @@
     move-result v0
     if-eqz v0, :L7
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
-    goto :L9
+    goto :L11
   :L7
   .line 334
     const-string v0, "DATE"
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result p1
-    if-eqz p1, :L9
+    move-result v0
+    if-eqz v0, :L8
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->date:Ljava/lang/String;
-    goto :L9
+    goto :L11
   :L8
+  .line 335
+    iget-boolean v0, p0, Lcom/innioasis/ipp/Meta$Info;->wantLyrics:Z
+    if-eqz v0, :L11
+    const-string v0, "LYRICS"
+    invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v0
+    if-nez v0, :L9
+    const-string v0, "UNSYNCEDLYRICS"
+    invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v0
+    if-nez v0, :L9
+  .line 336
+    const-string v0, "UNSYNCED LYRICS"
+    invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v0
+    if-nez v0, :L9
+    const-string v0, "SYNCEDLYRICS"
+    invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p1
+    if-eqz p1, :L11
+  :L9
+  .line 337
+    invoke-static { p0, p2 }, Lcom/innioasis/ipp/Meta;->offerLyrics(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;)V
+    goto :L11
+  :L10
   .line 329
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-  :L9
-  .line 335
+  :L11
+  .line 339
     return-void
 .end method
 
@@ -1088,16 +1113,16 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 363
+  .line 367
     new-instance v0, Ljava/lang/String;
     const-string v1, "UTF-8"
     invoke-direct { v0, p0, p1, p2, v1 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
   :L1
     return-object v0
   :L2
-  .line 364
+  .line 368
     move-exception p0
-  .line 365
+  .line 369
     const/4 p0, 0
     return-object p0
 .end method

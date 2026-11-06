@@ -88,11 +88,16 @@ public final class Tint {
     private static void lyrics(Activity a) {
         View v = a.findViewById(R.id.lyric_lv);
         if (!(v instanceof LrcView)) return;
-        int c = color(a, KEY_LYRICS, ACCENT);
+        int c = lyricsColor(a);
         LrcView lrc = (LrcView) v;
         // Also the colour of the "no lyrics" label.
         lrc.setCurrentColor(c);
         lrc.setNormalColor(Color.argb(HALF, Color.red(c), Color.green(c), Color.blue(c)));
+    }
+
+    /** The sung line's colour; also the whole of an untimed text ({@code Lrc}). */
+    static int lyricsColor(Activity a) {
+        return color(a, KEY_LYRICS, ACCENT);
     }
 
     /** The colour at the layout's own opacity: the box only shades what is under it. */

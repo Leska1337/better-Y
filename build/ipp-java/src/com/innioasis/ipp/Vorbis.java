@@ -332,6 +332,10 @@ final class Vorbis {
         else if (key.equals("TRACKNUMBER")) out.track = v;
         else if (key.equals("DISCNUMBER")) out.disc = v;
         else if (key.equals("DATE")) out.date = v;
+        else if (out.wantLyrics && (key.equals("LYRICS") || key.equals("UNSYNCEDLYRICS")
+                || key.equals("UNSYNCED LYRICS") || key.equals("SYNCEDLYRICS"))) {
+            Meta.offerLyrics(out, v);
+        }
     }
 
     /** FLAC PICTURE: type, MIME, description, four sizes, data; every number big-endian. */

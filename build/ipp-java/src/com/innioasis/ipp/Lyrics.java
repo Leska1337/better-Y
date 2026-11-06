@@ -64,6 +64,31 @@ public final class Lyrics {
         }
     }
 
+    /**
+     * The same answer for bytes already in memory (a lyrics tag): strict UTF-8, then the
+     * statistical detector, then Latin-1. Never null.
+     */
+    public static Charset guess(byte[] d, int off, int len) {
+        try {
+            UTF8.newDecoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(java.nio.charset.CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(d, off, len));
+            return UTF8;
+        } catch (Throwable t) {
+        }
+        try {
+            org.mozilla.universalchardet.UniversalDetector u =
+                    new org.mozilla.universalchardet.UniversalDetector();
+            u.handleData(d, off, len);
+            u.dataEnd();
+            Charset c = resolve(u.getDetectedCharset());
+            if (c != null) return c;
+        } catch (Throwable t) {
+        }
+        return Charset.forName("ISO-8859-1");
+    }
+
     /** Drop-in for {@code LyricParse.Companion.judgeCharset}. Never throws, never returns null. */
     public static Charset charset(File f) {
         try {

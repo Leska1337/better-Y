@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..18536ab9 100644
+index 01b1f730..8d05667c 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..18536ab9 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100484
++  versionCode: 10100486
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20154,7 +20154,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..8398efe0 100644
+index 71fe29d0..ad5647a3 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21103,7 +21103,7 @@ index 71fe29d0..8398efe0 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev484</string>
++    <string name="ipp_version">v1.1.0-dev486</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -68546,6 +68546,25 @@ index 6e8fae34..ee7c24e1 100644
      sget-object v4, Lcom/innioasis/y1/utils/Blur;->INSTANCE:Lcom/innioasis/y1/utils/Blur;
  
      const/4 v6, 0x5
+diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2.smali
+index fae85460..19858619 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2.smali
+@@ -278,7 +278,13 @@
+ 
+     iget-object p1, p1, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->lyricLv:Lme/wcy/lrcview/LrcView;
+ 
+-    invoke-virtual {p1, v2}, Lme/wcy/lrcview/LrcView;->loadLrc(Ljava/lang/String;)V
++    # ipp: the text ("" with no file) goes through Lrc instead: restamped, shown whole when
++    # untimed, and the text embedded in the track read when there is no .lrc
++    iget-object p1, p0, Lcom/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2;->this$0:Lcom/innioasis/y1/base/BasePlayerActivity;
++
++    iget-object v0, p0, Lcom/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2;->$lrcPath:Ljava/lang/String;
++
++    invoke-static {p1, v2, v0}, Lcom/innioasis/ipp/Lrc;->loaded(Lcom/innioasis/y1/base/BasePlayerActivity;Ljava/lang/String;Ljava/lang/String;)V
+ 
+     .line 461
+     iget-object p1, p0, Lcom/innioasis/y1/base/BasePlayerActivity$handler$1$handleMessage$2;->this$0:Lcom/innioasis/y1/base/BasePlayerActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali
 index 2e5e2671..c5960679 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity$handler$1.smali
@@ -68634,7 +68653,7 @@ index 7a2061d8..1d226aea 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
-index 510ca002..abcf3e40 100644
+index 510ca002..285710bf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/base/BasePlayerActivity.smali
 @@ -335,66 +335,18 @@
@@ -68804,7 +68823,7 @@ index 510ca002..abcf3e40 100644
      .line 208
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
  
-@@ -1742,9 +1743,167 @@
+@@ -1742,9 +1743,170 @@
      return v1
  .end method
  
@@ -68955,6 +68974,9 @@ index 510ca002..abcf3e40 100644
 +    # go out. Both directions, because this method is also how it is closed again.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Awake;->lyrics(Landroid/app/Activity;)V
 +
++    # ipp: the window just opened -- the text embedded in the track, if there is no .lrc
++    invoke-static {p0}, Lcom/innioasis/ipp/Lrc;->window(Lcom/innioasis/y1/base/BasePlayerActivity;)V
++
 +    return-void
 +.end method
 +
@@ -68972,7 +68994,7 @@ index 510ca002..abcf3e40 100644
      .line 597
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onPause()V
  
-@@ -1943,8 +2102,18 @@
+@@ -1943,8 +2105,18 @@
  .end method
  
  .method public pressMenu()V
@@ -68983,16 +69005,16 @@ index 510ca002..abcf3e40 100644
 +    invoke-static {p0}, Lcom/innioasis/ipp/Flow;->flipBack(Landroid/app/Activity;)Z
 +
 +    move-result v0
- 
-+    if-eqz v0, :ipp_flat
 +
++    if-eqz v0, :ipp_flat
+ 
 +    return-void
 +
 +    :ipp_flat
      .line 613
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BasePlayerActivity;->finish()V
  
-@@ -2133,6 +2302,8 @@
+@@ -2133,6 +2305,8 @@
      :cond_0
      iput-object p1, p0, Lcom/innioasis/y1/base/BasePlayerActivity;->pathForCover:Ljava/lang/String;
  
@@ -69001,7 +69023,17 @@ index 510ca002..abcf3e40 100644
      .line 495
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -2405,11 +2576,17 @@
+@@ -2191,6 +2365,9 @@
+ 
+     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+ 
++    # ipp: which song the window is about, for the embedded text read later
++    invoke-static {p1}, Lcom/innioasis/ipp/Lrc;->track(Ljava/lang/String;)V
++
+     .line 504
+     sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+ 
+@@ -2405,11 +2582,17 @@
  
      move-result v2
  

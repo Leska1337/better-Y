@@ -449,6 +449,7 @@ public final class Deck {
     }
 
     public static boolean wheel(BasePlayerActivity a, int key) {
+        if (Lrc.wheel(a, key)) return true;
         if (!active) return false;
         if (key == KeyMap.INSTANCE.getKEY_DOWN()) {
             side(a, 1);

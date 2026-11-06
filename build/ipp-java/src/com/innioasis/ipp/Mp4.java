@@ -123,7 +123,7 @@ final class Mp4 {
             String t = item.type;
             boolean art = t.equals("covr");
             if (art && !wantArt) continue;
-            if (!art && !wanted(t)) continue;
+            if (!art && !wanted(t) && !(out.wantLyrics && t.equals("©lyr"))) continue;
             // the first "data" child: type indicator and locale, then the value
             Box data = box(f, item.body, item.end, h);
             if (data == null || !data.type.equals("data")) continue;
@@ -169,6 +169,7 @@ final class Mp4 {
         else if (t.equals("©alb")) out.album = s;
         else if (t.equals("©gen")) out.genre = s;
         else if (t.equals("©day")) out.year = s;
+        else if (t.equals("©lyr")) Meta.offerLyrics(out, s);
     }
 
     private static int be32(byte[] b, int p) {

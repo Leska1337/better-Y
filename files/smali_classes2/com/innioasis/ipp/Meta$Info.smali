@@ -26,6 +26,10 @@
 
 .field public genre:Ljava/lang/String;
 
+.field lyrics:Ljava/lang/String;
+
+.field lyricsRank:I
+
 .field public ok:Z
 
 .field public openNs:J
@@ -35,6 +39,8 @@
 .field public title:Ljava/lang/String;
 
 .field public track:Ljava/lang/String;
+
+.field wantLyrics:Z
 
 .field public year:Ljava/lang/String;
 

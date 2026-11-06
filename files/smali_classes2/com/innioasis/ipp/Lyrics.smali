@@ -97,7 +97,7 @@
 .method public static charset(Ljava/io/File;)Ljava/nio/charset/Charset;
   .catchall { :L0 .. :L7 } :L8
   .registers 5
-  .line 70
+  .line 95
     if-eqz p0, :L6
   :L0
     invoke-virtual { p0 }, Ljava/io/File;->isFile()Z
@@ -105,14 +105,14 @@
     if-nez v0, :L1
     goto :L6
   :L1
-  .line 71
+  .line 96
     sget-object v0, Lcom/innioasis/y1_eBook/utils/FileEncodingDetector;->INSTANCE:Lcom/innioasis/y1_eBook/utils/FileEncodingDetector;
     invoke-virtual { p0 }, Ljava/io/File;->getPath()Ljava/lang/String;
     move-result-object v1
     sget-object v2, Lcom/innioasis/ipp/Lyrics;->UTF8:Ljava/nio/charset/Charset;
     invoke-virtual { v0, v1, v2 }, Lcom/innioasis/y1_eBook/utils/FileEncodingDetector;->detectCharset(Ljava/lang/String;Ljava/nio/charset/Charset;)Ljava/nio/charset/Charset;
     move-result-object v0
-  .line 72
+  .line 97
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "lrc "
@@ -137,7 +137,7 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 73
+  .line 98
     if-nez v0, :L4
     goto :L5
   :L4
@@ -145,15 +145,73 @@
   :L5
     return-object v2
   :L6
-  .line 70
+  .line 95
     sget-object p0, Lcom/innioasis/ipp/Lyrics;->UTF8:Ljava/nio/charset/Charset;
   :L7
     return-object p0
   :L8
-  .line 74
+  .line 99
     move-exception p0
-  .line 75
+  .line 100
     sget-object p0, Lcom/innioasis/ipp/Lyrics;->UTF8:Ljava/nio/charset/Charset;
+    return-object p0
+.end method
+
+.method public static guess([BII)Ljava/nio/charset/Charset;
+  .catchall { :L0 .. :L1 } :L2
+  .catchall { :L3 .. :L4 } :L6
+  .registers 6
+  :L0
+  .line 73
+    sget-object v0, Lcom/innioasis/ipp/Lyrics;->UTF8:Ljava/nio/charset/Charset;
+    invoke-virtual { v0 }, Ljava/nio/charset/Charset;->newDecoder()Ljava/nio/charset/CharsetDecoder;
+    move-result-object v1
+    sget-object v2, Ljava/nio/charset/CodingErrorAction;->REPORT:Ljava/nio/charset/CodingErrorAction;
+  .line 74
+    invoke-virtual { v1, v2 }, Ljava/nio/charset/CharsetDecoder;->onMalformedInput(Ljava/nio/charset/CodingErrorAction;)Ljava/nio/charset/CharsetDecoder;
+    move-result-object v1
+    sget-object v2, Ljava/nio/charset/CodingErrorAction;->REPORT:Ljava/nio/charset/CodingErrorAction;
+  .line 75
+    invoke-virtual { v1, v2 }, Ljava/nio/charset/CharsetDecoder;->onUnmappableCharacter(Ljava/nio/charset/CodingErrorAction;)Ljava/nio/charset/CharsetDecoder;
+    move-result-object v1
+  .line 76
+    invoke-static { p0, p1, p2 }, Ljava/nio/ByteBuffer;->wrap([BII)Ljava/nio/ByteBuffer;
+    move-result-object v2
+    invoke-virtual { v1, v2 }, Ljava/nio/charset/CharsetDecoder;->decode(Ljava/nio/ByteBuffer;)Ljava/nio/CharBuffer;
+  :L1
+  .line 77
+    return-object v0
+  :L2
+  .line 78
+    move-exception v0
+  :L3
+  .line 81
+    new-instance v0, Lorg/mozilla/universalchardet/UniversalDetector;
+    invoke-direct { v0 }, Lorg/mozilla/universalchardet/UniversalDetector;-><init>()V
+  .line 83
+    invoke-virtual { v0, p0, p1, p2 }, Lorg/mozilla/universalchardet/UniversalDetector;->handleData([BII)V
+  .line 84
+    invoke-virtual { v0 }, Lorg/mozilla/universalchardet/UniversalDetector;->dataEnd()V
+  .line 85
+    invoke-virtual { v0 }, Lorg/mozilla/universalchardet/UniversalDetector;->getDetectedCharset()Ljava/lang/String;
+    move-result-object p0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Lyrics;->resolve(Ljava/lang/String;)Ljava/nio/charset/Charset;
+    move-result-object p0
+  :L4
+  .line 86
+    if-eqz p0, :L5
+    return-object p0
+  :L5
+  .line 88
+    goto :L7
+  :L6
+  .line 87
+    move-exception p0
+  :L7
+  .line 89
+    const-string p0, "ISO-8859-1"
+    invoke-static { p0 }, Ljava/nio/charset/Charset;->forName(Ljava/lang/String;)Ljava/nio/charset/Charset;
+    move-result-object p0
     return-object p0
 .end method
 

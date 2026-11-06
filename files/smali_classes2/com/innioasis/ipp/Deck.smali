@@ -356,40 +356,40 @@
 
 .method public static back(Lcom/innioasis/y1/base/BasePlayerActivity;)Z
   .registers 4
-  .line 463
+  .line 464
     invoke-static { p0 }, Lcom/innioasis/ipp/Deck;->abState(Lcom/innioasis/y1/base/BasePlayerActivity;)I
     move-result v0
     const/4 v1, 1
     if-ne v0, v1, :L0
-  .line 464
-    invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->ippCancelAB()V
   .line 465
-    invoke-static { p0 }, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+    invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->ippCancelAB()V
   .line 466
+    invoke-static { p0 }, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+  .line 467
     return v1
   :L0
-  .line 468
+  .line 469
     invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->ippLyricOpen()Z
     move-result v0
     if-eqz v0, :L1
-  .line 469
-    invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->ippToggleLyric()V
   .line 470
+    invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->ippToggleLyric()V
+  .line 471
     return v1
   :L1
-  .line 472
+  .line 473
     sget-boolean v0, Lcom/innioasis/ipp/Deck;->active:Z
     const/4 v2, 0
     if-nez v0, :L2
     return v2
   :L2
-  .line 473
-    sput-boolean v2, Lcom/innioasis/ipp/Deck;->active:Z
   .line 474
-    sput v2, Lcom/innioasis/ipp/Deck;->focus:I
+    sput-boolean v2, Lcom/innioasis/ipp/Deck;->active:Z
   .line 475
-    invoke-static { p0 }, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+    sput v2, Lcom/innioasis/ipp/Deck;->focus:I
   .line 476
+    invoke-static { p0 }, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+  .line 477
     return v1
 .end method
 
@@ -1171,17 +1171,17 @@
 
 .method public static reset()V
   .registers 2
-  .line 481
+  .line 482
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/Deck;->active:Z
-  .line 482
-    sput v0, Lcom/innioasis/ipp/Deck;->focus:I
   .line 483
-    invoke-static { }, Lcom/innioasis/ipp/Deck;->stopAnim()V
+    sput v0, Lcom/innioasis/ipp/Deck;->focus:I
   .line 484
+    invoke-static { }, Lcom/innioasis/ipp/Deck;->stopAnim()V
+  .line 485
     const/4 v0, 0
     sput-object v0, Lcom/innioasis/ipp/Deck;->animAct:Lcom/innioasis/y1/base/BasePlayerActivity;
-  .line 485
+  .line 486
     sget-object v1, Lcom/innioasis/ipp/Deck;->lastAct:Ljava/lang/ref/WeakReference;
     if-nez v1, :L0
     goto :L1
@@ -1189,14 +1189,14 @@
     invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 486
+  .line 487
     instance-of v1, v0, Lcom/innioasis/y1/base/BasePlayerActivity;
     if-eqz v1, :L2
-  .line 487
+  .line 488
     check-cast v0, Lcom/innioasis/y1/base/BasePlayerActivity;
     invoke-static { v0 }, Lcom/innioasis/ipp/Deck;->render(Lcom/innioasis/y1/base/BasePlayerActivity;)V
   :L2
-  .line 489
+  .line 490
     return-void
 .end method
 
@@ -1507,32 +1507,38 @@
 .method public static wheel(Lcom/innioasis/y1/base/BasePlayerActivity;I)Z
   .registers 5
   .line 452
-    sget-boolean v0, Lcom/innioasis/ipp/Deck;->active:Z
-    const/4 v1, 0
-    if-nez v0, :L0
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Lrc;->wheel(Lcom/innioasis/y1/base/BasePlayerActivity;I)Z
+    move-result v0
+    const/4 v1, 1
+    if-eqz v0, :L0
     return v1
   :L0
   .line 453
+    sget-boolean v0, Lcom/innioasis/ipp/Deck;->active:Z
+    const/4 v2, 0
+    if-nez v0, :L1
+    return v2
+  :L1
+  .line 454
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_DOWN()I
     move-result v0
-    const/4 v2, 1
-    if-ne p1, v0, :L1
-  .line 454
-    invoke-static { p0, v2 }, Lcom/innioasis/ipp/Deck;->side(Lcom/innioasis/y1/base/BasePlayerActivity;I)Z
+    if-ne p1, v0, :L2
   .line 455
-    return v2
-  :L1
-  .line 457
-    sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
-    invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_UP()I
-    move-result v0
-    if-eq p1, v0, :L2
+    invoke-static { p0, v1 }, Lcom/innioasis/ipp/Deck;->side(Lcom/innioasis/y1/base/BasePlayerActivity;I)Z
+  .line 456
     return v1
   :L2
   .line 458
+    sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
+    invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_UP()I
+    move-result v0
+    if-eq p1, v0, :L3
+    return v2
+  :L3
+  .line 459
     const/4 p1, -1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Deck;->side(Lcom/innioasis/y1/base/BasePlayerActivity;I)Z
-  .line 459
-    return v2
+  .line 460
+    return v1
 .end method

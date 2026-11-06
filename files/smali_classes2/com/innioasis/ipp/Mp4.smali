@@ -21,7 +21,7 @@
 
 .method private static be32([BI)I
   .registers 4
-  .line 175
+  .line 176
     aget-byte v0, p0, p1
     and-int/lit16 v0, v0, 255
     shl-int/lit8 v0, v0, 24
@@ -44,7 +44,7 @@
 
 .method private static be64([BI)J
   .registers 7
-  .line 179
+  .line 180
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Mp4;->be32([BI)I
     move-result v0
     int-to-long v0, v0
@@ -199,7 +199,7 @@
     const-wide/16 v8, 8
     add-long v3, v1, v8
     cmp-long v0, v3, p3
-    if-gtz v0, :L11
+    if-gtz v0, :L12
   .line 120
     move-object v0, p0
     move-wide/from16 v3, p3
@@ -221,15 +221,22 @@
   .line 125
     if-eqz v13, :L2
     if-nez p6, :L2
-    goto :L10
+    goto :L11
   :L2
   .line 126
-    if-nez v13, :L3
+    if-nez v13, :L4
     invoke-static { v12 }, Lcom/innioasis/ipp/Mp4;->wanted(Ljava/lang/String;)Z
     move-result v1
-    if-nez v1, :L3
-    goto :L10
+    if-nez v1, :L4
+    iget-boolean v1, v7, Lcom/innioasis/ipp/Meta$Info;->wantLyrics:Z
+    if-eqz v1, :L3
+    const-string v1, "\u00a9lyr"
+    invoke-virtual { v12, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v1
+    if-nez v1, :L4
   :L3
+    goto :L11
+  :L4
   .line 128
     iget-wide v1, v0, Lcom/innioasis/ipp/Mp4$Box;->body:J
     iget-wide v3, v0, Lcom/innioasis/ipp/Mp4$Box;->end:J
@@ -238,14 +245,14 @@
     invoke-static/range { v0 .. v5 }, Lcom/innioasis/ipp/Mp4;->box(Ljava/io/RandomAccessFile;JJ[B)Lcom/innioasis/ipp/Mp4$Box;
     move-result-object v0
   .line 129
-    if-eqz v0, :L10
+    if-eqz v0, :L11
     iget-object v1, v0, Lcom/innioasis/ipp/Mp4$Box;->type:Ljava/lang/String;
     const-string v2, "data"
     invoke-virtual { v1, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
-    if-nez v1, :L4
-    goto :L10
-  :L4
+    if-nez v1, :L5
+    goto :L11
+  :L5
   .line 130
     iget-wide v1, v0, Lcom/innioasis/ipp/Mp4$Box;->end:J
     iget-wide v3, v0, Lcom/innioasis/ipp/Mp4$Box;->body:J
@@ -254,18 +261,18 @@
   .line 131
     const-wide/16 v3, 0
     cmp-long v5, v1, v3
-    if-lez v5, :L10
-    if-eqz v13, :L5
+    if-lez v5, :L11
+    if-eqz v13, :L6
     const/high16 v3, 0x00800000
-    goto :L6
-  :L5
-    const/high16 v3, 0x00010000
+    goto :L7
   :L6
+    const/high16 v3, 0x00010000
+  :L7
     int-to-long v3, v3
     cmp-long v5, v1, v3
-    if-lez v5, :L7
-    goto :L10
-  :L7
+    if-lez v5, :L8
+    goto :L11
+  :L8
   .line 132
     long-to-int v2, v1
     new-array v1, v2, [B
@@ -276,23 +283,23 @@
   .line 134
     invoke-virtual { p0, v1 }, Ljava/io/RandomAccessFile;->readFully([B)V
   .line 135
-    if-eqz v13, :L8
+    if-eqz v13, :L9
   .line 136
     iget-object v0, v7, Lcom/innioasis/ipp/Meta$Info;->art:[B
-    if-nez v0, :L9
+    if-nez v0, :L10
     iput-object v1, v7, Lcom/innioasis/ipp/Meta$Info;->art:[B
-    goto :L9
-  :L8
+    goto :L10
+  :L9
   .line 138
     invoke-static { v7, v12, v1 }, Lcom/innioasis/ipp/Mp4;->put(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;[B)V
-  :L9
+  :L10
   .line 140
     nop
-  :L10
+  :L11
   .line 119
     move-wide v1, v10
-    goto :L0
-  :L11
+    goto/16 :L0
+  :L12
   .line 141
     return-void
 .end method
@@ -309,12 +316,12 @@
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     const/4 v2, 2
-    if-nez v1, :L10
+    if-nez v1, :L11
     const-string v1, "disk"
     invoke-virtual { p1, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v1
     if-eqz v1, :L0
-    goto/16 :L10
+    goto/16 :L11
   :L0
   .line 159
     const-string v0, "gnre"
@@ -355,7 +362,7 @@
     move-result p2
     if-eqz p2, :L4
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->title:Ljava/lang/String;
-    goto :L9
+    goto :L10
   :L4
   .line 167
     const-string p2, "\u00a9ART"
@@ -363,7 +370,7 @@
     move-result p2
     if-eqz p2, :L5
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->artist:Ljava/lang/String;
-    goto :L9
+    goto :L10
   :L5
   .line 168
     const-string p2, "aART"
@@ -371,7 +378,7 @@
     move-result p2
     if-eqz p2, :L6
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-    goto :L9
+    goto :L10
   :L6
   .line 169
     const-string p2, "\u00a9alb"
@@ -379,7 +386,7 @@
     move-result p2
     if-eqz p2, :L7
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->album:Ljava/lang/String;
-    goto :L9
+    goto :L10
   :L7
   .line 170
     const-string p2, "\u00a9gen"
@@ -387,24 +394,32 @@
     move-result p2
     if-eqz p2, :L8
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->genre:Ljava/lang/String;
-    goto :L9
+    goto :L10
   :L8
   .line 171
     const-string p2, "\u00a9day"
     invoke-virtual { p1, p2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result p1
-    if-eqz p1, :L9
+    move-result p2
+    if-eqz p2, :L9
     iput-object v0, p0, Lcom/innioasis/ipp/Meta$Info;->year:Ljava/lang/String;
+    goto :L10
   :L9
   .line 172
-    return-void
+    const-string p2, "\u00a9lyr"
+    invoke-virtual { p1, p2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result p1
+    if-eqz p1, :L10
+    invoke-static { p0, v0 }, Lcom/innioasis/ipp/Meta;->offerLyrics(Lcom/innioasis/ipp/Meta$Info;Ljava/lang/String;)V
   :L10
+  .line 173
+    return-void
+  :L11
   .line 151
     array-length v1, p2
     const/4 v3, 6
-    if-ge v1, v3, :L11
+    if-ge v1, v3, :L12
     return-void
-  :L11
+  :L12
   .line 152
     aget-byte v1, p2, v2
     and-int/lit16 v1, v1, 255
@@ -437,13 +452,13 @@
   .line 155
     invoke-virtual { p1, v0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
-    if-eqz p1, :L12
+    if-eqz p1, :L13
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->track:Ljava/lang/String;
-    goto :L13
-  :L12
+    goto :L14
+  :L13
   .line 156
     iput-object p2, p0, Lcom/innioasis/ipp/Meta$Info;->disc:Ljava/lang/String;
-  :L13
+  :L14
   .line 157
     return-void
 .end method

@@ -35,20 +35,20 @@
 
 .method private static back(Landroid/app/Activity;II)V
   .registers 3
-  .line 105
+  .line 110
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 106
+  .line 111
     if-eqz p0, :L0
     invoke-virtual { p0, p2 }, Landroid/view/View;->setBackgroundColor(I)V
   :L0
-  .line 107
+  .line 112
     return-void
 .end method
 
 .method private static box(I)I
   .registers 2
-  .line 100
+  .line 105
     const v0, 16777215
     and-int/2addr p0, v0
     const/high16 v0, 0x1A000000
@@ -58,36 +58,36 @@
 
 .method private static color(Landroid/app/Activity;Ljava/lang/String;I)I
   .registers 4
-  .line 116
+  .line 121
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result p1
-  .line 117
+  .line 122
     const/4 v0, 1
     if-ne p1, v0, :L0
     const p0, -15592942
     return p0
   :L0
-  .line 118
+  .line 123
     const/4 v0, 2
     if-ne p1, v0, :L3
-  .line 119
+  .line 124
     invoke-static { p0 }, Lcom/innioasis/ipp/Icons;->timelineColor(Landroid/app/Activity;)I
     move-result p0
-  .line 120
+  .line 125
     if-eqz p0, :L1
     return p0
   :L1
-  .line 121
+  .line 126
     invoke-static { }, Lcom/innioasis/ipp/Icons;->themeColor()I
     move-result p0
-  .line 122
+  .line 127
     if-eqz p0, :L2
     return p0
   :L2
-  .line 123
+  .line 128
     return p2
   :L3
-  .line 125
+  .line 130
     const/4 p0, -1
     return p0
 .end method
@@ -104,9 +104,7 @@
     return-void
   :L0
   .line 91
-    const-string v1, "lyrics_tint"
-    const v2, -12779554
-    invoke-static { p0, v1, v2 }, Lcom/innioasis/ipp/Tint;->color(Landroid/app/Activity;Ljava/lang/String;I)I
+    invoke-static { p0 }, Lcom/innioasis/ipp/Tint;->lyricsColor(Landroid/app/Activity;)I
     move-result p0
   .line 92
     check-cast v0, Lme/wcy/lrcview/LrcView;
@@ -127,18 +125,28 @@
     return-void
 .end method
 
+.method static lyricsColor(Landroid/app/Activity;)I
+  .registers 3
+  .line 100
+    const-string v0, "lyrics_tint"
+    const v1, -12779554
+    invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/Tint;->color(Landroid/app/Activity;Ljava/lang/String;I)I
+    move-result p0
+    return p0
+.end method
+
 .method private static paint(Landroid/app/Activity;II)V
   .registers 3
-  .line 110
+  .line 115
     invoke-virtual { p0, p1 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 111
+  .line 116
     instance-of p1, p0, Landroid/widget/TextView;
     if-eqz p1, :L0
     check-cast p0, Landroid/widget/TextView;
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setTextColor(I)V
   :L0
-  .line 112
+  .line 117
     return-void
 .end method
 

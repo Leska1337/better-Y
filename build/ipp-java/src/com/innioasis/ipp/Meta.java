@@ -41,6 +41,10 @@ public final class Meta {
         public long artNs;
         /** Read by our own reader, not the platform's ("Cache library" log). */
         public boolean ours;
+        /** Set by {@link #lyrics} alone, so a scan never pays for the text. */
+        boolean wantLyrics;
+        String lyrics;
+        int lyricsRank;
     }
 
     /** The platform's 3 MB less a margin: reading a tag it could have read costs only a file open. */
@@ -50,6 +54,9 @@ public final class Meta {
     private static final int MAX_TEXT = 64 * 1024;
 
     private static final int MAX_ART = 8 * 1024 * 1024;
+
+    /** A lyrics frame this big is nobody's text. */
+    private static final int MAX_LYRICS = 256 * 1024;
 
     /**
      * The reader version the Song table was read with. Nothing re-reads a known file on its own,
@@ -136,6 +143,33 @@ public final class Meta {
         }
         out.openNs = System.nanoTime() - t0;
         return out;
+    }
+
+    /**
+     * The text embedded in the file — LRC when it carries timestamps, plain otherwise — or null.
+     * Our readers only: the platform does not give lyrics out. Opens the file; not the UI thread.
+     */
+    public static String lyrics(String path) {
+        String ext = ext(path);
+        if (ext == null) return null;
+        Info out = new Info();
+        out.wantLyrics = true;
+        try {
+            ownInto(ext, path, out, false);
+        } catch (Throwable t) {
+        }
+        return out.lyrics;
+    }
+
+    /** Timed text (SYLT included) wins over plain; among equals the last one in the file. */
+    static void offerLyrics(Info out, String text) {
+        if (text == null) return;
+        text = text.trim();
+        if (text.length() == 0) return;
+        int rank = Lrc.timed(text) ? 2 : 1;
+        if (rank < out.lyricsRank) return;
+        out.lyrics = text;
+        out.lyricsRank = rank;
     }
 
     private static boolean readable(String ext) {
@@ -425,9 +459,11 @@ public final class Meta {
                 pos = body + len;
 
                 boolean picture = id.equals("APIC") || id.equals("PIC");
+                boolean lyric = out.wantLyrics && (id.equals("USLT") || id.equals("ULT")
+                        || id.equals("SYLT") || id.equals("SLT"));
                 if (picture && (!wantArt || len > MAX_ART)) continue;
-                if (!picture && (len < 1 || len > MAX_TEXT)) continue;
-                if (!picture && !wanted(id)) continue;
+                if (!picture && (len < 1 || len > (lyric ? MAX_LYRICS : MAX_TEXT))) continue;
+                if (!picture && !lyric && !wanted(id)) continue;
 
                 f.seek(body);
                 byte[] d = new byte[(int) len];
@@ -438,6 +474,11 @@ public final class Meta {
                     // The front cover wins; another picture only stands in.
                     Pic got = picture(d, major);
                     if (got != null && (pic == null || (got.front && !pic.front))) pic = got;
+                    continue;
+                }
+                if (lyric) {
+                    boolean sylt = id.equals("SYLT") || id.equals("SLT");
+                    offerLyrics(out, sylt ? sylt(d) : uslt(d));
                     continue;
                 }
                 put(out, id, text(d));
@@ -569,6 +610,109 @@ public final class Meta {
         if (n <= 0) return null;
         try {
             return new String(d, off, n, charset).trim();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** USLT/ULT: encoding, language, a description, then the whole text to the frame's end. */
+    private static String uslt(byte[] d) {
+        if (d.length < 5) return null;
+        int enc = d[0] & 0xff;
+        int p = past(d, 4, enc);
+        if (p < 0 || p >= d.length) return null;
+        java.nio.charset.Charset cs = charsetOf(d, p, d.length - p, enc);
+        return decode(d, p, d.length, enc, cs);
+    }
+
+    /**
+     * SYLT/SLT as LRC text: encoding, language, timestamp format, content type, description, then
+     * text-and-time pairs. Times in MPEG frames (format 1) are not converted: null. Where the
+     * entries are syllables, one that starts with a newline starts a line and the rest join it.
+     */
+    private static String sylt(byte[] d) {
+        if (d.length < 7) return null;
+        int enc = d[0] & 0xff;
+        if ((d[4] & 0xff) != 2) return null;
+        int p = past(d, 6, enc);
+        if (p < 0) return null;
+        java.nio.charset.Charset cs = charsetOf(d, p, d.length - p, enc);
+        java.util.ArrayList texts = new java.util.ArrayList();
+        java.util.ArrayList times = new java.util.ArrayList();
+        boolean breaks = false;
+        while (p < d.length) {
+            int e = past(d, p, enc);
+            if (e < 0 || e + 4 > d.length) break;
+            String s = decode(d, p, e - (enc == 1 || enc == 2 ? 2 : 1), enc, cs);
+            if (s == null) s = "";
+            if (s.startsWith("\n") || s.startsWith("\r")) breaks = true;
+            texts.add(s);
+            times.add(Long.valueOf(be32(d, e)));
+            p = e + 4;
+        }
+        if (texts.isEmpty()) return null;
+        StringBuilder out = new StringBuilder();
+        StringBuilder line = null;
+        long at = 0;
+        for (int i = 0; i < texts.size(); i++) {
+            String s = (String) texts.get(i);
+            long t = ((Long) times.get(i)).longValue();
+            boolean starts = !breaks || line == null || s.startsWith("\n") || s.startsWith("\r");
+            if (starts) {
+                if (line != null) out.append(Lrc.stamp(at)).append(line.toString().trim()).append('\n');
+                line = new StringBuilder();
+                at = t;
+            }
+            line.append(s.replace('\r', ' ').replace('\n', ' '));
+        }
+        if (line != null) out.append(Lrc.stamp(at)).append(line.toString().trim()).append('\n');
+        return out.toString();
+    }
+
+    /** The index after the zero (two zeros in UTF-16) that ends the string at {@code p}; -1 if none. */
+    private static int past(byte[] d, int p, int enc) {
+        if (enc == 1 || enc == 2) {
+            while (p + 1 < d.length) {
+                if (d[p] == 0 && d[p + 1] == 0) return p + 2;
+                p += 2;
+            }
+            return -1;
+        }
+        while (p < d.length) {
+            if (d[p] == 0) return p + 1;
+            p++;
+        }
+        return -1;
+    }
+
+    /** Latin-1 by the letter of ID3, CP1251 and the like in practice: that one is guessed. */
+    private static java.nio.charset.Charset charsetOf(byte[] d, int off, int len, int enc) {
+        if (enc == 3) return java.nio.charset.Charset.forName("UTF-8");
+        if (enc == 2) return java.nio.charset.Charset.forName("UTF-16BE");
+        if (enc == 1) return null;
+        return Lyrics.guess(d, off, len);
+    }
+
+    /** {@code d[off..end)}, trailing zeros dropped; UTF-16 strings carry their own byte order mark. */
+    private static String decode(byte[] d, int off, int end, int enc, java.nio.charset.Charset cs) {
+        if (enc == 1 || enc == 2) {
+            // by pairs: a lone zero is the high half of the last character in UTF-16LE
+            while (end - off >= 2 && d[end - 1] == 0 && d[end - 2] == 0) end -= 2;
+        } else {
+            while (end > off && d[end - 1] == 0) end--;
+        }
+        if (end <= off) return null;
+        try {
+            if (enc == 1) {
+                if (end - off >= 2 && (d[off] & 0xff) == 0xff && (d[off + 1] & 0xff) == 0xfe) {
+                    return new String(d, off + 2, end - off - 2, "UTF-16LE");
+                }
+                if (end - off >= 2 && (d[off] & 0xff) == 0xfe && (d[off + 1] & 0xff) == 0xff) {
+                    return new String(d, off + 2, end - off - 2, "UTF-16BE");
+                }
+                return new String(d, off, end - off, "UTF-16BE");
+            }
+            return new String(d, off, end - off, cs.name());
         } catch (Throwable t) {
             return null;
         }
