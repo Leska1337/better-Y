@@ -1400,10 +1400,9 @@
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 257
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const/4 v4, 3
-    const-string v5, "bar_icons"
-    sget-object v3, Lcom/innioasis/ipp/TopBar;->ICONS:[I
-    array-length v6, v3
+    const/4 v4, 2
+    const-string v5, "bar_style"
+    const/4 v6, 2
     const/4 v8, 0
     move-object v3, v1
     invoke-direct/range { v3 .. v8 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
@@ -1412,9 +1411,10 @@
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 258
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const/4 v4, 2
-    const-string v5, "bar_style"
-    const/4 v6, 2
+    const/4 v4, 3
+    const-string v5, "bar_icons"
+    sget-object v3, Lcom/innioasis/ipp/TopBar;->ICONS:[I
+    array-length v6, v3
     move-object v3, v1
     invoke-direct/range { v3 .. v8 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppActivity$Item;->in(Ljava/lang/String;)Lcom/innioasis/y1/activity/IppActivity$Item;

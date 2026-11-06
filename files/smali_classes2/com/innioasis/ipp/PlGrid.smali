@@ -1952,7 +1952,11 @@
     return-void
   :L6
   .line 194
-    invoke-static { p0 }, Lcom/innioasis/ipp/Theme;->focusCard(Landroidx/cardview/widget/CardView;)V
+    invoke-virtual { p0 }, Landroidx/cardview/widget/CardView;->getContext()Landroid/content/Context;
+    move-result-object v0
+    invoke-static { v0 }, Lcom/innioasis/ipp/Photos;->focus(Landroid/content/Context;)I
+    move-result v0
+    invoke-virtual { p0, v0 }, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
   .line 195
     return-void
 .end method

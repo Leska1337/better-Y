@@ -191,7 +191,7 @@ public final class PlGrid {
     public static void photoFocus(CardView card) {
         if (card == null) return;
         if (!Anim.on() || multiMode(card.getContext())) {
-            Theme.focusCard(card);
+            card.setCardBackgroundColor(Photos.focus(card.getContext()));
             return;
         }
         card.setCardBackgroundColor(0);
@@ -613,7 +613,7 @@ public final class PlGrid {
             try {
                 if (SystemClock.uptimeMillis() - drawn >= 8) Frames.part("tiles drawn", drawn);
                 if (!has) return;
-                if (photos && focus == 0) focus = Theme.focusColor(rv.getContext());
+                if (photos && focus == 0) focus = Photos.focus(rv.getContext());
                 frame(c, l, t - off, photos ? focus : Theme.tileFrame());
             } catch (Throwable e) {
             }

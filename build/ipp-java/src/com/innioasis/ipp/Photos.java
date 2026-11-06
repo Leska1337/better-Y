@@ -58,6 +58,15 @@ public final class Photos {
         return c == null ? MENU_BG : c.intValue();
     }
 
+    /**
+     * The focused tile's frame: the focused text's colour, or the Themes frame where that is the
+     * folder plate's colour and the frame would vanish into it.
+     */
+    public static int focus(android.content.Context c) {
+        int f = Theme.focusColor(c);
+        return ((f ^ menuBg()) & 0xFFFFFF) == 0 ? Theme.tileFrame() : f;
+    }
+
     /** The name under a tile. */
     public static void name(TextView tv) {
         if (tv == null) return;

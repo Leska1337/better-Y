@@ -61,7 +61,7 @@ public final class Tone {
             0.2512f, 0.3548f, 0.5012f, 0.7079f, 1.0f};
 
     /** {@link #KEY_SOUND}: "" is the stock tick, THEME the applied theme's file, else a file name. */
-    private static final String THEME = "\u0001theme";
+    static final String THEME = "\u0001theme";
 
     private static final String DEFAULT_PATH = "/system/media/audio/ui/Effect_Tick.ogg";
     private static final String DIR = "key-tone";

@@ -371,11 +371,11 @@ public final class Theme {
     /** The layouts' focus colour, when the theme names none. */
     private static final int ACCENT = 0xFF3CFFDE;
 
-    /** The frame of the focused tile (Photos, wallpapers): a CardView whose background IS the frame. */
+    /** The wallpaper gallery's focused tile, framed as in Photos; the CardView's background IS it. */
     public static void focusCard(CardView card) {
         if (card == null) return;
         try {
-            card.setCardBackgroundColor(focusColor(card.getContext()));
+            card.setCardBackgroundColor(Photos.focus(card.getContext()));
         } catch (Throwable t) {
         }
     }
@@ -578,6 +578,72 @@ public final class Theme {
         return b != null;
     }
 
+    /**
+     * A theme that carries better-Y.json shows the logo in the corner where multi-select puts its
+     * box; in multi-select the box is stock's, as stock just set it. After stock's code for it.
+     */
+    public static void tileMark(ImageView mark, String path, boolean multi) {
+        if (mark == null || multi) return;
+        try {
+            Bitmap b = hasCfg(path) ? markBitmap(mark) : null;
+            if (b == null) {
+                mark.setVisibility(View.GONE);
+                return;
+            }
+            mark.setImageBitmap(b);
+            mark.setVisibility(View.VISIBLE);
+        } catch (Throwable t) {
+        }
+    }
+
+    private static Bitmap logo;
+    /** Theme path -> whether its folder has better-Y.json; cleared with each new gallery. */
+    private static final java.util.Hashtable cfgs = new java.util.Hashtable();
+
+    private static boolean hasCfg(String path) {
+        if (path == null || path.trim().length() == 0) return false;
+        Boolean b = (Boolean) cfgs.get(path);
+        if (b == null) {
+            b = Boolean.valueOf(new File(path, ThemeCfg.FILE).isFile());
+            cfgs.put(path, b);
+        }
+        return b.booleanValue();
+    }
+
+    /** Save config wrote the file: the gallery shows the logo at once. */
+    static void cfgSaved(Context c, String path) {
+        if (path != null) cfgs.put(path, Boolean.TRUE);
+        if (!(c instanceof Activity)) return;
+        View v = ((Activity) c).findViewById(R.id.recycler);
+        if (v instanceof RecyclerView && ((RecyclerView) v).getAdapter() != null) {
+            ((RecyclerView) v).getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * {@code plus_logo} scaled once to the box the layout gives the mark: halved while it is twice
+     * the box or more, since a bilinear filter only averages 2:1 and a single 146 → 26 step aliases.
+     */
+    private static Bitmap markBitmap(ImageView v) {
+        if (logo != null) return logo;
+        ViewGroup.LayoutParams lp = v.getLayoutParams();
+        int side = lp != null && lp.width > 0 ? lp.width
+                : (int) (26 * v.getResources().getDisplayMetrics().density);
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inScaled = false;
+        Bitmap b = BitmapFactory.decodeResource(v.getResources(), R.drawable.plus_logo, o);
+        if (b == null) return null;
+        while (b.getWidth() >= side * 2) {
+            Bitmap h = Bitmap.createScaledBitmap(b, b.getWidth() / 2, b.getHeight() / 2, true);
+            if (h != b) b.recycle();
+            b = h;
+        }
+        Bitmap s = Bitmap.createScaledBitmap(b, side, side, true);
+        if (s != b) b.recycle();
+        logo = s;
+        return logo;
+    }
+
     /** Theme path -> its cover at the size Glide loads it for the gallery. */
     private static final java.util.Hashtable covers = new java.util.Hashtable();
     private static final int COVER_W = 80;
@@ -595,6 +661,7 @@ public final class Theme {
             List data = ((com.chad.library.adapter.base.BaseQuickAdapter) a).getData();
             if (data == null || data.isEmpty()) return;        // not filled yet: the next call
             coversFor = new WeakReference(a);
+            cfgs.clear();
             ArrayList todo = new ArrayList();
             for (int i = 0; data != null && i < data.size(); i++) {
                 Object o = data.get(i);

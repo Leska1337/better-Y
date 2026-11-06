@@ -52,7 +52,7 @@
 
 .field private final static SEED:Ljava/lang/String; = "better-Y.mp3"
 
-.field private final static THEME:Ljava/lang/String; = "\u0001theme"
+.field final static THEME:Ljava/lang/String; = "\u0001theme"
 
 .field private final static THEME_FILE:Ljava/lang/String; = "key-tone"
 

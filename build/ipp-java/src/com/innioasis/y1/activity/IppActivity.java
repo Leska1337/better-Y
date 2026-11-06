@@ -254,8 +254,8 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
         l.add(new Item(SUB, "status_bar", 0, null, null));
         l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
-        l.add(new Item(ACTION, TopBar.KEY_ICONS, TopBar.ICONS.length, null, null).in("status_bar"));
         l.add(new Item(CHOICE, TopBar.KEY_STYLE, 2, null, null).in("status_bar"));
+        l.add(new Item(ACTION, TopBar.KEY_ICONS, TopBar.ICONS.length, null, null).in("status_bar"));
 
         l.add(new Item(HEADER, "metadata", 0, null, null));
         l.add(new Item(TOGGLE, "meta_title", 0, null, null));

@@ -39,6 +39,9 @@ public final class ThemeCfg {
     /** TOGGLE keys. */
     private static final String[] FLAGS = {Pad.KEY};
 
+    /** Whether Key tone's Sound is Theme: a yes or no, so a file name never goes in. */
+    private static final String THEME_SOUND = "use_theme_key_sound";
+
     private ThemeCfg() {}
 
     /** Called from the theme confirm dialog right before stock stores the new name and relaunches. */
@@ -47,11 +50,15 @@ public final class ThemeCfg {
             SharedPreferences p = Prefs.file();
             if (p == null) return;
             File from = fileOf(dirOf(ThemeManager.INSTANCE.getThemeName()));
+            // committed first: what follows reads Global back from p, not from an editor
+            SharedPreferences.Editor g = p.edit();
+            if (from == null || !from.isFile()) toGlobal(p, g);
+            else rememberSound(p, g);
+            g.commit();
             SharedPreferences.Editor e = p.edit();
-            if (from == null || !from.isFile()) toGlobal(p, e);
             File to = fileOf(newPath);
             JSONObject j = to != null && to.isFile() ? read(to) : null;
-            if (j != null) fromJson(j, e);
+            if (j != null) fromJson(j, p, e);
             else fromGlobal(p, e);
             e.commit();
         } catch (Throwable t) {
@@ -80,6 +87,7 @@ public final class ThemeCfg {
                         e.commit();
                     }
                     ok = write(f, toJson(p));
+                    if (ok) Theme.cfgSaved(c, item.getPath());
                 }
             }
         } catch (Throwable t) {
@@ -111,9 +119,30 @@ public final class ThemeCfg {
     private static void toGlobal(SharedPreferences p, SharedPreferences.Editor e) {
         for (int i = 0; i < KEYS.length; i++) e.putInt(GLOBAL + KEYS[i], current(p, KEYS[i]));
         for (int i = 0; i < FLAGS.length; i++) e.putBoolean(GLOBAL + FLAGS[i], currentFlag(p, FLAGS[i]));
+        rememberSound(p, e);
+    }
+
+    /** The key sound follows the user across themes, a file theme or not; Theme stays behind. */
+    private static void rememberSound(SharedPreferences p, SharedPreferences.Editor e) {
+        String s = p.getString(Tone.KEY_SOUND, "");
+        if (!Tone.THEME.equals(s)) e.putString(GLOBAL + Tone.KEY_SOUND, s);
+    }
+
+    /**
+     * The last sound chosen other than Theme: Theme comes only from a theme's flag, so Global
+     * never holds it and a theme without the flag never inherits it. None yet is Default.
+     */
+    private static void soundFromGlobal(SharedPreferences p, SharedPreferences.Editor e) {
+        String g = p.getString(GLOBAL + Tone.KEY_SOUND, "");
+        if (Tone.THEME.equals(g)) g = "";
+        String now = p.getString(Tone.KEY_SOUND, "");
+        if (p.contains(GLOBAL + Tone.KEY_SOUND) || Tone.THEME.equals(now)) {
+            e.putString(Tone.KEY_SOUND, g);
+        }
     }
 
     private static void fromGlobal(SharedPreferences p, SharedPreferences.Editor e) {
+        soundFromGlobal(p, e);
         for (int i = 0; i < KEYS.length; i++) {
             String g = GLOBAL + KEYS[i];
             if (p.contains(g)) e.putInt(KEYS[i], p.getInt(g, 0));
@@ -133,11 +162,17 @@ public final class ThemeCfg {
             else j.put(KEYS[i], v);
         }
         for (int i = 0; i < FLAGS.length; i++) j.put(FLAGS[i], currentFlag(p, FLAGS[i]));
+        j.put(THEME_SOUND, Tone.THEME.equals(p.getString(Tone.KEY_SOUND, "")));
         return j;
     }
 
-    /** Names or numbers both read; a value out of range falls back to the default. */
-    private static void fromJson(JSONObject j, SharedPreferences.Editor e) {
+    /**
+     * Names or numbers both read; a value out of range falls back to the default. The key sound
+     * is only ever "the theme's": without that flag the theme takes the Global one.
+     */
+    private static void fromJson(JSONObject j, SharedPreferences p, SharedPreferences.Editor e) {
+        if (j.optBoolean(THEME_SOUND, false)) e.putString(Tone.KEY_SOUND, Tone.THEME);
+        else soundFromGlobal(p, e);
         for (int i = 0; i < KEYS.length; i++) {
             String[] names = (String[]) NAMES[i];
             int v = Prefs.defInt(KEYS[i]);

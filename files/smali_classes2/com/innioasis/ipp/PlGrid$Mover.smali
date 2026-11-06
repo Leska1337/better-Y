@@ -1136,7 +1136,7 @@
     if-nez p3, :L3
     invoke-virtual { p2 }, Landroidx/recyclerview/widget/RecyclerView;->getContext()Landroid/content/Context;
     move-result-object p2
-    invoke-static { p2 }, Lcom/innioasis/ipp/Theme;->focusColor(Landroid/content/Context;)I
+    invoke-static { p2 }, Lcom/innioasis/ipp/Photos;->focus(Landroid/content/Context;)I
     move-result p2
     iput p2, p0, Lcom/innioasis/ipp/PlGrid$Mover;->focus:I
   :L3

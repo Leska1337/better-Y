@@ -184,7 +184,7 @@ When you open the list containing the currently playing song, the selection imme
 [follow_idle if follow_playing] Return delay (seconds)
 Determines how many seconds after the last scroll of the wheel the selection returns to the song currently playing.
 
-[loop_scroll] Loop scrolling
+[loop_scroll] Cyclic scrolling
 Past the last row of a list the wheel comes back to the first one, and up from the first it goes round to the last — as in the main menu. Works in every list, menu and gallery.
 In a song list the Shuffle row is part of the circle.
 
@@ -227,6 +227,11 @@ Sets the colour of the title and the battery percentage in the status bar.
 
 Theme color is the colour of the theme's list text.
 
+[bar_style in status_bar] Style
+* Default
+* Centered
+Centered moves the icons to the left edge and the section title to the middle; the battery stays on the right.
+
 [bar_icons in status_bar] Icons visibility
 * Menu header
 * Playback
@@ -235,11 +240,6 @@ Theme color is the colour of the theme's list text.
 * Battery
 * Battery percentage
 Chooses which icons the status bar shows.
-
-[bar_style in status_bar] Style
-* Default
-* Centered
-Centered moves the icons to the left edge and the section title to the middle; the battery stays on the right.
 
 [[metadata]] Metadata
 

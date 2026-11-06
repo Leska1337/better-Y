@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..41bd87b9 100644
+index 01b1f730..ee882655 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..41bd87b9 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100487
++  versionCode: 10100492
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20154,7 +20154,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..57fbd297 100644
+index 71fe29d0..73ec2979 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21103,7 +21103,7 @@ index 71fe29d0..57fbd297 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev487</string>
++    <string name="ipp_version">v1.1.0-dev492</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -65763,6 +65763,55 @@ index f2baa306..13f65c91 100644
      goto :goto_1
  
      .line 60
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$confirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$confirm$1.smali
+index becba77b..6483f5b6 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$confirm$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$confirm$1.smali
+@@ -256,41 +256,9 @@
+ 
+     .line 179
+     :cond_2
+-    sget-object p1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+-
+-    sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+-
+-    iget-object v3, p0, Lcom/innioasis/y1/activity/WallpaperActivity$confirm$1;->this$0:Lcom/innioasis/y1/activity/WallpaperActivity;
+-
+-    invoke-static {v3}, Lcom/innioasis/y1/activity/WallpaperActivity;->access$getAdapter(Lcom/innioasis/y1/activity/WallpaperActivity;)Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
+-
+-    move-result-object v3
+-
+-    invoke-virtual {v3}, Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;->getData()Ljava/util/List;
+-
+-    move-result-object v3
+-
+-    iget-object v4, p0, Lcom/innioasis/y1/activity/WallpaperActivity$confirm$1;->this$0:Lcom/innioasis/y1/activity/WallpaperActivity;
+-
+-    invoke-virtual {v4}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
+-
+-    move-result v4
+-
+-    invoke-interface {v3, v4}, Ljava/util/List;->get(I)Ljava/lang/Object;
+-
+-    move-result-object v3
+-
+-    check-cast v3, Ljava/lang/String;
+-
+-    const/16 v4, 0x64
+-
+-    invoke-virtual {v1, v3, v4, v4}, Lcom/innioasis/y1/utils/WallpaperUtils;->getImageThumbnail(Ljava/lang/String;II)Landroid/graphics/Bitmap;
+-
+-    move-result-object v1
+-
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/utils/WallpaperUtils;->getBright(Landroid/graphics/Bitmap;)I
+-
+-    move-result p1
++    # ipp: no refusal of a bright (white) picture: text colours are the user's to choose. The
++    # brightness is never measured, and the branch to the refusal below stays, never taken.
++    const/4 p1, 0x0
+ 
+     const/16 v1, 0xc8
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 index 4a99a22f..0969406f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
@@ -66009,7 +66058,7 @@ index cdc50c54..aae80378 100644
      :goto_1
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
-index 981585c3..e963309e 100644
+index 981585c3..edc86d9f 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 @@ -106,6 +106,16 @@
@@ -66042,7 +66091,29 @@ index 981585c3..e963309e 100644
  
      move-result v2
  
-@@ -210,7 +220,18 @@
+@@ -204,13 +214,40 @@
+ 
+     .line 94
+     :cond_3
++    # ipp: outside multi-select the box's corner shows the better-Y logo on a theme with its own
++    # better-Y.json; p3 (pos) is spent by now.
++    iget-object v0, p1, Lcom/innioasis/y1/databinding/ItemThemeBinding;->imgMSelect:Landroid/widget/ImageView;
++
++    invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
++
++    move-result-object v2
++
++    iget-object p3, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1;->this$0:Lcom/innioasis/y1/activity/theme/ThemeListActivity;
++
++    invoke-static {p3}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->access$isMultiSelect$p(Lcom/innioasis/y1/activity/theme/ThemeListActivity;)Z
++
++    move-result p3
++
++    invoke-static {v0, v2, p3}, Lcom/innioasis/ipp/Theme;->tileMark(Landroid/widget/ImageView;Ljava/lang/String;Z)V
++
+     iget-object p3, p1, Lcom/innioasis/y1/databinding/ItemThemeBinding;->img:Landroid/widget/ImageView;
+ 
+     invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
  
      move-result-object v0
  
@@ -73825,6 +73896,35 @@ index 1d20b75c..69ee459c 100644
      const/4 p1, 0x0
  
      .line 40
+diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali
+index e1fb5701..f226c909 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali
+@@ -220,21 +220,9 @@
+     invoke-static {p1}, Lkotlin/ResultKt;->throwOnFailure(Ljava/lang/Object;)V
+ 
+     .line 198
+-    sget-object p1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+-
+-    sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+-
+-    iget-object v3, p0, Lcom/innioasis/y1/utils/PhotosDialog$setWallpaper$1;->$path:Ljava/lang/String;
+-
+-    const/16 v4, 0x64
+-
+-    invoke-virtual {v1, v3, v4, v4}, Lcom/innioasis/y1/utils/WallpaperUtils;->getImageThumbnail(Ljava/lang/String;II)Landroid/graphics/Bitmap;
+-
+-    move-result-object v1
+-
+-    invoke-virtual {p1, v1}, Lcom/innioasis/y1/utils/WallpaperUtils;->getBright(Landroid/graphics/Bitmap;)I
+-
+-    move-result p1
++    # ipp: no refusal of a bright (white) picture: text colours are the user's to choose. The
++    # brightness is never measured, and the branch to the refusal below stays, never taken.
++    const/4 p1, 0x0
+ 
+     const/16 v1, 0xc8
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$subAdapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$subAdapter$2$1.smali
 index 0e9f1efd..ff9e4d31 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$subAdapter$2$1.smali
