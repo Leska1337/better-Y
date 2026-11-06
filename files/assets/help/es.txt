@@ -224,13 +224,19 @@ Establece el color del título y del porcentaje de batería en la barra de estad
 
 Color del tema es el color del texto de las listas del tema.
 
-[bar_icons] Iconos
+[bar_icons] Visibilidad de iconos
+* Título del menú
 * Reproducción
 * Auriculares
 * Bluetooth
 * Batería
 * Porcentaje de batería
 Elige qué iconos muestra la barra de estado.
+
+[bar_style] Estilo
+* Predeterminado
+* Centrado
+Centrado lleva los iconos al borde izquierdo y el título de la sección al centro; la batería se queda a la derecha.
 
 [[metadata]] Metadatos
 

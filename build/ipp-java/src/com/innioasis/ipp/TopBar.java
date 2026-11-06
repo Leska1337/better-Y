@@ -13,6 +13,7 @@ import com.innioasis.y1.activity.SettingActivity;
 import com.innioasis.y1.base.BaseActivity;
 import com.innioasis.y1.utils.SharedPreferencesUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,14 +41,25 @@ public final class TopBar {
     /** The picker's bit for stock's setting; never stored in "bar_icons". */
     public static final int PERCENT = 16;
 
+    /** The section title; stored as "bar_header", so masks saved without it keep the title. */
+    public static final int HEADER = 32;
+
+    public static final String KEY_HEADER = "bar_header";
+
+    /** 0 DEFAULT: title left, icons right. 1 CENTERED: icons left, title in the middle. */
+    public static final String KEY_STYLE = "bar_style";
+
+    private static final int CENTERED = 1;
+
     public static final int ALL = PLAY | HEADSET | BLUETOOTH | BATTERY;
 
     /** In the order the picker lists them. */
-    public static final int[] ICONS = new int[]{PLAY, HEADSET, BLUETOOTH, BATTERY, PERCENT};
+    public static final int[] ICONS = new int[]{HEADER, PLAY, HEADSET, BLUETOOTH, BATTERY, PERCENT};
 
     /** What the picker opens with. */
     public static int mask(Context c) {
         int m = Prefs.val(c, KEY_ICONS) & ALL;
+        if (Prefs.on(c, KEY_HEADER)) m |= HEADER;
         try {
             if (SharedPreferencesUtils.INSTANCE.getBatteryPercentage()) m |= PERCENT;
         } catch (Throwable t) {
@@ -58,6 +70,7 @@ public final class TopBar {
     /** What the picker was closed with. */
     public static void save(BaseActivity a, int mask) {
         Prefs.setInt(a, KEY_ICONS, mask & ALL);
+        Prefs.setBool(a, KEY_HEADER, (mask & HEADER) != 0);
         try {
             SharedPreferencesUtils.INSTANCE.setBatteryPercentage((mask & PERCENT) != 0);
             a.updateBatteryPercentageBase();
@@ -99,7 +112,97 @@ public final class TopBar {
             fold(bar, R.id.headset, (mask & HEADSET) == 0);
             fold(bar, R.id.bluetooth, (mask & BLUETOOTH) == 0);
             fold(bar, R.id.battery, (mask & BATTERY) == 0);
+            if (bar instanceof LinearLayout) {
+                arrange((LinearLayout) bar, Prefs.val(a, KEY_STYLE) == CENTERED);
+            }
+            View title = bar.findViewById(R.id.status_bar_time);
+            if (title != null) {
+                title.setVisibility(Prefs.on(a, KEY_HEADER) ? View.VISIBLE : View.INVISIBLE);
+            }
         } catch (Throwable t) {
+        }
+    }
+
+    /** The bar's children as the layout has them, the second spacer, the title's start margin. */
+    private static final class Order {
+        View[] stock;
+        View spacer;
+        int titleStart;
+        boolean centered;
+    }
+
+    private static final int[] LEFT = new int[]{R.id.play, R.id.headset, R.id.bluetooth,
+            R.id.ringtone, R.id.vibrator};
+
+    /**
+     * Centered: the playback, headphone and Bluetooth icons go to the left edge, the title between
+     * two spacers, battery and percent stay right. The bar's start padding takes over the title's
+     * start margin, so the first icon stands where the title did.
+     */
+    private static void arrange(LinearLayout bar, boolean centered) {
+        Object tag = bar.getTag(R.id.status_bar_time);
+        Order o;
+        if (tag instanceof Order) {
+            o = (Order) tag;
+            if (o.centered == centered) return;
+        } else {
+            if (!centered) return;
+            o = new Order();
+            o.stock = new View[bar.getChildCount()];
+            for (int i = 0; i < o.stock.length; i++) o.stock[i] = bar.getChildAt(i);
+            o.spacer = new View(bar.getContext());
+            o.spacer.setLayoutParams(new LinearLayout.LayoutParams(0, 0, 1f));
+            View title = bar.findViewById(R.id.status_bar_time);
+            if (title == null) return;
+            o.titleStart = ((LinearLayout.LayoutParams) title.getLayoutParams()).getMarginStart();
+            title.addOnLayoutChangeListener(new Center());
+            bar.setTag(R.id.status_bar_time, o);
+        }
+        View title = bar.findViewById(R.id.status_bar_time);
+        View[] order;
+        if (centered) {
+            ArrayList l = new ArrayList();
+            for (int i = 0; i < LEFT.length; i++) {
+                View v = bar.findViewById(LEFT[i]);
+                if (v != null) l.add(v);
+            }
+            View stockSpacer = null;
+            for (int i = 0; i < o.stock.length; i++) {
+                if (o.stock[i].getId() == View.NO_ID) stockSpacer = o.stock[i];
+            }
+            if (stockSpacer != null) l.add(stockSpacer);
+            l.add(title);
+            l.add(o.spacer);
+            for (int i = 0; i < o.stock.length; i++) {
+                View v = o.stock[i];
+                if (!l.contains(v)) l.add(v);
+            }
+            order = (View[]) l.toArray(new View[l.size()]);
+        } else {
+            order = o.stock;
+        }
+        bar.removeAllViews();
+        for (int i = 0; i < order.length; i++) bar.addView(order[i]);
+        LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) title.getLayoutParams();
+        int m = centered ? 0 : o.titleStart;
+        lp.leftMargin = m;
+        lp.setMarginStart(m);
+        title.setLayoutParams(lp);
+        bar.setPadding(centered ? o.titleStart : 0, bar.getPaddingTop(), bar.getPaddingRight(),
+                bar.getPaddingBottom());
+        if (!centered) title.setTranslationX(0);
+        o.centered = centered;
+    }
+
+    /** Moves the title, laid out between the two groups, to the middle of the screen. */
+    private static final class Center implements View.OnLayoutChangeListener {
+        public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or,
+                int ob) {
+            View bar = (View) v.getParent();
+            if (bar == null) return;
+            Object tag = bar.getTag(R.id.status_bar_time);
+            boolean on = tag instanceof Order && ((Order) tag).centered;
+            v.setTranslationX(on ? bar.getWidth() / 2f - (l + r) / 2f : 0f);
         }
     }
 

@@ -255,6 +255,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(SUB, "status_bar", 0, null, null));
         l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
         l.add(new Item(ACTION, TopBar.KEY_ICONS, TopBar.ICONS.length, null, null).in("status_bar"));
+        l.add(new Item(CHOICE, TopBar.KEY_STYLE, 2, null, null).in("status_bar"));
 
         l.add(new Item(HEADER, "metadata", 0, null, null));
         l.add(new Item(TOGGLE, "meta_title", 0, null, null));
@@ -549,7 +550,7 @@ public final class IppActivity extends BaseActivity {
         }
     }
 
-    /** "Icons": which of the status bar's icons are shown, named by the row's own values. */
+    /** Which of the status bar's icons are shown, named by the row's own values. */
     private void pickIcons(Item it) {
         new PickDialog(getActivity(), label(it), getString(R.string.ipp_backup_save),
                 TopBar.ICONS, valuesOf(it), TopBar.mask(this),
@@ -945,7 +946,7 @@ public final class IppActivity extends BaseActivity {
         } else if (it.type == CHOICE) {
             int v = (Prefs.val(this, it.key) + 1) % it.count;
             Prefs.setInt(this, it.key, v);
-            if (TopBar.KEY_TEXT.equals(it.key)) TopBar.apply(this);
+            if (TopBar.KEY_TEXT.equals(it.key) || TopBar.KEY_STYLE.equals(it.key)) TopBar.apply(this);
             render();
         } else if (it.type == SUB) {
             openSub(sel);

@@ -224,13 +224,19 @@ Définit la couleur du titre et du pourcentage de batterie dans la barre d'état
 
 Couleur du thème est la couleur du texte des listes du thème.
 
-[bar_icons] Icônes
+[bar_icons] Visibilité des icônes
+* Titre du menu
 * Lecture
 * Écouteurs
 * Bluetooth
 * Batterie
 * Pourcentage de batterie
 Choisit les icônes affichées dans la barre d'état.
+
+[bar_style] Style
+* Par défaut
+* Centré
+Centré place les icônes au bord gauche et le titre de la section au milieu ; la batterie reste à droite.
 
 [[metadata]] Métadonnées
 

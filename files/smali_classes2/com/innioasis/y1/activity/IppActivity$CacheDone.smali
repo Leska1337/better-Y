@@ -17,38 +17,38 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;I)V
   .registers 3
-  .line 2005
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 2006
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 2007
-    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->albums:I
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
   .line 2008
+    iput p2, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->albums:I
+  .line 2009
     return-void
 .end method
 
 .method public run()V
   .catchall { :L0 .. :L1 } :L2
   .registers 6
-  .line 2012
+  .line 2013
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppActivity;->access$900(Lcom/innioasis/y1/activity/IppActivity;)Lcom/innioasis/y1/utils/LoadingDialog;
     move-result-object v0
-  .line 2013
+  .line 2014
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
     const/4 v2, 0
     invoke-static { v1, v2 }, Lcom/innioasis/y1/activity/IppActivity;->access$902(Lcom/innioasis/y1/activity/IppActivity;Lcom/innioasis/y1/utils/LoadingDialog;)Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 2014
+  .line 2015
     if-eqz v0, :L3
   :L0
-  .line 2015
+  .line 2016
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->dismiss()V
   :L1
     goto :L3
   :L2
     move-exception v0
   :L3
-  .line 2017
+  .line 2018
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "cache library finished: "
@@ -63,18 +63,18 @@
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 2018
+  .line 2019
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->albums:I
     const/4 v1, 1
     if-gtz v0, :L4
-  .line 2019
+  .line 2020
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
     const v2, 2131821075
     invoke-virtual { v0, v2 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I)Ljava/lang/String;
     move-result-object v0
     goto :L5
   :L4
-  .line 2020
+  .line 2021
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
     new-array v3, v1, [Ljava/lang/Object;
     const/4 v4, 0
@@ -85,13 +85,13 @@
     invoke-virtual { v2, v0, v3 }, Lcom/innioasis/y1/activity/IppActivity;->getString(I[Ljava/lang/Object;)Ljava/lang/String;
     move-result-object v0
   :L5
-  .line 2021
+  .line 2022
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppActivity$CacheDone;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-virtual { v2 }, Lcom/innioasis/y1/activity/IppActivity;->getContext()Landroid/content/Context;
     move-result-object v2
     invoke-static { v2, v0, v1 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/widget/Toast;->show()V
-  .line 2022
+  .line 2023
     return-void
 .end method

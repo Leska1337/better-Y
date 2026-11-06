@@ -29,11 +29,12 @@ public final class ThemeCfg {
     private static final String[] TINT = {"light", "dark", "theme"};
     private static final String[] BOX = {"light", "dark", "theme", "off"};
     private static final String[] STYLE = {"default", "simple"};
+    private static final String[] BAR = {"default", "centered"};
 
     /** CHOICE keys with the names their values are written under. */
     private static final String[] KEYS = {"icon_tint", Tint.KEY_TEXT, Tint.KEY_BOX,
-            Tint.KEY_LYRICS, TopBar.KEY_TEXT, Preview.KEY, MenuStyle.KEY};
-    private static final Object[] NAMES = {TINT, TINT, BOX, TINT, TINT, TINT, STYLE};
+            Tint.KEY_LYRICS, TopBar.KEY_TEXT, Preview.KEY, MenuStyle.KEY, TopBar.KEY_STYLE};
+    private static final Object[] NAMES = {TINT, TINT, BOX, TINT, TINT, TINT, STYLE, BAR};
 
     /** TOGGLE keys. */
     private static final String[] FLAGS = {Pad.KEY};

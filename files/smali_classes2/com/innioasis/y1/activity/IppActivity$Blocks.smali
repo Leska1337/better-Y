@@ -18,36 +18,36 @@
 
 .method private constructor <init>([I[I)V
   .registers 3
-  .line 1658
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 1659
-    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 1660
-    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->to:[I
+    iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
   .line 1661
+    iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->to:[I
+  .line 1662
     return-void
 .end method
 
 .method static each(I)Lcom/innioasis/y1/activity/IppActivity$Blocks;
   .registers 5
-  .line 1665
-    new-array v0, p0, [I
   .line 1666
-    new-array v1, p0, [I
+    new-array v0, p0, [I
   .line 1667
+    new-array v1, p0, [I
+  .line 1668
     const/4 v2, 0
   :L0
     if-ge v2, p0, :L1
-  .line 1668
-    aput v2, v0, v2
   .line 1669
+    aput v2, v0, v2
+  .line 1670
     add-int/lit8 v3, v2, 1
     aput v3, v1, v2
-  .line 1667
+  .line 1668
     move v2, v3
     goto :L0
   :L1
-  .line 1671
+  .line 1672
     new-instance p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-direct { p0, v0, v1 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;-><init>([I[I)V
     return-object p0
@@ -55,20 +55,20 @@
 
 .method static folders(Ljava/util/List;)Lcom/innioasis/y1/activity/IppActivity$Blocks;
   .registers 12
-  .line 1676
+  .line 1677
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v0
-  .line 1677
-    new-array v1, v0, [I
   .line 1678
-    new-array v2, v0, [I
+    new-array v1, v0, [I
   .line 1679
-    nop
+    new-array v2, v0, [I
   .line 1680
     nop
   .line 1681
     nop
   .line 1682
+    nop
+  .line 1683
     const/4 v3, 0
     const/4 v4, 0
     move-object v8, v4
@@ -77,10 +77,10 @@
     const/4 v7, 0
   :L0
     if-ge v5, v0, :L7
-  .line 1683
+  .line 1684
     invoke-interface { p0, v5 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v9
-  .line 1684
+  .line 1685
     instance-of v10, v9, Lcom/innioasis/y1/database/Song;
     if-eqz v10, :L1
     check-cast v9, Lcom/innioasis/y1/database/Song;
@@ -90,7 +90,7 @@
   :L1
     move-object v9, v4
   :L2
-  .line 1685
+  .line 1686
     if-nez v9, :L3
     const-string v9, ""
     goto :L4
@@ -98,50 +98,50 @@
     invoke-static { v9 }, Lcom/innioasis/ipp/Albums;->trackFolder(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v9
   :L4
-  .line 1686
-    if-nez v8, :L5
   .line 1687
+    if-nez v8, :L5
+  .line 1688
     move-object v8, v9
     goto :L6
   :L5
-  .line 1688
+  .line 1689
     invoke-virtual { v8, v9 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v10
     if-nez v10, :L6
-  .line 1689
-    aput v7, v1, v6
   .line 1690
-    aput v5, v2, v6
+    aput v7, v1, v6
   .line 1691
-    add-int/lit8 v6, v6, 1
+    aput v5, v2, v6
   .line 1692
-    nop
+    add-int/lit8 v6, v6, 1
   .line 1693
+    nop
+  .line 1694
     move v7, v5
     move-object v8, v9
   :L6
-  .line 1682
+  .line 1683
     add-int/lit8 v5, v5, 1
     goto :L0
   :L7
-  .line 1696
-    if-lez v0, :L8
   .line 1697
-    aput v7, v1, v6
+    if-lez v0, :L8
   .line 1698
-    aput v0, v2, v6
+    aput v7, v1, v6
   .line 1699
+    aput v0, v2, v6
+  .line 1700
     add-int/lit8 v6, v6, 1
   :L8
-  .line 1701
-    new-array p0, v6, [I
   .line 1702
-    new-array v0, v6, [I
+    new-array p0, v6, [I
   .line 1703
-    invoke-static { v1, v3, p0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+    new-array v0, v6, [I
   .line 1704
-    invoke-static { v2, v3, v0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+    invoke-static { v1, v3, p0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
   .line 1705
+    invoke-static { v2, v3, v0, v3, v6 }, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
+  .line 1706
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Blocks;
     invoke-direct { v1, p0, v0 }, Lcom/innioasis/y1/activity/IppActivity$Blocks;-><init>([I[I)V
     return-object v1
@@ -149,7 +149,7 @@
 
 .method from(I)I
   .registers 3
-  .line 1712
+  .line 1713
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
     aget p1, v0, p1
     return p1
@@ -160,7 +160,7 @@
   .registers 3
     monitor-enter p0
   :L0
-  .line 1709
+  .line 1710
     iget v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->next:I
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->from:[I
     array-length v1, v1
@@ -175,7 +175,7 @@
     monitor-exit p0
     return v0
   :L4
-  .line 1709
+  .line 1710
     move-exception v0
     monitor-exit p0
     throw v0
@@ -183,7 +183,7 @@
 
 .method to(I)I
   .registers 3
-  .line 1714
+  .line 1715
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$Blocks;->to:[I
     aget p1, v0, p1
     return p1

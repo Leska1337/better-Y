@@ -50,6 +50,8 @@ public final class Prefs {
         def(Preview.KEY, 0);                 // white, as the layouts have it
         def(TopBar.KEY_TEXT, 0);             // white, as the layout has it
         def(TopBar.KEY_ICONS, TopBar.ALL);
+        def(TopBar.KEY_HEADER, 1);
+        def(TopBar.KEY_STYLE, 0);
         // [Metadata]
         def("meta_title", 1);
         def("book_meta_title", 0);           // a chapter's tag is routinely worse than its file name

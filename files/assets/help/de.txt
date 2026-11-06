@@ -224,13 +224,19 @@ Legt die Farbe des Titels und der Akkuanzeige in Prozent in der Statusleiste fes
 
 Themenfarbe ist die Farbe des Listentexts des Themes.
 
-[bar_icons] Symbole
+[bar_icons] Sichtbarkeit der Symbole
+* Menütitel
 * Wiedergabe
 * Kopfhörer
 * Bluetooth
 * Akku
 * Akkuprozent
 Legt fest, welche Symbole die Statusleiste zeigt.
+
+[bar_style] Stil
+* Standard
+* Zentriert
+Zentriert rückt die Symbole an den linken Rand und den Titel des Bereichs in die Mitte; der Akku bleibt rechts.
 
 [[metadata]] Metadaten
 

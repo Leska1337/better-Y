@@ -227,13 +227,19 @@ Sets the colour of the title and the battery percentage in the status bar.
 
 Theme color is the colour of the theme's list text.
 
-[bar_icons in status_bar] Icons
+[bar_icons in status_bar] Icons visibility
+* Menu header
 * Playback
 * Headphones
 * Bluetooth
 * Battery
 * Battery percentage
 Chooses which icons the status bar shows.
+
+[bar_style in status_bar] Style
+* Default
+* Centered
+Centered moves the icons to the left edge and the section title to the middle; the battery stays on the right.
 
 [[metadata]] Metadata
 
