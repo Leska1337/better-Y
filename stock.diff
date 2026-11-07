@@ -31,7 +31,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..ee882655 100644
+index 01b1f730..e7c7f626 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +46,7 @@ index 01b1f730..ee882655 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100492
++  versionCode: 10100494
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20154,7 +20154,7 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..73ec2979 100644
+index 71fe29d0..bf753664 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,589 @@
@@ -21024,7 +21024,7 @@ index 71fe29d0..73ec2979 100644
 +    <string name="setting_key_lock_off_info">In the power-saving working mode (screen off), press any key will immediately execute the corresponding action command.</string>
 +    <string name="setting_key_lock_on_info">In the power-saving working mode (screen off), press any key to light up the screen first, and press the key again to execute the corresponding action command.</string>
 +    <string name="setting_language">Language</string>
-+    <string name="setting_launcher">Launcher</string>
++    <string name="setting_launcher">Rockbox</string>
 +    <string name="setting_repeat_all">List loop</string>
 +    <string name="setting_repeat_off">Off</string>
 +    <string name="setting_repeat_one">Single loop</string>
@@ -21103,7 +21103,7 @@ index 71fe29d0..73ec2979 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev492</string>
++    <string name="ipp_version">v1.1.0-dev494</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21698,7 +21698,7 @@ index 74759f7b..d686deb2 100644
  
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/LanguageActivity;->getContext()Landroid/content/Context;
 diff --git a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
-index 675ebb2a..439eef8c 100644
+index 675ebb2a..dccf95e6 100644
 --- a/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/SettingActivity.smali
 @@ -602,8 +602,25 @@
@@ -22291,7 +22291,7 @@ index 675ebb2a..439eef8c 100644
      invoke-direct {v5, v8, v6, v7}, Lcom/innioasis/y1/activity/SettingActivity$SettingItem;-><init>(Ljava/lang/String;ZLjava/lang/String;)V
  
      const/4 v7, 0x3
-@@ -3716,6 +3850,31 @@
+@@ -3716,6 +3850,34 @@
      :cond_2
      check-cast v1, Ljava/util/List;
  
@@ -22317,13 +22317,16 @@ index 675ebb2a..439eef8c 100644
 +    # ipp: Battery percentage is a tick in better-Y's Status bar icons, not a row here
 +    invoke-static {p0, v1}, Lcom/innioasis/ipp/TopBar;->settingsRows(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
 +
++    # ipp: the Rockbox row under Language when Rockbox is installed; no Key lock without its driver
++    invoke-static {p0, v1}, Lcom/innioasis/ipp/Rockbox;->settingsRows(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
++
 +    # ipp: the Key tone section is this screen with rows of its own
 +    invoke-static {p0, v1}, Lcom/innioasis/ipp/Tone;->settingsRows(Lcom/innioasis/y1/activity/SettingActivity;Ljava/util/List;)V
 +
      .line 1520
      check-cast v1, Ljava/util/Collection;
  
-@@ -3788,6 +3947,11 @@
+@@ -3788,6 +3950,11 @@
  .method private final setVibratorRingtone(ZZ)V
      .locals 10
  
@@ -22335,7 +22338,7 @@ index 675ebb2a..439eef8c 100644
      const-string v0, "mtk_audioprofile_general"
  
      const-string v1, "mProfileManager::class.j\u2026:class.java\n            )"
-@@ -4979,6 +5143,30 @@
+@@ -4979,6 +5146,30 @@
  
      move-result-object v1
  
@@ -22366,7 +22369,7 @@ index 675ebb2a..439eef8c 100644
      check-cast v1, Ljava/lang/CharSequence;
  
      invoke-virtual {v0, v1}, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-@@ -7091,7 +7279,24 @@
+@@ -7091,7 +7282,24 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -22392,7 +22395,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 274
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7123,20 +7328,35 @@
+@@ -7123,20 +7331,35 @@
  
      move-result v1
  
@@ -22434,7 +22437,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 266
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getMark()I
-@@ -7182,14 +7402,12 @@
+@@ -7182,14 +7405,12 @@
  
      move-result v1
  
@@ -22452,7 +22455,7 @@ index 675ebb2a..439eef8c 100644
  
      return-void
  .end method
-@@ -7220,6 +7438,53 @@
+@@ -7220,6 +7441,63 @@
  
      move-result-object v0
  
@@ -22476,6 +22479,16 @@ index 675ebb2a..439eef8c 100644
 +    return-void
 +
 +    :cond_ipp_tone
++    # ipp: the Rockbox row enables Rockbox and hands over to it
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Rockbox;->settingsConfirm(Lcom/innioasis/y1/activity/SettingActivity;Ljava/lang/String;)Z
++
++    move-result v1
++
++    if-eqz v1, :cond_ipp_rockbox
++
++    return-void
++
++    :cond_ipp_rockbox
 +    const v1, 0x7f1101d7
 +
 +    invoke-virtual {p0, v1}, Lcom/innioasis/y1/activity/SettingActivity;->getString(I)Ljava/lang/String;
@@ -22506,7 +22519,7 @@ index 675ebb2a..439eef8c 100644
      const-string v1, "test"
  
      .line 287
-@@ -7227,14 +7492,14 @@
+@@ -7227,14 +7505,14 @@
  
      move-result v1
  
@@ -22523,7 +22536,7 @@ index 675ebb2a..439eef8c 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getResources()Landroid/content/res/Resources;
  
      move-result-object v1
-@@ -7249,7 +7514,7 @@
+@@ -7249,7 +7527,7 @@
  
      move-result v1
  
@@ -22532,7 +22545,7 @@ index 675ebb2a..439eef8c 100644
  
      const-class v0, Lcom/innioasis/y1/activity/BluetoothActivity;
  
-@@ -7257,7 +7522,7 @@
+@@ -7257,7 +7535,7 @@
  
      goto/16 :goto_0
  
@@ -22541,7 +22554,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110179
  
      .line 289
-@@ -7269,7 +7534,7 @@
+@@ -7269,7 +7547,7 @@
  
      move-result v1
  
@@ -22550,7 +22563,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 290
      new-instance v0, Landroid/content/Intent;
-@@ -7287,7 +7552,7 @@
+@@ -7287,7 +7565,7 @@
  
      goto/16 :goto_0
  
@@ -22559,7 +22572,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11019f
  
      .line 293
-@@ -7299,13 +7564,13 @@
+@@ -7299,13 +7577,13 @@
  
      move-result v1
  
@@ -22575,7 +22588,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11016c
  
      .line 294
-@@ -7317,13 +7582,13 @@
+@@ -7317,13 +7595,13 @@
  
      move-result v1
  
@@ -22591,7 +22604,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110190
  
      .line 295
-@@ -7335,14 +7600,14 @@
+@@ -7335,14 +7613,14 @@
  
      move-result v1
  
@@ -22608,7 +22621,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11018f
  
      .line 299
-@@ -7354,14 +7619,14 @@
+@@ -7354,14 +7632,14 @@
  
      move-result v1
  
@@ -22625,7 +22638,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110192
  
      .line 303
-@@ -7373,13 +7638,13 @@
+@@ -7373,13 +7651,13 @@
  
      move-result v1
  
@@ -22641,7 +22654,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11017c
  
      .line 304
-@@ -7391,7 +7656,7 @@
+@@ -7391,7 +7669,7 @@
  
      move-result v1
  
@@ -22650,7 +22663,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 305
      new-instance v0, Landroid/content/Intent;
-@@ -7414,7 +7679,7 @@
+@@ -7414,7 +7692,7 @@
  
      goto/16 :goto_0
  
@@ -22659,7 +22672,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110180
  
      .line 310
-@@ -7426,7 +7691,7 @@
+@@ -7426,7 +7704,7 @@
  
      move-result v1
  
@@ -22668,7 +22681,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 311
      new-instance v0, Landroid/content/Intent;
-@@ -7449,7 +7714,7 @@
+@@ -7449,7 +7727,7 @@
  
      goto/16 :goto_0
  
@@ -22677,7 +22690,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110196
  
      .line 316
-@@ -7461,7 +7726,7 @@
+@@ -7461,7 +7739,7 @@
  
      move-result v1
  
@@ -22686,7 +22699,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 317
      new-instance v0, Landroid/content/Intent;
-@@ -7484,7 +7749,7 @@
+@@ -7484,7 +7762,7 @@
  
      goto/16 :goto_0
  
@@ -22695,7 +22708,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110182
  
      .line 322
-@@ -7496,13 +7761,13 @@
+@@ -7496,13 +7774,13 @@
  
      move-result v1
  
@@ -22711,7 +22724,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11018e
  
      .line 323
-@@ -7514,13 +7779,13 @@
+@@ -7514,13 +7792,13 @@
  
      move-result v1
  
@@ -22727,7 +22740,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11017e
  
      .line 324
-@@ -7532,13 +7797,13 @@
+@@ -7532,13 +7810,13 @@
  
      move-result v1
  
@@ -22743,7 +22756,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110195
  
      .line 325
-@@ -7550,13 +7815,13 @@
+@@ -7550,13 +7828,13 @@
  
      move-result v1
  
@@ -22759,7 +22772,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110186
  
      .line 326
-@@ -7568,7 +7833,7 @@
+@@ -7568,7 +7846,7 @@
  
      move-result v1
  
@@ -22768,7 +22781,7 @@ index 675ebb2a..439eef8c 100644
  
      const-class v0, Lcom/innioasis/y1/activity/LanguageActivity;
  
-@@ -7576,7 +7841,7 @@
+@@ -7576,7 +7854,7 @@
  
      goto/16 :goto_0
  
@@ -22777,7 +22790,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11018b
  
      .line 327
-@@ -7588,13 +7853,13 @@
+@@ -7588,13 +7866,13 @@
  
      move-result v1
  
@@ -22793,7 +22806,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11017f
  
      .line 328
-@@ -7606,7 +7871,7 @@
+@@ -7606,7 +7884,7 @@
  
      move-result v1
  
@@ -22802,7 +22815,7 @@ index 675ebb2a..439eef8c 100644
  
      .line 329
      new-instance v0, Landroid/content/Intent;
-@@ -7626,7 +7891,7 @@
+@@ -7626,7 +7904,7 @@
  
      goto :goto_0
  
@@ -22811,7 +22824,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11018c
  
      .line 332
-@@ -7638,13 +7903,13 @@
+@@ -7638,13 +7916,13 @@
  
      move-result v1
  
@@ -22827,7 +22840,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11017b
  
      .line 333
-@@ -7656,13 +7921,13 @@
+@@ -7656,13 +7934,13 @@
  
      move-result v1
  
@@ -22843,7 +22856,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110183
  
      .line 334
-@@ -7674,13 +7939,13 @@
+@@ -7674,13 +7952,13 @@
  
      move-result v1
  
@@ -22859,7 +22872,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11001e
  
      .line 335
-@@ -7692,13 +7957,13 @@
+@@ -7692,13 +7970,13 @@
  
      move-result v1
  
@@ -22875,7 +22888,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f11017d
  
      .line 336
-@@ -7710,13 +7975,13 @@
+@@ -7710,13 +7988,13 @@
  
      move-result v1
  
@@ -22891,7 +22904,7 @@ index 675ebb2a..439eef8c 100644
      const v1, 0x7f110187
  
      .line 337
-@@ -7728,12 +7993,12 @@
+@@ -7728,12 +8006,12 @@
  
      move-result v0
  
@@ -22906,7 +22919,7 @@ index 675ebb2a..439eef8c 100644
      :goto_0
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->getAdapter()Lcom/innioasis/y1/activity/SettingActivity$adapter$2$1;
  
-@@ -7772,6 +8037,13 @@
+@@ -7772,6 +8050,13 @@
  
      .line 349
      :cond_0
@@ -22920,7 +22933,7 @@ index 675ebb2a..439eef8c 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/SettingActivity;->finish()V
  
      :goto_0
-@@ -7882,6 +8154,9 @@
+@@ -7882,6 +8167,9 @@
  
      invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->setLayoutManager(Landroidx/recyclerview/widget/RecyclerView$LayoutManager;)V
  
@@ -22930,7 +22943,7 @@ index 675ebb2a..439eef8c 100644
      .line 139
      invoke-direct {p0}, Lcom/innioasis/y1/activity/SettingActivity;->setRecyclerData()V
  
-@@ -8066,6 +8341,9 @@
+@@ -8066,6 +8354,9 @@
      invoke-direct {p0, v0}, Lcom/innioasis/y1/activity/SettingActivity;->refreshRight(Ljava/lang/String;)V
  
      :cond_1
@@ -23099,7 +23112,7 @@ index c4b75839..1a37e9cb 100644
      sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..bfa12d5f 100644
+index 060ed6d1..408e007f 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -23225,7 +23238,7 @@ index 060ed6d1..bfa12d5f 100644
      const/4 v0, 0x1
  
      .line 112
-@@ -2806,6 +2857,21 @@
+@@ -2806,6 +2857,24 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -23238,8 +23251,11 @@ index 060ed6d1..bfa12d5f 100644
 +    # the same once-per-process hook, for the same reason.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Usb;->boot(Landroid/content/Context;)V
 +
-+    # ipp: the Y2 sends the wheel and prev/next as other key codes -- KeyMap follows (Press).
++    # ipp: the wheel and prev/next codes of this device and firmware -- KeyMap follows (Press).
 +    invoke-static {}, Lcom/innioasis/ipp/Press;->layout()V
++
++    # ipp: back from Rockbox the card has not been mounted for us -- scan as after USB
++    invoke-static {p0}, Lcom/innioasis/ipp/Rockbox;->started(Landroid/content/Context;)V
 +
 +    # ipp: every screen is known, so a theme change can close them all (Theme.relaunch)
 +    invoke-static {p0}, Lcom/innioasis/ipp/Theme;->created(Landroid/app/Activity;)V
@@ -23247,7 +23263,7 @@ index 060ed6d1..bfa12d5f 100644
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3078,9 +3144,18 @@
+@@ -3078,9 +3147,18 @@
      .line 146
      invoke-virtual {p0, p1, v0}, Lcom/innioasis/y1/base/BaseActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
  
@@ -23266,7 +23282,7 @@ index 060ed6d1..bfa12d5f 100644
      .line 153
      invoke-direct {p0}, Lcom/innioasis/y1/base/BaseActivity;->setObserve()V
  
-@@ -3463,9 +3538,24 @@
+@@ -3463,9 +3541,24 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -23291,7 +23307,7 @@ index 060ed6d1..bfa12d5f 100644
      .line 347
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -3602,7 +3692,12 @@
+@@ -3602,7 +3695,12 @@
  
      const-string v2, "save state successful"
  
@@ -23305,7 +23321,7 @@ index 060ed6d1..bfa12d5f 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4217,12 @@
+@@ -4122,6 +4220,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -39201,7 +39217,7 @@ index 54919080..95081553 100644
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
  
 diff --git a/build/src/smali/com/innioasis/y1/utils/SharedPreferencesUtils.smali b/build/src/smali/com/innioasis/y1/utils/SharedPreferencesUtils.smali
-index bf847f61..ec205257 100644
+index bf847f61..ec0b291d 100644
 --- a/build/src/smali/com/innioasis/y1/utils/SharedPreferencesUtils.smali
 +++ b/build/src/smali/com/innioasis/y1/utils/SharedPreferencesUtils.smali
 @@ -927,7 +927,10 @@
@@ -39238,7 +39254,48 @@ index bf847f61..ec205257 100644
      return v0
  .end method
  
-@@ -3011,6 +3029,10 @@
+@@ -1355,6 +1373,18 @@
+ 
+     invoke-direct {v0, v1}, Ljava/io/File;-><init>(Ljava/lang/String;)V
+ 
++    # ipp: the Rockbox kernels have no such file -- reading it threw on every start
++    invoke-virtual {v0}, Ljava/io/File;->exists()Z
++
++    move-result v1
++
++    if-nez v1, :cond_ipp_lock
++
++    const/4 v0, 0x0
++
++    return v0
++
++    :cond_ipp_lock
+     const/4 v1, 0x0
+ 
+     const/4 v2, 0x1
+@@ -2216,6 +2246,13 @@
+     const-string v1, "1"
+ 
+     :goto_0
++    # ipp: the Rockbox kernels have no such file -- writing it threw from Y1Application.onCreate
++    invoke-virtual {v0}, Ljava/io/File;->exists()Z
++
++    move-result v2
++
++    if-eqz v2, :cond_ipp_lock
++
+     const/4 v2, 0x2
+ 
+     const/4 v3, 0x0
+@@ -2223,6 +2260,7 @@
+     invoke-static {v0, v1, v3, v2, v3}, Lkotlin/io/FilesKt;->writeText$default(Ljava/io/File;Ljava/lang/String;Ljava/nio/charset/Charset;ILjava/lang/Object;)V
+ 
+     .line 209
++    :cond_ipp_lock
+     invoke-virtual {p0, p1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->setKeyLockCache(Z)V
+ 
+     return-void
+@@ -3011,6 +3049,10 @@
  .method public final setVideoSort(I)V
      .locals 4
  

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.innioasis.fm.configs.KeyMap;
 import com.innioasis.music.objects.Constant;
 import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
@@ -154,11 +155,14 @@ public final class Tone {
 
     /**
      * The keys the system clicked on: home, menu, back, the wheel, the side keys, play, centre.
-     * 19/20 are the Y2's wheel (see {@link Press#layout}).
+     * The wheel and the side keys come from {@code KeyMap}: their codes differ per device and
+     * firmware (see {@link Press#layout}).
      */
     private static boolean clicks(int k) {
-        return k == 3 || k == 82 || k == 4 || k == 19 || k == 20 || k == 21 || k == 22
-                || k == 88 || k == 87 || k == 85 || k == 66;
+        KeyMap m = KeyMap.INSTANCE;
+        return k == 3 || k == 82 || k == 4 || k == 85 || k == 66
+                || k == m.getKEY_UP() || k == m.getKEY_DOWN()
+                || k == m.getKEY_LEFT() || k == m.getKEY_RIGHT();
     }
 
     private static long lastDown = -1;

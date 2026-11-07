@@ -8,6 +8,9 @@ import android.os.Looper;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.List;
 
 import com.innioasis.fm.configs.KeyMap;
@@ -30,21 +33,62 @@ public final class Press {
     /** A first bottom press's play/pause, waiting to see whether a second arrives. */
     private static Runnable pending;
 
+    private static boolean laid;
+
     /**
-     * The Y2's kernel sends the wheel as DPAD_UP/DOWN and prev/next as DPAD_LEFT/RIGHT, where the Y1
-     * sends DPAD_LEFT/RIGHT and MEDIA_PREVIOUS/NEXT; the keylayouts are the same on both. Everything
-     * reads the codes from {@code KeyMap}, so moving them there is the whole switch.
+     * Puts the wheel and side-key codes of this device and firmware into {@code KeyMap}, which
+     * everything reads them from. The Y2's kernel sends the wheel as DPAD_UP/DOWN and prev/next as
+     * DPAD_LEFT/RIGHT. On the Y1 the kernel without {@code /proc/tpd_keys_enable} (the Rockbox
+     * builds, Type A and B) sends the wheel as scancodes 103/108 and prev/next as 105/106, and what
+     * they become depends on that firmware's Generic.kl.
      */
     public static void layout() {
+        if (laid) return;
+        laid = true;
+        KeyMap k = KeyMap.INSTANCE;
         String hw = Build.HARDWARE;
-        if (!"Y2".equals(Build.MODEL) && (hw == null || hw.indexOf("6582") < 0)) {
+        if ("Y2".equals(Build.MODEL) || (hw != null && hw.indexOf("6582") >= 0)) {
+            k.setKEY_UP(KeyEvent.KEYCODE_DPAD_UP);
+            k.setKEY_DOWN(KeyEvent.KEYCODE_DPAD_DOWN);
+            k.setKEY_LEFT(KeyEvent.KEYCODE_DPAD_LEFT);
+            k.setKEY_RIGHT(KeyEvent.KEYCODE_DPAD_RIGHT);
             return;
         }
-        KeyMap k = KeyMap.INSTANCE;
-        k.setKEY_UP(KeyEvent.KEYCODE_DPAD_UP);
-        k.setKEY_DOWN(KeyEvent.KEYCODE_DPAD_DOWN);
-        k.setKEY_LEFT(KeyEvent.KEYCODE_DPAD_LEFT);
-        k.setKEY_RIGHT(KeyEvent.KEYCODE_DPAD_RIGHT);
+        if (!new File(KEY_LOCK).exists()) fromLayout(k);
+    }
+
+    /** The touch-wheel driver's switch; the stock 3.1.2 kernel has it, the Rockbox ones do not. */
+    public static final String KEY_LOCK = "/proc/tpd_keys_enable";
+
+    /** Codes for scancodes 103/108 (wheel) and 105/106 (prev/next); a pair it cannot read stays. */
+    private static void fromLayout(KeyMap k) {
+        int up = 0, down = 0, left = 0, right = 0;
+        BufferedReader r = null;
+        try {
+            r = new BufferedReader(new FileReader("/system/usr/keylayout/Generic.kl"));
+            String line;
+            while ((line = r.readLine()) != null) {
+                String[] w = line.trim().split("\\s+");
+                if (w.length < 3 || !"key".equals(w[0])) continue;
+                int code = KeyEvent.keyCodeFromString("KEYCODE_" + w[2]);
+                if (code <= 0) continue;
+                if ("103".equals(w[1])) up = code;
+                else if ("108".equals(w[1])) down = code;
+                else if ("105".equals(w[1])) left = code;
+                else if ("106".equals(w[1])) right = code;
+            }
+        } catch (Throwable t) {
+        } finally {
+            if (r != null) try { r.close(); } catch (Throwable t) { }
+        }
+        if (up > 0 && down > 0) {
+            k.setKEY_UP(up);
+            k.setKEY_DOWN(down);
+        }
+        if (left > 0 && right > 0) {
+            k.setKEY_LEFT(left);
+            k.setKEY_RIGHT(right);
+        }
     }
 
     public static void clearPending(Runnable r) {
