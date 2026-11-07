@@ -4,6 +4,15 @@
 #   ./build/rom.sh                    # newest APK in build/out
 #   ./build/rom.sh --apk <path>
 #   ./build/rom.sh --minimal          # rom.zip with system.img alone - read the note below first
+#   ./build/rom.sh --type B           # Y1 Type B, untested: rom_type_b_test.zip
+#   ./build/rom.sh --type ATA         # the Type B recipe on the ATA kernel, for a Type A player:
+#                                     # rom_ata_kernel_test.zip
+#
+# --type B and --type ATA take preloader, lk, recovery, the boot kernel and /system/lib/modules
+# from the Rockbox archive in ROM/rockbox/ and rewrite Generic.kl for that kernel's scancodes;
+# logo, the boot ramdisk, the boot animation and the rest stay 3.1.2 (rom-tools/rekernel.py).
+# Neither is named rom_type_b.zip on purpose: under that name Updater CE would offer it to every
+# Type B owner, and nobody has run it on Type B hardware yet.
 #
 # Output lands in build/rom-out/rom.zip. The system.img is not written out beside it: it is in the
 # archive already, and the archive is smaller than the bare image, so anyone who wants to flash
@@ -30,13 +39,15 @@ APK=""
 OUT=""
 MINIMAL=0
 ALLOW_DEV=0
+TYPE=A
 while [ $# -gt 0 ]; do
     case "$1" in
         --apk)     shift; APK="${1:-}"; [ -n "$APK" ] || die "--apk needs a path" ;;
         --out)     shift; OUT="${1:-}"; [ -n "$OUT" ] || die "--out needs a path" ;;
         --minimal) MINIMAL=1 ;;
         --allow-dev) ALLOW_DEV=1 ;;
-        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
+        --type)    shift; TYPE="${1:-}" ;;
+        -h|--help) sed -n '2,34p' "$0"; exit 0 ;;
         *) die "unknown option: $1" ;;
     esac
     shift
@@ -51,6 +62,17 @@ done
 # preloader, built three months earlier, and that partition is written by neither the Updater nor
 # our own install instructions.
 BASE_ZIP="$ROOT/ROM/y1-community_y1-stock-rom_Latest-3.1.2.zip"
+case "$TYPE" in
+    A)   KERNEL_ZIP=""; ROM_NAME=rom.zip ;;
+    B)   KERNEL_ZIP="$ROOT/ROM/rockbox/rockbox_type_b.zip"; ROM_NAME=rom_type_b_test.zip ;;
+    ATA) KERNEL_ZIP="$ROOT/ROM/rockbox/rockbox_type_a.zip"; ROM_NAME=rom_ata_kernel_test.zip ;;
+    *)   die "--type is A, B or ATA" ;;
+esac
+if [ -n "$KERNEL_ZIP" ]; then
+    [ -f "$KERNEL_ZIP" ] || die "no kernel archive at $KERNEL_ZIP"
+    # without boot and lk the modules would meet the kernel already on the device
+    [ "$MINIMAL" -eq 0 ] || die "--minimal cannot go with --type $TYPE: its modules need its kernel"
+fi
 
 for t in python3 simg2img debugfs e2fsck cmp md5sum; do
     have "$t" || die "no $t — this script needs a Linux userland (e2fsprogs, libsparse tools)"
@@ -143,6 +165,11 @@ sif com.innioasis.y1_3.1.2.apk uid 0
 sif com.innioasis.y1_3.1.2.apk gid 0
 EOF
 )
+if [ -n "$KERNEL_ZIP" ]; then
+    echo "      kernel: $(basename "$KERNEL_ZIP")"
+    ( cd "$WORK" && python3 "$BUILD_DIR/rom-tools/rekernel.py" "$KERNEL_ZIP" system.raw.img ) \
+        || die "rekernel.py failed"
+fi
 
 echo "[4/5] verifying the image"
 # read the launcher back out of the image and compare it with what went in
@@ -152,7 +179,7 @@ echo "      launcher in image: identical"
 e2fsck -fn "$WORK/system.raw.img" 2>&1 | tail -2 | sed 's/^/      /'
 rm -f "$WORK/check.apk" "$WORK/new.apk"
 
-echo "[5/5] packing rom.zip"
+echo "[5/5] packing $ROM_NAME"
 # system.img goes in RAW, never sparse: on macOS the Updater flashes through mtkclient, which wants
 # a raw image, and SP Flash Tool takes raw as well. Zeros deflate to almost nothing, so the archive
 # barely grows; the unpacked image is the full partition.
@@ -168,8 +195,10 @@ for n in z.namelist():
     print("      %-28s %10d" % (n, os.path.getsize("system.raw.img" if n == "system.img" else n)))
 PY
 )
-mv "$WORK/rom.zip" "$OUT/rom.zip"
+mv "$WORK/rom.zip" "$OUT/$ROM_NAME"
 rm -rf "$WORK"
 
+NOTE="Innioasis Updater asset - keep this exact name"
+[ -z "$KERNEL_ZIP" ] || NOTE="test build - not an Updater asset name"
 printf '\nOK\n'
-printf '  rom.zip     %12d B   Innioasis Updater asset - keep this exact name\n' "$(wc -c < "$OUT/rom.zip" | tr -d ' ')"
+printf '  %s  %12d B   %s\n' "$ROM_NAME" "$(wc -c < "$OUT/$ROM_NAME" | tr -d ' ')" "$NOTE"

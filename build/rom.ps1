@@ -2,9 +2,19 @@
 #
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1            # newest APK in build\out
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Apk <path>
+#   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Type B    # Y1 Type B, untested
 #
 # Output lands in build\rom-out\:
-#   rom.zip      a complete 3.1.2 flash set with our system.img in it
+#   rom.zip                 a complete 3.1.2 flash set with our system.img in it
+#   rom_type_b_test.zip     -Type B: the same set on the kernel of Rockbox Type B
+#   rom_ata_kernel_test.zip -Type ATA: the same recipe on the ATA kernel (Rockbox Type A), which
+#                           runs on a Type A player and so tries the Type B recipe out on one
+#
+# -Type B and -Type ATA take preloader, lk, recovery, the boot kernel and /system/lib/modules from
+# the Rockbox archive in ROM\rockbox\ and rewrite Generic.kl for that kernel's scancodes; logo,
+# the boot ramdisk, the boot animation and the rest stay 3.1.2 (build\rom-tools\rekernel.py).
+# Neither is named rom_type_b.zip on purpose: under that name Updater CE would offer it to every
+# Type B owner, and nobody has run it on Type B hardware yet.
 #
 # The system.img is not written out beside it: it is in the archive already, and the archive is
 # smaller than the bare image, so anyone who wants to flash that one partition by hand takes it
@@ -39,7 +49,8 @@ param(
     [string] $Apk = "",
     [string] $Out = "",
     [switch] $Minimal,     # rom.zip with system.img alone - see the note above before using it
-    [switch] $AllowDev     # pack a -devN build anyway (trying the pipeline out, not a release)
+    [switch] $AllowDev,    # pack a -devN build anyway (trying the pipeline out, not a release)
+    [ValidateSet("A", "B", "ATA")] [string] $Type = "A"
 )
 
 $ErrorActionPreference = "Stop"
@@ -56,6 +67,15 @@ if (-not $Out) { $Out = Join-Path $root "build\rom-out" }
 # our own install instructions.
 $baseZip = Join-Path $root "ROM\y1-community_y1-stock-rom_Latest-3.1.2.zip"
 $remote = "~/ipp-rom"
+$kernelZip = ""
+$romName = "rom.zip"
+if ($Type -eq "B") { $kernelZip = Join-Path $root "ROM\rockbox\rockbox_type_b.zip"; $romName = "rom_type_b_test.zip" }
+if ($Type -eq "ATA") { $kernelZip = Join-Path $root "ROM\rockbox\rockbox_type_a.zip"; $romName = "rom_ata_kernel_test.zip" }
+if ($kernelZip) {
+    if (-not (Test-Path $kernelZip)) { throw "kernel archive not found: $kernelZip" }
+    # without boot and lk the modules would meet the kernel already on the device
+    if ($Minimal) { throw "-Minimal cannot go with -Type ${Type}: its modules need its kernel" }
+}
 
 if (-not $Apk) {
     $Apk = (Get-ChildItem (Join-Path $root "build\out\*.apk") | Sort-Object LastWriteTime -Descending |
@@ -161,13 +181,18 @@ $cmdFile = Join-Path $env:TEMP "swap.debugfs"
 [IO.File]::WriteAllText($cmdFile, $cmds + "`n", (New-Object Text.ASCIIEncoding))
 $cmdW = ConvertTo-WslPath $cmdFile
 Invoke-Wsl "cd $remote && debugfs -w -f $cmdW system.raw.img" | Out-Null
+if ($kernelZip) {
+    Write-Host "      kernel: $(Split-Path -Leaf $kernelZip)" -ForegroundColor Yellow
+    $rekernelW = ConvertTo-WslPath (Join-Path $here "rom-tools\rekernel.py")
+    Invoke-Wsl "cd $remote && python3 '$rekernelW' '$(ConvertTo-WslPath $kernelZip)' system.raw.img" | ForEach-Object { Write-Host $_ }
+}
 
 Write-Host "[4/5] verifying the image" -ForegroundColor Cyan
 # read the launcher back out of the image and compare it with what went in
 Invoke-Wsl "cd $remote && debugfs -R 'dump app/com.innioasis.y1_3.1.2.apk check.apk' system.raw.img >/dev/null && cmp check.apk new.apk && echo '      launcher in image: identical'"
 Invoke-Wsl "cd $remote && e2fsck -fn system.raw.img | tail -2" | ForEach-Object { Write-Host "      $_" }
 
-Write-Host "[5/5] packing rom.zip and copying out" -ForegroundColor Cyan
+Write-Host "[5/5] packing $romName and copying out" -ForegroundColor Cyan
 # system.img goes in RAW, never sparse: on macOS the Updater flashes through mtkclient, which wants
 # a raw image, and SP Flash Tool takes raw as well. Zeros deflate to almost nothing, so the archive
 # barely grows; the unpacked image is the full partition.
@@ -182,8 +207,10 @@ z.close()
 for n in z.namelist():
     print("      %-28s %10d" % (n, os.path.getsize("system.raw.img" if n == "system.img" else n)))
 '@
-Invoke-Wsl "cd $remote && python3 $packPy $stockArgs && cp rom.zip '$outW/rom.zip' && rm -rf $remote" | ForEach-Object { Write-Host $_ }
+Invoke-Wsl "cd $remote && python3 $packPy $stockArgs && cp rom.zip '$outW/$romName' && rm -rf $remote" | ForEach-Object { Write-Host $_ }
 
 Write-Host ""
 Write-Host "OK" -ForegroundColor Green
-Write-Host ("  rom.zip     {0,12:n0} B   Innioasis Updater asset - keep this exact name" -f (Get-Item (Join-Path $Out "rom.zip")).Length)
+$note = "Innioasis Updater asset - keep this exact name"
+if ($kernelZip) { $note = "test build - not an Updater asset name" }
+Write-Host ("  {0}  {1,12:n0} B   {2}" -f $romName, (Get-Item (Join-Path $Out $romName)).Length, $note)
