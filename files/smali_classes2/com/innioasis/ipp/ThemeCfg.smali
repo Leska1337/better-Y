@@ -16,6 +16,12 @@
 
 .field private final static NAMES:[Ljava/lang/Object;
 
+.field private final static SS_BG:[Ljava/lang/String;
+
+.field private final static SS_STYLE:[Ljava/lang/String;
+
+.field private final static SS_TINT:[Ljava/lang/String;
+
 .field private final static STYLE:[Ljava/lang/String;
 
 .field private final static THEME_SOUND:Ljava/lang/String; = "use_theme_key_sound"
@@ -23,7 +29,7 @@
 .field private final static TINT:[Ljava/lang/String;
 
 .method static constructor <clinit>()V
-  .registers 15
+  .registers 23
   .line 29
     const/4 v0, 3
     new-array v1, v0, [Ljava/lang/String;
@@ -43,57 +49,114 @@
     aput-object v3, v9, v2
     aput-object v5, v9, v4
     aput-object v7, v9, v6
-    const-string v3, "off"
-    aput-object v3, v9, v0
+    const-string v10, "off"
+    aput-object v10, v9, v0
     sput-object v9, Lcom/innioasis/ipp/ThemeCfg;->BOX:[Ljava/lang/String;
   .line 31
-    new-array v3, v6, [Ljava/lang/String;
-    const-string v5, "default"
-    aput-object v5, v3, v2
-    const-string v7, "simple"
-    aput-object v7, v3, v4
-    sput-object v3, Lcom/innioasis/ipp/ThemeCfg;->STYLE:[Ljava/lang/String;
+    new-array v11, v6, [Ljava/lang/String;
+    const-string v12, "default"
+    aput-object v12, v11, v2
+    const-string v13, "simple"
+    aput-object v13, v11, v4
+    sput-object v11, Lcom/innioasis/ipp/ThemeCfg;->STYLE:[Ljava/lang/String;
   .line 32
-    new-array v7, v6, [Ljava/lang/String;
-    aput-object v5, v7, v2
-    const-string v5, "centered"
-    aput-object v5, v7, v4
-    sput-object v7, Lcom/innioasis/ipp/ThemeCfg;->BAR:[Ljava/lang/String;
+    new-array v13, v6, [Ljava/lang/String;
+    aput-object v12, v13, v2
+    const-string v12, "centered"
+    aput-object v12, v13, v4
+    sput-object v13, Lcom/innioasis/ipp/ThemeCfg;->BAR:[Ljava/lang/String;
+  .line 33
+    new-array v12, v0, [Ljava/lang/String;
+    aput-object v3, v12, v2
+    aput-object v5, v12, v4
+    const-string v14, "wallpaper"
+    aput-object v14, v12, v6
+    sput-object v12, Lcom/innioasis/ipp/ThemeCfg;->SS_BG:[Ljava/lang/String;
+  .line 34
+    new-array v14, v8, [Ljava/lang/String;
+    aput-object v10, v14, v2
+    aput-object v3, v14, v4
+    aput-object v5, v14, v6
+    aput-object v7, v14, v0
+    sput-object v14, Lcom/innioasis/ipp/ThemeCfg;->SS_TINT:[Ljava/lang/String;
   .line 35
-    const/16 v5, 8
-    new-array v10, v5, [Ljava/lang/String;
-    const-string v11, "icon_tint"
-    aput-object v11, v10, v2
-    const-string v11, "text_tint"
-    aput-object v11, v10, v4
-    const-string v11, "box_tint"
-    aput-object v11, v10, v6
-    const-string v11, "lyrics_tint"
-    aput-object v11, v10, v0
-    const-string v11, "bar_text"
-    aput-object v11, v10, v8
-    const-string v11, "preview_text"
-    const/4 v12, 5
-    aput-object v11, v10, v12
-    const-string v11, "menu_style"
-    const/4 v13, 6
-    aput-object v11, v10, v13
-    const-string v11, "bar_style"
-    const/4 v14, 7
-    aput-object v11, v10, v14
-    sput-object v10, Lcom/innioasis/ipp/ThemeCfg;->KEYS:[Ljava/lang/String;
-  .line 37
-    new-array v5, v5, [Ljava/lang/Object;
-    aput-object v1, v5, v2
-    aput-object v1, v5, v4
-    aput-object v9, v5, v6
-    aput-object v1, v5, v0
-    aput-object v1, v5, v8
-    aput-object v1, v5, v12
-    aput-object v3, v5, v13
-    aput-object v7, v5, v14
-    sput-object v5, Lcom/innioasis/ipp/ThemeCfg;->NAMES:[Ljava/lang/Object;
+    const/16 v3, 9
+    new-array v5, v3, [Ljava/lang/String;
+    const-string v7, "clock_left"
+    aput-object v7, v5, v2
+    const-string v7, "clock_center"
+    aput-object v7, v5, v4
+    const-string v7, "clock_right"
+    aput-object v7, v5, v6
+    const-string v7, "clock_date_left"
+    aput-object v7, v5, v0
+    const-string v7, "clock_date_center"
+    aput-object v7, v5, v8
+    const-string v7, "clock_date_right"
+    const/4 v10, 5
+    aput-object v7, v5, v10
+    const-string v7, "song_left"
+    const/4 v15, 6
+    aput-object v7, v5, v15
+    const-string v7, "song_center"
+    const/16 v16, 7
+    aput-object v7, v5, v16
+    const-string v7, "song_right"
+    const/16 v17, 8
+    aput-object v7, v5, v17
+    sput-object v5, Lcom/innioasis/ipp/ThemeCfg;->SS_STYLE:[Ljava/lang/String;
   .line 40
+    const/16 v7, 13
+    new-array v3, v7, [Ljava/lang/String;
+    const-string v19, "icon_tint"
+    aput-object v19, v3, v2
+    const-string v19, "text_tint"
+    aput-object v19, v3, v4
+    const-string v19, "box_tint"
+    aput-object v19, v3, v6
+    const-string v19, "lyrics_tint"
+    aput-object v19, v3, v0
+    const-string v19, "bar_text"
+    aput-object v19, v3, v8
+    const-string v19, "preview_text"
+    aput-object v19, v3, v10
+    const-string v19, "menu_style"
+    aput-object v19, v3, v15
+    const-string v19, "bar_style"
+    aput-object v19, v3, v16
+    const-string v19, "ss_style"
+    aput-object v19, v3, v17
+    const-string v19, "ss_background"
+    const/16 v18, 9
+    aput-object v19, v3, v18
+    const-string v19, "ss_tint"
+    const/16 v20, 10
+    aput-object v19, v3, v20
+    const-string v19, "ss_clock_color"
+    const/16 v21, 11
+    aput-object v19, v3, v21
+    const-string v19, "ss_text_color"
+    const/16 v22, 12
+    aput-object v19, v3, v22
+    sput-object v3, Lcom/innioasis/ipp/ThemeCfg;->KEYS:[Ljava/lang/String;
+  .line 43
+    new-array v3, v7, [Ljava/lang/Object;
+    aput-object v1, v3, v2
+    aput-object v1, v3, v4
+    aput-object v9, v3, v6
+    aput-object v1, v3, v0
+    aput-object v1, v3, v8
+    aput-object v1, v3, v10
+    aput-object v11, v3, v15
+    aput-object v13, v3, v16
+    aput-object v5, v3, v17
+    const/16 v0, 9
+    aput-object v12, v3, v0
+    aput-object v14, v3, v20
+    aput-object v1, v3, v21
+    aput-object v1, v3, v22
+    sput-object v3, Lcom/innioasis/ipp/ThemeCfg;->NAMES:[Ljava/lang/Object;
+  .line 47
     new-array v0, v4, [Ljava/lang/String;
     const-string v1, "fixed_menu_pad"
     aput-object v1, v0, v2
@@ -103,14 +166,14 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 45
+  .line 52
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method private static current(Landroid/content/SharedPreferences;Ljava/lang/String;)I
   .registers 3
-  .line 112
+  .line 123
     invoke-static { p1 }, Lcom/innioasis/ipp/Prefs;->defInt(Ljava/lang/String;)I
     move-result v0
     invoke-interface { p0, p1, v0 }, Landroid/content/SharedPreferences;->getInt(Ljava/lang/String;I)I
@@ -120,7 +183,7 @@
 
 .method private static currentFlag(Landroid/content/SharedPreferences;Ljava/lang/String;)Z
   .registers 3
-  .line 116
+  .line 127
     invoke-static { p1 }, Lcom/innioasis/ipp/Prefs;->defBool(Ljava/lang/String;)Z
     move-result v0
     invoke-interface { p0, p1, v0 }, Landroid/content/SharedPreferences;->getBoolean(Ljava/lang/String;Z)Z
@@ -130,7 +193,7 @@
 
 .method private static dirOf(Ljava/lang/String;)Ljava/lang/String;
   .registers 3
-  .line 103
+  .line 114
     if-eqz p0, :L1
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v0
@@ -155,7 +218,7 @@
 
 .method private static fileOf(Ljava/lang/String;)Ljava/io/File;
   .registers 3
-  .line 108
+  .line 119
     if-eqz p0, :L1
     invoke-virtual { p0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v0
@@ -176,9 +239,9 @@
 
 .method private static fromGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   .registers 7
-  .line 145
+  .line 156
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/ThemeCfg;->soundFromGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
-  .line 146
+  .line 157
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -186,7 +249,7 @@
     array-length v3, v2
     const-string v4, "global:"
     if-ge v1, v3, :L2
-  .line 147
+  .line 158
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -196,7 +259,7 @@
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v3
-  .line 148
+  .line 159
     invoke-interface { p0, v3 }, Landroid/content/SharedPreferences;->contains(Ljava/lang/String;)Z
     move-result v4
     if-eqz v4, :L1
@@ -205,17 +268,17 @@
     move-result v3
     invoke-interface { p1, v2, v3 }, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
   :L1
-  .line 146
+  .line 157
     add-int/lit8 v1, v1, 1
     goto :L0
   :L2
-  .line 150
+  .line 161
     nop
   :L3
     sget-object v1, Lcom/innioasis/ipp/ThemeCfg;->FLAGS:[Ljava/lang/String;
     array-length v2, v1
     if-ge v0, v2, :L5
-  .line 151
+  .line 162
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v2, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -225,7 +288,7 @@
     move-result-object v2
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
-  .line 152
+  .line 163
     invoke-interface { p0, v2 }, Landroid/content/SharedPreferences;->contains(Ljava/lang/String;)Z
     move-result v3
     if-eqz v3, :L4
@@ -235,17 +298,17 @@
     move-result v2
     invoke-interface { p1, v1, v2 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
   :L4
-  .line 150
+  .line 161
     add-int/lit8 v0, v0, 1
     goto :L3
   :L5
-  .line 154
+  .line 165
     return-void
 .end method
 
 .method private static fromJson(Lorg/json/JSONObject;Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   .registers 10
-  .line 174
+  .line 185
     const-string v0, "use_theme_key_sound"
     const/4 v1, 0
     invoke-virtual { p0, v0, v1 }, Lorg/json/JSONObject;->optBoolean(Ljava/lang/String;Z)Z
@@ -256,50 +319,50 @@
     invoke-interface { p2, p1, v0 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
     goto :L1
   :L0
-  .line 175
+  .line 186
     invoke-static { p1, p2 }, Lcom/innioasis/ipp/ThemeCfg;->soundFromGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   :L1
-  .line 176
+  .line 187
     const/4 p1, 0
   :L2
     sget-object v0, Lcom/innioasis/ipp/ThemeCfg;->KEYS:[Ljava/lang/String;
     array-length v2, v0
     if-ge p1, v2, :L8
-  .line 177
+  .line 188
     sget-object v2, Lcom/innioasis/ipp/ThemeCfg;->NAMES:[Ljava/lang/Object;
     aget-object v2, v2, p1
     check-cast v2, [Ljava/lang/String;
-  .line 178
+  .line 189
     aget-object v3, v0, p1
     invoke-static { v3 }, Lcom/innioasis/ipp/Prefs;->defInt(Ljava/lang/String;)I
     move-result v3
-  .line 179
+  .line 190
     aget-object v0, v0, p1
     invoke-virtual { p0, v0 }, Lorg/json/JSONObject;->opt(Ljava/lang/String;)Ljava/lang/Object;
     move-result-object v0
-  .line 180
+  .line 191
     instance-of v4, v0, Ljava/lang/Number;
     if-eqz v4, :L3
-  .line 181
+  .line 192
     check-cast v0, Ljava/lang/Number;
     invoke-virtual { v0 }, Ljava/lang/Number;->intValue()I
     move-result v0
-  .line 182
+  .line 193
     if-ltz v0, :L6
     array-length v2, v2
     if-ge v0, v2, :L6
     move v3, v0
     goto :L6
   :L3
-  .line 183
+  .line 194
     instance-of v4, v0, Ljava/lang/String;
     if-eqz v4, :L6
-  .line 184
+  .line 195
     const/4 v4, 0
   :L4
     array-length v5, v2
     if-ge v4, v5, :L7
-  .line 185
+  .line 196
     aget-object v5, v2, v4
     move-object v6, v0
     check-cast v6, Ljava/lang/String;
@@ -310,32 +373,32 @@
     if-eqz v5, :L5
     move v3, v4
   :L5
-  .line 184
+  .line 195
     add-int/lit8 v4, v4, 1
     goto :L4
   :L6
-  .line 183
+  .line 194
     nop
   :L7
-  .line 188
+  .line 199
     sget-object v0, Lcom/innioasis/ipp/ThemeCfg;->KEYS:[Ljava/lang/String;
     aget-object v0, v0, p1
     invoke-interface { p2, v0, v3 }, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
-  .line 176
+  .line 187
     add-int/lit8 p1, p1, 1
     goto :L2
   :L8
-  .line 190
+  .line 201
     nop
   :L9
     sget-object p1, Lcom/innioasis/ipp/ThemeCfg;->FLAGS:[Ljava/lang/String;
     array-length v0, p1
     if-ge v1, v0, :L12
-  .line 191
+  .line 202
     aget-object v0, p1, v1
     invoke-virtual { p0, v0 }, Lorg/json/JSONObject;->opt(Ljava/lang/String;)Ljava/lang/Object;
     move-result-object v0
-  .line 192
+  .line 203
     instance-of v2, v0, Ljava/lang/Boolean;
     if-eqz v2, :L10
     check-cast v0, Ljava/lang/Boolean;
@@ -347,14 +410,14 @@
     invoke-static { v0 }, Lcom/innioasis/ipp/Prefs;->defBool(Ljava/lang/String;)Z
     move-result v0
   :L11
-  .line 193
+  .line 204
     aget-object p1, p1, v1
     invoke-interface { p2, p1, v0 }, Landroid/content/SharedPreferences$Editor;->putBoolean(Ljava/lang/String;Z)Landroid/content/SharedPreferences$Editor;
-  .line 190
+  .line 201
     add-int/lit8 v1, v1, 1
     goto :L9
   :L12
-  .line 195
+  .line 206
     return-void
 .end method
 
@@ -366,15 +429,15 @@
   .catchall { :L13 .. :L14 } :L15
   .catchall { :L18 .. :L19 } :L20
   .registers 9
-  .line 198
+  .line 209
     nop
-  .line 200
+  .line 211
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/FileInputStream;
     invoke-direct { v1, p0 }, Ljava/io/FileInputStream;-><init>(Ljava/io/File;)V
   :L1
-  .line 201
+  .line 212
     invoke-virtual { p0 }, Ljava/io/File;->length()J
     move-result-wide v2
     const-wide/32 v4, 65536
@@ -382,50 +445,50 @@
     move-result-wide v2
     long-to-int v3, v2
     new-array v2, v3, [B
-  .line 202
+  .line 213
     const/4 v4, 0
     const/4 v5, 0
   :L2
-  .line 203
+  .line 214
     if-ge v5, v3, :L4
-  .line 204
+  .line 215
     sub-int v6, v3, v5
     invoke-virtual { v1, v2, v5, v6 }, Ljava/io/InputStream;->read([BII)I
     move-result v6
-  .line 205
+  .line 216
     if-gez v6, :L3
     goto :L4
   :L3
-  .line 206
+  .line 217
     add-int/2addr v5, v6
-  .line 207
+  .line 218
     goto :L2
   :L4
-  .line 208
+  .line 219
     new-instance v3, Lorg/json/JSONObject;
     new-instance v6, Ljava/lang/String;
     const-string v7, "UTF-8"
     invoke-direct { v6, v2, v4, v5, v7 }, Ljava/lang/String;-><init>([BIILjava/lang/String;)V
     invoke-direct { v3, v6 }, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
   :L5
-  .line 213
+  .line 224
     invoke-virtual { v1 }, Ljava/io/InputStream;->close()V
   :L6
     goto :L8
   :L7
     move-exception p0
   :L8
-  .line 208
+  .line 219
     return-object v3
   :L9
-  .line 209
+  .line 220
     move-exception v2
     goto :L11
   :L10
     move-exception v2
     move-object v1, v0
   :L11
-  .line 210
+  .line 221
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v4, "ThemeCfg.read "
@@ -442,9 +505,9 @@
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L12
-  .line 211
+  .line 222
     nop
-  .line 213
+  .line 224
     if-eqz v1, :L16
   :L13
     invoke-virtual { v1 }, Ljava/io/InputStream;->close()V
@@ -453,10 +516,10 @@
   :L15
     move-exception p0
   :L16
-  .line 211
+  .line 222
     return-object v0
   :L17
-  .line 213
+  .line 224
     move-exception p0
     if-eqz v1, :L21
   :L18
@@ -466,7 +529,7 @@
   :L20
     move-exception v0
   :L21
-  .line 214
+  .line 225
     goto :L23
   :L22
     throw p0
@@ -476,12 +539,12 @@
 
 .method private static rememberSound(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   .registers 4
-  .line 127
+  .line 138
     const-string v0, "key_tone_sound"
     const-string v1, ""
     invoke-interface { p0, v0, v1 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 128
+  .line 139
     const-string v0, "\u0001theme"
     invoke-virtual { v0, p0 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v0
@@ -489,7 +552,7 @@
     const-string v0, "global:key_tone_sound"
     invoke-interface { p1, v0, p0 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
   :L0
-  .line 129
+  .line 140
     return-void
 .end method
 
@@ -497,9 +560,9 @@
   .catchall { :L2 .. :L7 } :L14
   .catchall { :L8 .. :L9 } :L10
   .registers 8
-  .line 71
+  .line 82
     nop
-  .line 72
+  .line 83
     const-string v0, ""
     if-nez p1, :L0
     move-object v1, v0
@@ -508,12 +571,12 @@
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getName()Ljava/lang/String;
     move-result-object v1
   :L1
-  .line 74
+  .line 85
     const/4 v2, 0
   :L2
     invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v3
-  .line 75
+  .line 86
     if-nez p1, :L3
     goto :L4
   :L3
@@ -522,22 +585,22 @@
   :L4
     invoke-static { v0 }, Lcom/innioasis/ipp/ThemeCfg;->fileOf(Ljava/lang/String;)Ljava/io/File;
     move-result-object v0
-  .line 76
+  .line 87
     if-eqz v3, :L12
-  .line 77
+  .line 88
     if-nez v0, :L5
-  .line 78
+  .line 89
     invoke-interface { v3 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object p1
-  .line 79
+  .line 90
     invoke-static { v3, p1 }, Lcom/innioasis/ipp/ThemeCfg;->toGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
-  .line 80
+  .line 91
     invoke-interface { p1 }, Landroid/content/SharedPreferences$Editor;->commit()Z
     move-result p1
-  .line 81
+  .line 92
     goto :L13
   :L5
-  .line 82
+  .line 93
     invoke-virtual { v0 }, Ljava/io/File;->isFile()Z
     move-result v4
     if-nez v4, :L6
@@ -546,28 +609,28 @@
     invoke-virtual { v4 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v4
     sget-object v5, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-  .line 83
+  .line 94
     invoke-virtual { v5 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
     move-result-object v5
-  .line 82
+  .line 93
     invoke-virtual { v4, v5 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v4
     if-eqz v4, :L6
-  .line 85
+  .line 96
     invoke-interface { v3 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object v4
-  .line 86
+  .line 97
     invoke-static { v3, v4 }, Lcom/innioasis/ipp/ThemeCfg;->toGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
-  .line 87
+  .line 98
     invoke-interface { v4 }, Landroid/content/SharedPreferences$Editor;->commit()Z
   :L6
-  .line 89
+  .line 100
     invoke-static { v3 }, Lcom/innioasis/ipp/ThemeCfg;->toJson(Landroid/content/SharedPreferences;)Lorg/json/JSONObject;
     move-result-object v3
     invoke-static { v0, v3 }, Lcom/innioasis/ipp/ThemeCfg;->write(Ljava/io/File;Lorg/json/JSONObject;)Z
     move-result v0
   :L7
-  .line 90
+  .line 101
     if-eqz v0, :L11
   :L8
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
@@ -576,25 +639,25 @@
   :L9
     goto :L11
   :L10
-  .line 93
+  .line 104
     move-exception p1
     goto :L15
   :L11
-  .line 95
+  .line 106
     move p1, v0
     goto :L13
   :L12
-  .line 76
+  .line 87
     const/4 p1, 0
   :L13
-  .line 95
+  .line 106
     goto :L16
   :L14
-  .line 93
+  .line 104
     move-exception p1
     const/4 v0, 0
   :L15
-  .line 94
+  .line 105
     new-instance v3, Ljava/lang/StringBuilder;
     invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v4, "ThemeCfg.save: "
@@ -607,11 +670,11 @@
     invoke-static { p1 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
     move p1, v0
   :L16
-  .line 96
+  .line 107
     if-nez p0, :L17
     return-void
   :L17
-  .line 97
+  .line 108
     if-eqz p1, :L18
     const/4 p1, 1
     new-array p1, p1, [Ljava/lang/Object;
@@ -621,38 +684,38 @@
     move-result-object p1
     goto :L19
   :L18
-  .line 98
+  .line 109
     const p1, 2131821172
     invoke-virtual { p0, p1 }, Landroid/content/Context;->getString(I)Ljava/lang/String;
     move-result-object p1
   :L19
-  .line 99
+  .line 110
     invoke-static { p0, p1, v2 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/widget/Toast;->show()V
-  .line 100
+  .line 111
     return-void
 .end method
 
 .method private static soundFromGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   .registers 7
-  .line 136
+  .line 147
     const-string v0, "global:key_tone_sound"
     const-string v1, ""
     invoke-interface { p0, v0, v1 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v2
-  .line 137
+  .line 148
     const-string v3, "\u0001theme"
     invoke-virtual { v3, v2 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v4
     if-eqz v4, :L0
     move-object v2, v1
   :L0
-  .line 138
+  .line 149
     const-string v4, "key_tone_sound"
     invoke-interface { p0, v4, v1 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v1
-  .line 139
+  .line 150
     invoke-interface { p0, v0 }, Landroid/content/SharedPreferences;->contains(Ljava/lang/String;)Z
     move-result p0
     if-nez p0, :L1
@@ -660,25 +723,26 @@
     move-result p0
     if-eqz p0, :L2
   :L1
-  .line 140
+  .line 151
     invoke-interface { p1, v4, v2 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
   :L2
-  .line 142
+  .line 153
     return-void
 .end method
 
 .method public static switchTo(Ljava/lang/String;)V
-  .catchall { :L0 .. :L9 } :L10
-  .registers 4
+  .catchall { :L0 .. :L9 } :L14
+  .catchall { :L10 .. :L13 } :L14
+  .registers 5
   :L0
-  .line 50
+  .line 57
     invoke-static { }, Lcom/innioasis/ipp/Prefs;->file()Landroid/content/SharedPreferences;
     move-result-object v0
-  .line 51
+  .line 58
     if-nez v0, :L1
     return-void
   :L1
-  .line 52
+  .line 59
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v1 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
     move-result-object v1
@@ -686,59 +750,73 @@
     move-result-object v1
     invoke-static { v1 }, Lcom/innioasis/ipp/ThemeCfg;->fileOf(Ljava/lang/String;)Ljava/io/File;
     move-result-object v1
-  .line 54
+  .line 61
     invoke-interface { v0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object v2
-  .line 55
+  .line 62
     if-eqz v1, :L3
     invoke-virtual { v1 }, Ljava/io/File;->isFile()Z
     move-result v1
     if-nez v1, :L2
     goto :L3
   :L2
-  .line 56
+  .line 63
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/ThemeCfg;->rememberSound(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
     goto :L4
   :L3
-  .line 55
+  .line 62
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/ThemeCfg;->toGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   :L4
-  .line 57
+  .line 64
     invoke-interface { v2 }, Landroid/content/SharedPreferences$Editor;->commit()Z
-  .line 58
+  .line 65
     invoke-interface { v0 }, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
     move-result-object v1
-  .line 59
+  .line 66
     invoke-static { p0 }, Lcom/innioasis/ipp/ThemeCfg;->fileOf(Ljava/lang/String;)Ljava/io/File;
-    move-result-object p0
-  .line 60
-    if-eqz p0, :L5
-    invoke-virtual { p0 }, Ljava/io/File;->isFile()Z
-    move-result v2
+    move-result-object v2
+  .line 67
     if-eqz v2, :L5
-    invoke-static { p0 }, Lcom/innioasis/ipp/ThemeCfg;->read(Ljava/io/File;)Lorg/json/JSONObject;
-    move-result-object p0
+    invoke-virtual { v2 }, Ljava/io/File;->isFile()Z
+    move-result v3
+    if-eqz v3, :L5
+    invoke-static { v2 }, Lcom/innioasis/ipp/ThemeCfg;->read(Ljava/io/File;)Lorg/json/JSONObject;
+    move-result-object v2
     goto :L6
   :L5
-    const/4 p0, 0
+    const/4 v2, 0
   :L6
-  .line 61
-    if-eqz p0, :L7
-    invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/ThemeCfg;->fromJson(Lorg/json/JSONObject;Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
+  .line 68
+    if-eqz v2, :L7
+    invoke-static { v2, v0, v1 }, Lcom/innioasis/ipp/ThemeCfg;->fromJson(Lorg/json/JSONObject;Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
     goto :L8
   :L7
-  .line 62
+  .line 69
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/ThemeCfg;->fromGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   :L8
-  .line 63
-    invoke-interface { v1 }, Landroid/content/SharedPreferences$Editor;->commit()Z
+  .line 71
+    invoke-static { p0 }, Lcom/innioasis/ipp/Saver;->themePicture(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
   :L9
-  .line 66
-    goto :L11
+  .line 72
+    const-string v0, "ss_image"
+    if-eqz p0, :L11
   :L10
-  .line 64
+    invoke-interface { v1, v0, p0 }, Landroid/content/SharedPreferences$Editor;->putString(Ljava/lang/String;Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+    goto :L12
+  :L11
+  .line 73
+    invoke-interface { v1, v0 }, Landroid/content/SharedPreferences$Editor;->remove(Ljava/lang/String;)Landroid/content/SharedPreferences$Editor;
+  :L12
+  .line 74
+    invoke-interface { v1 }, Landroid/content/SharedPreferences$Editor;->commit()Z
+  :L13
+  .line 77
+    goto :L15
+  :L14
+  .line 75
     move-exception p0
-  .line 65
+  .line 76
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v1, "ThemeCfg.switchTo: "
@@ -749,14 +827,14 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  :L11
-  .line 67
+  :L15
+  .line 78
     return-void
 .end method
 
 .method private static toGlobal(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
   .registers 7
-  .line 120
+  .line 131
     const/4 v0, 0
     const/4 v1, 0
   :L0
@@ -780,7 +858,7 @@
     add-int/lit8 v1, v1, 1
     goto :L0
   :L1
-  .line 121
+  .line 132
     nop
   :L2
     sget-object v1, Lcom/innioasis/ipp/ThemeCfg;->FLAGS:[Ljava/lang/String;
@@ -802,9 +880,9 @@
     add-int/lit8 v0, v0, 1
     goto :L2
   :L3
-  .line 122
+  .line 133
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/ThemeCfg;->rememberSound(Landroid/content/SharedPreferences;Landroid/content/SharedPreferences$Editor;)V
-  .line 123
+  .line 134
     return-void
 .end method
 
@@ -815,25 +893,25 @@
     }
   .end annotation
   .registers 8
-  .line 157
+  .line 168
     new-instance v0, Lorg/json/JSONObject;
     invoke-direct { v0 }, Lorg/json/JSONObject;-><init>()V
-  .line 158
+  .line 169
     const/4 v1, 0
     const/4 v2, 0
   :L0
     sget-object v3, Lcom/innioasis/ipp/ThemeCfg;->KEYS:[Ljava/lang/String;
     array-length v4, v3
     if-ge v2, v4, :L3
-  .line 159
+  .line 170
     sget-object v4, Lcom/innioasis/ipp/ThemeCfg;->NAMES:[Ljava/lang/Object;
     aget-object v4, v4, v2
     check-cast v4, [Ljava/lang/String;
-  .line 160
+  .line 171
     aget-object v5, v3, v2
     invoke-static { p0, v5 }, Lcom/innioasis/ipp/ThemeCfg;->current(Landroid/content/SharedPreferences;Ljava/lang/String;)I
     move-result v5
-  .line 161
+  .line 172
     if-ltz v5, :L1
     array-length v6, v4
     if-ge v5, v6, :L1
@@ -842,15 +920,15 @@
     invoke-virtual { v0, v3, v4 }, Lorg/json/JSONObject;->put(Ljava/lang/String;Ljava/lang/Object;)Lorg/json/JSONObject;
     goto :L2
   :L1
-  .line 162
+  .line 173
     aget-object v3, v3, v2
     invoke-virtual { v0, v3, v5 }, Lorg/json/JSONObject;->put(Ljava/lang/String;I)Lorg/json/JSONObject;
   :L2
-  .line 158
+  .line 169
     add-int/lit8 v2, v2, 1
     goto :L0
   :L3
-  .line 164
+  .line 175
     nop
   :L4
     sget-object v2, Lcom/innioasis/ipp/ThemeCfg;->FLAGS:[Ljava/lang/String;
@@ -863,7 +941,7 @@
     add-int/lit8 v1, v1, 1
     goto :L4
   :L5
-  .line 165
+  .line 176
     const-string v1, "key_tone_sound"
     const-string v2, ""
     invoke-interface { p0, v1, v2 }, Landroid/content/SharedPreferences;->getString(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
@@ -873,7 +951,7 @@
     move-result p0
     const-string v1, "use_theme_key_sound"
     invoke-virtual { v0, v1, p0 }, Lorg/json/JSONObject;->put(Ljava/lang/String;Z)Lorg/json/JSONObject;
-  .line 166
+  .line 177
     return-object v0
 .end method
 
@@ -885,15 +963,15 @@
   .catchall { :L12 .. :L13 } :L14
   .catchall { :L17 .. :L18 } :L19
   .registers 5
-  .line 218
+  .line 229
     nop
-  .line 220
+  .line 231
     const/4 v0, 0
   :L0
     new-instance v1, Ljava/io/FileOutputStream;
     invoke-direct { v1, p0 }, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
   :L1
-  .line 221
+  .line 232
     const/4 v0, 2
   :L2
     invoke-virtual { p1, v0 }, Lorg/json/JSONObject;->toString(I)Ljava/lang/String;
@@ -902,33 +980,33 @@
     invoke-virtual { p1, v0 }, Ljava/lang/String;->getBytes(Ljava/lang/String;)[B
     move-result-object p1
     invoke-virtual { v1, p1 }, Ljava/io/FileOutputStream;->write([B)V
-  .line 222
+  .line 233
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->getFD()Ljava/io/FileDescriptor;
     move-result-object p1
     invoke-virtual { p1 }, Ljava/io/FileDescriptor;->sync()V
   :L3
-  .line 223
+  .line 234
     nop
   :L4
-  .line 228
+  .line 239
     invoke-virtual { v1 }, Ljava/io/FileOutputStream;->close()V
   :L5
     goto :L7
   :L6
     move-exception p0
   :L7
-  .line 223
+  .line 234
     const/4 p0, 1
     return p0
   :L8
-  .line 224
+  .line 235
     move-exception p1
     move-object v0, v1
     goto :L10
   :L9
     move-exception p1
   :L10
-  .line 225
+  .line 236
     new-instance v1, Ljava/lang/StringBuilder;
     invoke-direct { v1 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v2, "ThemeCfg.write "
@@ -945,9 +1023,9 @@
     move-result-object p0
     invoke-static { p0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L11
-  .line 226
+  .line 237
     nop
-  .line 228
+  .line 239
     if-eqz v0, :L15
   :L12
     invoke-virtual { v0 }, Ljava/io/FileOutputStream;->close()V
@@ -956,11 +1034,11 @@
   :L14
     move-exception p0
   :L15
-  .line 226
+  .line 237
     const/4 p0, 0
     return p0
   :L16
-  .line 228
+  .line 239
     move-exception p0
     if-eqz v0, :L20
   :L17
@@ -970,6 +1048,6 @@
   :L19
     move-exception p1
   :L20
-  .line 229
+  .line 240
     throw p0
 .end method

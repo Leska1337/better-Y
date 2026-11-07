@@ -17,29 +17,29 @@
 
 .method constructor <init>(Lcom/innioasis/y1/utils/LoadingDialog;Ljava/lang/String;)V
   .registers 3
-  .line 249
+  .line 274
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 250
+  .line 275
     iput-object p1, p0, Lcom/innioasis/ipp/Loading$ScanText;->d:Lcom/innioasis/y1/utils/LoadingDialog;
-  .line 251
+  .line 276
     iput-object p2, p0, Lcom/innioasis/ipp/Loading$ScanText;->text:Ljava/lang/String;
-  .line 252
+  .line 277
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 255
+  .line 280
     iget-object v0, p0, Lcom/innioasis/ipp/Loading$ScanText;->d:Lcom/innioasis/y1/utils/LoadingDialog;
     invoke-virtual { v0 }, Lcom/innioasis/y1/utils/LoadingDialog;->isShowing()Z
     move-result v0
     if-nez v0, :L0
     return-void
   :L0
-  .line 256
+  .line 281
     iget-object v0, p0, Lcom/innioasis/ipp/Loading$ScanText;->d:Lcom/innioasis/y1/utils/LoadingDialog;
     iget-object v1, p0, Lcom/innioasis/ipp/Loading$ScanText;->text:Ljava/lang/String;
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Loading;->show(Lcom/innioasis/y1/utils/LoadingDialog;Ljava/lang/String;)V
-  .line 257
+  .line 282
     return-void
 .end method

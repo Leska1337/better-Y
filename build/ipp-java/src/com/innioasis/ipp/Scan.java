@@ -81,6 +81,12 @@ public final class Scan {
         return a;
     }
 
+    /** The library scan is walking the card. */
+    public static boolean busy() {
+        Thread w = walker;
+        return w != null && w.isAlive();
+    }
+
     private static synchronized void mark() {
         walker = Thread.currentThread();
         marked = true;

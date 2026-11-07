@@ -325,6 +325,73 @@ Adds a second layout to the on-screen keyboard.
 
 Hold top button to switch.
 
+[screensaver] Screensaver
+Settings of the screen shown instead of the screen going dark.
+
+[ss_on in screensaver] Enable screensaver
+When the Sleep time set in Settings runs out, a screensaver appears instead of the screen locking. Any button closes it and returns to the screen you were on; that press does nothing else.
+
+[ss_style in screensaver if ss_on] Style
+* Clock, left
+* Clock, center
+* Clock, right
+* Clock and date, left
+* Clock and date, center
+* Clock and date, right
+* Playing song, left
+* Playing song, center
+* Playing song, right
+Opens the screensaver itself: turn the wheel to go through the styles, press the centre button to keep one, the top button to leave without changing.
+---
+Playing song shows the cover, the title, the artist and the album; while nothing is in the player it shows the clock. The clock is redrawn once a minute and the song only when it changes.
+
+[ss_bright in screensaver if ss_on] Brightness (%)
+The screen brightness of the screensaver. When the screensaver appears, the brightness smoothly goes down to it from the one set in Settings.
+
+[ss_off in screensaver if ss_on] Turn off the screen after
+* 15 sec
+* 30 sec
+* 45 sec
+* 1 min
+* 2 min
+* 3 min
+* 4 min
+* 5 min
+* 10 min
+* 15 min
+* Never
+How long the screensaver stays before the screen goes off.
+
+[ss_charging in screensaver if ss_on] Do not turn off the screen while charging
+While the player is charging, the screensaver stays on until a button is pressed.
+
+[ss_background in screensaver if ss_on] Background
+* Light
+* Dark
+* Wallpaper
+Wallpaper is the picture set with "Set as" in Photos or Wallpaper; until one is set, it is the theme's global wallpaper.
+
+A theme can bring its own picture: screensaver.png or screensaver.jpg in the theme's folder becomes the screensaver's when the theme is applied. A theme without one leaves the global wallpaper.
+
+[ss_tint in screensaver if ss_on] Background tint
+* Off
+* Light
+* Dark
+* Theme color
+Lays a see-through colour over the background; the clock, the text and the cover stay above it.
+
+[ss_clock_color in screensaver if ss_on] Clock color
+* Light
+* Dark
+* Theme color
+The colour of the clock.
+
+[ss_text_color in screensaver if ss_on] Text color
+* Light
+* Dark
+* Theme color
+The colour of the date, the song title, the artist and the album.
+
 [[coverflow]] Cover Flow
 
 [flow_count] Albums on screen

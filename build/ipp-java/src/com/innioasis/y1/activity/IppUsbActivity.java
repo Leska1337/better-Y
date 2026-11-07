@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.innioasis.ipp.Force;
 import com.innioasis.ipp.Icons;
+import com.innioasis.ipp.Saver;
 import com.innioasis.ipp.Tone;
 import com.innioasis.y1.R;
 import com.innioasis.y1.theme.ThemeManager;
@@ -115,10 +116,13 @@ public final class IppUsbActivity extends Activity {
         FrameLayout root = new FrameLayout(this);
         ImageView wall = new ImageView(this);
         wall.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Bitmap g = WallpaperUtils.INSTANCE.getGlobalBitmap();
+        // the theme's own usb.* is drawn for this screen and goes on as it is; the wallpaper is veiled
+        Bitmap own = Saver.themeUsb(this);
+        Bitmap g = own != null ? own : WallpaperUtils.INSTANCE.getGlobalBitmap();
         if (g != null) wall.setImageBitmap(g);
         root.addView(wall, new FrameLayout.LayoutParams(-1, -1));
         View veil = new View(this);
+        if (own != null) veil.setVisibility(View.GONE);
         // half the stock menu colour washes the wallpaper out: 30% for it
         int alpha = (bg & 0x00FFFFFF) == (MENU_BG & 0x00FFFFFF) ? 0x4D000000 : 0x80000000;
         veil.setBackgroundColor((bg & 0x00FFFFFF) | alpha);

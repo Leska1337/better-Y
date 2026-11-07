@@ -322,6 +322,73 @@ Fügt der Bildschirmtastatur eine zweite Belegung hinzu.
 
 Zum Umschalten die obere Taste halten.
 
+[screensaver] Bildschirmschoner
+Einstellungen des Bildschirms, der statt des Abschaltens erscheint.
+
+[ss_on] Bildschirmschoner aktivieren
+Wenn die in den Einstellungen festgelegte Ruhezeit abläuft, erscheint statt der Bildschirmsperre ein Bildschirmschoner. Jede Taste schließt ihn und kehrt zum vorherigen Bildschirm zurück; dieser Druck bewirkt sonst nichts.
+
+[ss_style] Stil
+* Uhr, links
+* Uhr, Mitte
+* Uhr, rechts
+* Uhr und Datum, links
+* Uhr und Datum, Mitte
+* Uhr und Datum, rechts
+* Aktueller Titel, links
+* Aktueller Titel, Mitte
+* Aktueller Titel, rechts
+Öffnet den Bildschirmschoner selbst: Das Rad blättert durch die Stile, die mittlere Taste übernimmt einen, die obere Taste verlässt ihn ohne Änderung.
+---
+„Aktueller Titel“ zeigt Cover, Titel, Interpret und Album; solange nichts im Player ist, wird die Uhr gezeigt. Die Uhr wird einmal pro Minute neu gezeichnet, der Titel nur beim Wechsel.
+
+[ss_bright] Helligkeit (%)
+Die Bildschirmhelligkeit des Bildschirmschoners. Beim Erscheinen sinkt die Helligkeit sanft von der in den Einstellungen festgelegten auf diese.
+
+[ss_off] Bildschirm ausschalten nach
+* 15 s
+* 30 s
+* 45 s
+* 1 Min.
+* 2 Min.
+* 3 Min.
+* 4 Min.
+* 5 Min.
+* 10 Min.
+* 15 Min.
+* Nie
+Wie lange der Bildschirmschoner bleibt, bevor sich der Bildschirm ausschaltet.
+
+[ss_charging] Bildschirm beim Laden nicht ausschalten
+Solange der Player lädt, bleibt der Bildschirmschoner bis zum nächsten Tastendruck an.
+
+[ss_background] Hintergrund
+* Hell
+* Dunkel
+* Hintergrundbild
+Das Hintergrundbild ist das mit „Festlegen als“ in Fotos oder Hintergrundbild gewählte Bild; bis eines gewählt ist, das globale Hintergrundbild des Themas.
+
+Ein Thema kann ein eigenes Bild mitbringen: screensaver.png oder screensaver.jpg im Ordner des Themas wird beim Anwenden des Themas zum Bild des Bildschirmschoners. Bei einem Thema ohne dieses Bild bleibt das globale Hintergrundbild.
+
+[ss_tint] Hintergrundtönung
+* Aus
+* Hell
+* Dunkel
+* Themenfarbe
+Legt eine durchscheinende Farbe über den Hintergrund; Uhr, Text und Cover bleiben darüber.
+
+[ss_clock_color] Uhrfarbe
+* Hell
+* Dunkel
+* Themenfarbe
+Die Farbe der Uhr.
+
+[ss_text_color] Textfarbe
+* Hell
+* Dunkel
+* Themenfarbe
+Die Farbe von Datum, Titel, Interpret und Album.
+
 [[coverflow]] Cover Flow
 
 [flow_count] Alben auf dem Bildschirm

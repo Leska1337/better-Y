@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..05575e84 100644
+index 2c8d26c0..4e02ef63 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -1,6 +1,7 @@
@@ -18,7 +18,7 @@ index 2c8d26c0..05575e84 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,11 @@
+@@ -64,6 +64,12 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
@@ -27,11 +27,12 @@ index 2c8d26c0..05575e84 100644
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppFlowActivity"/>
 +        <activity android:exported="false" android:name="com.innioasis.y1.activity.IppImportActivity"/>
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppUsbActivity"/>
++        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppSaverActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.LanguageActivity"/>
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..e7c7f626 100644
+index 01b1f730..94d181c7 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -46,7 +47,7 @@ index 01b1f730..e7c7f626 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100494
++  versionCode: 10100500
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -677,15 +678,17 @@ index 4ce64349..a3045553 100644
 +    <TextView android:textSize="10.0sp" android:textColor="#ff102162" android:gravity="center" android:id="@id/tip" android:layout_width="wrap_content" android:layout_height="wrap_content" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@id/content" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/dialog_photos.xml b/build/src/res/layout/dialog_photos.xml
-index 21c1e9d8..2ada0cb4 100644
+index 21c1e9d8..52018246 100644
 --- a/build/src/res/layout/dialog_photos.xml
 +++ b/build/src/res/layout/dialog_photos.xml
-@@ -6,6 +6,8 @@
+@@ -6,6 +6,10 @@
              <TextView android:textSize="18.0sp" android:id="@id/desktop" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/photos_wallpaper_desktop" />
              <View android:background="@drawable/shape_dotted_line" android:layout_width="fill_parent" android:layout_height="1.5dip" android:layerType="software" />
              <TextView android:textSize="18.0sp" android:id="@id/global" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/photos_wallpaper_global" />
 +            <View android:id="@id/ipp_pl_cover_line" android:background="@drawable/shape_dotted_line" android:layout_width="fill_parent" android:layout_height="1.5dip" android:layerType="software" />
 +            <TextView android:textSize="18.0sp" android:id="@id/ipp_pl_cover" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/ipp_pl_cover_photo" />
++            <View android:id="@id/ipp_ss_photo_line" android:background="@drawable/shape_dotted_line" android:layout_width="fill_parent" android:layout_height="1.5dip" android:layerType="software" />
++            <TextView android:textSize="18.0sp" android:id="@id/ipp_ss_photo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_margin="10.0dip" android:text="@string/ipp_ss_photo" />
          </LinearLayout>
      </androidx.cardview.widget.CardView>
      <androidx.recyclerview.widget.RecyclerView android:id="@id/rv" android:background="#ff0a214b" android:layout_width="fill_parent" android:layout_height="70.0dip" app:layout_constraintBottom_toBottomOf="parent" />
@@ -1218,10 +1221,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..986fcf80 100644
+index 50446006..d4a8e0f4 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,530 @@
+@@ -1,417 +1,533 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -2126,6 +2129,9 @@ index 50446006..986fcf80 100644
 +    <string name="ipp_bl_rename">Gerät umbenennen</string>
 +    <string name="ipp_thumb_reset">Album-Miniaturbild zurückgesetzt</string>
 +    <string name="ipp_pl_cover_photo">Listen-Cover</string>
++    <string name="ipp_ss_photo">Bildschirmschoner</string>
++    <string name="ipp_wallpaper_set">Hintergrundbild aktualisiert</string>
++    <string name="ipp_ss_set">Bildschirmschoner aktualisiert</string>
 +    <string name="ipp_set_pl_cover">Als Listen-Cover festlegen</string>
 +    <string name="ipp_reset_pl_cover">Cover zurücksetzen</string>
 +    <string name="ipp_pl_cover_set">Listen-Cover aktualisiert</string>
@@ -2488,10 +2494,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..63bf9d4e 100644
+index 6f5a555d..c4b086b2 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,530 @@
+@@ -1,417 +1,533 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3396,6 +3402,9 @@ index 6f5a555d..63bf9d4e 100644
 +    <string name="ipp_bl_rename">Renombrar dispositivo</string>
 +    <string name="ipp_thumb_reset">Miniatura del álbum restablecida</string>
 +    <string name="ipp_pl_cover_photo">Portada de lista</string>
++    <string name="ipp_ss_photo">Salvapantallas</string>
++    <string name="ipp_wallpaper_set">Fondo de pantalla actualizado</string>
++    <string name="ipp_ss_set">Salvapantallas actualizado</string>
 +    <string name="ipp_set_pl_cover">Usar como portada de la lista</string>
 +    <string name="ipp_reset_pl_cover">Restablecer portada</string>
 +    <string name="ipp_pl_cover_set">Portada de la lista actualizada</string>
@@ -3440,10 +3449,10 @@ index 6f5a555d..63bf9d4e 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..4ac28ce0 100644
+index c242cee4..17c09470 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,530 @@
+@@ -1,417 +1,533 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4348,6 +4357,9 @@ index c242cee4..4ac28ce0 100644
 +    <string name="ipp_bl_rename">Renommer l\'appareil</string>
 +    <string name="ipp_thumb_reset">Vignette d\'album réinitialisée</string>
 +    <string name="ipp_pl_cover_photo">Pochette liste</string>
++    <string name="ipp_ss_photo">Économiseur</string>
++    <string name="ipp_wallpaper_set">Fond d\'écran mis à jour</string>
++    <string name="ipp_ss_set">Économiseur d\'écran mis à jour</string>
 +    <string name="ipp_set_pl_cover">Définir comme pochette de la liste</string>
 +    <string name="ipp_reset_pl_cover">Réinitialiser la pochette</string>
 +    <string name="ipp_pl_cover_set">Pochette de la liste mise à jour</string>
@@ -4392,10 +4404,10 @@ index c242cee4..4ac28ce0 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..a85febe5 100644
+index d82ac6bb..09e6baba 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,530 @@
+@@ -1,417 +1,533 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -5300,6 +5312,9 @@ index d82ac6bb..a85febe5 100644
 +    <string name="ipp_bl_rename">שנה שם למכשיר</string>
 +    <string name="ipp_thumb_reset">התמונה הממוזערת של האלבום אופסה</string>
 +    <string name="ipp_pl_cover_photo">עטיפת פלייליסט</string>
++    <string name="ipp_ss_photo">שומר מסך</string>
++    <string name="ipp_wallpaper_set">הטפט עודכן</string>
++    <string name="ipp_ss_set">שומר המסך עודכן</string>
 +    <string name="ipp_set_pl_cover">הגדר כעטיפת הפלייליסט</string>
 +    <string name="ipp_reset_pl_cover">אפס עטיפה</string>
 +    <string name="ipp_pl_cover_set">עטיפת הפלייליסט עודכנה</string>
@@ -5344,10 +5359,10 @@ index d82ac6bb..a85febe5 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..bb4671af 100644
+index f71d0cb1..7ac9970c 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,447 @@
+@@ -1,334 +1,450 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -6086,6 +6101,9 @@ index f71d0cb1..bb4671af 100644
 +    <string name="ipp_bl_rename">기기 이름 변경</string>
 +    <string name="ipp_thumb_reset">앨범 썸네일이 초기화되었습니다</string>
 +    <string name="ipp_pl_cover_photo">재생 목록 커버로 설정</string>
++    <string name="ipp_ss_photo">화면 보호기로 설정</string>
++    <string name="ipp_wallpaper_set">배경화면이 변경되었습니다</string>
++    <string name="ipp_ss_set">화면 보호기가 변경되었습니다</string>
 +    <string name="ipp_set_pl_cover">재생 목록 커버로 설정</string>
 +    <string name="ipp_reset_pl_cover">커버 초기화</string>
 +    <string name="ipp_pl_cover_set">재생 목록 커버가 변경되었습니다</string>
@@ -6385,10 +6403,10 @@ index d79cf0f6..7b6930fd 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..e9492525 100644
+index 4c84fd2b..d628c8b3 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,199 @@
+@@ -1,86 +1,202 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6631,6 +6649,9 @@ index 4c84fd2b..e9492525 100644
 +    <string name="ipp_bl_rename">Переименовать устройство</string>
 +    <string name="ipp_thumb_reset">Обложка альбома сброшена</string>
 +    <string name="ipp_pl_cover_photo">Обложка плейлиста</string>
++    <string name="ipp_ss_photo">Заставка</string>
++    <string name="ipp_wallpaper_set">Обои обновлены</string>
++    <string name="ipp_ss_set">Заставка обновлена</string>
 +    <string name="ipp_set_pl_cover">Сделать обложкой плейлиста</string>
 +    <string name="ipp_reset_pl_cover">Сбросить обложку</string>
 +    <string name="ipp_pl_cover_set">Обложка плейлиста обновлена</string>
@@ -6675,10 +6696,10 @@ index 4c84fd2b..e9492525 100644
 +    <string name="ipp_coverflow">Cover Flow</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..4e57e829 100644
+index 5665bdd9..0b29072a 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,539 @@
+@@ -1,426 +1,542 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7601,6 +7622,9 @@ index 5665bdd9..4e57e829 100644
 +    <string name="ipp_bl_rename">重命名设备</string>
 +    <string name="ipp_thumb_reset">专辑缩略图已重置</string>
 +    <string name="ipp_pl_cover_photo">设为播放列表封面</string>
++    <string name="ipp_ss_photo">设为屏幕保护</string>
++    <string name="ipp_wallpaper_set">壁纸已更新</string>
++    <string name="ipp_ss_set">屏幕保护已更新</string>
 +    <string name="ipp_set_pl_cover">设为播放列表封面</string>
 +    <string name="ipp_reset_pl_cover">重置封面</string>
 +    <string name="ipp_pl_cover_set">播放列表封面已更新</string>
@@ -8951,10 +8975,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..d18a6dff 100644
+index 803c1e7a..98120085 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5679 @@
+@@ -1,5519 +1,5684 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -18127,6 +18151,8 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="id" name="ipp_bl_spin" id="0x7f0a0300" />
 +    <public type="id" name="ipp_pl_cover" id="0x7f0a0301" />
 +    <public type="id" name="ipp_pl_cover_line" id="0x7f0a0302" />
++    <public type="id" name="ipp_ss_photo" id="0x7f0a0303" />
++    <public type="id" name="ipp_ss_photo_line" id="0x7f0a0304" />
 +    <public type="integer" name="abc_config_activityDefaultDur" id="0x7f0b0000" />
 +    <public type="integer" name="abc_config_activityShortDur" id="0x7f0b0001" />
 +    <public type="integer" name="app_bar_elevation_anim_duration" id="0x7f0b0002" />
@@ -19071,6 +19097,9 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="string" name="ipp_cover_set" id="0x7f110277" />
 +    <public type="string" name="ipp_reset_cover" id="0x7f110278" />
 +    <public type="string" name="ipp_cover_reset" id="0x7f110279" />
++    <public type="string" name="ipp_ss_photo" id="0x7f11027a" />
++    <public type="string" name="ipp_wallpaper_set" id="0x7f11027b" />
++    <public type="string" name="ipp_ss_set" id="0x7f11027c" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -20154,10 +20183,10 @@ index 803c1e7a..d18a6dff 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..bf753664 100644
+index 71fe29d0..c1eb0e99 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,589 @@
+@@ -1,473 +1,592 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -21103,7 +21132,7 @@ index 71fe29d0..bf753664 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev494</string>
++    <string name="ipp_version">v1.1.0-dev500</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21176,6 +21205,9 @@ index 71fe29d0..bf753664 100644
 +    <string name="ipp_bl_rename">Rename device</string>
 +    <string name="ipp_thumb_reset">Album thumbnail reset</string>
 +    <string name="ipp_pl_cover_photo">Set playlist cover</string>
++    <string name="ipp_ss_photo">Set screensaver</string>
++    <string name="ipp_wallpaper_set">Wallpaper updated</string>
++    <string name="ipp_ss_set">Screensaver updated</string>
 +    <string name="ipp_set_pl_cover">Set as playlist cover</string>
 +    <string name="ipp_reset_pl_cover">Reset cover</string>
 +    <string name="ipp_pl_cover_set">Playlist cover updated</string>
@@ -22954,10 +22986,10 @@ index 675ebb2a..dccf95e6 100644
  .end method
  
 diff --git a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-index c4b75839..1a37e9cb 100644
+index c4b75839..024df549 100644
 --- a/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/activity/WallpaperListActivity.smali
-@@ -157,6 +157,17 @@
+@@ -157,6 +157,28 @@
  .method private final updateRight()V
      .locals 3
  
@@ -22972,10 +23004,21 @@ index c4b75839..1a37e9cb 100644
 +
 +    :cond_ipp_style
 +
++    # ipp: the Screensaver row shows the saver's picture (Saver)
++    invoke-static {p0}, Lcom/innioasis/ipp/Saver;->wallpaperPreview(Lcom/innioasis/y1/base/BaseActivity;)Z
++
++    move-result v0
++
++    if-eqz v0, :cond_ipp_saver
++
++    return-void
++
++    :cond_ipp_saver
++
      .line 180
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
  
-@@ -308,31 +319,45 @@
+@@ -308,31 +330,45 @@
  
  # virtual methods
  .method public antiClockwise()V
@@ -23031,7 +23074,7 @@ index c4b75839..1a37e9cb 100644
  
      .line 92
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
-@@ -341,33 +366,48 @@
+@@ -341,33 +377,49 @@
  .end method
  
  .method public clockwise()V
@@ -23050,7 +23093,8 @@ index c4b75839..1a37e9cb 100644
 +    move-result v1
  
 -    const/4 v1, 0x2
-+    const/4 v0, 0x2
++    # ipp: a fourth row, Screensaver (Saver)
++    const/4 v0, 0x3
  
 -    if-ge v0, v1, :cond_0
 +    if-ge v1, v0, :cond_0
@@ -23091,7 +23135,25 @@ index c4b75839..1a37e9cb 100644
  
      .line 83
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->updateRight()V
-@@ -445,7 +485,8 @@
+@@ -378,6 +430,17 @@
+ .method public confirm()V
+     .locals 5
+ 
++    # ipp: the Screensaver row opens the gallery for the saver (Saver)
++    invoke-static {p0}, Lcom/innioasis/ipp/Saver;->wallpaperConfirm(Lcom/innioasis/y1/base/BaseActivity;)Z
++
++    move-result v0
++
++    if-eqz v0, :cond_ipp_saver
++
++    return-void
++
++    :cond_ipp_saver
++
+     .line 102
+     invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getMark()I
+ 
+@@ -445,7 +508,8 @@
  
      move-result-object v0
  
@@ -23101,7 +23163,7 @@ index c4b75839..1a37e9cb 100644
  
      .line 108
      invoke-virtual {p0, v2}, Lcom/innioasis/y1/activity/WallpaperListActivity;->getString(I)Ljava/lang/String;
-@@ -470,6 +511,9 @@
+@@ -470,6 +534,9 @@
  
      move-result-object v0
  
@@ -23111,8 +23173,18 @@ index c4b75839..1a37e9cb 100644
      .line 113
      sget-object v1, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
+@@ -688,6 +755,9 @@
+ 
+     invoke-virtual {v0, v1}, Lcom/innioasis/y1/activity/WallpaperListActivity$adapter$2$1;->addData(Ljava/lang/Object;)V
+ 
++    # ipp: the Screensaver row (Saver)
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Saver;->wallpaperRow(Landroid/content/Context;Ljava/lang/Object;)V
++
+     .line 74
+     sget-object v0, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+ 
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..408e007f 100644
+index 060ed6d1..d5588541 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -23238,7 +23310,7 @@ index 060ed6d1..408e007f 100644
      const/4 v0, 0x1
  
      .line 112
-@@ -2806,6 +2857,24 @@
+@@ -2806,6 +2857,27 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -23260,10 +23332,13 @@ index 060ed6d1..408e007f 100644
 +    # ipp: every screen is known, so a theme change can close them all (Theme.relaunch)
 +    invoke-static {p0}, Lcom/innioasis/ipp/Theme;->created(Landroid/app/Activity;)V
 +
++    # ipp: the screensaver watches for the Sleep time from here on (Saver) -- once per process
++    invoke-static {p0}, Lcom/innioasis/ipp/Saver;->watch(Landroid/content/Context;)V
++
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3078,9 +3147,18 @@
+@@ -3078,9 +3150,18 @@
      .line 146
      invoke-virtual {p0, p1, v0}, Lcom/innioasis/y1/base/BaseActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
  
@@ -23282,7 +23357,7 @@ index 060ed6d1..408e007f 100644
      .line 153
      invoke-direct {p0}, Lcom/innioasis/y1/base/BaseActivity;->setObserve()V
  
-@@ -3463,9 +3541,24 @@
+@@ -3463,9 +3544,24 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -23307,7 +23382,7 @@ index 060ed6d1..408e007f 100644
      .line 347
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -3602,7 +3695,12 @@
+@@ -3602,7 +3698,12 @@
  
      const-string v2, "save state successful"
  
@@ -23321,7 +23396,7 @@ index 060ed6d1..408e007f 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4220,12 @@
+@@ -4122,6 +4223,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -65870,7 +65945,7 @@ index becba77b..6483f5b6 100644
      const/16 v1, 0xc8
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..0969406f 100644
+index 4a99a22f..04dfc1c3 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 @@ -144,7 +144,9 @@
@@ -66040,10 +66115,10 @@ index 4a99a22f..0969406f 100644
  
 -    move-result v1
 +    move-result v2
++
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
  
 -    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
-+    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
-+
 +    move-result-object v3
 +
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
@@ -66071,6 +66146,16 @@ index 4a99a22f..0969406f 100644
      .line 174
      move-object v0, p0
  
+@@ -599,6 +579,9 @@
+ .method public final save(Ljava/lang/String;)V
+     .locals 8
+ 
++    # ipp: opened from the Screensaver row, the pick is the saver's (Saver)
++    invoke-static {p0, p1}, Lcom/innioasis/ipp/Saver;->picked(Landroid/app/Activity;Ljava/lang/String;)V
++
+     const-string v0, "path"
+ 
+     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
 index cdc50c54..aae80378 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperListActivity$adapter$2$1.smali
@@ -73953,6 +74038,25 @@ index 1d20b75c..69ee459c 100644
      const/4 p1, 0x0
  
      .line 40
+diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali
+index 8050ef02..5133629c 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali
+@@ -95,5 +95,14 @@
+ 
+     invoke-virtual {v0}, Landroid/app/ProgressDialog;->dismiss()V
+ 
++    # ipp: say that it worked (Photos)
++    iget-object v0, p0, Lcom/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1;->this$0:Lcom/innioasis/y1/utils/PhotosDialog;
++
++    invoke-static {v0}, Lcom/innioasis/y1/utils/PhotosDialog;->access$getActivity$p(Lcom/innioasis/y1/utils/PhotosDialog;)Lcom/innioasis/y1/activity/PhotosActivity;
++
++    move-result-object v0
++
++    invoke-static {v0}, Lcom/innioasis/ipp/Photos;->wallpaperSet(Landroid/content/Context;)V
++
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali
 index e1fb5701..f226c909 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1.smali
@@ -74022,7 +74126,7 @@ index 0e9f1efd..ff9e4d31 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
-index a813f690..e58031fc 100644
+index a813f690..7c4ccb02 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog.smali
 @@ -468,6 +468,21 @@
@@ -74086,10 +74190,46 @@ index a813f690..e58031fc 100644
  
      const-string v0, "event"
  
-@@ -878,6 +900,40 @@
+@@ -878,6 +900,76 @@
  
      if-eqz p1, :cond_17
  
++    # ipp: the screensaver entry -- this picture as the screensaver's; then as after the cover
++    invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
++
++    move-result-object p1
++
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->setWallpaper:Landroidx/cardview/widget/CardView;
++
++    iget p2, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
++
++    iget-object v4, p0, Lcom/innioasis/y1/utils/PhotosDialog;->path:Ljava/lang/String;
++
++    invoke-static {p1, p2, v4}, Lcom/innioasis/ipp/Photos;->popupSaver(Landroidx/cardview/widget/CardView;ILjava/lang/String;)Z
++
++    move-result p1
++
++    if-eqz p1, :cond_ipp_notsaver
++
++    invoke-direct {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->getBinding()Lcom/innioasis/y1/databinding/DialogPhotosBinding;
++
++    move-result-object p1
++
++    iget-object p1, p1, Lcom/innioasis/y1/databinding/DialogPhotosBinding;->setWallpaper:Landroidx/cardview/widget/CardView;
++
++    invoke-virtual {p1, v2}, Landroidx/cardview/widget/CardView;->setVisibility(I)V
++
++    invoke-virtual {p0}, Lcom/innioasis/y1/utils/PhotosDialog;->dismiss()V
++
++    iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->afterSetWallpaper:Lkotlin/jvm/functions/Function0;
++
++    if-eqz p1, :cond_17
++
++    invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
++
++    goto/16 :goto_5
++
++    :cond_ipp_notsaver
 +    # ipp: the third entry -- this picture as a playlist's cover. The popup and the strip close
 +    # first, then PlGrid asks which playlist.
 +    iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
@@ -74127,7 +74267,7 @@ index a813f690..e58031fc 100644
      .line 103
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
  
-@@ -924,6 +980,13 @@
+@@ -924,6 +1016,13 @@
  
      iget p2, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
@@ -74141,7 +74281,7 @@ index a813f690..e58031fc 100644
      invoke-static {p2}, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
  
      move-result-object p2
-@@ -933,6 +996,10 @@
+@@ -933,6 +1032,10 @@
      .line 112
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
@@ -74152,7 +74292,7 @@ index a813f690..e58031fc 100644
      if-ne p1, v2, :cond_17
  
      .line 113
-@@ -991,11 +1058,14 @@
+@@ -991,11 +1094,14 @@
      if-eqz p1, :cond_a
  
      .line 120
@@ -74161,15 +74301,15 @@ index a813f690..e58031fc 100644
  
 -    if-ne p1, v1, :cond_9
 +    if-lez p1, :cond_9
-+
-+    add-int/lit8 p1, p1, -0x1
  
 -    iput v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
++    add-int/lit8 p1, p1, -0x1
++
 +    iput p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->wallpaperNowPosition:I
  
      .line 121
      :cond_9
-@@ -1005,6 +1075,9 @@
+@@ -1005,6 +1111,9 @@
  
      .line 124
      :cond_a
@@ -74179,7 +74319,7 @@ index a813f690..e58031fc 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      sub-int/2addr p1, v1
-@@ -1013,6 +1086,30 @@
+@@ -1013,6 +1122,30 @@
  
      if-gez p1, :cond_b
  
@@ -74210,7 +74350,7 @@ index a813f690..e58031fc 100644
      .line 125
      iput v0, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
-@@ -1035,11 +1132,22 @@
+@@ -1035,11 +1168,22 @@
  
      .line 131
      :cond_d
@@ -74235,7 +74375,7 @@ index a813f690..e58031fc 100644
  
      goto :goto_5
  
-@@ -1081,20 +1189,31 @@
+@@ -1081,20 +1225,31 @@
      if-eqz p1, :cond_12
  
      .line 136
@@ -74270,7 +74410,7 @@ index a813f690..e58031fc 100644
      iget p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->nowPosition:I
  
      add-int/2addr p1, v1
-@@ -1110,6 +1229,20 @@
+@@ -1110,6 +1265,20 @@
  
      if-lt p1, p2, :cond_13
  
@@ -74291,7 +74431,7 @@ index a813f690..e58031fc 100644
      iget-object p1, p0, Lcom/innioasis/y1/utils/PhotosDialog;->subs:Ljava/util/List;
  
      invoke-interface {p1}, Ljava/util/List;->size()I
-@@ -1155,11 +1288,20 @@
+@@ -1155,11 +1324,20 @@
  
      .line 151
      :cond_16
@@ -74314,7 +74454,7 @@ index a813f690..e58031fc 100644
  
      :cond_17
      :goto_5
-@@ -1213,3 +1355,16 @@
+@@ -1213,3 +1391,16 @@
  
      return-void
  .end method

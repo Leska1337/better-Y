@@ -59,6 +59,28 @@ public final class Loading {
 
     private Loading() { }
 
+    /** Every progress window that went through here; weak, so a closed one goes with its screen. */
+    private static final java.util.WeakHashMap SEEN = new java.util.WeakHashMap();
+
+    private static void seen(Dialog d) {
+        if (d == null) return;
+        synchronized (SEEN) {
+            SEEN.put(d, Boolean.TRUE);
+        }
+    }
+
+    /** A progress window is on screen: loading, a scan, the cache pass. Main thread. */
+    public static boolean up() {
+        synchronized (SEEN) {
+            java.util.Iterator it = SEEN.keySet().iterator();
+            while (it.hasNext()) {
+                Object o = it.next();
+                if (o instanceof Dialog && ((Dialog) o).isShowing()) return true;
+            }
+        }
+        return false;
+    }
+
     /** {@code @drawable/loading_dialog}. */
     private static final int BOX = 0xFFFFFFFF;
     private static final int RADIUS_DIP = 10;
@@ -74,6 +96,7 @@ public final class Loading {
 
     /** From {@code LoadingDialog.onCreate}, right after {@code setContentView}. */
     public static void paint(Dialog d, View root) {
+        seen(d);
         if (root == null) return;
         try {
             ThemeManager tm = ThemeManager.INSTANCE;
@@ -136,6 +159,7 @@ public final class Loading {
      */
     public static void counter(Dialog d) {
         if (d == null) return;
+        seen(d);
         synchronized (COUNTERS) {
             COUNTERS.put(d, Boolean.TRUE);
         }
@@ -212,6 +236,7 @@ public final class Loading {
 
     /** In place of the stock scan window's {@code show()}: kept awake and given the progress line. */
     public static void scan(LoadingDialog d) {
+        seen(d);
         if (d == null) return;
         counter(d);
         d.show();
@@ -268,6 +293,7 @@ public final class Loading {
      * our ring. Parts are found by walking the window — its ids are internal.
      */
     public static void progress(ProgressDialog d) {
+        seen(d);
         if (d == null) return;
         try {
             d.setMessage("");
@@ -310,6 +336,7 @@ public final class Loading {
      * and a second load over the first lands the wrong folder's list.
      */
     public static void hidden(ProgressDialog d) {
+        seen(d);
         if (d == null) return;
         try {
             Window w = d.getWindow();

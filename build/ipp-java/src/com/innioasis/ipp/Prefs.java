@@ -64,6 +64,15 @@ public final class Prefs {
         def("delete_folder", 0);             // stock leaves the folder; taking it is opt-in
         def("keep_awake", 1);
         def("likes", 1);
+        def(Saver.KEY_ON, 0);
+        def(Saver.KEY_STYLE, Saver.STYLE_DEFAULT);
+        def(Saver.KEY_BRIGHT, Saver.BRIGHT_DEFAULT);
+        def(Saver.KEY_OFF, Saver.OFF_DEFAULT);
+        def(Saver.KEY_CHARGING, 0);
+        def(Saver.KEY_BG, Saver.BG_WALLPAPER);   // the theme's global wallpaper until a picture is set
+        def(Saver.KEY_TINT, Saver.TINT_OFF);
+        def(Saver.KEY_CLOCK, Saver.COLOR_LIGHT);
+        def(Saver.KEY_TEXT, Saver.COLOR_LIGHT);
         // Cover Flow's own settings
         def(Flow.KEY_COUNT, 2);              // seven albums, as the iPod shows them
         def(Flow.KEY_SORT, Flow.A_Z);

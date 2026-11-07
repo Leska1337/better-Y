@@ -322,6 +322,73 @@ Añade una segunda distribución al teclado en pantalla.
 
 Mantenga pulsado el botón superior para cambiar.
 
+[screensaver] Salvapantallas
+Ajustes de la pantalla que aparece en lugar de apagarse la pantalla.
+
+[ss_on] Activar salvapantallas
+Cuando se agota el tiempo de suspensión fijado en Ajustes, aparece un salvapantallas en lugar del bloqueo de pantalla. Cualquier botón lo cierra y vuelve a la pantalla anterior; esa pulsación no hace nada más.
+
+[ss_style] Estilo
+* Reloj, izquierda
+* Reloj, centro
+* Reloj, derecha
+* Reloj y fecha, izquierda
+* Reloj y fecha, centro
+* Reloj y fecha, derecha
+* Canción actual, izquierda
+* Canción actual, centro
+* Canción actual, derecha
+Abre el propio salvapantallas: la rueda recorre los estilos, el botón central guarda uno y el superior sale sin cambios.
+---
+«Canción actual» muestra la portada, el título, el artista y el álbum; mientras no hay nada en el reproductor, muestra el reloj. El reloj se redibuja una vez por minuto y la canción solo al cambiar.
+
+[ss_bright] Brillo (%)
+El brillo de la pantalla en el salvapantallas. Al aparecer, el brillo baja suavemente hasta él desde el fijado en Ajustes.
+
+[ss_off] Apagar la pantalla tras
+* 15 s
+* 30 s
+* 45 s
+* 1 min
+* 2 min
+* 3 min
+* 4 min
+* 5 min
+* 10 min
+* 15 min
+* Nunca
+Cuánto tiempo se mantiene el salvapantallas antes de que se apague la pantalla.
+
+[ss_charging] No apagar la pantalla al cargar
+Mientras el reproductor se carga, el salvapantallas se mantiene hasta que se pulse un botón.
+
+[ss_background] Fondo
+* Claro
+* Oscuro
+* Fondo de pantalla
+El fondo de pantalla es la imagen elegida con «Establecer como» en Fotos o Fondo de pantalla; hasta que se elija una, es el fondo global del tema.
+
+Un tema puede traer su propia imagen: screensaver.png o screensaver.jpg en la carpeta del tema pasa a ser la del salvapantallas al aplicar el tema. Con un tema sin ella queda el fondo global.
+
+[ss_tint] Tono del fondo
+* Desactivado
+* Claro
+* Oscuro
+* Color del tema
+Pone un color translúcido sobre el fondo; el reloj, el texto y la portada quedan por encima.
+
+[ss_clock_color] Color del reloj
+* Claro
+* Oscuro
+* Color del tema
+El color del reloj.
+
+[ss_text_color] Color del texto
+* Claro
+* Oscuro
+* Color del tema
+El color de la fecha, el título, el artista y el álbum.
+
 [[coverflow]] Cover Flow
 
 [flow_count] Álbumes en pantalla

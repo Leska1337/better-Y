@@ -228,6 +228,9 @@ public final class Photos {
         boolean withCover = cover != null && PlGrid.on();
         if (cover != null) cover.setVisibility(withCover ? View.VISIBLE : View.GONE);
         if (coverLine != null) coverLine.setVisibility(withCover ? View.VISIBLE : View.GONE);
+        View sv = root.findViewById(R.id.ipp_ss_photo);
+        TextView saver = sv instanceof TextView ? (TextView) sv : null;
+        View saverLine = root.findViewById(R.id.ipp_ss_photo_line);
         float d = card.getResources().getDisplayMetrics().density;
         int pad = (int) (POPUP_ENTRY_DIP * d);
         shapeEntry(desktop, pad);
@@ -237,6 +240,12 @@ public final class Photos {
             shapeEntry(cover, pad);
             wide = Math.max(wide, entryWidth(cover));
             cover.setMinWidth(wide);
+        }
+        if (saver != null) {
+            shapeEntry(saver, pad);
+            wide = Math.max(wide, entryWidth(saver));
+            saver.setMinWidth(wide);
+            if (withCover) cover.setMinWidth(wide);
         }
         desktop.setMinWidth(wide);
         global.setMinWidth(wide);
@@ -256,6 +265,7 @@ public final class Photos {
             View line = i < box.getChildCount() ? box.getChildAt(i) : null;
             if (line != null && !(line instanceof TextView)) hairline(line, rule);
             if (coverLine != null) hairline(coverLine, rule);
+            if (saverLine != null) hairline(saverLine, rule);
         }
         card.setCardBackgroundColor(Color.TRANSPARENT);
         card.setCardElevation(0);
@@ -275,15 +285,40 @@ public final class Photos {
         line.setLayerType(View.LAYER_TYPE_NONE, null);
     }
 
-    /** Stock knew two entries; the third counts only while shown. */
+    /** Stock knew two entries; the playlist cover counts only while shown, the screensaver last. */
     public static int popupNext(CardView card, int pos) {
-        int last = 1;
+        return Math.min(pos + 1, saverPos(card));
+    }
+
+    /** The screensaver entry's position: after the playlist cover when that one is shown. */
+    private static int saverPos(CardView card) {
         try {
             View v = card == null ? null : card.findViewById(R.id.ipp_pl_cover);
-            if (v != null && v.getVisibility() == View.VISIBLE) last = 2;
+            if (v != null && v.getVisibility() == View.VISIBLE) return 3;
         } catch (Throwable t) {
         }
-        return Math.min(pos + 1, last);
+        return 2;
+    }
+
+    /** {@code PhotosDialog.setWallpaper}, once the desktop or global wallpaper is in place. */
+    public static void wallpaperSet(android.content.Context c) {
+        try {
+            android.widget.Toast.makeText(c, R.string.ipp_wallpaper_set, android.widget.Toast.LENGTH_SHORT).show();
+        } catch (Throwable t) {
+        }
+    }
+
+    /** {@code PhotosDialog.onKeyUp}, centre in the popup: the picture becomes the screensaver's. */
+    public static boolean popupSaver(CardView card, int pos, String path) {
+        if (pos != saverPos(card)) return false;
+        try {
+            Prefs.setString(card.getContext(), Saver.KEY_IMAGE, path);
+            Prefs.setInt(card.getContext(), Saver.KEY_BG, Saver.BG_WALLPAPER);
+            Saver.prefetchWall(card.getContext(), null);
+            android.widget.Toast.makeText(card.getContext(), R.string.ipp_ss_set, android.widget.Toast.LENGTH_SHORT).show();
+        } catch (Throwable t) {
+        }
+        return true;
     }
 
     private static void shapeEntry(TextView tv, int pad) {
@@ -313,6 +348,8 @@ public final class Photos {
             if (cover instanceof TextView && cover.getVisibility() == View.VISIBLE) {
                 popupEntry((TextView) cover, pos == 2);
             }
+            View saver = card == null ? null : card.findViewById(R.id.ipp_ss_photo);
+            if (saver instanceof TextView) popupEntry((TextView) saver, pos == saverPos(card));
         } catch (Throwable t) {
         }
     }

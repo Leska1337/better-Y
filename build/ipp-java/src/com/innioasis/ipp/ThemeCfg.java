@@ -30,11 +30,18 @@ public final class ThemeCfg {
     private static final String[] BOX = {"light", "dark", "theme", "off"};
     private static final String[] STYLE = {"default", "simple"};
     private static final String[] BAR = {"default", "centered"};
+    private static final String[] SS_BG = {"light", "dark", "wallpaper"};
+    private static final String[] SS_TINT = {"off", "light", "dark", "theme"};
+    private static final String[] SS_STYLE = {"clock_left", "clock_center", "clock_right",
+            "clock_date_left", "clock_date_center", "clock_date_right",
+            "song_left", "song_center", "song_right"};
 
     /** CHOICE keys with the names their values are written under. */
     private static final String[] KEYS = {"icon_tint", Tint.KEY_TEXT, Tint.KEY_BOX,
-            Tint.KEY_LYRICS, TopBar.KEY_TEXT, Preview.KEY, MenuStyle.KEY, TopBar.KEY_STYLE};
-    private static final Object[] NAMES = {TINT, TINT, BOX, TINT, TINT, TINT, STYLE, BAR};
+            Tint.KEY_LYRICS, TopBar.KEY_TEXT, Preview.KEY, MenuStyle.KEY, TopBar.KEY_STYLE,
+            Saver.KEY_STYLE, Saver.KEY_BG, Saver.KEY_TINT, Saver.KEY_CLOCK, Saver.KEY_TEXT};
+    private static final Object[] NAMES = {TINT, TINT, BOX, TINT, TINT, TINT, STYLE, BAR,
+            SS_STYLE, SS_BG, SS_TINT, TINT, TINT};
 
     /** TOGGLE keys. */
     private static final String[] FLAGS = {Pad.KEY};
@@ -60,6 +67,10 @@ public final class ThemeCfg {
             JSONObject j = to != null && to.isFile() ? read(to) : null;
             if (j != null) fromJson(j, p, e);
             else fromGlobal(p, e);
+            // the theme's own screensaver picture, or none: the saver then shows the global wallpaper
+            String ss = Saver.themePicture(newPath);
+            if (ss != null) e.putString(Saver.KEY_IMAGE, ss);
+            else e.remove(Saver.KEY_IMAGE);
             e.commit();
         } catch (Throwable t) {
             Diag.note("ThemeCfg.switchTo: " + t);

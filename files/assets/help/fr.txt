@@ -322,6 +322,73 @@ Ajoute une deuxième disposition au clavier à l'écran.
 
 Maintenez le bouton du haut pour changer.
 
+[screensaver] Économiseur d'écran
+Réglages de l'écran affiché au lieu de l'extinction de l'écran.
+
+[ss_on] Activer l'économiseur
+Quand le délai de mise en veille réglé dans Paramètres expire, un économiseur d'écran apparaît au lieu du verrouillage. N'importe quel bouton le ferme et revient à l'écran précédent ; cet appui ne fait rien d'autre.
+
+[ss_style] Style
+* Horloge, gauche
+* Horloge, centre
+* Horloge, droite
+* Horloge et date, gauche
+* Horloge et date, centre
+* Horloge et date, droite
+* Titre en cours, gauche
+* Titre en cours, centre
+* Titre en cours, droite
+Ouvre l'économiseur lui-même : la molette parcourt les styles, le bouton central en garde un, le bouton du haut quitte sans changement.
+---
+« Titre en cours » affiche la pochette, le titre, l'artiste et l'album ; tant que rien n'est dans le lecteur, l'horloge s'affiche. L'horloge est redessinée une fois par minute, le titre seulement quand il change.
+
+[ss_bright] Luminosité (%)
+La luminosité de l'écran pendant l'économiseur. À son apparition, la luminosité descend doucement jusqu'à elle depuis celle réglée dans Paramètres.
+
+[ss_off] Éteindre l'écran après
+* 15 s
+* 30 s
+* 45 s
+* 1 min
+* 2 min
+* 3 min
+* 4 min
+* 5 min
+* 10 min
+* 15 min
+* Jamais
+Combien de temps l'économiseur reste avant que l'écran ne s'éteigne.
+
+[ss_charging] Ne pas éteindre l'écran en charge
+Tant que le lecteur charge, l'économiseur reste affiché jusqu'à l'appui sur un bouton.
+
+[ss_background] Fond
+* Clair
+* Sombre
+* Fond d'écran
+Le fond d'écran est l'image choisie avec « Définir comme » dans Photos ou Fond d'écran ; tant qu'aucune n'est choisie, c'est le fond global du thème.
+
+Un thème peut apporter sa propre image : screensaver.png ou screensaver.jpg dans le dossier du thème devient celle de l'économiseur quand le thème est appliqué. Un thème sans elle laisse le fond global.
+
+[ss_tint] Teinte du fond
+* Désactivé
+* Clair
+* Sombre
+* Couleur du thème
+Pose une couleur translucide sur le fond ; l'horloge, le texte et la pochette restent au-dessus.
+
+[ss_clock_color] Couleur de l'horloge
+* Clair
+* Sombre
+* Couleur du thème
+La couleur de l'horloge.
+
+[ss_text_color] Couleur du texte
+* Clair
+* Sombre
+* Couleur du thème
+La couleur de la date, du titre, de l'artiste et de l'album.
+
 [[coverflow]] Cover Flow
 
 [flow_count] Albums à l'écran

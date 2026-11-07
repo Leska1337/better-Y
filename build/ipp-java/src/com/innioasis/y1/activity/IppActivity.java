@@ -49,6 +49,7 @@ import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.ipp.Prefs;
+import com.innioasis.ipp.Saver;
 import com.innioasis.ipp.Theme;
 import com.innioasis.ipp.Tint;
 import com.innioasis.ipp.TopBar;
@@ -128,6 +129,7 @@ public final class IppActivity extends BaseActivity {
         String[] values;       // CHOICE: from the asset; null shows the index
         String showIf;         // if non-null, row shown only while that pref is on
         String parent;         // the SUB row it stands in; null stands in its group
+        boolean wheel;         // CHOICE: opened and turned like a NUMBER, its words for values
 
         // No default here: it lives once, in Prefs.DEFAULTS, read by this screen and the feature.
         Item(int type, String key, int count, int[] choices, String showIf) {
@@ -140,6 +142,11 @@ public final class IppActivity extends BaseActivity {
 
         Item in(String section) {
             parent = section;
+            return this;
+        }
+
+        Item wheel() {
+            wheel = true;
             return this;
         }
     }
@@ -272,6 +279,16 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "likes", 0, null, null));
         // likes_names is deliberately not built: it does nothing yet
         l.add(new Item(CHOICE, Keys.KEY_SECOND, 2, null, null));
+        l.add(new Item(SUB, "screensaver", 0, null, null));
+        l.add(new Item(TOGGLE, Saver.KEY_ON, 0, null, null).in("screensaver"));
+        l.add(new Item(ACTION, Saver.KEY_STYLE, Saver.STYLES, null, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(NUMBER, Saver.KEY_BRIGHT, Saver.BRIGHTS.length, Saver.BRIGHTS, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(CHOICE, Saver.KEY_OFF, Saver.OFF_MS.length, null, Saver.KEY_ON).in("screensaver").wheel());
+        l.add(new Item(TOGGLE, Saver.KEY_CHARGING, 0, null, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(CHOICE, Saver.KEY_BG, 3, null, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(CHOICE, Saver.KEY_TINT, 4, null, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(CHOICE, Saver.KEY_CLOCK, 3, null, Saver.KEY_ON).in("screensaver"));
+        l.add(new Item(CHOICE, Saver.KEY_TEXT, 3, null, Saver.KEY_ON).in("screensaver"));
 
         return l;
     }
@@ -282,6 +299,11 @@ public final class IppActivity extends BaseActivity {
      */
     private static Typeface font() {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
+    }
+
+    /** Sub-items carry the arrow; a section's rows are already inside what they depend on. */
+    private static boolean marked(Item it) {
+        return it.showIf != null && it.parent == null;
     }
 
     private boolean visible(Item it) {
@@ -498,7 +520,7 @@ public final class IppActivity extends BaseActivity {
             for (int v = 0; v < vals.length; v++) widest = Math.max(widest, p.measureText(vals[v]));
             // the row's padding and the value column's
             int room = width - TEXT_START - 5 - 6 - 6 - (int) Math.ceil(widest);
-            if (it.showIf != null) room -= markRoom;
+            if (marked(it)) room -= markRoom;
             if (it.type == SUB || it.type == ACTION) room -= ARROW_ROOM;
             if (room <= 0) return false;
             android.text.StaticLayout l = new android.text.StaticLayout(label(it), p, room,
@@ -681,9 +703,9 @@ public final class IppActivity extends BaseActivity {
         }
         setHeight(h.line, rowPx > 0 ? rowPx : 2 * h.label.getLineHeight() + 4);
         h.label.setText(label(it));
-        h.value.setText(editing && i == editIndex ? String.valueOf(it.choices[editVal]) : valueText(it));
+        h.value.setText(editing && i == editIndex ? candidate(it, editVal) : valueText(it));
         h.value.setVisibility(View.VISIBLE);
-        h.mark.setVisibility(it.showIf != null ? View.VISIBLE : View.GONE);
+        h.mark.setVisibility(marked(it) ? View.VISIBLE : View.GONE);
 
         boolean on = (i == sel);
         int fg = on ? ACCENT : -1;
@@ -809,6 +831,11 @@ public final class IppActivity extends BaseActivity {
         showCandidate(it);
     }
 
+    private static String candidate(Item it, int v) {
+        if (it.choices != null) return String.valueOf(it.choices[v]);
+        return it.values != null ? it.values[v] : String.valueOf(v);
+    }
+
     /** Wrapped both ways: 60 -> 5 going on, 5 -> 60 going back. */
     private void spin(int dir) {
         Item it = (Item) items.get(editIndex);
@@ -830,7 +857,7 @@ public final class IppActivity extends BaseActivity {
         rowList.removeCallbacks(blink);
         TextView v = editValue();
         if (v != null) {
-            v.setText(String.valueOf(it.choices[editVal]));
+            v.setText(candidate(it, editVal));
             v.setVisibility(View.VISIBLE);
         }
         rowList.postDelayed(blink, BLINK_MS);
@@ -941,7 +968,7 @@ public final class IppActivity extends BaseActivity {
             String rival = Feat.rival(it.key);
             if (rival != null && Prefs.on(this, it.key)) Prefs.setBool(this, rival, false);
             render();
-        } else if (it.type == NUMBER) {
+        } else if (it.type == NUMBER || (it.type == CHOICE && it.wheel)) {
             startEdit(it);
         } else if (it.type == CHOICE) {
             int v = (Prefs.val(this, it.key) + 1) % it.count;
@@ -960,6 +987,11 @@ public final class IppActivity extends BaseActivity {
             } else if ("backup".equals(it.key)) {
                 // no Yes/No: Load asks for itself once an archive is picked
                 Backup.open(getActivity(), label(it));
+            } else if (Saver.KEY_STYLE.equals(it.key)) {
+                android.content.Intent i = new android.content.Intent(this, IppSaverActivity.class);
+                i.putExtra(IppSaverActivity.EXTRA_PREVIEW, true);
+                i.putExtra(IppSaverActivity.EXTRA_NAMES, valuesOf(it));
+                startActivity(i);
             } else if ("m3u_import".equals(it.key)) {
                 startActivity(new android.content.Intent(this, IppImportActivity.class));
             } else if ("log".equals(it.key)) {

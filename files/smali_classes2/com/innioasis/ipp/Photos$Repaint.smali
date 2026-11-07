@@ -15,38 +15,38 @@
 
 .method constructor <init>(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 3
-  .line 352
+  .line 389
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 353
+  .line 390
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/Photos$Repaint;->rv:Ljava/lang/ref/WeakReference;
-  .line 354
+  .line 391
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 357
+  .line 394
     iget-object v0, p0, Lcom/innioasis/ipp/Photos$Repaint;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
-  .line 358
+  .line 395
     instance-of v1, v0, Landroidx/recyclerview/widget/RecyclerView;
     if-nez v1, :L0
     return-void
   :L0
-  .line 359
+  .line 396
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 360
+  .line 397
     invoke-static { v0 }, Lcom/innioasis/ipp/Photos;->access$000(Landroidx/recyclerview/widget/RecyclerView;)V
-  .line 361
+  .line 398
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v0
-  .line 362
+  .line 399
     if-eqz v0, :L1
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->notifyDataSetChanged()V
   :L1
-  .line 363
+  .line 400
     return-void
 .end method
