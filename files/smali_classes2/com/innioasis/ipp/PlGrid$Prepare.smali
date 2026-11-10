@@ -26,21 +26,17 @@
 .method public run()V
   .registers 2
   .line 649
-    new-instance v0, Lcom/innioasis/ipp/PlGrid$Sweep;
-    invoke-direct { v0 }, Lcom/innioasis/ipp/PlGrid$Sweep;-><init>()V
-    invoke-virtual { v0 }, Lcom/innioasis/ipp/PlGrid$Sweep;->run()V
-  .line 650
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Prepare;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
     invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$600(Landroidx/recyclerview/widget/RecyclerView;)V
-  .line 651
+  .line 650
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Prepare;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
     invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid$Decoder;->all(Landroidx/recyclerview/widget/RecyclerView;)V
-  .line 652
+  .line 651
     return-void
 .end method

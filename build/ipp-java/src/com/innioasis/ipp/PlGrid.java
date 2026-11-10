@@ -646,7 +646,6 @@ public final class PlGrid {
         private final WeakReference rv;
         Prepare(RecyclerView rv) { this.rv = new WeakReference(rv); }
         public void run() {
-            new Sweep().run();
             firsts((RecyclerView) rv.get());
             Decoder.all((RecyclerView) rv.get());
         }
@@ -1144,6 +1143,23 @@ public final class PlGrid {
         }
     }
 
+    /**
+     * After stock's delete of a playlist: its cover and placeholder mark go with it. Only here — a
+     * sweep against the table would take every cover with it while a reflashed device waits for
+     * its backup to bring the playlists back.
+     */
+    public static void deleted(Object playlist) {
+        try {
+            if (!(playlist instanceof Playlist)) return;
+            UUID id = ((Playlist) playlist).getPlaylistId();
+            if (id == null) return;
+            jpg(id).delete();
+            none(id).delete();
+            mem.remove(id);
+        } catch (Throwable t) {
+        }
+    }
+
     /** "Reset cover": the placeholder, and it stays until the playlist is emptied and refilled. */
     static void reset(UUID id) {
         try {
@@ -1256,30 +1272,6 @@ public final class PlGrid {
             return c.moveToFirst() ? c.getInt(0) : 0;
         } finally {
             c.close();
-        }
-    }
-
-    /** Files of playlists that are gone. Favorites is kept: hidden while likes are off, not gone. */
-    static final class Sweep implements Runnable {
-        public void run() {
-            try {
-                File[] fs = dir().listFiles();
-                if (fs == null || fs.length == 0) return;
-                HashSet ids = new HashSet();
-                ids.add(Fav.UUID_STR);
-                List all = repo().getAllPlaylistSync();
-                if (all == null) return;
-                for (int i = 0; i < all.size(); i++) {
-                    Object o = all.get(i);
-                    if (o instanceof Playlist) ids.add(String.valueOf(((Playlist) o).getPlaylistId()));
-                }
-                for (int i = 0; i < fs.length; i++) {
-                    String n = fs[i].getName();
-                    int dot = n.indexOf('.');
-                    if (dot > 0 && !ids.contains(n.substring(0, dot))) fs[i].delete();
-                }
-            } catch (Throwable t) {
-            }
         }
     }
 
