@@ -302,10 +302,7 @@ public final class Disc {
         return i >= 1 && i <= 26 ? "Side " + (char) ('A' + i - 1) : "Side " + i;
     }
 
-    /**
-     * The strip on the first row of each disc, GONE elsewhere. Rows are then unequal, so
-     * {@code Wheel.list} scrolls by pixels ({@link #variableRows}). Row 0 has none: the bar says it.
-     */
+    /** The strip on the first row of each disc, GONE elsewhere. Row 0 has none: the bar says it. */
     public static void bind(View row, List songs, int pos, Object adapter) {
         if (row == null) return;
         View hv = row.findViewById(R.id.tv_disc_header);
@@ -330,17 +327,6 @@ public final class Disc {
         // noSize keeps that bitmap from setting the strip's height
         ThemeManager.INSTANCE.itemSetBackground(tv, R.drawable.item_no_selected, false);
         Rows.noSize(tv);
-    }
-
-    /** Rows of UNEQUAL height: {@code Wheel.list} scrolls by pixels. */
-    public static boolean variableRows(Object adapter) {
-        return discList(adapter) && enabled;
-    }
-
-    /** A row with a strip, taller than the rest. */
-    public static boolean startsDisc(int pos) {
-        return enabled && groupStart != null && pos > 0 && pos < groupStart.length
-                && groupStart[pos] == pos;
     }
 
     /** The strip's fixed layout height: exact for a row still off screen. */

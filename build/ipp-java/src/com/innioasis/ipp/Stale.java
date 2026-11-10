@@ -62,7 +62,6 @@ public final class Stale {
         try { n += BigCover.prune(need.big, need.folders, drop); } catch (Throwable t) { }
         try { n += FlowCache.prune(need.flow, drop); } catch (Throwable t) { }
         try { n += Art.prune(need.folders, drop); } catch (Throwable t) { }
-        try { n += AlbumInfo.prune(need.albums, need.big, drop); } catch (Throwable t) { }
         return n;
     }
 

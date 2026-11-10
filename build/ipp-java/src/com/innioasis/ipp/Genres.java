@@ -429,27 +429,6 @@ public final class Genres {
         names.addAll(out);
     }
 
-    /** The rows {@link #albumList} will build, for {@code GenreInfo}'s subtitle. */
-    public static int albumCount(Genre g) {
-        try {
-            String genre = g == null ? null : g.getName();
-            if (genre == null) return 0;
-            List all = Albums.allSongs();
-            if (all == null) return 0;
-            LinkedHashSet keys = new LinkedHashSet();
-            for (int i = 0; i < all.size(); i++) {
-                Object o = all.get(i);
-                if (!(o instanceof Song)) continue;
-                Song s = (Song) o;
-                if (!GenreSplit.has(s.getGenre(), genre)) continue;
-                keys.add(Albums.albumKey(s.getAlbum(), s.getPath()));
-            }
-            return keys.size();
-        } catch (Throwable t) {
-            return 0;
-        }
-    }
-
     private static final Comparator KEY_CMP = new KeyCmp();
     private static final class KeyCmp implements Comparator {
         public int compare(Object a, Object b) {

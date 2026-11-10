@@ -18,7 +18,6 @@ import com.innioasis.ipp.AlbumArtist;
 import com.innioasis.ipp.Anim;
 import com.innioasis.ipp.AlbumArtists;
 import com.innioasis.ipp.Feat;
-import com.innioasis.ipp.AlbumInfo;
 import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
 import com.innioasis.ipp.Art;
@@ -1482,7 +1481,6 @@ public final class IppActivity extends BaseActivity {
                     return;
                 }
                 BigCover.beginCache();              // the cover notes saved once, at the end
-                AlbumInfo.beginCache();
                 HashMap byDir = new HashMap();      // the album folder once per directory
                 label = a.getString(R.string.ipp_cache_running);
                 long tPrep0 = SystemClock.uptimeMillis();
@@ -1530,11 +1528,7 @@ public final class IppActivity extends BaseActivity {
                 for (int i = 0; i < m; i++) {
                     String key = (String) keys.get(i);
                     Song s = (Song) reps.get(key);
-                    if (tags && (AlbumInfo.artist(key) == null || AlbumInfo.path(key) == null)) {
-                        AlbumInfo.put(key, s.getArtist(), s.getPath());
-                    }
-                    String path = AlbumInfo.path(key);
-                    if (path == null) path = s.getPath();
+                    String path = s.getPath();
                     AlbumJob j = new AlbumJob();
                     j.key = key;
                     j.path = path;
@@ -1635,7 +1629,6 @@ public final class IppActivity extends BaseActivity {
             } finally {
                 // a pass that died half way still writes down what it learned
                 try { BigCover.endCache(); } catch (Throwable t) { }
-                try { AlbumInfo.endCache(); } catch (Throwable t) { }
                 try { Art.flushStamps(); } catch (Throwable t) { }
                 if (done != -1) {
                     synchronized (touched) {

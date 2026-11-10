@@ -11,9 +11,9 @@
 
 .method public static flush()V
   .registers 0
-  .line 51
+  .line 53
     invoke-static { }, Lcom/innioasis/ipp/Schema;->write()V
-  .line 52
+  .line 54
     return-void
 .end method
 
@@ -26,68 +26,74 @@
 .end method
 
 .method public static get(Ljava/lang/String;)Ljava/lang/String;
-  .registers 1
+  .registers 2
   .line 26
+    const/4 v0, 0
     if-nez p0, :L0
-    const/4 p0, 0
-    return-object p0
+    move-object p0, v0
+    goto :L1
   :L0
-  .line 27
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/YearCache;->repPath(Ljava/lang/String;)Ljava/lang/String;
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumTags;->of(Ljava/lang/String;)Lcom/innioasis/ipp/AlbumTags$Sum;
     move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
-    move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->of(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
-    move-result-object p0
-    return-object p0
+  :L1
+  .line 27
+    if-nez p0, :L2
+    goto :L3
+  :L2
+    iget-object v0, p0, Lcom/innioasis/ipp/AlbumTags$Sum;->albumArtist:Ljava/lang/String;
+  :L3
+    return-object v0
 .end method
 
 .method public static line(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 3
-  .line 60
-    if-nez p0, :L0
+  .line 61
     const/4 v0, 0
+    if-nez p0, :L0
+    move-object p0, v0
     goto :L1
   :L0
     invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object v0
-    invoke-static { v0 }, Lcom/innioasis/ipp/YearCache;->repPath(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object v0
-    invoke-static { v0 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
-    move-result-object v0
-  :L1
-  .line 61
-    if-eqz v0, :L2
-    invoke-static { v0 }, Lcom/innioasis/ipp/AlbumArtist;->of(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p0
-    invoke-virtual { v0 }, Lcom/innioasis/y1/database/Song;->getArtist()Ljava/lang/String;
-    move-result-object p1
-    invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtists;->of(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumTags;->of(Ljava/lang/String;)Lcom/innioasis/ipp/AlbumTags$Sum;
+    move-result-object p0
+  :L1
+  .line 62
+    if-eqz p0, :L2
+    invoke-virtual { p0 }, Lcom/innioasis/ipp/AlbumTags$Sum;->line()Ljava/lang/String;
     move-result-object p0
     return-object p0
   :L2
-  .line 62
-    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object p0
-    invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtists;->of(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+  .line 63
+    invoke-static { v0, p1 }, Lcom/innioasis/ipp/AlbumArtists;->of(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
     return-object p0
 .end method
 
 .method public static needsRead(Ljava/lang/String;)Z
   .registers 1
-  .line 31
-    if-eqz p0, :L0
-    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object p0
+  .line 32
     if-nez p0, :L0
-    const/4 p0, 1
+    const/4 p0, 0
     goto :L1
   :L0
-    const/4 p0, 0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumTags;->of(Ljava/lang/String;)Lcom/innioasis/ipp/AlbumTags$Sum;
+    move-result-object p0
   :L1
+  .line 33
+    if-eqz p0, :L2
+    invoke-virtual { p0 }, Lcom/innioasis/ipp/AlbumTags$Sum;->anyRead()Z
+    move-result p0
+    if-nez p0, :L2
+    const/4 p0, 1
+    goto :L3
+  :L2
+    const/4 p0, 0
+  :L3
     return p0
 .end method
 
@@ -105,50 +111,61 @@
 .end method
 
 .method public static read(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
-  .registers 3
-  .line 36
+  .registers 4
+  .line 38
     const-string v0, ""
     if-eqz p0, :L4
     if-nez p1, :L0
     goto :L4
   :L0
-  .line 37
-    invoke-static { p1 }, Lcom/innioasis/ipp/Schema;->row(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
-    move-result-object p0
-    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->of(Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
-    move-result-object p0
-  .line 38
-    if-eqz p0, :L1
-    return-object p0
-  :L1
   .line 39
-    const/4 p0, 0
-    invoke-static { p1, p0 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
-    move-result-object p0
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v1
   .line 40
-    invoke-static { p1, p0 }, Lcom/innioasis/ipp/Schema;->stage(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;)V
+    if-eqz v1, :L1
+    return-object v1
+  :L1
   .line 41
-    iget-object p1, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-    if-nez p1, :L2
+    const/4 v1, 0
+    invoke-static { p1, v1 }, Lcom/innioasis/ipp/Meta;->read(Ljava/lang/String;Z)Lcom/innioasis/ipp/Meta$Info;
+    move-result-object v1
+    invoke-static { p1, v1 }, Lcom/innioasis/ipp/Schema;->stage(Ljava/lang/String;Lcom/innioasis/ipp/Meta$Info;)V
+  .line 42
+    invoke-static { p0 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
+  .line 43
+    if-nez p0, :L2
     goto :L3
   :L2
-    iget-object p0, p0, Lcom/innioasis/ipp/Meta$Info;->albumArtist:Ljava/lang/String;
-    invoke-virtual { p0 }, Ljava/lang/String;->trim()Ljava/lang/String;
-    move-result-object v0
+    move-object v0, p0
   :L3
     return-object v0
   :L4
-  .line 36
+  .line 38
     return-object v0
 .end method
 
 .method public static readAndSave(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 45
+  .line 47
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtist;->read(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
-  .line 46
+  .line 48
     invoke-static { }, Lcom/innioasis/ipp/Schema;->write()V
-  .line 47
+  .line 49
+    return-object p0
+.end method
+
+.method public static row(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+  .registers 3
+  .line 68
+    if-eqz p0, :L0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Albums;->coverKey(Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v0
+    invoke-static { v0 }, Lcom/innioasis/ipp/AlbumTags;->shown(Ljava/lang/String;)V
+  :L0
+  .line 69
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/AlbumArtist;->line(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+    move-result-object p0
     return-object p0
 .end method

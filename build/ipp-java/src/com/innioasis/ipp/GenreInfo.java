@@ -114,7 +114,7 @@ public final class GenreInfo {
     /**
      * Every genre's artists and albums out of ONE walk of the song list. The answers must be the
      * ones the lists give: artists as {@code getArtistsByGenreSync} (exact tag unless a composite
-     * tag contributes, then {@code Artists.listGenre}), albums as {@code Genres.albumCount}.
+     * tag contributes, then {@code Artists.listGenre}), albums as the folder-split rows {@code Genres.albumList} builds.
      */
     private static HashMap count() {
         boolean split = GenreSplit.enabled();

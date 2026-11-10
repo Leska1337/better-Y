@@ -115,7 +115,7 @@ public final class Prefs {
         // the marker rows name an album artist, which is not the key's to answer
         if (Albums.isAllSongs(album) || Albums.isGenreAll(album)) return Albums.realName(album);
         boolean on = albumYearEnabled();
-        String year = on ? YearCache.get(album) : null;
+        String year = on ? YearCache.label(album) : null;
         // the bind asks on every row: the name and the year are cut and joined once per album
         synchronized (LABELS) {
             Object[] m = (Object[]) LABELS.get(album);

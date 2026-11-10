@@ -16,9 +16,9 @@
 
 .method constructor <init>()V
   .registers 2
-  .line 112
+  .line 111
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 113
+  .line 112
     const/16 v0, 4096
     new-array v0, v0, [J
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
@@ -27,7 +27,7 @@
 
 .method static of(II)J
   .registers 6
-  .line 122
+  .line 121
     int-to-long v0, p0
     const/16 p0, 32
     shl-long/2addr v0, p0
@@ -40,7 +40,7 @@
 
 .method static of(Ljava/lang/String;)J
   .registers 3
-  .line 118
+  .line 117
     invoke-virtual { p0 }, Ljava/lang/String;->hashCode()I
     move-result v0
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
@@ -52,7 +52,7 @@
 
 .method add(J)V
   .registers 6
-  .line 126
+  .line 125
     iget v0, p0, Lcom/innioasis/ipp/Stale$Keys;->n:I
     iget-object v1, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
     array-length v2, v1
@@ -62,19 +62,19 @@
     move-result-object v0
     iput-object v0, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
   :L0
-  .line 127
+  .line 126
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
     iget v1, p0, Lcom/innioasis/ipp/Stale$Keys;->n:I
     add-int/lit8 v2, v1, 1
     iput v2, p0, Lcom/innioasis/ipp/Stale$Keys;->n:I
     aput-wide p1, v0, v1
-  .line 128
+  .line 127
     return-void
 .end method
 
 .method has(J)Z
   .registers 6
-  .line 135
+  .line 134
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
     iget v1, p0, Lcom/innioasis/ipp/Stale$Keys;->n:I
     const/4 v2, 0
@@ -88,11 +88,11 @@
 
 .method seal()V
   .registers 4
-  .line 131
+  .line 130
     iget-object v0, p0, Lcom/innioasis/ipp/Stale$Keys;->a:[J
     const/4 v1, 0
     iget v2, p0, Lcom/innioasis/ipp/Stale$Keys;->n:I
     invoke-static { v0, v1, v2 }, Ljava/util/Arrays;->sort([JII)V
-  .line 132
+  .line 131
     return-void
 .end method

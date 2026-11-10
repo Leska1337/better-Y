@@ -219,7 +219,7 @@
     move-result v1
   .line 118
     if-eqz v1, :L2
-    invoke-static { p0 }, Lcom/innioasis/ipp/YearCache;->get(Ljava/lang/String;)Ljava/lang/String;
+    invoke-static { p0 }, Lcom/innioasis/ipp/YearCache;->label(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
   :L2
   .line 120

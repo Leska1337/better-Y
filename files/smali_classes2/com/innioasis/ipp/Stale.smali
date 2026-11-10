@@ -27,7 +27,7 @@
 
 .method static files(Ljava/io/File;Lcom/innioasis/ipp/Stale$Keys;Ljava/lang/String;ZZ)J
   .registers 10
-  .line 145
+  .line 144
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -35,19 +35,19 @@
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
   :L1
-  .line 146
+  .line 145
     const-wide/16 v0, 0
     if-nez p0, :L2
     return-wide v0
   :L2
-  .line 147
+  .line 146
     nop
-  .line 148
+  .line 147
     const/4 v2, 0
   :L3
     array-length v3, p0
     if-ge v2, v3, :L6
-  .line 149
+  .line 148
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v3
@@ -58,27 +58,27 @@
     if-eqz v3, :L4
     goto :L5
   :L4
-  .line 150
+  .line 149
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->length()J
     move-result-wide v3
     add-long/2addr v0, v3
-  .line 151
+  .line 150
     if-eqz p4, :L5
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
   :L5
-  .line 148
+  .line 147
     add-int/lit8 v2, v2, 1
     goto :L3
   :L6
-  .line 153
+  .line 152
     return-wide v0
 .end method
 
 .method static files(Ljava/io/File;Ljava/util/Set;Z)J
   .registers 8
-  .line 174
+  .line 173
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -86,19 +86,19 @@
     invoke-virtual { p0 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
   :L1
-  .line 175
+  .line 174
     const-wide/16 v0, 0
     if-nez p0, :L2
     return-wide v0
   :L2
-  .line 176
+  .line 175
     nop
-  .line 177
+  .line 176
     const/4 v2, 0
   :L3
     array-length v3, p0
     if-ge v2, v3, :L6
-  .line 178
+  .line 177
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v3
@@ -107,28 +107,28 @@
     if-eqz v3, :L4
     goto :L5
   :L4
-  .line 179
+  .line 178
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->length()J
     move-result-wide v3
     add-long/2addr v0, v3
-  .line 180
+  .line 179
     if-eqz p2, :L5
     aget-object v3, p0, v2
     invoke-virtual { v3 }, Ljava/io/File;->delete()Z
   :L5
-  .line 177
+  .line 176
     add-int/lit8 v2, v2, 1
     goto :L3
   :L6
-  .line 182
+  .line 181
     return-wide v0
 .end method
 
 .method private static key(Ljava/lang/String;Ljava/lang/String;Z)J
   .catchall { :L0 .. :L4 } :L6
   .registers 10
-  .line 159
+  .line 158
     const-wide v0, 9223372036854775807L
   :L0
     invoke-virtual { p0, p1 }, Ljava/lang/String;->endsWith(Ljava/lang/String;)Z
@@ -136,22 +136,22 @@
     if-nez v2, :L1
     return-wide v0
   :L1
-  .line 160
+  .line 159
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v2
     invoke-virtual { p1 }, Ljava/lang/String;->length()I
     move-result p1
     sub-int/2addr v2, p1
-  .line 161
+  .line 160
     const/16 p1, 45
     invoke-virtual { p0, p1 }, Ljava/lang/String;->indexOf(I)I
     move-result p1
-  .line 162
+  .line 161
     if-lez p1, :L5
     if-lt p1, v2, :L2
     goto :L5
   :L2
-  .line 163
+  .line 162
     const/4 v3, 0
     invoke-virtual { p0, v3, p1 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object v3
@@ -159,11 +159,11 @@
     invoke-static { v3, v4 }, Ljava/lang/Long;->parseLong(Ljava/lang/String;I)J
     move-result-wide v5
     long-to-int v3, v5
-  .line 164
+  .line 163
     add-int/lit8 p1, p1, 1
     invoke-virtual { p0, p1, v2 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object p0
-  .line 165
+  .line 164
     if-eqz p2, :L3
     invoke-static { p0, v4 }, Ljava/lang/Long;->parseLong(Ljava/lang/String;I)J
     move-result-wide p0
@@ -173,7 +173,7 @@
     invoke-static { p0 }, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
     move-result p1
   :L4
-  .line 166
+  .line 165
     int-to-long v0, v3
     const/16 p0, 32
     shl-long/2addr v0, p0
@@ -183,12 +183,12 @@
     or-long/2addr p0, v0
     return-wide p0
   :L5
-  .line 162
+  .line 161
     return-wide v0
   :L6
-  .line 167
+  .line 166
     move-exception p0
-  .line 168
+  .line 167
     return-wide v0
 .end method
 
@@ -196,7 +196,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 188
+  .line 187
     new-instance v0, Ljava/lang/StringBuilder;
     invoke-direct { v0 }, Ljava/lang/StringBuilder;-><init>()V
     invoke-virtual { v0, p0 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -219,9 +219,9 @@
     int-to-long p0, p0
     return-wide p0
   :L2
-  .line 189
+  .line 188
     move-exception v0
-  .line 190
+  .line 189
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result p0
     invoke-virtual { p1 }, Ljava/lang/String;->length()I
@@ -233,23 +233,22 @@
 .end method
 
 .method private static run(Z)J
-  .catchall { :L1 .. :L2 } :L25
+  .catchall { :L1 .. :L2 } :L22
   .catchall { :L9 .. :L10 } :L11
   .catchall { :L12 .. :L13 } :L14
   .catchall { :L15 .. :L16 } :L17
   .catchall { :L18 .. :L19 } :L20
-  .catchall { :L21 .. :L22 } :L23
   .registers 9
   .line 35
     invoke-static { }, Lcom/innioasis/ipp/Albums;->allSongs()Ljava/util/List;
     move-result-object v0
   .line 37
     const-wide/16 v1, 0
-    if-eqz v0, :L26
+    if-eqz v0, :L23
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v3
     if-eqz v3, :L0
-    goto/16 :L26
+    goto/16 :L23
   :L0
   .line 38
     nop
@@ -357,27 +356,16 @@
     add-long/2addr v1, v3
     goto :L21
   :L20
-    move-exception v0
+    move-exception p0
   :L21
   .line 65
-    iget-object v0, v6, Lcom/innioasis/ipp/Stale$Need;->albums:Ljava/util/HashSet;
-    iget-object v3, v6, Lcom/innioasis/ipp/Stale$Need;->big:Lcom/innioasis/ipp/Stale$Keys;
-    invoke-static { v0, v3, p0 }, Lcom/innioasis/ipp/AlbumInfo;->prune(Ljava/util/Set;Lcom/innioasis/ipp/Stale$Keys;Z)J
-    move-result-wide v3
-  :L22
-    add-long/2addr v1, v3
-    goto :L24
-  :L23
-    move-exception p0
-  :L24
-  .line 66
     return-wide v1
-  :L25
+  :L22
   .line 42
     move-exception p0
   .line 43
     return-wide v1
-  :L26
+  :L23
   .line 37
     return-wide v1
 .end method

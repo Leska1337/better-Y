@@ -3,9 +3,9 @@ package com.innioasis.ipp;
 import com.innioasis.y1.database.Song;
 
 /**
- * The ALBUM ARTIST tag of an album: its representative's row ({@link Schema}), the song
- * {@link YearCache#repPath} names. It is one deliberate value — "Various Artists" is not two
- * artists — so it is never split and no setting rewrites it.
+ * The ALBUM ARTIST of an album: the commonest one among its songs ({@link AlbumTags}). It is one
+ * deliberate value — "Various Artists" is not two artists — so it is never split and no setting
+ * rewrites it.
  */
 public final class AlbumArtist {
 
@@ -21,24 +21,26 @@ public final class AlbumArtist {
         return s == null ? null : s.getAlbumArtist();
     }
 
-    /** The tag, "" when the file has none, null when never read. */
+    /** "" when the songs read carry none, null when none of them was read. */
     public static String get(String key) {
-        if (key == null) return null;
-        return of(Schema.row(YearCache.repPath(Albums.coverKey(key))));
+        AlbumTags.Sum s = key == null ? null : AlbumTags.of(Albums.coverKey(key));
+        return s == null ? null : s.albumArtist;
     }
 
+    /** Not one song of the album was read: the row's background pass reads one. */
     public static boolean needsRead(String key) {
-        return key != null && get(key) == null;
+        AlbumTags.Sum s = key == null ? null : AlbumTags.of(Albums.coverKey(key));
+        return s != null && !s.anyRead();
     }
 
-    /** Reads the file only when its row never was; then into the row. Not on the UI thread. */
+    /** Reads the file only when no song of the album was; then into the row. Not on the UI thread. */
     public static String read(String key, String path) {
         if (key == null || path == null) return "";
-        String kept = of(Schema.row(path));
+        String kept = get(key);
         if (kept != null) return kept;
-        Meta.Info i = Meta.read(path, false);
-        Schema.stage(path, i);
-        return i.albumArtist == null ? "" : i.albumArtist.trim();
+        Schema.stage(path, Meta.read(path, false));
+        kept = get(key);
+        return kept == null ? "" : kept;
     }
 
     public static String readAndSave(String key, String path) {
@@ -52,13 +54,18 @@ public final class AlbumArtist {
     }
 
     /**
-     * An album row's artist line: exactly the name it is filed under in Album Artists
-     * ({@link AlbumArtists#of}), so no setting may touch it. The representative's own artist
-     * before the row's: the row's is not there until its background pass has run.
+     * An album row's artist line: exactly the name it is filed under in Album Artists, so no
+     * setting may touch it. {@code tagArtist} only for a key that names no album of the list.
      */
     public static String line(String key, String tagArtist) {
-        Song rep = key == null ? null : Schema.row(YearCache.repPath(Albums.coverKey(key)));
-        if (rep != null) return AlbumArtists.of(of(rep), rep.getArtist());
-        return AlbumArtists.of(get(key), tagArtist);
+        AlbumTags.Sum s = key == null ? null : AlbumTags.of(Albums.coverKey(key));
+        if (s != null) return s.line();
+        return AlbumArtists.of(null, tagArtist);
+    }
+
+    /** {@link #line} from the album row's bind: the row is on screen, so its songs get read. */
+    public static String row(String key, String tagArtist) {
+        if (key != null) AlbumTags.shown(Albums.coverKey(key));
+        return line(key, tagArtist);
     }
 }

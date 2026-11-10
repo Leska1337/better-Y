@@ -340,6 +340,9 @@ public final class Schema {
         synchronized (staged) {
             staged.add(s);
         }
+        synchronized (Schema.class) {
+            gen++;                          // the row in memory changed: AlbumTags answers anew
+        }
     }
 
     private static int gen;

@@ -28,13 +28,6 @@ public final class Panel {
         return new File(new File(Constant.ROOT_PATH), DIR);
     }
 
-    /** {@link #card()}, created, for code about to write. */
-    static File dir() {
-        File d = card();
-        if (!d.isDirectory()) d.mkdirs();
-        return d;
-    }
-
     /**
      * What the app writes about itself. The folder's root is kept for files a person puts there
      * ({@code comma_artists.txt}, {@code debug_log}).

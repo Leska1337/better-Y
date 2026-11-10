@@ -511,6 +511,7 @@ public final class Albums {
     /** The song list and what the first screens build from it: album folders, the All songs order. */
     private static void lists() {
         CoverCache.loadMiss();
+        AlbumInfo.clear();      // the file an older build kept album rows in; nothing reads it
         List all = allSongs();
         if (all == null) return;
         foldersOf(all);
@@ -1843,41 +1844,6 @@ public final class Albums {
             base = matched;
         }
         return byDisc(base);
-    }
-
-    /**
-     * The path {@code songs(key, FileName_A_To_Z)} puts first — disc, then file name, the earliest
-     * on a tie — in one pass: no copy, no sort, and not the album song sort that getSongsByAlbum
-     * stores on the way. Null for a key that is not an encoded album: the caller asks stock.
-     */
-    static String firstPath(String key, boolean scoped) {
-        if (!isEnc(key) || isAllSongs(key)) return null;
-        List all = allSongs();
-        if (all == null) return null;
-        ArrayList matched = matchAlbum(all, realName(key), folderOf(key));
-        if (scoped) matched = onlyScoped(matched);
-        Song best = null;
-        int bestDisc = 0;
-        String bestName = null;
-        String lastFolder = null;
-        int folderDisc = 0;
-        for (int i = 0; i < matched.size(); i++) {
-            Song s = (Song) matched.get(i);
-            // discOf, with the folder's number parsed once per folder: the songs of one come together
-            String folder = trackFolder(s.getPath());
-            if (lastFolder == null || !lastFolder.equals(folder)) {
-                lastFolder = folder;
-                folderDisc = discNumber(folder);
-            }
-            int d = folderDisc > 0 ? folderDisc : DiscCache.get(s.getPath());
-            String n = s.getPinyinName() == null ? "" : s.getPinyinName().toLowerCase(Locale.ROOT);
-            if (best == null || d < bestDisc || (d == bestDisc && n.compareTo(bestName) < 0)) {
-                best = s;
-                bestDisc = d;
-                bestName = n;
-            }
-        }
-        return best == null ? null : best.getPath();
     }
 
     /**

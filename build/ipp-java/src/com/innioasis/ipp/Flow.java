@@ -174,7 +174,7 @@ public final class Flow {
         public final String name;
         public final Song rep;
         public volatile String artist;
-        /** Four digits, "" when the tag has none, null while never read. */
+        /** "1997" or "2001 – 2004", "" when the tags have none, null while never read. */
         public volatile String year;
         /** What the row is ordered by. */
         final String sort;
@@ -185,12 +185,11 @@ public final class Flow {
             this.sort = real == null ? "" : real.toLowerCase(Locale.ROOT);
             this.name = name;
             this.rep = rep;
-            this.artist = artistOf(key, rep, AlbumArtist.get(key));
+            this.artist = artistOf(key, rep);
             this.year = yearOf(key, rep);
         }
     }
 
-    /** The representative's own year, else the one the Albums screen found for the album. */
     /**
      * The song the album's cover is drawn from: the one pinned as its thumbnail (Art), else the
      * representative. The slide, its FlowCache file and the picture landing from the player all
@@ -204,17 +203,14 @@ public final class Flow {
         return s;
     }
 
+    /** The album's years, as the Albums screen shows them. */
     static String yearOf(String key, Song rep) {
-        String y = rep.getYear();
-        if (y == null) y = YearCache.get(key);
-        if (y == null) return null;
-        String d = YearCache.digits4(y);
-        return d == null ? "" : d;
+        return YearCache.label(key);
     }
 
-    /** Music → Album Artists' rule: the album artist as written, else the track's first artist. */
-    static String artistOf(String key, Song rep, String aa) {
-        return Other.INSTANCE.unNamed(AlbumArtists.of(aa, rep.getArtist()));
+    /** Music → Album Artists' rule, over all the album's songs. */
+    static String artistOf(String key, Song rep) {
+        return Other.INSTANCE.unNamed(AlbumArtist.line(key, rep.getArtist()));
     }
 
     // The row, kept against the list object it was built from: a pass over a large library is
@@ -242,7 +238,7 @@ public final class Flow {
             if (gen != -1) {
                 for (int i = 0; i < kept.size(); i++) {
                     Item it = (Item) kept.get(i);
-                    it.artist = artistOf(it.key, it.rep, AlbumArtist.get(it.key));
+                    it.artist = artistOf(it.key, it.rep);
                     it.year = yearOf(it.key, it.rep);
                 }
             }
@@ -309,17 +305,14 @@ public final class Flow {
             boolean read = false;
             for (int i = 0; i < out.size(); i++) {
                 Item it = (Item) out.get(i);
-                String aa;
                 if (AlbumArtist.needsRead(it.key)) {
-                    aa = AlbumArtist.read(it.key, it.rep.getPath());
-                    it.artist = artistOf(it.key, it.rep, aa);
+                    AlbumArtist.read(it.key, it.rep.getPath());
+                    it.artist = artistOf(it.key, it.rep);
                     it.year = yearOf(it.key, it.rep);
                     read = true;
-                } else {
-                    aa = AlbumArtist.get(it.key);
                 }
                 // as written, so an unknown artist keeps its sort-last prefix
-                String g = AlbumArtists.of(aa, it.rep.getArtist());
+                String g = AlbumArtist.line(it.key, it.rep.getArtist());
                 groups.put(it, g == null ? "" : g.toLowerCase(Locale.ROOT));
             }
             if (read) AlbumArtist.flush();
@@ -734,10 +727,12 @@ public final class Flow {
                 }
                 Item it = (Item) items.get(want);
                 if (AlbumArtist.needsRead(it.key) || it.year == null) {
-                    it.artist = artistOf(it.key, it.rep, AlbumArtist.read(it.key, it.rep.getPath()));
+                    AlbumArtist.read(it.key, it.rep.getPath());
+                    it.artist = artistOf(it.key, it.rep);
                     it.year = yearOf(it.key, it.rep);
                     readArtist = true;
                 }
+                AlbumTags.shown(it.key);
                 born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
                 build(want);
             }

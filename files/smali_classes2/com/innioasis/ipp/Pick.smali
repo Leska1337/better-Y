@@ -225,22 +225,22 @@
 
 .method public static askCache(Landroid/app/Activity;Lcom/innioasis/ipp/PickDialog$Go;)V
   .registers 12
-  .line 372
+  .line 371
     if-nez p0, :L0
     return-void
   :L0
-  .line 373
+  .line 372
     const/16 v0, 8
     const/4 v1, 2
     const/4 v2, 1
     filled-new-array { v2, v0, v1 }, [I
     move-result-object v7
-  .line 374
+  .line 373
     new-instance v0, Lcom/innioasis/ipp/PickDialog;
     const v1, 2131821072
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v5
-  .line 375
+  .line 374
     const v1, 2131821085
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v6
@@ -250,7 +250,7 @@
     move-object v9, p1
     invoke-direct/range { v3 .. v9 }, Lcom/innioasis/ipp/PickDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;[IZLcom/innioasis/ipp/PickDialog$Go;)V
     invoke-virtual { v0 }, Lcom/innioasis/ipp/PickDialog;->show()V
-  .line 376
+  .line 375
     return-void
 .end method
 
@@ -876,7 +876,7 @@
 
 .method public static sizeText(J)Ljava/lang/String;
   .registers 2
-  .line 367
+  .line 366
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/CacheSize;->format(J)Ljava/lang/String;
     move-result-object p0
     return-object p0
@@ -917,20 +917,12 @@
 .end method
 
 .method private static tagFiles(Ljava/io/File;)J
-  .registers 5
+  .registers 3
   .line 362
     new-instance v0, Ljava/io/File;
-    const-string v1, "ipp_albums.txt"
+    const-string v1, "ipp_genres.txt"
     invoke-direct { v0, p0, v1 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
     invoke-static { v0 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
     move-result-wide v0
-    new-instance v2, Ljava/io/File;
-    const-string v3, "ipp_genres.txt"
-    invoke-direct { v2, p0, v3 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 363
-    invoke-static { v2 }, Lcom/innioasis/ipp/CacheSize;->dirSize(Ljava/io/File;)J
-    move-result-wide v2
-    add-long/2addr v0, v2
-  .line 362
     return-wide v0
 .end method

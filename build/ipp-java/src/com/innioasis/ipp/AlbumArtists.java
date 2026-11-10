@@ -53,16 +53,15 @@ public final class AlbumArtists {
     }
 
     /**
-     * ALBUM ARTIST as written, else the first artist of the representative track (no toggle
-     * applies), else {@code Constant.UNKNOWN}. Also the album row's artist line, so the two screens
-     * always agree.
+     * ALBUM ARTIST as written, else the track's first artist (no toggle applies), else
+     * {@code Constant.UNKNOWN}. For an album the two come from all its songs ({@link AlbumTags}).
      */
     public static String of(String aa, String tagArtist) {
         if (aa != null && aa.trim().length() > 0) return aa.trim();
         return first(tagArtist);
     }
 
-    private static String first(String tag) {
+    static String first(String tag) {
         if (tag == null) return Constant.UNKNOWN;
         String t = tag.trim();
         if (t.length() == 0 || Constant.UNKNOWN.equals(t)) return Constant.UNKNOWN;
@@ -130,59 +129,27 @@ public final class AlbumArtists {
     private static HashMap albumSongs;     // album key -> its songs, of memoAll. Read only
     private static LinkedHashMap names;    // group -> the spelling shown
 
-    /** Album key to its songs: the index Albums keeps for this list, else built here. */
-    private static HashMap albumIndex(List all) {
-        HashMap ix = Albums.albumSongsOf(all);
-        if (ix != null) return ix;
-        ix = new HashMap();
-        HashMap byDir = new HashMap();
-        for (int i = 0; i < all.size(); i++) {
-            Object o = all.get(i);
-            if (!(o instanceof Song)) continue;
-            Song s = (Song) o;
-            if (s.getPath() == null) continue;
-            String k = Albums.keyOf(s, byDir);
-            ArrayList l = (ArrayList) ix.get(k);
-            if (l == null) { l = new ArrayList(); ix.put(k, l); }
-            l.add(s);
-        }
-        return ix;
-    }
-
     /**
-     * Unread tags are read first, one file each — seconds on a first entry, so never on the main
-     * thread then. Rebuilt only when the library or an album artist changes.
+     * An album none of whose songs was read has its representative read first, one file each —
+     * seconds on a first entry, so never on the main thread then. Rebuilt only when the library or
+     * an album artist changes.
      */
     private static synchronized boolean build() {
         List all = Albums.allSongs();
         if (all == null) return false;
         if (all == memoAll && memoGen == AlbumArtist.gen() && keyToNorm != null) return true;
 
-        // The representative is the lowest path, as the album row takes it.
-        HashMap index = albumIndex(all);
-        HashMap reps = new HashMap();
-        Iterator kt = index.entrySet().iterator();
-        while (kt.hasNext()) {
-            Map.Entry e = (Map.Entry) kt.next();
-            List l = (List) e.getValue();
-            Song r = null;
-            for (int i = 0; i < l.size(); i++) {
-                Song s = (Song) l.get(i);
-                if (s.getPath() == null) continue;
-                if (r == null || s.getPath().compareTo(r.getPath()) < 0) r = s;
-            }
-            if (r != null) reps.put(e.getKey(), r);
-        }
-        readMissing(reps);
+        HashMap index = AlbumTags.index(all);
+        readMissing(index);
 
         HashMap k2n = new HashMap();
         HashMap counts = new HashMap();    // group -> (spelling -> albums)
-        Iterator it = reps.entrySet().iterator();
+        Iterator it = index.keySet().iterator();
         while (it.hasNext()) {
-            Map.Entry e = (Map.Entry) it.next();
-            String key = (String) e.getKey();
-            Song rep = (Song) e.getValue();
-            String v = of(AlbumArtist.of(rep), rep.getArtist());
+            String key = (String) it.next();
+            AlbumTags.Sum sum = AlbumTags.of(key);
+            if (sum == null) continue;
+            String v = sum.line();
             String n = Constant.UNKNOWN.equals(v) ? Constant.UNKNOWN : norm(v);
             k2n.put(key, n);
             HashMap c = (HashMap) counts.get(n);
@@ -214,14 +181,13 @@ public final class AlbumArtists {
     }
 
     /** On a few threads; committed here, on one. */
-    private static void readMissing(HashMap reps) {
+    private static void readMissing(HashMap index) {
         ArrayList paths = new ArrayList();
-        Iterator it = reps.entrySet().iterator();
+        Iterator it = index.keySet().iterator();
         while (it.hasNext()) {
-            Map.Entry e = (Map.Entry) it.next();
-            Song rep = (Song) e.getValue();
-            if (AlbumArtist.of(rep) != null) continue;
-            paths.add(rep.getPath());
+            AlbumTags.Sum sum = AlbumTags.of((String) it.next());
+            if (sum == null || sum.anyRead() || sum.rep == null) continue;
+            paths.add(sum.rep);
         }
         if (paths.isEmpty()) return;
         Meta.Info[] out = new Meta.Info[paths.size()];

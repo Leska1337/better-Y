@@ -88,9 +88,6 @@ public final class Help {
         return entries == null ? null : (Row) entries.get(key);
     }
 
-    public static boolean has(Context c, String key) {
-        return raw(c, key) != null;
-    }
     public static List blocks(Context c, String key) {
         List out = new ArrayList();
         String s = raw(c, key);

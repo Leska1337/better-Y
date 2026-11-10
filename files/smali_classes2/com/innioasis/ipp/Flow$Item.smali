@@ -46,9 +46,7 @@
   .line 187
     iput-object p3, p0, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
   .line 188
-    invoke-static { p1 }, Lcom/innioasis/ipp/AlbumArtist;->get(Ljava/lang/String;)Ljava/lang/String;
-    move-result-object p2
-    invoke-static { p1, p3, p2 }, Lcom/innioasis/ipp/Flow;->artistOf(Ljava/lang/String;Lcom/innioasis/y1/database/Song;Ljava/lang/String;)Ljava/lang/String;
+    invoke-static { p1, p3 }, Lcom/innioasis/ipp/Flow;->artistOf(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p2
     iput-object p2, p0, Lcom/innioasis/ipp/Flow$Item;->artist:Ljava/lang/String;
   .line 189

@@ -359,8 +359,7 @@ public final class Pick {
     }
 
     private static long tagFiles(File d) {
-        return CacheSize.dirSize(new File(d, "ipp_albums.txt"))
-                + CacheSize.dirSize(new File(d, "ipp_genres.txt"));
+        return CacheSize.dirSize(new File(d, "ipp_genres.txt"));
     }
 
     public static String sizeText(long n) {

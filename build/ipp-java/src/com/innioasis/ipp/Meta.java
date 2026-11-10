@@ -208,25 +208,6 @@ public final class Meta {
         return blind(path) || oversized(path);
     }
 
-    /** The picture alone, without paying for every key of {@link #read}. */
-    public static byte[] art(String path) {
-        if (path == null) return null;
-        Info mine = own(path, true);
-        if (mine != null && mine.ok) return mine.art;
-        byte[] out = null;
-        MediaMetadataRetriever r = new MediaMetadataRetriever();
-        try {
-            r.setDataSource(path);
-            out = r.getEmbeddedPicture();
-        } catch (Throwable t) {
-        }
-        try {
-            r.release();
-        } catch (Throwable t) {
-        }
-        return out != null && out.length > 0 ? out : tagArt(path);
-    }
-
     /**
      * For callers the retriever already told "no picture" ({@code Art.external}). Null for every
      * ordinary file after ten bytes, so cheap enough for the drawing path.

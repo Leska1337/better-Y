@@ -32,7 +32,7 @@ index 2c8d26c0..4e02ef63 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..18575669 100644
+index 01b1f730..cdf847f0 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -47,7 +47,7 @@ index 01b1f730..18575669 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100502
++  versionCode: 10100507
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20183,7 +20183,7 @@ index 803c1e7a..98120085 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..1db3c53a 100644
+index 71fe29d0..cd80c0e7 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,592 @@
@@ -21132,7 +21132,7 @@ index 71fe29d0..1db3c53a 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev502</string>
++    <string name="ipp_version">v1.1.0-dev507</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -55804,7 +55804,7 @@ index b9220ba5..d300a957 100644
      move-result-object v0
  
 diff --git a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
-index 4ed7ef9f..bb4ee15f 100644
+index 4ed7ef9f..675c4343 100644
 --- a/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/adapter/AlbumListAdapter.smali
 @@ -135,358 +135,285 @@
@@ -55975,11 +55975,11 @@ index 4ed7ef9f..bb4ee15f 100644
 +    invoke-virtual { v1 }, Lcom/innioasis/music/data/Album;->getArtist()Ljava/lang/String;
 +    move-result-object v0
 +  :L5
-+    # ipp: the album's ALBUM ARTIST tag wins over the first song's artist, and the
-+    # "show only the first artist" setting applies only to the latter (see AlbumArtist.line)
++    # ipp: the line is what the album is BY, out of all its songs, and the row being on screen
++    # gets its unread songs read in the background (see AlbumArtist.row)
 +    invoke-virtual { v1 }, Lcom/innioasis/music/data/Album;->getName()Ljava/lang/String;
 +    move-result-object v4
-+    invoke-static { v4, v0 }, Lcom/innioasis/ipp/AlbumArtist;->line(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
++    invoke-static { v4, v0 }, Lcom/innioasis/ipp/AlbumArtist;->row(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 +    move-result-object v0
 +    sget-object v4, Lcom/innioasis/music/util/Other;->INSTANCE:Lcom/innioasis/music/util/Other;
 +    invoke-virtual { v4, v0 }, Lcom/innioasis/music/util/Other;->unNamed(Ljava/lang/String;)Ljava/lang/String;

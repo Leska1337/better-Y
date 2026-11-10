@@ -1,21 +1,17 @@
 package com.innioasis.ipp;
 
-import java.util.HashMap;
 import java.util.List;
 
-import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
-import com.innioasis.y1.database.Y1Repository;
 
 /**
- * An album's year: the year column of ONE of its songs ({@link Schema}). {@code ""} means "read,
- * no year", null "never read". The song is the one {@link AlbumInfo} recorded for the row, else
- * the one {@link #warm} looked up, remembered in memory against the song list it was found in.
+ * An album's year out of all its songs ({@link AlbumTags}): {@link #get} is the earliest, what
+ * lists sort and group by; {@link #label} is what a row shows, a span when the songs differ.
+ * {@code ""} means "read, no year", null "no song of it was read".
  */
 public final class YearCache {
 
-    private static List repsFor;
-    private static final HashMap reps = new HashMap();   // album key -> path
+    private YearCache() { }
 
     /** The first run of four digits: "1997-08-12" gives 1997. */
     static String digits4(String s) {
@@ -40,79 +36,46 @@ public final class YearCache {
         return null;
     }
 
-    /** An album's representative: the one {@link #warm} looked up, else the row's {@link AlbumInfo}. */
-    static synchronized String repPath(String key) {
-        List l = Albums.loaded();
-        if (l != null && l != repsFor) {
-            reps.clear();
-            repsFor = l;
-        }
-        String p = (String) reps.get(key);
-        return p != null ? p : AlbumInfo.path(key);
-    }
-
-    private static synchronized void noteRep(String key, String path) {
-        reps.put(key, path);
-    }
-
-    /** "" for "read, no year", null for "never looked at". The key is canonicalised. */
+    /** The earliest year, four digits. The key is canonicalised. */
     public static String get(String album) {
-        album = Albums.coverKey(album);
-        if (album == null) {
-            return null;
-        }
-        Song s = Schema.row(repPath(album));
-        return s == null ? null : s.getYear();
+        AlbumTags.Sum s = album == null ? null : AlbumTags.of(Albums.coverKey(album));
+        if (s == null || !s.anyRead()) return null;
+        return s.yearMin == 0 ? "" : String.valueOf(s.yearMin);
     }
 
-    /** Reads every album whose song was never read, then stores them in one batch. */
+    /** "1997" or "2001 – 2004". The key is canonicalised. */
+    public static String label(String album) {
+        return album == null ? null : AlbumTags.yearLabel(AlbumTags.of(Albums.coverKey(album)));
+    }
+
+    /** Reads the representative of every album none of whose songs was read, then stores them. */
     public static void warm(List names) {
-        warm(names, true);
-    }
-
-    /** {@link #warm} for the whole library, off the screen: the artist scope of a list has no say. */
-    static void prepare(List keys) {
-        warm(keys, false);
-    }
-
-    private static void warm(List names, boolean scoped) {
         if (names == null) {
             return;
         }
         try {
-            Y1Repository repo = Y1Application.Companion.getY1Repository();
             int n = names.size();
             for (int i = 0; i < n; i++) {
                 String album = Albums.coverKey((String) names.get(i));
                 if (album == null || Albums.isAllSongs(album)) {
                     continue;
                 }
-                if (get(album) != null) {
+                AlbumTags.Sum s = AlbumTags.of(album);
+                if (s == null || s.anyRead() || s.rep == null) {
                     continue;
                 }
-                String path = repPath(album);
-                if (path == null) {
-                    path = Albums.firstPath(album, scoped);
-                    if (path != null) noteRep(album, path);
-                }
-                if (path == null) {
-                    List songs = repo.getSongsByAlbum(album, Y1Repository.SongSortType.FileName_A_To_Z);
-                    if (songs == null || songs.isEmpty()) {
-                        continue;
-                    }
-                    path = ((Song) songs.get(0)).getPath();
-                    if (path == null) {
-                        continue;
-                    }
-                    noteRep(album, path);
-                }
-                Song row = Schema.row(path);
+                Song row = Schema.row(s.rep);
                 if (row != null && Schema.unread(row)) {
-                    Schema.stage(path, Meta.read(path, false));
+                    Schema.stage(s.rep, Meta.read(s.rep, false));
                 }
             }
         } catch (Throwable t) {
         }
         Schema.write();
+    }
+
+    /** {@link #warm} for the whole library, off the screen. */
+    static void prepare(List keys) {
+        warm(keys);
     }
 }

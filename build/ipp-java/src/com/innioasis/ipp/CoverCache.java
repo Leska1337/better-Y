@@ -163,11 +163,31 @@ public final class CoverCache {
                 in.close();
                 String[] keys = new String(b, 0, got, "UTF-8").split("\n");
                 for (int i = 0; i < keys.length; i++) {
-                    if (keys[i].length() > 0) miss.put(keys[i], keys[i]);
+                    if (keys[i].length() == 0) continue;
+                    String k = unpack(keys[i]);
+                    miss.put(k, k);
                 }
             } catch (Throwable t) {
             }
         }
+    }
+
+    // On disk a folder-encoded key drops the "/storage/" every path starts with and keeps the
+    // volume ("sdcard0/…"): a second volume must stay apart. A line still holding the full path
+    // reads as it is.
+    private static final char SEP = (char) 1;
+    private static final String ROOT = "/storage/";
+
+    private static String pack(String key) {
+        int s = key.indexOf(SEP);
+        if (s < 0 || !key.startsWith(ROOT, s + 1)) return key;
+        return key.substring(0, s + 1) + key.substring(s + 1 + ROOT.length());
+    }
+
+    private static String unpack(String line) {
+        int s = line.indexOf(SEP);
+        if (s < 0 || s + 1 >= line.length() || line.charAt(s + 1) == '/') return line;
+        return line.substring(0, s + 1) + ROOT + line.substring(s + 1);
     }
 
     static final class Save implements Runnable {
@@ -215,7 +235,7 @@ public final class CoverCache {
                 for (int i = 0; i < keys.length; i++) {
                     String k = (String) keys[i];
                     if (k.indexOf('\n') >= 0) continue;
-                    w.write(k);
+                    w.write(pack(k));
                     w.write('\n');
                 }
             } finally {
