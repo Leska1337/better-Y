@@ -49,6 +49,9 @@ public final class Queue {
     public static final int MANUAL_MAX = 20;
 
     private static final ArrayList manual = new ArrayList();   // ArrayList<Song> — user-queued
+
+    /** The queued songs themselves, for {@code Moved}; main thread only. */
+    static List manualSongs() { return manual; }
     /**
      * Aligned with {@link #manual}: the list position of a GUEST (spliced in when queued), or -1
      * for an entry the list holds already.

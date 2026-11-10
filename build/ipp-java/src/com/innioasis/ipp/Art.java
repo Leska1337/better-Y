@@ -399,7 +399,7 @@ public final class Art {
      * "Set as album thumbnail": in the preferences, not the cache, so it survives Clear cache and
      * rescans. Keyed by the encoded album, so a same-named album elsewhere keeps its own.
      */
-    private static final String PICK = "thumb";
+    static final String PICK = "thumb";
 
     /** Null too when the pinned song is gone: back to the automatic thumbnail. */
     private static String picked(String albumKey) {

@@ -530,10 +530,16 @@ public final class Scan {
     private static void drop(List unmet) throws Exception {
         HashSet want = new HashSet(unmet);
         ArrayList ids = new ArrayList();
+        HashSet before = paths;
+        Moved moved;
+        synchronized (Scan.class) {
+            moved = (added > 0 && before != null) ? new Moved() : null;
+        }
+        String cols = moved == null ? "" : Moved.COLS;
         long after = -1L;
         while (true) {
-            android.database.Cursor c = PlGrid.db().query("select rowid, path from song where rowid > " + after
-                    + " order by rowid limit " + PORTION, null);
+            android.database.Cursor c = PlGrid.db().query("select rowid, path" + cols + " from song where rowid > "
+                    + after + " order by rowid limit " + PORTION, null);
             int n = 0;
             try {
                 while (c.moveToNext()) {
@@ -541,16 +547,29 @@ public final class Scan {
                     n++;
                     if (c.isNull(1)) continue;
                     String path = c.getString(1);
-                    if (!want.contains(path)) continue;
+                    if (!want.contains(path)) {
+                        if (moved != null && !before.contains(path)) moved.fresh(c, path);
+                        continue;
+                    }
                     Song probe = new Song();
                     probe.setPath(path);
-                    if (!stays(probe)) ids.add(Long.valueOf(after));
+                    if (!stays(probe)) {
+                        ids.add(Long.valueOf(after));
+                        if (moved != null) moved.old(c, path);
+                    }
                     tailStep(DROP);
                 }
             } finally {
                 c.close();
             }
             if (n < PORTION) break;
+        }
+        if (moved != null) {
+            try {
+                moved.relink(PlGrid.db());
+            } catch (Throwable t) {
+                Diag.note("library scan: moved files not matched: " + t);
+            }
         }
         androidx.room.RoomDatabase db = PlGrid.db();
         int gone = 0;

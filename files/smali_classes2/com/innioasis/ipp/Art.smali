@@ -17,7 +17,7 @@
 
 .field private final static OWN_THUMB:[Ljava/lang/String;
 
-.field private final static PICK:Ljava/lang/String; = "thumb\u0001"
+.field final static PICK:Ljava/lang/String; = "thumb\u0001"
 
 .field private final static SAVE_DELAY_MS:J = 5000L
 
