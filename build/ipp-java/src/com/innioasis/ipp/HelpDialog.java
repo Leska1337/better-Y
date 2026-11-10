@@ -162,6 +162,8 @@ public final class HelpDialog extends BaseDialog {
             lp.width = contentW + PAD_X * 2;
             lp.gravity = Gravity.CENTER;
             w.setAttributes(lp);
+            // reading takes longer than the sleep time; the screensaver too stays away while it is up
+            w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         show(0);

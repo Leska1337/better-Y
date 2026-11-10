@@ -76,34 +76,34 @@
 
 .method private font()Landroid/graphics/Typeface;
   .registers 2
-  .line 175
+  .line 177
     sget-object v0, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
     return-object v0
 .end method
 
 .method private paginate(I)Ljava/util/List;
   .registers 25
-  .line 183
+  .line 185
     move-object/from16 v0, p0
     new-instance v1, Ljava/util/ArrayList;
     invoke-direct { v1 }, Ljava/util/ArrayList;-><init>()V
-  .line 184
+  .line 186
     iget-object v2, v0, Lcom/innioasis/ipp/HelpDialog;->body:Landroid/widget/TextView;
     invoke-virtual { v2 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v2
-  .line 185
+  .line 187
     nop
-  .line 186
+  .line 188
     invoke-virtual { v2 }, Landroid/text/TextPaint;->getFontSpacing()F
     move-result v3
     const v4, 1065772646
     mul-float v11, v3, v4
-  .line 187
+  .line 189
     move/from16 v3, p1
     int-to-float v3, v3
     div-float/2addr v3, v11
     float-to-int v3, v3
-  .line 188
+  .line 190
     const/4 v4, 1
     if-ge v3, v4, :L0
     const/4 v12, 1
@@ -111,11 +111,11 @@
   :L0
     move v12, v3
   :L1
-  .line 189
-    nop
-  .line 190
+  .line 191
     nop
   .line 192
+    nop
+  .line 194
     const/4 v13, 0
     const/4 v3, 0
     const/4 v14, 0
@@ -128,27 +128,27 @@
     const/4 v10, 0
     const/16 v4, 440
     if-ge v15, v3, :L22
-  .line 193
+  .line 195
     iget-object v3, v0, Lcom/innioasis/ipp/HelpDialog;->blocks:Ljava/util/List;
     invoke-interface { v3, v15 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v3
     move-object v9, v3
     check-cast v9, Lcom/innioasis/ipp/Help$Block;
-  .line 194
+  .line 196
     iget-object v3, v9, Lcom/innioasis/ipp/Help$Block;->img:Ljava/lang/String;
     if-eqz v3, :L11
-  .line 195
+  .line 197
     new-instance v3, Lcom/innioasis/ipp/HelpDialog$Page;
     iget-object v5, v9, Lcom/innioasis/ipp/Help$Block;->img:Ljava/lang/String;
     iget-object v6, v9, Lcom/innioasis/ipp/Help$Block;->cap:Ljava/lang/String;
     invoke-direct { v3, v10, v5, v6 }, Lcom/innioasis/ipp/HelpDialog$Page;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
     invoke-interface { v1, v3 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 196
+  .line 198
     iget-object v3, v0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
     iget-object v5, v9, Lcom/innioasis/ipp/Help$Block;->img:Ljava/lang/String;
     invoke-static { v3, v5 }, Lcom/innioasis/ipp/Help;->size(Landroid/content/Context;Ljava/lang/String;)[I
     move-result-object v3
-  .line 197
+  .line 199
     if-nez v3, :L3
     int-to-float v3, v4
     goto :L4
@@ -156,48 +156,48 @@
     aget v3, v3, v13
     int-to-float v3, v3
   :L4
-  .line 198
+  .line 200
     int-to-float v4, v4
     cmpl-float v5, v3, v4
     if-lez v5, :L5
     move v3, v4
   :L5
-  .line 199
+  .line 201
     cmpl-float v5, v3, v14
     if-lez v5, :L6
     move v14, v3
   :L6
-  .line 200
+  .line 202
     iget-object v3, v9, Lcom/innioasis/ipp/Help$Block;->cap:Ljava/lang/String;
     if-eqz v3, :L10
-  .line 201
+  .line 203
     iget-object v3, v0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
     iget-object v5, v9, Lcom/innioasis/ipp/Help$Block;->cap:Ljava/lang/String;
     invoke-virtual { v3, v5 }, Landroid/text/TextPaint;->measureText(Ljava/lang/String;)F
     move-result v3
-  .line 202
+  .line 204
     cmpl-float v5, v3, v4
     if-lez v5, :L7
     goto :L8
   :L7
     move v4, v3
   :L8
-  .line 203
+  .line 205
     cmpl-float v3, v4, v14
     if-lez v3, :L9
     move v14, v4
   :L9
-  .line 204
+  .line 206
     move/from16 v18, v11
     goto/16 :L21
   :L10
-  .line 200
+  .line 202
     move/from16 v18, v11
     goto/16 :L21
   :L11
-  .line 207
+  .line 209
     new-instance v8, Landroid/text/StaticLayout;
     iget-object v4, v9, Lcom/innioasis/ipp/Help$Block;->text:Ljava/lang/String;
     sget-object v7, Landroid/text/Layout$Alignment;->ALIGN_NORMAL:Landroid/text/Layout$Alignment;
@@ -215,44 +215,44 @@
     move-object v11, v10
     move/from16 v10, v19
     invoke-direct/range { v3 .. v10 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 209
+  .line 211
     invoke-virtual/range { p1 .. p1 }, Landroid/text/StaticLayout;->getLineCount()I
     move-result v10
-  .line 210
+  .line 212
     const/4 v3, 0
   :L12
     if-ge v3, v10, :L14
-  .line 211
+  .line 213
     move-object/from16 v9, p1
     invoke-virtual { v9, v3 }, Landroid/text/StaticLayout;->getLineWidth(I)F
     move-result v4
-  .line 212
+  .line 214
     cmpl-float v5, v4, v14
     if-lez v5, :L13
     move v14, v4
   :L13
-  .line 210
+  .line 212
     add-int/lit8 v3, v3, 1
     move-object/from16 p1, v9
     goto :L12
   :L14
-  .line 214
+  .line 216
     move-object/from16 v9, p1
     move/from16 v8, v16
     const/4 v3, 0
   :L15
-  .line 215
-    if-ge v3, v10, :L20
-  .line 216
-    add-int v4, v3, v12
   .line 217
+    if-ge v3, v10, :L20
+  .line 218
+    add-int v4, v3, v12
+  .line 219
     if-le v4, v10, :L16
     move/from16 v16, v10
     goto :L17
   :L16
     move/from16 v16, v4
   :L17
-  .line 218
+  .line 220
     iget-object v4, v13, Lcom/innioasis/ipp/Help$Block;->text:Ljava/lang/String;
     invoke-virtual { v9, v3 }, Landroid/text/StaticLayout;->getLineStart(I)I
     move-result v3
@@ -263,11 +263,11 @@
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v4
-  .line 219
+  .line 221
     new-instance v3, Lcom/innioasis/ipp/HelpDialog$Page;
     invoke-direct { v3, v4, v11, v11 }, Lcom/innioasis/ipp/HelpDialog$Page;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
     invoke-interface { v1, v3 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 222
+  .line 224
     new-instance v19, Landroid/text/StaticLayout;
     sget-object v7, Landroid/text/Layout$Alignment;->ALIGN_NORMAL:Landroid/text/Layout$Alignment;
     const v20, 1065772646
@@ -283,7 +283,7 @@
     move/from16 v21, v10
     move/from16 v10, v22
     invoke-direct/range { v3 .. v10 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 224
+  .line 226
     invoke-virtual/range { v19 .. v19 }, Landroid/text/StaticLayout;->getHeight()I
     move-result v3
     if-le v3, v11, :L18
@@ -294,26 +294,26 @@
   :L18
     move v8, v11
   :L19
-  .line 225
+  .line 227
     nop
-  .line 226
+  .line 228
     move/from16 v3, v16
     move-object/from16 v9, v20
     move/from16 v10, v21
     const/4 v11, 0
     goto :L15
   :L20
-  .line 215
+  .line 217
     move v11, v8
     move/from16 v16, v11
   :L21
-  .line 192
+  .line 194
     add-int/lit8 v15, v15, 1
     move/from16 v11, v18
     const/4 v13, 0
     goto/16 :L2
   :L22
-  .line 228
+  .line 230
     move/from16 v18, v11
     invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
     move-result v2
@@ -324,27 +324,27 @@
     invoke-direct { v2, v3, v5, v5 }, Lcom/innioasis/ipp/HelpDialog$Page;-><init>(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
     invoke-interface { v1, v2 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   :L23
-  .line 230
+  .line 232
     float-to-double v2, v14
     invoke-static { v2, v3 }, Ljava/lang/Math;->ceil(D)D
     move-result-wide v2
     double-to-int v2, v2
     add-int/lit8 v2, v2, 4
     iput v2, v0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
-  .line 231
+  .line 233
     if-le v2, v4, :L24
     iput v4, v0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
   :L24
-  .line 232
+  .line 234
     iget v2, v0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
     const/16 v3, 180
     if-ge v2, v3, :L25
     iput v3, v0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
   :L25
-  .line 233
+  .line 235
     add-int/lit8 v2, v16, 2
     iput v2, v0, Lcom/innioasis/ipp/HelpDialog;->textH:I
-  .line 234
+  .line 236
     const/4 v3, 3
     if-ge v2, v3, :L26
     move/from16 v3, v18
@@ -354,59 +354,59 @@
     double-to-int v2, v2
     iput v2, v0, Lcom/innioasis/ipp/HelpDialog;->textH:I
   :L26
-  .line 235
+  .line 237
     return-object v1
 .end method
 
 .method private paint(Landroid/widget/TextView;)V
   .registers 4
-  .line 171
+  .line 173
     sget-object v0, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     const/high16 v1, 0xFF000000
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->dialogTextColor(I)I
     move-result v0
     invoke-virtual { p1, v0 }, Landroid/widget/TextView;->setTextColor(I)V
-  .line 172
+  .line 174
     return-void
 .end method
 
 .method private resize(I)V
   .registers 4
-  .line 300
+  .line 302
     iget-object v0, p0, Lcom/innioasis/ipp/HelpDialog;->hole:Landroid/widget/LinearLayout;
     if-nez v0, :L0
     return-void
   :L0
-  .line 301
+  .line 303
     iget v1, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
     if-le p1, v1, :L1
     move p1, v1
   :L1
-  .line 302
+  .line 304
     invoke-virtual { v0 }, Landroid/widget/LinearLayout;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 303
+  .line 305
     if-eqz v0, :L3
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-ne v1, p1, :L2
     goto :L3
   :L2
-  .line 304
+  .line 306
     iput p1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
-  .line 305
+  .line 307
     iget-object p1, p0, Lcom/innioasis/ipp/HelpDialog;->hole:Landroid/widget/LinearLayout;
     invoke-virtual { p1, v0 }, Landroid/widget/LinearLayout;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 306
+  .line 308
     return-void
   :L3
-  .line 303
+  .line 305
     return-void
 .end method
 
 .method private room()I
   .catchall { :L0 .. :L3 } :L7
   .registers 12
-  .line 268
+  .line 270
     const/16 v0, 268
   :L0
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
@@ -415,7 +415,7 @@
     invoke-virtual { v1 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v1
     iget v1, v1, Landroid/util/DisplayMetrics;->heightPixels:I
-  .line 269
+  .line 271
     iget v2, p0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->head:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingLeft()I
@@ -425,13 +425,13 @@
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingRight()I
     move-result v3
     sub-int/2addr v2, v3
-  .line 270
+  .line 272
     const/4 v3, 1
     if-ge v2, v3, :L1
     iget v2, p0, Lcom/innioasis/ipp/HelpDialog;->contentW:I
   :L1
     move v5, v2
-  .line 271
+  .line 273
     new-instance v10, Landroid/text/StaticLayout;
     iget-object v2, p0, Lcom/innioasis/ipp/HelpDialog;->title:Ljava/lang/String;
     if-nez v2, :L2
@@ -447,7 +447,7 @@
     const/4 v9, 0
     move-object v2, v10
     invoke-direct/range { v2 .. v9 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 273
+  .line 275
     invoke-virtual { v10 }, Landroid/text/StaticLayout;->getHeight()I
     move-result v2
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->head:Landroid/widget/TextView;
@@ -458,7 +458,7 @@
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaddingBottom()I
     move-result v3
     add-int/2addr v2, v3
-  .line 274
+  .line 276
     iget-object v3, p0, Lcom/innioasis/ipp/HelpDialog;->foot:Landroid/widget/TextView;
     invoke-virtual { v3 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object v3
@@ -469,7 +469,7 @@
     move-result-wide v3
     double-to-int v3, v3
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->foot:Landroid/widget/TextView;
-  .line 275
+  .line 277
     invoke-virtual { v4 }, Landroid/widget/TextView;->getPaddingTop()I
     move-result v4
     add-int/2addr v3, v4
@@ -478,40 +478,40 @@
     move-result v4
   :L3
     add-int/2addr v3, v4
-  .line 276
+  .line 278
     add-int/lit8 v1, v1, -20
     add-int/lit8 v1, v1, -16
     sub-int/2addr v1, v2
     sub-int/2addr v1, v3
-  .line 277
+  .line 279
     if-le v1, v0, :L4
     goto :L5
   :L4
     move v0, v1
   :L5
-  .line 278
+  .line 280
     const/16 v1, 60
     if-ge v0, v1, :L6
     const/16 v0, 60
   :L6
-  .line 279
+  .line 281
     return v0
   :L7
-  .line 280
+  .line 282
     move-exception v1
-  .line 281
+  .line 283
     return v0
 .end method
 
 .method private shotHeight(Landroid/graphics/Bitmap;Ljava/lang/String;)I
   .registers 12
-  .line 286
+  .line 288
     iget v0, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
-  .line 287
+  .line 289
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v1
     if-lez v1, :L0
-  .line 288
+  .line 290
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v0
     int-to-long v0, v0
@@ -523,16 +523,16 @@
     int-to-long v2, v2
     div-long/2addr v0, v2
     long-to-int v0, v0
-  .line 289
+  .line 291
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v1
     if-le v0, v1, :L0
     invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v0
   :L0
-  .line 291
+  .line 293
     if-eqz p2, :L1
-  .line 292
+  .line 294
     new-instance p1, Landroid/text/StaticLayout;
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     invoke-virtual { v1 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
@@ -545,7 +545,7 @@
     move-object v1, p1
     move-object v2, p2
     invoke-direct/range { v1 .. v8 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 294
+  .line 296
     invoke-virtual { p1 }, Landroid/text/StaticLayout;->getHeight()I
     move-result p1
     iget-object p2, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
@@ -554,7 +554,7 @@
     add-int/2addr p1, p2
     add-int/2addr v0, p1
   :L1
-  .line 296
+  .line 298
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->bodyMax:I
     if-le v0, p1, :L2
     move v0, p1
@@ -564,7 +564,7 @@
 
 .method private show(I)V
   .registers 8
-  .line 239
+  .line 241
     iget-object v0, p0, Lcom/innioasis/ipp/HelpDialog;->pages:Ljava/util/List;
     if-eqz v0, :L18
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
@@ -572,12 +572,12 @@
     if-eqz v0, :L0
     goto/16 :L18
   :L0
-  .line 240
+  .line 242
     const/4 v0, 0
     if-gez p1, :L1
     const/4 p1, 0
   :L1
-  .line 241
+  .line 243
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->pages:Ljava/util/List;
     invoke-interface { v1 }, Ljava/util/List;->size()I
     move-result v1
@@ -587,27 +587,27 @@
     move-result p1
     add-int/lit8 p1, p1, -1
   :L2
-  .line 242
+  .line 244
     iput p1, p0, Lcom/innioasis/ipp/HelpDialog;->page:I
-  .line 243
+  .line 245
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->pages:Ljava/util/List;
     invoke-interface { v1, p1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Lcom/innioasis/ipp/HelpDialog$Page;
-  .line 245
+  .line 247
     iget-object v1, p1, Lcom/innioasis/ipp/HelpDialog$Page;->img:Ljava/lang/String;
     const-string v2, ""
     const/16 v3, 8
     if-eqz v1, :L14
-  .line 246
+  .line 248
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
     iget-object v4, p1, Lcom/innioasis/ipp/HelpDialog$Page;->img:Ljava/lang/String;
     invoke-static { v1, v4 }, Lcom/innioasis/ipp/Help;->image(Landroid/content/Context;Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v1
-  .line 247
+  .line 249
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->shot:Landroid/widget/ImageView;
     invoke-virtual { v4, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 248
+  .line 250
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->shot:Landroid/widget/ImageView;
     if-nez v1, :L3
     const/16 v5, 8
@@ -616,7 +616,7 @@
     const/4 v5, 0
   :L4
     invoke-virtual { v4, v5 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 249
+  .line 251
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->body:Landroid/widget/TextView;
     if-nez v1, :L5
     const/4 v5, 0
@@ -625,12 +625,12 @@
     const/16 v5, 8
   :L6
     invoke-virtual { v4, v5 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 250
+  .line 252
     if-nez v1, :L7
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->body:Landroid/widget/TextView;
     invoke-virtual { v4, v2 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   :L7
-  .line 251
+  .line 253
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     iget-object v5, p1, Lcom/innioasis/ipp/HelpDialog$Page;->cap:Ljava/lang/String;
     if-nez v5, :L8
@@ -640,7 +640,7 @@
     iget-object v5, p1, Lcom/innioasis/ipp/HelpDialog$Page;->cap:Ljava/lang/String;
   :L9
     invoke-virtual { v4, v5 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 252
+  .line 254
     iget-object v4, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     iget-object v5, p1, Lcom/innioasis/ipp/HelpDialog$Page;->cap:Ljava/lang/String;
     if-eqz v5, :L10
@@ -649,7 +649,7 @@
     const/16 v0, 8
   :L11
     invoke-virtual { v4, v0 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 253
+  .line 255
     if-nez v1, :L12
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->textH:I
     goto :L13
@@ -659,31 +659,31 @@
     move-result p1
   :L13
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->resize(I)V
-  .line 254
+  .line 256
     goto :L15
   :L14
-  .line 255
+  .line 257
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->shot:Landroid/widget/ImageView;
     invoke-virtual { v1, v3 }, Landroid/widget/ImageView;->setVisibility(I)V
-  .line 256
+  .line 258
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->shot:Landroid/widget/ImageView;
     const/4 v4, 0
     invoke-virtual { v1, v4 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 257
+  .line 259
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->cap:Landroid/widget/TextView;
     invoke-virtual { v1, v3 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 258
+  .line 260
     iget-object v1, p0, Lcom/innioasis/ipp/HelpDialog;->body:Landroid/widget/TextView;
     invoke-virtual { v1, v0 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 259
+  .line 261
     iget-object v0, p0, Lcom/innioasis/ipp/HelpDialog;->body:Landroid/widget/TextView;
     iget-object p1, p1, Lcom/innioasis/ipp/HelpDialog$Page;->text:Ljava/lang/String;
     invoke-virtual { v0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 260
+  .line 262
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->textH:I
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->resize(I)V
   :L15
-  .line 262
+  .line 264
     iget-object p1, p0, Lcom/innioasis/ipp/HelpDialog;->foot:Landroid/widget/TextView;
     iget-object v0, p0, Lcom/innioasis/ipp/HelpDialog;->pages:Ljava/util/List;
     invoke-interface { v0 }, Ljava/util/List;->size()I
@@ -710,16 +710,16 @@
     move-result-object v2
   :L17
     invoke-virtual { p1, v2 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 263
+  .line 265
     return-void
   :L18
-  .line 239
+  .line 241
     return-void
 .end method
 
 .method public longDown(II)V
   .registers 4
-  .line 323
+  .line 325
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_ENTER()I
     move-result v0
@@ -729,17 +729,17 @@
     iget-object p1, p0, Lcom/innioasis/ipp/HelpDialog;->activity:Landroid/app/Activity;
     instance-of p2, p1, Lcom/innioasis/y1/base/BaseActivity;
     if-eqz p2, :L0
-  .line 325
+  .line 327
     check-cast p1, Lcom/innioasis/y1/base/BaseActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/base/BaseActivity;->askShutdown()V
   :L0
-  .line 327
+  .line 329
     return-void
 .end method
 
 .method public longDownFinish(I)V
   .registers 2
-  .line 331
+  .line 333
     return-void
 .end method
 
@@ -971,18 +971,21 @@
     iput v3, v0, Landroid/view/WindowManager$LayoutParams;->gravity:I
   .line 164
     invoke-virtual { p1, v0 }, Landroid/view/Window;->setAttributes(Landroid/view/WindowManager$LayoutParams;)V
+  .line 166
+    const/16 v0, 128
+    invoke-virtual { p1, v0 }, Landroid/view/Window;->addFlags(I)V
   :L1
-  .line 167
+  .line 169
     invoke-direct { p0, v7 }, Lcom/innioasis/ipp/HelpDialog;->show(I)V
-  .line 168
+  .line 170
     return-void
 .end method
 
 .method public shortUp(I)V
   .registers 4
-  .line 310
+  .line 312
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
-  .line 311
+  .line 313
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_UP()I
     move-result v1
     if-eq p1, v1, :L3
@@ -991,7 +994,7 @@
     if-ne p1, v1, :L0
     goto :L3
   :L0
-  .line 313
+  .line 315
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_DOWN()I
     move-result v1
     if-eq p1, v1, :L2
@@ -1000,25 +1003,25 @@
     if-ne p1, v1, :L1
     goto :L2
   :L1
-  .line 315
+  .line 317
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_MENU()I
     move-result v0
     if-ne p1, v0, :L4
-  .line 316
+  .line 318
     invoke-virtual { p0 }, Lcom/innioasis/ipp/HelpDialog;->dismiss()V
     goto :L4
   :L2
-  .line 314
+  .line 316
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->page:I
     add-int/lit8 p1, p1, 1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->show(I)V
     goto :L4
   :L3
-  .line 312
+  .line 314
     iget p1, p0, Lcom/innioasis/ipp/HelpDialog;->page:I
     add-int/lit8 p1, p1, -1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/HelpDialog;->show(I)V
   :L4
-  .line 318
+  .line 320
     return-void
 .end method
