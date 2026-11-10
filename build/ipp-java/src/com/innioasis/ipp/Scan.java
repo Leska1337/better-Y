@@ -8,6 +8,7 @@ import com.innioasis.y1.database.Y1Repository;
 import com.innioasis.y1.utils.HanziToPinyin;
 
 import com.innioasis.music.objects.Constant;
+import com.innioasis.y1.R;
 import com.innioasis.y1.Y1Application;
 
 import java.io.File;
@@ -564,9 +565,10 @@ public final class Scan {
             }
             if (n < PORTION) break;
         }
+        int relinked = 0;
         if (moved != null) {
             try {
-                moved.relink(PlGrid.db());
+                relinked = moved.relink(PlGrid.db());
             } catch (Throwable t) {
                 Diag.note("library scan: moved files not matched: " + t);
             }
@@ -598,6 +600,28 @@ public final class Scan {
         }
         Diag.note("library scan: " + gone + " row(s) of missing files dropped in bulk");
         if (gone > 0) Ipp.libraryChanged();
+        // a move counted as moved only once its old rows are all gone: no "Moved" for a clean-up cut short
+        if (relinked > 0 && gone == ids.size()) {
+            com.innioasis.music.objects.Global g = com.innioasis.music.objects.Global.INSTANCE;
+            g.setScanDeletedCount(Math.max(0, g.getScanDeletedCount() - relinked));
+            g.setScanNewAddedCount(Math.max(0, g.getScanNewAddedCount() - relinked));
+            movedCount = relinked;
+        }
+    }
+
+    /** Files this scan saw move; shown in the scan's toast, reset as the scan starts. */
+    private static volatile int movedCount;
+
+    /** From the scan's start, next to stock's {@code Global.initScanState}. */
+    public static void scanStarts() {
+        movedCount = 0;
+    }
+
+    /** Stock's scan toast, with the moved files in a line of their own when there are any. */
+    public static String toast(android.content.Context c, String text) {
+        int n = movedCount;
+        if (n <= 0 || c == null || text == null) return text;
+        return text + '\n' + c.getString(R.string.ipp_scan_moved) + n;
     }
 
     private static final int DROP_BATCH = 500;

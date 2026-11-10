@@ -824,9 +824,9 @@ public final class Albums {
         if (scanToast && a != null) {
             scanToast = false;
             try {
-                Toast.makeText(a, a.getString(R.string.total_count) + Global.INSTANCE.getScanTotalCount()
+                Toast.makeText(a, Scan.toast(a, a.getString(R.string.total_count) + Global.INSTANCE.getScanTotalCount()
                         + '\n' + a.getString(R.string.newly_added) + Global.INSTANCE.getScanNewAddedCount()
-                        + '\n' + a.getString(R.string.deleted_count) + Global.INSTANCE.getScanDeletedCount(),
+                        + '\n' + a.getString(R.string.deleted_count) + Global.INSTANCE.getScanDeletedCount()),
                         Toast.LENGTH_SHORT).show();
             } catch (Throwable t) {
             }

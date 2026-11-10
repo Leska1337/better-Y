@@ -76,9 +76,12 @@ final class Moved {
         gone.add(row(c, path));
     }
 
-    /** Before the rows are deleted. Whatever fails here, the clean-up goes on. */
-    void relink(RoomDatabase db) {
-        if (strict.isEmpty() || gone.isEmpty()) return;
+    /**
+     * Before the rows are deleted; answers how many moved files keep their links, 0 when the
+     * database could not be rewritten. Whatever fails here, the clean-up goes on.
+     */
+    int relink(RoomDatabase db) {
+        if (strict.isEmpty() || gone.isEmpty()) return 0;
         ArrayList claimed = new ArrayList();
         for (int i = 0; i < gone.size(); i++) {
             Row r = (Row) gone.get(i);
@@ -97,9 +100,11 @@ final class Moved {
             pairs.add(p);
             moves.put(((Row) p[0]).path, to);
         }
-        if (pairs.isEmpty()) return;
+        if (pairs.isEmpty()) return 0;
+        boolean kept = false;
         try {
             tables(db, pairs);
+            kept = true;
         } catch (Throwable t) {
             Diag.note("library scan: moved files not relinked in the database: " + t);
         }
@@ -109,6 +114,7 @@ final class Moved {
         }
         new Handler(Looper.getMainLooper()).post(new Requeue(moves));
         Diag.note("library scan: " + pairs.size() + " moved file(s) keep their links");
+        return kept ? pairs.size() : 0;
     }
 
     private static void tables(RoomDatabase db, List pairs) {

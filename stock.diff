@@ -32,7 +32,7 @@ index 2c8d26c0..4e02ef63 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..416c0cc0 100644
+index 01b1f730..1d8045e8 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -47,7 +47,7 @@ index 01b1f730..416c0cc0 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100508
++  versionCode: 10100509
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -1221,10 +1221,10 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..d4a8e0f4 100644
+index 50446006..0442e14d 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
-@@ -1,417 +1,533 @@
+@@ -1,417 +1,534 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Alle</string>
@@ -2174,6 +2174,7 @@ index 50446006..d4a8e0f4 100644
 +    <string name="ipp_tone_default">Standard</string>
 +    <string name="ipp_tone_theme">Design</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"Verschoben: "</string>
 +</resources>
 diff --git a/build/src/res/values-en/strings.xml b/build/src/res/values-en/strings.xml
 index a2f30ff6..7672d71f 100644
@@ -2494,10 +2495,10 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..c4b086b2 100644
+index 6f5a555d..4c0a7de5 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
-@@ -1,417 +1,533 @@
+@@ -1,417 +1,534 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Todos</string>
@@ -3447,12 +3448,13 @@ index 6f5a555d..c4b086b2 100644
 +    <string name="ipp_tone_default">Predeterminado</string>
 +    <string name="ipp_tone_theme">Tema</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"Movidos: "</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..17c09470 100644
+index c242cee4..bc68d264 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
-@@ -1,417 +1,533 @@
+@@ -1,417 +1,534 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">Tous</string>
@@ -4402,12 +4404,13 @@ index c242cee4..17c09470 100644
 +    <string name="ipp_tone_default">Par défaut</string>
 +    <string name="ipp_tone_theme">Thème</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"Déplacés : "</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..09e6baba 100644
+index d82ac6bb..1f3a9573 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
-@@ -1,417 +1,533 @@
+@@ -1,417 +1,534 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">הכל</string>
@@ -5357,12 +5360,13 @@ index d82ac6bb..09e6baba 100644
 +    <string name="ipp_tone_default">ברירת מחדל</string>
 +    <string name="ipp_tone_theme">ערכת נושא</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"הועברו: "</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..7ac9970c 100644
+index f71d0cb1..20c9a31e 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
-@@ -1,334 +1,450 @@
+@@ -1,334 +1,451 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">모두</string>
@@ -6146,6 +6150,7 @@ index f71d0cb1..7ac9970c 100644
 +    <string name="ipp_tone_default">기본값</string>
 +    <string name="ipp_tone_theme">테마</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"이동됨: "</string>
 +</resources>
 diff --git a/build/src/res/values-ru-rRU/strings.xml b/build/src/res/values-ru-rRU/strings.xml
 index d79cf0f6..7b6930fd 100644
@@ -6403,10 +6408,10 @@ index d79cf0f6..7b6930fd 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..d628c8b3 100644
+index 4c84fd2b..3b776c7f 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
-@@ -1,86 +1,202 @@
+@@ -1,86 +1,203 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="abc_action_bar_home_description">Перейти на главный экран</string>
@@ -6694,12 +6699,13 @@ index 4c84fd2b..d628c8b3 100644
 +    <string name="ipp_tone_default">По умолчанию</string>
 +    <string name="ipp_tone_theme">Тема</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"Перемещено: "</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..0b29072a 100644
+index 5665bdd9..e3304801 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
-@@ -1,426 +1,542 @@
+@@ -1,426 +1,543 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">全部</string>
@@ -7667,6 +7673,7 @@ index 5665bdd9..0b29072a 100644
 +    <string name="ipp_tone_default">默认</string>
 +    <string name="ipp_tone_theme">主题</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"移动: "</string>
 +</resources>
 diff --git a/build/src/res/values/attrs.xml b/build/src/res/values/attrs.xml
 index ce849b8e..31964bc2 100644
@@ -8975,10 +8982,10 @@ index 48ac137a..961ff677 100644
      <integer name="m3_btn_anim_delay_ms">100</integer>
      <integer name="m3_btn_anim_duration_ms">100</integer>
 diff --git a/build/src/res/values/public.xml b/build/src/res/values/public.xml
-index 803c1e7a..98120085 100644
+index 803c1e7a..9641ca96 100644
 --- a/build/src/res/values/public.xml
 +++ b/build/src/res/values/public.xml
-@@ -1,5519 +1,5684 @@
+@@ -1,5519 +1,5685 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <public type="anim" name="abc_fade_in" id="0x7f010000" />
@@ -19100,6 +19107,7 @@ index 803c1e7a..98120085 100644
 +    <public type="string" name="ipp_ss_photo" id="0x7f11027a" />
 +    <public type="string" name="ipp_wallpaper_set" id="0x7f11027b" />
 +    <public type="string" name="ipp_ss_set" id="0x7f11027c" />
++    <public type="string" name="ipp_scan_moved" id="0x7f11027d" />
 +    <public type="style" name="ActivityTranslucent" id="0x7f120000" />
 +    <public type="style" name="AlertDialog.AppCompat" id="0x7f120001" />
 +    <public type="style" name="AlertDialog.AppCompat.Light" id="0x7f120002" />
@@ -20183,10 +20191,10 @@ index 803c1e7a..98120085 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..980ea0ee 100644
+index 71fe29d0..db4655fc 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
-@@ -1,473 +1,592 @@
+@@ -1,473 +1,593 @@
 -<?xml version="1.0" encoding="utf-8"?>
 -<resources>
 -    <string name="All">All</string>
@@ -21132,7 +21140,7 @@ index 71fe29d0..980ea0ee 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev508</string>
++    <string name="ipp_version">v1.1.0-dev509</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21250,6 +21258,7 @@ index 71fe29d0..980ea0ee 100644
 +    <string name="ipp_tone_default">Default</string>
 +    <string name="ipp_tone_theme">Theme</string>
 +    <string name="ipp_coverflow">Cover Flow</string>
++    <string name="ipp_scan_moved">"Moved count: "</string>
 +</resources>
 diff --git a/build/src/res/values/styles.xml b/build/src/res/values/styles.xml
 index fb6efacc..5850e990 100644
@@ -68555,6 +68564,22 @@ index bedaedce..c6d756a2 100644
  
      return-void
  .end method
+diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1$1$1.smali
+index dd5c7fb8..732be0ca 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1$1$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1$1$1.smali
+@@ -271,6 +271,11 @@
+ 
+     move-result-object v0
+ 
++    # ipp: the files this scan saw move, in a line of their own
++    invoke-static {p1, v0}, Lcom/innioasis/ipp/Scan;->toast(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
++
++    move-result-object v0
++
+     check-cast v0, Ljava/lang/CharSequence;
+ 
+     const/4 v1, 0x0
 diff --git a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1.smali b/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1.smali
 index 2d249018..25e73edf 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/base/BaseActivity$onResume$1.smali
@@ -71903,10 +71928,16 @@ index e9374192..dfbaef01 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
-index 7bf058bc..8ec5d97c 100644
+index 7bf058bc..0c63f517 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/database/Y1Repository$refreshDatabase$1.smali
-@@ -181,9 +181,11 @@
+@@ -178,12 +178,17 @@
+ 
+     invoke-virtual {v9}, Lcom/innioasis/music/objects/Global;->initScanState()V
+ 
++    # ipp: and the moved-files count of the toast
++    invoke-static {}, Lcom/innioasis/ipp/Scan;->scanStarts()V
++
      const-string v9, "/storage/sdcard0"
  
      .line 617
@@ -71920,7 +71951,7 @@ index 7bf058bc..8ec5d97c 100644
  
      check-cast v10, Ljava/util/List;
  
-@@ -282,7 +284,9 @@
+@@ -282,7 +287,9 @@
      invoke-interface {v10, v4}, Ljava/util/List;->remove(I)Ljava/lang/Object;
  
      .line 628
@@ -71931,7 +71962,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v3
  
-@@ -296,7 +300,13 @@
+@@ -296,7 +303,13 @@
  
      invoke-static {v13, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -71946,7 +71977,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v3
  
-@@ -308,7 +318,7 @@
+@@ -308,7 +321,7 @@
      :cond_1
      iget-object v3, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
@@ -71955,7 +71986,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v3
      :try_end_1
-@@ -337,7 +347,7 @@
+@@ -337,7 +350,7 @@
      :cond_2
      iget-object v3, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
@@ -71964,7 +71995,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v3
  
-@@ -429,7 +439,7 @@
+@@ -429,7 +442,7 @@
      :goto_2
      iget-object v0, v1, Lcom/innioasis/y1/database/Y1Repository$refreshDatabase$1;->this$0:Lcom/innioasis/y1/database/Y1Repository;
  
@@ -71973,7 +72004,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v0
  
-@@ -497,7 +507,7 @@
+@@ -497,7 +510,7 @@
  
      .line 687
      :cond_5
@@ -71982,7 +72013,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v0
  
-@@ -514,6 +524,9 @@
+@@ -514,6 +527,9 @@
  
      move-result-object v0
  
@@ -71992,7 +72023,7 @@ index 7bf058bc..8ec5d97c 100644
      .line 689
      move-object v3, v10
  
-@@ -592,14 +605,16 @@
+@@ -592,14 +608,16 @@
  
      move-result-object v0
  
@@ -72011,7 +72042,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v4
  
-@@ -630,15 +645,9 @@
+@@ -630,15 +648,9 @@
      check-cast v4, Lcom/innioasis/y1/database/Song;
  
      .line 705
@@ -72030,7 +72061,7 @@ index 7bf058bc..8ec5d97c 100644
  
      move-result v9
  
-@@ -807,6 +816,10 @@
+@@ -807,6 +819,10 @@
  
      .line 723
      :goto_6

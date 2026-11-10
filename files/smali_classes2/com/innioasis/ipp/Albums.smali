@@ -924,6 +924,8 @@
     invoke-virtual { v2 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v2
   .line 827
+    invoke-static { p0, v2 }, Lcom/innioasis/ipp/Scan;->toast(Landroid/content/Context;Ljava/lang/String;)Ljava/lang/String;
+    move-result-object v2
     invoke-static { p0, v2, v1 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;Ljava/lang/CharSequence;I)Landroid/widget/Toast;
     move-result-object p0
   .line 830
