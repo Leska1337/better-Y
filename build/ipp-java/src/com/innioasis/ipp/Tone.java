@@ -521,6 +521,7 @@ public final class Tone {
 
     /** From the top of {@code confirm}; true when the press was ours. */
     public static boolean settingsConfirm(SettingActivity a, String title) {
+        if (!section(a) && Sleep.confirm(a, title)) return true;
         if (!section(a)) {
             if (!a.getString(R.string.setting_clicker).equals(title)) return false;
             a.startActivity(new Intent(a, SettingActivity.class).putExtra(EXTRA, true));
@@ -542,6 +543,8 @@ public final class Tone {
 
     /** From {@code refreshRight}, after the title is set: every row shows Key tone's picture. */
     public static boolean settingsPanel(SettingActivity a, String title) {
+        if (Sleep.panel(a, title)) return true;
+        if (MenuStyle.settingsLogo(a, title)) return true;
         if (!section(a)) return false;
         ActivitySettingBinding vb = (ActivitySettingBinding) a.getVb();
         ThemeManager.INSTANCE.commonSetIcon(vb.rightImage,
@@ -553,6 +556,7 @@ public final class Tone {
 
     /** From the top of {@code clockwise}/{@code antiClockwise}: inside a value the wheel is the value's. */
     public static boolean settingsWheel(SettingActivity a, int dir) {
+        if (Sleep.wheel(a, dir)) return true;
         if (editing != a) return false;
         int n = editRow == ROW_VOLUME ? GAIN.length : options.length;
         editVal = ((editVal + dir) % n + n) % n;
@@ -564,6 +568,7 @@ public final class Tone {
 
     /** From {@code direction}: the top button puts an open value back rather than leaving. */
     public static boolean settingsTop(SettingActivity a) {
+        if (Sleep.top(a)) return true;
         if (editing != a) return false;
         endEdit(a, false);
         return true;

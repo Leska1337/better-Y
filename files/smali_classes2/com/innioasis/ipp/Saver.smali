@@ -1014,7 +1014,7 @@
     return p0
 .end method
 
-.method private static themeFile(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+.method static themeFile(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .catchall { :L0 .. :L5 } :L8
   .registers 7
   .line 457

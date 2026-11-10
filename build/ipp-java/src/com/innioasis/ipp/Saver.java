@@ -452,7 +452,7 @@ public final class Saver {
     }
 
     /** {@code <base>.png/.jpg/.jpeg/.bmp/.webp} in {@code dir}, any case. */
-    private static String themeFile(String dir, String base) {
+    static String themeFile(String dir, String base) {
         try {
             if (dir == null || dir.trim().length() == 0) return null;
             File[] fs = new File(dir).listFiles();

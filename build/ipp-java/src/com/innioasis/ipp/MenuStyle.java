@@ -167,12 +167,58 @@ public final class MenuStyle {
         box.setVisibility(on ? View.VISIBLE : View.GONE);
         if (!on) return;
         ImageView iv = (ImageView) (box instanceof ImageView ? box : box.findViewById(R.id.right_image));
-        if (!Integer.valueOf(pic).equals(iv.getTag(R.id.layoutContent))) {
-            iv.setTag(R.id.layoutContent, Integer.valueOf(pic));
-            ThemeManager.INSTANCE.commonSetIcon(iv, pic);
+        Bitmap own = pic == R.drawable.plus_logo ? logo(a) : null;
+        Object want = own != null ? (Object) own : Integer.valueOf(pic);
+        if (!want.equals(iv.getTag(R.id.layoutContent))) {
+            iv.setTag(R.id.layoutContent, want);
+            if (own != null) iv.setImageBitmap(own);
+            else ThemeManager.INSTANCE.commonSetIcon(iv, pic);
         }
         View info = box.findViewById(R.id.info_state_tv);
         if (info instanceof TextView) ((TextView) info).setTextColor(Preview.fg(a));
+    }
+
+    // the theme's better-Y.* by theme name: a folder is listed once, not on every step of the wheel
+    private static String logoTheme;
+    private static Bitmap logoBmp;
+
+    /** The current theme's {@code better-Y.*} (any case), read once; null keeps {@code plus_logo}. */
+    static Bitmap logo(Context c) {
+        try {
+            String name = ThemeManager.INSTANCE.getThemeName();
+            if (name == null) name = "";
+            synchronized (MenuStyle.class) {
+                if (name.equals(logoTheme)) return logoBmp;
+            }
+            String path = name.length() == 0 ? null : Saver.themeFile(ThemeManager.themesPath + "/" + name, "better-y");
+            Bitmap b = path == null ? null : Saver.picture(c, path, LOGO_SIDE, LOGO_SIDE);
+            synchronized (MenuStyle.class) {
+                logoTheme = name;
+                logoBmp = b;
+            }
+            return b;
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private static final int LOGO_SIDE = 360;
+
+    /** From the scan's end: a file put in by USB is looked for again. */
+    static synchronized void logoRecheck() {
+        logoTheme = null;
+        logoBmp = null;
+    }
+
+    /** From {@code Tone.settingsPanel}: the better-Y row of Settings shows the theme's own picture. */
+    static boolean settingsLogo(SettingActivity a, String title) {
+        if (!a.getString(R.string.ipp_settings_title).equals(title)) return false;
+        Bitmap b = logo(a);
+        if (b == null) return false;
+        ActivitySettingBinding vb = (ActivitySettingBinding) a.getVb();
+        vb.rightImage.setImageBitmap(b);
+        vb.infoStateTv.setText(R.string.ipp_version);
+        return true;
     }
 
     /**

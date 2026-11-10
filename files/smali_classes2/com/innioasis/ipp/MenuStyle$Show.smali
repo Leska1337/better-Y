@@ -19,26 +19,26 @@
 
 .method constructor <init>(Ljava/lang/ref/WeakReference;ILandroid/graphics/drawable/Drawable;)V
   .registers 4
-  .line 565
+  .line 611
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 566
+  .line 612
     iput-object p1, p0, Lcom/innioasis/ipp/MenuStyle$Show;->view:Ljava/lang/ref/WeakReference;
-  .line 567
+  .line 613
     iput p2, p0, Lcom/innioasis/ipp/MenuStyle$Show;->id:I
-  .line 568
+  .line 614
     iput-object p3, p0, Lcom/innioasis/ipp/MenuStyle$Show;->d:Landroid/graphics/drawable/Drawable;
-  .line 569
+  .line 615
     return-void
 .end method
 
 .method public run()V
   .registers 5
-  .line 572
+  .line 618
     iget-object v0, p0, Lcom/innioasis/ipp/MenuStyle$Show;->view:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/widget/ImageView;
-  .line 573
+  .line 619
     if-eqz v0, :L1
     iget v1, p0, Lcom/innioasis/ipp/MenuStyle$Show;->id:I
     invoke-static { v1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
@@ -51,15 +51,15 @@
     if-nez v1, :L0
     goto :L1
   :L0
-  .line 574
+  .line 620
     const/4 v1, 0
     invoke-virtual { v0, v2, v1 }, Landroid/widget/ImageView;->setTag(ILjava/lang/Object;)V
-  .line 575
+  .line 621
     iget-object v1, p0, Lcom/innioasis/ipp/MenuStyle$Show;->d:Landroid/graphics/drawable/Drawable;
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 576
+  .line 622
     return-void
   :L1
-  .line 573
+  .line 619
     return-void
 .end method

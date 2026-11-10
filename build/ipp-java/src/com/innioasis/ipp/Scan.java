@@ -694,6 +694,7 @@ public final class Scan {
      */
     static synchronized void done() {
         Tone.recheck();
+        MenuStyle.logoRecheck();
         paths = null;
         added = 0;
         dropped = 0;
