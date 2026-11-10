@@ -2,6 +2,8 @@ package com.innioasis.y1.activity;
 
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -344,11 +346,14 @@ public final class IppImportActivity extends BaseActivity {
         t.start();
     }
 
+    /** Worker to UI through the main Handler: {@code View.post} from a worker is lost while detached. */
+    private final Handler main = new Handler(Looper.getMainLooper());
+
     /** Worker -> UI, one repaint in flight at a time: a tick per entry would flood the queue. */
     void tick() {
         if (paintPending) return;
         paintPending = true;
-        container.post(new Paint(this));
+        main.post(new Paint(this));
     }
 
     void paint() {
@@ -379,7 +384,7 @@ public final class IppImportActivity extends BaseActivity {
             doneEntries = tk.base + p.lines.size();
             tick();
         }
-        container.post(new Done(this));
+        main.post(new Done(this));
     }
 
     void done() {

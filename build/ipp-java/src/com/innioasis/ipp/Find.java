@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -225,10 +227,15 @@ public final class Find {
         }
     }
 
-    /** Dropped when the ImageView has been recycled onto another key meanwhile. */
+    private static final Handler MAIN = new Handler(Looper.getMainLooper());
+
+    /**
+     * Dropped when the ImageView has been recycled onto another key meanwhile. Through the main
+     * Handler, not {@code View.post}: from a worker that is lost while the row is detached.
+     */
     private static void post(ImageView icon, String tag, Bitmap bmp, Bitmap def) {
         try {
-            icon.post(new Paint(icon, tag, bmp, def));
+            MAIN.post(new Paint(icon, tag, bmp, def));
         } catch (Throwable t) {
         }
     }
