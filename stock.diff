@@ -32,7 +32,7 @@ index 2c8d26c0..4e02ef63 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..b84e4b7e 100644
+index 01b1f730..23caf45d 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -47,7 +47,7 @@ index 01b1f730..b84e4b7e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100515
++  versionCode: 10100516
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -1221,7 +1221,7 @@ index 67bb2db9..b4b1d4c4 100644
      <dimen name="player_progress_height">36.0dip</dimen>
      <dimen name="progress_dot_rate">3.0dip</dimen>
 diff --git a/build/src/res/values-de/strings.xml b/build/src/res/values-de/strings.xml
-index 50446006..40c4e6a7 100644
+index 50446006..68c2dae3 100644
 --- a/build/src/res/values-de/strings.xml
 +++ b/build/src/res/values-de/strings.xml
 @@ -1,417 +1,539 @@
@@ -2166,8 +2166,8 @@ index 50446006..40c4e6a7 100644
 +    <string name="ipp_m3u_import_go">Importieren</string>
 +    <string name="ipp_m3u_none_picked">Keine Wiedergabeliste ausgewählt</string>
 +    <string name="ipp_m3u_base_ask">Musikordner auf dem Computer merken?</string>
-+    <string name="ipp_m3u_base_why">Damit erhalten exportierte Wiedergabelisten vollständige Pfade: Am Computer laufen sie aus jedem Ordner und kommen trotzdem auf den Player zurück.</string>
-+    <string name="ipp_m3u_base_foot">Später in better-Y/music_path.txt änderbar.</string>
++    <string name="ipp_m3u_base_why">Damit erhalten exportierte Wiedergabelisten vollständige Pfade: Am Computer laufen sie aus jedem Ordner und lassen sich trotzdem weiterhin importieren.</string>
++    <string name="ipp_m3u_base_foot">Später in /better-Y/music_path.txt änderbar.</string>
 +    <string name="ipp_m3u_base_edit">Ändern</string>
 +    <string name="ipp_m3u_base_skip">Nicht speichern</string>
 +    <string name="ipp_pl_view">Ansicht</string>
@@ -2500,7 +2500,7 @@ index a2f30ff6..7672d71f 100644
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted</string>
  </resources>
 diff --git a/build/src/res/values-es/strings.xml b/build/src/res/values-es/strings.xml
-index 6f5a555d..5bece9d8 100644
+index 6f5a555d..6b10865a 100644
 --- a/build/src/res/values-es/strings.xml
 +++ b/build/src/res/values-es/strings.xml
 @@ -1,417 +1,539 @@
@@ -3445,8 +3445,8 @@ index 6f5a555d..5bece9d8 100644
 +    <string name="ipp_m3u_import_go">Importar</string>
 +    <string name="ipp_m3u_none_picked">No hay ninguna lista seleccionada</string>
 +    <string name="ipp_m3u_base_ask">¿Recordar la carpeta de música del ordenador?</string>
-+    <string name="ipp_m3u_base_why">Con ella, las listas exportadas llevan rutas completas: en el ordenador se abren desde cualquier carpeta y siguen volviendo al reproductor.</string>
-+    <string name="ipp_m3u_base_foot">Puedes cambiarla después en better-Y/music_path.txt.</string>
++    <string name="ipp_m3u_base_why">Con ella, las listas exportadas llevan rutas completas: en el ordenador se abren desde cualquier carpeta y siguen pudiendo importarse.</string>
++    <string name="ipp_m3u_base_foot">Puedes cambiarla después en /better-Y/music_path.txt.</string>
 +    <string name="ipp_m3u_base_edit">Cambiar</string>
 +    <string name="ipp_m3u_base_skip">No guardar</string>
 +    <string name="ipp_pl_view">Vista</string>
@@ -3461,7 +3461,7 @@ index 6f5a555d..5bece9d8 100644
 +    <string name="ipp_scan_moved">"Movidos: "</string>
 +</resources>
 diff --git a/build/src/res/values-fr/strings.xml b/build/src/res/values-fr/strings.xml
-index c242cee4..02f3a4cd 100644
+index c242cee4..665d9a3a 100644
 --- a/build/src/res/values-fr/strings.xml
 +++ b/build/src/res/values-fr/strings.xml
 @@ -1,417 +1,539 @@
@@ -4406,8 +4406,8 @@ index c242cee4..02f3a4cd 100644
 +    <string name="ipp_m3u_import_go">Importer</string>
 +    <string name="ipp_m3u_none_picked">Aucune liste sélectionnée</string>
 +    <string name="ipp_m3u_base_ask">Mémoriser le dossier de musique de l’ordinateur ?</string>
-+    <string name="ipp_m3u_base_why">Les listes exportées portent alors des chemins complets : sur l’ordinateur, elles s’ouvrent depuis n’importe quel dossier et reviennent toujours sur le lecteur.</string>
-+    <string name="ipp_m3u_base_foot">Modifiable plus tard dans better-Y/music_path.txt.</string>
++    <string name="ipp_m3u_base_why">Les listes exportées portent alors des chemins complets : sur l’ordinateur, elles s’ouvrent depuis n’importe quel dossier et peuvent toujours être importées.</string>
++    <string name="ipp_m3u_base_foot">Modifiable plus tard dans /better-Y/music_path.txt.</string>
 +    <string name="ipp_m3u_base_edit">Modifier</string>
 +    <string name="ipp_m3u_base_skip">Ne pas enregistrer</string>
 +    <string name="ipp_pl_view">Affichage</string>
@@ -4422,7 +4422,7 @@ index c242cee4..02f3a4cd 100644
 +    <string name="ipp_scan_moved">"Déplacés : "</string>
 +</resources>
 diff --git a/build/src/res/values-iw/strings.xml b/build/src/res/values-iw/strings.xml
-index d82ac6bb..e07824c6 100644
+index d82ac6bb..fbadb9ef 100644
 --- a/build/src/res/values-iw/strings.xml
 +++ b/build/src/res/values-iw/strings.xml
 @@ -1,417 +1,539 @@
@@ -5367,8 +5367,8 @@ index d82ac6bb..e07824c6 100644
 +    <string name="ipp_m3u_import_go">ייבא</string>
 +    <string name="ipp_m3u_none_picked">לא נבחר אף פלייליסט</string>
 +    <string name="ipp_m3u_base_ask">לזכור את תיקיית המוזיקה במחשב?</string>
-+    <string name="ipp_m3u_base_why">כך הפלייליסטים המיוצאים יקבלו נתיבים מלאים: במחשב הם ייפתחו מכל תיקייה, ועדיין יחזרו לנגן.</string>
-+    <string name="ipp_m3u_base_foot">אפשר לשנות זאת מאוחר יותר ב-better-Y/music_path.txt.</string>
++    <string name="ipp_m3u_base_why">כך הפלייליסטים המיוצאים יקבלו נתיבים מלאים: במחשב הם ייפתחו מכל תיקייה, ועדיין ניתן לייבא אותם.</string>
++    <string name="ipp_m3u_base_foot">אפשר לשנות זאת מאוחר יותר ב-/better-Y/music_path.txt.</string>
 +    <string name="ipp_m3u_base_edit">שנה</string>
 +    <string name="ipp_m3u_base_skip">אל תשמור</string>
 +    <string name="ipp_pl_view">תצוגה</string>
@@ -5383,7 +5383,7 @@ index d82ac6bb..e07824c6 100644
 +    <string name="ipp_scan_moved">"הועברו: "</string>
 +</resources>
 diff --git a/build/src/res/values-ko-rKR/strings.xml b/build/src/res/values-ko-rKR/strings.xml
-index f71d0cb1..9a32a815 100644
+index f71d0cb1..19b0d3ad 100644
 --- a/build/src/res/values-ko-rKR/strings.xml
 +++ b/build/src/res/values-ko-rKR/strings.xml
 @@ -1,334 +1,456 @@
@@ -6162,8 +6162,8 @@ index f71d0cb1..9a32a815 100644
 +    <string name="ipp_m3u_import_go">가져오기</string>
 +    <string name="ipp_m3u_none_picked">선택한 재생 목록이 없습니다</string>
 +    <string name="ipp_m3u_base_ask">컴퓨터의 음악 폴더를 기억할까요?</string>
-+    <string name="ipp_m3u_base_why">그러면 내보낸 재생 목록에 전체 경로가 들어가, 컴퓨터의 어느 폴더에서든 열리고 플레이어로도 다시 가져올 수 있습니다.</string>
-+    <string name="ipp_m3u_base_foot">나중에 better-Y/music_path.txt에서 바꿀 수 있습니다.</string>
++    <string name="ipp_m3u_base_why">그러면 내보낸 재생 목록에 전체 경로가 들어가, 컴퓨터의 어느 폴더에서든 열리고, 여전히 가져올 수 있습니다.</string>
++    <string name="ipp_m3u_base_foot">나중에 /better-Y/music_path.txt에서 바꿀 수 있습니다.</string>
 +    <string name="ipp_m3u_base_edit">수정</string>
 +    <string name="ipp_m3u_base_skip">저장 안 함</string>
 +    <string name="ipp_pl_view">보기</string>
@@ -6433,7 +6433,7 @@ index d79cf0f6..7b6930fd 100644
      <string name="wednesday">Среда</string>
      <string name="yes">Да</string>
 diff --git a/build/src/res/values-ru/strings.xml b/build/src/res/values-ru/strings.xml
-index 4c84fd2b..f113ce10 100644
+index 4c84fd2b..9114e8ac 100644
 --- a/build/src/res/values-ru/strings.xml
 +++ b/build/src/res/values-ru/strings.xml
 @@ -1,86 +1,208 @@
@@ -6716,8 +6716,8 @@ index 4c84fd2b..f113ce10 100644
 +    <string name="ipp_m3u_import_go">Импортировать</string>
 +    <string name="ipp_m3u_none_picked">Не выбрано ни одного плейлиста</string>
 +    <string name="ipp_m3u_base_ask">Запомнить папку с музыкой на компьютере?</string>
-+    <string name="ipp_m3u_base_why">С ней в экспортированных плейлистах будут полные пути: на компьютере они откроются из любой папки и по-прежнему вернутся на плеер.</string>
-+    <string name="ipp_m3u_base_foot">Потом путь можно изменить в better-Y/music_path.txt.</string>
++    <string name="ipp_m3u_base_why">С ней в экспортированных плейлистах будут полные пути: на компьютере они откроются из любой папки и по-прежнему могут быть импортированы.</string>
++    <string name="ipp_m3u_base_foot">Путь можно изменить в /better-Y/music_path.txt.</string>
 +    <string name="ipp_m3u_base_edit">Изменить</string>
 +    <string name="ipp_m3u_base_skip">Не сохранять</string>
 +    <string name="ipp_pl_view">Вид</string>
@@ -6732,7 +6732,7 @@ index 4c84fd2b..f113ce10 100644
 +    <string name="ipp_scan_moved">"Перемещено: "</string>
 +</resources>
 diff --git a/build/src/res/values-zh-rCN/strings.xml b/build/src/res/values-zh-rCN/strings.xml
-index 5665bdd9..c2279d1c 100644
+index 5665bdd9..f0c4ec1f 100644
 --- a/build/src/res/values-zh-rCN/strings.xml
 +++ b/build/src/res/values-zh-rCN/strings.xml
 @@ -1,426 +1,548 @@
@@ -7695,8 +7695,8 @@ index 5665bdd9..c2279d1c 100644
 +    <string name="ipp_m3u_import_go">导入</string>
 +    <string name="ipp_m3u_none_picked">未选择任何播放列表</string>
 +    <string name="ipp_m3u_base_ask">记住电脑上的音乐文件夹？</string>
-+    <string name="ipp_m3u_base_why">这样导出的播放列表会使用完整路径：在电脑上从任何文件夹都能打开，也仍能导回播放器。</string>
-+    <string name="ipp_m3u_base_foot">之后可在 better-Y/music_path.txt 中修改。</string>
++    <string name="ipp_m3u_base_why">这样导出的播放列表会使用完整路径：在电脑上从任何文件夹都能打开，也仍可导入。</string>
++    <string name="ipp_m3u_base_foot">之后可在 /better-Y/music_path.txt 中修改。</string>
 +    <string name="ipp_m3u_base_edit">修改</string>
 +    <string name="ipp_m3u_base_skip">不保存</string>
 +    <string name="ipp_pl_view">视图</string>
@@ -20231,7 +20231,7 @@ index 803c1e7a..62176310 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..1b137ed7 100644
+index 71fe29d0..5a87b8f1 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,598 @@
@@ -21180,7 +21180,7 @@ index 71fe29d0..1b137ed7 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev515</string>
++    <string name="ipp_version">v1.1.0-dev516</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -21290,8 +21290,8 @@ index 71fe29d0..1b137ed7 100644
 +    <string name="ipp_m3u_import_go">Import</string>
 +    <string name="ipp_m3u_none_picked">No playlists selected</string>
 +    <string name="ipp_m3u_base_ask">Remember the music folder on the computer?</string>
-+    <string name="ipp_m3u_base_why">With it, exported playlists carry full paths: on the computer they open from any folder and still come back to the player.</string>
-+    <string name="ipp_m3u_base_foot">You can change it later in better-Y/music_path.txt.</string>
++    <string name="ipp_m3u_base_why">With it, exported playlists carry full paths: on the computer they open from any folder and still can be imported.</string>
++    <string name="ipp_m3u_base_foot">You can change it later in /better-Y/music_path.txt.</string>
 +    <string name="ipp_m3u_base_edit">Edit</string>
 +    <string name="ipp_m3u_base_skip">Don’t save</string>
 +    <string name="ipp_pl_view">View</string>
