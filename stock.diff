@@ -32,7 +32,7 @@ index 2c8d26c0..4e02ef63 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..cf968721 100644
+index 01b1f730..ca1e9476 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -47,7 +47,7 @@ index 01b1f730..cf968721 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100526
++  versionCode: 10100527
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20239,7 +20239,7 @@ index 803c1e7a..61ff2742 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..2d20b292 100644
+index 71fe29d0..d687383e 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,599 @@
@@ -21188,7 +21188,7 @@ index 71fe29d0..2d20b292 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev526</string>
++    <string name="ipp_version">v1.1.0-dev527</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -73133,6 +73133,23 @@ index 6f58dd16..8d043abe 100644
      sget-object p1, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
  
      goto :goto_0
+diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/BitmapSize.smali b/build/src/smali_classes2/com/innioasis/y1/theme/BitmapSize.smali
+index a57d65f3..5926f44a 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/theme/BitmapSize.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/theme/BitmapSize.smali
+@@ -92,9 +92,10 @@
+     .line 13
+     new-instance v0, Lcom/innioasis/y1/theme/BitmapSizeValue;
+ 
+-    const/16 v1, 0x140
++    # ipp: the theme's settingMask and desktopMask are read at the screen's 480x360, not 320x240
++    const/16 v1, 0x1e0
+ 
+-    const/16 v2, 0xf0
++    const/16 v2, 0x168
+ 
+     invoke-direct {v0, v1, v2}, Lcom/innioasis/y1/theme/BitmapSizeValue;-><init>(II)V
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
 index 80ab6a74..7c346be9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/theme/ThemeManager$loadConfig$2$1.smali
