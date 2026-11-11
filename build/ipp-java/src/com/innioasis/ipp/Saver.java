@@ -377,9 +377,14 @@ public final class Saver {
             if (path.equals(wallKey)) return wallBmp;
         }
         Bitmap b = picture(c, path, 480, 360);
+        // a file missing now may be on a card not mounted yet (boot): not remembered as "no picture"
+        boolean known = b != null || WallpaperUtils.INSTANCE.getPresetMap().get(path) != null
+                || new File(path).isFile();
         synchronized (Saver.class) {
-            wallKey = path;
-            wallBmp = b;
+            if (known) {
+                wallKey = path;
+                wallBmp = b;
+            }
             if (path.equals(wallLoading)) wallLoading = null;
         }
         return b;

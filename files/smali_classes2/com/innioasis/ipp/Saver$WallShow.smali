@@ -17,31 +17,31 @@
 
 .method constructor <init>(Ljava/lang/ref/WeakReference;Landroid/graphics/Bitmap;)V
   .registers 3
-  .line 410
+  .line 415
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 411
+  .line 416
     iput-object p1, p0, Lcom/innioasis/ipp/Saver$WallShow;->show:Ljava/lang/ref/WeakReference;
-  .line 412
+  .line 417
     iput-object p2, p0, Lcom/innioasis/ipp/Saver$WallShow;->b:Landroid/graphics/Bitmap;
-  .line 413
+  .line 418
     return-void
 .end method
 
 .method public run()V
   .registers 4
-  .line 417
+  .line 422
     iget-object v0, p0, Lcom/innioasis/ipp/Saver$WallShow;->show:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/widget/ImageView;
-  .line 418
+  .line 423
     if-nez v0, :L0
     return-void
   :L0
-  .line 419
+  .line 424
     invoke-virtual { v0 }, Landroid/widget/ImageView;->getContext()Landroid/content/Context;
     move-result-object v1
-  .line 421
+  .line 426
     instance-of v2, v1, Lcom/innioasis/y1/base/BaseActivity;
     if-eqz v2, :L1
     check-cast v1, Lcom/innioasis/y1/base/BaseActivity;
@@ -52,6 +52,6 @@
     iget-object v1, p0, Lcom/innioasis/ipp/Saver$WallShow;->b:Landroid/graphics/Bitmap;
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   :L1
-  .line 422
+  .line 427
     return-void
 .end method
