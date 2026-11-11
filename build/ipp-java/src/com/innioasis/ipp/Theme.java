@@ -125,6 +125,7 @@ public final class Theme {
             forgetBitmaps();
             MenuStyle.themeChanged();
             Icons.themeChanged();
+            Saver.themeChanged();
             Context c = Y1Application.Companion.getAppContext();
             Intent i = new Intent(c, SplashActivity.class);
             i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

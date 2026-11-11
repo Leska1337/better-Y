@@ -32,7 +32,7 @@ index 2c8d26c0..4e02ef63 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..5e94a290 100644
+index 01b1f730..cf968721 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -47,7 +47,7 @@ index 01b1f730..5e94a290 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100524
++  versionCode: 10100526
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20239,7 +20239,7 @@ index 803c1e7a..61ff2742 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..91b174fb 100644
+index 71fe29d0..2d20b292 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,599 @@
@@ -21188,7 +21188,7 @@ index 71fe29d0..91b174fb 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev524</string>
++    <string name="ipp_version">v1.1.0-dev526</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -74110,7 +74110,7 @@ index 6e949456..6adcb206 100644
      iget-object p1, p0, Lcom/innioasis/y1/utils/InputMethodDialog;->callback:Lcom/innioasis/y1/utils/InputMethodDialog$Callback;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali b/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
-index 1d20b75c..69ee459c 100644
+index 1d20b75c..1a2a12d9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/LoadingDialog.smali
 @@ -198,6 +198,9 @@
@@ -74133,6 +74133,19 @@ index 1d20b75c..69ee459c 100644
      const/4 p1, 0x0
  
      .line 40
+@@ -387,6 +393,12 @@
+     .line 48
+     invoke-virtual {v0, v1}, Landroid/widget/ImageView;->startAnimation(Landroid/view/animation/Animation;)V
+ 
++    # ipp: not kept for the next window: a started animation holds its window's handler, and through
++    # it the screen that showed the dialog, closed or not (the splash with its full-screen background)
++    const/4 v1, 0x0
++
++    sput-object v1, Lcom/innioasis/y1/utils/LoadingDialog;->anima:Landroid/view/animation/Animation;
++
+     .line 50
+     :cond_1
+     sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali b/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali
 index 8050ef02..5133629c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/PhotosDialog$setWallpaper$1$1.smali

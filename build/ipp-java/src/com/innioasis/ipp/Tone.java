@@ -478,8 +478,8 @@ public final class Tone {
             return;
         }
         RecyclerView rv = ((ActivitySettingBinding) a.getVb()).recycler;
-        if (rv != fitted) {
-            fitted = rv;
+        if (fitted == null || fitted.get() != rv) {
+            fitted = new java.lang.ref.WeakReference(rv);
             rv.addOnChildAttachStateChangeListener(new Fit(rv));
         }
         list.clear();
@@ -489,7 +489,8 @@ public final class Tone {
         list.add(new SettingActivity.SettingItem(a.getString(R.string.ipp_tone_sound), false, value(a, ROW_SOUND)));
     }
 
-    private static RecyclerView fitted;
+    // only to know the list again: weak, or it keeps a closed Settings screen with its background
+    private static java.lang.ref.WeakReference fitted;
 
     /**
      * A sound's name can be any file name: in the row it ends in an ellipsis where it would push

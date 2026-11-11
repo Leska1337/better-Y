@@ -362,9 +362,13 @@ public final class Saver {
     public static void prefetchWall(Context c, ImageView show) {
         if (c == null) return;
         String p = Prefs.getString(c, KEY_IMAGE, null);
-        if (p == null) return;
         synchronized (Saver.class) {
-            if (p.equals(wallKey) || p.equals(wallLoading)) return;
+            // a picture no longer chosen (a theme without one, after a switch that keeps the process)
+            if (wallKey != null && !wallKey.equals(p)) {
+                wallKey = null;
+                wallBmp = null;
+            }
+            if (p == null || p.equals(wallKey) || p.equals(wallLoading)) return;
             wallLoading = p;
         }
         Context app = c.getApplicationContext();
@@ -427,6 +431,12 @@ public final class Saver {
         }
     }
 
+    /** From {@code Theme.relaunch}: the old theme's {@code usb.*} is not kept for the new one. */
+    public static synchronized void themeChanged() {
+        usbKey = null;
+        usbBmp = null;
+    }
+
     /** The saver's picture and the theme's {@code usb.*}, for the diagnostic report. */
     static long memBytes() {
         java.util.ArrayList all = new java.util.ArrayList();
@@ -449,8 +459,14 @@ public final class Saver {
     public static Bitmap themeUsb(Context c) {
         try {
             String name = ThemeManager.INSTANCE.getThemeName();
-            if (name == null || name.length() == 0) return null;
-            String path = themeFile(ThemeManager.themesPath + "/" + name, "usb");
+            String path = name == null || name.length() == 0 ? null
+                    : themeFile(ThemeManager.themesPath + "/" + name, "usb");
+            synchronized (Saver.class) {
+                if (usbKey != null && !usbKey.equals(path)) {
+                    usbKey = null;
+                    usbBmp = null;
+                }
+            }
             if (path == null) return null;
             synchronized (Saver.class) {
                 if (path.equals(usbKey)) return usbBmp;
