@@ -427,6 +427,16 @@ public final class Saver {
         }
     }
 
+    /** The saver's picture and the theme's {@code usb.*}, for the diagnostic report. */
+    static long memBytes() {
+        java.util.ArrayList all = new java.util.ArrayList();
+        synchronized (Saver.class) {
+            all.add(wallBmp);
+            all.add(usbBmp);
+        }
+        return Diag.bitmapBytes(all);
+    }
+
     /** {@code screensaver.*} in a theme's folder; null for none and for the default theme. */
     public static String themePicture(String dir) {
         return themeFile(dir, "screensaver");

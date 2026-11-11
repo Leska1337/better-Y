@@ -488,7 +488,8 @@ public final class Diag {
                     .append(" (max ").append(mb(r.maxMemory())).append(")\n");
             s.append("pictures big covers ").append(mb(BigCover.memBytes()))
                     .append(", thumbnails ").append(mb(CoverCache.memBytes()))
-                    .append(", playlist covers ").append(mb(PlGrid.memBytes())).append('\n');
+                    .append(", playlist covers ").append(mb(PlGrid.memBytes()))
+                    .append(", screensaver ").append(mb(Saver.memBytes())).append('\n');
         } catch (Throwable t) {
         }
     }

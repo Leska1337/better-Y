@@ -279,14 +279,14 @@
 
 .method private static crop(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
   .registers 14
-  .line 523
+  .line 533
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v0
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v1
-  .line 524
+  .line 534
     nop
-  .line 525
+  .line 535
     int-to-long v2, v0
     int-to-long v4, p2
     mul-long v2, v2, v4
@@ -300,25 +300,25 @@
     move v3, v1
     goto :L1
   :L0
-  .line 526
+  .line 536
     div-long/2addr v2, v8
     long-to-int v3, v2
     move v2, v0
   :L1
-  .line 527
+  .line 537
     sub-int/2addr v0, v2
     div-int/lit8 v0, v0, 2
     sub-int/2addr v1, v3
     div-int/lit8 v1, v1, 2
-  .line 528
+  .line 538
     sget-object v4, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
     invoke-static { p1, p2, v4 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
     move-result-object v4
-  .line 529
+  .line 539
     new-instance v5, Landroid/graphics/Paint;
     const/4 v6, 6
     invoke-direct { v5, v6 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 531
+  .line 541
     new-instance v6, Landroid/graphics/Canvas;
     invoke-direct { v6, v4 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
     new-instance v7, Landroid/graphics/Rect;
@@ -329,9 +329,9 @@
     const/4 v1, 0
     invoke-direct { v0, v1, v1, p1, p2 }, Landroid/graphics/Rect;-><init>(IIII)V
     invoke-virtual { v6, p0, v7, v0, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
-  .line 533
+  .line 543
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->recycle()V
-  .line 534
+  .line 544
     return-object v4
 .end method
 
@@ -483,14 +483,47 @@
     throw p0
 .end method
 
+.method static memBytes()J
+  .catchall { :L0 .. :L1 } :L2
+  .catchall { :L3 .. :L4 } :L2
+  .registers 3
+  .line 432
+    new-instance v0, Ljava/util/ArrayList;
+    invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
+  .line 433
+    const-class v1, Lcom/innioasis/ipp/Saver;
+    monitor-enter v1
+  :L0
+  .line 434
+    sget-object v2, Lcom/innioasis/ipp/Saver;->wallBmp:Landroid/graphics/Bitmap;
+    invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 435
+    sget-object v2, Lcom/innioasis/ipp/Saver;->usbBmp:Landroid/graphics/Bitmap;
+    invoke-virtual { v0, v2 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 436
+    monitor-exit v1
+  :L1
+  .line 437
+    invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->bitmapBytes(Ljava/util/Collection;)J
+    move-result-wide v0
+    return-wide v0
+  :L2
+  .line 436
+    move-exception v0
+  :L3
+    monitor-exit v1
+  :L4
+    throw v0
+.end method
+
 .method private static number(Ljava/lang/String;C)J
   .registers 4
-  .line 573
+  .line 583
     invoke-virtual { p0, p1 }, Ljava/lang/String;->indexOf(I)I
     move-result p1
     add-int/lit8 p1, p1, 1
   :L0
-  .line 574
+  .line 584
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v0
     if-ge p1, v0, :L1
@@ -502,10 +535,10 @@
     add-int/lit8 p1, p1, 1
     goto :L0
   :L1
-  .line 575
+  .line 585
     move v0, p1
   :L2
-  .line 576
+  .line 586
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v1
     if-ge v0, v1, :L3
@@ -517,7 +550,7 @@
     add-int/lit8 v0, v0, 1
     goto :L2
   :L3
-  .line 577
+  .line 587
     if-le v0, p1, :L4
     invoke-virtual { p0, p1, v0 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object p0
@@ -660,7 +693,7 @@
 .method public static picture(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
   .catchall { :L0 .. :L12 } :L15
   .registers 20
-  .line 487
+  .line 497
     move-object/from16 v0, p1
     move/from16 v1, p2
     move/from16 v2, p3
@@ -668,22 +701,22 @@
     if-nez v0, :L0
     return-object v3
   :L0
-  .line 489
+  .line 499
     sget-object v4, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
     invoke-virtual { v4 }, Lcom/innioasis/y1/utils/WallpaperUtils;->getPresetMap()Ljava/util/Map;
     move-result-object v4
     invoke-interface { v4, v0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v4
-  .line 490
+  .line 500
     new-instance v5, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v5 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 491
+  .line 501
     const/4 v6, 1
     iput-boolean v6, v5, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 492
+  .line 502
     const/4 v7, 0
     iput-boolean v7, v5, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
-  .line 493
+  .line 503
     if-eqz v4, :L1
     invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v8
@@ -694,7 +727,7 @@
     invoke-static { v8, v9, v5 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     goto :L2
   :L1
-  .line 494
+  .line 504
     new-instance v8, Ljava/io/File;
     invoke-direct { v8, v0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v8 }, Ljava/io/File;->isFile()Z
@@ -702,22 +735,22 @@
     if-eqz v8, :L14
     invoke-static { v0, v5 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
   :L2
-  .line 496
+  .line 506
     iget v8, v5, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     if-lez v8, :L13
     iget v8, v5, Landroid/graphics/BitmapFactory$Options;->outHeight:I
     if-gtz v8, :L3
     goto/16 :L13
   :L3
-  .line 499
+  .line 509
     const-string v8, "image/jpeg"
     iget-object v9, v5, Landroid/graphics/BitmapFactory$Options;->outMimeType:Ljava/lang/String;
     invoke-virtual { v8, v9 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v8
-  .line 500
+  .line 510
     const/4 v9, 1
   :L4
-  .line 501
+  .line 511
     iget v10, v5, Landroid/graphics/BitmapFactory$Options;->outWidth:I
     mul-int/lit8 v11, v9, 2
     div-int/2addr v10, v11
@@ -737,21 +770,21 @@
     cmp-long v10, v12, v14
     if-lez v10, :L6
   :L5
-  .line 502
+  .line 512
     move v9, v11
     goto :L4
   :L6
-  .line 503
+  .line 513
     new-instance v5, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v5 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 504
+  .line 514
     iput v9, v5, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 505
+  .line 515
     iput-boolean v7, v5, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
-  .line 506
+  .line 516
     sget-object v7, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
     iput-object v7, v5, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
-  .line 507
+  .line 517
     if-eqz v4, :L7
     invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
     move-result-object v0
@@ -762,15 +795,15 @@
     move-result-object v0
     goto :L8
   :L7
-  .line 508
+  .line 518
     invoke-static { v0, v5 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L8
-  .line 509
+  .line 519
     if-nez v0, :L9
     return-object v3
   :L9
-  .line 510
+  .line 520
     invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v4
     div-int/lit8 v4, v4, 2
@@ -779,7 +812,7 @@
     move-result v4
     div-int/lit8 v4, v4, 2
     if-lt v4, v2, :L11
-  .line 511
+  .line 521
     invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v4
     div-int/lit8 v4, v4, 2
@@ -788,31 +821,31 @@
     div-int/lit8 v5, v5, 2
     invoke-static { v0, v4, v5, v6 }, Landroid/graphics/Bitmap;->createScaledBitmap(Landroid/graphics/Bitmap;IIZ)Landroid/graphics/Bitmap;
     move-result-object v4
-  .line 512
+  .line 522
     if-eq v4, v0, :L10
     invoke-virtual { v0 }, Landroid/graphics/Bitmap;->recycle()V
   :L10
-  .line 513
+  .line 523
     nop
-  .line 514
+  .line 524
     move-object v0, v4
     goto :L9
   :L11
-  .line 515
+  .line 525
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Saver;->crop(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
     move-result-object v0
   :L12
     return-object v0
   :L13
-  .line 496
+  .line 506
     return-object v3
   :L14
-  .line 495
+  .line 505
     return-object v3
   :L15
-  .line 516
+  .line 526
     move-exception v0
-  .line 517
+  .line 527
     return-object v3
 .end method
 
@@ -917,7 +950,7 @@
   .catchall { :L1 .. :L2 } :L15
   .catchall { :L3 .. :L8 } :L14
   .registers 20
-  .line 539
+  .line 549
     const-string v0, "android.os.ServiceManager"
     invoke-static { v0 }, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
     move-result-object v0
@@ -926,7 +959,7 @@
     const-class v3, Ljava/lang/String;
     const/4 v4, 0
     aput-object v3, v2, v4
-  .line 540
+  .line 550
     const-string v3, "getService"
     invoke-virtual { v0, v3, v2 }, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
     move-result-object v0
@@ -937,35 +970,35 @@
     invoke-virtual { v0, v3, v2 }, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/os/IBinder;
-  .line 541
+  .line 551
     if-nez v0, :L0
     return-object v3
   :L0
-  .line 542
+  .line 552
     new-instance v2, Ljava/io/File;
     sget-object v5, Lcom/innioasis/ipp/Saver;->app:Landroid/content/Context;
     invoke-virtual { v5 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v5
     const-string v6, "ipp_power.txt"
     invoke-direct { v2, v5, v6 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 543
+  .line 553
     const/high16 v5, 0x2C000000
     invoke-static { v2, v5 }, Landroid/os/ParcelFileDescriptor;->open(Ljava/io/File;I)Landroid/os/ParcelFileDescriptor;
     move-result-object v5
   :L1
-  .line 546
+  .line 556
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->getFileDescriptor()Ljava/io/FileDescriptor;
     move-result-object v6
     new-array v7, v4, [Ljava/lang/String;
     invoke-interface { v0, v6, v7 }, Landroid/os/IBinder;->dump(Ljava/io/FileDescriptor;[Ljava/lang/String;)V
   :L2
-  .line 548
+  .line 558
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->close()V
-  .line 549
+  .line 559
     nop
-  .line 550
+  .line 560
     nop
-  .line 551
+  .line 561
     new-instance v5, Ljava/io/BufferedReader;
     new-instance v0, Ljava/io/FileReader;
     invoke-direct { v0, v2 }, Ljava/io/FileReader;-><init>(Ljava/io/File;)V
@@ -977,14 +1010,14 @@
     move-wide/from16 v16, v10
     const-wide/16 v18, 1
   :L3
-  .line 554
+  .line 564
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->readLine()Ljava/lang/String;
     move-result-object v0
     if-eqz v0, :L10
-  .line 555
+  .line 565
     invoke-virtual { v0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v0
-  .line 556
+  .line 566
     const-string v6, "mLastUserActivityTime="
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -994,7 +1027,7 @@
     move-result-wide v8
     goto :L3
   :L4
-  .line 557
+  .line 567
     const-string v6, "Screen off timeout:"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1004,7 +1037,7 @@
     move-result-wide v12
     goto :L3
   :L5
-  .line 558
+  .line 568
     const-string v6, "Screen dim duration:"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1013,7 +1046,7 @@
     move-result-wide v14
     goto :L3
   :L6
-  .line 559
+  .line 569
     const-string v6, "mWakeLockSummary=0x"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1028,7 +1061,7 @@
     move-result-wide v16
     goto :L3
   :L7
-  .line 560
+  .line 570
     const-string v6, "mWakefulness="
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1044,26 +1077,26 @@
     move-wide/from16 v18, v10
     goto :L3
   :L10
-  .line 563
+  .line 573
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->close()V
-  .line 564
+  .line 574
     nop
-  .line 565
+  .line 575
     invoke-virtual { v2 }, Ljava/io/File;->delete()Z
-  .line 566
+  .line 576
     cmp-long v0, v8, v10
     if-ltz v0, :L13
     cmp-long v0, v12, v10
     if-gez v0, :L11
     goto :L13
   :L11
-  .line 567
+  .line 577
     cmp-long v0, v14, v10
     if-gez v0, :L12
     invoke-static { v12, v13 }, Lcom/innioasis/ipp/Saver;->dimOf(J)J
     move-result-wide v14
   :L12
-  .line 568
+  .line 578
     const/4 v0, 5
     new-array v0, v0, [J
     aput-wide v8, v0, v4
@@ -1076,19 +1109,19 @@
     aput-wide v18, v0, v1
     return-object v0
   :L13
-  .line 566
+  .line 576
     return-object v3
   :L14
-  .line 563
+  .line 573
     move-exception v0
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->close()V
-  .line 564
+  .line 574
     throw v0
   :L15
-  .line 548
+  .line 558
     move-exception v0
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->close()V
-  .line 549
+  .line 559
     goto :L17
   :L16
     throw v0
@@ -1172,7 +1205,7 @@
 .method static themeFile(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
   .catchall { :L0 .. :L5 } :L8
   .registers 7
-  .line 462
+  .line 472
     const/4 v0, 0
     if-eqz p0, :L10
   :L0
@@ -1183,28 +1216,28 @@
     if-nez v1, :L1
     goto/16 :L10
   :L1
-  .line 463
+  .line 473
     new-instance v1, Ljava/io/File;
     invoke-direct { v1, p0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
     invoke-virtual { v1 }, Ljava/io/File;->listFiles()[Ljava/io/File;
     move-result-object p0
-  .line 464
+  .line 474
     if-nez p0, :L2
     return-object v0
   :L2
-  .line 465
+  .line 475
     const/4 v1, 0
   :L3
     array-length v2, p0
     if-ge v1, v2, :L7
-  .line 466
+  .line 476
     aget-object v2, p0, v1
     invoke-virtual { v2 }, Ljava/io/File;->getName()Ljava/lang/String;
     move-result-object v2
     sget-object v3, Ljava/util/Locale;->US:Ljava/util/Locale;
     invoke-virtual { v2, v3 }, Ljava/lang/String;->toLowerCase(Ljava/util/Locale;)Ljava/lang/String;
     move-result-object v2
-  .line 467
+  .line 477
     aget-object v3, p0, v1
     invoke-virtual { v3 }, Ljava/io/File;->isFile()Z
     move-result v3
@@ -1242,7 +1275,7 @@
     move-result-object v3
     invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v3
-  .line 468
+  .line 478
     invoke-virtual { v2, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
     if-nez v3, :L4
@@ -1271,33 +1304,33 @@
     move-result v2
     if-eqz v2, :L6
   :L4
-  .line 469
+  .line 479
     aget-object p0, p0, v1
     invoke-virtual { p0 }, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
     move-result-object p0
   :L5
     return-object p0
   :L6
-  .line 465
+  .line 475
     add-int/lit8 v1, v1, 1
     goto/16 :L3
   :L7
-  .line 473
+  .line 483
     goto :L9
   :L8
-  .line 472
+  .line 482
     move-exception p0
   :L9
-  .line 474
+  .line 484
     return-object v0
   :L10
-  .line 462
+  .line 472
     return-object v0
 .end method
 
 .method public static themePicture(Ljava/lang/String;)Ljava/lang/String;
   .registers 2
-  .line 432
+  .line 442
     const-string v0, "screensaver"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Saver;->themeFile(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object p0
@@ -1313,20 +1346,20 @@
   .catchall { :L11 .. :L12 } :L10
   .catchall { :L12 .. :L13 } :L14
   .registers 5
-  .line 441
+  .line 451
     const/4 v0, 0
   :L0
     sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     invoke-virtual { v1 }, Lcom/innioasis/y1/theme/ThemeManager;->getThemeName()Ljava/lang/String;
     move-result-object v1
-  .line 442
+  .line 452
     if-eqz v1, :L13
     invoke-virtual { v1 }, Ljava/lang/String;->length()I
     move-result v2
     if-nez v2, :L1
     goto :L13
   :L1
-  .line 443
+  .line 453
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "/storage/sdcard0/Themes/"
@@ -1339,15 +1372,15 @@
     const-string v2, "usb"
     invoke-static { v1, v2 }, Lcom/innioasis/ipp/Saver;->themeFile(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
     move-result-object v1
-  .line 444
+  .line 454
     if-nez v1, :L2
     return-object v0
   :L2
-  .line 445
+  .line 455
     const-class v2, Lcom/innioasis/ipp/Saver;
     monitor-enter v2
   :L3
-  .line 446
+  .line 456
     sget-object v3, Lcom/innioasis/ipp/Saver;->usbKey:Ljava/lang/String;
     invoke-virtual { v1, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v3
@@ -1356,47 +1389,47 @@
     monitor-exit v2
     return-object p0
   :L4
-  .line 447
+  .line 457
     monitor-exit v2
   :L5
-  .line 448
+  .line 458
     const/16 v2, 480
     const/16 v3, 360
   :L6
     invoke-static { p0, v1, v2, v3 }, Lcom/innioasis/ipp/Saver;->picture(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
     move-result-object p0
-  .line 449
+  .line 459
     const-class v2, Lcom/innioasis/ipp/Saver;
     monitor-enter v2
   :L7
-  .line 450
+  .line 460
     sput-object v1, Lcom/innioasis/ipp/Saver;->usbKey:Ljava/lang/String;
-  .line 451
+  .line 461
     sput-object p0, Lcom/innioasis/ipp/Saver;->usbBmp:Landroid/graphics/Bitmap;
-  .line 452
+  .line 462
     monitor-exit v2
-  .line 453
+  .line 463
     return-object p0
   :L8
-  .line 452
+  .line 462
     move-exception p0
     monitor-exit v2
   :L9
     throw p0
   :L10
-  .line 447
+  .line 457
     move-exception p0
   :L11
     monitor-exit v2
   :L12
     throw p0
   :L13
-  .line 442
+  .line 452
     return-object v0
   :L14
-  .line 454
+  .line 464
     move-exception p0
-  .line 455
+  .line 465
     return-object v0
 .end method
 
