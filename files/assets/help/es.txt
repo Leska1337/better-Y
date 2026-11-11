@@ -36,7 +36,7 @@ Al final, la pantalla muestra el nombre de archivo de cada canción que no se en
 
 Para exportar, mantén pulsado el botón superior sobre una lista en la pantalla de listas y elige «Exportar a m3u». Las rutas del archivo parten de la carpeta /Music/: en el ordenador, pon el archivo en la carpeta que contiene la misma música.
 
-Si /better-Y/music_path.txt contiene la ruta de la misma música en el ordenador (por ejemplo, D:\Música), el archivo lleva rutas completas y se abre allí desde cualquier carpeta. Tras importar una lista creada en el ordenador, el reproductor propone esa ruta por sí mismo.
+Si /better-Y/music_path.txt contiene la ruta de la misma música en el ordenador (por ejemplo, D:\Música), el archivo lleva rutas completas y se abre allí desde cualquier carpeta. Tras importar una lista creada en el ordenador, el reproductor propone esa ruta por sí mismo. La carpeta del ordenador debe tener la misma estructura que /Music/ en el reproductor.
 
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de memoria para adjuntarlo a un informe de error.

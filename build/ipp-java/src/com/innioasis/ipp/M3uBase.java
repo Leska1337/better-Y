@@ -210,7 +210,9 @@ public final class M3uBase {
         SpannableStringBuilder sb = new SpannableStringBuilder();
         sb.append(path);
         sb.setSpan(new StyleSpan(Typeface.BOLD), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        sb.append("\n\n").append(a.getString(R.string.ipp_m3u_base_why)).append("\n\n");
+        String why = a.getString(R.string.ipp_m3u_base_why);
+        sb.append("\n\n").append(why).append(why.endsWith("。") ? "" : " ")
+                .append(a.getString(R.string.ipp_m3u_base_tree)).append("\n\n");
         sb.append(a.getString(R.string.ipp_m3u_base_foot));
         String[] rows = { a.getString(R.string.ipp_backup_save),
                 a.getString(R.string.ipp_m3u_base_edit), a.getString(R.string.ipp_m3u_base_skip) };

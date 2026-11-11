@@ -16,31 +16,31 @@
 
 .method constructor <init>(Landroid/app/Activity;Ljava/lang/String;)V
   .registers 3
-  .line 225
-    invoke-direct { p0 }, Lcom/innioasis/ipp/BackupDialog$Go;-><init>()V
-  .line 226
-    iput-object p1, p0, Lcom/innioasis/ipp/M3uBase$Answer;->a:Landroid/app/Activity;
   .line 227
-    iput-object p2, p0, Lcom/innioasis/ipp/M3uBase$Answer;->path:Ljava/lang/String;
+    invoke-direct { p0 }, Lcom/innioasis/ipp/BackupDialog$Go;-><init>()V
   .line 228
+    iput-object p1, p0, Lcom/innioasis/ipp/M3uBase$Answer;->a:Landroid/app/Activity;
+  .line 229
+    iput-object p2, p0, Lcom/innioasis/ipp/M3uBase$Answer;->path:Ljava/lang/String;
+  .line 230
     return-void
 .end method
 
 .method public go(I)V
   .registers 3
-  .line 231
+  .line 233
     if-nez p1, :L0
     iget-object p1, p0, Lcom/innioasis/ipp/M3uBase$Answer;->path:Ljava/lang/String;
     invoke-static { p1 }, Lcom/innioasis/ipp/M3uBase;->put(Ljava/lang/String;)Z
     goto :L1
   :L0
-  .line 232
+  .line 234
     const/4 v0, 1
     if-ne p1, v0, :L1
     iget-object p1, p0, Lcom/innioasis/ipp/M3uBase$Answer;->a:Landroid/app/Activity;
     iget-object v0, p0, Lcom/innioasis/ipp/M3uBase$Answer;->path:Ljava/lang/String;
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/M3uBase;->edit(Landroid/app/Activity;Ljava/lang/String;)V
   :L1
-  .line 233
+  .line 235
     return-void
 .end method

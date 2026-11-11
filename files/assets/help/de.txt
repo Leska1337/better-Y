@@ -36,7 +36,7 @@ Am Ende zeigt der Bildschirm die Dateinamen aller Titel, die in der Bibliothek n
 
 Zum Exportieren halten Sie im Bildschirm der Wiedergabelisten die obere Taste auf einer Liste gedrückt und wählen „Als m3u export.“. Die Pfade in der Datei beginnen beim Ordner /Music/: Legen Sie die Datei am Computer in den Ordner, der dieselbe Musik enthält.
 
-Steht in /better-Y/music_path.txt der Pfad zur selben Musik auf dem Computer (etwa D:\Musik), erhält die Datei vollständige Pfade und öffnet sich dort aus jedem Ordner. Nach dem Import einer am Computer erstellten Liste schlägt der Player diesen Pfad selbst vor.
+Steht in /better-Y/music_path.txt der Pfad zur selben Musik auf dem Computer (etwa D:\Musik), erhält die Datei vollständige Pfade und öffnet sich dort aus jedem Ordner. Nach dem Import einer am Computer erstellten Liste schlägt der Player diesen Pfad selbst vor. Der Ordner auf dem Computer muss genauso aufgebaut sein wie /Music/ auf dem Player.
 
 [log] Diagnoseprotokoll speichern
 Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.

@@ -36,7 +36,7 @@ Si une liste de ce nom existe déjà, vous pouvez la remplacer, ajouter les morc
 
 Pour exporter, maintenez le bouton du haut sur une liste dans l’écran des listes et choisissez « Export. m3u ». Les chemins du fichier partent du dossier /Music/ : sur l’ordinateur, placez le fichier dans le dossier qui contient la même musique.
 
-Si /better-Y/music_path.txt contient le chemin de la même musique sur l’ordinateur (par exemple D:\Musique), le fichier porte des chemins complets et s’y ouvre depuis n’importe quel dossier. Après l’import d’une liste créée sur l’ordinateur, le lecteur propose lui-même ce chemin.
+Si /better-Y/music_path.txt contient le chemin de la même musique sur l’ordinateur (par exemple D:\Musique), le fichier porte des chemins complets et s’y ouvre depuis n’importe quel dossier. Après l’import d’une liste créée sur l’ordinateur, le lecteur propose lui-même ce chemin. Le dossier de l’ordinateur doit avoir la même structure que /Music/ sur le lecteur.
 
 [log] Enregistrer le journal de diagnostic
 Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte mémoire, à joindre à un rapport de bogue.

@@ -39,7 +39,7 @@ At the end the screen lists every song that was not found in the library.
 
 To export, hold the top button on a playlist in the playlists screen and pick "Export to m3u".
 
-If /better-Y/music_path.txt holds the path to the same music on a computer (for example D:\Music), the exported file carries full paths and opens there from any folder. After importing a playlist made on a computer, the player offers that path itself.
+If /better-Y/music_path.txt holds the path to the same music on a computer (for example D:\Music), the exported file carries full paths and opens there from any folder. After importing a playlist made on a computer, the player offers that path itself. The folder on the computer must have the same structure as /Music/ on the player.
 
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
