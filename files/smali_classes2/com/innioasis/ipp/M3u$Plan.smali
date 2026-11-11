@@ -10,6 +10,8 @@
   name = "Plan"
 .end annotation
 
+.field base:Ljava/lang/String;
+
 .field public final dups:Ljava/util/ArrayList;
 
 .field public fav:Z
@@ -34,24 +36,24 @@
 
 .method public constructor <init>()V
   .registers 2
-  .line 352
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 356
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
+  .line 361
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->lines:Ljava/util/ArrayList;
-  .line 357
+  .line 362
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->infos:Ljava/util/ArrayList;
-  .line 360
+  .line 365
     const/4 v0, 0
     iput v0, p0, Lcom/innioasis/ipp/M3u$Plan;->mode:I
-  .line 365
+  .line 370
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->missing:Ljava/util/ArrayList;
-  .line 366
+  .line 371
     new-instance v0, Ljava/util/ArrayList;
     invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/M3u$Plan;->dups:Ljava/util/ArrayList;

@@ -14,7 +14,7 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/M3u$Ask;)V
   .registers 2
-  .line 600
+  .line 609
     invoke-direct { p0 }, Lcom/innioasis/ipp/BackupDialog$Go;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/M3u$AskGo;->ask:Lcom/innioasis/ipp/M3u$Ask;
     return-void
@@ -22,19 +22,19 @@
 
 .method public go(I)V
   .registers 4
-  .line 603
+  .line 612
     iget-object v0, p0, Lcom/innioasis/ipp/M3u$AskGo;->ask:Lcom/innioasis/ipp/M3u$Ask;
     const/4 v1, 0
     invoke-virtual { v0, p1, v1 }, Lcom/innioasis/ipp/M3u$Ask;->answer(IZ)V
-  .line 604
+  .line 613
     return-void
 .end method
 
 .method public go(IZ)V
   .registers 4
-  .line 608
+  .line 617
     iget-object v0, p0, Lcom/innioasis/ipp/M3u$AskGo;->ask:Lcom/innioasis/ipp/M3u$Ask;
     invoke-virtual { v0, p1, p2 }, Lcom/innioasis/ipp/M3u$Ask;->answer(IZ)V
-  .line 609
+  .line 618
     return-void
 .end method

@@ -15,7 +15,7 @@
 
 .method constructor <init>(Ljava/lang/Runnable;)V
   .registers 2
-  .line 616
+  .line 625
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/M3u$Run;->r:Ljava/lang/Runnable;
     return-void
@@ -23,12 +23,12 @@
 
 .method public invoke()Ljava/lang/Object;
   .registers 2
-  .line 619
+  .line 628
     iget-object v0, p0, Lcom/innioasis/ipp/M3u$Run;->r:Ljava/lang/Runnable;
     if-eqz v0, :L0
     invoke-interface { v0 }, Ljava/lang/Runnable;->run()V
   :L0
-  .line 620
+  .line 629
     sget-object v0, Lkotlin/Unit;->INSTANCE:Lkotlin/Unit;
     return-object v0
 .end method

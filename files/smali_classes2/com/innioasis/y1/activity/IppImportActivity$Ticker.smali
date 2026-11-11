@@ -16,7 +16,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppImportActivity;)V
   .registers 2
-  .line 613
+  .line 619
     invoke-direct { p0 }, Lcom/innioasis/ipp/M3u$Tick;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppImportActivity$Ticker;->a:Lcom/innioasis/y1/activity/IppImportActivity;
     return-void
@@ -24,14 +24,14 @@
 
 .method public tick(Lcom/innioasis/ipp/M3u$Plan;I)V
   .registers 4
-  .line 616
+  .line 622
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppImportActivity$Ticker;->a:Lcom/innioasis/y1/activity/IppImportActivity;
     iget v0, p0, Lcom/innioasis/y1/activity/IppImportActivity$Ticker;->base:I
     add-int/2addr v0, p2
     iput v0, p1, Lcom/innioasis/y1/activity/IppImportActivity;->doneEntries:I
-  .line 617
+  .line 623
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppImportActivity$Ticker;->a:Lcom/innioasis/y1/activity/IppImportActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/IppImportActivity;->tick()V
-  .line 618
+  .line 624
     return-void
 .end method

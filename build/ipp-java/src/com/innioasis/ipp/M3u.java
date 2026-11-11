@@ -43,7 +43,8 @@ import kotlin.jvm.functions.Function0;
  * card's root — the folder other players and PC software look in.
  *
  * Export writes the songs in the order the playlist shows them now (its sort, "date added"
- * included), paths relative to /Music/, and {@code .m3u8} as soon as the name or any line is
+ * included), paths relative to /Music/ — or full computer paths when {@link M3uBase} knows where
+ * /Music/ lies there — and {@code .m3u8} as soon as the name or any line is
  * not plain ASCII. Import finds each entry by its path, then by its file name alone, then by its
  * #EXTINF text ({@link Resolver}), and writes the songs with ascending "date added", so the file's
  * order is the playlist's order under Date added.
@@ -248,6 +249,8 @@ public final class M3u {
                             SharedPreferencesUtils.INSTANCE.getSortPlayListSong()));
             StringBuilder sb = new StringBuilder(HEAD).append(NL);
             if (Playlists.isFav(p)) sb.append(MARK).append(NL);
+            String base = M3uBase.get();
+            if (base != null) sb.append(M3uBase.LINE).append(base).append(NL);
             int n = 0;
             if (songs != null) {
                 for (int i = 0; i < songs.size(); i++) {
@@ -255,7 +258,8 @@ public final class M3u {
                     if (!(o instanceof Song)) continue;
                     Song s = (Song) o;
                     sb.append("#EXTINF:-1,").append(extinf(s)).append(NL);
-                    sb.append(relative(s.getPath())).append(NL);
+                    String full = M3uBase.absolute(base, s.getPath());
+                    sb.append(full != null ? full : relative(s.getPath())).append(NL);
                     n++;
                 }
             }
@@ -353,6 +357,7 @@ public final class M3u {
         public String name;          // the playlist it becomes (the file name, unless taken)
         public String file;          // the file's own name, for the summary
         public boolean fav;
+        String base;                 // its #BETTERY:BASE line, or null
         public final ArrayList lines = new ArrayList();   // the entries, raw, in order
         final ArrayList infos = new ArrayList();          // each entry's #EXTINF text, or null
         public boolean picked;                            // ticked on the file list
@@ -427,6 +432,10 @@ public final class M3u {
             if (l.length() == 0) continue;
             if (l.charAt(0) == '#') {
                 if (l.equalsIgnoreCase(MARK)) p.fav = true;
+                if (l.regionMatches(true, 0, M3uBase.LINE, 0, M3uBase.LINE.length())) {
+                    String pb = M3uBase.trim(l.substring(M3uBase.LINE.length()));
+                    if (pb.length() > 0) p.base = pb;
+                }
                 // "#EXTINF:<seconds>,<Artist - Title>" belongs to the entry that follows it
                 if (l.regionMatches(true, 0, "#EXTINF:", 0, 8)) {
                     int comma = l.indexOf(',');
@@ -644,7 +653,7 @@ public final class M3u {
         Song[] got = new Song[n];
         HashMap dirs = new HashMap();          // folder -> how many entries were found in it
         for (int i = 0; i < n; i++) {
-            got[i] = r.byPath((String) p.lines.get(i));
+            got[i] = r.byPath((String) p.lines.get(i), p.base);
             vote(dirs, got[i]);
             if (tick != null) tick.tick(p, i + 1);
         }
@@ -661,6 +670,7 @@ public final class M3u {
         }
         for (int i = 0; i < n; i++) {
             if (got[i] == null) got[i] = r.byInfo((String) p.infos.get(i), dirs);
+            if (got[i] != null) r.learn.note((String) p.lines.get(i), got[i].getPath());
         }
         ArrayList songs = new ArrayList();
         HashSet ids = new HashSet();
@@ -818,6 +828,15 @@ public final class M3u {
         "/storage/sdcard0", "/storage/emulated/0", "/mnt/sdcard", "/sdcard",
     };
 
+    /** A '/' path under one of the card's own roots. */
+    static boolean onCard(String s) {
+        if (s.startsWith(Constant.ROOT_PATH + "/")) return true;
+        for (int i = 0; i < ROOTS.length; i++) {
+            if (s.startsWith(ROOTS[i] + "/")) return true;
+        }
+        return false;
+    }
+
     /**
      * Every place an entry may mean, in the order they are tried: relative to /Playlists/, relative to
      * /Music/ (what export writes), relative to the card's root, a Windows path with its drive letter taken off,
@@ -865,7 +884,7 @@ public final class M3u {
     }
 
     /** "." and ".." resolved, doubled slashes dropped — without touching the disk. */
-    private static String norm(String path) {
+    static String norm(String path) {
         String[] parts = path.split("/");
         ArrayList stack = new ArrayList();
         for (int i = 0; i < parts.length; i++) {
@@ -897,9 +916,15 @@ public final class M3u {
         private HashMap byFile;      // lower file name -> List of Song
         private HashMap byInfo;      // lower "artist - title" -> List of Song
         private HashMap byTitle;     // lower title -> List of Song
+        private final String stored = M3uBase.get();
+        public final M3uBase.Learn learn = new M3uBase.Learn();
 
-        Song byPath(String raw) {
-            List c = candidates(raw);
+        /** The list's own base first, then the stored one, then every other shape. */
+        Song byPath(String raw, String base) {
+            List c = new ArrayList();
+            M3uBase.strip(raw, base, c);
+            if (!M3uBase.same(base, stored)) M3uBase.strip(raw, stored, c);
+            c.addAll(candidates(raw));
             for (int i = 0; i < c.size(); i++) {
                 Song s = repo.getSongByPathSync((String) c.get(i));
                 if (s != null) return s;

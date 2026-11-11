@@ -18,6 +18,7 @@ import com.innioasis.ipp.Help;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.Icons;
 import com.innioasis.ipp.M3u;
+import com.innioasis.ipp.M3uBase;
 import com.innioasis.ipp.PickDialog;
 import com.innioasis.y1.R;
 import com.innioasis.y1.base.BaseActivity;
@@ -384,13 +385,18 @@ public final class IppImportActivity extends BaseActivity {
             doneEntries = tk.base + p.lines.size();
             tick();
         }
+        learned = r.learn.best();
         main.post(new Done(this));
     }
+
+    /** Where the imported lists say /Music/ lies on a computer; written by the worker before Done. */
+    private volatile String learned;
 
     void done() {
         running = false;
         finished = true;
         container.removeAllViews();
+        M3uBase.offer(this, learned);
 
         int ok = 0;
         int bad = 0;

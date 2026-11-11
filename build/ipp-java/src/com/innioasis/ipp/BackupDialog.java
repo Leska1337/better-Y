@@ -42,6 +42,9 @@ public final class BackupDialog extends BaseDialog {
     private final String toggle;
     private boolean toggled;
 
+    /** Smaller text under the title, or null. */
+    private CharSequence note;
+
     private View[] views;
     private TextView[] labels;
     private TextView[] values;
@@ -66,6 +69,12 @@ public final class BackupDialog extends BaseDialog {
         this.extras = extras;
         this.toggle = toggle;
         this.go = go;
+    }
+
+    /** Set before {@code show()}. */
+    public BackupDialog note(CharSequence n) {
+        note = n;
+        return this;
     }
 
     @Override
@@ -96,6 +105,17 @@ public final class BackupDialog extends BaseDialog {
         ThemeManager.INSTANCE.menuItemSetTextColor(head,
                 activity.getResources().getColor(R.color.white), false);
         box.addView(head, -1, -2);
+
+        if (note != null) {
+            TextView nt = new TextView(activity);
+            nt.setTextSize(12.5f);
+            nt.setTypeface(Typeface.MONOSPACE);
+            nt.setPadding(6, 0, 6, 8);
+            nt.setText(note);
+            ThemeManager.INSTANCE.menuItemSetTextColor(nt,
+                    activity.getResources().getColor(R.color.white), false);
+            box.addView(nt, -1, -2);
+        }
 
         for (int i = 0; i < n; i++) box.addView(row(i), -1, -2);
 

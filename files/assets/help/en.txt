@@ -31,13 +31,15 @@ Saves the settings, likes, playlists, bookmarks and reading progress to the /bet
 The five newest archives are kept. After Load the player restarts.
 
 [m3u_import] Import M3U playlists
-Lists the .m3u and .m3u8 files in the /Playlists/ folder at the root of the SD card; each one you tick becomes a playlist, songs in the order of the file. A song is found by its path, or by its file name when the path leads nowhere.
+Imports the .m3u and .m3u8 files in the /Playlists/ folder at the root of the SD card. A song is found by its path, or by its file name when the path leads nowhere.
 
 If a playlist of that name already exists, you can replace it, add the missing songs or create a new one. A file exported from {app:favorites} goes back into {app:favorites}.
 
-At the end the screen lists, by file name, every song that was not found in the library.
+At the end the screen lists every song that was not found in the library.
 
-To export, hold the top button on a playlist in the playlists screen and pick "Export to m3u". Paths in the file start from the /Music/ folder: on a computer, put the file into the folder that holds the same music.
+To export, hold the top button on a playlist in the playlists screen and pick "Export to m3u".
+
+If /better-Y/music_path.txt holds the path to the same music on a computer (for example D:\Music), the exported file carries full paths and opens there from any folder. After importing a playlist made on a computer, the player offers that path itself.
 
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
