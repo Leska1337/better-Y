@@ -147,7 +147,7 @@ public final class M3uBase {
         }
     }
 
-    // ---- the base a run of imports points at ---------------------------------------------------
+    // ---- the base a run of imports points at ------------------------------------------------
 
     /**
      * Each found song votes for the prefix its entry has in front of the song's path under /Music/:
@@ -197,7 +197,7 @@ public final class M3uBase {
         }
     }
 
-    // ---- the question --------------------------------------------------------------------------
+    // ---- the question -----------------------------------------------------------------------
 
     /** Asked after an import whose lists point at a base other than the stored one. */
     public static void offer(Activity a, String learned) {
