@@ -69,13 +69,22 @@ public final class Loading {
         }
     }
 
-    /** A progress window is on screen: loading, a scan, the cache pass. Main thread. */
+    /**
+     * A progress window is on screen: loading, a scan, the cache pass. Main thread. A window put
+     * away by {@code hide()} still answers {@code isShowing()}, its decor GONE: counted, it kept
+     * the screen from ever going out.
+     */
     public static boolean up() {
         synchronized (SEEN) {
             java.util.Iterator it = SEEN.keySet().iterator();
             while (it.hasNext()) {
                 Object o = it.next();
-                if (o instanceof Dialog && ((Dialog) o).isShowing()) return true;
+                if (!(o instanceof Dialog) || !((Dialog) o).isShowing()) continue;
+                Window w = ((Dialog) o).getWindow();
+                if (w != null && w.peekDecorView() != null
+                        && w.peekDecorView().getVisibility() == View.VISIBLE) {
+                    return true;
+                }
             }
         }
         return false;
