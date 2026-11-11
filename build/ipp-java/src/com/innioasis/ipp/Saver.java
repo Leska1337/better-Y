@@ -490,10 +490,32 @@ public final class Saver {
     /**
      * The saver's picture: a file, or one of the gallery's presets by name, cropped to the centre
      * and scaled to exactly {@code w}x{@code h}; null when there is none or it cannot be read.
-     * Reduced by halves, each filtered, and only the last step is finer: a single big step samples
-     * a few source pixels per output pixel and looks pixelated.
      */
     public static Bitmap picture(Context c, String path, int w, int h) {
+        Bitmap b = decode(c, path, w, h, false);
+        return b == null ? null : crop(b, w, h);
+    }
+
+    /**
+     * A picture at its own size, or fitted into {@code w}x{@code h} when larger; never enlarged,
+     * the alpha kept. For the theme's {@code better-Y.*}, which stands where a drawable would.
+     */
+    public static Bitmap fitted(Context c, String path, int w, int h) {
+        Bitmap b = decode(c, path, w, h, true);
+        if (b == null || (b.getWidth() <= w && b.getHeight() <= h)) return b;
+        float k = Math.min((float) w / b.getWidth(), (float) h / b.getHeight());
+        int fw = Math.max(1, Math.round(b.getWidth() * k)), fh = Math.max(1, Math.round(b.getHeight() * k));
+        Bitmap out = Bitmap.createBitmap(fw, fh, Bitmap.Config.ARGB_8888);
+        draw(b, out, 0, 0, b.getWidth(), b.getHeight());
+        return out;
+    }
+
+    /**
+     * Read in ARGB and reduced by halves, each filtered, to no less than what the last step needs:
+     * {@code w}x{@code h} in both sides for a crop, in either for a fit. A single big step samples
+     * a few source pixels per output pixel and looks pixelated.
+     */
+    private static Bitmap decode(Context c, String path, int w, int h, boolean fit) {
         if (path == null) return null;
         try {
             Object res = WallpaperUtils.INSTANCE.getPresetMap().get(path);
@@ -508,7 +530,7 @@ public final class Saver {
             // are subsampled only as far as memory requires
             boolean jpeg = "image/jpeg".equals(o.outMimeType);
             int s = 1;
-            while (o.outWidth / (s * 2) >= w && o.outHeight / (s * 2) >= h
+            while (halves(o.outWidth / s, o.outHeight / s, w, h, fit)
                     && (jpeg || (long) (o.outWidth / s) * (o.outHeight / s) > DECODE_BUDGET)) s *= 2;
             BitmapFactory.Options d = new BitmapFactory.Options();
             d.inSampleSize = s;
@@ -517,15 +539,20 @@ public final class Saver {
             Bitmap b = res != null ? BitmapFactory.decodeResource(c.getResources(), ((Integer) res).intValue(), d)
                     : BitmapFactory.decodeFile(path, d);
             if (b == null) return null;
-            while (b.getWidth() / 2 >= w && b.getHeight() / 2 >= h) {
+            while (halves(b.getWidth(), b.getHeight(), w, h, fit)) {
                 Bitmap half = Bitmap.createScaledBitmap(b, b.getWidth() / 2, b.getHeight() / 2, true);
                 if (half != b) b.recycle();
                 b = half;
             }
-            return crop(b, w, h);
+            return b;
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    /** Whether half of {@code bw}x{@code bh} is still no smaller than the last step needs. */
+    private static boolean halves(int bw, int bh, int w, int h, boolean fit) {
+        return fit ? bw / 2 >= w || bh / 2 >= h : bw / 2 >= w && bh / 2 >= h;
     }
 
     /** {@code b} as CENTER_CROP would show it in {@code w}x{@code h}, filtered, into RGB_565. */
@@ -536,12 +563,17 @@ public final class Saver {
         else ch = (int) ((long) bw * h / w);
         int x = (bw - cw) / 2, y = (bh - ch) / 2;
         Bitmap out = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        draw(b, out, x, y, cw, ch);
+        return out;
+    }
+
+    /** The part of {@code b} at x,y of cw x ch over the whole of {@code out}, filtered; b is let go. */
+    private static void draw(Bitmap b, Bitmap out, int x, int y, int cw, int ch) {
         android.graphics.Paint p = new android.graphics.Paint(
                 android.graphics.Paint.FILTER_BITMAP_FLAG | android.graphics.Paint.DITHER_FLAG);
         new android.graphics.Canvas(out).drawBitmap(b, new android.graphics.Rect(x, y, x + cw, y + ch),
-                new android.graphics.Rect(0, 0, w, h), p);
+                new android.graphics.Rect(0, 0, out.getWidth(), out.getHeight()), p);
         b.recycle();
-        return out;
     }
 
     /** {last user activity (uptime), timeout, dim duration, wake lock summary, awake 1/0}. */

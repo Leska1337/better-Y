@@ -791,7 +791,7 @@
     goto :L8
   :L7
     const/16 v3, 360
-    invoke-static { p0, v2, v3, v3 }, Lcom/innioasis/ipp/Saver;->picture(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
+    invoke-static { p0, v2, v3, v3 }, Lcom/innioasis/ipp/Saver;->fitted(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
     move-result-object p0
   :L8
   .line 195

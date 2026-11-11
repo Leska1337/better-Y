@@ -279,14 +279,14 @@
 
 .method private static crop(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
   .registers 14
-  .line 533
+  .line 560
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getWidth()I
     move-result v0
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v1
-  .line 534
+  .line 561
     nop
-  .line 535
+  .line 562
     int-to-long v2, v0
     int-to-long v4, p2
     mul-long v2, v2, v4
@@ -297,41 +297,186 @@
     if-lez v10, :L0
     div-long/2addr v6, v4
     long-to-int v2, v6
-    move v3, v1
+    move v9, v1
+    move v8, v2
     goto :L1
   :L0
-  .line 536
+  .line 563
     div-long/2addr v2, v8
     long-to-int v3, v2
-    move v2, v0
+    move v8, v0
+    move v9, v3
   :L1
+  .line 564
+    sub-int/2addr v0, v8
+    div-int/lit8 v6, v0, 2
+    sub-int/2addr v1, v9
+    div-int/lit8 v7, v1, 2
+  .line 565
+    sget-object v0, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
+    invoke-static { p1, p2, v0 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
+    move-result-object p1
+  .line 566
+    move-object v4, p0
+    move-object v5, p1
+    invoke-static/range { v4 .. v9 }, Lcom/innioasis/ipp/Saver;->draw(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;IIII)V
+  .line 567
+    return-object p1
+.end method
+
+.method private static decode(Landroid/content/Context;Ljava/lang/String;IIZ)Landroid/graphics/Bitmap;
+  .catchall { :L0 .. :L10 } :L14
+  .registers 21
+  .line 519
+    move-object/from16 v0, p1
+    move/from16 v1, p2
+    move/from16 v2, p3
+    move/from16 v3, p4
+    const/4 v4, 0
+    if-nez v0, :L0
+    return-object v4
+  :L0
+  .line 521
+    sget-object v5, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
+    invoke-virtual { v5 }, Lcom/innioasis/y1/utils/WallpaperUtils;->getPresetMap()Ljava/util/Map;
+    move-result-object v5
+    invoke-interface { v5, v0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v5
+  .line 522
+    new-instance v6, Landroid/graphics/BitmapFactory$Options;
+    invoke-direct { v6 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
+  .line 523
+    const/4 v7, 1
+    iput-boolean v7, v6, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
+  .line 524
+    const/4 v8, 0
+    iput-boolean v8, v6, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
+  .line 525
+    if-eqz v5, :L1
+    invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v9
+    move-object v10, v5
+    check-cast v10, Ljava/lang/Integer;
+    invoke-virtual { v10 }, Ljava/lang/Integer;->intValue()I
+    move-result v10
+    invoke-static { v9, v10, v6 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    goto :L2
+  :L1
+  .line 526
+    new-instance v9, Ljava/io/File;
+    invoke-direct { v9, v0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
+    invoke-virtual { v9 }, Ljava/io/File;->isFile()Z
+    move-result v9
+    if-eqz v9, :L13
+    invoke-static { v0, v6 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+  :L2
+  .line 528
+    iget v9, v6, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    if-lez v9, :L12
+    iget v9, v6, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    if-gtz v9, :L3
+    goto/16 :L12
+  :L3
+  .line 531
+    const-string v9, "image/jpeg"
+    iget-object v10, v6, Landroid/graphics/BitmapFactory$Options;->outMimeType:Ljava/lang/String;
+    invoke-virtual { v9, v10 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+    move-result v9
+  .line 532
+    const/4 v10, 1
+  :L4
+  .line 533
+    iget v11, v6, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    div-int/2addr v11, v10
+    iget v12, v6, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    div-int/2addr v12, v10
+    invoke-static { v11, v12, v1, v2, v3 }, Lcom/innioasis/ipp/Saver;->halves(IIIIZ)Z
+    move-result v11
+    if-eqz v11, :L6
+    if-nez v9, :L5
+    iget v11, v6, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+    div-int/2addr v11, v10
+    int-to-long v11, v11
+    iget v13, v6, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+    div-int/2addr v13, v10
+    int-to-long v13, v13
+    mul-long v11, v11, v13
+    const-wide/32 v13, 2000000
+    cmp-long v15, v11, v13
+    if-lez v15, :L6
+  :L5
+  .line 534
+    mul-int/lit8 v10, v10, 2
+    goto :L4
+  :L6
+  .line 535
+    new-instance v6, Landroid/graphics/BitmapFactory$Options;
+    invoke-direct { v6 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
+  .line 536
+    iput v10, v6, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
   .line 537
-    sub-int/2addr v0, v2
-    div-int/lit8 v0, v0, 2
-    sub-int/2addr v1, v3
-    div-int/lit8 v1, v1, 2
+    iput-boolean v8, v6, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
   .line 538
-    sget-object v4, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
-    invoke-static { p1, p2, v4 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
-    move-result-object v4
+    sget-object v8, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
+    iput-object v8, v6, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
   .line 539
-    new-instance v5, Landroid/graphics/Paint;
-    const/4 v6, 6
-    invoke-direct { v5, v6 }, Landroid/graphics/Paint;-><init>(I)V
+    if-eqz v5, :L7
+    invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v0
+    check-cast v5, Ljava/lang/Integer;
+    invoke-virtual { v5 }, Ljava/lang/Integer;->intValue()I
+    move-result v5
+    invoke-static { v0, v5, v6 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    move-result-object v0
+    goto :L8
+  :L7
+  .line 540
+    invoke-static { v0, v6 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    move-result-object v0
+  :L8
   .line 541
-    new-instance v6, Landroid/graphics/Canvas;
-    invoke-direct { v6, v4 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
-    new-instance v7, Landroid/graphics/Rect;
-    add-int/2addr v2, v0
-    add-int/2addr v3, v1
-    invoke-direct { v7, v0, v1, v2, v3 }, Landroid/graphics/Rect;-><init>(IIII)V
-    new-instance v0, Landroid/graphics/Rect;
-    const/4 v1, 0
-    invoke-direct { v0, v1, v1, p1, p2 }, Landroid/graphics/Rect;-><init>(IIII)V
-    invoke-virtual { v6, p0, v7, v0, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
+    if-nez v0, :L9
+    return-object v4
+  :L9
+  .line 542
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result v5
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result v6
+    invoke-static { v5, v6, v1, v2, v3 }, Lcom/innioasis/ipp/Saver;->halves(IIIIZ)Z
+    move-result v5
+    if-eqz v5, :L11
   .line 543
-    invoke-virtual { p0 }, Landroid/graphics/Bitmap;->recycle()V
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result v5
+    div-int/lit8 v5, v5, 2
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result v6
+    div-int/lit8 v6, v6, 2
+    invoke-static { v0, v5, v6, v7 }, Landroid/graphics/Bitmap;->createScaledBitmap(Landroid/graphics/Bitmap;IIZ)Landroid/graphics/Bitmap;
+    move-result-object v5
   .line 544
+    if-eq v5, v0, :L10
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->recycle()V
+  :L10
+  .line 545
+    nop
+  .line 546
+    move-object v0, v5
+    goto :L9
+  :L11
+  .line 547
+    return-object v0
+  :L12
+  .line 528
+    return-object v4
+  :L13
+  .line 527
+    return-object v4
+  :L14
+  .line 548
+    move-exception v0
+  .line 549
     return-object v4
 .end method
 
@@ -344,6 +489,124 @@
     invoke-static { v0, v1, p0, p1 }, Ljava/lang/Math;->min(JJ)J
     move-result-wide p0
     return-wide p0
+.end method
+
+.method private static draw(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;IIII)V
+  .registers 9
+  .line 572
+    new-instance v0, Landroid/graphics/Paint;
+    const/4 v1, 6
+    invoke-direct { v0, v1 }, Landroid/graphics/Paint;-><init>(I)V
+  .line 574
+    new-instance v1, Landroid/graphics/Canvas;
+    invoke-direct { v1, p1 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+    new-instance v2, Landroid/graphics/Rect;
+    add-int/2addr p4, p2
+    add-int/2addr p5, p3
+    invoke-direct { v2, p2, p3, p4, p5 }, Landroid/graphics/Rect;-><init>(IIII)V
+    new-instance p2, Landroid/graphics/Rect;
+  .line 575
+    invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result p3
+    invoke-virtual { p1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result p1
+    const/4 p4, 0
+    invoke-direct { p2, p4, p4, p3, p1 }, Landroid/graphics/Rect;-><init>(IIII)V
+  .line 574
+    invoke-virtual { v1, p0, v2, p2, v0 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
+  .line 576
+    invoke-virtual { p0 }, Landroid/graphics/Bitmap;->recycle()V
+  .line 577
+    return-void
+.end method
+
+.method public static fitted(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
+  .registers 11
+  .line 504
+    const/4 v0, 1
+    invoke-static { p0, p1, p2, p3, v0 }, Lcom/innioasis/ipp/Saver;->decode(Landroid/content/Context;Ljava/lang/String;IIZ)Landroid/graphics/Bitmap;
+    move-result-object v1
+  .line 505
+    if-eqz v1, :L1
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result p0
+    if-gt p0, p2, :L0
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result p0
+    if-gt p0, p3, :L0
+    goto :L1
+  :L0
+  .line 506
+    int-to-float p0, p2
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result p1
+    int-to-float p1, p1
+    div-float/2addr p0, p1
+    int-to-float p1, p3
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result p2
+    int-to-float p2, p2
+    div-float/2addr p1, p2
+    invoke-static { p0, p1 }, Ljava/lang/Math;->min(FF)F
+    move-result p0
+  .line 507
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result p1
+    int-to-float p1, p1
+    mul-float p1, p1, p0
+    invoke-static { p1 }, Ljava/lang/Math;->round(F)I
+    move-result p1
+    invoke-static { v0, p1 }, Ljava/lang/Math;->max(II)I
+    move-result p1
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result p2
+    int-to-float p2, p2
+    mul-float p2, p2, p0
+    invoke-static { p2 }, Ljava/lang/Math;->round(F)I
+    move-result p0
+    invoke-static { v0, p0 }, Ljava/lang/Math;->max(II)I
+    move-result p0
+  .line 508
+    sget-object p2, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
+    invoke-static { p1, p0, p2 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
+    move-result-object p0
+  .line 509
+    const/4 v3, 0
+    const/4 v4, 0
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result v5
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result v6
+    move-object v2, p0
+    invoke-static/range { v1 .. v6 }, Lcom/innioasis/ipp/Saver;->draw(Landroid/graphics/Bitmap;Landroid/graphics/Bitmap;IIII)V
+  .line 510
+    return-object p0
+  :L1
+  .line 505
+    return-object v1
+.end method
+
+.method private static halves(IIIIZ)Z
+  .registers 7
+  .line 555
+    const/4 v0, 1
+    const/4 v1, 0
+    div-int/lit8 p0, p0, 2
+    if-eqz p4, :L1
+    if-ge p0, p2, :L0
+    div-int/lit8 p1, p1, 2
+    if-lt p1, p3, :L2
+  :L0
+    goto :L3
+  :L1
+    if-lt p0, p2, :L2
+    div-int/lit8 p1, p1, 2
+    if-lt p1, p3, :L2
+    goto :L0
+  :L2
+    const/4 v0, 0
+  :L3
+    return v0
 .end method
 
 .method private static idleDelay()J
@@ -518,12 +781,12 @@
 
 .method private static number(Ljava/lang/String;C)J
   .registers 4
-  .line 583
+  .line 615
     invoke-virtual { p0, p1 }, Ljava/lang/String;->indexOf(I)I
     move-result p1
     add-int/lit8 p1, p1, 1
   :L0
-  .line 584
+  .line 616
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v0
     if-ge p1, v0, :L1
@@ -535,10 +798,10 @@
     add-int/lit8 p1, p1, 1
     goto :L0
   :L1
-  .line 585
+  .line 617
     move v0, p1
   :L2
-  .line 586
+  .line 618
     invoke-virtual { p0 }, Ljava/lang/String;->length()I
     move-result v1
     if-ge v0, v1, :L3
@@ -550,7 +813,7 @@
     add-int/lit8 v0, v0, 1
     goto :L2
   :L3
-  .line 587
+  .line 619
     if-le v0, p1, :L4
     invoke-virtual { p0, p1, v0 }, Ljava/lang/String;->substring(II)Ljava/lang/String;
     move-result-object p0
@@ -691,162 +954,20 @@
 .end method
 
 .method public static picture(Landroid/content/Context;Ljava/lang/String;II)Landroid/graphics/Bitmap;
-  .catchall { :L0 .. :L12 } :L15
-  .registers 20
-  .line 497
-    move-object/from16 v0, p1
-    move/from16 v1, p2
-    move/from16 v2, p3
-    const/4 v3, 0
-    if-nez v0, :L0
-    return-object v3
+  .registers 5
+  .line 495
+    const/4 v0, 0
+    invoke-static { p0, p1, p2, p3, v0 }, Lcom/innioasis/ipp/Saver;->decode(Landroid/content/Context;Ljava/lang/String;IIZ)Landroid/graphics/Bitmap;
+    move-result-object p0
+  .line 496
+    if-nez p0, :L0
+    const/4 p0, 0
+    goto :L1
   :L0
-  .line 499
-    sget-object v4, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
-    invoke-virtual { v4 }, Lcom/innioasis/y1/utils/WallpaperUtils;->getPresetMap()Ljava/util/Map;
-    move-result-object v4
-    invoke-interface { v4, v0 }, Ljava/util/Map;->get(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object v4
-  .line 500
-    new-instance v5, Landroid/graphics/BitmapFactory$Options;
-    invoke-direct { v5 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 501
-    const/4 v6, 1
-    iput-boolean v6, v5, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
-  .line 502
-    const/4 v7, 0
-    iput-boolean v7, v5, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
-  .line 503
-    if-eqz v4, :L1
-    invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
-    move-result-object v8
-    move-object v9, v4
-    check-cast v9, Ljava/lang/Integer;
-    invoke-virtual { v9 }, Ljava/lang/Integer;->intValue()I
-    move-result v9
-    invoke-static { v8, v9, v5 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-    goto :L2
+    invoke-static { p0, p2, p3 }, Lcom/innioasis/ipp/Saver;->crop(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
+    move-result-object p0
   :L1
-  .line 504
-    new-instance v8, Ljava/io/File;
-    invoke-direct { v8, v0 }, Ljava/io/File;-><init>(Ljava/lang/String;)V
-    invoke-virtual { v8 }, Ljava/io/File;->isFile()Z
-    move-result v8
-    if-eqz v8, :L14
-    invoke-static { v0, v5 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-  :L2
-  .line 506
-    iget v8, v5, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    if-lez v8, :L13
-    iget v8, v5, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    if-gtz v8, :L3
-    goto/16 :L13
-  :L3
-  .line 509
-    const-string v8, "image/jpeg"
-    iget-object v9, v5, Landroid/graphics/BitmapFactory$Options;->outMimeType:Ljava/lang/String;
-    invoke-virtual { v8, v9 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v8
-  .line 510
-    const/4 v9, 1
-  :L4
-  .line 511
-    iget v10, v5, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    mul-int/lit8 v11, v9, 2
-    div-int/2addr v10, v11
-    if-lt v10, v1, :L6
-    iget v10, v5, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    div-int/2addr v10, v11
-    if-lt v10, v2, :L6
-    if-nez v8, :L5
-    iget v10, v5, Landroid/graphics/BitmapFactory$Options;->outWidth:I
-    div-int/2addr v10, v9
-    int-to-long v12, v10
-    iget v10, v5, Landroid/graphics/BitmapFactory$Options;->outHeight:I
-    div-int/2addr v10, v9
-    int-to-long v14, v10
-    mul-long v12, v12, v14
-    const-wide/32 v14, 2000000
-    cmp-long v10, v12, v14
-    if-lez v10, :L6
-  :L5
-  .line 512
-    move v9, v11
-    goto :L4
-  :L6
-  .line 513
-    new-instance v5, Landroid/graphics/BitmapFactory$Options;
-    invoke-direct { v5 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 514
-    iput v9, v5, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
-  .line 515
-    iput-boolean v7, v5, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
-  .line 516
-    sget-object v7, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
-    iput-object v7, v5, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
-  .line 517
-    if-eqz v4, :L7
-    invoke-virtual/range { p0 .. p0 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
-    move-result-object v0
-    check-cast v4, Ljava/lang/Integer;
-    invoke-virtual { v4 }, Ljava/lang/Integer;->intValue()I
-    move-result v4
-    invoke-static { v0, v4, v5 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-    move-result-object v0
-    goto :L8
-  :L7
-  .line 518
-    invoke-static { v0, v5 }, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
-    move-result-object v0
-  :L8
-  .line 519
-    if-nez v0, :L9
-    return-object v3
-  :L9
-  .line 520
-    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
-    move-result v4
-    div-int/lit8 v4, v4, 2
-    if-lt v4, v1, :L11
-    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getHeight()I
-    move-result v4
-    div-int/lit8 v4, v4, 2
-    if-lt v4, v2, :L11
-  .line 521
-    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getWidth()I
-    move-result v4
-    div-int/lit8 v4, v4, 2
-    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->getHeight()I
-    move-result v5
-    div-int/lit8 v5, v5, 2
-    invoke-static { v0, v4, v5, v6 }, Landroid/graphics/Bitmap;->createScaledBitmap(Landroid/graphics/Bitmap;IIZ)Landroid/graphics/Bitmap;
-    move-result-object v4
-  .line 522
-    if-eq v4, v0, :L10
-    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->recycle()V
-  :L10
-  .line 523
-    nop
-  .line 524
-    move-object v0, v4
-    goto :L9
-  :L11
-  .line 525
-    invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Saver;->crop(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
-    move-result-object v0
-  :L12
-    return-object v0
-  :L13
-  .line 506
-    return-object v3
-  :L14
-  .line 505
-    return-object v3
-  :L15
-  .line 526
-    move-exception v0
-  .line 527
-    return-object v3
+    return-object p0
 .end method
 
 .method private static poke()V
@@ -950,7 +1071,7 @@
   .catchall { :L1 .. :L2 } :L15
   .catchall { :L3 .. :L8 } :L14
   .registers 20
-  .line 549
+  .line 581
     const-string v0, "android.os.ServiceManager"
     invoke-static { v0 }, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
     move-result-object v0
@@ -959,7 +1080,7 @@
     const-class v3, Ljava/lang/String;
     const/4 v4, 0
     aput-object v3, v2, v4
-  .line 550
+  .line 582
     const-string v3, "getService"
     invoke-virtual { v0, v3, v2 }, Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method;
     move-result-object v0
@@ -970,35 +1091,35 @@
     invoke-virtual { v0, v3, v2 }, Ljava/lang/reflect/Method;->invoke(Ljava/lang/Object;[Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/os/IBinder;
-  .line 551
+  .line 583
     if-nez v0, :L0
     return-object v3
   :L0
-  .line 552
+  .line 584
     new-instance v2, Ljava/io/File;
     sget-object v5, Lcom/innioasis/ipp/Saver;->app:Landroid/content/Context;
     invoke-virtual { v5 }, Landroid/content/Context;->getCacheDir()Ljava/io/File;
     move-result-object v5
     const-string v6, "ipp_power.txt"
     invoke-direct { v2, v5, v6 }, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
-  .line 553
+  .line 585
     const/high16 v5, 0x2C000000
     invoke-static { v2, v5 }, Landroid/os/ParcelFileDescriptor;->open(Ljava/io/File;I)Landroid/os/ParcelFileDescriptor;
     move-result-object v5
   :L1
-  .line 556
+  .line 588
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->getFileDescriptor()Ljava/io/FileDescriptor;
     move-result-object v6
     new-array v7, v4, [Ljava/lang/String;
     invoke-interface { v0, v6, v7 }, Landroid/os/IBinder;->dump(Ljava/io/FileDescriptor;[Ljava/lang/String;)V
   :L2
-  .line 558
+  .line 590
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->close()V
-  .line 559
+  .line 591
     nop
-  .line 560
+  .line 592
     nop
-  .line 561
+  .line 593
     new-instance v5, Ljava/io/BufferedReader;
     new-instance v0, Ljava/io/FileReader;
     invoke-direct { v0, v2 }, Ljava/io/FileReader;-><init>(Ljava/io/File;)V
@@ -1010,14 +1131,14 @@
     move-wide/from16 v16, v10
     const-wide/16 v18, 1
   :L3
-  .line 564
+  .line 596
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->readLine()Ljava/lang/String;
     move-result-object v0
     if-eqz v0, :L10
-  .line 565
+  .line 597
     invoke-virtual { v0 }, Ljava/lang/String;->trim()Ljava/lang/String;
     move-result-object v0
-  .line 566
+  .line 598
     const-string v6, "mLastUserActivityTime="
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1027,7 +1148,7 @@
     move-result-wide v8
     goto :L3
   :L4
-  .line 567
+  .line 599
     const-string v6, "Screen off timeout:"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1037,7 +1158,7 @@
     move-result-wide v12
     goto :L3
   :L5
-  .line 568
+  .line 600
     const-string v6, "Screen dim duration:"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1046,7 +1167,7 @@
     move-result-wide v14
     goto :L3
   :L6
-  .line 569
+  .line 601
     const-string v6, "mWakeLockSummary=0x"
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1061,7 +1182,7 @@
     move-result-wide v16
     goto :L3
   :L7
-  .line 570
+  .line 602
     const-string v6, "mWakefulness="
     invoke-virtual { v0, v6 }, Ljava/lang/String;->startsWith(Ljava/lang/String;)Z
     move-result v6
@@ -1077,26 +1198,26 @@
     move-wide/from16 v18, v10
     goto :L3
   :L10
-  .line 573
+  .line 605
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->close()V
-  .line 574
+  .line 606
     nop
-  .line 575
+  .line 607
     invoke-virtual { v2 }, Ljava/io/File;->delete()Z
-  .line 576
+  .line 608
     cmp-long v0, v8, v10
     if-ltz v0, :L13
     cmp-long v0, v12, v10
     if-gez v0, :L11
     goto :L13
   :L11
-  .line 577
+  .line 609
     cmp-long v0, v14, v10
     if-gez v0, :L12
     invoke-static { v12, v13 }, Lcom/innioasis/ipp/Saver;->dimOf(J)J
     move-result-wide v14
   :L12
-  .line 578
+  .line 610
     const/4 v0, 5
     new-array v0, v0, [J
     aput-wide v8, v0, v4
@@ -1109,19 +1230,19 @@
     aput-wide v18, v0, v1
     return-object v0
   :L13
-  .line 576
+  .line 608
     return-object v3
   :L14
-  .line 573
+  .line 605
     move-exception v0
     invoke-virtual { v5 }, Ljava/io/BufferedReader;->close()V
-  .line 574
+  .line 606
     throw v0
   :L15
-  .line 558
+  .line 590
     move-exception v0
     invoke-virtual { v5 }, Landroid/os/ParcelFileDescriptor;->close()V
-  .line 559
+  .line 591
     goto :L17
   :L16
     throw v0

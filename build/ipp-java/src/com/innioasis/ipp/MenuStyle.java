@@ -191,7 +191,7 @@ public final class MenuStyle {
                 if (name.equals(logoTheme)) return logoBmp;
             }
             String path = name.length() == 0 ? null : Saver.themeFile(ThemeManager.themesPath + "/" + name, "better-y");
-            Bitmap b = path == null ? null : Saver.picture(c, path, LOGO_SIDE, LOGO_SIDE);
+            Bitmap b = path == null ? null : Saver.fitted(c, path, LOGO_SIDE, LOGO_SIDE);
             synchronized (MenuStyle.class) {
                 logoTheme = name;
                 logoBmp = b;
