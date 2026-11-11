@@ -474,9 +474,14 @@ public final class Saver {
         return null;
     }
 
+    /** Pixels a non-JPEG picture may decode to before it is subsampled on reading. */
+    private static final int DECODE_BUDGET = 2000000;
+
     /**
-     * The saver's picture: a file, or one of the gallery's presets by name. Sampled down to no
-     * less than {@code w}x{@code h}; null when there is none or it cannot be read.
+     * The saver's picture: a file, or one of the gallery's presets by name, cropped to the centre
+     * and scaled to exactly {@code w}x{@code h}; null when there is none or it cannot be read.
+     * Reduced by halves, each filtered, and only the last step is finer: a single big step samples
+     * a few source pixels per output pixel and looks pixelated.
      */
     public static Bitmap picture(Context c, String path, int w, int h) {
         if (path == null) return null;
@@ -484,19 +489,49 @@ public final class Saver {
             Object res = WallpaperUtils.INSTANCE.getPresetMap().get(path);
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
+            o.inScaled = false;
             if (res != null) BitmapFactory.decodeResource(c.getResources(), ((Integer) res).intValue(), o);
             else if (new File(path).isFile()) BitmapFactory.decodeFile(path, o);
             else return null;
+            if (o.outWidth <= 0 || o.outHeight <= 0) return null;
+            // JPEG is reduced on decoding by averaging; other formats only drop pixels, so they
+            // are subsampled only as far as memory requires
+            boolean jpeg = "image/jpeg".equals(o.outMimeType);
             int s = 1;
-            while (o.outWidth / (s * 2) >= w && o.outHeight / (s * 2) >= h) s *= 2;
+            while (o.outWidth / (s * 2) >= w && o.outHeight / (s * 2) >= h
+                    && (jpeg || (long) (o.outWidth / s) * (o.outHeight / s) > DECODE_BUDGET)) s *= 2;
             BitmapFactory.Options d = new BitmapFactory.Options();
             d.inSampleSize = s;
-            d.inPreferredConfig = Bitmap.Config.RGB_565;
-            return res != null ? BitmapFactory.decodeResource(c.getResources(), ((Integer) res).intValue(), d)
+            d.inScaled = false;
+            d.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            Bitmap b = res != null ? BitmapFactory.decodeResource(c.getResources(), ((Integer) res).intValue(), d)
                     : BitmapFactory.decodeFile(path, d);
+            if (b == null) return null;
+            while (b.getWidth() / 2 >= w && b.getHeight() / 2 >= h) {
+                Bitmap half = Bitmap.createScaledBitmap(b, b.getWidth() / 2, b.getHeight() / 2, true);
+                if (half != b) b.recycle();
+                b = half;
+            }
+            return crop(b, w, h);
         } catch (Throwable t) {
             return null;
         }
+    }
+
+    /** {@code b} as CENTER_CROP would show it in {@code w}x{@code h}, filtered, into RGB_565. */
+    private static Bitmap crop(Bitmap b, int w, int h) {
+        int bw = b.getWidth(), bh = b.getHeight();
+        int cw = bw, ch = bh;
+        if ((long) bw * h > (long) bh * w) cw = (int) ((long) bh * w / h);
+        else ch = (int) ((long) bw * h / w);
+        int x = (bw - cw) / 2, y = (bh - ch) / 2;
+        Bitmap out = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        android.graphics.Paint p = new android.graphics.Paint(
+                android.graphics.Paint.FILTER_BITMAP_FLAG | android.graphics.Paint.DITHER_FLAG);
+        new android.graphics.Canvas(out).drawBitmap(b, new android.graphics.Rect(x, y, x + cw, y + ch),
+                new android.graphics.Rect(0, 0, w, h), p);
+        b.recycle();
+        return out;
     }
 
     /** {last user activity (uptime), timeout, dim duration, wake lock summary, awake 1/0}. */
