@@ -127,6 +127,8 @@ public final class BackupDialog extends BaseDialog {
             lp.width = (int) (activity.getResources().getDimension(R.dimen.submenu_width) * 1.7f);
             lp.gravity = Gravity.CENTER;
             w.setAttributes(lp);
+            // a question waits for its answer: no dimming, no screensaver while it is up
+            w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         paintAll();

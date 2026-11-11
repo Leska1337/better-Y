@@ -62,7 +62,7 @@ public final class Keys {
     /** Stock's row and order. */
     private static final String CYRILLIC = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
     /** The order the user asked for. Space is on the right-hand button. */
-    private static final String SYMBOLS = ".,?!'\"-_()0123456789[]@#$%&*+=/:;";
+    private static final String SYMBOLS = ".,?!'\"-_()0123456789[]@#$%&*+=/\\:;";
 
     /** Русский in {@code LanguageActivity.languageList}. */
     private static final int RUSSIAN = 4;

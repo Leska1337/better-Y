@@ -127,13 +127,13 @@
 .end method
 
 .method static ask(Landroid/app/Activity;Ljava/lang/String;)V
-  .registers 13
+  .registers 14
   .line 209
     if-eqz p0, :L1
     invoke-virtual { p0 }, Landroid/app/Activity;->isFinishing()Z
     move-result v0
     if-eqz v0, :L0
-    goto/16 :L1
+    goto :L1
   :L0
   .line 210
     new-instance v0, Landroid/text/SpannableStringBuilder;
@@ -146,67 +146,57 @@
     invoke-direct { v1, v2 }, Landroid/text/style/StyleSpan;-><init>(I)V
     invoke-virtual { v0 }, Landroid/text/SpannableStringBuilder;->length()I
     move-result v3
-    const/4 v4, 0
-    const/16 v5, 33
-    invoke-virtual { v0, v1, v4, v3, v5 }, Landroid/text/SpannableStringBuilder;->setSpan(Ljava/lang/Object;III)V
+    const/16 v4, 33
+    const/4 v5, 0
+    invoke-virtual { v0, v1, v5, v3, v4 }, Landroid/text/SpannableStringBuilder;->setSpan(Ljava/lang/Object;III)V
   .line 213
     const-string v1, "\n\n"
     invoke-virtual { v0, v1 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
     move-result-object v3
-    const v6, 2131821183
-    invoke-virtual { p0, v6 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
-    move-result-object v6
-    invoke-virtual { v3, v6 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
+    const v4, 2131821183
+    invoke-virtual { p0, v4 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v4
+    invoke-virtual { v3, v4 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
     move-result-object v3
     invoke-virtual { v3, v1 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
   .line 214
-    invoke-virtual { v0 }, Landroid/text/SpannableStringBuilder;->length()I
-    move-result v1
+    const v1, 2131821184
+    invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
+    move-result-object v1
+    invoke-virtual { v0, v1 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
   .line 215
-    const v3, 2131821184
-    invoke-virtual { p0, v3 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
-    move-result-object v3
-    invoke-virtual { v0, v3 }, Landroid/text/SpannableStringBuilder;->append(Ljava/lang/CharSequence;)Landroid/text/SpannableStringBuilder;
-  .line 216
-    new-instance v3, Landroid/text/style/RelativeSizeSpan;
-    const v6, 1062836634
-    invoke-direct { v3, v6 }, Landroid/text/style/RelativeSizeSpan;-><init>(F)V
-    invoke-virtual { v0 }, Landroid/text/SpannableStringBuilder;->length()I
-    move-result v6
-    invoke-virtual { v0, v3, v1, v6, v5 }, Landroid/text/SpannableStringBuilder;->setSpan(Ljava/lang/Object;III)V
-  .line 217
     const/4 v1, 3
-    new-array v8, v1, [Ljava/lang/String;
+    new-array v9, v1, [Ljava/lang/String;
     const v1, 2131821118
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
-    aput-object v1, v8, v4
-  .line 218
+    aput-object v1, v9, v5
+  .line 216
     const v1, 2131821185
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
-    aput-object v1, v8, v2
+    aput-object v1, v9, v2
     const v1, 2131821186
     invoke-virtual { p0, v1 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
     move-result-object v1
     const/4 v2, 2
-    aput-object v1, v8, v2
-  .line 219
+    aput-object v1, v9, v2
+  .line 217
     new-instance v1, Lcom/innioasis/ipp/BackupDialog;
     const v2, 2131821182
     invoke-virtual { p0, v2 }, Landroid/app/Activity;->getString(I)Ljava/lang/String;
-    move-result-object v7
-    const/4 v9, 0
-    new-instance v10, Lcom/innioasis/ipp/M3uBase$Answer;
-    invoke-direct { v10, p0, p1 }, Lcom/innioasis/ipp/M3uBase$Answer;-><init>(Landroid/app/Activity;Ljava/lang/String;)V
-    move-object v5, v1
-    move-object v6, p0
-    invoke-direct/range { v5 .. v10 }, Lcom/innioasis/ipp/BackupDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;Lcom/innioasis/ipp/BackupDialog$Go;)V
-  .line 220
+    move-result-object v8
+    const/4 v10, 0
+    new-instance v11, Lcom/innioasis/ipp/M3uBase$Answer;
+    invoke-direct { v11, p0, p1 }, Lcom/innioasis/ipp/M3uBase$Answer;-><init>(Landroid/app/Activity;Ljava/lang/String;)V
+    move-object v6, v1
+    move-object v7, p0
+    invoke-direct/range { v6 .. v11 }, Lcom/innioasis/ipp/BackupDialog;-><init>(Landroid/app/Activity;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;Lcom/innioasis/ipp/BackupDialog$Go;)V
+  .line 218
     invoke-virtual { v1, v0 }, Lcom/innioasis/ipp/BackupDialog;->note(Ljava/lang/CharSequence;)Lcom/innioasis/ipp/BackupDialog;
     move-result-object p0
     invoke-virtual { p0 }, Lcom/innioasis/ipp/BackupDialog;->show()V
-  .line 221
+  .line 219
     return-void
   :L1
   .line 209
@@ -215,20 +205,30 @@
 
 .method static edit(Landroid/app/Activity;Ljava/lang/String;)V
   .registers 5
-  .line 243
+  .line 241
     new-instance v0, Lcom/innioasis/ipp/M3uBase$Typed;
     invoke-direct { v0, p0, p1 }, Lcom/innioasis/ipp/M3uBase$Typed;-><init>(Landroid/app/Activity;Ljava/lang/String;)V
-  .line 244
+  .line 242
     new-instance v1, Lcom/innioasis/y1/utils/InputMethodDialog;
     const v2, 2131886361
     invoke-direct { v1, p0, v0, v2 }, Lcom/innioasis/y1/utils/InputMethodDialog;-><init>(Landroid/app/Activity;Lcom/innioasis/y1/utils/InputMethodDialog$Callback;I)V
-  .line 245
+  .line 243
     invoke-virtual { v1 }, Lcom/innioasis/y1/utils/InputMethodDialog;->show()V
+  .line 245
+    invoke-virtual { v1 }, Lcom/innioasis/y1/utils/InputMethodDialog;->getWindow()Landroid/view/Window;
+    move-result-object p0
+    if-eqz p0, :L0
   .line 246
-    invoke-virtual { v0, p1 }, Lcom/innioasis/ipp/M3uBase$Typed;->seed(Ljava/lang/String;)V
-  .line 247
-    invoke-virtual { v1, p1 }, Lcom/innioasis/y1/utils/InputMethodDialog;->setEditText(Ljava/lang/String;)V
+    invoke-virtual { v1 }, Lcom/innioasis/y1/utils/InputMethodDialog;->getWindow()Landroid/view/Window;
+    move-result-object p0
+    const/16 v2, 128
+    invoke-virtual { p0, v2 }, Landroid/view/Window;->addFlags(I)V
+  :L0
   .line 248
+    invoke-virtual { v0, p1 }, Lcom/innioasis/ipp/M3uBase$Typed;->seed(Ljava/lang/String;)V
+  .line 249
+    invoke-virtual { v1, p1 }, Lcom/innioasis/y1/utils/InputMethodDialog;->setEditText(Ljava/lang/String;)V
+  .line 250
     return-void
 .end method
 

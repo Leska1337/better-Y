@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.graphics.Typeface;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.view.WindowManager;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -211,9 +211,7 @@ public final class M3uBase {
         sb.append(path);
         sb.setSpan(new StyleSpan(Typeface.BOLD), 0, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         sb.append("\n\n").append(a.getString(R.string.ipp_m3u_base_why)).append("\n\n");
-        int foot = sb.length();
         sb.append(a.getString(R.string.ipp_m3u_base_foot));
-        sb.setSpan(new RelativeSizeSpan(0.85f), foot, sb.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         String[] rows = { a.getString(R.string.ipp_backup_save),
                 a.getString(R.string.ipp_m3u_base_edit), a.getString(R.string.ipp_m3u_base_skip) };
         new BackupDialog(a, a.getString(R.string.ipp_m3u_base_ask), rows, null, new Answer(a, path))
@@ -243,6 +241,10 @@ public final class M3uBase {
         Typed cb = new Typed(a, path);
         InputMethodDialog dlg = new InputMethodDialog(a, cb, R.style.Dialog_Input_Method);
         dlg.show();
+        // typing a path out takes longer than the sleep time
+        if (dlg.getWindow() != null) {
+            dlg.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
         cb.seed(path);
         dlg.setEditText(path);
     }

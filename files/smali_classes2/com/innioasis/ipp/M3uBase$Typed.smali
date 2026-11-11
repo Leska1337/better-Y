@@ -19,19 +19,19 @@
 
 .method constructor <init>(Landroid/app/Activity;Ljava/lang/String;)V
   .registers 3
-  .line 256
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 257
-    iput-object p1, p0, Lcom/innioasis/ipp/M3uBase$Typed;->a:Landroid/app/Activity;
   .line 258
-    iput-object p2, p0, Lcom/innioasis/ipp/M3uBase$Typed;->path:Ljava/lang/String;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 259
+    iput-object p1, p0, Lcom/innioasis/ipp/M3uBase$Typed;->a:Landroid/app/Activity;
+  .line 260
+    iput-object p2, p0, Lcom/innioasis/ipp/M3uBase$Typed;->path:Ljava/lang/String;
+  .line 261
     return-void
 .end method
 
 .method public onBack()V
   .registers 4
-  .line 270
+  .line 272
     iget-object v0, p0, Lcom/innioasis/ipp/M3uBase$Typed;->live:Landroidx/lifecycle/MutableLiveData;
     if-nez v0, :L0
     const/4 v0, 0
@@ -40,7 +40,7 @@
     invoke-virtual { v0 }, Landroidx/lifecycle/MutableLiveData;->getValue()Ljava/lang/Object;
     move-result-object v0
   :L1
-  .line 271
+  .line 273
     if-nez v0, :L2
     const-string v0, ""
     goto :L3
@@ -50,7 +50,7 @@
     invoke-static { v0 }, Lcom/innioasis/ipp/M3uBase;->trim(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
   :L3
-  .line 272
+  .line 274
     iget-object v1, p0, Lcom/innioasis/ipp/M3uBase$Typed;->a:Landroid/app/Activity;
     invoke-virtual { v0 }, Ljava/lang/String;->length()I
     move-result v2
@@ -58,25 +58,25 @@
     iget-object v0, p0, Lcom/innioasis/ipp/M3uBase$Typed;->path:Ljava/lang/String;
   :L4
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/M3uBase;->ask(Landroid/app/Activity;Ljava/lang/String;)V
-  .line 273
+  .line 275
     return-void
 .end method
 
 .method public onInit(Landroidx/lifecycle/MutableLiveData;)V
   .registers 2
-  .line 262
+  .line 264
     iput-object p1, p0, Lcom/innioasis/ipp/M3uBase$Typed;->live:Landroidx/lifecycle/MutableLiveData;
-  .line 263
+  .line 265
     return-void
 .end method
 
 .method seed(Ljava/lang/String;)V
   .registers 3
-  .line 266
+  .line 268
     iget-object v0, p0, Lcom/innioasis/ipp/M3uBase$Typed;->live:Landroidx/lifecycle/MutableLiveData;
     if-eqz v0, :L0
     invoke-virtual { v0, p1 }, Landroidx/lifecycle/MutableLiveData;->setValue(Ljava/lang/Object;)V
   :L0
-  .line 267
+  .line 269
     return-void
 .end method

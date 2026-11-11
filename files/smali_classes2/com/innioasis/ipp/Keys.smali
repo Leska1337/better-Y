@@ -44,7 +44,7 @@
 
 .field private final static SHIFT:I = 1
 
-.field private final static SYMBOLS:Ljava/lang/String; = ".,?!'\"-_()0123456789[]@#$%&*+=/:;"
+.field private final static SYMBOLS:Ljava/lang/String; = ".,?!'\"-_()0123456789[]@#$%&*+=/\\:;"
 
 .field private static actRef:Ljava/lang/ref/WeakReference;
 
@@ -1165,7 +1165,7 @@
   :L0
     const/4 v2, 2
     if-ne v0, v2, :L1
-    const-string v0, ".,?!'\"-_()0123456789[]@#$%&*+=/:;"
+    const-string v0, ".,?!'\"-_()0123456789[]@#$%&*+=/\\:;"
     goto :L2
   :L1
     const-string v0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
