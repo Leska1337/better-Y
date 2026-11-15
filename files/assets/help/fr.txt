@@ -55,7 +55,7 @@ Pour cela, maintenez le bouton du haut enfoncé sur le thème voulu et choisisse
 ---
 Les réglages suivants sont enregistrés :
 
-En lecture : style.
+En lecture : style (sauf "incliner la pochette").
 Menu : style de menu, couleur du texte des aperçus du menu, marges de menu corrigées, style et couleur du texte de la barre d'état.
 Économiseur d'écran : style.
 Sonorité des touches : son.

@@ -49,6 +49,17 @@ public final class ThemeCfg {
     /** Whether Key tone's Sound is Theme: a yes or no, so a file name never goes in. */
     private static final String THEME_SOUND = "use_theme_key_sound";
 
+    /**
+     * How the file is laid out for whoever opens it: the better-Y menu's groups, in its order.
+     * Reading takes a key from any group, or from the top level, where older files keep them all.
+     */
+    private static final String[][] LAYOUT = {
+            {"now_playing", "icon_tint", Tint.KEY_TEXT, Tint.KEY_LYRICS, Tint.KEY_BOX},
+            {"menu", MenuStyle.KEY, Preview.KEY, Pad.KEY},
+            {"status_bar", TopBar.KEY_TEXT, TopBar.KEY_STYLE},
+            {"screensaver", Saver.KEY_STYLE, Saver.KEY_BG, Saver.KEY_TINT, Saver.KEY_CLOCK, Saver.KEY_TEXT},
+            {"key_tone", THEME_SOUND}};
+
     private ThemeCfg() {}
 
     /** Called from the theme confirm dialog right before stock stores the new name and relaunches. */
@@ -164,17 +175,37 @@ public final class ThemeCfg {
         }
     }
 
+    /** Grouped as {@link #LAYOUT}; JSONObject keeps insertion order, so the file reads in it. */
     private static JSONObject toJson(SharedPreferences p) throws Exception {
-        JSONObject j = new JSONObject();
+        java.util.HashMap values = new java.util.HashMap();
         for (int i = 0; i < KEYS.length; i++) {
             String[] names = (String[]) NAMES[i];
             int v = current(p, KEYS[i]);
-            if (v >= 0 && v < names.length) j.put(KEYS[i], names[v]);
-            else j.put(KEYS[i], v);
+            values.put(KEYS[i], v >= 0 && v < names.length ? (Object) names[v] : (Object) Integer.valueOf(v));
         }
-        for (int i = 0; i < FLAGS.length; i++) j.put(FLAGS[i], currentFlag(p, FLAGS[i]));
-        j.put(THEME_SOUND, Tone.THEME.equals(p.getString(Tone.KEY_SOUND, "")));
+        for (int i = 0; i < FLAGS.length; i++) values.put(FLAGS[i], Boolean.valueOf(currentFlag(p, FLAGS[i])));
+        values.put(THEME_SOUND, Boolean.valueOf(Tone.THEME.equals(p.getString(Tone.KEY_SOUND, ""))));
+        JSONObject j = new JSONObject();
+        for (int g = 0; g < LAYOUT.length; g++) {
+            JSONObject group = new JSONObject();
+            for (int k = 1; k < LAYOUT[g].length; k++) {
+                Object v = values.get(LAYOUT[g][k]);
+                if (v != null) group.put(LAYOUT[g][k], v);
+            }
+            j.put(LAYOUT[g][0], group);
+        }
         return j;
+    }
+
+    /** {@code key} from its group, or from the top level. */
+    private static Object opt(JSONObject j, String key) {
+        Object o = j.opt(key);
+        if (o != null) return o;
+        for (int g = 0; g < LAYOUT.length; g++) {
+            JSONObject group = j.optJSONObject(LAYOUT[g][0]);
+            if (group != null && group.has(key)) return group.opt(key);
+        }
+        return null;
     }
 
     /**
@@ -182,12 +213,12 @@ public final class ThemeCfg {
      * is only ever "the theme's": without that flag the theme takes the Global one.
      */
     private static void fromJson(JSONObject j, SharedPreferences p, SharedPreferences.Editor e) {
-        if (j.optBoolean(THEME_SOUND, false)) e.putString(Tone.KEY_SOUND, Tone.THEME);
+        if (Boolean.TRUE.equals(opt(j, THEME_SOUND))) e.putString(Tone.KEY_SOUND, Tone.THEME);
         else soundFromGlobal(p, e);
         for (int i = 0; i < KEYS.length; i++) {
             String[] names = (String[]) NAMES[i];
             int v = Prefs.defInt(KEYS[i]);
-            Object o = j.opt(KEYS[i]);
+            Object o = opt(j, KEYS[i]);
             if (o instanceof Number) {
                 int n = ((Number) o).intValue();
                 if (n >= 0 && n < names.length) v = n;
@@ -199,7 +230,7 @@ public final class ThemeCfg {
             e.putInt(KEYS[i], v);
         }
         for (int i = 0; i < FLAGS.length; i++) {
-            Object o = j.opt(FLAGS[i]);
+            Object o = opt(j, FLAGS[i]);
             boolean v = o instanceof Boolean ? ((Boolean) o).booleanValue() : Prefs.defBool(FLAGS[i]);
             e.putBoolean(FLAGS[i], v);
         }

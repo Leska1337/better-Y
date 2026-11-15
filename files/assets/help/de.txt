@@ -55,7 +55,7 @@ Halten Sie dazu auf dem gewünschten Design die obere Taste gedrückt und wähle
 ---
 Folgende Einstellungen werden gespeichert:
 
-Gerade läuft: Stil.
+Gerade läuft: Stil (außer "Cover neigen").
 Menü: Menüstil, Textfarbe der Menüvorschau, Korrigierte Menüränder, Stil und Textfarbe der Statusleiste.
 Bildschirmschoner: Stil.
 Tastenklang: Klang.

@@ -58,7 +58,7 @@ To do this, press and hold the top button on the desired theme and select "Save 
 ---
 The following settings are saved:
 
-Now Playing: style.
+Now Playing: style (except for "tilt the cover").
 Menu: menu style, text color in menu previews, fixed menu margins, status bar style and text color.
 Screensaver: style.
 Key tone: sound.

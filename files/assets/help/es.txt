@@ -55,7 +55,7 @@ Para ello, mantenga pulsado el botón superior sobre el tema deseado y seleccion
 ---
 Se guardan los siguientes ajustes:
 
-Reproduciendo ahora: estilo.
+Reproduciendo ahora: estilo (excepto "inclinar la carátula").
 Menú: estilo de menú, color del texto en las vistas previas del menú, márgenes de menú corregidos, estilo y color del texto de la barra de estado.
 Salvapantallas: estilo.
 Tono de tecla: sonido.
