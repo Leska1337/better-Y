@@ -46,6 +46,29 @@ Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte 
 * Ne plus afficher
 Vous pouvez maintenir le bouton du haut enfoncé sur chaque élément du menu pour en savoir plus sur son fonctionnement.
 
+[themes_tip]
+* Fermer
+* Ne plus afficher
+Vous pouvez enregistrer les réglages actuels dans le fichier better-Y.json, qui apparaîtra dans le dossier du thème sélectionné.
+
+Pour cela, maintenez le bouton du haut enfoncé sur le thème voulu et choisissez "Enreg. config".
+---
+Les réglages suivants sont enregistrés :
+
+En lecture : style.
+Menu : style de menu, couleur du texte des aperçus du menu, marges de menu corrigées, style et couleur du texte de la barre d'état.
+Économiseur d'écran : style.
+Sonorité des touches : son.
+---
+Pour ajouter un fond d'économiseur d'écran (screensaver.*), un fond d'écran USB (usb.*) ou une icône better-Y (better-Y.*), placez des images portant les noms de fichier correspondants dans le dossier du thème.
+
+Formats pris en charge : *.png, *.jpg et *.jpeg.
+---
+Vous pouvez aussi utiliser votre propre fichier de son pour la molette.
+Pour cela, placez un fichier "key-tone.*" dans le dossier du thème. Ensuite, allez dans Paramètres - Sonorité des touches, choisissez Son - Thème et enregistrez la configuration du thème.
+
+Formats pris en charge : *.mp3, *.ogg et *.wav.
+
 [[player]] En lecture
 
 [np_style] Style

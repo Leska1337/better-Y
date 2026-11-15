@@ -49,6 +49,29 @@ Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug
 * Don't show again
 You can tap and hold the top button on each menu item to learn more about how they work.
 
+[themes_tip]
+* Close
+* Don't show again
+You can save your current settings to the better-Y.json file, which will appear in the selected theme's folder.
+
+To do this, press and hold the top button on the desired theme and select "Save config".
+---
+The following settings are saved:
+
+Now Playing: style.
+Menu: menu style, text color in menu previews, fixed menu margins, status bar style and text color.
+Screensaver: style.
+Key tone: sound.
+---
+To add a screensaver background (screensaver.*), a USB screen background (usb.*), or a better-Y icon (better-Y.*), place images with the corresponding filenames in the theme folder.
+
+Supported formats are *.png, *.jpg, and *.jpeg.
+---
+You can also use your own scroll wheel sound file. 
+To do this, place a "key-tone.*" file in the theme folder. Next, go to Settings - Key tone, select Sound - Theme, and save the theme config.
+
+Supported formats are *.mp3, *.ogg, and *.wav.
+
 [[player]] Now Playing
 
 [np_style] Style

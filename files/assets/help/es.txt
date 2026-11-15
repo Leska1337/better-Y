@@ -46,6 +46,29 @@ Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de
 * No volver a mostrar
 Puede mantener pulsado el botón superior en cada elemento del menú para saber más sobre cómo funciona.
 
+[themes_tip]
+* Cerrar
+* No volver a mostrar
+Puede guardar los ajustes actuales en el archivo better-Y.json, que aparecerá en la carpeta del tema seleccionado.
+
+Para ello, mantenga pulsado el botón superior sobre el tema deseado y seleccione "Guardar conf.".
+---
+Se guardan los siguientes ajustes:
+
+Reproduciendo ahora: estilo.
+Menú: estilo de menú, color del texto en las vistas previas del menú, márgenes de menú corregidos, estilo y color del texto de la barra de estado.
+Salvapantallas: estilo.
+Tono de tecla: sonido.
+---
+Para añadir un fondo de salvapantallas (screensaver.*), un fondo para la pantalla USB (usb.*) o un icono de better-Y (better-Y.*), coloque imágenes con los nombres de archivo correspondientes en la carpeta del tema.
+
+Se admiten los formatos *.png, *.jpg y *.jpeg.
+---
+También puede usar su propio archivo de sonido para la rueda de desplazamiento.
+Para ello, coloque un archivo "key-tone.*" en la carpeta del tema. Después, vaya a Ajustes - Tono de tecla, seleccione Sonido - Tema y guarde la configuración del tema.
+
+Se admiten los formatos *.mp3, *.ogg y *.wav.
+
 [[player]] Reproduciendo ahora
 
 [np_style] Estilo

@@ -1427,30 +1427,6 @@
     move-result-object v3
   .line 494
     invoke-virtual { v2, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v3
-    if-nez v3, :L4
-    new-instance v3, Ljava/lang/StringBuilder;
-    invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
-    invoke-virtual { v3, p1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    const-string v4, ".bmp"
-    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v3
-    invoke-virtual { v2, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
-    move-result v3
-    if-nez v3, :L4
-    new-instance v3, Ljava/lang/StringBuilder;
-    invoke-direct { v3 }, Ljava/lang/StringBuilder;-><init>()V
-    invoke-virtual { v3, p1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    const-string v4, ".webp"
-    invoke-virtual { v3, v4 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v3
-    invoke-virtual { v3 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
-    move-result-object v3
-    invoke-virtual { v2, v3 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result v2
     if-eqz v2, :L6
   :L4
@@ -1463,7 +1439,7 @@
   :L6
   .line 491
     add-int/lit8 v1, v1, 1
-    goto/16 :L3
+    goto :L3
   :L7
   .line 499
     goto :L9

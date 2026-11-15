@@ -439,6 +439,24 @@ public final class Theme {
         }
     }
 
+    /** The gallery that has had its hint already: once per entry, not per reload of the list. */
+    private static WeakReference tipped;
+
+    /**
+     * The gallery's hint, from {@code ThemeListActivity$toPathFolder$2$1} right after its loading
+     * window closes. Not while a theme is still being copied: its own window is up, and the list
+     * is loaded again when it ends.
+     */
+    public static void tip(Activity a) {
+        try {
+            if (a == null || ThemeManager.INSTANCE.isRunCopyTheme()) return;
+            if (tipped != null && tipped.get() == a) return;
+            tipped = new WeakReference(a);
+            TipDialog.show(a, "themes_tip", "themes_hint_off");
+        } catch (Throwable t) {
+        }
+    }
+
     /**
      * The theme gallery's full-screen preview has no backdrop, so the grid hides under it —
      * INVISIBLE, keeping its layout and scroll position.

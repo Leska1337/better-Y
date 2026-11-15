@@ -482,7 +482,7 @@ public final class Saver {
         }
     }
 
-    /** {@code <base>.png/.jpg/.jpeg/.bmp/.webp} in {@code dir}, any case. */
+    /** {@code <base>.png/.jpg/.jpeg} in {@code dir}, any case. */
     static String themeFile(String dir, String base) {
         try {
             if (dir == null || dir.trim().length() == 0) return null;
@@ -491,7 +491,7 @@ public final class Saver {
             for (int i = 0; i < fs.length; i++) {
                 String n = fs[i].getName().toLowerCase(java.util.Locale.US);
                 if (fs[i].isFile() && (n.equals(base + ".png") || n.equals(base + ".jpg")
-                        || n.equals(base + ".jpeg") || n.equals(base + ".bmp") || n.equals(base + ".webp"))) {
+                        || n.equals(base + ".jpeg"))) {
                     return fs[i].getAbsolutePath();
                 }
             }

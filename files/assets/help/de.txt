@@ -46,6 +46,29 @@ Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte,
 * Nicht mehr anzeigen
 Sie können auf jedem Menüpunkt die obere Taste gedrückt halten, um mehr darüber zu erfahren, wie er funktioniert.
 
+[themes_tip]
+* Schließen
+* Nicht mehr anzeigen
+Sie können die aktuellen Einstellungen in der Datei better-Y.json speichern, die im Ordner des ausgewählten Designs erscheint.
+
+Halten Sie dazu auf dem gewünschten Design die obere Taste gedrückt und wählen Sie "Speichern".
+---
+Folgende Einstellungen werden gespeichert:
+
+Gerade läuft: Stil.
+Menü: Menüstil, Textfarbe der Menüvorschau, Korrigierte Menüränder, Stil und Textfarbe der Statusleiste.
+Bildschirmschoner: Stil.
+Tastenklang: Klang.
+---
+Um einen Hintergrund für den Bildschirmschoner (screensaver.*), einen Hintergrund für den USB-Bildschirm (usb.*) oder ein better-Y-Symbol (better-Y.*) hinzuzufügen, legen Sie Bilder mit den entsprechenden Dateinamen in den Ordner des Designs.
+
+Unterstützte Formate sind *.png, *.jpg und *.jpeg.
+---
+Sie können auch eine eigene Tondatei für das Scrollrad verwenden.
+Legen Sie dazu eine Datei "key-tone.*" in den Ordner des Designs. Öffnen Sie anschließend Einstellungen - Tastenklang, wählen Sie Klang - Design und speichern Sie die Konfiguration des Designs.
+
+Unterstützte Formate sind *.mp3, *.ogg und *.wav.
+
 [[player]] Gerade läuft
 
 [np_style] Stil

@@ -3,6 +3,8 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.text.Layout;
+import android.text.StaticLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
@@ -16,20 +18,27 @@ import com.innioasis.y1.R;
 import com.innioasis.y1.base.BaseDialog;
 import com.innioasis.y1.theme.ThemeManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A one-time hint: the text, a "Don't show again" tick and a Close button, dressed like
  * {@link PickDialog}. Its wording is an asset row: the body is the text, the two values are the
  * button and the tick. The tick counts only when Close is pressed; the top button just closes.
+ * A {@code ---} line splits the text into pages: the wheel turns them, and past the last one
+ * moves on to the tick and the button. The window is as tall as its tallest page.
  */
 public final class TipDialog extends BaseDialog {
 
     private static final int TICK = 0;
+    private static final int NONE = -1;
     private static final int CLOSE = 1;
     private static final int BOX = 0xFF8C94B2;
     private static final float CORNER = 10.0f;
 
     private final Activity activity;
-    private final String text;
+    private final String[] pages;
+    private int page;
     private final String closeText;
     private final String tickText;
     private final String pref;
@@ -39,6 +48,7 @@ public final class TipDialog extends BaseDialog {
     private final TextView[] labels = new TextView[2];
     private ImageView tick;
     private TextView body;
+    private TextView counter;
 
     /** Shows the hint of asset row {@code row} unless its tick was set; null when it is not shown. */
     public static TipDialog show(Activity a, String row, String pref) {
@@ -59,7 +69,8 @@ public final class TipDialog extends BaseDialog {
     private TipDialog(Activity a, String text, String closeText, String tickText, String pref) {
         super(a, R.style.Dialog_Common);
         this.activity = a;
-        this.text = text;
+        this.pages = split(text);
+        if (pages.length > 1) sel = NONE;
         this.closeText = closeText;
         this.tickText = tickText;
         this.pref = pref;
@@ -81,9 +92,15 @@ public final class TipDialog extends BaseDialog {
         body.setTextSize(14.0f);
         body.setTypeface(font());
         body.setPadding(4, 2, 4, 8);
-        body.setGravity(Gravity.CENTER_HORIZONTAL);
-        body.setText(text);
+        body.setGravity(Gravity.CENTER);
         box.addView(body, -1, -2);
+        counter = new TextView(activity);
+        counter.setTextSize(12.0f);
+        counter.setTypeface(font());
+        counter.setGravity(Gravity.CENTER_HORIZONTAL);
+        counter.setPadding(0, 0, 0, 4);
+        counter.setVisibility(pages.length > 1 ? View.VISIBLE : View.GONE);
+        box.addView(counter, -1, -2);
 
         LinearLayout r = new LinearLayout(activity);
         r.setOrientation(LinearLayout.HORIZONTAL);
@@ -125,14 +142,44 @@ public final class TipDialog extends BaseDialog {
         box.addView(buttons, -1, -2);
 
         setContentView(box);
+        int width = (int) (activity.getResources().getDimension(R.dimen.submenu_width) * 1.7f);
         Window w = getWindow();
         if (w != null) {
             WindowManager.LayoutParams wl = w.getAttributes();
-            wl.width = (int) (activity.getResources().getDimension(R.dimen.submenu_width) * 1.7f);
+            wl.width = width;
             wl.gravity = Gravity.CENTER;
             w.setAttributes(wl);
         }
+        if (pages.length > 1) body.setHeight(tallest(width - 20 - 8) + 2 + 8);
         paint();
+    }
+
+    private static String[] split(String text) {
+        List out = new ArrayList();
+        StringBuilder cur = new StringBuilder();
+        String[] lines = text.split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            if (lines[i].trim().equals("---")) {
+                out.add(cur.toString().trim());
+                cur.setLength(0);
+            } else {
+                if (cur.length() > 0) cur.append('\n');
+                cur.append(lines[i]);
+            }
+        }
+        out.add(cur.toString().trim());
+        return (String[]) out.toArray(new String[out.size()]);
+    }
+
+    /** Measured with the body's own paint, so turning a page never resizes the window. */
+    private int tallest(int w) {
+        int max = 0;
+        for (int i = 0; i < pages.length; i++) {
+            StaticLayout l = new StaticLayout(pages[i], body.getPaint(), w,
+                    Layout.Alignment.ALIGN_CENTER, 1f, 0f, true);
+            if (l.getHeight() > max) max = l.getHeight();
+        }
+        return max;
     }
 
     private static Typeface font() {
@@ -141,7 +188,10 @@ public final class TipDialog extends BaseDialog {
 
     private void paint() {
         int white = activity.getResources().getColor(R.color.white);
+        body.setText(pages[page]);
+        counter.setText((page + 1) + " / " + pages.length);
         ThemeManager.INSTANCE.menuItemSetTextColor(body, white, false);
+        ThemeManager.INSTANCE.menuItemSetTextColor(counter, white, false);
         for (int i = 0; i < 2; i++) {
             boolean focus = i == sel;
             if (i == CLOSE) {
@@ -170,12 +220,16 @@ public final class TipDialog extends BaseDialog {
     @Override
     public void shortUp(int keyCode) {
         KeyMap k = KeyMap.INSTANCE;
-        if (keyCode == k.getKEY_UP() || keyCode == k.getKEY_LEFT()
-                || keyCode == k.getKEY_DOWN() || keyCode == k.getKEY_RIGHT()) {
-            sel = sel == TICK ? CLOSE : TICK;
+        boolean back = keyCode == k.getKEY_UP() || keyCode == k.getKEY_LEFT();
+        if (back || keyCode == k.getKEY_DOWN() || keyCode == k.getKEY_RIGHT()) {
+            if (pages.length == 1) sel = sel == TICK ? CLOSE : TICK;
+            else step(back ? -1 : 1);
             paint();
         } else if (keyCode == k.getKEY_ENTER()) {
-            if (sel == TICK) {
+            if (sel == NONE) {
+                step(1);
+                paint();
+            } else if (sel == TICK) {
                 off = !off;
                 paint();
             } else {
@@ -184,6 +238,20 @@ public final class TipDialog extends BaseDialog {
             }
         } else if (keyCode == k.getKEY_MENU()) {
             dismiss();
+        }
+    }
+
+    /** Pages first, then the tick and the button; no wrap at either end. */
+    private void step(int d) {
+        int last = pages.length - 1;
+        if (d > 0) {
+            if (page < last) page++;
+            else if (sel == NONE) sel = TICK;
+            else sel = CLOSE;
+        } else {
+            if (sel == CLOSE) sel = TICK;
+            else if (sel == TICK) sel = NONE;
+            else if (page > 0) page--;
         }
     }
 
