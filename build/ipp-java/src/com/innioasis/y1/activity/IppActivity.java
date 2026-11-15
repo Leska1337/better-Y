@@ -381,6 +381,7 @@ public final class IppActivity extends BaseActivity {
         box.addView(rowList, -1, -1);
         root.addView(box, -1, -1);
         show(-1, -1);
+        tip = com.innioasis.ipp.TipDialog.show(this, TIP, TIP_OFF);
     }
 
     /** The list of groups is open, the level {@link MenuStyle#section} lays out as the main menu. */
@@ -2134,6 +2135,21 @@ public final class IppActivity extends BaseActivity {
     /** The asset's name for the row, or its key. */
     private static String label(Item it) {
         return it.label != null ? it.label : it.key;
+    }
+
+    /** The hint shown on entry: its asset row, and the "don't show again" flag. */
+    private static final String TIP = "menu_tip";
+    private static final String TIP_OFF = "menu_hint_off";
+    private com.innioasis.ipp.TipDialog tip;
+
+    @Override
+    protected void onDestroy() {
+        try {
+            if (tip != null && tip.isShowing()) tip.dismiss();
+        } catch (Throwable t) {
+        }
+        tip = null;
+        super.onDestroy();
     }
 
     @Override

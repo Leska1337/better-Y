@@ -41,6 +41,11 @@ Pour que la liste exportée s’ouvre depuis n’importe quel endroit de l’ord
 [log] Enregistrer le journal de diagnostic
 Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte mémoire, à joindre à un rapport de bogue.
 
+[menu_tip]
+* Fermer
+* Ne plus afficher
+Vous pouvez maintenir le bouton du haut enfoncé sur chaque élément du menu pour en savoir plus sur son fonctionnement.
+
 [[player]] En lecture
 
 [np_style] Style

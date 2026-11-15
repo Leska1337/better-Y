@@ -13,14 +13,14 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 165
+  .line 142
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 6
-  .line 167
+  .line 144
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$000()J
@@ -31,6 +31,6 @@
     if-ltz v4, :L0
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->paintPanel()V
   :L0
-  .line 168
+  .line 145
     return-void
 .end method

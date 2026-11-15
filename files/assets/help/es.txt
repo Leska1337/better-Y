@@ -41,6 +41,11 @@ Para que la lista exportada se abra desde cualquier lugar del ordenador, hay que
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de memoria para adjuntarlo a un informe de error.
 
+[menu_tip]
+* Cerrar
+* No volver a mostrar
+Puede mantener pulsado el botón superior en cada elemento del menú para saber más sobre cómo funciona.
+
 [[player]] Reproduciendo ahora
 
 [np_style] Estilo

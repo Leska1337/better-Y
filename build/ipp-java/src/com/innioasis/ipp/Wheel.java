@@ -98,34 +98,11 @@ public final class Wheel {
         }
         if (!busy || painting) {               // not a wheel move, or our own paint
             painted = title;
-            stateShift(host, title);
             return false;
         }
         panelHost = new WeakReference(host);
         panelTitle = title;
         return true;
-    }
-
-    /**
-     * The state caption moved down by {@code ipp_state_top} — non-zero in the locales with a
-     * two-line title. Not on About: no room below it. From the paint path, never a bind.
-     */
-    private static void stateShift(SettingActivity host, String title) {
-        try {
-            View tv = ((android.app.Activity) host).findViewById(R.id.info_state_tv);
-            if (tv == null) return;
-            ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) tv.getLayoutParams();
-            if (lp == null) return;
-            int top = 0;
-            if (!host.getString(R.string.setting_about).equals(title)) {
-                top = host.getResources().getDimensionPixelSize(R.dimen.ipp_state_top);
-            }
-            if (lp.topMargin != top) {
-                lp.topMargin = top;
-                tv.setLayoutParams(lp);
-            }
-        } catch (Throwable t) {
-        }
     }
 
     private static String painted;

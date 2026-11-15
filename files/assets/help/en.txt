@@ -44,6 +44,11 @@ To ensure that the exported playlist opens from anywhere on your PC, you must sp
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
 
+[menu_tip]
+* Close
+* Don't show again
+You can tap and hold the top button on each menu item to learn more about how they work.
+
 [[player]] Now Playing
 
 [np_style] Style

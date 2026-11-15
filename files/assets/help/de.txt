@@ -41,6 +41,11 @@ Damit sich die exportierte Wiedergabeliste am PC von überall aus öffnen lässt
 [log] Diagnoseprotokoll speichern
 Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
 
+[menu_tip]
+* Schließen
+* Nicht mehr anzeigen
+Sie können auf jedem Menüpunkt die obere Taste gedrückt halten, um mehr darüber zu erfahren, wie er funktioniert.
+
 [[player]] Gerade läuft
 
 [np_style] Stil

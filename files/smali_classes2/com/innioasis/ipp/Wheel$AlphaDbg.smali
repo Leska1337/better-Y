@@ -26,43 +26,43 @@
 
 .method constructor <init>(JLandroidx/recyclerview/widget/RecyclerView;)V
   .registers 4
-  .line 257
+  .line 234
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 258
+  .line 235
     iput-wide p1, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->at:J
-  .line 259
+  .line 236
     iput-object p3, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->rv:Landroidx/recyclerview/widget/RecyclerView;
-  .line 260
+  .line 237
     return-void
 .end method
 
 .method public doFrame(J)V
   .registers 3
-  .line 263
+  .line 240
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide p1
     iput-wide p1, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->frame:J
-  .line 264
+  .line 241
     iget-object p1, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object p1
     invoke-virtual { p1, p0 }, Landroid/view/ViewTreeObserver;->addOnGlobalLayoutListener(Landroid/view/ViewTreeObserver$OnGlobalLayoutListener;)V
-  .line 265
+  .line 242
     iget-object p1, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { p1 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object p1
     invoke-virtual { p1, p0 }, Landroid/view/ViewTreeObserver;->addOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  .line 266
+  .line 243
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$300()Landroid/os/Handler;
     move-result-object p1
     invoke-virtual { p1, p0 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
-  .line 267
+  .line 244
     return-void
 .end method
 
 .method public onGlobalLayout()V
   .registers 6
-  .line 270
+  .line 247
     iget-wide v0, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->laid:J
     const-wide/16 v2, 0
     cmp-long v4, v0, v2
@@ -71,13 +71,13 @@
     move-result-wide v0
     iput-wide v0, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->laid:J
   :L0
-  .line 271
+  .line 248
     return-void
 .end method
 
 .method public onPreDraw()Z
   .registers 6
-  .line 274
+  .line 251
     iget-wide v0, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->pre:J
     const-wide/16 v2, 0
     cmp-long v4, v0, v2
@@ -86,27 +86,27 @@
     move-result-wide v0
     iput-wide v0, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->pre:J
   :L0
-  .line 275
+  .line 252
     const/4 v0, 1
     return v0
 .end method
 
 .method public run()V
   .registers 13
-  .line 279
+  .line 256
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-  .line 280
+  .line 257
     iget-object v2, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v2
     invoke-virtual { v2, p0 }, Landroid/view/ViewTreeObserver;->removeGlobalOnLayoutListener(Landroid/view/ViewTreeObserver$OnGlobalLayoutListener;)V
-  .line 281
+  .line 258
     iget-object v2, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->rv:Landroidx/recyclerview/widget/RecyclerView;
     invoke-virtual { v2 }, Landroidx/recyclerview/widget/RecyclerView;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v2
     invoke-virtual { v2, p0 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  .line 282
+  .line 259
     new-instance v2, Ljava/lang/StringBuilder;
     invoke-direct { v2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "alpha frame "
@@ -143,7 +143,7 @@
     const-string v3, " predraw "
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v2
-  .line 283
+  .line 260
     iget-wide v3, p0, Lcom/innioasis/ipp/Wheel$AlphaDbg;->pre:J
     cmp-long v9, v3, v7
     if-nez v9, :L2
@@ -212,22 +212,22 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 282
+  .line 259
     invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
-  .line 285
+  .line 262
     const/4 v0, 0
     sput-object v0, Lcom/innioasis/ipp/SongRows;->dbgWho:Ljava/lang/String;
-  .line 286
+  .line 263
     const/4 v0, 0
     sput v0, Lcom/innioasis/ipp/SongRows;->dbgReqBefore:I
-  .line 287
+  .line 264
     sput v0, Lcom/innioasis/ipp/SongRows;->dbgReqAfter:I
-  .line 288
+  .line 265
     sput v0, Lcom/innioasis/ipp/SongRows;->dbgBinds:I
-  .line 289
+  .line 266
     sput-wide v7, Lcom/innioasis/ipp/SongRows;->dbgBindMs:J
-  .line 290
+  .line 267
     sput v0, Lcom/innioasis/ipp/SongRows;->dbgMade:I
-  .line 291
+  .line 268
     return-void
 .end method
