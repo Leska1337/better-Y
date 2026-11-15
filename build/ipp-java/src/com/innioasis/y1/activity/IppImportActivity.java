@@ -132,7 +132,8 @@ public final class IppImportActivity extends BaseActivity {
             r.setPadding(10, 0, 5, 0);
 
             ImageView t = new ImageView(this);
-            t.setImageBitmap(PickDialog.tick());
+            t.setImageBitmap(PickDialog.box(false));
+            if (i == 0) t.setVisibility(View.GONE);   // "Select all" is an action, not a choice
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(-2, -2);
             tp.rightMargin = 6;
             r.addView(t, tp);
@@ -219,10 +220,7 @@ public final class IppImportActivity extends BaseActivity {
         Icons.menu(ticks[i], labels[i].getCurrentTextColor());
         boolean file = i > 0 && i <= all.size();
         if (file) {
-            ticks[i].setVisibility(((M3u.Plan) all.get(i - 1)).picked
-                    ? View.VISIBLE : View.INVISIBLE);
-        } else if (i == 0) {
-            ticks[i].setVisibility(View.INVISIBLE);   // keeps the labels in one column
+            ticks[i].setImageBitmap(PickDialog.box(((M3u.Plan) all.get(i - 1)).picked));
         }
     }
 
@@ -249,13 +247,18 @@ public final class IppImportActivity extends BaseActivity {
         else if (v.getBottom() > y + h) scroller.scrollTo(0, v.getBottom() - h);
     }
 
+    private boolean every() {
+        boolean every = true;
+        for (int i = 0; i < all.size(); i++) every &= ((M3u.Plan) all.get(i)).picked;
+        return every;
+    }
+
     private void press() {
         int n = all.size();
         if (sel == 0) {
-            boolean every = true;
-            for (int i = 0; i < n; i++) every &= ((M3u.Plan) all.get(i)).picked;
+            boolean every = every();
             for (int i = 0; i < n; i++) ((M3u.Plan) all.get(i)).picked = !every;
-            for (int i = 1; i <= n; i++) paintRow(i);
+            for (int i = 0; i <= n; i++) paintRow(i);
         } else if (sel <= n) {
             M3u.Plan p = (M3u.Plan) all.get(sel - 1);
             p.picked = !p.picked;

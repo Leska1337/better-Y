@@ -17,22 +17,22 @@
 
 .method constructor <init>(Landroid/widget/ImageView;Landroid/graphics/Bitmap;)V
   .registers 3
-  .line 670
+  .line 745
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 671
+  .line 746
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowWall;->v:Landroid/widget/ImageView;
-  .line 672
+  .line 747
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowWall;->b:Landroid/graphics/Bitmap;
-  .line 673
+  .line 748
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 677
+  .line 752
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowWall;->v:Landroid/widget/ImageView;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowWall;->b:Landroid/graphics/Bitmap;
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 678
+  .line 753
     return-void
 .end method

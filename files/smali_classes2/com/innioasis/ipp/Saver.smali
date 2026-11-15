@@ -22,7 +22,7 @@
 
 .field public final static BRIGHTS:[I
 
-.field public final static BRIGHT_DEFAULT:I = 29
+.field public final static BRIGHT_DEFAULT:I = 30
 
 .field private final static CHECK:Ljava/lang/Runnable;
 
@@ -111,7 +111,7 @@
 .method static constructor <clinit>()V
   .registers 3
   .line 56
-    const/16 v0, 100
+    const/16 v0, 101
     new-array v0, v0, [I
     sput-object v0, Lcom/innioasis/ipp/Saver;->BRIGHTS:[I
   .line 60
@@ -120,9 +120,8 @@
     sget-object v1, Lcom/innioasis/ipp/Saver;->BRIGHTS:[I
     array-length v2, v1
     if-ge v0, v2, :L1
-    add-int/lit8 v2, v0, 1
-    aput v2, v1, v0
-    move v0, v2
+    aput v0, v1, v0
+    add-int/lit8 v0, v0, 1
     goto :L0
   :L1
   .line 64

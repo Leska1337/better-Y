@@ -19,29 +19,29 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppSaverActivity;Ljava/lang/String;Landroid/graphics/Bitmap;)V
   .registers 4
-  .line 633
+  .line 708
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 634
+  .line 709
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
-  .line 635
+  .line 710
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->path:Ljava/lang/String;
-  .line 636
+  .line 711
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->b:Landroid/graphics/Bitmap;
-  .line 637
+  .line 712
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 641
+  .line 716
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->path:Ljava/lang/String;
     invoke-static { v0, v1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$602(Lcom/innioasis/y1/activity/IppSaverActivity;Ljava/lang/String;)Ljava/lang/String;
-  .line 642
+  .line 717
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->b:Landroid/graphics/Bitmap;
     invoke-static { v0, v1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$702(Lcom/innioasis/y1/activity/IppSaverActivity;Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
-  .line 643
+  .line 718
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$800(Lcom/innioasis/y1/activity/IppSaverActivity;)Landroid/widget/ImageView;
     move-result-object v0
@@ -59,6 +59,6 @@
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$ShowCover;->b:Landroid/graphics/Bitmap;
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   :L0
-  .line 644
+  .line 719
     return-void
 .end method

@@ -55,10 +55,21 @@ import java.util.Locale;
  */
 public final class IppSaverActivity extends Activity {
 
-    /** Preview from the Style row: the wheel runs over the presets, centre keeps one. */
+    /**
+     * Preview from the Style row: left/right pick a category, the wheel its value, shown live and
+     * written at once, so leaving keeps what is on screen.
+     */
     public static final String EXTRA_PREVIEW = "preview";
-    /** The presets' names, from the row's values. */
-    public static final String EXTRA_NAMES = "names";
+
+    /** The preview's categories; their names and values are the asset's rows of the same keys. */
+    private static final String[] CATS = {Saver.KEY_STYLE, Saver.KEY_BRIGHT, Saver.KEY_BG,
+            Saver.KEY_TINT, Saver.KEY_CLOCK, Saver.KEY_TEXT};
+    private static final int[] COUNTS = {Saver.STYLES, Saver.BRIGHTS.length, 3, 4, 3, 3};
+    private static final int BRIGHT_STEP = 5;
+    /** The preview's hint: its asset row, and the "don't show again" flag. */
+    private static final String TIP = "ss_tip";
+    private static final String TIP_OFF = "ss_hint_off";
+    private com.innioasis.ipp.TipDialog tip;
 
     private static final int LIGHT = 0xFFFFFFFF;
     private static final int DARK = 0xFF121212;
@@ -75,10 +86,12 @@ public final class IppSaverActivity extends Activity {
     private int dateOver;
 
     private boolean preview;
-    private String[] names;
+    private int cat;
     private int style;
     private Handler ui;
+    private FrameLayout back;
     private FrameLayout content;
+    private TextView head;
     private TextView band;
     private TextView clock;
     private TextView date;
@@ -107,33 +120,28 @@ public final class IppSaverActivity extends Activity {
         preview = getIntent().getBooleanExtra(EXTRA_PREVIEW, false);
         int bi = Prefs.val(this, Saver.KEY_BRIGHT);
         if (bi < 0 || bi >= Saver.BRIGHTS.length) bi = Saver.BRIGHT_DEFAULT;
-        target = Math.max(0.01f, Saver.BRIGHTS[bi] / 100f);
+        target = com.innioasis.ipp.Backlight.window(Saver.BRIGHTS[bi]);
         // the saver eases down from the brightness the user was looking at; the preview is at once
         from = preview ? target : systemBrightness();
         brightness(from);
         if (!preview) ui.postDelayed(fade, FADE_STEP_MS);
-        names = getIntent().getStringArrayExtra(EXTRA_NAMES);
         style = Prefs.val(this, Saver.KEY_STYLE);
         if (style < 0 || style >= Saver.STYLES) style = Saver.STYLE_DEFAULT;
 
         FrameLayout root = new FrameLayout(this);
-        background(root);
-        tint(root);
+        back = new FrameLayout(this);
+        root.addView(back, new FrameLayout.LayoutParams(-1, -1));
+        paintBack();
         content = new FrameLayout(this);
         root.addView(content, new FrameLayout.LayoutParams(-1, -1));
         if (preview) {
-            band = new TextView(this);
-            band.setGravity(Gravity.CENTER);
-            band.setTextColor(LIGHT);
-            band.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
-            fit(band, 22, "Hg", 0, 28);
-            band.setBackgroundColor(0xB3000000);
-            FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(-1, 44);
-            bl.gravity = Gravity.BOTTOM;
-            root.addView(band, bl);
+            head = band(root, Gravity.TOP);
+            band = band(root, Gravity.BOTTOM);
         }
         setContentView(root);
         layout();
+        bands();
+        if (preview) tip = com.innioasis.ipp.TipDialog.show(this, TIP, TIP_OFF);
 
         rx = new Rx(this);
         IntentFilter f = new IntentFilter(Intent.ACTION_TIME_TICK);
@@ -167,6 +175,10 @@ public final class IppSaverActivity extends Activity {
         ui.removeCallbacks(sleep);
         ui.removeCallbacks(fade);
         try {
+            if (tip != null && tip.isShowing()) tip.dismiss();
+        } catch (Throwable t) {
+        }
+        try {
             unregisterReceiver(rx);
         } catch (Throwable t) {
         }
@@ -180,25 +192,92 @@ public final class IppSaverActivity extends Activity {
         if (e.getAction() == KeyEvent.ACTION_DOWN) {
             if (preview) Tone.key(e);
             if (e.getRepeatCount() == 0) down = code;
-            if (preview && (code == KeyMap.INSTANCE.getKEY_UP() || code == KeyMap.INSTANCE.getKEY_DOWN())) {
-                int step = code == KeyMap.INSTANCE.getKEY_DOWN() ? 1 : -1;
-                style = (style + step + Saver.STYLES) % Saver.STYLES;
-                layout();
+            if (preview) {
+                KeyMap k = KeyMap.INSTANCE;
+                if (code == k.getKEY_UP() || code == k.getKEY_DOWN()) {
+                    change(code == k.getKEY_DOWN() ? 1 : -1);
+                } else if (e.getRepeatCount() == 0 && (code == k.getKEY_LEFT() || code == k.getKEY_RIGHT())) {
+                    cat = (cat + (code == k.getKEY_RIGHT() ? 1 : -1) + CATS.length) % CATS.length;
+                    bands();
+                }
             }
             return true;
         }
         if (e.getAction() == KeyEvent.ACTION_UP && code == down) {
             down = -1;
-            if (!preview) {
-                finish();
-            } else if (code == KeyMap.INSTANCE.getKEY_ENTER()) {
-                Prefs.setInt(this, Saver.KEY_STYLE, style);
-                finish();
-            } else if (code == KeyMap.INSTANCE.getKEY_MENU()) {
-                finish();
-            }
+            if (!preview || code == KeyMap.INSTANCE.getKEY_MENU()) finish();
         }
         return true;
+    }
+
+    // ---- preview ----------------------------------------------------------------------------
+
+    private TextView band(FrameLayout root, int gravity) {
+        TextView t = new TextView(this);
+        t.setGravity(Gravity.CENTER);
+        t.setTextColor(LIGHT);
+        t.setTypeface(Typeface.MONOSPACE, Typeface.BOLD);
+        fit(t, 22, "Hg", 0, 28);
+        t.setBackgroundColor(0xB3000000);
+        FrameLayout.LayoutParams bl = new FrameLayout.LayoutParams(-1, 44);
+        bl.gravity = gravity;
+        root.addView(t, bl);
+        return t;
+    }
+
+    private int current(int c) {
+        if (c == 0) return style;
+        int v = Prefs.val(this, CATS[c]);
+        return v < 0 || v >= COUNTS[c] ? 0 : v;
+    }
+
+    /** One wheel step in the current category: written at once and shown at once. */
+    private void change(int step) {
+        String key = CATS[cat];
+        int n = COUNTS[cat];
+        int v;
+        if (Saver.KEY_BRIGHT.equals(key)) {
+            // 5 % steps from 0 to 100, landing on a multiple of 5 from any stored value; no wrap,
+            // which would throw the screen from 100 % to 0 %
+            int pct = Saver.BRIGHTS[current(cat)];
+            pct = step > 0 ? (pct / BRIGHT_STEP + 1) * BRIGHT_STEP
+                    : ((pct + BRIGHT_STEP - 1) / BRIGHT_STEP - 1) * BRIGHT_STEP;
+            pct = Math.max(Saver.BRIGHTS[0], Math.min(Saver.BRIGHTS[n - 1], pct));
+            v = pct - Saver.BRIGHTS[0];
+        } else {
+            v = (current(cat) + step + n) % n;
+        }
+        Prefs.setInt(this, key, v);
+        if (Saver.KEY_STYLE.equals(key)) {
+            style = v;
+        } else if (Saver.KEY_BRIGHT.equals(key)) {
+            target = com.innioasis.ipp.Backlight.window(Saver.BRIGHTS[v]);
+            brightness(target);
+        } else if (Saver.KEY_BG.equals(key) || Saver.KEY_TINT.equals(key)) {
+            paintBack();
+        }
+        if (!Saver.KEY_BRIGHT.equals(key)) layout();
+        bands();
+    }
+
+    private void bands() {
+        if (head == null) return;
+        String key = CATS[cat];
+        com.innioasis.ipp.Help.Row r = com.innioasis.ipp.Help.row(this, key);
+        String name = r != null && r.label != null ? r.label : key;
+        head.setText("‹  " + name + "  ›");
+        int v = current(cat);
+        String val;
+        if (Saver.KEY_BRIGHT.equals(key)) val = Saver.BRIGHTS[v] + "%";
+        else if (r != null && r.values != null && v < r.values.length) val = r.values[v];
+        else val = String.valueOf(v + 1);
+        band.setText(val);
+    }
+
+    private void paintBack() {
+        back.removeAllViews();
+        background(back);
+        tint(back);
     }
 
     // ---- drawing ----------------------------------------------------------------------------
@@ -304,10 +383,6 @@ public final class IppSaverActivity extends Activity {
         coverPath = null;
         int kind = Saver.kind(style);
         int side = Saver.side(style);
-        if (band != null) {
-            String n = names != null && style < names.length ? names[style] : String.valueOf(style + 1);
-            band.setText("‹  " + n + "  ›");
-        }
         Song s = kind == Saver.SONG ? playing() : null;
         if (s != null) {
             song(s, side);

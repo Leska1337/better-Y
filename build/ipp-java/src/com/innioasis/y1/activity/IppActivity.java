@@ -281,13 +281,8 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(SUB, "screensaver", 0, null, null));
         l.add(new Item(TOGGLE, Saver.KEY_ON, 0, null, null).in("screensaver"));
         l.add(new Item(ACTION, Saver.KEY_STYLE, Saver.STYLES, null, Saver.KEY_ON).in("screensaver"));
-        l.add(new Item(NUMBER, Saver.KEY_BRIGHT, Saver.BRIGHTS.length, Saver.BRIGHTS, Saver.KEY_ON).in("screensaver"));
         l.add(new Item(CHOICE, Saver.KEY_OFF, Saver.OFF_MS.length, null, Saver.KEY_ON).in("screensaver").wheel());
         l.add(new Item(TOGGLE, Saver.KEY_CHARGING, 0, null, Saver.KEY_ON).in("screensaver"));
-        l.add(new Item(CHOICE, Saver.KEY_BG, 3, null, Saver.KEY_ON).in("screensaver"));
-        l.add(new Item(CHOICE, Saver.KEY_TINT, 4, null, Saver.KEY_ON).in("screensaver"));
-        l.add(new Item(CHOICE, Saver.KEY_CLOCK, 3, null, Saver.KEY_ON).in("screensaver"));
-        l.add(new Item(CHOICE, Saver.KEY_TEXT, 3, null, Saver.KEY_ON).in("screensaver"));
 
         return l;
     }
@@ -989,7 +984,6 @@ public final class IppActivity extends BaseActivity {
             } else if (Saver.KEY_STYLE.equals(it.key)) {
                 android.content.Intent i = new android.content.Intent(this, IppSaverActivity.class);
                 i.putExtra(IppSaverActivity.EXTRA_PREVIEW, true);
-                i.putExtra(IppSaverActivity.EXTRA_NAMES, valuesOf(it));
                 startActivity(i);
             } else if ("m3u_import".equals(it.key)) {
                 startActivity(new android.content.Intent(this, IppImportActivity.class));

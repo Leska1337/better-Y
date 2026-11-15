@@ -199,9 +199,9 @@ public final class PickDialog extends BaseDialog {
         r.setPadding(5, 3, 5, 3);
         r.setTag(Rows.FLAT);
 
-        // "Select all" keeps an invisible tick, so every label starts at the same x.
         ImageView t = new ImageView(activity);
-        t.setImageBitmap(tick());
+        t.setImageBitmap(box(false));
+        if (i == 0) t.setVisibility(View.GONE);   // "Select all" is an action, not a choice
         t.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(16, 16);
         tp.rightMargin = 6;
@@ -279,7 +279,7 @@ public final class PickDialog extends BaseDialog {
         ThemeManager.INSTANCE.menuItemSetTextColor(values[i], fg, focus);
         // The colour the label ACTUALLY got: under a theme fg is ignored.
         Icons.menu(ticks[i], labels[i].getCurrentTextColor());
-        ticks[i].setVisibility(i > 0 && on[i] ? View.VISIBLE : View.INVISIBLE);
+        ticks[i].setImageBitmap(box(on[i]));
         values[i].setText(sizeText(i));
     }
 
@@ -290,20 +290,33 @@ public final class PickDialog extends BaseDialog {
         return n < 0L ? "…" : Pick.sizeText(n);
     }
 
-    /** White strokes on transparent, tinted per row. One bitmap for the whole app. */
-    private static Bitmap mark;
+    /** White strokes on transparent, tinted per row. Two bitmaps for the whole app. */
+    private static Bitmap boxOff;
+    private static Bitmap boxOn;
 
-    public static Bitmap tick() {
-        if (mark != null) return mark;
+    /** A tick box, empty or ticked: every tick list of the app draws these. */
+    public static Bitmap box(boolean ticked) {
+        if (boxOff == null) {
+            boxOff = frame();
+            boxOn = frame();
+            Canvas c = new Canvas(boxOn);
+            Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+            p.setColor(Color.WHITE);
+            p.setStrokeWidth(2.0f);
+            p.setStyle(Paint.Style.STROKE);
+            c.drawLine(4.0f, 8.5f, 7.0f, 11.5f, p);
+            c.drawLine(7.0f, 11.5f, 12.5f, 4.5f, p);
+        }
+        return ticked ? boxOn : boxOff;
+    }
+
+    private static Bitmap frame() {
         Bitmap b = Bitmap.createBitmap(16, 16, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setColor(Color.WHITE);
-        p.setStrokeWidth(2.4f);
+        p.setStrokeWidth(1.5f);
         p.setStyle(Paint.Style.STROKE);
-        c.drawLine(2.5f, 8.5f, 6.5f, 12.5f, p);
-        c.drawLine(6.5f, 12.5f, 13.5f, 3.5f, p);
-        mark = b;
+        new Canvas(b).drawRect(1.0f, 1.0f, 15.0f, 15.0f, p);
         return b;
     }
 
@@ -356,11 +369,16 @@ public final class PickDialog extends BaseDialog {
         toggle(sel);
     }
 
+    private boolean allOn() {
+        boolean all = true;
+        for (int j = 1; j < on.length; j++) all &= on[j];
+        return all;
+    }
+
     /** "Select all": all on, or all off when they already are. */
     private void toggle(int i) {
         if (i == 0) {
-            boolean all = true;
-            for (int j = 1; j < on.length; j++) all &= on[j];
+            boolean all = allOn();
             for (int j = 1; j < on.length; j++) on[j] = !all;
         } else {
             on[i] = !on[i];

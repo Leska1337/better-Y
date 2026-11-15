@@ -52,12 +52,12 @@ public final class Saver {
     /** The picture of "Set as -> Screensaver"; absent = the theme's global wallpaper. */
     public static final String KEY_IMAGE = "ss_image";
 
-    /** Brightness in percent, the row's NUMBER values: 1..100. */
-    public static final int[] BRIGHTS = new int[100];
-    public static final int BRIGHT_DEFAULT = 29;
+    /** Brightness in percent, the preview's values: 0..100, the index is the percent. */
+    public static final int[] BRIGHTS = new int[101];
+    public static final int BRIGHT_DEFAULT = 30;
 
     static {
-        for (int i = 0; i < BRIGHTS.length; i++) BRIGHTS[i] = i + 1;
+        for (int i = 0; i < BRIGHTS.length; i++) BRIGHTS[i] = i;
     }
 
     /** "Turn off the screen after", in the order of the row's values; 0 = never. */

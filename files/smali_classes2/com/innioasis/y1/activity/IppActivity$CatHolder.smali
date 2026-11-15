@@ -16,12 +16,12 @@
 
 .method constructor <init>(Landroid/view/View;Landroid/widget/TextView;Landroid/widget/ImageView;)V
   .registers 4
-  .line 928
+  .line 923
     invoke-direct { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView$ViewHolder;-><init>(Landroid/view/View;)V
-  .line 929
+  .line 924
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$CatHolder;->label:Landroid/widget/TextView;
-  .line 930
+  .line 925
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$CatHolder;->arrow:Landroid/widget/ImageView;
-  .line 931
+  .line 926
     return-void
 .end method

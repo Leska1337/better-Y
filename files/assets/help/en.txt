@@ -37,9 +37,9 @@ If a playlist of that name already exists, you can replace it, add the missing s
 
 At the end the screen lists every song that was not found in the library.
 
-To export, hold the top button on a playlist in the playlists screen and pick "Export to m3u".
+To export, hold the top button on a playlist and pick "Export to m3u".
 
-If /better-Y/music_path.txt holds the path to the same music on a computer (for example D:\Music), the exported file carries full paths and opens there from any folder. After importing a playlist made on a computer, the player offers that path itself. The folder on the computer must have the same structure as /Music/ on the player.
+To ensure that the exported playlist opens from anywhere on your PC, you must specify the path to the music library on your computer (for example, C:\Music). During import, the player will suggest a path. You can edit it directly in the player or later in the /better-Y/music_path.txt file. The folder structure must be identical on both the player and the PC. 
 
 [log] Save diagnostic log
 Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug report.
@@ -50,26 +50,26 @@ Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug
 * Light
 * Dark
 * Theme color
-Sets the colour of the interactive buttons in the player.
+Sets the color of the interactive buttons in the player.
 
 [text_tint] Text color
 * Light
 * Dark
 * Theme color
-Sets the colour of the text lines and the time marks in the player.
+Sets the color of the text lines and the time marks in the player.
 
 [lyrics_tint] Lyrics color
 * Light
 * Dark
 * Theme color
-Sets the colour of the lyrics in the player.
+Sets the color of the lyrics in the player.
 
 [box_tint] Text boxes color
 * Light
 * Dark
 * Theme color
 * Off
-Sets the colour of the boxes behind the text lines and the buttons in the player.
+Sets the color of the boxes behind the text lines and the buttons in the player.
 
 [cover_tilt] Tilt the cover
 @img cover_tilt_on.png {On}
@@ -120,7 +120,7 @@ Works only in the artist line of the player.
 @img feat_in_title_on.png {On} + {On}
 
 [player_album_artist] Show Album Artists instead of Artists
-Shows the album's Album Artist in the artist line of the player instead of the song's own artists. An album without an Album Artist shows the first artist of the song. For example, on an album by "Tree":
+Shows the Album Artist in the artist line of the player instead of the song's individual artists. An album without an Album Artist shows the first artist of the song. For example, on an album by "Tree":
 
 "Tree, Shelf Nunny, Lena Kuhn — People"
 becomes
@@ -135,9 +135,9 @@ Turning it on turns "{row:first_artist_only}" off.
 [various_artist if player_album_artist] Replace "Various Artists" with an artist
 When the Album Artist is "Various" or "Various Artists", shows the first artist of the song instead. For example, on a compilation:
 
-"Various Artists — People"
+"Various Artists — Lose Yourself"
 becomes
-"Tree — People"
+"Eminem — Lose Yourself"
 
 [aa_feat_in_title if player_album_artist] Move featured artists to the title
 Moves the song's artists that the artist line does not show into the song title, after a "feat.". For example, on an album by "Tree":
@@ -149,9 +149,9 @@ with this setting Off becomes
 with this setting On becomes
 "Tree — People (feat. Shelf Nunny, Lena Kuhn)"
 
-Nothing is added when the title already names one of them, or when the artist line shows "Various" or "Various Artists" ("{row:various_artist}" is Off).
-@img first_artist_only_on.png {On} + {Off}
-@img feat_in_title_on.png {On} + {On}
+Nothing is added when the title already names one of them, or when the artist line shows "Various" or "Various Artists".
+@img first_artist_only_on.png {Off}
+@img feat_in_title_on.png {On}
 
 [artist_album_scroll] Long artist/album scroll
 * Off
@@ -187,8 +187,7 @@ When you open the list containing the currently playing song, the selection imme
 Determines how many seconds after the last scroll of the wheel the selection returns to the song currently playing.
 
 [loop_scroll] Cyclic scrolling
-Past the last row of a list the wheel comes back to the first one, and up from the first it goes round to the last — as in the main menu. Works in every list, menu and gallery.
-In a song list the Shuffle row is part of the circle.
+When reaching the end or the beginning of a list, the selection loops back to the opposite side. Works in every list, menu and gallery.
 
 [animations] Enable animations
 In the tile grids — Playlists, Themes and Photos — the rows glide into view and the cursor's frame travels from tile to tile. Off, both move at once.
@@ -196,13 +195,15 @@ In the tile grids — Playlists, Themes and Photos — the rows glide into view 
 [menu_style] Menu style
 * Default
 * Simple
-Simple hides the preview beside the list and stretches the rows across the whole screen — in the main menu, in Settings and in the screens inside it.
+@img menu_style_default.png Default
+@img menu_style_simple.png Simple
 
 [preview_text] Text color in menu previews
 * Light
 * Dark
 * Theme color
-Sets the colour of the text in the previews beside the lists of Settings and the screens inside it, and inside About. Theme color is the colour of the theme's list text.
+@img menu_preview_text_light.png Light
+@img menu_preview_text_theme.png Theme color
 
 [fixed_menu_pad] Fixed menu margins
 Fixes margins of the main menu and settings.
@@ -212,27 +213,22 @@ Worth turning off with themes whose backgrounds are drawn for stock margins — 
 @img fixed_menu_pad_on.png {On}
 
 [album_artists] Show Album Artists
-Adds "Album Artists" to the Music menu, right below "{app:artists}".
+Adds "Album Artists" to the Music menu.
 
-Albums are grouped by their Album Artist tag. An album without one goes under the first artist of its songs; with no artist at all, under <unknown>. An album always opens whole.
----
-The first time the section is opened the tag of every album is read, which can take a while on a large library. After that it opens straight away; "{row:cache}" reads the tags in advance.
+An album without an “Album Artist” tag uses the first artist from the “Artist” tag that appears most frequently on the album.
 
 [status_bar] Status bar
-Settings of the bar at the top of the screen.
 
 [bar_text in status_bar] Status bar text color
 * Light
 * Dark
 * Theme color
-Sets the colour of the title and the battery percentage in the status bar.
-
-Theme color is the colour of the theme's list text.
+Sets the color of the menu header and the battery percentage.
 
 [bar_style in status_bar] Style
 * Default
 * Centered
-Centered moves the icons to the left edge and the section title to the middle; the battery stays on the right.
+Centered moves the icons to the left edge and the section title to the middle while the battery stays on the right.
 
 [bar_icons in status_bar] Icons visibility
 * Menu header
@@ -252,8 +248,11 @@ Shows song titles from the metadata instead of the file name.
 Shows audiobook titles from the metadata instead of the file name.
 
 [album_year] Release year in album names
-Shows the album's release year in its name. For example:
+Shows the album's release year in its name:
 "The Eminem Show (2002)"
+
+If an album contains songs released in different years, the earliest and latest years will be listed, separated by a dash:
+"Dirt (1992 - 1993)"
 
 [track_numbers] Track numbers from metadata inside albums
 Shows track numbers from the metadata inside albums. 
@@ -328,10 +327,9 @@ Adds a second layout to the on-screen keyboard.
 Hold top button to switch.
 
 [screensaver] Screensaver
-Settings of the screen shown instead of the screen going dark.
 
 [ss_on in screensaver] Enable screensaver
-When the Sleep time set in Settings runs out, a screensaver appears instead of the screen locking. Any button closes it and returns to the screen you were on; that press does nothing else.
+When the Sleep time set in Settings runs out, a screensaver appears instead of the screen locking.
 
 [ss_style in screensaver if ss_on] Style
 * Clock, left
@@ -343,12 +341,8 @@ When the Sleep time set in Settings runs out, a screensaver appears instead of t
 * Playing song, left
 * Playing song, center
 * Playing song, right
-Opens the screensaver itself: turn the wheel to go through the styles, press the centre button to keep one, the top button to leave without changing.
----
-Playing song shows the cover, the title, the artist and the album; while nothing is in the player it shows the clock. The clock is redrawn once a minute and the song only when it changes.
 
-[ss_bright in screensaver if ss_on] Brightness (%)
-The screen brightness of the screensaver. When the screensaver appears, the brightness smoothly goes down to it from the one set in Settings.
+[ss_bright in screensaver if ss_on] Brightness
 
 [ss_off in screensaver if ss_on] Turn off the screen after
 * 15 sec
@@ -365,34 +359,36 @@ The screen brightness of the screensaver. When the screensaver appears, the brig
 How long the screensaver stays before the screen goes off.
 
 [ss_charging in screensaver if ss_on] Do not turn off the screen while charging
-While the player is charging, the screensaver stays on until a button is pressed.
 
 [ss_background in screensaver if ss_on] Background
 * Light
 * Dark
 * Wallpaper
-Wallpaper is the picture set with "Set as" in Photos or Wallpaper; until one is set, it is the theme's global wallpaper.
-
-A theme can bring its own picture: screensaver.png or screensaver.jpg in the theme's folder becomes the screensaver's when the theme is applied. A theme without one leaves the global wallpaper.
 
 [ss_tint in screensaver if ss_on] Background tint
 * Off
 * Light
 * Dark
 * Theme color
-Lays a see-through colour over the background; the clock, the text and the cover stay above it.
 
 [ss_clock_color in screensaver if ss_on] Clock color
 * Light
 * Dark
 * Theme color
-The colour of the clock.
 
 [ss_text_color in screensaver if ss_on] Text color
 * Light
 * Dark
 * Theme color
-The colour of the date, the song title, the artist and the album.
+
+[ss_tip in screensaver]
+* Close
+* Don't show again
+To switch between categories, use the left and right buttons.
+
+To select a value, use the scroll wheel.
+
+To save your changes, exit the menu by pressing the top button.
 
 [[coverflow]] Cover Flow
 

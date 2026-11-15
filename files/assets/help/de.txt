@@ -34,9 +34,9 @@ Gibt es bereits eine Wiedergabeliste mit diesem Namen, können Sie sie ersetzen,
 
 Am Ende zeigt der Bildschirm die Dateinamen aller Titel, die in der Bibliothek nicht gefunden wurden.
 
-Zum Exportieren halten Sie im Bildschirm der Wiedergabelisten die obere Taste auf einer Liste gedrückt und wählen „Als m3u export.“. Die Pfade in der Datei beginnen beim Ordner /Music/: Legen Sie die Datei am Computer in den Ordner, der dieselbe Musik enthält.
+Zum Exportieren halten Sie die obere Taste auf einer Wiedergabeliste gedrückt und wählen „Als m3u export.“.
 
-Steht in /better-Y/music_path.txt der Pfad zur selben Musik auf dem Computer (etwa D:\Musik), erhält die Datei vollständige Pfade und öffnet sich dort aus jedem Ordner. Nach dem Import einer am Computer erstellten Liste schlägt der Player diesen Pfad selbst vor. Der Ordner auf dem Computer muss genauso aufgebaut sein wie /Music/ auf dem Player.
+Damit sich die exportierte Wiedergabeliste am PC von überall aus öffnen lässt, muss der Pfad zur Musikbibliothek auf Ihrem Computer angegeben werden (zum Beispiel C:\Music). Beim Import schlägt der Player einen Pfad vor. Sie können ihn direkt am Player bearbeiten oder später in der Datei /better-Y/music_path.txt. Die Ordnerstruktur muss auf dem Player und am PC identisch sein.
 
 [log] Diagnoseprotokoll speichern
 Speichert einen Diagnosebericht im Ordner /better-Y/logs/ auf der Speicherkarte, um ihn einem Fehlerbericht beizulegen.
@@ -132,9 +132,9 @@ Beim Einschalten wird „{row:first_artist_only}“ ausgeschaltet.
 [various_artist] „Various Artists“ durch einen Künstler ersetzen
 Ist der Album Artist „Various“ oder „Various Artists“, wird stattdessen der erste Künstler des Songs gezeigt. Zum Beispiel auf einer Compilation:
 
-„Various Artists — People“
+„Various Artists — Lose Yourself“
 wird zu
-„Tree — People“
+„Eminem — Lose Yourself“
 
 [aa_feat_in_title] Gastkünstler in den Titel verschieben
 Verschiebt die Künstler des Songs, die die Künstlerzeile nicht zeigt, hinter einem „feat.“ in den Songtitel. Zum Beispiel auf einem Album von „Tree“:
@@ -146,9 +146,9 @@ wird mit dieser Einstellung Aus zu
 mit dieser Einstellung An zu
 „Tree — People (feat. Shelf Nunny, Lena Kuhn)“
 
-Nichts wird angehängt, wenn der Titel einen von ihnen schon nennt oder die Künstlerzeile „Various“ oder „Various Artists“ zeigt („{row:various_artist}“ ist Aus).
-@img first_artist_only_on.png {On} + {Off}
-@img feat_in_title_on.png {On} + {On}
+Nichts wird angehängt, wenn der Titel einen von ihnen schon nennt oder die Künstlerzeile „Various“ oder „Various Artists“ zeigt.
+@img first_artist_only_on.png {Off}
+@img feat_in_title_on.png {On}
 
 [artist_album_scroll] Langen Künstler-/Albumtext scrollen
 * Aus
@@ -184,8 +184,7 @@ Beim Öffnen der Liste, in der der gerade laufende Titel steht, springt die Ausw
 Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum gerade laufenden Titel zurückkehrt.
 
 [loop_scroll] Endlos-Scrollen
-Nach der letzten Zeile einer Liste kehrt das Rad zur ersten zurück, und von der ersten aufwärts geht es zur letzten – wie im Hauptmenü. Gilt für alle Listen, Menüs und Galerien.
-In einer Titelliste gehört die Zeile Shuffle mit zum Kreis.
+Am Ende oder Anfang einer Liste springt die Auswahl auf die gegenüberliegende Seite. Gilt für alle Listen, Menüs und Galerien.
 
 [animations] Animationen aktivieren
 In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins Bild, und der Rahmen des Cursors wandert von Kachel zu Kachel. Ausgeschaltet springt beides sofort.
@@ -193,13 +192,15 @@ In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins
 [menu_style] Menüstil
 * Standard
 * Einfach
-Einfach blendet die Vorschau neben der Liste aus und zieht die Zeilen über die ganze Bildschirmbreite — im Hauptmenü, in den Einstellungen und in deren Bildschirmen.
+@img menu_style_default.png Standard
+@img menu_style_simple.png Einfach
 
 [preview_text] Textfarbe der Menüvorschau
 * Hell
 * Dunkel
 * Themenfarbe
-Legt die Farbe des Textes in der Vorschau neben den Listen der Einstellungen und ihrer Bildschirme sowie im Bildschirm „Über“ fest. Themenfarbe ist die Farbe des Listentextes des Themas.
+@img menu_preview_text_light.png Hell
+@img menu_preview_text_theme.png Themenfarbe
 
 [fixed_menu_pad] Korrigierte Menüränder
 Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
@@ -209,22 +210,17 @@ Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, bess
 @img fixed_menu_pad_on.png {On}
 
 [album_artists] Albumkünstler anzeigen
-Fügt „Albumkünstler“ zum Musik-Menü hinzu, direkt unter „{app:artists}“.
+Fügt „Albumkünstler“ zum Musik-Menü hinzu.
 
-Alben werden nach ihrem Album-Artist-Tag gruppiert. Ein Album ohne diesen landet beim ersten Künstler seiner Lieder, ganz ohne Künstler unter <unknown>. Ein Album öffnet sich immer vollständig.
----
-Beim ersten Öffnen wird der Tag jedes Albums gelesen, was bei einer großen Bibliothek dauern kann. Danach öffnet sich der Bereich sofort; „{row:cache}“ liest die Tags im Voraus.
+Ein Album ohne „Album Artist“-Tag nimmt den ersten Künstler aus dem „Artist“-Tag, der auf dem Album am häufigsten vorkommt.
 
 [status_bar] Statusleiste
-Einstellungen der Leiste am oberen Bildschirmrand.
 
 [bar_text] Textfarbe der Statusleiste
 * Hell
 * Dunkel
 * Themenfarbe
-Legt die Farbe des Titels und der Akkuanzeige in Prozent in der Statusleiste fest.
-
-Themenfarbe ist die Farbe des Listentexts des Themes.
+Legt die Farbe des Menütitels und der Akkuanzeige in Prozent fest.
 
 [bar_icons] Sichtbarkeit der Symbole
 * Menütitel
@@ -249,8 +245,11 @@ Zeigt Songtitel aus den Metadaten statt des Dateinamens.
 Zeigt Hörbuchtitel aus den Metadaten statt des Dateinamens.
 
 [album_year] Erscheinungsjahr in Albumnamen
-Zeigt das Erscheinungsjahr des Albums in dessen Namen. Zum Beispiel:
+Zeigt das Erscheinungsjahr des Albums in dessen Namen:
 „The Eminem Show (2002)“
+
+Enthält ein Album Songs aus verschiedenen Jahren, werden das früheste und das späteste Jahr mit einem Bindestrich angegeben:
+„Dirt (1992 - 1993)“
 
 [track_numbers] Titelnummern aus Metadaten in Alben
 Zeigt Titelnummern aus den Metadaten innerhalb von Alben.
@@ -325,10 +324,9 @@ Fügt der Bildschirmtastatur eine zweite Belegung hinzu.
 Zum Umschalten die obere Taste halten.
 
 [screensaver] Bildschirmschoner
-Einstellungen des Bildschirms, der statt des Abschaltens erscheint.
 
 [ss_on] Bildschirmschoner aktivieren
-Wenn die in den Einstellungen festgelegte Ruhezeit abläuft, erscheint statt der Bildschirmsperre ein Bildschirmschoner. Jede Taste schließt ihn und kehrt zum vorherigen Bildschirm zurück; dieser Druck bewirkt sonst nichts.
+Wenn die in den Einstellungen festgelegte Ruhezeit abläuft, erscheint statt der Bildschirmsperre ein Bildschirmschoner.
 
 [ss_style] Stil
 * Uhr, links
@@ -340,12 +338,8 @@ Wenn die in den Einstellungen festgelegte Ruhezeit abläuft, erscheint statt der
 * Aktueller Titel, links
 * Aktueller Titel, Mitte
 * Aktueller Titel, rechts
-Öffnet den Bildschirmschoner selbst: Das Rad blättert durch die Stile, die mittlere Taste übernimmt einen, die obere Taste verlässt ihn ohne Änderung.
----
-„Aktueller Titel“ zeigt Cover, Titel, Interpret und Album; solange nichts im Player ist, wird die Uhr gezeigt. Die Uhr wird einmal pro Minute neu gezeichnet, der Titel nur beim Wechsel.
 
-[ss_bright] Helligkeit (%)
-Die Bildschirmhelligkeit des Bildschirmschoners. Beim Erscheinen sinkt die Helligkeit sanft von der in den Einstellungen festgelegten auf diese.
+[ss_bright] Helligkeit
 
 [ss_off] Bildschirm ausschalten nach
 * 15 s
@@ -362,34 +356,36 @@ Die Bildschirmhelligkeit des Bildschirmschoners. Beim Erscheinen sinkt die Helli
 Wie lange der Bildschirmschoner bleibt, bevor sich der Bildschirm ausschaltet.
 
 [ss_charging] Bildschirm beim Laden nicht ausschalten
-Solange der Player lädt, bleibt der Bildschirmschoner bis zum nächsten Tastendruck an.
 
 [ss_background] Hintergrund
 * Hell
 * Dunkel
 * Hintergrundbild
-Das Hintergrundbild ist das mit „Festlegen als“ in Fotos oder Hintergrundbild gewählte Bild; bis eines gewählt ist, das globale Hintergrundbild des Themas.
-
-Ein Thema kann ein eigenes Bild mitbringen: screensaver.png oder screensaver.jpg im Ordner des Themas wird beim Anwenden des Themas zum Bild des Bildschirmschoners. Bei einem Thema ohne dieses Bild bleibt das globale Hintergrundbild.
 
 [ss_tint] Hintergrundtönung
 * Aus
 * Hell
 * Dunkel
 * Themenfarbe
-Legt eine durchscheinende Farbe über den Hintergrund; Uhr, Text und Cover bleiben darüber.
 
 [ss_clock_color] Uhrfarbe
 * Hell
 * Dunkel
 * Themenfarbe
-Die Farbe der Uhr.
 
 [ss_text_color] Textfarbe
 * Hell
 * Dunkel
 * Themenfarbe
-Die Farbe von Datum, Titel, Interpret und Album.
+
+[ss_tip]
+* Schließen
+* Nicht mehr anzeigen
+Mit der linken und rechten Taste wechseln Sie die Kategorie.
+
+Mit dem Rad wählen Sie einen Wert.
+
+Um die Änderungen zu speichern, verlassen Sie das Menü mit der oberen Taste.
 
 [[coverflow]] Cover Flow
 

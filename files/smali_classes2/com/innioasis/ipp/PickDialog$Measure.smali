@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/PickDialog;)V
   .registers 2
-  .line 405
+  .line 423
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     return-void
@@ -25,7 +25,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0
-  .line 431
+  .line 449
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v0 }, Lcom/innioasis/ipp/PickDialog;->access$300(Lcom/innioasis/ipp/PickDialog;)Landroid/app/Activity;
     move-result-object v0
@@ -34,19 +34,19 @@
     invoke-direct { v1, v2, p1 }, Lcom/innioasis/ipp/PickDialog$Apply;-><init>(Lcom/innioasis/ipp/PickDialog;[J)V
     invoke-virtual { v0, v1 }, Landroid/app/Activity;->runOnUiThread(Ljava/lang/Runnable;)V
   :L1
-  .line 433
+  .line 451
     goto :L3
   :L2
-  .line 432
+  .line 450
     move-exception p1
   :L3
-  .line 434
+  .line 452
     return-void
 .end method
 
 .method public run()V
   .registers 10
-  .line 408
+  .line 426
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v0 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v0
@@ -54,12 +54,12 @@
     const/4 v1, 1
     add-int/2addr v0, v1
     new-array v0, v0, [J
-  .line 409
+  .line 427
     const-wide/16 v2, -1
     invoke-static { v0, v2, v3 }, Ljava/util/Arrays;->fill([JJ)V
-  .line 410
+  .line 428
     nop
-  .line 411
+  .line 429
     const-wide/16 v2, 0
     const/4 v4, 0
     const/4 v5, 0
@@ -69,7 +69,7 @@
     move-result-object v6
     array-length v6, v6
     if-ge v5, v6, :L3
-  .line 412
+  .line 430
     iget-object v6, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v6 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v6
@@ -79,34 +79,34 @@
     if-nez v6, :L1
     goto :L2
   :L1
-  .line 413
+  .line 431
     iget-object v6, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v6 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v6
     aget v6, v6, v5
     invoke-static { v6 }, Lcom/innioasis/ipp/Pick;->size(I)J
     move-result-wide v6
-  .line 414
+  .line 432
     add-int/lit8 v8, v5, 1
     aput-wide v6, v0, v8
-  .line 415
+  .line 433
     add-long/2addr v2, v6
   :L2
-  .line 411
+  .line 429
     add-int/lit8 v5, v5, 1
     goto :L0
   :L3
-  .line 417
+  .line 435
     aput-wide v2, v0, v4
-  .line 418
+  .line 436
     invoke-direct { p0, v0 }, Lcom/innioasis/ipp/PickDialog$Measure;->post([J)V
-  .line 419
+  .line 437
     invoke-virtual { v0 }, [J->clone()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, [J
-  .line 420
+  .line 438
     nop
-  .line 421
+  .line 439
     const/4 v2, 0
   :L4
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
@@ -114,7 +114,7 @@
     move-result-object v3
     array-length v3, v3
     if-ge v4, v3, :L7
-  .line 422
+  .line 440
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v3 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
     move-result-object v3
@@ -128,7 +128,7 @@
     if-nez v3, :L5
     goto :L6
   :L5
-  .line 423
+  .line 441
     add-int/lit8 v2, v4, 1
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog$Measure;->d:Lcom/innioasis/ipp/PickDialog;
     invoke-static { v3 }, Lcom/innioasis/ipp/PickDialog;->access$200(Lcom/innioasis/ipp/PickDialog;)[I
@@ -137,17 +137,17 @@
     invoke-static { v3 }, Lcom/innioasis/ipp/Pick;->size(I)J
     move-result-wide v5
     aput-wide v5, v0, v2
-  .line 424
+  .line 442
     const/4 v2, 1
   :L6
-  .line 421
+  .line 439
     add-int/lit8 v4, v4, 1
     goto :L4
   :L7
-  .line 426
+  .line 444
     if-eqz v2, :L8
     invoke-direct { p0, v0 }, Lcom/innioasis/ipp/PickDialog$Measure;->post([J)V
   :L8
-  .line 427
+  .line 445
     return-void
 .end method

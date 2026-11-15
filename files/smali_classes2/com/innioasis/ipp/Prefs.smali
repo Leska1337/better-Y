@@ -135,7 +135,7 @@
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
   .line 69
     const-string v0, "ss_bright"
-    const/16 v3, 29
+    const/16 v3, 30
     invoke-static { v0, v3 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
   .line 70
     const-string v0, "ss_off"

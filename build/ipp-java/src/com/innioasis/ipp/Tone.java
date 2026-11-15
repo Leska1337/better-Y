@@ -544,6 +544,7 @@ public final class Tone {
 
     /** From {@code refreshRight}, after the title is set: every row shows Key tone's picture. */
     public static boolean settingsPanel(SettingActivity a, String title) {
+        if (Backlight.panel(a, title)) return true;
         if (Sleep.panel(a, title)) return true;
         if (MenuStyle.settingsLogo(a, title)) return true;
         if (!section(a)) return false;
@@ -590,9 +591,11 @@ public final class Tone {
             if (ad == null) return;
             List data = ad.getData();
             int m = a.getMark();
-            if (m >= 0 && m < data.size()
-                    && name.equals(((SettingActivity.SettingItem) data.get(m)).getTitle())) {
-                a.ippRefreshRight(name);
+            if (m < 0 || m >= data.size()) return;
+            String row = ((SettingActivity.SettingItem) data.get(m)).getTitle();
+            // Brightness too: stock repaints it on return in the setting's own percent
+            if (name.equals(row) || a.getString(R.string.setting_brightness).equals(row)) {
+                a.ippRefreshRight(row);
             }
         } catch (Throwable t) {
         }

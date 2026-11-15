@@ -15,7 +15,9 @@
 
 .field private final static CORNER:F = 10.0F
 
-.field private static mark:Landroid/graphics/Bitmap;
+.field private static boxOff:Landroid/graphics/Bitmap;
+
+.field private static boxOn:Landroid/graphics/Bitmap;
 
 .field private final activity:Landroid/app/Activity;
 
@@ -169,6 +171,81 @@
     return-object p0
 .end method
 
+.method private allOn()Z
+  .registers 5
+  .line 373
+    nop
+  .line 374
+    const/4 v0, 1
+    const/4 v1, 1
+  :L0
+    iget-object v2, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
+    array-length v3, v2
+    if-ge v0, v3, :L1
+    aget-boolean v2, v2, v0
+    and-int/2addr v1, v2
+    add-int/lit8 v0, v0, 1
+    goto :L0
+  :L1
+  .line 375
+    return v1
+.end method
+
+.method public static box(Z)Landroid/graphics/Bitmap;
+  .registers 9
+  .line 299
+    sget-object v0, Lcom/innioasis/ipp/PickDialog;->boxOff:Landroid/graphics/Bitmap;
+    if-nez v0, :L0
+  .line 300
+    invoke-static { }, Lcom/innioasis/ipp/PickDialog;->frame()Landroid/graphics/Bitmap;
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/PickDialog;->boxOff:Landroid/graphics/Bitmap;
+  .line 301
+    invoke-static { }, Lcom/innioasis/ipp/PickDialog;->frame()Landroid/graphics/Bitmap;
+    move-result-object v0
+    sput-object v0, Lcom/innioasis/ipp/PickDialog;->boxOn:Landroid/graphics/Bitmap;
+  .line 302
+    new-instance v0, Landroid/graphics/Canvas;
+    sget-object v1, Lcom/innioasis/ipp/PickDialog;->boxOn:Landroid/graphics/Bitmap;
+    invoke-direct { v0, v1 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+  .line 303
+    new-instance v7, Landroid/graphics/Paint;
+    const/4 v1, 1
+    invoke-direct { v7, v1 }, Landroid/graphics/Paint;-><init>(I)V
+  .line 304
+    const/4 v1, -1
+    invoke-virtual { v7, v1 }, Landroid/graphics/Paint;->setColor(I)V
+  .line 305
+    const/high16 v1, 0x40000000
+    invoke-virtual { v7, v1 }, Landroid/graphics/Paint;->setStrokeWidth(F)V
+  .line 306
+    sget-object v1, Landroid/graphics/Paint$Style;->STROKE:Landroid/graphics/Paint$Style;
+    invoke-virtual { v7, v1 }, Landroid/graphics/Paint;->setStyle(Landroid/graphics/Paint$Style;)V
+  .line 307
+    const/high16 v2, 0x40800000
+    const/high16 v3, 0x41080000
+    const/high16 v4, 0x40E00000
+    const/high16 v5, 0x41380000
+    move-object v1, v0
+    move-object v6, v7
+    invoke-virtual/range { v1 .. v6 }, Landroid/graphics/Canvas;->drawLine(FFFFLandroid/graphics/Paint;)V
+  .line 308
+    const/high16 v2, 0x40E00000
+    const/high16 v3, 0x41380000
+    const/high16 v4, 0x41480000
+    const/high16 v5, 0x40900000
+    invoke-virtual/range { v1 .. v6 }, Landroid/graphics/Canvas;->drawLine(FFFFLandroid/graphics/Paint;)V
+  :L0
+  .line 310
+    if-eqz p0, :L1
+    sget-object p0, Lcom/innioasis/ipp/PickDialog;->boxOn:Landroid/graphics/Bitmap;
+    goto :L2
+  :L1
+    sget-object p0, Lcom/innioasis/ipp/PickDialog;->boxOff:Landroid/graphics/Bitmap;
+  :L2
+    return-object p0
+.end method
+
 .method private button(ILjava/lang/String;)Landroid/view/View;
   .registers 6
   .line 234
@@ -211,41 +288,41 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 390
+  .line 408
     invoke-virtual { p0 }, Lcom/innioasis/ipp/PickDialog;->getOnBack()Lkotlin/jvm/functions/Function0;
     move-result-object v0
-  .line 391
+  .line 409
     if-eqz v0, :L1
     invoke-interface { v0 }, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
   :L1
-  .line 393
+  .line 411
     goto :L3
   :L2
-  .line 392
+  .line 410
     move-exception v0
   :L3
-  .line 394
+  .line 412
     invoke-virtual { p0 }, Lcom/innioasis/ipp/PickDialog;->dismiss()V
-  .line 395
+  .line 413
     return-void
 .end method
 
 .method private enter()V
   .registers 6
-  .line 347
+  .line 360
     iget v0, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
     iget v1, p0, Lcom/innioasis/ipp/PickDialog;->okRow:I
     if-ne v0, v1, :L5
-  .line 348
+  .line 361
     nop
-  .line 349
+  .line 362
     const/4 v0, 0
     const/4 v1, 0
   :L0
     iget-object v2, p0, Lcom/innioasis/ipp/PickDialog;->cats:[I
     array-length v3, v2
     if-ge v0, v3, :L2
-  .line 350
+  .line 363
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
     add-int/lit8 v4, v0, 1
     aget-boolean v3, v3, v4
@@ -254,13 +331,13 @@
     or-int/2addr v0, v1
     move v1, v0
   :L1
-  .line 349
+  .line 362
     move v0, v4
     goto :L0
   :L2
-  .line 352
+  .line 365
     invoke-virtual { p0 }, Lcom/innioasis/ipp/PickDialog;->dismiss()V
-  .line 353
+  .line 366
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog;->go:Lcom/innioasis/ipp/PickDialog$Go;
     if-eqz v0, :L4
     iget-boolean v2, p0, Lcom/innioasis/ipp/PickDialog;->none:Z
@@ -269,12 +346,12 @@
   :L3
     invoke-virtual { v0, v1 }, Lcom/innioasis/ipp/PickDialog$Go;->go(I)V
   :L4
-  .line 354
+  .line 367
     return-void
   :L5
-  .line 356
+  .line 369
     invoke-direct { p0, v0 }, Lcom/innioasis/ipp/PickDialog;->toggle(I)V
-  .line 357
+  .line 370
     return-void
 .end method
 
@@ -288,33 +365,65 @@
     return-object v0
 .end method
 
+.method private static frame()Landroid/graphics/Bitmap;
+  .registers 7
+  .line 314
+    const/16 v0, 16
+    sget-object v1, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
+    invoke-static { v0, v0, v1 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
+    move-result-object v0
+  .line 315
+    new-instance v6, Landroid/graphics/Paint;
+    const/4 v1, 1
+    invoke-direct { v6, v1 }, Landroid/graphics/Paint;-><init>(I)V
+  .line 316
+    const/4 v1, -1
+    invoke-virtual { v6, v1 }, Landroid/graphics/Paint;->setColor(I)V
+  .line 317
+    const/high16 v1, 0x3FC00000
+    invoke-virtual { v6, v1 }, Landroid/graphics/Paint;->setStrokeWidth(F)V
+  .line 318
+    sget-object v1, Landroid/graphics/Paint$Style;->STROKE:Landroid/graphics/Paint$Style;
+    invoke-virtual { v6, v1 }, Landroid/graphics/Paint;->setStyle(Landroid/graphics/Paint$Style;)V
+  .line 319
+    new-instance v1, Landroid/graphics/Canvas;
+    invoke-direct { v1, v0 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+    const/high16 v2, 0x3F800000
+    const/high16 v3, 0x3F800000
+    const/high16 v4, 0x41700000
+    const/high16 v5, 0x41700000
+    invoke-virtual/range { v1 .. v6 }, Landroid/graphics/Canvas;->drawRect(FFFFLandroid/graphics/Paint;)V
+  .line 320
+    return-object v0
+.end method
+
 .method private move(I)V
   .registers 4
-  .line 338
+  .line 351
     iget v0, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
-  .line 339
+  .line 352
     iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
     array-length v1, v1
     invoke-static { v0, p1, v1 }, Lcom/innioasis/ipp/Loop;->step(III)I
     move-result p1
-  .line 340
+  .line 353
     iget v1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
     if-ne p1, v1, :L0
     return-void
   :L0
-  .line 341
+  .line 354
     iput p1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
-  .line 342
+  .line 355
     invoke-direct { p0, v0 }, Lcom/innioasis/ipp/PickDialog;->paint(I)V
-  .line 343
+  .line 356
     iget p1, p0, Lcom/innioasis/ipp/PickDialog;->sel:I
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/PickDialog;->paint(I)V
-  .line 344
+  .line 357
     return-void
 .end method
 
 .method private paint(I)V
-  .registers 9
+  .registers 8
   .line 252
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
     aget-object v0, v0, p1
@@ -396,59 +505,52 @@
   .line 272
     const v5, 2131231051
     if-eqz v0, :L10
-    const v6, 2131231051
-    goto :L11
+    const v1, 2131231051
   :L10
-    const/4 v6, 0
-  :L11
   .line 271
-    invoke-virtual { v3, v4, v6, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetBackground(Landroid/view/View;IZ)V
+    invoke-virtual { v3, v4, v1, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetBackground(Landroid/view/View;IZ)V
   .line 273
-    if-eqz v0, :L12
-    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
-    aget-object v3, v3, p1
-    invoke-virtual { v3 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
-    move-result-object v3
-    if-nez v3, :L12
+    if-eqz v0, :L11
+    iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
+    aget-object v1, v1, p1
+    invoke-virtual { v1 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
+    move-result-object v1
+    if-nez v1, :L11
   .line 274
-    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
-    aget-object v3, v3, p1
-    invoke-virtual { v3, v5 }, Landroid/view/View;->setBackgroundResource(I)V
-  :L12
+    iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
+    aget-object v1, v1, p1
+    invoke-virtual { v1, v5 }, Landroid/view/View;->setBackgroundResource(I)V
+  :L11
   .line 277
-    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
-    aget-object v3, v3, p1
-    invoke-static { v3 }, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
+    iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->rows:[Landroid/view/View;
+    aget-object v1, v1, p1
+    invoke-static { v1 }, Lcom/innioasis/ipp/Rows;->noSize(Landroid/view/View;)V
   .line 278
-    sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    iget-object v4, p0, Lcom/innioasis/ipp/PickDialog;->labels:[Landroid/widget/TextView;
-    aget-object v4, v4, p1
-    invoke-virtual { v3, v4, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetTextColor(Landroid/widget/TextView;IZ)V
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->labels:[Landroid/widget/TextView;
+    aget-object v3, v3, p1
+    invoke-virtual { v1, v3, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetTextColor(Landroid/widget/TextView;IZ)V
   .line 279
-    sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
-    iget-object v4, p0, Lcom/innioasis/ipp/PickDialog;->values:[Landroid/widget/TextView;
-    aget-object v4, v4, p1
-    invoke-virtual { v3, v4, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetTextColor(Landroid/widget/TextView;IZ)V
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->values:[Landroid/widget/TextView;
+    aget-object v3, v3, p1
+    invoke-virtual { v1, v3, v2, v0 }, Lcom/innioasis/y1/theme/ThemeManager;->menuItemSetTextColor(Landroid/widget/TextView;IZ)V
   .line 281
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog;->ticks:[Landroid/widget/ImageView;
     aget-object v0, v0, p1
-    iget-object v2, p0, Lcom/innioasis/ipp/PickDialog;->labels:[Landroid/widget/TextView;
-    aget-object v2, v2, p1
-    invoke-virtual { v2 }, Landroid/widget/TextView;->getCurrentTextColor()I
-    move-result v2
-    invoke-static { v0, v2 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
+    iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->labels:[Landroid/widget/TextView;
+    aget-object v1, v1, p1
+    invoke-virtual { v1 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result v1
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
   .line 282
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog;->ticks:[Landroid/widget/ImageView;
     aget-object v0, v0, p1
-    if-lez p1, :L13
-    iget-object v2, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
-    aget-boolean v2, v2, p1
-    if-eqz v2, :L13
-    goto :L14
-  :L13
-    const/4 v1, 4
-  :L14
-    invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setVisibility(I)V
+    iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
+    aget-boolean v1, v1, p1
+    invoke-static { v1 }, Lcom/innioasis/ipp/PickDialog;->box(Z)Landroid/graphics/Bitmap;
+    move-result-object v1
+    invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   .line 283
     iget-object v0, p0, Lcom/innioasis/ipp/PickDialog;->values:[Landroid/widget/TextView;
     aget-object v0, v0, p1
@@ -494,14 +596,19 @@
   .line 200
     const-string v3, "ipp_flat"
     invoke-virtual { v0, v3 }, Landroid/widget/LinearLayout;->setTag(Ljava/lang/Object;)V
-  .line 203
+  .line 202
     new-instance v3, Landroid/widget/ImageView;
     iget-object v5, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
     invoke-direct { v3, v5 }, Landroid/widget/ImageView;-><init>(Landroid/content/Context;)V
-  .line 204
-    invoke-static { }, Lcom/innioasis/ipp/PickDialog;->tick()Landroid/graphics/Bitmap;
+  .line 203
+    invoke-static { v1 }, Lcom/innioasis/ipp/PickDialog;->box(Z)Landroid/graphics/Bitmap;
     move-result-object v5
     invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
+  .line 204
+    if-nez p1, :L0
+    const/16 v5, 8
+    invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setVisibility(I)V
+  :L0
   .line 205
     sget-object v5, Landroid/widget/ImageView$ScaleType;->FIT_CENTER:Landroid/widget/ImageView$ScaleType;
     invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
@@ -597,64 +704,16 @@
     return-object p1
 .end method
 
-.method public static tick()Landroid/graphics/Bitmap;
-  .registers 9
-  .line 297
-    sget-object v0, Lcom/innioasis/ipp/PickDialog;->mark:Landroid/graphics/Bitmap;
-    if-eqz v0, :L0
-    return-object v0
-  :L0
-  .line 298
-    sget-object v0, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
-    const/16 v1, 16
-    invoke-static { v1, v1, v0 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
-    move-result-object v0
-  .line 299
-    new-instance v7, Landroid/graphics/Canvas;
-    invoke-direct { v7, v0 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
-  .line 300
-    new-instance v8, Landroid/graphics/Paint;
-    const/4 v1, 1
-    invoke-direct { v8, v1 }, Landroid/graphics/Paint;-><init>(I)V
-  .line 301
-    const/4 v1, -1
-    invoke-virtual { v8, v1 }, Landroid/graphics/Paint;->setColor(I)V
-  .line 302
-    const v1, 1075419546
-    invoke-virtual { v8, v1 }, Landroid/graphics/Paint;->setStrokeWidth(F)V
-  .line 303
-    sget-object v1, Landroid/graphics/Paint$Style;->STROKE:Landroid/graphics/Paint$Style;
-    invoke-virtual { v8, v1 }, Landroid/graphics/Paint;->setStyle(Landroid/graphics/Paint$Style;)V
-  .line 304
-    const/high16 v2, 0x40200000
-    const/high16 v3, 0x41080000
-    const/high16 v4, 0x40D00000
-    const/high16 v5, 0x41480000
-    move-object v1, v7
-    move-object v6, v8
-    invoke-virtual/range { v1 .. v6 }, Landroid/graphics/Canvas;->drawLine(FFFFLandroid/graphics/Paint;)V
-  .line 305
-    const/high16 v2, 0x40D00000
-    const/high16 v3, 0x41480000
-    const/high16 v4, 0x41580000
-    const/high16 v5, 0x40600000
-    invoke-virtual/range { v1 .. v6 }, Landroid/graphics/Canvas;->drawLine(FFFFLandroid/graphics/Paint;)V
-  .line 306
-    sput-object v0, Lcom/innioasis/ipp/PickDialog;->mark:Landroid/graphics/Bitmap;
-  .line 307
-    return-object v0
-.end method
-
 .method private tie(I)V
   .registers 9
-  .line 377
+  .line 395
     iget-boolean v0, p0, Lcom/innioasis/ipp/PickDialog;->sizes:Z
     if-nez v0, :L0
     return-void
   :L0
-  .line 378
+  .line 396
     nop
-  .line 379
+  .line 397
     const/4 v0, 0
     const/4 v1, -1
     const/4 v2, -1
@@ -664,87 +723,76 @@
     array-length v5, v4
     const/4 v6, 1
     if-ge v3, v5, :L4
-  .line 380
+  .line 398
     aget v4, v4, v3
     if-ne v4, v6, :L2
     add-int/lit8 v1, v3, 1
   :L2
-  .line 381
+  .line 399
     const/16 v5, 8
     if-ne v4, v5, :L3
     add-int/lit8 v2, v3, 1
   :L3
-  .line 379
+  .line 397
     add-int/lit8 v3, v3, 1
     goto :L1
   :L4
-  .line 383
+  .line 401
     if-lez v1, :L8
     if-gtz v2, :L5
     goto :L8
   :L5
-  .line 384
+  .line 402
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
     aget-boolean v4, v3, v1
     if-eqz v4, :L6
     aput-boolean v6, v3, v2
     goto :L7
   :L6
-  .line 385
+  .line 403
     if-ne p1, v1, :L7
     aput-boolean v0, v3, v2
   :L7
-  .line 386
+  .line 404
     return-void
   :L8
-  .line 383
+  .line 401
     return-void
 .end method
 
 .method private toggle(I)V
   .registers 7
-  .line 361
+  .line 380
     const/4 v0, 1
-    if-nez p1, :L4
-  .line 362
-    nop
-  .line 363
-    const/4 v1, 1
+    if-nez p1, :L2
+  .line 381
+    invoke-direct { p0 }, Lcom/innioasis/ipp/PickDialog;->allOn()Z
+    move-result v1
+  .line 382
     const/4 v2, 1
   :L0
     iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
     array-length v4, v3
-    if-ge v1, v4, :L1
-    aget-boolean v3, v3, v1
-    and-int/2addr v2, v3
-    add-int/lit8 v1, v1, 1
+    if-ge v2, v4, :L1
+    xor-int/lit8 v4, v1, 1
+    aput-boolean v4, v3, v2
+    add-int/lit8 v2, v2, 1
     goto :L0
   :L1
-  .line 364
-    const/4 v1, 1
+  .line 383
+    goto :L3
   :L2
-    iget-object v3, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
-    array-length v4, v3
-    if-ge v1, v4, :L3
-    xor-int/lit8 v4, v2, 1
-    aput-boolean v4, v3, v1
-    add-int/lit8 v1, v1, 1
-    goto :L2
-  :L3
-  .line 365
-    goto :L5
-  :L4
-  .line 366
+  .line 384
     iget-object v1, p0, Lcom/innioasis/ipp/PickDialog;->on:[Z
     aget-boolean v2, v1, p1
     xor-int/2addr v0, v2
     aput-boolean v0, v1, p1
-  :L5
-  .line 368
+  :L3
+  .line 386
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/PickDialog;->tie(I)V
-  .line 369
+  .line 387
     invoke-direct { p0 }, Lcom/innioasis/ipp/PickDialog;->paintAll()V
-  .line 370
+  .line 388
     return-void
 .end method
 
@@ -761,7 +809,7 @@
 
 .method public longDown(II)V
   .registers 4
-  .line 327
+  .line 340
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_ENTER()I
     move-result v0
@@ -771,17 +819,17 @@
     iget-object p1, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
     instance-of p2, p1, Lcom/innioasis/y1/base/BaseActivity;
     if-eqz p2, :L0
-  .line 329
+  .line 342
     check-cast p1, Lcom/innioasis/y1/base/BaseActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/base/BaseActivity;->askShutdown()V
   :L0
-  .line 331
+  .line 344
     return-void
 .end method
 
 .method public longDownFinish(I)V
   .registers 2
-  .line 335
+  .line 348
     return-void
 .end method
 
@@ -1016,9 +1064,9 @@
 
 .method public shortUp(I)V
   .registers 4
-  .line 312
+  .line 325
     sget-object v0, Lcom/innioasis/fm/configs/KeyMap;->INSTANCE:Lcom/innioasis/fm/configs/KeyMap;
-  .line 313
+  .line 326
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_UP()I
     move-result v1
     if-eq p1, v1, :L4
@@ -1027,7 +1075,7 @@
     if-ne p1, v1, :L0
     goto :L4
   :L0
-  .line 315
+  .line 328
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_DOWN()I
     move-result v1
     if-eq p1, v1, :L3
@@ -1036,31 +1084,31 @@
     if-ne p1, v1, :L1
     goto :L3
   :L1
-  .line 317
+  .line 330
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_ENTER()I
     move-result v1
     if-ne p1, v1, :L2
-  .line 318
+  .line 331
     invoke-direct { p0 }, Lcom/innioasis/ipp/PickDialog;->enter()V
     goto :L5
   :L2
-  .line 319
+  .line 332
     invoke-virtual { v0 }, Lcom/innioasis/fm/configs/KeyMap;->getKEY_MENU()I
     move-result v0
     if-ne p1, v0, :L5
-  .line 320
+  .line 333
     invoke-direct { p0 }, Lcom/innioasis/ipp/PickDialog;->close()V
     goto :L5
   :L3
-  .line 316
+  .line 329
     const/4 p1, 1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/PickDialog;->move(I)V
     goto :L5
   :L4
-  .line 314
+  .line 327
     const/4 p1, -1
     invoke-direct { p0, p1 }, Lcom/innioasis/ipp/PickDialog;->move(I)V
   :L5
-  .line 322
+  .line 335
     return-void
 .end method

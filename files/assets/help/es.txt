@@ -34,9 +34,9 @@ Si ya existe una lista con ese nombre, puedes reemplazarla, añadir las cancione
 
 Al final, la pantalla muestra el nombre de archivo de cada canción que no se encontró en la biblioteca.
 
-Para exportar, mantén pulsado el botón superior sobre una lista en la pantalla de listas y elige «Exportar a m3u». Las rutas del archivo parten de la carpeta /Music/: en el ordenador, pon el archivo en la carpeta que contiene la misma música.
+Para exportar, mantén pulsado el botón superior sobre una lista y elige «Exportar a m3u».
 
-Si /better-Y/music_path.txt contiene la ruta de la misma música en el ordenador (por ejemplo, D:\Música), el archivo lleva rutas completas y se abre allí desde cualquier carpeta. Tras importar una lista creada en el ordenador, el reproductor propone esa ruta por sí mismo. La carpeta del ordenador debe tener la misma estructura que /Music/ en el reproductor.
+Para que la lista exportada se abra desde cualquier lugar del ordenador, hay que indicar la ruta de la biblioteca de música en tu ordenador (por ejemplo, C:\Music). Al importar, el reproductor propone una ruta. Puedes editarla directamente en el reproductor o más tarde en el archivo /better-Y/music_path.txt. La estructura de carpetas debe ser idéntica en el reproductor y en el ordenador.
 
 [log] Guardar registro de diagnóstico
 Guarda un informe de diagnóstico en la carpeta /better-Y/logs/ de la tarjeta de memoria para adjuntarlo a un informe de error.
@@ -132,9 +132,9 @@ Al activarlo se desactiva «{row:first_artist_only}».
 [various_artist] Reemplazar «Various Artists» por un artista
 Si el Album Artist es «Various» o «Various Artists», se muestra en su lugar el primer artista de la canción. Por ejemplo, en un recopilatorio:
 
-«Various Artists — People»
+«Various Artists — Lose Yourself»
 se convierte en
-«Tree — People»
+«Eminem — Lose Yourself»
 
 [aa_feat_in_title] Mover los artistas invitados al título
 Mueve los artistas de la canción que la línea del artista no muestra al título de la canción, después de un «feat.». Por ejemplo, en un álbum de «Tree»:
@@ -146,9 +146,9 @@ con este ajuste desactivado se convierte en
 con este ajuste activado se convierte en
 «Tree — People (feat. Shelf Nunny, Lena Kuhn)»
 
-No se añade nada si el título ya nombra a alguno de ellos o si la línea del artista muestra «Various» o «Various Artists» («{row:various_artist}» desactivado).
-@img first_artist_only_on.png {On} + {Off}
-@img feat_in_title_on.png {On} + {On}
+No se añade nada si el título ya nombra a alguno de ellos o si la línea del artista muestra «Various» o «Various Artists».
+@img first_artist_only_on.png {Off}
+@img feat_in_title_on.png {On}
 
 [artist_album_scroll] Desplazar artistas/álbumes largos
 * Desactivado
@@ -184,8 +184,7 @@ Al abrir la lista en la que está la canción en reproducción, la selección va
 Determina cuántos segundos después del último giro de la rueda la selección vuelve a la canción que se está reproduciendo.
 
 [loop_scroll] Desplazamiento circular
-Tras la última fila de una lista, la rueda vuelve a la primera, y hacia arriba desde la primera pasa a la última, como en el menú principal. Funciona en todas las listas, menús y galerías.
-En una lista de canciones, la fila Shuffle también forma parte del ciclo.
+Al llegar al final o al principio de una lista, la selección salta al extremo opuesto. Funciona en todas las listas, menús y galerías.
 
 [animations] Activar animaciones
 En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran deslizándose y el marco del cursor se desplaza de un mosaico a otro. Desactivado, ambos saltan al instante.
@@ -193,13 +192,15 @@ En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran d
 [menu_style] Estilo de menú
 * Predeterminado
 * Simple
-Simple oculta la vista previa junto a la lista y extiende las filas a todo el ancho de la pantalla: en el menú principal, en los ajustes y en sus pantallas.
+@img menu_style_default.png Predeterminado
+@img menu_style_simple.png Simple
 
 [preview_text] Color del texto en las vistas previas del menú
 * Claro
 * Oscuro
 * Color del tema
-Establece el color del texto en las vistas previas junto a las listas de los ajustes y de sus pantallas, y dentro de «Acerca de». El color del tema es el del texto de las listas del tema.
+@img menu_preview_text_light.png Claro
+@img menu_preview_text_theme.png Color del tema
 
 [fixed_menu_pad] Márgenes de menú corregidos
 Corrige los márgenes del menú principal y de los ajustes.
@@ -209,22 +210,17 @@ Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes
 @img fixed_menu_pad_on.png {On}
 
 [album_artists] Mostrar artistas del álbum
-Añade «Artistas del álbum» al menú de Música, justo debajo de «{app:artists}».
+Añade «Artistas del álbum» al menú de Música.
 
-Los álbumes se agrupan por su etiqueta Album Artist. Un álbum sin ella va con el primer artista de sus canciones y, sin ningún artista, a <unknown>. Un álbum siempre se abre completo.
----
-La primera vez que se abre la sección se lee la etiqueta de cada álbum, lo que puede tardar con una biblioteca grande. Después se abre al instante; «{row:cache}» lee las etiquetas por adelantado.
+Un álbum sin etiqueta «Album Artist» toma el primer artista de la etiqueta «Artist» que más se repite en el álbum.
 
 [status_bar] Barra de estado
-Ajustes de la barra de la parte superior de la pantalla.
 
 [bar_text] Color del texto de la barra de estado
 * Claro
 * Oscuro
 * Color del tema
-Establece el color del título y del porcentaje de batería en la barra de estado.
-
-Color del tema es el color del texto de las listas del tema.
+Establece el color del título del menú y del porcentaje de batería.
 
 [bar_icons] Visibilidad de iconos
 * Título del menú
@@ -249,8 +245,11 @@ Muestra los títulos de las canciones de los metadatos en lugar del nombre del a
 Muestra los títulos de los audiolibros de los metadatos en lugar del nombre del archivo.
 
 [album_year] Año de lanzamiento en los álbumes
-Muestra el año de lanzamiento del álbum en su nombre. Por ejemplo:
+Muestra el año de lanzamiento del álbum en su nombre:
 «The Eminem Show (2002)»
+
+Si un álbum contiene canciones de años distintos, se indican el año más antiguo y el más reciente separados por un guion:
+«Dirt (1992 - 1993)»
 
 [track_numbers] Números de pista de los metadatos en los álbumes
 Muestra los números de pista de los metadatos dentro de los álbumes.
@@ -325,10 +324,9 @@ Añade una segunda distribución al teclado en pantalla.
 Mantenga pulsado el botón superior para cambiar.
 
 [screensaver] Salvapantallas
-Ajustes de la pantalla que aparece en lugar de apagarse la pantalla.
 
 [ss_on] Activar salvapantallas
-Cuando se agota el tiempo de suspensión fijado en Ajustes, aparece un salvapantallas en lugar del bloqueo de pantalla. Cualquier botón lo cierra y vuelve a la pantalla anterior; esa pulsación no hace nada más.
+Cuando se agota el tiempo de suspensión fijado en Ajustes, aparece un salvapantallas en lugar del bloqueo de pantalla.
 
 [ss_style] Estilo
 * Reloj, izquierda
@@ -340,12 +338,8 @@ Cuando se agota el tiempo de suspensión fijado en Ajustes, aparece un salvapant
 * Canción actual, izquierda
 * Canción actual, centro
 * Canción actual, derecha
-Abre el propio salvapantallas: la rueda recorre los estilos, el botón central guarda uno y el superior sale sin cambios.
----
-«Canción actual» muestra la portada, el título, el artista y el álbum; mientras no hay nada en el reproductor, muestra el reloj. El reloj se redibuja una vez por minuto y la canción solo al cambiar.
 
-[ss_bright] Brillo (%)
-El brillo de la pantalla en el salvapantallas. Al aparecer, el brillo baja suavemente hasta él desde el fijado en Ajustes.
+[ss_bright] Brillo
 
 [ss_off] Apagar la pantalla tras
 * 15 s
@@ -362,34 +356,36 @@ El brillo de la pantalla en el salvapantallas. Al aparecer, el brillo baja suave
 Cuánto tiempo se mantiene el salvapantallas antes de que se apague la pantalla.
 
 [ss_charging] No apagar la pantalla al cargar
-Mientras el reproductor se carga, el salvapantallas se mantiene hasta que se pulse un botón.
 
 [ss_background] Fondo
 * Claro
 * Oscuro
 * Fondo de pantalla
-El fondo de pantalla es la imagen elegida con «Establecer como» en Fotos o Fondo de pantalla; hasta que se elija una, es el fondo global del tema.
-
-Un tema puede traer su propia imagen: screensaver.png o screensaver.jpg en la carpeta del tema pasa a ser la del salvapantallas al aplicar el tema. Con un tema sin ella queda el fondo global.
 
 [ss_tint] Tono del fondo
 * Desactivado
 * Claro
 * Oscuro
 * Color del tema
-Pone un color translúcido sobre el fondo; el reloj, el texto y la portada quedan por encima.
 
 [ss_clock_color] Color del reloj
 * Claro
 * Oscuro
 * Color del tema
-El color del reloj.
 
 [ss_text_color] Color del texto
 * Claro
 * Oscuro
 * Color del tema
-El color de la fecha, el título, el artista y el álbum.
+
+[ss_tip]
+* Cerrar
+* No volver a mostrar
+Para cambiar de categoría, usa los botones izquierdo y derecho.
+
+Para elegir un valor, usa la rueda.
+
+Para guardar los cambios, sal del menú pulsando el botón superior.
 
 [[coverflow]] Cover Flow
 
