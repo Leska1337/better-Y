@@ -715,51 +715,51 @@
 .method public static instantCover(Lcom/innioasis/y1/base/BasePlayerActivity;Ljava/lang/String;)V
   .catchall { :L1 .. :L2 } :L3
   .registers 4
-  .line 601
+  .line 620
     invoke-static { p0 }, Lcom/innioasis/ipp/Cover;->blank(Lcom/innioasis/y1/base/BasePlayerActivity;)V
-  .line 602
+  .line 621
     invoke-static { p1 }, Lcom/innioasis/ipp/Cover;->bigCoverCached(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 603
+  .line 622
     if-nez v0, :L0
-  .line 604
+  .line 623
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Cover;->instantBlank(Lcom/innioasis/y1/base/BasePlayerActivity;Ljava/lang/String;)V
-  .line 605
+  .line 624
     return-void
   :L0
-  .line 607
+  .line 626
     invoke-static { v0 }, Lcom/innioasis/ipp/Cover;->fitCover(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
     move-result-object p1
-  .line 608
+  .line 627
     if-nez p1, :L1
-  .line 609
+  .line 628
     return-void
   :L1
-  .line 612
+  .line 631
     invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
     move-result-object v0
     check-cast v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;
-  .line 613
+  .line 632
     iget-object v1, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg:Lcom/innioasis/y1/view/ReflectImageView;
-  .line 614
+  .line 633
     invoke-virtual { v1, p1 }, Lcom/innioasis/y1/view/ReflectImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
-  .line 615
+  .line 634
     const/4 p1, 0
     invoke-virtual { v1, p1 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
-  .line 616
+  .line 635
     iget-object p1, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg2:Lcom/innioasis/y1/view/ReflectImageView;
     const/16 v0, 8
     invoke-virtual { p1, v0 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
-  .line 617
+  .line 636
     invoke-static { p0 }, Lcom/innioasis/ipp/Cover;->tilt(Lcom/innioasis/y1/base/BasePlayerActivity;)V
   :L2
-  .line 619
+  .line 638
     goto :L4
   :L3
-  .line 618
+  .line 637
     move-exception p0
   :L4
-  .line 620
+  .line 639
     return-void
 .end method
 
@@ -868,6 +868,59 @@
     move v7, v1
     invoke-virtual/range { v5 .. v10 }, Landroid/graphics/Canvas;->drawRect(FFFFLandroid/graphics/Paint;)V
   .line 163
+    return-void
+.end method
+
+.method public static preview(Lcom/innioasis/y1/base/BasePlayerActivity;Landroid/graphics/Bitmap;)V
+  .catchall { :L0 .. :L4 } :L5
+  .registers 6
+  :L0
+  .line 602
+    invoke-virtual { p0 }, Lcom/innioasis/y1/base/BasePlayerActivity;->getVb()Landroidx/viewbinding/ViewBinding;
+    move-result-object v0
+    check-cast v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;
+  .line 603
+    invoke-static { p0 }, Lcom/innioasis/ipp/Cover;->blank(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+  .line 604
+    if-nez p1, :L1
+    const/4 p1, 0
+    goto :L2
+  :L1
+    invoke-static { p1 }, Lcom/innioasis/ipp/Cover;->fitCover(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
+    move-result-object p1
+  :L2
+  .line 605
+    const/4 v1, 0
+    const/16 v2, 8
+    if-nez p1, :L3
+  .line 606
+    iget-object p0, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg:Lcom/innioasis/y1/view/ReflectImageView;
+    invoke-virtual { p0, v2 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
+  .line 607
+    iget-object p0, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg2:Lcom/innioasis/y1/view/ReflectImageView;
+    invoke-virtual { p0, v1 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
+  .line 608
+    return-void
+  :L3
+  .line 610
+    iget-object v3, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg:Lcom/innioasis/y1/view/ReflectImageView;
+    invoke-virtual { v3, p1 }, Lcom/innioasis/y1/view/ReflectImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
+  .line 611
+    iget-object p1, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg:Lcom/innioasis/y1/view/ReflectImageView;
+    invoke-virtual { p1, v1 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
+  .line 612
+    iget-object p1, v0, Lcom/innioasis/y1/databinding/ActivityMusicPlayerBinding;->coverBg2:Lcom/innioasis/y1/view/ReflectImageView;
+    invoke-virtual { p1, v2 }, Lcom/innioasis/y1/view/ReflectImageView;->setVisibility(I)V
+  .line 613
+    invoke-static { p0 }, Lcom/innioasis/ipp/Cover;->tilt(Lcom/innioasis/y1/base/BasePlayerActivity;)V
+  :L4
+  .line 615
+    goto :L6
+  :L5
+  .line 614
+    move-exception p0
+  :L6
+  .line 616
     return-void
 .end method
 

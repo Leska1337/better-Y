@@ -605,32 +605,32 @@
     move-result-object v5
     invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   .line 204
+    const/4 v5, 4
     if-nez p1, :L0
-    const/16 v5, 8
     invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setVisibility(I)V
   :L0
   .line 205
-    sget-object v5, Landroid/widget/ImageView$ScaleType;->FIT_CENTER:Landroid/widget/ImageView$ScaleType;
-    invoke-virtual { v3, v5 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
+    sget-object v6, Landroid/widget/ImageView$ScaleType;->FIT_CENTER:Landroid/widget/ImageView$ScaleType;
+    invoke-virtual { v3, v6 }, Landroid/widget/ImageView;->setScaleType(Landroid/widget/ImageView$ScaleType;)V
   .line 206
-    new-instance v5, Landroid/widget/LinearLayout$LayoutParams;
-    invoke-direct { v5, v2, v2 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
+    new-instance v6, Landroid/widget/LinearLayout$LayoutParams;
+    invoke-direct { v6, v2, v2 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
   .line 207
     const/4 v2, 6
-    iput v2, v5, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
+    iput v2, v6, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
   .line 208
-    invoke-virtual { v0, v3, v5 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
+    invoke-virtual { v0, v3, v6 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
   .line 210
     new-instance v2, Landroid/widget/TextView;
-    iget-object v5, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
-    invoke-direct { v2, v5 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+    iget-object v6, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
+    invoke-direct { v2, v6 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
   .line 211
-    const/high16 v5, 0x41600000
-    invoke-virtual { v2, v5 }, Landroid/widget/TextView;->setTextSize(F)V
+    const/high16 v6, 0x41600000
+    invoke-virtual { v2, v6 }, Landroid/widget/TextView;->setTextSize(F)V
   .line 212
     invoke-static { }, Lcom/innioasis/ipp/PickDialog;->font()Landroid/graphics/Typeface;
-    move-result-object v5
-    invoke-virtual { v2, v5 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+    move-result-object v6
+    invoke-virtual { v2, v6 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
   .line 213
     invoke-virtual { v2, v4 }, Landroid/widget/TextView;->setMaxLines(I)V
   .line 214
@@ -640,26 +640,25 @@
     const/4 v4, -2
     invoke-direct { p2, v1, v4 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
   .line 216
-    const/high16 v5, 0x3F800000
-    iput v5, p2, Landroid/widget/LinearLayout$LayoutParams;->weight:F
+    const/high16 v6, 0x3F800000
+    iput v6, p2, Landroid/widget/LinearLayout$LayoutParams;->weight:F
   .line 217
     invoke-virtual { v0, v2, p2 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
   .line 219
     new-instance p2, Landroid/widget/TextView;
-    iget-object v5, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
-    invoke-direct { p2, v5 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
+    iget-object v6, p0, Lcom/innioasis/ipp/PickDialog;->activity:Landroid/app/Activity;
+    invoke-direct { p2, v6 }, Landroid/widget/TextView;-><init>(Landroid/content/Context;)V
   .line 220
-    const/high16 v5, 0x41400000
-    invoke-virtual { p2, v5 }, Landroid/widget/TextView;->setTextSize(F)V
+    const/high16 v6, 0x41400000
+    invoke-virtual { p2, v6 }, Landroid/widget/TextView;->setTextSize(F)V
   .line 221
     invoke-static { }, Lcom/innioasis/ipp/PickDialog;->font()Landroid/graphics/Typeface;
-    move-result-object v5
-    invoke-virtual { p2, v5 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
+    move-result-object v6
+    invoke-virtual { p2, v6 }, Landroid/widget/TextView;->setTypeface(Landroid/graphics/Typeface;)V
   .line 222
-    const v5, 8388613
-    invoke-virtual { p2, v5 }, Landroid/widget/TextView;->setGravity(I)V
+    const v6, 8388613
+    invoke-virtual { p2, v6 }, Landroid/widget/TextView;->setGravity(I)V
   .line 223
-    const/4 v5, 4
     const/4 v6, 2
     invoke-virtual { p2, v5, v1, v6, v1 }, Landroid/widget/TextView;->setPadding(IIII)V
   .line 224

@@ -201,7 +201,7 @@ public final class PickDialog extends BaseDialog {
 
         ImageView t = new ImageView(activity);
         t.setImageBitmap(box(false));
-        if (i == 0) t.setVisibility(View.GONE);   // "Select all" is an action, not a choice
+        if (i == 0) t.setVisibility(View.INVISIBLE);   // "Select all" is an action: no box, same indent
         t.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(16, 16);
         tp.rightMargin = 6;

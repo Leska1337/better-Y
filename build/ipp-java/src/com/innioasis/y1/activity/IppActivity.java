@@ -233,11 +233,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(ACTION, "log", 0, null, null));              // Diag
 
         l.add(new Item(HEADER, "player", 0, null, null));
-        l.add(new Item(CHOICE, "icon_tint", 3, null, null));
-        l.add(new Item(CHOICE, Tint.KEY_TEXT, 3, null, null));
-        l.add(new Item(CHOICE, Tint.KEY_LYRICS, 3, null, null));
-        l.add(new Item(CHOICE, Tint.KEY_BOX, 4, null, null));
-        l.add(new Item(TOGGLE, Cover.KEY_TILT, 0, null, null));
+        l.add(new Item(ACTION, IppNowActivity.KEY_STYLE, 0, null, null));   // the player's colours and tilt
         l.add(new Item(CHOICE, "top_hold", 3, null, null));
         l.add(new Item(CHOICE, "book_top_hold", 2, null, null));
         l.add(new Item(TOGGLE, Feat.KEY_FIRST, 0, null, null));
@@ -981,6 +977,8 @@ public final class IppActivity extends BaseActivity {
             } else if ("backup".equals(it.key)) {
                 // no Yes/No: Load asks for itself once an archive is picked
                 Backup.open(getActivity(), label(it));
+            } else if (IppNowActivity.KEY_STYLE.equals(it.key)) {
+                startActivity(new android.content.Intent(this, IppNowActivity.class));
             } else if (Saver.KEY_STYLE.equals(it.key)) {
                 android.content.Intent i = new android.content.Intent(this, IppSaverActivity.class);
                 i.putExtra(IppSaverActivity.EXTRA_PREVIEW, true);

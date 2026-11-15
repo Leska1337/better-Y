@@ -596,6 +596,25 @@ public final class Cover {
         }
     }
 
+    /** Now Playing's Style preview: {@code src} as the player shows it in the current look, the placeholder for null. */
+    public static void preview(BasePlayerActivity a, Bitmap src) {
+        try {
+            ActivityMusicPlayerBinding vb = (ActivityMusicPlayerBinding) a.getVb();
+            blank(a);
+            Bitmap b = src == null ? null : fitCover(src);
+            if (b == null) {
+                vb.coverBg.setVisibility(android.view.View.GONE);
+                vb.coverBg2.setVisibility(android.view.View.VISIBLE);
+                return;
+            }
+            vb.coverBg.setImageBitmap(b);
+            vb.coverBg.setVisibility(android.view.View.VISIBLE);
+            vb.coverBg2.setVisibility(android.view.View.GONE);
+            tilt(a);
+        } catch (Throwable t) {
+        }
+    }
+
     /** Paint the cover at once, from the caches, at the top of stock's {@code refreshCover}. */
     public static void instantCover(BasePlayerActivity a, String path) {
         blank(a);

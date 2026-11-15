@@ -133,7 +133,7 @@ public final class IppImportActivity extends BaseActivity {
 
             ImageView t = new ImageView(this);
             t.setImageBitmap(PickDialog.box(false));
-            if (i == 0) t.setVisibility(View.GONE);   // "Select all" is an action, not a choice
+            if (i == 0) t.setVisibility(View.INVISIBLE);   // "Select all" is an action: no box, same indent
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(-2, -2);
             tp.rightMargin = 6;
             r.addView(t, tp);

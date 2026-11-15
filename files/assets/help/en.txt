@@ -46,34 +46,36 @@ Saves a diagnostic report to the /better-Y/logs/ folder on the SD card for a bug
 
 [[player]] Now Playing
 
+[np_style] Style
+
 [icon_tint] Icon color
 * Light
 * Dark
 * Theme color
-Sets the color of the interactive buttons in the player.
 
 [text_tint] Text color
 * Light
 * Dark
 * Theme color
-Sets the color of the text lines and the time marks in the player.
 
 [lyrics_tint] Lyrics color
 * Light
 * Dark
 * Theme color
-Sets the color of the lyrics in the player.
 
 [box_tint] Text boxes color
 * Light
 * Dark
 * Theme color
 * Off
-Sets the color of the boxes behind the text lines and the buttons in the player.
 
 [cover_tilt] Tilt the cover
-@img cover_tilt_on.png {On}
-@img cover_tilt_off.png {Off}
+
+[np_blank]
+* Title
+* Artist
+* Album
+* Lyrics
 
 [top_hold] Top button hold (Music)
 * Lyrics

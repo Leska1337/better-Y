@@ -894,7 +894,7 @@
     move-result-object v6
     invoke-virtual { v5, v6 }, Landroid/widget/ImageView;->setImageBitmap(Landroid/graphics/Bitmap;)V
   .line 136
-    const/16 v6, 8
+    const/4 v6, 4
     if-nez v3, :L1
     invoke-virtual { v5, v6 }, Landroid/widget/ImageView;->setVisibility(I)V
   :L1
@@ -932,69 +932,69 @@
     invoke-direct { p0, v10, v11 }, Lcom/innioasis/y1/activity/IppImportActivity;->line(Ljava/lang/String;F)Landroid/widget/TextView;
     move-result-object v10
   .line 149
-    const/4 v11, 4
-    invoke-virtual { v10, v9, v2, v11, v2 }, Landroid/widget/TextView;->setPadding(IIII)V
+    invoke-virtual { v10, v9, v2, v6, v2 }, Landroid/widget/TextView;->setPadding(IIII)V
   .line 150
     if-lez v3, :L2
-    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->all:Ljava/util/List;
-    invoke-interface { v9 }, Ljava/util/List;->size()I
-    move-result v9
-    if-gt v3, v9, :L2
+    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->all:Ljava/util/List;
+    invoke-interface { v6 }, Ljava/util/List;->size()I
+    move-result v6
+    if-gt v3, v6, :L2
   .line 151
-    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->all:Ljava/util/List;
-    add-int/lit8 v11, v3, -1
-    invoke-interface { v9, v11 }, Ljava/util/List;->get(I)Ljava/lang/Object;
-    move-result-object v9
-    check-cast v9, Lcom/innioasis/ipp/M3u$Plan;
-    iget-object v9, v9, Lcom/innioasis/ipp/M3u$Plan;->lines:Ljava/util/ArrayList;
-    invoke-virtual { v9 }, Ljava/util/ArrayList;->size()I
-    move-result v9
-    invoke-static { v9 }, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
-    move-result-object v9
-    invoke-virtual { v10, v9 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
+    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->all:Ljava/util/List;
+    add-int/lit8 v9, v3, -1
+    invoke-interface { v6, v9 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v6
+    check-cast v6, Lcom/innioasis/ipp/M3u$Plan;
+    iget-object v6, v6, Lcom/innioasis/ipp/M3u$Plan;->lines:Ljava/util/ArrayList;
+    invoke-virtual { v6 }, Ljava/util/ArrayList;->size()I
+    move-result v6
+    invoke-static { v6 }, Ljava/lang/String;->valueOf(I)Ljava/lang/String;
+    move-result-object v6
+    invoke-virtual { v10, v6 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
   :L2
   .line 153
     invoke-virtual { v4, v10, v8, v8 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;II)V
   .line 155
-    add-int/lit8 v9, v1, -1
-    if-ne v3, v9, :L3
+    add-int/lit8 v6, v1, -1
+    if-ne v3, v6, :L3
   .line 157
-    invoke-virtual { v5, v6 }, Landroid/widget/ImageView;->setVisibility(I)V
+    const/16 v9, 8
+    invoke-virtual { v5, v9 }, Landroid/widget/ImageView;->setVisibility(I)V
   .line 158
-    const/16 v6, 17
-    invoke-virtual { v7, v6 }, Landroid/widget/TextView;->setGravity(I)V
+    const/16 v9, 17
+    invoke-virtual { v7, v9 }, Landroid/widget/TextView;->setGravity(I)V
   .line 159
     invoke-static { v7 }, Lcom/innioasis/y1/activity/IppImportActivity;->bold(Landroid/widget/TextView;)V
   :L3
   .line 161
-    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->rows:[Landroid/view/View;
-    aput-object v4, v6, v3
+    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->rows:[Landroid/view/View;
+    aput-object v4, v9, v3
   .line 162
-    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->labels:[Landroid/widget/TextView;
-    aput-object v7, v6, v3
+    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->labels:[Landroid/widget/TextView;
+    aput-object v7, v9, v3
   .line 163
-    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->values:[Landroid/widget/TextView;
-    aput-object v10, v6, v3
+    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->values:[Landroid/widget/TextView;
+    aput-object v10, v9, v3
   .line 164
-    iget-object v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->ticks:[Landroid/widget/ImageView;
-    aput-object v5, v6, v3
+    iget-object v9, p0, Lcom/innioasis/y1/activity/IppImportActivity;->ticks:[Landroid/widget/ImageView;
+    aput-object v5, v9, v3
   .line 165
     iget v5, p0, Lcom/innioasis/y1/activity/IppImportActivity;->step:I
     if-nez v5, :L4
     invoke-virtual { v7 }, Landroid/widget/TextView;->getTextSize()F
     move-result v5
-    const v6, 1075419546
-    mul-float v5, v5, v6
+    const v7, 1075419546
+    mul-float v5, v5, v7
     float-to-int v5, v5
     add-int/2addr v5, v0
     invoke-direct { p0, v5 }, Lcom/innioasis/y1/activity/IppImportActivity;->fit(I)V
   :L4
   .line 166
     const/4 v5, -1
-    if-ne v3, v9, :L8
+    if-ne v3, v6, :L8
   .line 168
-    iget v6, p0, Lcom/innioasis/y1/activity/IppImportActivity;->fitRows:I
-    if-lt v9, v6, :L5
+    iget v7, p0, Lcom/innioasis/y1/activity/IppImportActivity;->fitRows:I
+    if-lt v6, v7, :L5
     const/4 v6, 1
     goto :L6
   :L5

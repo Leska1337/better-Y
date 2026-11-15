@@ -43,34 +43,36 @@ Enregistre un rapport de diagnostic dans le dossier /better-Y/logs/ de la carte 
 
 [[player]] En lecture
 
+[np_style] Style
+
 [icon_tint] Couleur des icônes
 * Clair
 * Sombre
 * Couleur du thème
-Définit la couleur des boutons interactifs du lecteur.
 
 [text_tint] Couleur du texte
 * Clair
 * Sombre
 * Couleur du thème
-Définit la couleur des lignes de texte et des repères de temps du lecteur.
 
 [lyrics_tint] Couleur des paroles
 * Clair
 * Sombre
 * Couleur du thème
-Définit la couleur des paroles dans le lecteur.
 
 [box_tint] Couleur des cadres
 * Clair
 * Sombre
 * Couleur du thème
 * Désactivé
-Définit la couleur des cadres derrière les lignes de texte et les boutons dans le lecteur.
 
 [cover_tilt] Incliner la pochette
-@img cover_tilt_on.png {On}
-@img cover_tilt_off.png {Off}
+
+[np_blank]
+* Titre
+* Artiste
+* Album
+* Paroles
 
 [top_hold] Appui long bouton haut (Musique)
 * Paroles

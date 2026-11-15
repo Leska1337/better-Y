@@ -43,34 +43,36 @@
 
 [[player]] 正在播放
 
+[np_style] 样式
+
 [icon_tint] 图标颜色
 * 浅色
 * 深色
 * 主题颜色
-设置播放器中交互按钮的颜色。
 
 [text_tint] 文字颜色
 * 浅色
 * 深色
 * 主题颜色
-设置播放器中文字行和时间标记的颜色。
 
 [lyrics_tint] 歌词颜色
 * 浅色
 * 深色
 * 主题颜色
-设置播放器中歌词的颜色。
 
 [box_tint] 文字框颜色
 * 浅色
 * 深色
 * 主题颜色
 * 关
-设置播放器中文字行和按钮背后方框的颜色。
 
 [cover_tilt] 倾斜封面
-@img cover_tilt_on.png {On}
-@img cover_tilt_off.png {Off}
+
+[np_blank]
+* 标题
+* 艺术家
+* 专辑
+* 歌词
 
 [top_hold] 长按顶部按钮（音乐）
 * 歌词
