@@ -50,11 +50,11 @@ public final class IppNowActivity extends BasePlayerActivity {
     /** The menu row that opens this screen. */
     public static final String KEY_STYLE = "np_style";
 
-    private static final String[] CATS = {"icon_tint", Tint.KEY_TEXT, Tint.KEY_LYRICS, Tint.KEY_BOX,
-            Cover.KEY_TILT};
-    private static final int[] COUNTS = {3, 3, 3, 4, 2};
-    private static final int LYRICS = 2;
-    private static final int TILT = 4;
+    private static final String[] CATS = {"icon_tint", Tint.KEY_TEXT, Tint.KEY_BOX, Cover.KEY_TILT,
+            Tint.KEY_LYRICS};
+    private static final int[] COUNTS = {3, 3, 4, 2, 3};
+    private static final int LYRICS = 4;
+    private static final int TILT = 3;
     /** Placeholder lines: their asset row, values Title, Artist, Album, Lyrics. */
     private static final String BLANK = "np_blank";
     /** The screensaver's hint says the same, under a flag of its own. */

@@ -130,7 +130,7 @@ public final class Cover {
             }
             Canvas c = new Canvas(out);
             c.drawBitmap(src, 0.0f, 0.0f, null);
-            mirror(c, src, w, h);
+            mirror(c, src, w, h, flatCover() ? 0 : 2);
 
             if (reflOut != held) spare = reflOut;
             reflIn = new WeakReference(src);
@@ -142,17 +142,17 @@ public final class Cover {
         }
     }
 
-    /** The faded mirror of {@code src}'s lower half, under it on {@code c}. */
-    private static void mirror(Canvas c, Bitmap src, int w, int h) {
+    /** The faded mirror of {@code src}'s lower half, under it on {@code c}; the side frame {@code f} stays out of it. */
+    private static void mirror(Canvas c, Bitmap src, int w, int h, int f) {
         int half = h / 2;
         float k = (w > REFL_W) ? ((float) REFL_W / (float) w) : 1.0f;
         Matrix m = new Matrix();
         m.preScale(k, -k);
-        Bitmap mir = Bitmap.createBitmap(src, 0, half, w, half, m, true);
+        Bitmap mir = Bitmap.createBitmap(src, f, half, w - 2 * f, half, m, true);
         Paint p = new Paint();
         p.setFilterBitmap(true);
         p.setAntiAlias(true);
-        c.drawBitmap(mir, null, new Rect(0, h, w, h + half), p);
+        c.drawBitmap(mir, null, new Rect(f, h, w - f, h + half), p);
 
         // stock's fade
         Paint g = new Paint();
@@ -393,7 +393,7 @@ public final class Cover {
         Bitmap out = Bitmap.createBitmap(fw, fh + fh / 2, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(out);
         c.drawBitmap(framed, 0, 0, null);
-        mirror(c, framed, fw, fh);
+        mirror(c, framed, fw, fh, f);
         framed.recycle();
         blankPic = out;
         blankLook = now;

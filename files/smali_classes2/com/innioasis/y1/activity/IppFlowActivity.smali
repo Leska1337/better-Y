@@ -474,8 +474,8 @@
     return-void
 .end method
 
-.method private edgeOn(Ljava/lang/Runnable;IF)V
-  .registers 9
+.method private edgeOn(Ljava/lang/Runnable;FIF)V
+  .registers 8
   .line 606
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     invoke-virtual { v0 }, Lcom/innioasis/ipp/FlowView;->getHeight()I
@@ -484,42 +484,42 @@
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->animate()Landroid/view/ViewPropertyAnimator;
     move-result-object v1
-    const/high16 v2, 0x42B40000
-    invoke-virtual { v1, v2 }, Landroid/view/ViewPropertyAnimator;->rotationY(F)Landroid/view/ViewPropertyAnimator;
-    move-result-object v1
-    const/high16 v3, 0x3F000000
-    invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->scaleX(F)Landroid/view/ViewPropertyAnimator;
-    move-result-object v1
+    invoke-virtual { v1, p2 }, Landroid/view/ViewPropertyAnimator;->rotationY(F)Landroid/view/ViewPropertyAnimator;
+    move-result-object p2
+    const/high16 v1, 0x3F000000
+    invoke-virtual { p2, v1 }, Landroid/view/ViewPropertyAnimator;->scaleX(F)Landroid/view/ViewPropertyAnimator;
+    move-result-object p2
   .line 608
     if-lez v0, :L0
-    const/high16 v3, 0x43340000
-    int-to-float v4, v0
-    div-float/2addr v3, v4
+    const/high16 v1, 0x43340000
+    int-to-float v2, v0
+    div-float/2addr v1, v2
     goto :L1
   :L0
-    const/high16 v3, 0x3F800000
+    const/high16 v1, 0x3F800000
   :L1
-    invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->scaleY(F)Landroid/view/ViewPropertyAnimator;
-    move-result-object v1
-    iget-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
+    invoke-virtual { p2, v1 }, Landroid/view/ViewPropertyAnimator;->scaleY(F)Landroid/view/ViewPropertyAnimator;
+    move-result-object p2
+    iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
   .line 609
-    invoke-virtual { v3 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
-    move-result v3
-    int-to-float v3, v3
-    add-float/2addr v3, v2
+    invoke-virtual { v1 }, Lcom/innioasis/ipp/FlowView;->coverTop()I
+    move-result v1
+    int-to-float v1, v1
+    const/high16 v2, 0x42B40000
+    add-float/2addr v1, v2
     int-to-float v0, v0
     const/high16 v2, 0x40000000
     div-float/2addr v0, v2
-    sub-float/2addr v3, v0
-    invoke-virtual { v1, v3 }, Landroid/view/ViewPropertyAnimator;->translationY(F)Landroid/view/ViewPropertyAnimator;
-    move-result-object v0
-    int-to-long v1, p2
-  .line 610
-    invoke-virtual { v0, v1, v2 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
+    sub-float/2addr v1, v0
+    invoke-virtual { p2, v1 }, Landroid/view/ViewPropertyAnimator;->translationY(F)Landroid/view/ViewPropertyAnimator;
     move-result-object p2
-    new-instance v0, Landroid/view/animation/AccelerateInterpolator;
-    invoke-direct { v0, p3 }, Landroid/view/animation/AccelerateInterpolator;-><init>(F)V
-    invoke-virtual { p2, v0 }, Landroid/view/ViewPropertyAnimator;->setInterpolator(Landroid/animation/TimeInterpolator;)Landroid/view/ViewPropertyAnimator;
+    int-to-long v0, p3
+  .line 610
+    invoke-virtual { p2, v0, v1 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
+    move-result-object p2
+    new-instance p3, Landroid/view/animation/AccelerateInterpolator;
+    invoke-direct { p3, p4 }, Landroid/view/animation/AccelerateInterpolator;-><init>(F)V
+    invoke-virtual { p2, p3 }, Landroid/view/ViewPropertyAnimator;->setInterpolator(Landroid/animation/TimeInterpolator;)Landroid/view/ViewPropertyAnimator;
     move-result-object p2
   .line 611
     invoke-virtual { p2, p1 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
@@ -551,8 +551,9 @@
     new-instance v0, Lcom/innioasis/y1/activity/IppFlowActivity$Half;
     const/4 v2, 0
     invoke-direct { v0, p0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Half;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;Z)V
-    const/16 v2, 130
-    invoke-direct { p0, v0, v2, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(Ljava/lang/Runnable;IF)V
+    const/high16 v2, 0x42B40000
+    const/16 v3, 130
+    invoke-direct { p0, v0, v2, v3, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(Ljava/lang/Runnable;FIF)V
   .line 602
     return-void
 .end method
@@ -968,8 +969,9 @@
   .line 765
     new-instance v0, Lcom/innioasis/y1/activity/IppFlowActivity$ToPlayer;
     invoke-direct { v0, p0 }, Lcom/innioasis/y1/activity/IppFlowActivity$ToPlayer;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
-    const/16 v1, 130
-    invoke-direct { p0, v0, v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(Ljava/lang/Runnable;IF)V
+    const/high16 v1, 0xC2B40000
+    const/16 v3, 130
+    invoke-direct { p0, v0, v1, v3, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->edgeOn(Ljava/lang/Runnable;FIF)V
   .line 766
     return-void
   :L4
@@ -2830,7 +2832,7 @@
     invoke-virtual { v1, v0 }, Landroid/widget/ImageView;->setScaleY(F)V
   .line 785
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;
-    const/high16 v1, 0xC2B40000
+    const/high16 v1, 0x42B40000
     invoke-virtual { v0, v1 }, Landroid/widget/ImageView;->setRotationY(F)V
   .line 786
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->trip:Landroid/widget/ImageView;

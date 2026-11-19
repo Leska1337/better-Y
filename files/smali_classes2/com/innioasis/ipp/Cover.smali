@@ -282,34 +282,34 @@
     invoke-virtual { v4 }, Landroid/graphics/Bitmap;->recycle()V
   .line 391
     invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
-    move-result v2
+    move-result v4
   .line 392
     invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
-    move-result v4
+    move-result v6
   .line 393
-    div-int/lit8 v6, v4, 2
-    add-int/2addr v6, v4
-    sget-object v7, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
-    invoke-static { v2, v6, v7 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
-    move-result-object v6
+    div-int/lit8 v7, v6, 2
+    add-int/2addr v7, v6
+    sget-object v8, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
+    invoke-static { v4, v7, v8 }, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
+    move-result-object v7
   .line 394
-    new-instance v7, Landroid/graphics/Canvas;
-    invoke-direct { v7, v6 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+    new-instance v8, Landroid/graphics/Canvas;
+    invoke-direct { v8, v7 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
   .line 395
-    const/4 v8, 0
-    invoke-virtual { v7, v1, v8, v8, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
+    const/4 v9, 0
+    invoke-virtual { v8, v1, v9, v9, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
   .line 396
-    invoke-static { v7, v1, v2, v4 }, Lcom/innioasis/ipp/Cover;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;II)V
+    invoke-static { v8, v1, v4, v6, v2 }, Lcom/innioasis/ipp/Cover;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;III)V
   .line 397
     invoke-virtual { v1 }, Landroid/graphics/Bitmap;->recycle()V
   .line 398
-    sput-object v6, Lcom/innioasis/ipp/Cover;->blankPic:Landroid/graphics/Bitmap;
+    sput-object v7, Lcom/innioasis/ipp/Cover;->blankPic:Landroid/graphics/Bitmap;
   .line 399
     sput v3, Lcom/innioasis/ipp/Cover;->blankLook:I
   :L11
   .line 400
     monitor-exit v0
-    return-object v6
+    return-object v7
   :L12
   .line 371
     move-exception v1
@@ -793,80 +793,81 @@
     return p0
 .end method
 
-.method private static mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;II)V
-  .registers 23
+.method private static mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;III)V
+  .registers 26
   .line 147
-    move/from16 v7, p2
-    move/from16 v8, p3
-    div-int/lit8 v9, v8, 2
+    move/from16 v0, p2
+    move/from16 v1, p3
+    move/from16 v9, p4
+    div-int/lit8 v10, v1, 2
   .line 148
-    const/16 v0, 150
-    if-le v7, v0, :L0
-    const/high16 v0, 0x43160000
-    int-to-float v1, v7
-    div-float/2addr v0, v1
+    const/16 v2, 150
+    if-le v0, v2, :L0
+    const/high16 v2, 0x43160000
+    int-to-float v3, v0
+    div-float/2addr v2, v3
     goto :L1
   :L0
-    const/high16 v0, 0x3F800000
+    const/high16 v2, 0x3F800000
   :L1
   .line 149
-    new-instance v5, Landroid/graphics/Matrix;
-    invoke-direct { v5 }, Landroid/graphics/Matrix;-><init>()V
+    new-instance v7, Landroid/graphics/Matrix;
+    invoke-direct { v7 }, Landroid/graphics/Matrix;-><init>()V
   .line 150
-    neg-float v1, v0
-    invoke-virtual { v5, v0, v1 }, Landroid/graphics/Matrix;->preScale(FF)Z
+    neg-float v3, v2
+    invoke-virtual { v7, v2, v3 }, Landroid/graphics/Matrix;->preScale(FF)Z
   .line 151
-    const/4 v1, 0
-    const/4 v6, 1
-    move-object/from16 v0, p1
-    move v2, v9
-    move/from16 v3, p2
-    move v4, v9
-    invoke-static/range { v0 .. v6 }, Landroid/graphics/Bitmap;->createBitmap(Landroid/graphics/Bitmap;IIIILandroid/graphics/Matrix;Z)Landroid/graphics/Bitmap;
-    move-result-object v0
+    mul-int/lit8 v2, v9, 2
+    sub-int v5, v0, v2
+    const/4 v8, 1
+    move-object/from16 v2, p1
+    move/from16 v3, p4
+    move v4, v10
+    move v6, v10
+    invoke-static/range { v2 .. v8 }, Landroid/graphics/Bitmap;->createBitmap(Landroid/graphics/Bitmap;IIIILandroid/graphics/Matrix;Z)Landroid/graphics/Bitmap;
+    move-result-object v2
   .line 152
-    new-instance v1, Landroid/graphics/Paint;
-    invoke-direct { v1 }, Landroid/graphics/Paint;-><init>()V
+    new-instance v3, Landroid/graphics/Paint;
+    invoke-direct { v3 }, Landroid/graphics/Paint;-><init>()V
   .line 153
-    const/4 v2, 1
-    invoke-virtual { v1, v2 }, Landroid/graphics/Paint;->setFilterBitmap(Z)V
+    const/4 v4, 1
+    invoke-virtual { v3, v4 }, Landroid/graphics/Paint;->setFilterBitmap(Z)V
   .line 154
-    invoke-virtual { v1, v2 }, Landroid/graphics/Paint;->setAntiAlias(Z)V
+    invoke-virtual { v3, v4 }, Landroid/graphics/Paint;->setAntiAlias(Z)V
   .line 155
-    new-instance v2, Landroid/graphics/Rect;
-    add-int v3, v8, v9
-    const/4 v4, 0
-    invoke-direct { v2, v4, v8, v7, v3 }, Landroid/graphics/Rect;-><init>(IIII)V
-    const/4 v4, 0
-    move-object/from16 v5, p0
-    invoke-virtual { v5, v0, v4, v2, v1 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
+    new-instance v4, Landroid/graphics/Rect;
+    sub-int v5, v0, v9
+    add-int v6, v1, v10
+    invoke-direct { v4, v9, v1, v5, v6 }, Landroid/graphics/Rect;-><init>(IIII)V
+    const/4 v5, 0
+    move-object/from16 v7, p0
+    invoke-virtual { v7, v2, v5, v4, v3 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/Rect;Landroid/graphics/Paint;)V
   .line 158
-    new-instance v10, Landroid/graphics/Paint;
-    invoke-direct { v10 }, Landroid/graphics/Paint;-><init>()V
+    new-instance v12, Landroid/graphics/Paint;
+    invoke-direct { v12 }, Landroid/graphics/Paint;-><init>()V
   .line 159
-    new-instance v0, Landroid/graphics/LinearGradient;
-    const/4 v12, 0
-    int-to-float v1, v8
+    new-instance v2, Landroid/graphics/LinearGradient;
     const/4 v14, 0
-    int-to-float v9, v3
-    const v16, 1895825407
-    const v17, 16777215
-    sget-object v18, Landroid/graphics/Shader$TileMode;->CLAMP:Landroid/graphics/Shader$TileMode;
-    move-object v11, v0
-    move v13, v1
+    int-to-float v9, v1
+    const/16 v16, 0
+    int-to-float v11, v6
+    const v18, 1895825407
+    const v19, 16777215
+    sget-object v20, Landroid/graphics/Shader$TileMode;->CLAMP:Landroid/graphics/Shader$TileMode;
+    move-object v13, v2
     move v15, v9
-    invoke-direct/range { v11 .. v18 }, Landroid/graphics/LinearGradient;-><init>(FFFFIILandroid/graphics/Shader$TileMode;)V
-    invoke-virtual { v10, v0 }, Landroid/graphics/Paint;->setShader(Landroid/graphics/Shader;)Landroid/graphics/Shader;
+    move/from16 v17, v11
+    invoke-direct/range { v13 .. v20 }, Landroid/graphics/LinearGradient;-><init>(FFFFIILandroid/graphics/Shader$TileMode;)V
+    invoke-virtual { v12, v2 }, Landroid/graphics/Paint;->setShader(Landroid/graphics/Shader;)Landroid/graphics/Shader;
   .line 161
-    new-instance v0, Landroid/graphics/PorterDuffXfermode;
+    new-instance v1, Landroid/graphics/PorterDuffXfermode;
     sget-object v2, Landroid/graphics/PorterDuff$Mode;->DST_IN:Landroid/graphics/PorterDuff$Mode;
-    invoke-direct { v0, v2 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
-    invoke-virtual { v10, v0 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
+    invoke-direct { v1, v2 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
+    invoke-virtual { v12, v1 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
   .line 162
-    const/4 v6, 0
-    int-to-float v8, v7
-    move v7, v1
-    invoke-virtual/range { v5 .. v10 }, Landroid/graphics/Canvas;->drawRect(FFFFLandroid/graphics/Paint;)V
+    const/4 v8, 0
+    int-to-float v10, v0
+    invoke-virtual/range { v7 .. v12 }, Landroid/graphics/Canvas;->drawRect(FFFFLandroid/graphics/Paint;)V
   .line 163
     return-void
 .end method
@@ -949,10 +950,10 @@
 .end method
 
 .method public static declared-synchronized reflect(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
-  .catchall { :L0 .. :L1 } :L11
-  .catchall { :L2 .. :L4 } :L11
-  .catchall { :L5 .. :L9 } :L11
-  .registers 9
+  .catchall { :L0 .. :L1 } :L13
+  .catchall { :L2 .. :L4 } :L13
+  .catchall { :L5 .. :L11 } :L13
+  .registers 10
     const-class v0, Lcom/innioasis/ipp/Cover;
     monitor-enter v0
   .line 109
@@ -993,9 +994,9 @@
     invoke-virtual { p0 }, Landroid/graphics/Bitmap;->getHeight()I
     move-result v3
   .line 117
-    if-lez v2, :L10
+    if-lez v2, :L12
     if-gtz v3, :L3
-    goto :L10
+    goto :L12
   :L3
   .line 118
     div-int/lit8 v4, v3, 2
@@ -1010,24 +1011,24 @@
   .line 124
     sput-object v1, Lcom/innioasis/ipp/Cover;->spare:Landroid/graphics/Bitmap;
   .line 125
+    const/4 v6, 0
     if-eqz v5, :L6
     invoke-virtual { v5 }, Landroid/graphics/Bitmap;->isRecycled()Z
-    move-result v6
-    if-nez v6, :L6
+    move-result v7
+    if-nez v7, :L6
     invoke-virtual { v5 }, Landroid/graphics/Bitmap;->isMutable()Z
-    move-result v6
-    if-eqz v6, :L6
+    move-result v7
+    if-eqz v7, :L6
   .line 126
     invoke-virtual { v5 }, Landroid/graphics/Bitmap;->getWidth()I
-    move-result v6
-    if-ne v6, v2, :L6
+    move-result v7
+    if-ne v7, v2, :L6
     invoke-virtual { v5 }, Landroid/graphics/Bitmap;->getHeight()I
-    move-result v6
-    add-int v7, v3, v4
-    if-ne v6, v7, :L6
+    move-result v7
+    add-int v8, v3, v4
+    if-ne v7, v8, :L6
   .line 127
-    const/4 v4, 0
-    invoke-virtual { v5, v4 }, Landroid/graphics/Bitmap;->eraseColor(I)V
+    invoke-virtual { v5, v6 }, Landroid/graphics/Bitmap;->eraseColor(I)V
     goto :L7
   :L6
   .line 129
@@ -1040,16 +1041,23 @@
     new-instance v4, Landroid/graphics/Canvas;
     invoke-direct { v4, v5 }, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
   .line 132
-    const/4 v6, 0
-    invoke-virtual { v4, p0, v6, v6, v1 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
+    const/4 v7, 0
+    invoke-virtual { v4, p0, v7, v7, v1 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
   .line 133
-    invoke-static { v4, p0, v2, v3 }, Lcom/innioasis/ipp/Cover;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;II)V
+    invoke-static { }, Lcom/innioasis/ipp/Cover;->flatCover()Z
+    move-result v7
+    if-eqz v7, :L8
+    goto :L9
+  :L8
+    const/4 v6, 2
+  :L9
+    invoke-static { v4, p0, v2, v3, v6 }, Lcom/innioasis/ipp/Cover;->mirror(Landroid/graphics/Canvas;Landroid/graphics/Bitmap;III)V
   .line 135
     sget-object v2, Lcom/innioasis/ipp/Cover;->reflOut:Landroid/graphics/Bitmap;
     sget-object v3, Lcom/innioasis/ipp/Cover;->held:Landroid/graphics/Bitmap;
-    if-eq v2, v3, :L8
+    if-eq v2, v3, :L10
     sput-object v2, Lcom/innioasis/ipp/Cover;->spare:Landroid/graphics/Bitmap;
-  :L8
+  :L10
   .line 136
     new-instance v2, Ljava/lang/ref/WeakReference;
     invoke-direct { v2, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -1060,15 +1068,15 @@
     sput p0, Lcom/innioasis/ipp/Cover;->reflGen:I
   .line 138
     sput-object v5, Lcom/innioasis/ipp/Cover;->reflOut:Landroid/graphics/Bitmap;
-  :L9
+  :L11
   .line 139
     monitor-exit v0
     return-object v5
-  :L10
+  :L12
   .line 117
     monitor-exit v0
     return-object v1
-  :L11
+  :L13
   .line 140
     move-exception p0
   .line 141

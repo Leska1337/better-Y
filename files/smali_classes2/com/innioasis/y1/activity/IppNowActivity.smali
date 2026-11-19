@@ -21,11 +21,11 @@
 
 .field public final static KEY_STYLE:Ljava/lang/String; = "np_style"
 
-.field private final static LYRICS:I = 2
+.field private final static LYRICS:I = 4
 
 .field private final static NO_TIME:Ljava/lang/String; = "99:59:59"
 
-.field private final static TILT:I = 4
+.field private final static TILT:I = 3
 
 .field private final static TIP:Ljava/lang/String; = "ss_tip"
 
@@ -58,18 +58,18 @@
     const/4 v1, 1
     const-string v2, "text_tint"
     aput-object v2, v0, v1
-    const-string v1, "lyrics_tint"
+    const-string v1, "box_tint"
     const/4 v2, 2
     aput-object v1, v0, v2
-    const-string v1, "box_tint"
+    const-string v1, "cover_tilt"
     const/4 v3, 3
     aput-object v1, v0, v3
-    const-string v1, "cover_tilt"
+    const-string v1, "lyrics_tint"
     const/4 v4, 4
     aput-object v1, v0, v4
     sput-object v0, Lcom/innioasis/y1/activity/IppNowActivity;->CATS:[Ljava/lang/String;
   .line 55
-    filled-new-array { v3, v3, v3, v4, v2 }, [I
+    filled-new-array { v3, v3, v4, v2, v3 }, [I
     move-result-object v0
     sput-object v0, Lcom/innioasis/y1/activity/IppNowActivity;->COUNTS:[I
     return-void
@@ -123,7 +123,7 @@
   .registers 7
   .line 163
     iget v0, p0, Lcom/innioasis/y1/activity/IppNowActivity;->cat:I
-    const/4 v1, 2
+    const/4 v1, 4
     const/4 v2, 1
     if-ne v0, v1, :L0
     const/4 v0, 1
@@ -162,7 +162,7 @@
     move-result v3
   .line 172
     iget v4, p0, Lcom/innioasis/y1/activity/IppNowActivity;->cat:I
-    const/4 v5, 4
+    const/4 v5, 3
     if-ne v4, v5, :L6
     if-ne v3, v2, :L4
     const v1, 2131821018
@@ -277,7 +277,7 @@
     rem-int/2addr v1, v0
   .line 153
     iget p1, p0, Lcom/innioasis/y1/activity/IppNowActivity;->cat:I
-    const/4 v0, 4
+    const/4 v0, 3
     if-ne p1, v0, :L2
     const/4 p1, 1
     if-ne v1, p1, :L0
@@ -312,7 +312,7 @@
 .method private current(I)I
   .registers 4
   .line 145
-    const/4 v0, 4
+    const/4 v0, 3
     if-ne p1, v0, :L0
     const-string p1, "cover_tilt"
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z

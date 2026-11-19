@@ -598,13 +598,13 @@ public final class IppFlowActivity extends BaseActivity {
         // back in only as the cover finishes turning round: both halves of the turn, the frame the
         // second half waits to start, and slow at first so it does not look done half way
         labels(1, Flow.LEAVE_MS + Flow.CARD_MS + TURN_SLACK_MS).setInterpolator(new AccelerateInterpolator(1.5f));
-        edgeOn(new Half(this, false), Flow.LEAVE_MS, Flow.LEAVE_EASE);
+        edgeOn(new Half(this, false), 90, Flow.LEAVE_MS, Flow.LEAVE_EASE);
     }
 
-    /** The track list shrinks onto the cover's square and turns edge-on. */
-    private void edgeOn(Runnable end, int ms, float ease) {
+    /** The track list shrinks onto the cover's square and turns edge-on, to {@code turn} degrees. */
+    private void edgeOn(Runnable end, float turn, int ms, float ease) {
         int ph = flow.getHeight();
-        panel.animate().rotationY(90).scaleX((float) Flow.S / PANEL_W)
+        panel.animate().rotationY(turn).scaleX((float) Flow.S / PANEL_W)
                 .scaleY(ph > 0 ? (float) Flow.S / ph : 1f)
                 .translationY(flow.coverTop() + Flow.S / 2f - ph / 2f)
                 .setDuration(ms).setInterpolator(new AccelerateInterpolator(ease))
@@ -762,7 +762,7 @@ public final class IppFlowActivity extends BaseActivity {
         Frames.part("playlist", t0);
         state = 4;
         spread(0, 1, SPREAD_MS, new AccelerateInterpolator());
-        edgeOn(new ToPlayer(this), Flow.LEAVE_MS, Flow.LEAVE_EASE);
+        edgeOn(new ToPlayer(this), -90, Flow.LEAVE_MS, Flow.LEAVE_EASE);
     }
 
     void toPlayer() {
@@ -782,7 +782,7 @@ public final class IppFlowActivity extends BaseActivity {
         trip.setTranslationY(p[1]);
         trip.setScaleX(p[2]);
         trip.setScaleY(p[2]);
-        trip.setRotationY(-90);
+        trip.setRotationY(90);
         trip.setVisibility(View.VISIBLE);
         trip.animate().rotationY(Flow.geo(this)[6]).translationX(0).translationY(0).scaleX(1).scaleY(1)
                 .setDuration(MOVE_MS).setInterpolator(new DecelerateInterpolator())

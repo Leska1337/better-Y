@@ -132,10 +132,10 @@
     sput-object v0, Lcom/innioasis/ipp/Flow;->BY_NAME:Ljava/util/Comparator;
   .line 453
     new-instance v0, Landroid/graphics/Rect;
-    const/16 v1, 184
+    const/16 v1, 92
     const/16 v2, 182
-    const/16 v4, 92
-    invoke-direct { v0, v3, v4, v1, v2 }, Landroid/graphics/Rect;-><init>(IIII)V
+    const/4 v3, 2
+    invoke-direct { v0, v3, v1, v2, v2 }, Landroid/graphics/Rect;-><init>(IIII)V
     sput-object v0, Lcom/innioasis/ipp/Flow;->MIR_FROM:Landroid/graphics/Rect;
     return-void
 .end method

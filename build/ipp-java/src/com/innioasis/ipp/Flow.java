@@ -450,9 +450,9 @@ public final class Flow {
         return Bitmap.createBitmap(SW, MIR.bottom,OPAQUE ? Bitmap.Config.RGB_565 : Bitmap.Config.ARGB_8888);
     }
 
-    private static final Rect MIR_FROM = new Rect(0, F + S - REFL, SW, F + S);
+    private static final Rect MIR_FROM = new Rect(F, F + S - REFL, F + S, F + S);
 
-    /** The slide's lower half, frame columns included, shrunk into its {@link #MIR} rows. */
+    /** The cover's lower half, without the frame, shrunk into its {@link #MIR} rows. */
     static void mirror(Canvas c, Bitmap s, Paint p) {
         c.setBitmap(s);
         c.drawBitmap(s, MIR_FROM, MIR, p);
