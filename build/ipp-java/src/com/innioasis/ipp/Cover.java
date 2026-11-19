@@ -100,6 +100,17 @@ public final class Cover {
         if (spare == b) spare = null;
     }
 
+    /** A {@link #reflect} result its keeper no longer needs: the next composite is drawn into it. */
+    public static synchronized void release(Bitmap b) {
+        if (b == null || b == blankPic || b.isRecycled() || !b.isMutable()) return;
+        if (held == b) held = null;
+        if (reflOut == b) {
+            reflOut = null;
+            reflIn = null;
+        }
+        spare = b;
+    }
+
     /**
      * Stock's {@code DoReflection}, memoised and with a smaller mirror — stock rebuilt it on every
      * {@code setImageBitmap}, before the first frame. Null = not handled, stock's path runs.

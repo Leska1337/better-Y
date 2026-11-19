@@ -76,6 +76,8 @@ public final class IppFlowActivity extends BaseActivity {
     /** The neighbours running off the screen, and the cover travelling to or from the player. */
     private static final int SPREAD_MS = 200;
     private static final int MOVE_MS = 260;
+    /** How long after a picture built ahead the list must still stand before its garbage is collected. */
+    private static final int TIDY_MS = 700;
     /** What the turn back takes beyond its two halves: the second waits for the first's end action. */
     private static final int TURN_SLACK_MS = 40;
 
@@ -93,7 +95,7 @@ public final class IppFlowActivity extends BaseActivity {
      * 0 the row, 1 turning over, 2 the track list, 3 turning back, 4 at the player, 5 back from it,
      * 6 the settings over the row.
      */
-    private int state;
+    private volatile int state;
     private int flipped = -1;
 
     @Override
@@ -567,6 +569,7 @@ public final class IppFlowActivity extends BaseActivity {
         card.setRotationY(0);
         card.setVisibility(View.VISIBLE);
         flow.hide(i);
+        flow.turnedBy(card);
         shrunk();
         panel.setRotationY(90);
         card.animate().rotationY(-90).setDuration(Flow.CARD_MS)
@@ -626,6 +629,7 @@ public final class IppFlowActivity extends BaseActivity {
         trip.animate().cancel();
         trip.setAlpha(1f);
         flow.setLabels(1);
+        flow.turnedBy(null);
         if (!turn || trip.getDrawable() == null) {
             flow.setSpread(0);
             done(0);
@@ -911,6 +915,12 @@ public final class IppFlowActivity extends BaseActivity {
         Song track = panel.songs != null && at >= 0 && at < panel.songs.size()
                 ? (Song) panel.songs.get(at) : null;
         if (track == null || track.getPath() == null || track.getPath().equals(aheadFor)) return;
+        // the picture built for the track left behind is redrawn for this one, not thrown away
+        Bitmap old = aheadPic;
+        aheadPic = null;
+        aheadFor = null;
+        aheadSrc = null;
+        Cover.release(old);
         aheadBusy = track.getPath();
         Thread t = new Thread(new Ahead(this, track, ((Flow.Item) items.get(flipped)).rep), "ipp-flow-trip");
         t.setDaemon(true);
@@ -1746,7 +1756,13 @@ public final class IppFlowActivity extends BaseActivity {
             Object[] src = new Object[2];
             Bitmap b = Flow.tripAhead(track, rep, src);
             a.ui.post(new AheadDone(a, track.getPath(), b, src));
-            IppFlowActivity.tidy();
+            // a collection overlapping a flip just begun costs it a frame, and a list only glanced
+            // at closes about now: collect only once the list has stood a while longer
+            try {
+                Thread.sleep(TIDY_MS);
+            } catch (InterruptedException e) {
+            }
+            if (!a.animating && a.state == 2) IppFlowActivity.tidy();
         }
     }
 

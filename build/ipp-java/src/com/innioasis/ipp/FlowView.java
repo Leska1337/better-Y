@@ -234,6 +234,21 @@ public final class FlowView extends View {
         invalidate();
     }
 
+    private Card turning;
+
+    /**
+     * The card turning over the hidden slide, or null for a picture that lands on it flat. The row
+     * draws the card itself, last and in the pose the card's animation gives it: on top of the
+     * neighbours, erasing only what it covers. Drawn by a view of its own, it could not erase them,
+     * and the neighbours tucked behind it showed through its reflection.
+     */
+    public void turnedBy(Card v) {
+        if (turning != null) turning.byRow = false;
+        turning = v;
+        if (v != null) v.byRow = true;
+        invalidate();
+    }
+
     /** Where the centre cover stands at rest. */
     public int coverLeft() { return w / 2 - Flow.S / 2; }
 
@@ -292,6 +307,10 @@ public final class FlowView extends View {
             for (int k = SIDE + 1; k >= 0; k--) {
                 slide(c, ci - k, n);
                 if (k != 0) slide(c, ci + k, n);
+            }
+            if (turning != null && turning.getVisibility() == VISIBLE) {
+                turning.drawOn(c, erase);
+                fading = true;          // redrawn each frame while the card turns
             }
             Flow.Item it = (Flow.Item) items.get(Math.max(0, Math.min(n - 1, ci)));
             float cx = w / 2f;
@@ -362,9 +381,9 @@ public final class FlowView extends View {
     }
 
     private void slide(Canvas c, int i, int n) {
-        // Hidden under the turning card or the picture flying to or from the player, the slide
-        // still erases its place: their reflections are see-through, and the neighbours tucked
-        // behind the centre showed through them.
+        // Hidden under the picture flying to or from the player, the slide still erases its place:
+        // the picture's reflection is see-through, and the neighbours tucked behind the centre
+        // showed through it. Under the turning card it is not drawn at all: the row draws the card.
         boolean ghost = i == hidden;
         if (i < 0 || i >= n) return;
         place(i - pos);
@@ -372,6 +391,7 @@ public final class FlowView extends View {
         Bitmap b = loader.get(i);
         if (b == null) return;
         int a = sAlpha;
+        if (ghost && turning != null) return;
         long age = loader.age(i);
         if (age < FADE_MS && !ghost) {
             a = (int) (a * (age < 0 ? 0 : age) / FADE_MS);
@@ -477,6 +497,9 @@ public final class FlowView extends View {
             setLayerType(LAYER_TYPE_HARDWARE, null);
         }
 
+        /** The row draws this card ({@link FlowView#turnedBy}): its own draw is skipped, its pose is used. */
+        boolean byRow;
+
         public void setSlide(Bitmap s) {
             b = s;
             invalidate();
@@ -484,21 +507,39 @@ public final class FlowView extends View {
 
         @Override
         protected void onDraw(Canvas c) {
+            if (b == null || byRow) return;
+            paint(c, null);
+        }
+
+        /** As this view would draw itself, on the row's canvas: each part first erases its place. */
+        void drawOn(Canvas c, Paint erase) {
             if (b == null) return;
+            c.save();
+            c.translate(getLeft(), getTop());
+            c.concat(getMatrix());
+            erase.setAlpha(255);
+            paint(c, erase);
+            c.restore();
+        }
+
+        private void paint(Canvas c, Paint erase) {
             float x = Flow.PAD - Flow.F, y = Flow.PAD - Flow.F;
             float base = Flow.PAD + Flow.S;
             // as the row draws it: the seam's underlay, the reflection, then the cover over both
             to.set(x, base - Flow.F, x + Flow.SW, base);
             half.setAlpha(Flow.REFL_ALPHA);
+            if (erase != null) c.drawBitmap(b, seam, to, erase);
             c.drawBitmap(b, seam, to, half);
             c.save();
             c.translate(0, 2 * base);
             c.scale(1, -1);
             to.set(x + Flow.F, base - Flow.REFL, x + Flow.F + Flow.S, base);
+            if (erase != null) c.drawBitmap(b, from, to, erase);
             c.drawBitmap(b, from, to, paint);
             c.drawBitmap(Flow.fade(), null, to, fade);
             c.restore();
             to.set(x, y, x + Flow.SW, y + Flow.SH);
+            if (erase != null) c.drawBitmap(b, whole, to, erase);
             c.drawBitmap(b, whole, to, paint);
         }
     }

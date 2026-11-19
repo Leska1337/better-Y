@@ -21,14 +21,14 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/util/List;Lcom/innioasis/ipp/Flow$Item;Ljava/util/UUID;)V
   .registers 5
-  .line 1885
+  .line 1901
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1886
+  .line 1902
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->songs:Ljava/util/List;
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->it:Lcom/innioasis/ipp/Flow$Item;
     iput-object p4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->id:Ljava/util/UUID;
-  .line 1887
+  .line 1903
     return-void
 .end method
 
@@ -36,35 +36,35 @@
   .catchall { :L0 .. :L4 } :L6
   .registers 4
   :L0
-  .line 1891
+  .line 1907
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->songs:Ljava/util/List;
-  .line 1892
+  .line 1908
     if-nez v0, :L2
-  .line 1893
+  .line 1909
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->it:Lcom/innioasis/ipp/Flow$Item;
     invoke-static { v0 }, Lcom/innioasis/ipp/Flow;->back(Lcom/innioasis/ipp/Flow$Item;)Lcom/innioasis/ipp/Flow$Back;
     move-result-object v0
-  .line 1894
+  .line 1910
     if-nez v0, :L1
     const/4 v0, 0
     goto :L2
   :L1
     iget-object v0, v0, Lcom/innioasis/ipp/Flow$Back;->songs:Ljava/util/List;
   :L2
-  .line 1896
+  .line 1912
     if-eqz v0, :L5
     invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
     move-result v1
     if-eqz v1, :L3
     goto :L5
   :L3
-  .line 1897
+  .line 1913
     sget-object v1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { v1 }, Lcom/innioasis/y1/Y1Application$Companion;->getY1Repository()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v1
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->id:Ljava/util/UUID;
     invoke-virtual { v1, v0, v2 }, Lcom/innioasis/y1/database/Y1Repository;->addToPlayList(Ljava/util/List;Ljava/util/UUID;)V
-  .line 1898
+  .line 1914
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AddTo;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
     move-result-object v0
@@ -73,15 +73,15 @@
     invoke-direct { v1, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity$Added;-><init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
   :L4
-  .line 1900
+  .line 1916
     goto :L7
   :L5
-  .line 1896
+  .line 1912
     return-void
   :L6
-  .line 1899
+  .line 1915
     move-exception v0
   :L7
-  .line 1901
+  .line 1917
     return-void
 .end method
