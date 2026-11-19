@@ -5,10 +5,12 @@ import android.os.Looper;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
+import com.innioasis.music.objects.Global;
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
 import com.innioasis.y1.database.Y1Repository;
 import com.innioasis.y1.service.PlayerService;
+import com.innioasis.y1.utils.SharedPreferencesUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,6 +31,26 @@ public final class Saved {
 
     /** Up to this many songs a list is written whole, exactly as stock writes it. */
     private static final int FULL_MAX = 2000;
+
+    /**
+     * From the top of both players' error listeners. A restore at boot that could not open its
+     * file (the card still being checked) left stock's shutdown flag up, and the first track the
+     * user then started was taken for the restore: paused at once and moved to the stored second,
+     * and with the music still muted by it.
+     * Not on -38: stock's pause on an idle player raises it before every first track.
+     */
+    public static void restoreFailed(int what) {
+        try {
+            if (what == -38) return;
+            if (!SharedPreferencesUtils.INSTANCE.isShutdown()) return;
+            SharedPreferencesUtils.INSTANCE.setShutdown(false);
+            Global.INSTANCE.setRestoreCompleted(true);
+            // the restore muted the music for its silent prepare; the volume comes back with it
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            if (ps != null) ps.muteOrNoMuteMusic(false);
+        } catch (Throwable t) {
+        }
+    }
 
     /** From the top of stock's {@code saveState}; false = not written, stock's own code goes on. */
     public static boolean write(PlayerService ps) {

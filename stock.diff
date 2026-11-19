@@ -33,7 +33,7 @@ index 2c8d26c0..caa86c7a 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..6907e0aa 100644
+index 01b1f730..0ff0f337 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -48,7 +48,7 @@ index 01b1f730..6907e0aa 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100546
++  versionCode: 10100554
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20218,7 +20218,7 @@ index 803c1e7a..0f10f442 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..ad7095bd 100644
+index 71fe29d0..705210b8 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,599 @@
@@ -21167,7 +21167,7 @@ index 71fe29d0..ad7095bd 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev546</string>
++    <string name="ipp_version">v1.1.0-dev554</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -39023,7 +39023,7 @@ index 4fcfcfff..d4b4f3db 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali/com/innioasis/y1/service/PlayerService.smali b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
-index 54919080..95081553 100644
+index 54919080..1c43f5aa 100644
 --- a/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 +++ b/build/src/smali/com/innioasis/y1/service/PlayerService.smali
 @@ -497,6 +497,11 @@
@@ -39045,12 +39045,12 @@ index 54919080..95081553 100644
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookIndex:I
 -
 -    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
+-
+-    invoke-interface {v5}, Ljava/util/List;->size()I
 +    # ipp: repeat-off end of the audiobook list. Stock tested "index == size-1", which says
 +    # nothing under a shuffled pass and nothing while the queue still holds entries.
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
--    invoke-interface {v5}, Ljava/util/List;->size()I
--
 -    move-result v5
 -
 -    sub-int/2addr v5, v4
@@ -39066,17 +39066,17 @@ index 54919080..95081553 100644
      .line 841
      :cond_c
 -    iget v0, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
--
--    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
--
--    invoke-interface {v5}, Ljava/util/List;->size()I
--
--    move-result v5
 +    # ipp: repeat-off end-of-list. Stock only tested "index == size-1", which is meaningless
 +    # under shuffle; Queue.endOfList reports the spent shuffle cycle too (and never ends while
 +    # manually queued tracks are still pending).
 +    invoke-static {p0}, Lcom/innioasis/ipp/Queue;->endOfList(Lcom/innioasis/y1/service/PlayerService;)Z
  
+-    iget-object v5, p0, Lcom/innioasis/y1/service/PlayerService;->musicList:Ljava/util/List;
+-
+-    invoke-interface {v5}, Ljava/util/List;->size()I
+-
+-    move-result v5
+-
 -    sub-int/2addr v5, v4
 +    move-result v0
  
@@ -39085,7 +39085,27 @@ index 54919080..95081553 100644
  
      const/16 v0, 0x9
  
-@@ -2226,6 +2224,11 @@
+@@ -1062,6 +1060,9 @@
+ .method private static final initPlayer$lambda-12(Lcom/innioasis/y1/service/PlayerService;Ltv/danmaku/ijk/media/player/IMediaPlayer;II)Z
+     .locals 0
+ 
++    # ipp: a failed restore at boot must not take the next track for itself
++    invoke-static {p2}, Lcom/innioasis/ipp/Saved;->restoreFailed(I)V
++
+     const-string p1, "this$0"
+ 
+     invoke-static {p0, p1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+@@ -1365,6 +1366,9 @@
+ .method private static final initPlayer2$lambda-15(Lcom/innioasis/y1/service/PlayerService;Landroid/media/MediaPlayer;II)Z
+     .locals 3
+ 
++    # ipp: a failed restore at boot must not take the next track for itself
++    invoke-static {p2}, Lcom/innioasis/ipp/Saved;->restoreFailed(I)V
++
+     const-string v0, "this$0"
+ 
+     invoke-static {p0, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+@@ -2226,6 +2230,11 @@
  .method private final toRestart()V
      .locals 11
  
@@ -39097,7 +39117,7 @@ index 54919080..95081553 100644
      const-string v0, "restore"
  
      .line 520
-@@ -2259,6 +2262,9 @@
+@@ -2259,6 +2268,9 @@
  
      if-nez v1, :cond_1
  
@@ -39107,7 +39127,19 @@ index 54919080..95081553 100644
      return-void
  
      .line 548
-@@ -2463,6 +2469,9 @@
+@@ -2295,7 +2307,10 @@
+ 
+     move-result-object v4
+ 
+-    invoke-virtual {v4}, Ltv/danmaku/ijk/media/player/IjkMediaPlayer;->reset()V
++    # ipp: a new player instead of reset, the old one released off the main thread (Ijk)
++    invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->initPlayer()V
++
++    invoke-static {p0, v4}, Lcom/innioasis/ipp/Ijk;->swapped(Lcom/innioasis/y1/service/PlayerService;Ltv/danmaku/ijk/media/player/IjkMediaPlayer;)V
+ 
+     .line 551
+     invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->getPlayer()Ltv/danmaku/ijk/media/player/IjkMediaPlayer;
+@@ -2463,6 +2478,9 @@
  
      if-nez v1, :cond_4
  
@@ -39117,7 +39149,19 @@ index 54919080..95081553 100644
      return-void
  
      .line 523
-@@ -2622,6 +2631,9 @@
+@@ -2517,7 +2535,10 @@
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {v0}, Ltv/danmaku/ijk/media/player/IjkMediaPlayer;->reset()V
++    # ipp: a new player instead of reset, the old one released off the main thread (Ijk)
++    invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->initPlayer()V
++
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/Ijk;->swapped(Lcom/innioasis/y1/service/PlayerService;Ltv/danmaku/ijk/media/player/IjkMediaPlayer;)V
+ 
+     .line 528
+     invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->getPlayer()Ltv/danmaku/ijk/media/player/IjkMediaPlayer;
+@@ -2622,6 +2643,9 @@
  
      :cond_6
      :goto_1
@@ -39127,7 +39171,7 @@ index 54919080..95081553 100644
      return-void
  .end method
  
-@@ -4215,6 +4227,22 @@
+@@ -4215,6 +4239,22 @@
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
@@ -39150,7 +39194,7 @@ index 54919080..95081553 100644
      .line 757
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
-@@ -4296,6 +4324,22 @@
+@@ -4296,6 +4336,22 @@
  
      .line 745
      :cond_a
@@ -39173,7 +39217,7 @@ index 54919080..95081553 100644
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
      invoke-virtual {v1}, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->getMusicIsShuffle()Z
-@@ -5183,6 +5227,21 @@
+@@ -5183,6 +5239,21 @@
      :cond_5
      invoke-direct {p0}, Lcom/innioasis/y1/service/PlayerService;->updateProgressWhileSwitchSong()V
  
@@ -39195,7 +39239,7 @@ index 54919080..95081553 100644
      .line 805
      sget-object v1, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
-@@ -5272,19 +5331,21 @@
+@@ -5272,19 +5343,21 @@
  
      .line 792
      :cond_a
@@ -39223,7 +39267,7 @@ index 54919080..95081553 100644
      :cond_b
      iget v1, p0, Lcom/innioasis/y1/service/PlayerService;->musicIndex:I
  
-@@ -5349,6 +5410,12 @@
+@@ -5349,6 +5422,12 @@
  .method public final restartPlay(Z)V
      .locals 4
  
@@ -39236,7 +39280,7 @@ index 54919080..95081553 100644
      .line 591
      invoke-virtual {p0}, Lcom/innioasis/y1/service/PlayerService;->stopRepeat()V
  
-@@ -5403,6 +5470,11 @@
+@@ -5403,6 +5482,11 @@
  
      invoke-virtual {v0, v3, v2}, Ltimber/log/Timber$Tree;->d(Ljava/lang/String;[Ljava/lang/Object;)V
  
@@ -39248,7 +39292,7 @@ index 54919080..95081553 100644
      const/16 v0, 0x10
  
      const/4 v2, 0x2
-@@ -5412,6 +5484,9 @@
+@@ -5412,6 +5496,9 @@
      .line 599
      invoke-static {p0, v0, v1, v2, v3}, Lcom/innioasis/y1/service/PlayerService;->pause$default(Lcom/innioasis/y1/service/PlayerService;IZILjava/lang/Object;)V
  
@@ -39258,7 +39302,7 @@ index 54919080..95081553 100644
      .line 600
      iput-boolean p1, p0, Lcom/innioasis/y1/service/PlayerService;->isSetPlayValue:Z
  
-@@ -5451,6 +5526,11 @@
+@@ -5451,6 +5538,11 @@
  
      invoke-virtual {p1}, Lcom/innioasis/y1/service/PlayerService$timerForRestartPlay$1;->start()Landroid/os/CountDownTimer;
  
@@ -39270,7 +39314,7 @@ index 54919080..95081553 100644
      :goto_0
      return-void
  .end method
-@@ -5984,6 +6064,19 @@
+@@ -5984,6 +6076,19 @@
  .method public final saveState()V
      .locals 19
  
@@ -39290,7 +39334,7 @@ index 54919080..95081553 100644
      move-object/from16 v12, p0
  
      .line 235
-@@ -6371,6 +6464,16 @@
+@@ -6371,6 +6476,16 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -39307,7 +39351,7 @@ index 54919080..95081553 100644
      .line 216
      iget-object v0, p0, Lcom/innioasis/y1/service/PlayerService;->audiobookList:Ljava/util/List;
  
-@@ -6581,6 +6684,25 @@
+@@ -6581,6 +6696,25 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  

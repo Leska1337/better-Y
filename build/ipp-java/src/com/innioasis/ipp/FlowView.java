@@ -310,7 +310,9 @@ public final class FlowView extends View {
             }
             if (turning != null && turning.getVisibility() == VISIBLE) {
                 turning.drawOn(c, erase);
-                fading = true;          // redrawn each frame while the card turns
+                // redrawn each frame while the card turns, but not once it stands edge-on: that frame
+                // is the track list's first, and a repaint of the row on top of it cost it a frame
+                if (Math.abs(turning.getRotationY()) < 89.5f) fading = true;
             }
             Flow.Item it = (Flow.Item) items.get(Math.max(0, Math.min(n - 1, ci)));
             float cx = w / 2f;

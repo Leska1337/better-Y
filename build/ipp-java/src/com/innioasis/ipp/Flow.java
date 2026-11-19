@@ -12,6 +12,7 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.view.Choreographer;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -1065,28 +1066,75 @@ public final class Flow {
             View cover2 = a.findViewById(R.id.cover_bg2);
             if (center == null || !(center.getParent() instanceof ViewGroup)) return;
             ViewGroup root = (ViewGroup) center.getParent();
+            FadeStart go = new FadeStart();
             for (int i = 0; i < root.getChildCount(); i++) {
                 View v = root.getChildAt(i);
                 int id = v.getId();
                 if (id == R.id.player_bg || id == R.id.mask_bg) continue;
                 if (v != center) {
-                    fade(v);
+                    go.add(v);
                     continue;
                 }
                 ViewGroup g = (ViewGroup) center;
                 for (int k = 0; k < g.getChildCount(); k++) {
                     View c = g.getChildAt(k);
-                    if (c != cover && c != cover2) fade(c);
+                    if (c != cover && c != cover2) go.add(c);
                 }
             }
+            Choreographer.getInstance().postFrameCallback(go);
         } catch (Throwable t) {
         }
     }
 
-    private static void fade(View v) {
-        float to = v.getAlpha();
-        v.setAlpha(0f);
-        v.animate().alpha(to).setDuration(FADE_MS).withLayer();
+    /**
+     * Hides the views at once and fades them in once the track has started: the player's first
+     * frame builds the whole screen, and the track's start comes right after it — on the ffmpeg
+     * formats a new player, the file opened and its threads busy, 100–200 ms of lost frames. The
+     * fade begun before them lost its first steps; it waits for prepared, WAIT_MS at the most.
+     */
+    static final class FadeStart implements Choreographer.FrameCallback {
+        private static final long WAIT_MS = 600;
+        private final ArrayList views = new ArrayList();
+        private final ArrayList alphas = new ArrayList();
+        private boolean first = true;
+        /** The track is starting: unprepared at the first frame, as the player restarts it from initView. */
+        private boolean starting;
+        private int after;
+        private long since;
+
+        void add(View v) {
+            views.add(v);
+            alphas.add(Float.valueOf(v.getAlpha()));
+            v.setAlpha(0f);
+        }
+
+        public void doFrame(long nanos) {
+            PlayerService ps = Y1Application.Companion.getPlayerService();
+            boolean ready = ps != null && ps.getPlayerIsPrepared();
+            if (first) {
+                since = SystemClock.uptimeMillis();
+                starting = !ready;
+            }
+            // a starting track: its prepared handling, then one frame more; the one playing: at once
+            boolean settled = !starting || (ready && ++after > 1);
+            if (first || (!settled && SystemClock.uptimeMillis() - since < WAIT_MS)) {
+                first = false;
+                Choreographer.getInstance().postFrameCallback(this);
+                return;
+            }
+            Frames.start("player fade", true);
+            for (int i = 0; i < views.size(); i++) {
+                ((View) views.get(i)).animate().alpha(((Float) alphas.get(i)).floatValue())
+                        .setDuration(FADE_MS).withLayer().withEndAction(FADED);
+            }
+        }
+    }
+
+    /** The fade's frames go to the log once it is over: every view ends it, the first one stops. */
+    private static final Runnable FADED = new Faded();
+
+    static final class Faded implements Runnable {
+        public void run() { Frames.stop(); }
     }
 
     /**

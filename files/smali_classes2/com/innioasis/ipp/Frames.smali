@@ -18,6 +18,8 @@
 
 .field private static gaps:Ljava/lang/StringBuilder;
 
+.field private static lastCpu:J
+
 .field private static lastNanos:J
 
 .field private static parts:Ljava/lang/StringBuilder;
@@ -32,63 +34,77 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 13
+  .line 15
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static synthetic access$000()Ljava/lang/String;
   .registers 1
-  .line 11
+  .line 13
     sget-object v0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
     return-object v0
 .end method
 
 .method static synthetic access$100()J
   .registers 2
-  .line 11
+  .line 13
     sget-wide v0, Lcom/innioasis/ipp/Frames;->startAt:J
     return-wide v0
 .end method
 
 .method static synthetic access$200()J
   .registers 2
-  .line 11
+  .line 13
     sget-wide v0, Lcom/innioasis/ipp/Frames;->lastNanos:J
     return-wide v0
 .end method
 
 .method static synthetic access$202(J)J
   .registers 2
-  .line 11
+  .line 13
     sput-wide p0, Lcom/innioasis/ipp/Frames;->lastNanos:J
     return-wide p0
 .end method
 
 .method static synthetic access$300()J
   .registers 2
-  .line 11
+  .line 13
     sget-wide v0, Lcom/innioasis/ipp/Frames;->worst:J
     return-wide v0
 .end method
 
 .method static synthetic access$302(J)J
   .registers 2
-  .line 11
+  .line 13
     sput-wide p0, Lcom/innioasis/ipp/Frames;->worst:J
     return-wide p0
 .end method
 
 .method static synthetic access$400()Ljava/lang/StringBuilder;
   .registers 1
-  .line 11
+  .line 13
     sget-object v0, Lcom/innioasis/ipp/Frames;->gaps:Ljava/lang/StringBuilder;
     return-object v0
 .end method
 
-.method static synthetic access$508()I
+.method static synthetic access$500()J
   .registers 2
-  .line 11
+  .line 13
+    sget-wide v0, Lcom/innioasis/ipp/Frames;->lastCpu:J
+    return-wide v0
+.end method
+
+.method static synthetic access$502(J)J
+  .registers 2
+  .line 13
+    sput-wide p0, Lcom/innioasis/ipp/Frames;->lastCpu:J
+    return-wide p0
+.end method
+
+.method static synthetic access$608()I
+  .registers 2
+  .line 13
     sget v0, Lcom/innioasis/ipp/Frames;->count:I
     add-int/lit8 v1, v0, 1
     sput v1, Lcom/innioasis/ipp/Frames;->count:I
@@ -97,7 +113,7 @@
 
 .method public static part(Ljava/lang/String;J)V
   .registers 5
-  .line 55
+  .line 58
     sget-object v0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
     if-eqz v0, :L0
     sget-object v0, Lcom/innioasis/ipp/Frames;->parts:Ljava/lang/StringBuilder;
@@ -114,16 +130,16 @@
     sub-long/2addr v0, p1
     invoke-virtual { p0, v0, v1 }, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
   :L0
-  .line 56
+  .line 59
     return-void
 .end method
 
 .method public static start(Ljava/lang/String;)V
   .registers 2
-  .line 33
+  .line 36
     const/4 v0, 0
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
-  .line 34
+  .line 37
     return-void
 .end method
 
@@ -131,9 +147,9 @@
   .catchall { :L0 .. :L3 } :L4
   .registers 3
   :L0
-  .line 39
+  .line 42
     sput-boolean p1, Lcom/innioasis/ipp/Frames;->always:Z
-  .line 40
+  .line 43
     sget-object p1, Lcom/innioasis/ipp/Frames;->tick:Lcom/innioasis/ipp/Frames$Tick;
     if-nez p1, :L1
     new-instance p1, Lcom/innioasis/ipp/Frames$Tick;
@@ -141,47 +157,47 @@
     sput-object p1, Lcom/innioasis/ipp/Frames;->tick:Lcom/innioasis/ipp/Frames$Tick;
     goto :L2
   :L1
-  .line 41
+  .line 44
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object p1
     sget-object v0, Lcom/innioasis/ipp/Frames;->tick:Lcom/innioasis/ipp/Frames$Tick;
     invoke-virtual { p1, v0 }, Landroid/view/Choreographer;->removeFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L2
-  .line 42
+  .line 45
     sput-object p0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
-  .line 43
+  .line 46
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide p0
     sput-wide p0, Lcom/innioasis/ipp/Frames;->startAt:J
-  .line 44
+  .line 47
     const-wide/16 p0, 0
     sput-wide p0, Lcom/innioasis/ipp/Frames;->lastNanos:J
-  .line 45
+  .line 48
     sput-wide p0, Lcom/innioasis/ipp/Frames;->worst:J
-  .line 46
+  .line 49
     const/4 p0, 0
     sput p0, Lcom/innioasis/ipp/Frames;->count:I
-  .line 47
+  .line 50
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
     sput-object p0, Lcom/innioasis/ipp/Frames;->parts:Ljava/lang/StringBuilder;
-  .line 48
+  .line 51
     new-instance p0, Ljava/lang/StringBuilder;
     invoke-direct { p0 }, Ljava/lang/StringBuilder;-><init>()V
     sput-object p0, Lcom/innioasis/ipp/Frames;->gaps:Ljava/lang/StringBuilder;
-  .line 49
+  .line 52
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object p0
     sget-object p1, Lcom/innioasis/ipp/Frames;->tick:Lcom/innioasis/ipp/Frames$Tick;
     invoke-virtual { p0, p1 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L3
-  .line 51
+  .line 54
     goto :L5
   :L4
-  .line 50
+  .line 53
     move-exception p0
   :L5
-  .line 52
+  .line 55
     return-void
 .end method
 
@@ -189,17 +205,17 @@
   .catchall { :L0 .. :L8 } :L9
   .registers 8
   :L0
-  .line 60
+  .line 63
     sget-object v0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
     if-nez v0, :L1
     return-void
   :L1
-  .line 61
+  .line 64
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object v0
     sget-object v1, Lcom/innioasis/ipp/Frames;->tick:Lcom/innioasis/ipp/Frames$Tick;
     invoke-virtual { v0, v1 }, Landroid/view/Choreographer;->removeFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
-  .line 62
+  .line 65
     sget-wide v0, Lcom/innioasis/ipp/Frames;->worst:J
     const-wide/16 v2, 50
     cmp-long v4, v0, v2
@@ -207,12 +223,12 @@
     sget-boolean v0, Lcom/innioasis/ipp/Frames;->always:Z
     if-eqz v0, :L7
   :L2
-  .line 63
+  .line 66
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     sget-wide v4, Lcom/innioasis/ipp/Frames;->startAt:J
     sub-long/2addr v0, v4
-  .line 64
+  .line 67
     new-instance v4, Ljava/lang/StringBuilder;
     invoke-direct { v4 }, Ljava/lang/StringBuilder;-><init>()V
     sget-wide v5, Lcom/innioasis/ipp/Frames;->worst:J
@@ -248,7 +264,7 @@
     const-string v3, " ms, mean "
     invoke-virtual { v2, v3 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
     move-result-object v2
-  .line 66
+  .line 69
     sget v3, Lcom/innioasis/ipp/Frames;->count:I
     if-lez v3, :L5
     int-to-long v3, v3
@@ -273,22 +289,22 @@
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 67
+  .line 70
     invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
-  .line 68
+  .line 71
     const-string v1, "ippflow"
     invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
   :L7
-  .line 70
+  .line 73
     const/4 v0, 0
     sput-object v0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
   :L8
-  .line 72
+  .line 75
     goto :L10
   :L9
-  .line 71
+  .line 74
     move-exception v0
   :L10
-  .line 73
+  .line 76
     return-void
 .end method

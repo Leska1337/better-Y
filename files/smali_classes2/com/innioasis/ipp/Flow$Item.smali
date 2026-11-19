@@ -24,14 +24,14 @@
 
 .method constructor <init>(Ljava/lang/String;Ljava/lang/String;Lcom/innioasis/y1/database/Song;)V
   .registers 6
-  .line 182
-    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 183
-    iput-object p1, p0, Lcom/innioasis/ipp/Flow$Item;->key:Ljava/lang/String;
+    invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 184
+    iput-object p1, p0, Lcom/innioasis/ipp/Flow$Item;->key:Ljava/lang/String;
+  .line 185
     invoke-static { p1 }, Lcom/innioasis/ipp/Albums;->realName(Ljava/lang/String;)Ljava/lang/String;
     move-result-object v0
-  .line 185
+  .line 186
     if-nez v0, :L0
     const-string v0, ""
     goto :L1
@@ -41,18 +41,18 @@
     move-result-object v0
   :L1
     iput-object v0, p0, Lcom/innioasis/ipp/Flow$Item;->sort:Ljava/lang/String;
-  .line 186
-    iput-object p2, p0, Lcom/innioasis/ipp/Flow$Item;->name:Ljava/lang/String;
   .line 187
-    iput-object p3, p0, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
+    iput-object p2, p0, Lcom/innioasis/ipp/Flow$Item;->name:Ljava/lang/String;
   .line 188
+    iput-object p3, p0, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
+  .line 189
     invoke-static { p1, p3 }, Lcom/innioasis/ipp/Flow;->artistOf(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p2
     iput-object p2, p0, Lcom/innioasis/ipp/Flow$Item;->artist:Ljava/lang/String;
-  .line 189
+  .line 190
     invoke-static { p1, p3 }, Lcom/innioasis/ipp/Flow;->yearOf(Ljava/lang/String;Lcom/innioasis/y1/database/Song;)Ljava/lang/String;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/ipp/Flow$Item;->year:Ljava/lang/String;
-  .line 190
+  .line 191
     return-void
 .end method

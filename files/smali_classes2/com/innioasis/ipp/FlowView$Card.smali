@@ -30,143 +30,143 @@
 
 .method public constructor <init>(Landroid/content/Context;)V
   .registers 7
-  .line 496
+  .line 498
     invoke-direct { p0, p1 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
-  .line 487
+  .line 489
     new-instance p1, Landroid/graphics/Paint;
     const/4 v0, 2
     invoke-direct { p1, v0 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->paint:Landroid/graphics/Paint;
-  .line 488
+  .line 490
     invoke-static { }, Lcom/innioasis/ipp/FlowView;->access$000()Landroid/graphics/Paint;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->fade:Landroid/graphics/Paint;
-  .line 489
+  .line 491
     sget-object p1, Lcom/innioasis/ipp/Flow;->MIR:Landroid/graphics/Rect;
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->from:Landroid/graphics/Rect;
-  .line 490
+  .line 492
     new-instance p1, Landroid/graphics/Rect;
     const/4 v1, 0
     const/16 v2, 184
     invoke-direct { p1, v1, v1, v2, v2 }, Landroid/graphics/Rect;-><init>(IIII)V
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->whole:Landroid/graphics/Rect;
-  .line 491
+  .line 493
     new-instance p1, Landroid/graphics/Rect;
     const/16 v3, 180
     const/16 v4, 182
     invoke-direct { p1, v1, v3, v2, v4 }, Landroid/graphics/Rect;-><init>(IIII)V
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->seam:Landroid/graphics/Rect;
-  .line 492
+  .line 494
     new-instance p1, Landroid/graphics/Paint;
     invoke-direct { p1, v0 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->half:Landroid/graphics/Paint;
-  .line 493
+  .line 495
     new-instance p1, Landroid/graphics/RectF;
     invoke-direct { p1 }, Landroid/graphics/RectF;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
-  .line 497
+  .line 499
     const/4 p1, 0
     invoke-virtual { p0, v0, p1 }, Lcom/innioasis/ipp/FlowView$Card;->setLayerType(ILandroid/graphics/Paint;)V
-  .line 498
+  .line 500
     return-void
 .end method
 
 .method private paint(Landroid/graphics/Canvas;Landroid/graphics/Paint;)V
   .registers 10
-  .line 526
-    nop
-  .line 527
+  .line 528
     nop
   .line 529
+    nop
+  .line 531
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     const/4 v1, 0
     const/high16 v2, 0x43340000
     const/high16 v3, 0x43380000
     const/high16 v4, 0x43360000
     invoke-virtual { v0, v1, v2, v3, v4 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 530
+  .line 532
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->half:Landroid/graphics/Paint;
     const/16 v2, 112
     invoke-virtual { v0, v2 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 531
+  .line 533
     if-eqz p2, :L0
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->seam:Landroid/graphics/Rect;
     iget-object v5, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     invoke-virtual { p1, v0, v2, v5, p2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
   :L0
-  .line 532
+  .line 534
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->seam:Landroid/graphics/Rect;
     iget-object v5, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     iget-object v6, p0, Lcom/innioasis/ipp/FlowView$Card;->half:Landroid/graphics/Paint;
     invoke-virtual { p1, v0, v2, v5, v6 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 533
+  .line 535
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->save()I
-  .line 534
+  .line 536
     const/high16 v0, 0x43B60000
     invoke-virtual { p1, v1, v0 }, Landroid/graphics/Canvas;->translate(FF)V
-  .line 535
+  .line 537
     const/high16 v0, 0x3F800000
     const/high16 v2, 0xBF800000
     invoke-virtual { p1, v0, v2 }, Landroid/graphics/Canvas;->scale(FF)V
-  .line 536
+  .line 538
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     const/high16 v2, 0x40000000
     const/high16 v5, 0x42B80000
     invoke-virtual { v0, v2, v5, v4, v4 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 537
+  .line 539
     if-eqz p2, :L1
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->from:Landroid/graphics/Rect;
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     invoke-virtual { p1, v0, v2, v4, p2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
   :L1
-  .line 538
+  .line 540
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->from:Landroid/graphics/Rect;
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     iget-object v5, p0, Lcom/innioasis/ipp/FlowView$Card;->paint:Landroid/graphics/Paint;
     invoke-virtual { p1, v0, v2, v4, v5 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 539
+  .line 541
     invoke-static { }, Lcom/innioasis/ipp/Flow;->fade()Landroid/graphics/Bitmap;
     move-result-object v0
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     iget-object v4, p0, Lcom/innioasis/ipp/FlowView$Card;->fade:Landroid/graphics/Paint;
     const/4 v5, 0
     invoke-virtual { p1, v0, v5, v2, v4 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 540
+  .line 542
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->restore()V
-  .line 541
+  .line 543
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     invoke-virtual { v0, v1, v1, v3, v3 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 542
+  .line 544
     if-eqz p2, :L2
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v1, p0, Lcom/innioasis/ipp/FlowView$Card;->whole:Landroid/graphics/Rect;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     invoke-virtual { p1, v0, v1, v2, p2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
   :L2
-  .line 543
+  .line 545
     iget-object p2, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->whole:Landroid/graphics/Rect;
     iget-object v1, p0, Lcom/innioasis/ipp/FlowView$Card;->to:Landroid/graphics/RectF;
     iget-object v2, p0, Lcom/innioasis/ipp/FlowView$Card;->paint:Landroid/graphics/Paint;
     invoke-virtual { p1, p2, v0, v1, v2 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 544
+  .line 546
     return-void
 .end method
 
 .method drawOn(Landroid/graphics/Canvas;Landroid/graphics/Paint;)V
   .registers 5
-  .line 516
+  .line 518
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     if-nez v0, :L0
     return-void
   :L0
-  .line 517
+  .line 519
     invoke-virtual { p1 }, Landroid/graphics/Canvas;->save()I
-  .line 518
+  .line 520
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView$Card;->getLeft()I
     move-result v0
     int-to-float v0, v0
@@ -174,46 +174,46 @@
     move-result v1
     int-to-float v1, v1
     invoke-virtual { p1, v0, v1 }, Landroid/graphics/Canvas;->translate(FF)V
-  .line 519
+  .line 521
     invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView$Card;->getMatrix()Landroid/graphics/Matrix;
     move-result-object v0
     invoke-virtual { p1, v0 }, Landroid/graphics/Canvas;->concat(Landroid/graphics/Matrix;)V
-  .line 520
+  .line 522
     const/16 v0, 255
     invoke-virtual { p2, v0 }, Landroid/graphics/Paint;->setAlpha(I)V
-  .line 521
-    invoke-direct { p0, p1, p2 }, Lcom/innioasis/ipp/FlowView$Card;->paint(Landroid/graphics/Canvas;Landroid/graphics/Paint;)V
-  .line 522
-    invoke-virtual { p1 }, Landroid/graphics/Canvas;->restore()V
   .line 523
+    invoke-direct { p0, p1, p2 }, Lcom/innioasis/ipp/FlowView$Card;->paint(Landroid/graphics/Canvas;Landroid/graphics/Paint;)V
+  .line 524
+    invoke-virtual { p1 }, Landroid/graphics/Canvas;->restore()V
+  .line 525
     return-void
 .end method
 
 .method protected onDraw(Landroid/graphics/Canvas;)V
   .registers 3
-  .line 510
+  .line 512
     iget-object v0, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
     if-eqz v0, :L1
     iget-boolean v0, p0, Lcom/innioasis/ipp/FlowView$Card;->byRow:Z
     if-eqz v0, :L0
     goto :L1
   :L0
-  .line 511
+  .line 513
     const/4 v0, 0
     invoke-direct { p0, p1, v0 }, Lcom/innioasis/ipp/FlowView$Card;->paint(Landroid/graphics/Canvas;Landroid/graphics/Paint;)V
-  .line 512
+  .line 514
     return-void
   :L1
-  .line 510
+  .line 512
     return-void
 .end method
 
 .method public setSlide(Landroid/graphics/Bitmap;)V
   .registers 2
-  .line 504
-    iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
-  .line 505
-    invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView$Card;->invalidate()V
   .line 506
+    iput-object p1, p0, Lcom/innioasis/ipp/FlowView$Card;->b:Landroid/graphics/Bitmap;
+  .line 507
+    invoke-virtual { p0 }, Lcom/innioasis/ipp/FlowView$Card;->invalidate()V
+  .line 508
     return-void
 .end method

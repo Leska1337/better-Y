@@ -6,7 +6,9 @@ import android.view.Choreographer;
 /**
  * The longest frame of an animation, written to the app's log only when one stuttered:
  * {@code slow: frames <what> worst N ms, F frames in T ms, <parts>}. {@link #part} names a step
- * that ran on the main thread meanwhile. Main thread only, one animation at a time.
+ * that ran on the main thread meanwhile; a slow gap carries {@code /N}, the main thread's own CPU
+ * time in it, so a frame it computed is told from one it waited for. Main thread only, one
+ * animation at a time.
  */
 public final class Frames {
 
@@ -21,6 +23,7 @@ public final class Frames {
     private static String what;
     private static long startAt;
     private static long lastNanos;
+    private static long lastCpu;
     private static long worst;
     private static int count;
     private static StringBuilder parts;
@@ -79,12 +82,16 @@ public final class Frames {
                 stop();                      // the animation never reported its end
                 return;
             }
+            long cpu = SystemClock.currentThreadTimeMillis();
             if (lastNanos != 0) {
                 long gap = (nanos - lastNanos) / 1000000L;
                 if (gap > worst) worst = gap;
                 gaps.append(' ').append(gap);
+                // a slow frame: how much of it the main thread spent running, the rest it waited
+                if (gap >= SLOW_MS) gaps.append('/').append(cpu - lastCpu);
             }
             lastNanos = nanos;
+            lastCpu = cpu;
             count++;
             Choreographer.getInstance().postFrameCallback(this);
         }
