@@ -57,9 +57,9 @@ public final class IppNowActivity extends BasePlayerActivity {
     private static final int TILT = 3;
     /** Placeholder lines: their asset row, values Title, Artist, Album, Lyrics. */
     private static final String BLANK = "np_blank";
-    /** The screensaver's hint says the same, under a flag of its own. */
+    /** The screensaver's hint, under the flag every Style preview shares. */
     private static final String TIP = "ss_tip";
-    private static final String TIP_OFF = "np_hint_off";
+    private static final String TIP_OFF = TipDialog.STYLE_OFF;
     private static final String ZERO = "00:00";
     private static final String NO_TIME = "99:59:59";
     private static final int BAND_H = 45;

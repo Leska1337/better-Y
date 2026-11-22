@@ -56,7 +56,7 @@ Pour cela, maintenez le bouton du haut enfoncé sur le thème voulu et choisisse
 Les réglages suivants sont enregistrés :
 
 En lecture : style (sauf "incliner la pochette").
-Menu : style de menu, couleur du texte des aperçus du menu, marges de menu corrigées, style et couleur du texte de la barre d'état.
+Menu : style, marges, couleur du texte des aperçus, style et couleur du texte de la barre d'état.
 Économiseur d'écran : style.
 Sonorité des touches : son.
 ---
@@ -191,6 +191,8 @@ Les titres longs des morceaux défilent toujours, quel que soit ce réglage.
 
 [[menu]] Menu
 
+[menu_look] Style
+
 [alpha_scroll] Défilement alphabétique rapide
 Démarre après un certain nombre de crans de la molette et parcourt la liste par première lettre.
 
@@ -213,31 +215,25 @@ La sélection passe en mode manuel dès que la molette est utilisée. Une fois l
 [follow_idle if follow_playing] Délai de retour (secondes)
 Détermine au bout de combien de secondes, après la dernière rotation de la molette, la sélection revient sur le morceau en cours de lecture.
 
-[loop_scroll] Défilement en boucle
-Arrivée à la fin ou au début d'une liste, la sélection repart du côté opposé. Fonctionne dans toutes les listes, menus et galeries.
+[loop_scroll] Listes en boucle
+Arrivée à la fin ou au début d'une liste, la sélection repart du côté opposé. Fonctionne dans toutes les listes, menus, galeries et fenêtres de dialogue.
 
 [animations] Activer les animations
 Dans les grilles de vignettes (Playlists, Themes et Photos), les rangées glissent à l'écran et le cadre du curseur se déplace d'une vignette à l'autre. Désactivé, les deux sautent aussitôt.
 
-[menu_style] Style de menu
+[menu_style] Style
 * Par défaut
+* Équilibré
 * Simple
-@img menu_style_default.png Par défaut
-@img menu_style_simple.png Simple
 
-[preview_text] Couleur du texte des aperçus du menu
+[fixed_menu_pad] Marges
+* Par défaut
+* Sans marges
+
+[preview_text] Couleur du texte des aperçus
 * Clair
 * Sombre
 * Couleur du thème
-@img menu_preview_text_light.png Clair
-@img menu_preview_text_theme.png Couleur du thème
-
-[fixed_menu_pad] Marges de menu corrigées
-Corrige les marges du menu principal et des réglages.
-
-À désactiver avec les thèmes dont les fonds sont dessinés pour les marges d'origine — le thème fourni Melody Munchkin, par exemple.
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] Afficher les artistes d'album
 Ajoute « Artistes d'album » au menu Musique.

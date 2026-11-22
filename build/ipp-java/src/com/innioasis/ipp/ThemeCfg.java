@@ -28,7 +28,7 @@ public final class ThemeCfg {
 
     private static final String[] TINT = {"light", "dark", "theme"};
     private static final String[] BOX = {"light", "dark", "theme", "off"};
-    private static final String[] STYLE = {"default", "simple"};
+    private static final String[] STYLE = {"default", "simple", "even"};
     private static final String[] BAR = {"default", "centered"};
     private static final String[] SS_BG = {"light", "dark", "wallpaper"};
     private static final String[] SS_TINT = {"off", "light", "dark", "theme"};

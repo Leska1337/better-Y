@@ -280,7 +280,7 @@
     return-void
 .end method
 
-.method static fg(Landroid/content/Context;)I
+.method public static fg(Landroid/content/Context;)I
   .registers 1
   .line 54
     invoke-static { p0 }, Lcom/innioasis/ipp/Preview;->color(Landroid/content/Context;)I

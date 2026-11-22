@@ -13,33 +13,33 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 198
+  .line 217
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/TopBar$1;)V
   .registers 2
-  .line 198
+  .line 217
     invoke-direct { p0 }, Lcom/innioasis/ipp/TopBar$Center;-><init>()V
     return-void
 .end method
 
 .method public onLayoutChange(Landroid/view/View;IIIIIIII)V
   .registers 10
-  .line 201
+  .line 220
     invoke-virtual { p1 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p3
     check-cast p3, Landroid/view/View;
-  .line 202
+  .line 221
     if-nez p3, :L0
     return-void
   :L0
-  .line 203
+  .line 222
     const p5, 2131362410
     invoke-virtual { p3, p5 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object p5
-  .line 204
+  .line 223
     instance-of p6, p5, Lcom/innioasis/ipp/TopBar$Order;
     if-eqz p6, :L1
     check-cast p5, Lcom/innioasis/ipp/TopBar$Order;
@@ -50,7 +50,7 @@
   :L1
     const/4 p5, 0
   :L2
-  .line 205
+  .line 224
     if-eqz p5, :L3
     invoke-virtual { p3 }, Landroid/view/View;->getWidth()I
     move-result p3
@@ -66,6 +66,6 @@
     const/4 p3, 0
   :L4
     invoke-virtual { p1, p3 }, Landroid/view/View;->setTranslationX(F)V
-  .line 206
+  .line 225
     return-void
 .end method

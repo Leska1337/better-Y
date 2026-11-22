@@ -47,7 +47,7 @@
 
 .field private final static TIP:Ljava/lang/String; = "ss_tip"
 
-.field private final static TIP_OFF:Ljava/lang/String; = "ss_hint_off"
+.field private final static TIP_OFF:Ljava/lang/String; = "style_hint_off"
 
 .field private back:Landroid/widget/FrameLayout;
 
@@ -1905,7 +1905,7 @@
     iget-boolean p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->preview:Z
     if-eqz p1, :L8
     const-string p1, "ss_tip"
-    const-string v0, "ss_hint_off"
+    const-string v0, "style_hint_off"
     invoke-static { p0, p1, v0 }, Lcom/innioasis/ipp/TipDialog;->show(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;)Lcom/innioasis/ipp/TipDialog;
     move-result-object p1
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->tip:Lcom/innioasis/ipp/TipDialog;

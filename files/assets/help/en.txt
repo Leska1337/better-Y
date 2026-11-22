@@ -59,7 +59,7 @@ To do this, press and hold the top button on the desired theme and select "Save 
 The following settings are saved:
 
 Now Playing: style (except for "tilt the cover").
-Menu: menu style, text color in menu previews, fixed menu margins, status bar style and text color.
+Menu: style, margins, text color in previews, status bar style and text color.
 Screensaver: style.
 Key tone: sound.
 ---
@@ -194,6 +194,8 @@ Long song titles always scroll, regardless of the setting.
 
 [[menu]] Menu
 
+[menu_look] Style
+
 [alpha_scroll] Alphabetical fast scroll
 Starts after a number of wheel clicks and jumps through a list by first letter.
 
@@ -216,31 +218,25 @@ When you open the list containing the currently playing song, the selection imme
 [follow_idle if follow_playing] Return delay (seconds)
 Determines how many seconds after the last scroll of the wheel the selection returns to the song currently playing.
 
-[loop_scroll] Cyclic scrolling
-When reaching the end or the beginning of a list, the selection loops back to the opposite side. Works in every list, menu and gallery.
+[loop_scroll] List wraparound
+When reaching the end or the beginning of a list, the selection loops back to the opposite side. Works in every list, menu, gallery and dialog window.
 
 [animations] Enable animations
 In the tile grids — Playlists, Themes and Photos — the rows glide into view and the cursor's frame travels from tile to tile. Off, both move at once.
 
-[menu_style] Menu style
+[menu_style] Style
 * Default
+* Even
 * Simple
-@img menu_style_default.png Default
-@img menu_style_simple.png Simple
 
-[preview_text] Text color in menu previews
+[fixed_menu_pad] Margins
+* Default
+* No margins
+
+[preview_text] Text color in previews
 * Light
 * Dark
 * Theme color
-@img menu_preview_text_light.png Light
-@img menu_preview_text_theme.png Theme color
-
-[fixed_menu_pad] Fixed menu margins
-Fixes margins of the main menu and settings.
-
-Worth turning off with themes whose backgrounds are drawn for stock margins — bundled Melody Munchkin, for example.
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] Show Album Artists
 Adds "Album Artists" to the Music menu.

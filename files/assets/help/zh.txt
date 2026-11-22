@@ -56,7 +56,7 @@
 保存以下设置：
 
 正在播放：样式（"倾斜封面"除外）。
-菜单：菜单样式、菜单预览文字颜色、修正的菜单边距、状态栏样式和文字颜色。
+菜单：样式、边距、预览文字颜色、状态栏样式和文字颜色。
 屏幕保护：样式。
 按键音：声音。
 ---
@@ -191,6 +191,8 @@
 
 [[menu]] 菜单
 
+[menu_look] 样式
+
 [alpha_scroll] 按字母快速滚动
 滚动滚轮若干次后启动，按首字母在列表中跳转。
 
@@ -213,31 +215,25 @@
 [follow_idle if follow_playing] 返回延迟（秒）
 决定最后一次转动滚轮之后，经过多少秒选中项回到当前正在播放的歌曲。
 
-[loop_scroll] 循环滚动
-到达列表末尾或开头时，选择会跳到另一端。适用于所有列表、菜单和图库。
+[loop_scroll] 列表循环
+到达列表末尾或开头时，选择会跳到另一端。适用于所有列表、菜单、图库和对话框。
 
 [animations] 启用动画
 在图块网格（Playlists、Themes 和 Photos）中，各行平滑滑入，光标边框在图块之间移动。关闭后两者都会立即跳转。
 
-[menu_style] 菜单样式
+[menu_style] 样式
 * 默认
+* 均分
 * 简洁
-@img menu_style_default.png 默认
-@img menu_style_simple.png 简洁
 
-[preview_text] 菜单预览文字颜色
+[fixed_menu_pad] 边距
+* 默认
+* 无边距
+
+[preview_text] 预览文字颜色
 * 浅色
 * 深色
 * 主题颜色
-@img menu_preview_text_light.png 浅色
-@img menu_preview_text_theme.png 主题颜色
-
-[fixed_menu_pad] 修正的菜单边距
-修正主菜单和设置的边距。
-
-如果主题的背景是按原版边距绘制的，建议关闭，例如内置的 Melody Munchkin。
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] 显示专辑艺术家
 在音乐菜单中添加"专辑艺术家"。

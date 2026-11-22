@@ -28,6 +28,7 @@ import com.innioasis.y1.activity.DateOneLevelActivity;
 import com.innioasis.y1.activity.EbookActivity;
 import com.innioasis.y1.activity.EqActivity;
 import com.innioasis.y1.activity.IppActivity;
+import com.innioasis.y1.activity.IppMenuActivity;
 import com.innioasis.y1.activity.LanguageActivity;
 import com.innioasis.y1.activity.MainActivity;
 import com.innioasis.y1.activity.SettingActivity;
@@ -45,10 +46,11 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * "menu_style" SIMPLE: a screen that draws a preview beside its list loses the preview, and the
- * list takes the whole width — the main menu, Settings and the screens inside it. The preview is
- * hidden and not painted: each painter asks {@link #simple} first. Stock never touches its
- * visibility. The style also picks the background of Settings and its screens ({@link #backdrop}).
+ * "menu_style" for every screen that draws a preview beside its list — the main menu, Settings,
+ * the screens inside it and the first level of the sections. SIMPLE: the preview is hidden and not
+ * painted (each painter asks {@link #simple} first; stock never touches its visibility) and the
+ * list takes the whole width. EVEN: list and preview take half the screen each. The style also
+ * picks the background of Settings and its screens ({@link #backdrop}).
  */
 public final class MenuStyle {
 
@@ -56,10 +58,22 @@ public final class MenuStyle {
 
     public static final String KEY = "menu_style";
 
+    // stored indices; the preview lists them Default, Even, Simple
     private static final int SIMPLE = 1;
+    private static final int EVEN = 2;
 
     public static boolean simple(Context c) {
         return Prefs.val(c, KEY) == SIMPLE;
+    }
+
+    /** The list and the preview each take half the screen. */
+    public static boolean even(Context c) {
+        return Prefs.val(c, KEY) == EVEN;
+    }
+
+    /** "fixed_menu_pad" off: stock's left margin on every list that stands beside a preview. */
+    static boolean stock(Context c) {
+        return !Prefs.on(c, Pad.KEY);
     }
 
     /** End of {@code BaseActivity.onResume}: a screen left open under the menu is not re-created. */
@@ -68,29 +82,38 @@ public final class MenuStyle {
         try {
             Activity a = (Activity) activity;
             boolean s = simple(a);
+            boolean e = even(a);
+            boolean m = stock(a);
             if (a instanceof MainActivity) {
-                pad(a.findViewById(R.id.rc_list));
-                if (hide(a.findViewById(R.id.iv_now), s) && !s) mainPreview(a);
+                if (page(a.findViewById(R.id.rc_list), a.findViewById(R.id.iv_now)) && !s) mainPreview(a);
                 if (!s) preloadMain(a);
             } else if (a instanceof SettingActivity) {
-                pad(a.findViewById(R.id.recycler));
-                if (hide(parent(a.findViewById(R.id.right_title)), s) && !s) Wheel.paintPanel();
+                if (page(a.findViewById(R.id.recycler), parent(a.findViewById(R.id.right_title))) && !s) {
+                    Wheel.paintPanel();
+                }
+            } else if (a instanceof IppMenuActivity) {
+                ((IppMenuActivity) a).restyle();
             } else if (a instanceof EqActivity) {
-                widen(a.findViewById(R.id.recycler_list), s);
-                hide(parent(a.findViewById(R.id.image)), s);
+                size(a.findViewById(R.id.recycler_list), OWN, s, e, m);
+                View p = parent(a.findViewById(R.id.image));
+                hide(p, s);
+                side(p, e);
             } else if (a instanceof WallpaperListActivity) {
-                widen(a.findViewById(R.id.recycler), s);
+                size(a.findViewById(R.id.recycler), OWN, s, e, m);
                 hide(parent(a.findViewById(R.id.img)), s);
             } else if (a instanceof LanguageActivity) {
-                widen(a.findViewById(R.id.recycler), s);
+                size(a.findViewById(R.id.recycler), OWN, s, e, m);
                 hide(a.findViewById(R.id.image), s);
             } else if (a instanceof DateOneLevelActivity) {
-                widen(a.findViewById(R.id.date_ll), s);
+                size(a.findViewById(R.id.date_ll), OWN, s, e, m);
                 hide(a.findViewById(R.id.show_time), s);
                 hide(a.findViewById(R.id.imageView), s);
                 hide(a.findViewById(R.id.show_date), s);
+                side(parent(a.findViewById(R.id.show_time)), e);
                 dateIcon(a.findViewById(R.id.imageView));
             }
+            TopBar.indent(a, m && (a instanceof MainActivity || a instanceof SettingActivity || sub(a))
+                    ? px(a, MAIN_TEXT) : 0);
             section(a);
             backdrop(a, s);
             Preview.apply(a);
@@ -142,30 +165,21 @@ public final class MenuStyle {
             }
             boolean set = a instanceof IppActivity;
             boolean on = root && !simple(a);
-            split(a, list, pic, on, set);
+            split(a, list, pic, on, set, root && stock(a));
+            TopBar.indent(a, root && stock(a) ? px(a, MAIN_TEXT) : 0);
             wallpaper(a, on, set);
         } catch (Throwable t) {
         }
     }
 
-    private static void split(Activity a, View list, int pic, boolean on, boolean set) {
+    private static void split(Activity a, View list, int pic, boolean on, boolean set, boolean stock) {
         if (list == null) return;
-        ViewGroup.LayoutParams lp = list.getLayoutParams();
-        if (lp == null) return;
-        Object tag = list.getTag(R.id.layoutContent);
-        if (!(tag instanceof Integer)) {
-            tag = Integer.valueOf(lp.width);
-            list.setTag(R.id.layoutContent, tag);
-        }
-        int w = on ? px(a, set ? SET_W : SPLIT_W) : ((Integer) tag).intValue();
-        if (lp.width != w) {
-            lp.width = w;
-            list.setLayoutParams(lp);
-        }
+        size(list, on ? px(a, set ? SET_W : SPLIT_W) : OWN, !on, even(a), stock);
         View box = sectionPic(a, on, set);
         if (box == null) return;
         box.setVisibility(on ? View.VISIBLE : View.GONE);
         if (!on) return;
+        side(box, even(a));
         ImageView iv = (ImageView) (box instanceof ImageView ? box : box.findViewById(R.id.right_image));
         Bitmap own = pic == R.drawable.plus_logo ? logo(a) : null;
         Object want = own != null ? (Object) own : Integer.valueOf(pic);
@@ -208,6 +222,13 @@ public final class MenuStyle {
     static synchronized void logoRecheck() {
         logoTheme = null;
         logoBmp = null;
+    }
+
+    /** The better-Y picture of the Settings panel: the theme's own, or {@code plus_logo}. */
+    public static void betterY(ImageView iv) {
+        Bitmap b = logo(iv.getContext());
+        if (b != null) iv.setImageBitmap(b);
+        else ThemeManager.INSTANCE.commonSetIcon(iv, R.drawable.plus_logo);
     }
 
     /** From {@code Tone.settingsPanel}: the better-Y row of Settings shows the theme's own picture. */
@@ -355,6 +376,12 @@ public final class MenuStyle {
         ThemeManager.INSTANCE.commonSetIcon((ImageView) v, R.drawable.icon_setting_day);
     }
 
+    /** The screens inside Settings that draw a preview beside their list. */
+    private static boolean sub(Activity a) {
+        return a instanceof LanguageActivity || a instanceof WallpaperListActivity
+                || a instanceof DateOneLevelActivity || a instanceof EqActivity;
+    }
+
     /**
      * Settings' background — the wallpaper under the theme's settingMask — in Default, the
      * wallpaper alone in Simple. The screens inside Settings carry it on the base layout's unused
@@ -367,10 +394,7 @@ public final class MenuStyle {
                 back.setVisibility(simple ? View.INVISIBLE : View.VISIBLE);
                 return;
             }
-            if (!(a instanceof LanguageActivity || a instanceof WallpaperListActivity
-                    || a instanceof DateOneLevelActivity || a instanceof EqActivity)) {
-                return;
-            }
+            if (!sub(a)) return;
             ImageView back = ((BaseActivity) a).getBackImageView();
             if (simple) {
                 back.setVisibility(View.GONE);
@@ -385,11 +409,6 @@ public final class MenuStyle {
             back.setVisibility(View.VISIBLE);
         } catch (Throwable t) {
         }
-    }
-
-    /** These two lists' width is {@link Pad}'s, which asks {@link #simple} itself. */
-    private static void pad(View v) {
-        if (v instanceof RecyclerView) Pad.list((RecyclerView) v);
     }
 
     private static View parent(View v) {
@@ -661,8 +680,35 @@ public final class MenuStyle {
         ThemeManager.INSTANCE.setSettingMask(new ImageView(a));
     }
 
-    /** The layout's own width is kept in a tag, to go back to. */
-    private static void widen(View v, boolean wide) {
+    // ---- geometry beside a preview ----------------------------------------------------------
+
+    /** As {@code base}: the layout's own width, kept in a tag to go back to. */
+    private static final int OWN = -100;
+    private static final int HALF = 240;
+    private static final int MARGIN = 9;
+    /** With stock margins every row's text stands this far right of the title, as stock has it. */
+    private static final int MAIN_TEXT = 4;
+    /** A 179 wide preview in the middle of the right half. */
+    private static final int EVEN_RIGHT = 30;
+
+    /**
+     * The main menu's or Settings' list and the preview beside it, the screens' own and the Style
+     * preview's alike. True when the preview was shown again: it was not painted while hidden.
+     */
+    public static boolean page(View list, View pic) {
+        if (list instanceof RecyclerView) Pad.list((RecyclerView) list);
+        if (pic == null) return false;
+        Context c = pic.getContext();
+        side(pic, even(c));
+        return hide(pic, simple(c));
+    }
+
+    /**
+     * A list beside a preview: {@code base} wide in Default, the left half in Even, the whole width
+     * in Simple or when {@code base} is MATCH_PARENT. Stock margins move its left edge in and keep
+     * the right one where it was.
+     */
+    private static void size(View v, int base, boolean simple, boolean even, boolean stock) {
         if (v == null) return;
         ViewGroup.LayoutParams lp = v.getLayoutParams();
         if (lp == null) return;
@@ -671,9 +717,120 @@ public final class MenuStyle {
             tag = Integer.valueOf(lp.width);
             v.setTag(R.id.layout, tag);
         }
-        int w = wide ? ViewGroup.LayoutParams.MATCH_PARENT : ((Integer) tag).intValue();
+        if (base == OWN) base = ((Integer) tag).intValue();
+        Context c = v.getContext();
+        int m = stock ? px(c, MARGIN) : 0;
+        int w;
+        if (simple || base < 0) {
+            w = m == 0 ? ViewGroup.LayoutParams.MATCH_PARENT
+                    : c.getResources().getDisplayMetrics().widthPixels - m;
+        } else if (even) {
+            w = px(c, HALF) - m;
+        } else {
+            w = base - m;
+        }
+        inset(v, lp, m);
+        lead(v, stock ? px(c, LEAD) : 0);
         if (lp.width == w) return;
         lp.width = w;
+        v.setLayoutParams(lp);
+    }
+
+    /**
+     * The left margin. A ConstraintLayout ignores it on a child with no horizontal constraint,
+     * and these lists have none, so there it is a translation; elsewhere both margin fields.
+     */
+    private static void inset(View v, ViewGroup.LayoutParams p, int m) {
+        if (v.getParent() instanceof ConstraintLayout) {
+            if (v.getTranslationX() != m) v.setTranslationX(m);
+            return;
+        }
+        if (!(p instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) p;
+        if (lp.leftMargin == m && lp.getMarginStart() == m) return;
+        lp.leftMargin = m;
+        lp.setMarginStart(m);
+        v.setLayoutParams(lp);
+    }
+
+    /** Stock margins: the rows' leading part moves this far left, its text 9 - 5 = 4 past the title. */
+    private static final int LEAD = 5;
+    private static final RowLead ROW_LEAD = new RowLead();
+
+    /**
+     * Every row of the list, now and as rows come and go, has its leading children (left of its
+     * middle) moved {@code px} left — the background stays where the margin put it. 0 puts them back.
+     */
+    private static void lead(View list, int px) {
+        if (!(list instanceof ViewGroup)) return;
+        list.setTag(R.id.tv_item, Integer.valueOf(px));
+        if (list instanceof RecyclerView && list.getTag(R.id.title) == null) {
+            list.setTag(R.id.title, Boolean.TRUE);
+            ((RecyclerView) list).addOnChildAttachStateChangeListener(new ListLead());
+        }
+        ViewGroup g = (ViewGroup) list;
+        for (int i = 0; i < g.getChildCount(); i++) leadRow(g.getChildAt(i));
+    }
+
+    /** Laid out rows at once; the rest on their layout, which is also when a recycled row arrives. */
+    private static void leadRow(View row) {
+        if (!(row instanceof ViewGroup)) return;
+        if (row.getTag(R.id.title) == null) {
+            row.setTag(R.id.title, Boolean.TRUE);
+            row.addOnLayoutChangeListener(ROW_LEAD);
+        }
+        Object t = row.getParent() instanceof View ? ((View) row.getParent()).getTag(R.id.tv_item) : null;
+        leadIn((ViewGroup) row, t instanceof Integer ? ((Integer) t).intValue() : 0);
+    }
+
+    /**
+     * A child wider than half the row is a container — Videos paints its highlight on one — and
+     * its own children move instead, or the highlight would move with them.
+     */
+    private static void leadIn(ViewGroup g, int px) {
+        int half = g.getWidth() / 2;
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View c = g.getChildAt(i);
+            if (c instanceof ViewGroup && half > 0 && c.getWidth() > half) {
+                if (c.getTranslationX() != 0f) c.setTranslationX(0f);
+                leadIn((ViewGroup) c, px);
+                continue;
+            }
+            float x = px > 0 && c.getLeft() < half ? -px : 0f;
+            if (c.getTranslationX() != x) c.setTranslationX(x);
+        }
+    }
+
+    static final class ListLead implements RecyclerView.OnChildAttachStateChangeListener {
+        @Override
+        public void onChildViewAttachedToWindow(View row) {
+            leadRow(row);
+        }
+
+        @Override
+        public void onChildViewDetachedFromWindow(View row) { }
+    }
+
+    static final class RowLead implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
+            leadRow(v);
+        }
+    }
+
+    /** The preview's right margin: the layout's own, or in the middle of the right half in Even. */
+    private static void side(View v, boolean even) {
+        if (v == null || !(v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams)) return;
+        ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+        Object tag = v.getTag(R.id.layout);
+        if (!(tag instanceof Integer)) {
+            tag = Integer.valueOf(lp.rightMargin);
+            v.setTag(R.id.layout, tag);
+        }
+        int m = even ? px(v.getContext(), EVEN_RIGHT) : ((Integer) tag).intValue();
+        if (lp.rightMargin == m && lp.getMarginEnd() == m) return;
+        lp.rightMargin = m;
+        lp.setMarginEnd(m);
         v.setLayoutParams(lp);
     }
 }

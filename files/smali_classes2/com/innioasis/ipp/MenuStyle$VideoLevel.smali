@@ -14,27 +14,27 @@
 
 .method constructor <init>(Landroid/app/Activity;)V
   .registers 3
-  .line 340
+  .line 361
     invoke-direct { p0 }, Landroidx/recyclerview/widget/RecyclerView$AdapterDataObserver;-><init>()V
-  .line 341
+  .line 362
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/MenuStyle$VideoLevel;->act:Ljava/lang/ref/WeakReference;
-  .line 342
+  .line 363
     return-void
 .end method
 
 .method public onChanged()V
   .registers 2
-  .line 346
+  .line 367
     iget-object v0, p0, Lcom/innioasis/ipp/MenuStyle$VideoLevel;->act:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroid/app/Activity;
-  .line 347
+  .line 368
     if-eqz v0, :L0
     invoke-static { v0 }, Lcom/innioasis/ipp/MenuStyle;->section(Landroid/app/Activity;)V
   :L0
-  .line 348
+  .line 369
     return-void
 .end method

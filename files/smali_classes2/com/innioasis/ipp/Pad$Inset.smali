@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 106
+  .line 109
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -22,7 +22,7 @@
   .catchall { :L0 .. :L3 } :L4
   .registers 4
   :L0
-  .line 110
+  .line 113
     invoke-virtual { p1 }, Landroid/view/View;->getContext()Landroid/content/Context;
     move-result-object v0
     const-string v1, "fixed_menu_pad"
@@ -36,18 +36,18 @@
   :L2
     invoke-static { p1, v0 }, Lcom/innioasis/ipp/Pad;->access$000(Landroid/view/View;Z)V
   :L3
-  .line 112
+  .line 115
     goto :L5
   :L4
-  .line 111
+  .line 114
     move-exception p1
   :L5
-  .line 113
+  .line 116
     return-void
 .end method
 
 .method public onChildViewDetachedFromWindow(Landroid/view/View;)V
   .registers 2
-  .line 116
+  .line 119
     return-void
 .end method

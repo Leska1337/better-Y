@@ -30,6 +30,9 @@ import java.util.List;
  */
 public final class TipDialog extends BaseDialog {
 
+    /** One "don't show again" for the hints of every Style preview. */
+    public static final String STYLE_OFF = "style_hint_off";
+
     private static final int TICK = 0;
     private static final int NONE = -1;
     private static final int CLOSE = 1;
@@ -222,8 +225,7 @@ public final class TipDialog extends BaseDialog {
         KeyMap k = KeyMap.INSTANCE;
         boolean back = keyCode == k.getKEY_UP() || keyCode == k.getKEY_LEFT();
         if (back || keyCode == k.getKEY_DOWN() || keyCode == k.getKEY_RIGHT()) {
-            if (pages.length == 1) sel = sel == TICK ? CLOSE : TICK;
-            else step(back ? -1 : 1);
+            step(back ? -1 : 1);
             paint();
         } else if (keyCode == k.getKEY_ENTER()) {
             if (sel == NONE) {
@@ -241,17 +243,37 @@ public final class TipDialog extends BaseDialog {
         }
     }
 
-    /** Pages first, then the tick and the button; no wrap at either end. */
+    /**
+     * Pages first, then the tick and the button. Past either end only with {@link Loop}: from the
+     * button back to the first page (or the tick), and the other way.
+     */
     private void step(int d) {
         int last = pages.length - 1;
+        boolean one = pages.length == 1;
         if (d > 0) {
-            if (page < last) page++;
-            else if (sel == NONE) sel = TICK;
-            else sel = CLOSE;
+            if (sel == CLOSE) {
+                if (Loop.on()) {
+                    page = 0;
+                    sel = one ? TICK : NONE;
+                }
+            } else if (sel == TICK) {
+                sel = CLOSE;
+            } else if (page < last) {
+                page++;
+            } else {
+                sel = TICK;
+            }
         } else {
-            if (sel == CLOSE) sel = TICK;
-            else if (sel == TICK) sel = NONE;
-            else if (page > 0) page--;
+            if (sel == CLOSE) {
+                sel = TICK;
+            } else if (sel == TICK && !one) {
+                sel = NONE;
+            } else if (sel == NONE && page > 0) {
+                page--;
+            } else if (Loop.on()) {
+                page = last;
+                sel = CLOSE;
+            }
         }
     }
 

@@ -111,10 +111,10 @@
   :L3
     goto :L5
   :L4
-    new-instance v1, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object p0
-    invoke-direct { v1, p0, p1 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Ends;->of(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)Landroid/graphics/drawable/BitmapDrawable;
+    move-result-object v1
     goto :L3
   :L5
     const/4 p0, 0
@@ -132,11 +132,11 @@
     return-void
   :L7
   .line 516
-    new-instance v0, Landroid/graphics/drawable/BitmapDrawable;
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
-    move-result-object v1
-    invoke-direct { v0, v1, p1 }, Landroid/graphics/drawable/BitmapDrawable;-><init>(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)V
-    invoke-virtual { p0, v0 }, Landroid/view/View;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
+    move-result-object v0
+    invoke-static { v0, p1 }, Lcom/innioasis/ipp/Ends;->of(Landroid/content/res/Resources;Landroid/graphics/Bitmap;)Landroid/graphics/drawable/BitmapDrawable;
+    move-result-object p1
+    invoke-virtual { p0, p1 }, Landroid/view/View;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
   :L8
   .line 518
     goto :L10
@@ -198,7 +198,7 @@
     if-nez v1, :L5
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object v1
-    invoke-virtual { v1, p1 }, Landroid/content/res/Resources;->getDrawable(I)Landroid/graphics/drawable/Drawable;
+    invoke-static { v1, p1 }, Lcom/innioasis/ipp/Ends;->drawable(Landroid/content/res/Resources;I)Landroid/graphics/drawable/Drawable;
     move-result-object v1
   :L5
   .line 542
@@ -209,6 +209,9 @@
     return-void
   :L6
   .line 547
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Ends;->res(Landroid/view/View;I)Z
+    move-result v0
+    if-nez v0, :L7
     invoke-virtual { p0, p1 }, Landroid/view/View;->setBackgroundResource(I)V
   :L7
   .line 549

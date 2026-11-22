@@ -29,7 +29,7 @@
 
 .field private final static TIP:Ljava/lang/String; = "ss_tip"
 
-.field private final static TIP_OFF:Ljava/lang/String; = "np_hint_off"
+.field private final static TIP_OFF:Ljava/lang/String; = "style_hint_off"
 
 .field private final static ZERO:Ljava/lang/String; = "00:00"
 
@@ -679,7 +679,7 @@
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppNowActivity;->bands()V
   .line 89
     const-string v0, "ss_tip"
-    const-string v1, "np_hint_off"
+    const-string v1, "style_hint_off"
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/TipDialog;->show(Landroid/app/Activity;Ljava/lang/String;Ljava/lang/String;)Lcom/innioasis/ipp/TipDialog;
     move-result-object v0
     iput-object v0, p0, Lcom/innioasis/y1/activity/IppNowActivity;->tip:Lcom/innioasis/ipp/TipDialog;

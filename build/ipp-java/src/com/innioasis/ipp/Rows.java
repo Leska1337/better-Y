@@ -498,7 +498,7 @@ public final class Rows {
     // wrapper's size requested a layout each time — every visible row re-measured per wheel click,
     // slow enough to break SpeedUtil's acceleration on themed screens.
 
-    /** A theme bitmap as background, untouched when unchanged; swapped INSIDE a wrapper. */
+    /** A theme bitmap as background ({@link Ends}), untouched when unchanged; swapped INSIDE a wrapper. */
     public static void bg(View v, Bitmap b) {
         if (v == null || b == null) return;
         try {
@@ -509,11 +509,11 @@ public final class Rows {
                 // a bar's row: the bar blanks it again right after, so nothing is built for it
                 if (f.res == BLANK && Bar.owns(v)) return;
                 Drawable d = f.spareFor(b);
-                f.swap(d != null ? d : new BitmapDrawable(v.getResources(), b), 0);
+                f.swap(d != null ? d : Ends.of(v.getResources(), b), 0);
                 return;
             }
             if (cur instanceof BitmapDrawable && ((BitmapDrawable) cur).getBitmap() == b) return;
-            v.setBackgroundDrawable(new BitmapDrawable(v.getResources(), b));
+            v.setBackgroundDrawable(Ends.of(v.getResources(), b));
         } catch (Throwable t) {
         }
     }
@@ -538,13 +538,13 @@ public final class Rows {
                 if (f.res == resid) return;
                 // a new GradientDrawable per bind is a Paint with a finalizer each time
                 Drawable d = f.spareFor(resid);
-                if (d == null) d = v.getResources().getDrawable(resid);
+                if (d == null) d = Ends.drawable(v.getResources(), resid);
                 if (d != null) {
                     f.swap(d, resid);
                     return;
                 }
             }
-            v.setBackgroundResource(resid);
+            if (!Ends.res(v, resid)) v.setBackgroundResource(resid);
         } catch (Throwable t) {
         }
     }

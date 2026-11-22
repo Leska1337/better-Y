@@ -56,7 +56,7 @@ Para ello, mantenga pulsado el botón superior sobre el tema deseado y seleccion
 Se guardan los siguientes ajustes:
 
 Reproduciendo ahora: estilo (excepto "inclinar la carátula").
-Menú: estilo de menú, color del texto en las vistas previas del menú, márgenes de menú corregidos, estilo y color del texto de la barra de estado.
+Menú: estilo, márgenes, color del texto en las vistas previas, estilo y color del texto de la barra de estado.
 Salvapantallas: estilo.
 Tono de tecla: sonido.
 ---
@@ -191,6 +191,8 @@ Los títulos largos de las canciones se desplazan siempre, sea cual sea esta opc
 
 [[menu]] Menú
 
+[menu_look] Estilo
+
 [alpha_scroll] Desplazamiento alfabético rápido
 Se activa tras un número de clics de la rueda y salta por la lista según la primera letra.
 
@@ -213,31 +215,25 @@ Al abrir la lista en la que está la canción en reproducción, la selección va
 [follow_idle if follow_playing] Retardo de regreso (segundos)
 Determina cuántos segundos después del último giro de la rueda la selección vuelve a la canción que se está reproduciendo.
 
-[loop_scroll] Desplazamiento circular
-Al llegar al final o al principio de una lista, la selección salta al extremo opuesto. Funciona en todas las listas, menús y galerías.
+[loop_scroll] Listas circulares
+Al llegar al final o al principio de una lista, la selección salta al extremo opuesto. Funciona en todas las listas, menús, galerías y ventanas de diálogo.
 
 [animations] Activar animaciones
 En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran deslizándose y el marco del cursor se desplaza de un mosaico a otro. Desactivado, ambos saltan al instante.
 
-[menu_style] Estilo de menú
+[menu_style] Estilo
 * Predeterminado
+* Equilibrado
 * Simple
-@img menu_style_default.png Predeterminado
-@img menu_style_simple.png Simple
 
-[preview_text] Color del texto en las vistas previas del menú
+[fixed_menu_pad] Márgenes
+* Predeterminado
+* Sin márgenes
+
+[preview_text] Color del texto en las vistas previas
 * Claro
 * Oscuro
 * Color del tema
-@img menu_preview_text_light.png Claro
-@img menu_preview_text_theme.png Color del tema
-
-[fixed_menu_pad] Márgenes de menú corregidos
-Corrige los márgenes del menú principal y de los ajustes.
-
-Conviene desactivarlo con temas cuyos fondos están dibujados para los márgenes originales, como el incluido Melody Munchkin.
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] Mostrar artistas del álbum
 Añade «Artistas del álbum» al menú de Música.

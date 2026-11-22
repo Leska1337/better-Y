@@ -56,7 +56,7 @@ Halten Sie dazu auf dem gewünschten Design die obere Taste gedrückt und wähle
 Folgende Einstellungen werden gespeichert:
 
 Gerade läuft: Stil (außer "Cover neigen").
-Menü: Menüstil, Textfarbe der Menüvorschau, Korrigierte Menüränder, Stil und Textfarbe der Statusleiste.
+Menü: Stil, Ränder, Textfarbe der Vorschau, Stil und Textfarbe der Statusleiste.
 Bildschirmschoner: Stil.
 Tastenklang: Klang.
 ---
@@ -191,6 +191,8 @@ Lange Songtitel scrollen immer, unabhängig von dieser Einstellung.
 
 [[menu]] Menü
 
+[menu_look] Stil
+
 [alpha_scroll] Alphabetisches Schnellscrollen
 Setzt nach einigen Radklicks ein und springt anhand des ersten Buchstabens durch die Liste.
 
@@ -213,31 +215,25 @@ Beim Öffnen der Liste, in der der gerade laufende Titel steht, springt die Ausw
 [follow_idle if follow_playing] Verzögerung der Rückkehr (Sekunden)
 Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum gerade laufenden Titel zurückkehrt.
 
-[loop_scroll] Endlos-Scrollen
-Am Ende oder Anfang einer Liste springt die Auswahl auf die gegenüberliegende Seite. Gilt für alle Listen, Menüs und Galerien.
+[loop_scroll] Endlose Listen
+Am Ende oder Anfang einer Liste springt die Auswahl auf die gegenüberliegende Seite. Gilt für alle Listen, Menüs, Galerien und Dialogfenster.
 
 [animations] Animationen aktivieren
 In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins Bild, und der Rahmen des Cursors wandert von Kachel zu Kachel. Ausgeschaltet springt beides sofort.
 
-[menu_style] Menüstil
+[menu_style] Stil
 * Standard
+* Gleichmäßig
 * Einfach
-@img menu_style_default.png Standard
-@img menu_style_simple.png Einfach
 
-[preview_text] Textfarbe der Menüvorschau
+[fixed_menu_pad] Ränder
+* Standard
+* Ohne Ränder
+
+[preview_text] Textfarbe der Vorschau
 * Hell
 * Dunkel
 * Themenfarbe
-@img menu_preview_text_light.png Hell
-@img menu_preview_text_theme.png Themenfarbe
-
-[fixed_menu_pad] Korrigierte Menüränder
-Korrigiert die Ränder des Hauptmenüs und der Einstellungen.
-
-Bei Designs, deren Hintergründe für die Original-Ränder gezeichnet sind, besser ausschalten — etwa beim mitgelieferten Melody Munchkin.
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] Albumkünstler anzeigen
 Fügt „Albumkünstler“ zum Musik-Menü hinzu.

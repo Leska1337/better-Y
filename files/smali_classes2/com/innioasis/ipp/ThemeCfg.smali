@@ -55,11 +55,13 @@
     aput-object v10, v9, v0
     sput-object v9, Lcom/innioasis/ipp/ThemeCfg;->BOX:[Ljava/lang/String;
   .line 31
-    new-array v11, v6, [Ljava/lang/String;
+    new-array v11, v0, [Ljava/lang/String;
     const-string v12, "default"
     aput-object v12, v11, v2
     const-string v13, "simple"
     aput-object v13, v11, v4
+    const-string v13, "even"
+    aput-object v13, v11, v6
     sput-object v11, Lcom/innioasis/ipp/ThemeCfg;->STYLE:[Ljava/lang/String;
   .line 32
     new-array v13, v6, [Ljava/lang/String;

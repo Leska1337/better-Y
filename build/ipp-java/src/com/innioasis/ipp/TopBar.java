@@ -188,10 +188,29 @@ public final class TopBar {
         lp.leftMargin = m;
         lp.setMarginStart(m);
         title.setLayoutParams(lp);
-        bar.setPadding(centered ? o.titleStart : 0, bar.getPaddingTop(), bar.getPaddingRight(),
-                bar.getPaddingBottom());
+        bar.setPadding(centered ? o.titleStart : indentOf(bar), bar.getPaddingTop(),
+                bar.getPaddingRight(), bar.getPaddingBottom());
         if (!centered) title.setTranslationX(0);
         o.centered = centered;
+    }
+
+    /**
+     * From {@code MenuStyle}: how far the screen's row text stands right of where the title
+     * starts, so with stock margins the title moves onto the same line. Not in Centered.
+     */
+    static void indent(Activity a, int px) {
+        View bar = a.findViewById(R.id.status_bar);
+        if (bar == null) return;
+        bar.setTag(R.id.status_bar, Integer.valueOf(px));
+        Object tag = bar.getTag(R.id.status_bar_time);
+        if (tag instanceof Order && ((Order) tag).centered) return;
+        if (bar.getPaddingLeft() == px) return;
+        bar.setPadding(px, bar.getPaddingTop(), bar.getPaddingRight(), bar.getPaddingBottom());
+    }
+
+    private static int indentOf(View bar) {
+        Object t = bar.getTag(R.id.status_bar);
+        return t instanceof Integer ? ((Integer) t).intValue() : 0;
     }
 
     /** Moves the title, laid out between the two groups, to the middle of the screen. */

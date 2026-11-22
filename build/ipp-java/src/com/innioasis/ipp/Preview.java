@@ -50,7 +50,7 @@ public final class Preview {
     }
 
     /** The colour itself, LIGHT included. */
-    static int fg(Context c) {
+    public static int fg(Context c) {
         int v = color(c);
         return v == 0 ? WHITE : v;
     }

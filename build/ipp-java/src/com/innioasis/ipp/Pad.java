@@ -13,8 +13,9 @@ import com.innioasis.y1.R;
  * The main menu's and Settings' list geometry. "fixed_menu_pad" ON (default): edge to edge, no
  * left margin, down to the bottom. OFF: stock's inset, which some themes' row artwork expects.
  * Inverting the row's wording without renaming the key flips the geometry on every device.
- * With {@link MenuStyle#simple} the list runs to the right edge as well. OFF also keeps the rows'
- * text at stock's inset; ON it stands under the status bar's title, as the layouts have it.
+ * With {@link MenuStyle#simple} the list runs to the right edge, with {@link MenuStyle#even} to
+ * the middle. OFF also keeps the rows' text at stock's inset; ON it stands under the status bar's
+ * title, as the layouts have it. The other lists beside a preview take the margin in MenuStyle.
  * One method for both screens, told apart by the list's id — one reference in the full classes.dex.
  */
 public final class Pad {
@@ -32,6 +33,7 @@ public final class Pad {
     private static final int IPP_MAIN_W = 213;
     private static final int IPP_SET_W = 227;
     private static final int IPP_H = 315;      // 360 - the 45px status bar
+    private static final int HALF = 240;
 
     /** Also from {@code MainActivity.onResume}: the main menu is not re-created on return. */
     public static void list(RecyclerView rv) {
@@ -70,6 +72,7 @@ public final class Pad {
             int hPx = px(h, d);
             int mPx = stock ? px(MARGIN, d) : 0;
             if (MenuStyle.simple(c)) wPx = c.getResources().getDisplayMetrics().widthPixels - mPx;
+            else if (MenuStyle.even(c)) wPx = px(HALF, d) - mPx;
             if (lp.width == wPx && lp.height == hPx && lp.leftMargin == mPx) return;
             lp.width = wPx;
             lp.height = hPx;

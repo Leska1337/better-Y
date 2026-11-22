@@ -56,7 +56,7 @@
 다음 설정이 저장됩니다:
 
 현재 재생 중: 스타일("앨범 아트 기울이기" 제외).
-메뉴: 메뉴 스타일, 메뉴 미리보기 텍스트 색상, 수정된 메뉴 여백, 상태 표시줄 스타일 및 텍스트 색상.
+메뉴: 스타일, 여백, 미리보기 텍스트 색상, 상태 표시줄 스타일 및 텍스트 색상.
 화면 보호기: 스타일.
 키음: 소리.
 ---
@@ -194,6 +194,8 @@ Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번�
 
 [[menu]] 메뉴
 
+[menu_look] 스타일
+
 [alpha_scroll] 가나다순 빠른 스크롤
 휠을 일정 횟수 돌리면 시작되어 첫 글자를 기준으로 목록을 건너뜁니다.
 
@@ -216,31 +218,25 @@ Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번�
 [follow_idle if follow_playing] 복귀 지연 (초)
 휠을 마지막으로 돌린 뒤 몇 초 후에 선택이 지금 재생 중인 곡으로 돌아갈지 정합니다.
 
-[loop_scroll] 순환 스크롤
-목록의 끝이나 처음에 이르면 선택이 반대쪽으로 넘어갑니다. 모든 목록, 메뉴, 갤러리에서 작동합니다.
+[loop_scroll] 목록 순환
+목록의 끝이나 처음에 이르면 선택이 반대쪽으로 넘어갑니다. 모든 목록, 메뉴, 갤러리, 대화 상자에서 작동합니다.
 
 [animations] 애니메이션 사용
 타일 격자(Playlists, Themes, Photos)에서 줄이 부드럽게 들어오고 커서 테두리가 타일 사이를 이동합니다. 끄면 둘 다 즉시 이동합니다.
 
-[menu_style] 메뉴 스타일
+[menu_style] 스타일
 * 기본
+* 균등
 * 단순
-@img menu_style_default.png 기본
-@img menu_style_simple.png 단순
 
-[preview_text] 메뉴 미리보기 텍스트 색상
+[fixed_menu_pad] 여백
+* 기본
+* 여백 없음
+
+[preview_text] 미리보기 텍스트 색상
 * 밝게
 * 어둡게
 * 테마 색상
-@img menu_preview_text_light.png 밝게
-@img menu_preview_text_theme.png 테마 색상
-
-[fixed_menu_pad] 수정된 메뉴 여백
-기본 메뉴와 설정의 여백을 수정합니다.
-
-배경이 원본 여백에 맞춰 그려진 테마에서는 끄는 것이 좋습니다. 기본 제공되는 Melody Munchkin이 그렇습니다.
-@img fixed_menu_pad_off.png {Off}
-@img fixed_menu_pad_on.png {On}
 
 [album_artists] 앨범 아티스트 표시
 음악 메뉴에 "앨범 아티스트"를 추가합니다.

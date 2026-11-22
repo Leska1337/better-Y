@@ -57,8 +57,9 @@ https://github.com/ariya/pictureflow, released under the MIT License:
 What is taken from it is the layout of the row, not its code: the side covers turned by 70
 degrees and pushed back, the 40 px step between them (with three albums on screen; the five- and
 seven-album rows are ours, turned further and packed closer, and so are how far the side covers
-are pushed back, moving them out until the last one shown reaches the screen's edge and, with
-seven, tucking the first behind the centre cover), the outermost
+are pushed back, each one further out turned less than the one before it, moving them out until
+the last one shown reaches the screen's edge and, with seven, tucking the first behind the centre
+cover), the outermost
 pair fading out, the reflection starting at half strength and fading to nothing, and the grey card
 drawn for an album without a cover. PictureFlow's own software renderer is not used; the covers
 are drawn by the GPU. The Rockbox plugin of the same name (GPL) was read for reference only and

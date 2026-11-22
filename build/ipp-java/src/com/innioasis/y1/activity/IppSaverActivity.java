@@ -66,9 +66,9 @@ public final class IppSaverActivity extends Activity {
             Saver.KEY_TINT, Saver.KEY_CLOCK, Saver.KEY_TEXT};
     private static final int[] COUNTS = {Saver.STYLES, Saver.BRIGHTS.length, 3, 4, 3, 3};
     private static final int BRIGHT_STEP = 5;
-    /** The preview's hint: its asset row, and the "don't show again" flag. */
+    /** The preview's hint: its asset row, and the flag every Style preview shares. */
     private static final String TIP = "ss_tip";
-    private static final String TIP_OFF = "ss_hint_off";
+    private static final String TIP_OFF = com.innioasis.ipp.TipDialog.STYLE_OFF;
     private com.innioasis.ipp.TipDialog tip;
 
     private static final int LIGHT = 0xFFFFFFFF;

@@ -378,35 +378,38 @@
     check-cast v2, Landroid/widget/LinearLayout$LayoutParams;
   .line 187
     if-eqz p1, :L20
-    const/4 v3, 0
     goto :L21
   :L20
-    iget v3, v1, Lcom/innioasis/ipp/TopBar$Order;->titleStart:I
+    iget v4, v1, Lcom/innioasis/ipp/TopBar$Order;->titleStart:I
   :L21
   .line 188
-    iput v3, v2, Landroid/widget/LinearLayout$LayoutParams;->leftMargin:I
+    iput v4, v2, Landroid/widget/LinearLayout$LayoutParams;->leftMargin:I
   .line 189
-    invoke-virtual { v2, v3 }, Landroid/widget/LinearLayout$LayoutParams;->setMarginStart(I)V
+    invoke-virtual { v2, v4 }, Landroid/widget/LinearLayout$LayoutParams;->setMarginStart(I)V
   .line 190
     invoke-virtual { v0, v2 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
   .line 191
     if-eqz p1, :L22
-    iget v4, v1, Lcom/innioasis/ipp/TopBar$Order;->titleStart:I
+    iget v2, v1, Lcom/innioasis/ipp/TopBar$Order;->titleStart:I
+    goto :L23
   :L22
-    invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getPaddingTop()I
+    invoke-static { p0 }, Lcom/innioasis/ipp/TopBar;->indentOf(Landroid/view/View;)I
     move-result v2
-    invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getPaddingRight()I
+  :L23
+    invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getPaddingTop()I
     move-result v3
   .line 192
+    invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getPaddingRight()I
+    move-result v4
     invoke-virtual { p0 }, Landroid/widget/LinearLayout;->getPaddingBottom()I
     move-result v5
   .line 191
-    invoke-virtual { p0, v4, v2, v3, v5 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
+    invoke-virtual { p0, v2, v3, v4, v5 }, Landroid/widget/LinearLayout;->setPadding(IIII)V
   .line 193
-    if-nez p1, :L23
+    if-nez p1, :L24
     const/4 p0, 0
     invoke-virtual { v0, p0 }, Landroid/view/View;->setTranslationX(F)V
-  :L23
+  :L24
   .line 194
     iput-boolean p1, v1, Lcom/innioasis/ipp/TopBar$Order;->centered:Z
   .line 195
@@ -415,71 +418,71 @@
 
 .method private static color(Landroid/content/Context;)I
   .registers 2
-  .line 210
+  .line 229
     const-string v0, "bar_text"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result p0
-  .line 211
+  .line 230
     const/4 v0, 1
     if-ne p0, v0, :L0
     const p0, -15592942
     return p0
   :L0
-  .line 212
+  .line 231
     const/4 v0, 2
     if-ne p0, v0, :L1
-  .line 213
+  .line 232
     invoke-static { }, Lcom/innioasis/ipp/Icons;->themeColor()I
     move-result p0
-  .line 214
+  .line 233
     if-eqz p0, :L1
     return p0
   :L1
-  .line 216
+  .line 235
     const/4 p0, -1
     return p0
 .end method
 
 .method private static fold(Landroid/view/View;IZ)V
   .registers 6
-  .line 226
+  .line 245
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 227
+  .line 246
     if-nez p0, :L0
     return-void
   :L0
-  .line 228
+  .line 247
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object p1
-  .line 229
+  .line 248
     instance-of v0, p1, Landroid/widget/LinearLayout$LayoutParams;
     if-nez v0, :L1
     return-void
   :L1
-  .line 230
+  .line 249
     check-cast p1, Landroid/widget/LinearLayout$LayoutParams;
-  .line 231
+  .line 250
     const v0, 2131362408
     invoke-virtual { p0, v0 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
     move-result-object v1
-  .line 233
+  .line 252
     instance-of v2, v1, [I
     if-eqz v2, :L2
-  .line 234
+  .line 253
     check-cast v1, [I
     goto :L3
   :L2
-  .line 236
+  .line 255
     iget v1, p1, Landroid/widget/LinearLayout$LayoutParams;->width:I
     invoke-virtual { p1 }, Landroid/widget/LinearLayout$LayoutParams;->getMarginEnd()I
     move-result v2
     filled-new-array { v1, v2 }, [I
     move-result-object v1
-  .line 237
+  .line 256
     invoke-virtual { p0, v0, v1 }, Landroid/view/View;->setTag(ILjava/lang/Object;)V
   :L3
-  .line 239
+  .line 258
     const/4 v0, 0
     if-eqz p2, :L4
     const/4 v2, 0
@@ -487,14 +490,14 @@
   :L4
     aget v2, v1, v0
   :L5
-  .line 240
+  .line 259
     if-eqz p2, :L6
     goto :L7
   :L6
     const/4 p2, 1
     aget v0, v1, p2
   :L7
-  .line 241
+  .line 260
     iget p2, p1, Landroid/widget/LinearLayout$LayoutParams;->width:I
     if-ne p2, v2, :L8
     invoke-virtual { p1 }, Landroid/widget/LinearLayout$LayoutParams;->getMarginEnd()I
@@ -502,16 +505,79 @@
     if-ne p2, v0, :L8
     return-void
   :L8
-  .line 242
+  .line 261
     iput v2, p1, Landroid/widget/LinearLayout$LayoutParams;->width:I
-  .line 244
+  .line 263
     iput v0, p1, Landroid/widget/LinearLayout$LayoutParams;->rightMargin:I
-  .line 245
+  .line 264
     invoke-virtual { p1, v0 }, Landroid/widget/LinearLayout$LayoutParams;->setMarginEnd(I)V
-  .line 246
+  .line 265
     invoke-virtual { p0, p1 }, Landroid/view/View;->setLayoutParams(Landroid/view/ViewGroup$LayoutParams;)V
-  .line 247
+  .line 266
     return-void
+.end method
+
+.method static indent(Landroid/app/Activity;I)V
+  .registers 5
+  .line 202
+    const v0, 2131362408
+    invoke-virtual { p0, v0 }, Landroid/app/Activity;->findViewById(I)Landroid/view/View;
+    move-result-object p0
+  .line 203
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 204
+    invoke-static { p1 }, Ljava/lang/Integer;->valueOf(I)Ljava/lang/Integer;
+    move-result-object v1
+    invoke-virtual { p0, v0, v1 }, Landroid/view/View;->setTag(ILjava/lang/Object;)V
+  .line 205
+    const v0, 2131362410
+    invoke-virtual { p0, v0 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
+    move-result-object v0
+  .line 206
+    instance-of v1, v0, Lcom/innioasis/ipp/TopBar$Order;
+    if-eqz v1, :L1
+    check-cast v0, Lcom/innioasis/ipp/TopBar$Order;
+    iget-boolean v0, v0, Lcom/innioasis/ipp/TopBar$Order;->centered:Z
+    if-eqz v0, :L1
+    return-void
+  :L1
+  .line 207
+    invoke-virtual { p0 }, Landroid/view/View;->getPaddingLeft()I
+    move-result v0
+    if-ne v0, p1, :L2
+    return-void
+  :L2
+  .line 208
+    invoke-virtual { p0 }, Landroid/view/View;->getPaddingTop()I
+    move-result v0
+    invoke-virtual { p0 }, Landroid/view/View;->getPaddingRight()I
+    move-result v1
+    invoke-virtual { p0 }, Landroid/view/View;->getPaddingBottom()I
+    move-result v2
+    invoke-virtual { p0, p1, v0, v1, v2 }, Landroid/view/View;->setPadding(IIII)V
+  .line 209
+    return-void
+.end method
+
+.method private static indentOf(Landroid/view/View;)I
+  .registers 2
+  .line 212
+    const v0, 2131362408
+    invoke-virtual { p0, v0 }, Landroid/view/View;->getTag(I)Ljava/lang/Object;
+    move-result-object p0
+  .line 213
+    instance-of v0, p0, Ljava/lang/Integer;
+    if-eqz v0, :L0
+    check-cast p0, Ljava/lang/Integer;
+    invoke-virtual { p0 }, Ljava/lang/Integer;->intValue()I
+    move-result p0
+    goto :L1
+  :L0
+    const/4 p0, 0
+  :L1
+    return p0
 .end method
 
 .method public static mask(Landroid/content/Context;)I
@@ -550,26 +616,26 @@
 
 .method private static paint(Landroid/view/View;II)V
   .registers 3
-  .line 220
+  .line 239
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 221
+  .line 240
     instance-of p1, p0, Landroid/widget/TextView;
     if-eqz p1, :L0
     check-cast p0, Landroid/widget/TextView;
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setTextColor(I)V
   :L0
-  .line 222
+  .line 241
     return-void
 .end method
 
 .method public static percent(Landroid/widget/TextView;Ljava/lang/CharSequence;)V
   .registers 3
-  .line 255
+  .line 274
     if-nez p0, :L0
     return-void
   :L0
-  .line 256
+  .line 275
     if-eqz p1, :L1
     invoke-virtual { p0 }, Landroid/widget/TextView;->getText()Ljava/lang/CharSequence;
     move-result-object v0
@@ -578,9 +644,9 @@
     if-eqz v0, :L1
     return-void
   :L1
-  .line 257
+  .line 276
     invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setText(Ljava/lang/CharSequence;)V
-  .line 258
+  .line 277
     return-void
 .end method
 

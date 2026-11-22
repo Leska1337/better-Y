@@ -1,5 +1,5 @@
 diff --git a/build/src/AndroidManifest.xml b/build/src/AndroidManifest.xml
-index 2c8d26c0..caa86c7a 100644
+index 2c8d26c0..36f631bd 100644
 --- a/build/src/AndroidManifest.xml
 +++ b/build/src/AndroidManifest.xml
 @@ -1,6 +1,7 @@
@@ -18,7 +18,7 @@ index 2c8d26c0..caa86c7a 100644
          <activity android:exported="false" android:name="com.innioasis.music.PlaylistsActivity"/>
          <activity android:exported="false" android:name="com.innioasis.music.SearchActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.WallpaperListActivity"/>
-@@ -64,6 +64,13 @@
+@@ -64,6 +64,14 @@
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateTwoLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.DateOneLevelActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.AboutActivity"/>
@@ -29,11 +29,12 @@ index 2c8d26c0..caa86c7a 100644
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppUsbActivity"/>
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppSaverActivity"/>
 +        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppNowActivity"/>
++        <activity android:exported="false" android:launchMode="singleTop" android:name="com.innioasis.y1.activity.IppMenuActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.LanguageActivity"/>
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..0ff0f337 100644
+index 01b1f730..45752782 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -48,7 +49,7 @@ index 01b1f730..0ff0f337 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100554
++  versionCode: 10100559
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20218,7 +20219,7 @@ index 803c1e7a..0f10f442 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..705210b8 100644
+index 71fe29d0..03d5f00f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,599 @@
@@ -21167,7 +21168,7 @@ index 71fe29d0..705210b8 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev554</string>
++    <string name="ipp_version">v1.1.0-dev559</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

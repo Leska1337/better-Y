@@ -41,9 +41,7 @@ import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Loading;
 import com.innioasis.ipp.Loop;
 import com.innioasis.ipp.MenuStyle;
-import com.innioasis.ipp.Preview;
 import com.innioasis.ipp.Meta;
-import com.innioasis.ipp.Pad;
 import com.innioasis.ipp.Flow;
 import com.innioasis.ipp.Pick;
 import com.innioasis.ipp.PickDialog;
@@ -244,15 +242,13 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(CHOICE, Ipp.KEY_LINE_SCROLL, 4, null, null));
 
         l.add(new Item(HEADER, "menu", 0, null, null));
+        l.add(new Item(ACTION, IppMenuActivity.KEY_STYLE, 0, null, null));  // style, margins, preview text
         l.add(new Item(TOGGLE, "alpha_scroll", 0, null, null));
         l.add(new Item(NUMBER, "alpha_threshold", Alpha.THRESHOLDS.length, Alpha.THRESHOLDS, null));
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
         if (Anim.BUILT) l.add(new Item(TOGGLE, Anim.KEY, 0, null, null));
-        l.add(new Item(CHOICE, MenuStyle.KEY, 2, null, null));
-        l.add(new Item(CHOICE, Preview.KEY, 3, null, null));
-        l.add(new Item(TOGGLE, Pad.KEY, 0, null, null));
         l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
         l.add(new Item(SUB, "status_bar", 0, null, null));
         l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
@@ -980,6 +976,8 @@ public final class IppActivity extends BaseActivity {
                 Backup.open(getActivity(), label(it));
             } else if (IppNowActivity.KEY_STYLE.equals(it.key)) {
                 startActivity(new android.content.Intent(this, IppNowActivity.class));
+            } else if (IppMenuActivity.KEY_STYLE.equals(it.key)) {
+                startActivity(new android.content.Intent(this, IppMenuActivity.class));
             } else if (Saver.KEY_STYLE.equals(it.key)) {
                 android.content.Intent i = new android.content.Intent(this, IppSaverActivity.class);
                 i.putExtra(IppSaverActivity.EXTRA_PREVIEW, true);
