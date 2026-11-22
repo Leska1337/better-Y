@@ -85,6 +85,9 @@
   .line 68
     const-string v0, "likes"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
+  .line 69
+    const-string v0, "center_hold"
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
   .line 70
     return-void
 .end method

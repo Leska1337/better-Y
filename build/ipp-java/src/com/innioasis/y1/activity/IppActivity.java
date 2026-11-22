@@ -16,6 +16,7 @@ import com.innioasis.ipp.AlbumInfo;
 import com.innioasis.ipp.Albums;
 import com.innioasis.ipp.Alpha;
 import com.innioasis.ipp.Art;
+import com.innioasis.ipp.CenterHold;
 import com.innioasis.ipp.Artists;
 import com.innioasis.ipp.Backup;
 import com.innioasis.ipp.BigCover;
@@ -282,6 +283,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "delete_folder", 0, null, null));
         l.add(new Item(TOGGLE, "keep_awake", 0, null, null));
         l.add(new Item(TOGGLE, "likes", 0, null, null));
+        l.add(new Item(TOGGLE, CenterHold.KEY, 0, null, null));
         // "Show likes next to song names" (likes_names) is deliberately NOT built: the toggle
         // exists and does nothing yet. Its preference stays for when it does.
         l.add(new Item(CHOICE, Keys.KEY_SECOND, 2, null, null));

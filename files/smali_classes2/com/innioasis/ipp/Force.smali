@@ -139,6 +139,7 @@
   :L0
   .line 83
     invoke-static { }, Lcom/innioasis/ipp/Force;->watch()V
+    invoke-static { p0 }, Lcom/innioasis/ipp/CenterHold;->key(Landroid/view/KeyEvent;)V
   .line 89
     sget-boolean v1, Lcom/innioasis/ipp/Force;->fired:Z
     const/4 v2, 1
