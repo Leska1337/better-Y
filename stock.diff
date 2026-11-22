@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..c4336998 100644
+index 01b1f730..41a1e2e3 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..c4336998 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100560
++  versionCode: 10100562
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20219,7 +20219,7 @@ index 803c1e7a..0f10f442 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..ead7baaa 100644
+index 71fe29d0..27543907 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,599 @@
@@ -21168,7 +21168,7 @@ index 71fe29d0..ead7baaa 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev560</string>
++    <string name="ipp_version">v1.1.0-dev562</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -51684,7 +51684,7 @@ index ff3e0fc0..600c530c 100644
 +    return-void
 +.end method
 diff --git a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
-index 132f6278..6bf49654 100644
+index 132f6278..3600c2f5 100644
 --- a/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/music/MusicMainActivity.smali
 @@ -84,7 +84,7 @@
@@ -51734,18 +51734,13 @@ index 132f6278..6bf49654 100644
  
      .line 51
      invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
-@@ -134,9 +138,20 @@
+@@ -134,9 +138,15 @@
  
      move-result v0
  
-+    # ipp: the Album Artists row is opened there; the rows under it are handed back at the
-+    # index this switch knows them by (-1 = ours, the switch does nothing)
-+    invoke-static {p0, v0}, Lcom/innioasis/ipp/AlbumArtists;->musicPick(Landroid/app/Activity;I)I
-+
-+    move-result v0
-+
-+    # ipp: the same for the Cover Flow row, the first one
-+    invoke-static {p0, v0}, Lcom/innioasis/ipp/Flow;->musicPick(Landroid/app/Activity;I)I
++    # ipp: the row is found by its label and handed back at the index this switch knows it by;
++    # Cover Flow and Album Artists are opened there (-1 = ours, the switch does nothing)
++    invoke-static {p0, v0}, Lcom/innioasis/ipp/MainMenu;->musicPick(Landroid/app/Activity;I)I
 +
 +    move-result v0
 +
@@ -51756,7 +51751,7 @@ index 132f6278..6bf49654 100644
  
      .line 80
      :pswitch_0
-@@ -153,7 +168,7 @@
+@@ -153,7 +163,7 @@
      .line 81
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -51765,7 +51760,7 @@ index 132f6278..6bf49654 100644
  
      .line 74
      :pswitch_1
-@@ -169,7 +184,12 @@
+@@ -169,7 +179,12 @@
  
      const-string v1, "now_path"
  
@@ -51779,7 +51774,7 @@ index 132f6278..6bf49654 100644
  
      .line 75
      invoke-virtual {v0, v1, v2}, Landroid/content/Intent;->putExtra(Ljava/lang/String;Ljava/lang/String;)Landroid/content/Intent;
-@@ -262,9 +282,12 @@
+@@ -262,9 +277,12 @@
      .line 55
      invoke-virtual {p0, v0}, Lcom/innioasis/music/MusicMainActivity;->startActivity(Landroid/content/Intent;)V
  
@@ -51792,7 +51787,7 @@ index 132f6278..6bf49654 100644
      :pswitch_data_0
      .packed-switch 0x0
          :pswitch_6
-@@ -489,6 +512,12 @@
+@@ -489,6 +507,15 @@
  
      move-result-object v1
  
@@ -51802,10 +51797,13 @@ index 132f6278..6bf49654 100644
 +    # ipp: "Cover Flow" first
 +    invoke-static {v1, p0}, Lcom/innioasis/ipp/Flow;->musicMenu(Ljava/util/List;Landroid/content/Context;)V
 +
++    # ipp: the rows better-Y -> Main menu hides
++    invoke-static {v1, p0}, Lcom/innioasis/ipp/MainMenu;->music(Ljava/util/List;Landroid/content/Context;)V
++
      invoke-virtual {v0, v1}, Lcom/innioasis/music/objects/Constant;->setMainList(Ljava/util/List;)V
  
      .line 30
-@@ -566,7 +595,7 @@
+@@ -566,7 +593,7 @@
  
      check-cast v0, Lcom/innioasis/y1/databinding/ActivityMusicmainBinding;
  
@@ -51814,7 +51812,7 @@ index 132f6278..6bf49654 100644
  
      invoke-virtual {p0}, Lcom/innioasis/music/MusicMainActivity;->getAdapter()Lcom/innioasis/music/adapter/MainAdapter;
  
-@@ -574,7 +603,9 @@
+@@ -574,7 +601,9 @@
  
      check-cast v1, Landroid/widget/ListAdapter;
  
@@ -60640,7 +60638,7 @@ index a97af096..7665521d 100644
      invoke-static {p1}, Lkotlin/jvm/internal/Intrinsics;->checkNotNull(Ljava/lang/Object;)V
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
-index c90de289..2ed56d01 100644
+index c90de289..2d9ab2e9 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/EbookActivity.smali
 @@ -102,7 +102,7 @@
@@ -60683,7 +60681,19 @@ index c90de289..2ed56d01 100644
  
      return-void
  .end method
-@@ -388,7 +392,11 @@
+@@ -159,6 +163,11 @@
+ 
+     move-result v0
+ 
++    # ipp: the shown row as the switch below numbers it, with hidden rows in between
++    invoke-static {v0}, Lcom/innioasis/ipp/MainMenu;->bookPick(I)I
++
++    move-result v0
++
+     if-eqz v0, :cond_6
+ 
+     const/4 v1, 0x1
+@@ -388,7 +397,11 @@
  
      check-cast v1, Landroid/content/Context;
  
@@ -60696,7 +60706,7 @@ index c90de289..2ed56d01 100644
  
      new-array v2, v2, [Ljava/lang/String;
  
-@@ -467,21 +475,6 @@
+@@ -467,26 +480,14 @@
  
      aput-object v3, v2, v4
  
@@ -60718,7 +60728,15 @@ index c90de289..2ed56d01 100644
      .line 28
      invoke-static {v2}, Lkotlin/collections/CollectionsKt;->mutableListOf([Ljava/lang/Object;)Ljava/util/List;
  
-@@ -498,7 +491,7 @@
+     move-result-object v2
+ 
++    # ipp: the rows better-Y -> Main menu hides
++    invoke-static {v2, p0}, Lcom/innioasis/ipp/MainMenu;->books(Ljava/util/List;Landroid/content/Context;)V
++
+     invoke-direct {v0, v1, v2}, Lcom/innioasis/music/adapter/MainAdapter;-><init>(Landroid/content/Context;Ljava/util/List;)V
+ 
+     iput-object v0, p0, Lcom/innioasis/y1/activity/EbookActivity;->adapter:Lcom/innioasis/music/adapter/MainAdapter;
+@@ -498,7 +499,7 @@
  
      check-cast v0, Lcom/innioasis/y1/databinding/ActivityEbookBinding;
  
@@ -60727,7 +60745,7 @@ index c90de289..2ed56d01 100644
  
      iget-object v1, p0, Lcom/innioasis/y1/activity/EbookActivity;->adapter:Lcom/innioasis/music/adapter/MainAdapter;
  
-@@ -513,7 +506,9 @@
+@@ -513,7 +514,9 @@
      :cond_0
      check-cast v1, Landroid/widget/ListAdapter;
  
@@ -64756,7 +64774,7 @@ index 3c10a113..e9972766 100644
      .line 455
      sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..0b78d71f 100644
+index a9542df1..ed741784 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -64936,7 +64954,17 @@ index a9542df1..0b78d71f 100644
      if-eqz v0, :cond_1
  
      .line 95
-@@ -2566,6 +2647,18 @@
+@@ -2375,6 +2456,9 @@
+ 
+     invoke-static {v0, v1}, Lkotlin/collections/CollectionsKt;->removeAll(Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
+ 
++    # ipp: the rows better-Y -> Main menu hides
++    invoke-static {v0, p0}, Lcom/innioasis/ipp/MainMenu;->main(Ljava/util/List;Landroid/content/Context;)V
++
+     .line 115
+     iput-object v0, p0, Lcom/innioasis/y1/activity/MainActivity;->itemList:Ljava/util/List;
+ 
+@@ -2566,6 +2650,21 @@
      .line 212
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onResume()V
  
@@ -64951,6 +64979,9 @@ index a9542df1..0b78d71f 100644
 +    iget-object v0, v0, Lcom/innioasis/y1/databinding/ActivityMainBinding;->rcList:Landroidx/recyclerview/widget/RecyclerView;
 +
 +    invoke-static {v0}, Lcom/innioasis/ipp/Pad;->list(Landroidx/recyclerview/widget/RecyclerView;)V
++
++    # ipp: and the rows better-Y -> Main menu shows, for the same reason
++    invoke-static {p0}, Lcom/innioasis/ipp/MainMenu;->mainResume(Lcom/innioasis/y1/base/BaseActivity;)V
 +
      .line 213
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
@@ -68248,8 +68279,25 @@ index 7b295570..3ce4c5ef 100644
      const/4 p2, 0x0
  
      const/4 v0, 0x2
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$videoMainList$2.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$videoMainList$2.smali
+index e6bca880..08cf787e 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$videoMainList$2.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity$videoMainList$2.smali
+@@ -233,5 +233,12 @@
+ 
+     move-result-object v1
+ 
++    # ipp: without the rows better-Y -> Main menu hides
++    iget-object v2, v0, Lcom/innioasis/y1/activity/video/VideoListActivity$videoMainList$2;->this$0:Lcom/innioasis/y1/activity/video/VideoListActivity;
++
++    invoke-static {v1, v2}, Lcom/innioasis/ipp/MainMenu;->videos(Ljava/util/List;Landroid/content/Context;)Ljava/util/List;
++
++    move-result-object v1
++
+     return-object v1
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
-index 44fce9d8..5b082b1e 100644
+index 44fce9d8..89fe62b4 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/video/VideoListActivity.smali
 @@ -1402,6 +1402,10 @@
@@ -68457,7 +68505,26 @@ index 44fce9d8..5b082b1e 100644
  
      move-result-object v10
  
-@@ -3505,10 +3475,17 @@
+@@ -3435,7 +3405,8 @@
+ 
+     .line 278
+     :cond_13
+-    invoke-virtual/range {p0 .. p0}, Lcom/innioasis/y1/activity/video/VideoListActivity;->getMark()I
++    # ipp: the root rows are numbered as stock built them, hidden ones included (MainMenu)
++    invoke-static/range {p0 .. p0}, Lcom/innioasis/ipp/MainMenu;->videoPick(Lcom/innioasis/y1/base/BaseActivity;)I
+ 
+     move-result v1
+ 
+@@ -3478,7 +3449,7 @@
+ 
+     .line 284
+     :cond_14
+-    invoke-virtual/range {p0 .. p0}, Lcom/innioasis/y1/activity/video/VideoListActivity;->getMark()I
++    invoke-static/range {p0 .. p0}, Lcom/innioasis/ipp/MainMenu;->videoPick(Lcom/innioasis/y1/base/BaseActivity;)I
+ 
+     move-result v1
+ 
+@@ -3505,10 +3476,17 @@
      :cond_16
      const-string v1, "/storage/sdcard0"
  
@@ -68476,7 +68543,7 @@ index 44fce9d8..5b082b1e 100644
  
      .line 342
      invoke-virtual {v4}, Ljava/io/File;->listFiles()[Ljava/io/File;
-@@ -3610,7 +3587,8 @@
+@@ -3610,7 +3588,8 @@
  
      invoke-static {v10, v3}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullExpressionValue(Ljava/lang/Object;Ljava/lang/String;)V
  

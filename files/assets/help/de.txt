@@ -235,9 +235,59 @@ In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins
 * Dunkel
 * Themenfarbe
 
-[album_artists] Albumkünstler anzeigen
-Fügt „Albumkünstler“ zum Musik-Menü hinzu.
+[main_menu] Hauptmenü
 
+[mm_now] Jetzt läuft
+
+[mm_music] Musik
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] Alle songs
+
+[mm_playlists] Wiedergabelisten
+
+[mm_artists] Künstler
+
+[mm_albums] Alben
+
+[mm_genres] Genres
+
+[mm_folders] Ordner
+
+[mm_search] Suche
+
+[mm_videos] Video
+
+[mm_video_all] Alle Videos
+
+[mm_video_playlist] Listen
+
+[mm_video_folders] Ordner
+
+[mm_video_search] Suche
+
+[mm_audiobooks] Hörbücher
+
+[mm_book_all] Alle Hörbücher
+
+[mm_book_artists] Künstler
+
+[mm_book_albums] Alben
+
+[mm_book_folders] Ordner
+
+[mm_bookmarks] Lesezeichen
+
+[mm_ebook] E-Books
+
+[mm_photos] Fotos
+
+[mm_fm] UKW-Radio
+
+[mm_bluetooth] Bluetooth
+
+[album_artists] Albumkünstler
 Ein Album ohne „Album Artist“-Tag nimmt den ersten Künstler aus dem „Artist“-Tag, der auf dem Album am häufigsten vorkommt.
 
 [status_bar] Statusleiste

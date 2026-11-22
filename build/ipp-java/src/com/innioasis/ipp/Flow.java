@@ -150,23 +150,6 @@ public final class Flow {
         }
     }
 
-    /**
-     * Injected in MusicMainActivity.confirm after AlbumArtists.musicPick, so the index it gets is
-     * already past that row: ours opens the screen and answers -1, the rest move up by one.
-     */
-    public static int musicPick(Activity a, int pos) {
-        try {
-            if (pos < 0) return pos;
-            List l = Constant.INSTANCE.getMainList();
-            if (l == null || l.isEmpty() || !a.getString(R.string.ipp_coverflow).equals(l.get(0))) return pos;
-            if (pos > 0) return pos - 1;
-            a.startActivity(new Intent(a, IppFlowActivity.class));
-            return -1;
-        } catch (Throwable t) {
-            return pos;
-        }
-    }
-
     // ---- albums -----------------------------------------------------------------------------
 
     /** One album of the flow. {@code artist} is filled in late when the tag has not been read. */

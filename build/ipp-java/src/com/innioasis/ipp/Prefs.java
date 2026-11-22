@@ -43,7 +43,6 @@ public final class Prefs {
         def("follow_playing", 1);
         def(Follow.KEY_IDLE, Follow.IDLE_DEFAULT);
         def(Pad.KEY, 1);
-        def(AlbumArtists.KEY, 0);
         def(Loop.KEY, 0);
         def(Anim.KEY, 1);
         def(MenuStyle.KEY, 0);               // the preview beside the list, as stock draws it
@@ -52,6 +51,7 @@ public final class Prefs {
         def(TopBar.KEY_ICONS, TopBar.ALL);
         def(TopBar.KEY_HEADER, 1);
         def(TopBar.KEY_STYLE, 0);
+        for (int i = 0; i < MainMenu.DEFAULT_ON.length; i++) def(MainMenu.DEFAULT_ON[i], 1);
         // [Metadata]
         def("meta_title", 1);
         def("book_meta_title", 0);           // a chapter's tag is routinely worse than its file name

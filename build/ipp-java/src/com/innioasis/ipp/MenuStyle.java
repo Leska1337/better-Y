@@ -451,7 +451,7 @@ public final class MenuStyle {
     }
 
     /** The main menu's painter is private; this runs once per change of the setting. */
-    private static void mainPreview(Activity a) {
+    static void mainPreview(Activity a) {
         try {
             java.lang.reflect.Method m = MainActivity.class.getDeclaredMethod("selItem", new Class[0]);
             m.setAccessible(true);

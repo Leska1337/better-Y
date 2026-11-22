@@ -14,7 +14,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppActivity;)V
   .registers 2
-  .line 572
+  .line 610
     invoke-direct { p0 }, Lcom/innioasis/ipp/PickDialog$Go;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppActivity$IconPick;->a:Lcom/innioasis/y1/activity/IppActivity;
     return-void
@@ -22,9 +22,9 @@
 
 .method public go(I)V
   .registers 3
-  .line 576
+  .line 614
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppActivity$IconPick;->a:Lcom/innioasis/y1/activity/IppActivity;
     invoke-static { v0, p1 }, Lcom/innioasis/ipp/TopBar;->save(Lcom/innioasis/y1/base/BaseActivity;I)V
-  .line 577
+  .line 615
     return-void
 .end method

@@ -235,9 +235,59 @@ En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran d
 * Oscuro
 * Color del tema
 
-[album_artists] Mostrar artistas del álbum
-Añade «Artistas del álbum» al menú de Música.
+[main_menu] Menú principal
 
+[mm_now] Reproduciendo ahora
+
+[mm_music] Música
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] Todas las canciones
+
+[mm_playlists] Listas de reproducción
+
+[mm_artists] Artistas
+
+[mm_albums] Álbumes
+
+[mm_genres] Géneros
+
+[mm_folders] Carpetas
+
+[mm_search] Buscar
+
+[mm_videos] Videos
+
+[mm_video_all] Todos los videos
+
+[mm_video_playlist] Listas de reproducción
+
+[mm_video_folders] Carpetas
+
+[mm_video_search] Buscar
+
+[mm_audiobooks] Audiolibros
+
+[mm_book_all] Todos los audiolibros
+
+[mm_book_artists] Artistas
+
+[mm_book_albums] Álbumes
+
+[mm_book_folders] Carpetas
+
+[mm_bookmarks] Marcadores
+
+[mm_ebook] E-libros
+
+[mm_photos] Fotos
+
+[mm_fm] Radio FM
+
+[mm_bluetooth] Bluetooth
+
+[album_artists] Artistas del álbum
 Un álbum sin etiqueta «Album Artist» toma el primer artista de la etiqueta «Artist» que más se repite en el álbum.
 
 [status_bar] Barra de estado

@@ -82,21 +82,11 @@ public final class AlbumArtists {
         }
     }
 
-    /** Top of MusicMainActivity.confirm: the index stock's switch knows; -1 when the row was ours. */
-    public static int musicPick(Activity a, int pos) {
-        try {
-            List l = Constant.INSTANCE.getMainList();
-            if (a == null || l == null) return pos;
-            int at = l.indexOf(a.getString(R.string.ipp_album_artists));
-            if (at < 0 || pos < at) return pos;
-            if (pos > at) return pos - 1;
-            Intent i = new Intent(a, ArtistsActivity.class);
-            i.putExtra(EXTRA, true);
-            a.startActivity(i);
-            return -1;
-        } catch (Throwable t) {
-            return pos;
-        }
+    /** The Album Artists row of the Music menu (MainMenu.musicPick). */
+    static void open(Activity a) {
+        Intent i = new Intent(a, ArtistsActivity.class);
+        i.putExtra(EXTRA, true);
+        a.startActivity(i);
     }
 
     private static boolean screen(Activity a) {

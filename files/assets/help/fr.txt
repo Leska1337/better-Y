@@ -235,9 +235,59 @@ Dans les grilles de vignettes (Playlists, Themes et Photos), les rangées glisse
 * Sombre
 * Couleur du thème
 
-[album_artists] Afficher les artistes d'album
-Ajoute « Artistes d'album » au menu Musique.
+[main_menu] Menu principal
 
+[mm_now] À l'écoute
+
+[mm_music] Musique
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] Tous
+
+[mm_playlists] Listes de lecture
+
+[mm_artists] Artistes
+
+[mm_albums] Albums
+
+[mm_genres] Genres
+
+[mm_folders] Dossier
+
+[mm_search] Recherche
+
+[mm_videos] Vidéo
+
+[mm_video_all] Toutes les vidéos
+
+[mm_video_playlist] Listes de lecture
+
+[mm_video_folders] Dossier
+
+[mm_video_search] Recherche
+
+[mm_audiobooks] Livres audio
+
+[mm_book_all] Tous audios
+
+[mm_book_artists] Artistes
+
+[mm_book_albums] Albums
+
+[mm_book_folders] Dossier
+
+[mm_bookmarks] Signets
+
+[mm_ebook] Livres électroniques
+
+[mm_photos] Photos
+
+[mm_fm] Radio FM
+
+[mm_bluetooth] Bluetooth
+
+[album_artists] Artistes d'album
 Un album sans tag « Album Artist » prend le premier artiste du tag « Artist » qui revient le plus souvent sur l'album.
 
 [status_bar] Barre d'état

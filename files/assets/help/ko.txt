@@ -238,9 +238,59 @@ Album Artist가 "Various" 또는 "Various Artists"이면 대신 곡의 첫 번�
 * 어둡게
 * 테마 색상
 
-[album_artists] 앨범 아티스트 표시
-음악 메뉴에 "앨범 아티스트"를 추가합니다.
+[main_menu] 메인 메뉴
 
+[mm_now] 지금 재생 중
+
+[mm_music] 음악
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] 모든 노래
+
+[mm_playlists] 재생 목록
+
+[mm_artists] 아티스트
+
+[mm_albums] 앨범
+
+[mm_genres] 장르
+
+[mm_folders] 폴더
+
+[mm_search] 검색
+
+[mm_videos] 동영상
+
+[mm_video_all] 모든 동영상
+
+[mm_video_playlist] 재생 목록
+
+[mm_video_folders] 폴더
+
+[mm_video_search] 검색
+
+[mm_audiobooks] 오디오북
+
+[mm_book_all] 모든 오디오북
+
+[mm_book_artists] 아티스트
+
+[mm_book_albums] 앨범
+
+[mm_book_folders] 폴더
+
+[mm_bookmarks] 북마크
+
+[mm_ebook] 전자책
+
+[mm_photos] 사진
+
+[mm_fm] FM 라디오
+
+[mm_bluetooth] 블루투스
+
+[album_artists] 앨범 아티스트
 "Album Artist" 태그가 없는 앨범은 앨범에서 가장 자주 나오는 "Artist" 태그의 첫 번째 아티스트를 사용합니다.
 
 [status_bar] 상태 표시줄

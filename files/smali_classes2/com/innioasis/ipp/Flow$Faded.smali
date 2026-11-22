@@ -13,14 +13,14 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 1136
+  .line 1119
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 1
-  .line 1137
+  .line 1120
     invoke-static { }, Lcom/innioasis/ipp/Frames;->stop()V
     return-void
 .end method

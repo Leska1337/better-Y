@@ -40,6 +40,7 @@ import com.innioasis.ipp.Ipp;
 import com.innioasis.ipp.Keys;
 import com.innioasis.ipp.Loading;
 import com.innioasis.ipp.Loop;
+import com.innioasis.ipp.MainMenu;
 import com.innioasis.ipp.MenuStyle;
 import com.innioasis.ipp.Meta;
 import com.innioasis.ipp.Flow;
@@ -127,6 +128,7 @@ public final class IppActivity extends BaseActivity {
         String showIf;         // if non-null, row shown only while that pref is on
         String parent;         // the SUB row it stands in; null stands in its group
         boolean wheel;         // CHOICE: opened and turned like a NUMBER, its words for values
+        boolean indent;        // drawn in from its section's other rows, under the row it hangs on
 
         // No default here: it lives once, in Prefs.DEFAULTS, read by this screen and the feature.
         Item(int type, String key, int count, int[] choices, String showIf) {
@@ -144,6 +146,11 @@ public final class IppActivity extends BaseActivity {
 
         Item wheel() {
             wheel = true;
+            return this;
+        }
+
+        Item indent() {
+            indent = true;
             return this;
         }
     }
@@ -249,11 +256,11 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
         if (Anim.BUILT) l.add(new Item(TOGGLE, Anim.KEY, 0, null, null));
-        l.add(new Item(TOGGLE, AlbumArtists.KEY, 0, null, null));
         l.add(new Item(SUB, "status_bar", 0, null, null));
         l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
         l.add(new Item(CHOICE, TopBar.KEY_STYLE, 2, null, null).in("status_bar"));
         l.add(new Item(ACTION, TopBar.KEY_ICONS, TopBar.ICONS.length, null, null).in("status_bar"));
+        mainMenu(l);
 
         l.add(new Item(HEADER, "metadata", 0, null, null));
         l.add(new Item(TOGGLE, "meta_title", 0, null, null));
@@ -277,6 +284,33 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, Saver.KEY_CHARGING, 0, null, Saver.KEY_ON).in("screensaver"));
 
         return l;
+    }
+
+    /** The Main menu section (MainMenu): a toggle per row, the rows of a menu indented under it. */
+    private static void mainMenu(List l) {
+        String s = "main_menu";
+        l.add(new Item(SUB, s, 0, null, null));
+        l.add(new Item(TOGGLE, "mm_now", 0, null, null).in(s));
+        l.add(new Item(TOGGLE, MainMenu.KEY_MUSIC, 0, null, null).in(s));
+        String[] music = {"mm_coverflow", "mm_songs", "mm_playlists", "mm_artists", AlbumArtists.KEY,
+                "mm_albums", "mm_genres", "mm_folders", "mm_search"};
+        for (int i = 0; i < music.length; i++) {
+            l.add(new Item(TOGGLE, music[i], 0, null, MainMenu.KEY_MUSIC).in(s).indent());
+        }
+        l.add(new Item(TOGGLE, MainMenu.KEY_VIDEOS, 0, null, null).in(s));
+        String[] videos = {"mm_video_all", "mm_video_playlist", "mm_video_folders", "mm_video_search"};
+        for (int i = 0; i < videos.length; i++) {
+            l.add(new Item(TOGGLE, videos[i], 0, null, MainMenu.KEY_VIDEOS).in(s).indent());
+        }
+        l.add(new Item(TOGGLE, MainMenu.KEY_BOOKS, 0, null, null).in(s));
+        String[] books = {"mm_book_all", "mm_book_artists", "mm_book_albums", "mm_book_folders", "mm_bookmarks"};
+        for (int i = 0; i < books.length; i++) {
+            l.add(new Item(TOGGLE, books[i], 0, null, MainMenu.KEY_BOOKS).in(s).indent());
+        }
+        l.add(new Item(TOGGLE, "mm_ebook", 0, null, null).in(s));
+        l.add(new Item(TOGGLE, "mm_photos", 0, null, null).in(s));
+        l.add(new Item(TOGGLE, "mm_fm", 0, null, null).in(s));
+        l.add(new Item(TOGGLE, "mm_bluetooth", 0, null, null).in(s));
     }
 
     /**
@@ -456,6 +490,9 @@ public final class IppActivity extends BaseActivity {
     private static final int ARROW_END = 5;
     private static final int ARROW_ROOM = 24;
 
+    /** How far an indented row's text stands in. */
+    private static final int INDENT = 22;
+
     /** Rows on one screen inside a group. */
     private static final int ROWS = 5;
 
@@ -508,6 +545,7 @@ public final class IppActivity extends BaseActivity {
             // the row's padding and the value column's
             int room = width - TEXT_START - 5 - 6 - 6 - (int) Math.ceil(widest);
             if (marked(it)) room -= markRoom;
+            if (it.indent) room -= INDENT;
             if (it.type == SUB || it.type == ACTION) room -= ARROW_ROOM;
             if (room <= 0) return false;
             android.text.StaticLayout l = new android.text.StaticLayout(label(it), p, room,
@@ -693,6 +731,10 @@ public final class IppActivity extends BaseActivity {
         h.value.setText(editing && i == editIndex ? candidate(it, editVal) : valueText(it));
         h.value.setVisibility(View.VISIBLE);
         h.mark.setVisibility(marked(it) ? View.VISIBLE : View.GONE);
+        int start = it.indent ? TEXT_START + INDENT : TEXT_START;
+        if (h.line.getPaddingLeft() != start) {
+            h.line.setPadding(start, 0, h.line.getPaddingRight(), 0);
+        }
 
         boolean on = (i == sel);
         int fg = on ? ACCENT : -1;
@@ -2095,6 +2137,8 @@ public final class IppActivity extends BaseActivity {
             // the innermost thing open: the edit, the section, the group, then the screen
             if (editing) { endEdit(false); return; }
             if (group >= 0 && ((Item) items.get(group)).type == SUB) {
+                // a menu row left with none of its rows on goes off with them
+                if ("main_menu".equals(((Item) items.get(group)).key)) MainMenu.settle(this);
                 show(groupOf[group], group);
                 return;
             }

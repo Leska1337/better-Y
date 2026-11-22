@@ -235,9 +235,59 @@
 * 深色
 * 主题颜色
 
-[album_artists] 显示专辑艺术家
-在音乐菜单中添加"专辑艺术家"。
+[main_menu] 主菜单
 
+[mm_now] 正在播放
+
+[mm_music] 音乐
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] 全部歌曲
+
+[mm_playlists] 播放列表
+
+[mm_artists] 艺术家
+
+[mm_albums] 专辑
+
+[mm_genres] 流派
+
+[mm_folders] 文件夹
+
+[mm_search] 搜索
+
+[mm_videos] 视频
+
+[mm_video_all] 全部视频
+
+[mm_video_playlist] 播放列表
+
+[mm_video_folders] 文件夹
+
+[mm_video_search] 搜索
+
+[mm_audiobooks] 有声读物
+
+[mm_book_all] 全部有声读物
+
+[mm_book_artists] 艺术家
+
+[mm_book_albums] 专辑
+
+[mm_book_folders] 文件夹
+
+[mm_bookmarks] 书签
+
+[mm_ebook] 电子书
+
+[mm_photos] 图片
+
+[mm_fm] 收音机
+
+[mm_bluetooth] 蓝牙
+
+[album_artists] 专辑艺术家
 没有“Album Artist”标签的专辑，使用专辑中出现次数最多的“Artist”标签里的第一位艺术家。
 
 [status_bar] 状态栏

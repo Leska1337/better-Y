@@ -235,9 +235,59 @@
 * Тёмный
 * Цвет темы
 
-[album_artists] Показывать исполнителей альбомов
-Добавляет «Исполнители альбомов» в меню «Музыка».
+[main_menu] Главное меню
 
+[mm_now] Сейчас играет
+
+[mm_music] Музыка
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] Все песни
+
+[mm_playlists] Плейлисты
+
+[mm_artists] Исполнители
+
+[mm_albums] Альбомы
+
+[mm_genres] Жанры
+
+[mm_folders] Папки
+
+[mm_search] Поиск
+
+[mm_videos] Видео
+
+[mm_video_all] Все видео
+
+[mm_video_playlist] Плейлист
+
+[mm_video_folders] Папки
+
+[mm_video_search] Поиск
+
+[mm_audiobooks] Аудиокниги
+
+[mm_book_all] Все аудиокниги
+
+[mm_book_artists] Исполнители
+
+[mm_book_albums] Альбомы
+
+[mm_book_folders] Папки
+
+[mm_bookmarks] Закладки
+
+[mm_ebook] Электронные книги
+
+[mm_photos] Фото
+
+[mm_fm] FM-радио
+
+[mm_bluetooth] Bluetooth
+
+[album_artists] Исполнители альбомов
 Альбом без тега Album Artist берёт первого исполнителя из тега Artist, который наиболее часто встречаются на альбоме.
 
 [status_bar] Строка состояния

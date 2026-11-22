@@ -1155,7 +1155,7 @@
     throw v1
 .end method
 
-.method private static mainPreview(Landroid/app/Activity;)V
+.method static mainPreview(Landroid/app/Activity;)V
   .catchall { :L0 .. :L1 } :L2
   .registers 5
   :L0

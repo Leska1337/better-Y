@@ -235,9 +235,59 @@
 * כהה
 * צבע ערכת הנושא
 
-[album_artists] הצג אומני אלבום
-מוסיף "אומני אלבום" לתפריט המוזיקה.
+[main_menu] תפריט ראשי
 
+[mm_now] מושמע כעת
+
+[mm_music] מוזיקה
+
+[mm_coverflow] Cover Flow
+
+[mm_songs] כל השירים
+
+[mm_playlists] פלייליסטים
+
+[mm_artists] אומנים
+
+[mm_albums] אלבומים
+
+[mm_genres] ז'אנרים
+
+[mm_folders] תיקיות
+
+[mm_search] חיפוש
+
+[mm_videos] סרטונים
+
+[mm_video_all] כל הסרטונים
+
+[mm_video_playlist] פלייליסטים
+
+[mm_video_folders] תיקיות
+
+[mm_video_search] חיפוש
+
+[mm_audiobooks] ספרי שמע
+
+[mm_book_all] כל ספרי השמע
+
+[mm_book_artists] אומנים
+
+[mm_book_albums] אלבומים
+
+[mm_book_folders] תיקיות
+
+[mm_bookmarks] סימניות
+
+[mm_ebook] ספרים אלקטרוניים
+
+[mm_photos] תמונות
+
+[mm_fm] רדיו FM
+
+[mm_bluetooth] Bluetooth
+
+[album_artists] אומני אלבום
 אלבום ללא תג "Album Artist" מקבל את האמן הראשון מתג "Artist" שמופיע הכי הרבה פעמים באלבום.
 
 [status_bar] שורת המצב

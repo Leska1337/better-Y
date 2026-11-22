@@ -70,33 +70,42 @@
     const-string v0, "fixed_menu_pad"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
   .line 46
-    const-string v0, "album_artists"
-    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 47
     const-string v0, "loop_scroll"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 48
+  .line 47
     const-string v0, "animations"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 49
+  .line 48
     const-string v0, "menu_style"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 50
+  .line 49
     const-string v0, "preview_text"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 51
+  .line 50
     const-string v0, "bar_text"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 52
+  .line 51
     const-string v0, "bar_icons"
     const/16 v3, 15
     invoke-static { v0, v3 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 53
+  .line 52
     const-string v0, "bar_header"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
-  .line 54
+  .line 53
     const-string v0, "bar_style"
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
+  .line 54
+    const/4 v0, 0
+  :L0
+    sget-object v3, Lcom/innioasis/ipp/MainMenu;->DEFAULT_ON:[Ljava/lang/String;
+    array-length v3, v3
+    if-ge v0, v3, :L1
+    sget-object v3, Lcom/innioasis/ipp/MainMenu;->DEFAULT_ON:[Ljava/lang/String;
+    aget-object v3, v3, v0
+    invoke-static { v3, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V
+    add-int/lit8 v0, v0, 1
+    goto :L0
+  :L1
   .line 56
     const-string v0, "meta_title"
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Prefs;->def(Ljava/lang/String;I)V

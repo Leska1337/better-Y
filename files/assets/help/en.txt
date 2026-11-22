@@ -218,6 +218,61 @@ Centered moves the icons to the left edge and the section title to the middle wh
 * Battery percentage
 Chooses which icons the status bar shows.
 
+[main_menu] Main menu
+
+[mm_now in main_menu] Now Playing
+
+[mm_music in main_menu] Music
+
+[mm_coverflow in main_menu if mm_music] Cover Flow
+
+[mm_songs in main_menu if mm_music] All songs
+
+[mm_playlists in main_menu if mm_music] Playlists
+
+[mm_artists in main_menu if mm_music] Artists
+
+[album_artists in main_menu if mm_music] Album Artists
+An album without an “Album Artist” tag uses the first artist from the “Artist” tag that appears most frequently on the album.
+
+[mm_albums in main_menu if mm_music] Albums
+
+[mm_genres in main_menu if mm_music] Genres
+
+[mm_folders in main_menu if mm_music] Folders
+
+[mm_search in main_menu if mm_music] Search
+
+[mm_videos in main_menu] Videos
+
+[mm_video_all in main_menu if mm_videos] All videos
+
+[mm_video_playlist in main_menu if mm_videos] Playlists
+
+[mm_video_folders in main_menu if mm_videos] Folders
+
+[mm_video_search in main_menu if mm_videos] Search
+
+[mm_audiobooks in main_menu] Audiobooks
+
+[mm_book_all in main_menu if mm_audiobooks] All audiobooks
+
+[mm_book_artists in main_menu if mm_audiobooks] Artists
+
+[mm_book_albums in main_menu if mm_audiobooks] Albums
+
+[mm_book_folders in main_menu if mm_audiobooks] Folders
+
+[mm_bookmarks in main_menu if mm_audiobooks] Bookmarks
+
+[mm_ebook in main_menu] E-books
+
+[mm_photos in main_menu] Photos
+
+[mm_fm in main_menu] FM Radio
+
+[mm_bluetooth in main_menu] Bluetooth
+
 [alpha_scroll] Alphabetical fast scroll
 Starts after a number of wheel clicks and jumps through a list by first letter.
 
@@ -259,11 +314,6 @@ In the tile grids — Playlists, Themes and Photos — the rows glide into view 
 * Light
 * Dark
 * Theme color
-
-[album_artists] Show Album Artists
-Adds "Album Artists" to the Music menu.
-
-An album without an “Album Artist” tag uses the first artist from the “Artist” tag that appears most frequently on the album.
 
 [[metadata]] Metadata
 
