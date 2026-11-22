@@ -112,8 +112,8 @@ public final class MenuStyle {
                 side(parent(a.findViewById(R.id.show_time)), e);
                 dateIcon(a.findViewById(R.id.imageView));
             }
-            TopBar.indent(a, m && (a instanceof MainActivity || a instanceof SettingActivity || sub(a))
-                    ? px(a, MAIN_TEXT) : 0);
+            TopBar.indent(a, m && (a instanceof MainActivity || a instanceof SettingActivity || sub(a)
+                    || !rows(a.findViewById(R.id.layoutContent))) ? px(a, MAIN_TEXT) : 0);
             section(a);
             backdrop(a, s);
             Preview.apply(a);
@@ -374,6 +374,31 @@ public final class MenuStyle {
         if (!(v instanceof ImageView) || v.getTag(R.id.imageView) != null) return;
         v.setTag(R.id.imageView, Boolean.TRUE);
         ThemeManager.INSTANCE.commonSetIcon((ImageView) v, R.drawable.icon_setting_day);
+    }
+
+    /**
+     * Whether the screen shows rows of a list, whose text stands under the title as laid out. A
+     * screen without (the player, Cover Flow, a tile grid) takes the title onto the menus' line.
+     */
+    private static boolean rows(View v) {
+        if (v == null || v.getVisibility() != View.VISIBLE) return false;
+        if (v instanceof android.widget.AbsListView) return !(v instanceof android.widget.GridView);
+        if (v instanceof RecyclerView) {
+            RecyclerView.LayoutManager lm = ((RecyclerView) v).getLayoutManager();
+            // the SongRows lists get theirs with the adapter, after onResume
+            if (lm == null) return true;
+            return lm instanceof androidx.recyclerview.widget.LinearLayoutManager
+                    && !(lm instanceof androidx.recyclerview.widget.GridLayoutManager)
+                    && ((androidx.recyclerview.widget.LinearLayoutManager) lm).getOrientation()
+                    == androidx.recyclerview.widget.LinearLayoutManager.VERTICAL;
+        }
+        if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) {
+                if (rows(g.getChildAt(i))) return true;
+            }
+        }
+        return false;
     }
 
     /** The screens inside Settings that draw a preview beside their list. */

@@ -196,6 +196,28 @@ Long song titles always scroll, regardless of the setting.
 
 [menu_look] Style
 
+[status_bar] Status bar
+
+[bar_text in status_bar] Status bar text color
+* Light
+* Dark
+* Theme color
+Sets the color of the menu header and the battery percentage.
+
+[bar_style in status_bar] Style
+* Default
+* Centered
+Centered moves the icons to the left edge and the section title to the middle while the battery stays on the right.
+
+[bar_icons in status_bar] Icons visibility
+* Menu header
+* Playback
+* Headphones
+* Bluetooth
+* Battery
+* Battery percentage
+Chooses which icons the status bar shows.
+
 [alpha_scroll] Alphabetical fast scroll
 Starts after a number of wheel clicks and jumps through a list by first letter.
 
@@ -242,28 +264,6 @@ In the tile grids — Playlists, Themes and Photos — the rows glide into view 
 Adds "Album Artists" to the Music menu.
 
 An album without an “Album Artist” tag uses the first artist from the “Artist” tag that appears most frequently on the album.
-
-[status_bar] Status bar
-
-[bar_text in status_bar] Status bar text color
-* Light
-* Dark
-* Theme color
-Sets the color of the menu header and the battery percentage.
-
-[bar_style in status_bar] Style
-* Default
-* Centered
-Centered moves the icons to the left edge and the section title to the middle while the battery stays on the right.
-
-[bar_icons in status_bar] Icons visibility
-* Menu header
-* Playback
-* Headphones
-* Bluetooth
-* Battery
-* Battery percentage
-Chooses which icons the status bar shows.
 
 [[metadata]] Metadata
 
@@ -328,30 +328,6 @@ When an album is opened through the "{app:artists}" section, only the songs the 
 
 [[system]] System
 
-[delete_folder] After deleting a song also delete the folder it was stored in
-When songs or albums are deleted, the folders that held them are deleted as well, if they are left empty.
----
-A folder holding nothing but external covers (cover.* and folder.*), lyrics (*.lrc) and empty folders counts as empty and goes too.
-
-This does not apply to the "{app:folders}" section, where deleting works as usual.
-
-[keep_awake] Disable auto screen lock while reading lyrics and books
-Keeps the screen from locking itself while the lyrics screen or a book is open.
-
-[likes] Favorites system
-Adds the "{app:favorites}" playlist and the "❤" button in the player: pressing it puts the song into that playlist.
----
-You can add songs to it just like you would to a regular playlist, and likes are automatically added and removed.
-
-When you turn off this setting, the playlist and the likes you've given aren't deleted - they're simply hidden.
-
-[kb_lang2] Second keyboard language
-* Off
-* Russian
-Adds a second layout to the on-screen keyboard.
-
-Hold top button to switch.
-
 [screensaver] Screensaver
 
 [ss_on in screensaver] Enable screensaver
@@ -415,6 +391,30 @@ To switch between categories, use the left and right buttons.
 To select a value, use the scroll wheel.
 
 To save your changes, exit the menu by pressing the top button.
+
+[delete_folder] After deleting a song also delete the folder it was stored in
+When songs or albums are deleted, the folders that held them are deleted as well, if they are left empty.
+---
+A folder holding nothing but external covers (cover.* and folder.*), lyrics (*.lrc) and empty folders counts as empty and goes too.
+
+This does not apply to the "{app:folders}" section, where deleting works as usual.
+
+[keep_awake] Disable auto screen lock while reading lyrics and books
+Keeps the screen from locking itself while the lyrics screen or a book is open.
+
+[likes] Favorites system
+Adds the "{app:favorites}" playlist and the "❤" button in the player: pressing it puts the song into that playlist.
+---
+You can add songs to it just like you would to a regular playlist, and likes are automatically added and removed.
+
+When you turn off this setting, the playlist and the likes you've given aren't deleted - they're simply hidden.
+
+[kb_lang2] Second keyboard language
+* Off
+* Russian
+Adds a second layout to the on-screen keyboard.
+
+Hold top button to switch.
 
 [[coverflow]] Cover Flow
 
