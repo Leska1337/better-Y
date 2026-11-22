@@ -36,12 +36,8 @@ public final class FlowView extends View {
     // and seven turn the covers further and pack them closer. Seven's step is worked out by fit.
     private static final float[] ANGLES = { 70f, 75f, 80f };
     private static final float[] STEPS = { 40f, 64f, 40f };
-    /** Seven: the first side cover tucks this far behind the centre one, as on the iPod (see fit). */
-    private static final float TUCK = 8f;
     /** How far the side covers are pushed back past their own turn, in cover sizes: 0, the outer edge is the centre cover's height. */
     private static final float DEPTH = 0f;
-    /** Each side cover further out is turned this much less than the one before it, in degrees. */
-    private static final float TURN = 6f;
     /** Covers drawn on each side; the outermost pair fades out. */
     private static final int SIDE = 6;
     /** How far past the screen's edge the outermost cover shown reaches: the filtered edge is soft. */
@@ -152,21 +148,21 @@ public final class FlowView extends View {
      * Moves the side covers out until the outer edge of the last one shown at rest is past the
      * screen's: the covers behind it are then hidden by it, not faded out. The picture's edge, not
      * the slide's transparent frame round it, or a sliver of the next cover shows beside it. With
-     * seven the inner edge of the first is set too, TUCK behind the centre cover, and the step
-     * between the side covers follows from the two.
+     * seven every side cover shows the same strip: the first from the centre cover's edge to its
+     * outer edge, as wide as the step between the outer edges of the rest; its inner edge lies
+     * behind the centre cover, as on the iPod.
      */
     private void fit() {
         if (w <= 0 || h <= 0) return;
         float u = Flow.S / 2f;
-        float cos = (float) Math.cos(angle), sin = (float) Math.sin(angle);
-        float last = turnAt(side);   // its outer edge stands at depth DEPTH whatever its turn
-        float lc = (float) Math.cos(last);
+        float cos = (float) Math.cos(angle);
         // corner() solved for the centre x that projects the last one's edge u to w + EDGE_OUT
-        float cx = (w / 2f + EDGE_OUT) * (h + Flow.S * DEPTH) / h - u * lc;
+        float cx = (w / 2f + EDGE_OUT) * (h + Flow.S * DEPTH) / h - u * cos;
         if (side >= 3) {
-            // ...and for the centre x that projects the edge -u to the centre cover's edge less TUCK
-            offX = (u - TUCK) * (h + offY + u * sin) / h + u * cos;
-            spacing = (cx - offX) / (side - 1);
+            // the first one's outer edge one step past the centre cover's edge, the last one's at cx
+            float scale = h / (h + Flow.S * DEPTH);
+            spacing = (cx - (u / scale - u * cos)) / side;
+            offX = u / scale - u * cos + spacing;
         } else {
             offX = cx - spacing * (side - 1);
         }
@@ -358,12 +354,6 @@ public final class FlowView extends View {
     private float sAngle, sCx, sCy;
     private int sAlpha;
 
-    /** The side covers' turn at {@code ad} slides out: the nearest the most, TURN less each step, held past the last shown. */
-    private float turnAt(float ad) {
-        float k = Math.min(ad, (float) Math.max(side, 1)) - 1f;
-        return angle - TURN * (float) Math.PI / 180f * Math.max(0f, k);
-    }
-
     /** PictureFlow's slide state, continuous in d. */
     private void place(float d) {
         float ad = Math.abs(d);
@@ -373,10 +363,9 @@ public final class FlowView extends View {
             sCx = sg * offX * ad;
             sCy = offY * ad;
         } else {
-            float a = turnAt(ad);
-            sAngle = -sg * a;
+            sAngle = -sg * angle;
             sCx = sg * (offX + spacing * (ad - 1f));
-            sCy = Flow.S / 2f * (float) Math.sin(a) + Flow.S * DEPTH;
+            sCy = offY;
         }
         float b = (SIDE - ad) / 2f;
         sAlpha = b >= 1f ? 255 : b <= 0f ? 0 : (int) (b * 255);
