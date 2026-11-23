@@ -55,6 +55,7 @@ public final class Force {
         try {
             if (e == null) return false;
             watch();
+            CenterHold.key(e);
             // After firing, nothing gets through: the top button's short press arrives on its UP
             // and would change the screen under the shutdown window.
             if (fired) return true;

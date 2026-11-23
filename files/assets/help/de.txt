@@ -392,6 +392,13 @@ Titel lassen sich dort wie in jeder anderen Wiedergabeliste hinzufügen, die Lik
 
 Wird die Einstellung ausgeschaltet, werden die Wiedergabeliste und die vergebenen Likes nicht gelöscht, sondern nur ausgeblendet.
 
+[center_hold] Zum Ausschalten Mitteltaste gedrückt halten
+Wird die Mitteltaste 5 Sekunden lang gedrückt gehalten, schaltet sich das Gerät ohne Rückfrage aus.
+---
+2 Sekunden vor dem Ausschalten erscheint ein Hinweis. Wird die Taste losgelassen, solange der Hinweis sichtbar ist, wird das Ausschalten abgebrochen.
+
+Um den Bildschirm zu sperren, die Mitteltaste drücken und loslassen, bevor der Hinweis erscheint.
+
 [kb_lang2] Zweite Tastatursprache
 * Aus
 * Russisch

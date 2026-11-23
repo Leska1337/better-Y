@@ -25,6 +25,7 @@ import com.innioasis.ipp.Artists;
 import com.innioasis.ipp.Bar;
 import com.innioasis.ipp.Backup;
 import com.innioasis.ipp.BigCover;
+import com.innioasis.ipp.CenterHold;
 import com.innioasis.ipp.Cover;
 import com.innioasis.ipp.CoverCache;
 import com.innioasis.ipp.Diag;
@@ -275,6 +276,7 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "delete_folder", 0, null, null));
         l.add(new Item(TOGGLE, "keep_awake", 0, null, null));
         l.add(new Item(TOGGLE, "likes", 0, null, null));
+        l.add(new Item(TOGGLE, CenterHold.KEY, 0, null, null));
         // likes_names is deliberately not built: it does nothing yet
         l.add(new Item(CHOICE, Keys.KEY_SECOND, 2, null, null));
         l.add(new Item(SUB, "screensaver", 0, null, null));

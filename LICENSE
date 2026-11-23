@@ -49,22 +49,10 @@ say which device this is for.
 PICTUREFLOW
 -----------
 
-Cover Flow (com/innioasis/ipp/Flow.java, FlowView.java) follows PictureFlow by Ariya Hidayat,
-https://github.com/ariya/pictureflow, released under the MIT License:
+The layout of the Cover Flow row follows PictureFlow by Ariya Hidayat,
+https://github.com/ariya/pictureflow. Only the layout is taken, not the code.
 
   Copyright (C) 2007, 2008, 2009 Ariya Hidayat (ariya@kde.org)
-
-What is taken from it is the layout of the row, not its code: the side covers turned by 70
-degrees and pushed back, the 40 px step between them (with three albums on screen; the five- and
-seven-album rows are ours, turned further and packed closer, and so are how far the side covers
-are pushed back, moving them out until the last one shown reaches the screen's edge and, with
-seven, spacing them evenly from the centre cover's edge with the first tucked behind it), the
-outermost
-pair fading out, the reflection starting at half strength and fading to nothing, and the grey card
-drawn for an album without a cover. PictureFlow's own software renderer is not used; the covers
-are drawn by the GPU. The Rockbox plugin of the same name (GPL) was read for reference only and
-nothing of it is included. The MIT permission notice below applies to that part as it is given
-there.
 
 
 MIT License

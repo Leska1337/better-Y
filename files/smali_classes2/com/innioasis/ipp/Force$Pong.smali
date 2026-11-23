@@ -13,24 +13,24 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 320
+  .line 321
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Force$1;)V
   .registers 2
-  .line 320
+  .line 321
     invoke-direct { p0 }, Lcom/innioasis/ipp/Force$Pong;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 3
-  .line 322
+  .line 323
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Force;->access$1202(J)J
-  .line 323
+  .line 324
     return-void
 .end method

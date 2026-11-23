@@ -64,6 +64,7 @@ public final class Prefs {
         def("delete_folder", 0);             // stock leaves the folder; taking it is opt-in
         def("keep_awake", 1);
         def("likes", 1);
+        def(CenterHold.KEY, 0);
         def(Saver.KEY_ON, 0);
         def(Saver.KEY_STYLE, Saver.STYLE_DEFAULT);
         def(Saver.KEY_BRIGHT, Saver.BRIGHT_DEFAULT);

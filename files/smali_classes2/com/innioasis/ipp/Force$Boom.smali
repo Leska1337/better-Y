@@ -13,24 +13,24 @@
 
 .method private constructor <init>()V
   .registers 1
-  .line 115
+  .line 116
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method synthetic constructor <init>(Lcom/innioasis/ipp/Force$1;)V
   .registers 2
-  .line 115
+  .line 116
     invoke-direct { p0 }, Lcom/innioasis/ipp/Force$Boom;-><init>()V
     return-void
 .end method
 
 .method public run()V
   .registers 1
-  .line 117
-    invoke-static { }, Lcom/innioasis/ipp/Force;->access$100()V
   .line 118
-    invoke-static { }, Lcom/innioasis/ipp/Force;->access$200()V
+    invoke-static { }, Lcom/innioasis/ipp/Force;->access$100()V
   .line 119
+    invoke-static { }, Lcom/innioasis/ipp/Force;->access$200()V
+  .line 120
     return-void
 .end method

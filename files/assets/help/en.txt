@@ -459,6 +459,13 @@ You can add songs to it just like you would to a regular playlist, and likes are
 
 When you turn off this setting, the playlist and the likes you've given aren't deleted - they're simply hidden.
 
+[center_hold] Hold center button to shut down
+Holding the center button for 5 seconds shuts the device down without asking for confirmation.
+---
+A notice appears 2 seconds before the shutdown. Releasing the button while the notice is visible cancels the shutdown.
+
+To lock the screen, press and release the center button before the notice appears.
+
 [kb_lang2] Second keyboard language
 * Off
 * Russian

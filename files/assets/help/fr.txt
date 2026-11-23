@@ -392,6 +392,13 @@ Les morceaux s'y ajoutent comme dans n'importe quelle playlist, et les favoris s
 
 Lorsque ce réglage est désactivé, la playlist et les favoris donnés ne sont pas supprimés : ils sont simplement masqués.
 
+[center_hold] Maintenir le bouton central pour éteindre
+Maintenir le bouton central enfoncé pendant 5 secondes éteint l'appareil sans demander de confirmation.
+---
+Un avertissement apparaît 2 secondes avant l'extinction. Relâcher le bouton tant que l'avertissement est visible annule l'extinction.
+
+Pour verrouiller l'écran, appuyez sur le bouton central et relâchez-le avant que l'avertissement n'apparaisse.
+
 [kb_lang2] Deuxième langue du clavier
 * Désactivé
 * Russe

@@ -392,6 +392,13 @@ Se pueden añadir canciones como en cualquier otra lista de reproducción, y los
 
 Al desactivar esta opción, la lista y los Me gusta que haya dado no se eliminan: simplemente se ocultan.
 
+[center_hold] Mantener el botón central para apagar
+Mantener pulsado el botón central durante 5 segundos apaga el dispositivo sin pedir confirmación.
+---
+Aparece un aviso 2 segundos antes del apagado. Soltar el botón mientras el aviso está visible cancela el apagado.
+
+Para bloquear la pantalla, pulse y suelte el botón central antes de que aparezca el aviso.
+
 [kb_lang2] Segundo idioma del teclado
 * Desactivado
 * Ruso
