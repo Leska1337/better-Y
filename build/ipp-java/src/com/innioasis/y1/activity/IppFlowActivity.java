@@ -131,6 +131,7 @@ public final class IppFlowActivity extends BaseActivity {
         Rows.watchFlat(new Highlight(panel));
         Lists.watch(playChange);
         new Thread(new Load(this), "ipp-flow-list").start();
+        getWindow().getDecorView().getViewTreeObserver().addOnPreDrawListener(new Gate(this));
     }
 
     // The open list's cursor follows the playing track by the lists' rule (Follow): the user's
@@ -194,6 +195,7 @@ public final class IppFlowActivity extends BaseActivity {
         }
         keepKey = null;
         loader = new Flow.Loader(l, ui, new Repaint(this));
+        loader.aim(start);
         Thread t = new Thread(loader, "ipp-flow-covers");
         t.setDaemon(true);
         t.start();
@@ -1630,6 +1632,29 @@ public final class IppFlowActivity extends BaseActivity {
         public void run() {
             a.loaded(l);
             Diag.slow("flow list shown", t0);
+        }
+    }
+
+    /**
+     * The screen's first frame waits for the centre cover and three either side, so that the row
+     * opens whole instead of covers popping up one by one; never longer than {@code GATE_MS}.
+     */
+    static final class Gate implements android.view.ViewTreeObserver.OnPreDrawListener {
+        private static final long GATE_MS = 600;
+        private final IppFlowActivity a;
+        private final long until = SystemClock.uptimeMillis() + GATE_MS;
+
+        Gate(IppFlowActivity a) { this.a = a; }
+
+        public boolean onPreDraw() {
+            Flow.Loader l = a.loader;
+            boolean empty = a.items != null && a.items.isEmpty();
+            if (!empty && !a.isFinishing() && SystemClock.uptimeMillis() < until
+                    && (l == null || !l.firstReady())) {
+                return false;
+            }
+            a.getWindow().getDecorView().getViewTreeObserver().removeOnPreDrawListener(this);
+            return true;
         }
     }
 

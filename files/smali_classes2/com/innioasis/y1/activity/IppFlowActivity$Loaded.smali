@@ -19,7 +19,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/util/List;J)V
   .registers 5
-  .line 1628
+  .line 1630
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;->l:Ljava/util/List;
@@ -29,14 +29,14 @@
 
 .method public run()V
   .registers 4
-  .line 1631
+  .line 1633
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;->l:Ljava/util/List;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->loaded(Ljava/util/List;)V
-  .line 1632
+  .line 1634
     const-string v0, "flow list shown"
     iget-wide v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Loaded;->t0:J
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Diag;->slow(Ljava/lang/String;J)V
-  .line 1633
+  .line 1635
     return-void
 .end method

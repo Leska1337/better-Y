@@ -622,7 +622,6 @@ public final class Flow {
         }
 
         public void run() {
-            android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 synchronized (SPARE) {
                     while (!SPARE.isEmpty() && pool.size() < SLIDES) {
@@ -630,7 +629,13 @@ public final class Flow {
                     }
                 }
                 if (pool.size() < SLIDES) room();
-                while (pool.size() < SLIDES && !stop) pool.add(newSlide());
+                // what the screen opens on first, at the screen's own priority; the rest of the
+                // pool after it, still before the row can move
+                int t = target;
+                while (!stop && next(t, FIRST)) { }
+                first = true;
+                android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+                while (pool.size() + built() < SLIDES && !stop) pool.add(newSlide());
                 loop();
             } finally {
                 if (readArtist) AlbumArtist.flush();
@@ -645,6 +650,23 @@ public final class Flow {
          * straight back. 34 slides, about 6.5 MB, held for the life of the process.
          */
         private static final ArrayList SPARE = new ArrayList();
+
+        /** Slides either side of the target the screen waits for before it shows. */
+        public static final int FIRST = 3;
+
+        private volatile boolean first;
+
+        /** The slides the screen opens on are built. */
+        public boolean firstReady() {
+            return first;
+        }
+
+        private int built() {
+            int n = 0;
+            Object[] vs = slides.values().toArray();
+            for (int i = 0; i < vs.length; i++) if (vs[i] != blank) n++;
+            return n;
+        }
 
         private void giveBack() {
             synchronized (SPARE) {
@@ -694,32 +716,37 @@ public final class Flow {
                     continue;
                 }
                 int t = target;
-                // every round, not only when idle: a long fast run would otherwise keep every slide passed
-                evict(t);
-                int want = -1;
-                for (int d = 0; d <= AHEAD && want < 0; d++) {
-                    if (has(t + d)) want = t + d;
-                    else if (has(t - d)) want = t - d;
-                }
-                if (want < 0) {
+                if (!next(t, AHEAD)) {
                     synchronized (wake) {
                         if (target == t && renewAt < 0 && !stop) {
                             try { wake.wait(); } catch (InterruptedException e) { return; }
                         }
                     }
-                    continue;
                 }
-                Item it = (Item) items.get(want);
-                if (AlbumArtist.needsRead(it.key) || it.year == null) {
-                    AlbumArtist.read(it.key, it.rep.getPath());
-                    it.artist = artistOf(it.key, it.rep);
-                    it.year = yearOf(it.key, it.rep);
-                    readArtist = true;
-                }
-                AlbumTags.shown(it.key);
-                born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
-                build(want);
             }
+        }
+
+        /** The nearest slide within {@code reach} of {@code t} not yet built, built; false when there is none. */
+        private boolean next(int t, int reach) {
+            // every round, not only when idle: a long fast run would otherwise keep every slide passed
+            evict(t);
+            int want = -1;
+            for (int d = 0; d <= reach && want < 0; d++) {
+                if (has(t + d)) want = t + d;
+                else if (has(t - d)) want = t - d;
+            }
+            if (want < 0) return false;
+            Item it = (Item) items.get(want);
+            if (AlbumArtist.needsRead(it.key) || it.year == null) {
+                AlbumArtist.read(it.key, it.rep.getPath());
+                it.artist = artistOf(it.key, it.rep);
+                it.year = yearOf(it.key, it.rep);
+                readArtist = true;
+            }
+            AlbumTags.shown(it.key);
+            born.put(Integer.valueOf(want), Long.valueOf(SystemClock.uptimeMillis()));
+            build(want);
+            return true;
         }
 
         private void build(int at) {

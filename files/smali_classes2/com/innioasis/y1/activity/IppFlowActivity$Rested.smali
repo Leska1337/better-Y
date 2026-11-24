@@ -15,7 +15,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 2
-  .line 1676
+  .line 1701
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
@@ -23,30 +23,30 @@
 
 .method public run()V
   .registers 3
-  .line 1679
+  .line 1704
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$100(Lcom/innioasis/y1/activity/IppFlowActivity;)I
+    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$300(Lcom/innioasis/y1/activity/IppFlowActivity;)I
     move-result v0
     if-eqz v0, :L0
     return-void
   :L0
-  .line 1680
+  .line 1705
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-boolean v0, v0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipPending:Z
     if-eqz v0, :L1
-  .line 1681
+  .line 1706
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     const/4 v1, 0
     iput-boolean v1, v0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipPending:Z
-  .line 1682
+  .line 1707
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)V
+    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$400(Lcom/innioasis/y1/activity/IppFlowActivity;)V
     goto :L2
   :L1
-  .line 1684
+  .line 1709
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Rested;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
-    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$300(Lcom/innioasis/y1/activity/IppFlowActivity;)V
+    invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$500(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   :L2
-  .line 1686
+  .line 1711
     return-void
 .end method
