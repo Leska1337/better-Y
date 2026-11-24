@@ -374,10 +374,6 @@ public final class Loading {
         for (int i = 0; i < g.getChildCount(); i++) {
             View c = g.getChildAt(i);
             c.setVisibility(on ? View.VISIBLE : View.INVISIBLE);
-            if (on) {
-                c.setAlpha(0f);
-                c.animate().alpha(1f).setDuration(150);
-            }
         }
     }
 
