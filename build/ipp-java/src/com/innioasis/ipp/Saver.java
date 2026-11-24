@@ -509,7 +509,35 @@ public final class Saver {
      */
     public static Bitmap picture(Context c, String path, int w, int h) {
         Bitmap b = decode(c, path, w, h, false);
-        return b == null ? null : crop(b, w, h);
+        return b == null ? null : crop(b, w, h, Bitmap.Config.RGB_565, 0);
+    }
+
+    /** Size a wallpaper is stored at. */
+    static final int WALL_W = 480, WALL_H = 360;
+
+    /**
+     * A picture chosen as wallpaper, in place of stock's copy of it: cropped to the centre as the
+     * screen shows it, on white, and written as a JPEG of {@link #WALL_W}x{@link #WALL_H}. Read by halves:
+     * decoded whole, a camera photo takes tens of megabytes.
+     */
+    public static void wallpaperFile(File f) {
+        try {
+            if (f == null) return;
+            Context c = com.innioasis.y1.Y1Application.Companion.getAppContext();
+            Bitmap b = decode(c, f.getAbsolutePath(), WALL_W, WALL_H, false);
+            if (b == null) return;
+            Bitmap out = crop(b, WALL_W, WALL_H, Bitmap.Config.ARGB_8888, 0xFFFFFFFF);
+            java.io.FileOutputStream os = new java.io.FileOutputStream(f);
+            try {
+                out.compress(Bitmap.CompressFormat.JPEG, 95, os);
+                os.flush();
+            } finally {
+                os.close();
+                out.recycle();
+            }
+        } catch (Throwable t) {
+            Diag.note("Saver.wallpaperFile: " + t);
+        }
     }
 
     /**
@@ -571,14 +599,15 @@ public final class Saver {
         return fit ? bw / 2 >= w || bh / 2 >= h : bw / 2 >= w && bh / 2 >= h;
     }
 
-    /** {@code b} as CENTER_CROP would show it in {@code w}x{@code h}, filtered, into RGB_565. */
-    private static Bitmap crop(Bitmap b, int w, int h) {
+    /** {@code b} as CENTER_CROP would show it in {@code w}x{@code h}, filtered, over {@code bg}. */
+    private static Bitmap crop(Bitmap b, int w, int h, Bitmap.Config cfg, int bg) {
         int bw = b.getWidth(), bh = b.getHeight();
         int cw = bw, ch = bh;
         if ((long) bw * h > (long) bh * w) cw = (int) ((long) bh * w / h);
         else ch = (int) ((long) bw * h / w);
         int x = (bw - cw) / 2, y = (bh - ch) / 2;
-        Bitmap out = Bitmap.createBitmap(w, h, Bitmap.Config.RGB_565);
+        Bitmap out = Bitmap.createBitmap(w, h, cfg);
+        if (bg != 0) out.eraseColor(bg);
         draw(b, out, x, y, cw, ch);
         return out;
     }

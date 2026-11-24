@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3cc2e301 100644
+index 01b1f730..5812617c 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..3cc2e301 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100570
++  versionCode: 10100571
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20227,7 +20227,7 @@ index 803c1e7a..c9def65c 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b3c5eef7 100644
+index 71fe29d0..f4e2baf0 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21176,7 +21176,7 @@ index 71fe29d0..b3c5eef7 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev570</string>
++    <string name="ipp_version">v1.1.0-dev571</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -75500,10 +75500,114 @@ index 9a8ff3b5..90a1eb9b 100644
      const-wide/16 v12, 0x0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/WallpaperUtils.smali b/build/src/smali_classes2/com/innioasis/y1/utils/WallpaperUtils.smali
-index beb88ad2..d2e05a12 100644
+index beb88ad2..4e2588d6 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/WallpaperUtils.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/WallpaperUtils.smali
-@@ -1269,6 +1269,13 @@
+@@ -433,99 +433,12 @@
+ .end method
+ 
+ .method private final backgroundWhite(Ljava/io/File;)V
+-    .locals 5
+-
+-    .line 499
+-    :try_start_0
+-    invoke-virtual {p1}, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
+-
+-    move-result-object v0
+-
+-    invoke-static {v0}, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;)Landroid/graphics/Bitmap;
+-
+-    move-result-object v0
+-
+-    if-nez v0, :cond_0
+-
+-    return-void
+-
+-    .line 503
+-    :cond_0
+-    invoke-virtual {v0}, Landroid/graphics/Bitmap;->getWidth()I
+-
+-    move-result v1
+-
+-    .line 504
+-    invoke-virtual {v0}, Landroid/graphics/Bitmap;->getHeight()I
+-
+-    move-result v2
+-
+-    .line 505
+-    sget-object v3, Landroid/graphics/Bitmap$Config;->ARGB_8888:Landroid/graphics/Bitmap$Config;
+-
+-    .line 502
+-    invoke-static {v1, v2, v3}, Landroid/graphics/Bitmap;->createBitmap(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;
+-
+-    move-result-object v1
+-
+-    .line 507
+-    new-instance v2, Landroid/graphics/Canvas;
+-
+-    invoke-direct {v2, v1}, Landroid/graphics/Canvas;-><init>(Landroid/graphics/Bitmap;)V
+-
+-    const/4 v3, -0x1
+-
+-    .line 508
+-    invoke-virtual {v2, v3}, Landroid/graphics/Canvas;->drawColor(I)V
+-
+-    .line 509
+-    new-instance v3, Landroid/graphics/Paint;
+-
+-    invoke-direct {v3}, Landroid/graphics/Paint;-><init>()V
+-
+-    const/4 v4, 0x1
+-
+-    .line 510
+-    invoke-virtual {v3, v4}, Landroid/graphics/Paint;->setFilterBitmap(Z)V
+-
+-    const/4 v4, 0x0
+-
+-    .line 511
+-    invoke-virtual {v2, v0, v4, v4, v3}, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;FFLandroid/graphics/Paint;)V
+-
+-    .line 512
+-    new-instance v0, Ljava/io/FileOutputStream;
+-
+-    invoke-direct {v0, p1}, Ljava/io/FileOutputStream;-><init>(Ljava/io/File;)V
+-
+-    .line 513
+-    sget-object p1, Landroid/graphics/Bitmap$CompressFormat;->PNG:Landroid/graphics/Bitmap$CompressFormat;
+-
+-    const/16 v2, 0x64
+-
+-    move-object v3, v0
+-
+-    check-cast v3, Ljava/io/OutputStream;
+-
+-    invoke-virtual {v1, p1, v2, v3}, Landroid/graphics/Bitmap;->compress(Landroid/graphics/Bitmap$CompressFormat;ILjava/io/OutputStream;)Z
+-
+-    .line 514
+-    invoke-virtual {v0}, Ljava/io/FileOutputStream;->flush()V
+-
+-    .line 515
+-    invoke-virtual {v0}, Ljava/io/FileOutputStream;->close()V
+-    :try_end_0
+-    .catch Ljava/io/IOException; {:try_start_0 .. :try_end_0} :catch_0
+-
+-    goto :goto_0
+-
+-    :catch_0
+-    move-exception p1
++    .locals 0
+ 
+-    .line 517
+-    invoke-virtual {p1}, Ljava/io/IOException;->printStackTrace()V
++    # ipp: the copy cropped to the screen and stored at 480x360 (Saver.wallpaperFile); stock decoded
++    # it whole and wrote it back as a PNG of the original size.
++    invoke-static {p1}, Lcom/innioasis/ipp/Saver;->wallpaperFile(Ljava/io/File;)V
+ 
+-    :goto_0
+     return-void
+ .end method
+ 
+@@ -1269,6 +1182,13 @@
  
      if-eqz v5, :cond_1
  
@@ -75517,7 +75621,7 @@ index beb88ad2..d2e05a12 100644
      .line 418
      sget-object v5, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -1762,6 +1769,13 @@
+@@ -1762,6 +1682,13 @@
  
      if-nez v4, :cond_1
  
