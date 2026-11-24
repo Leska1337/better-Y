@@ -23,6 +23,9 @@ public final class Anim {
      */
     public static final boolean BUILT = false;
 
+    /** The same for the slide between screens. With both false the menu has no animations row at all. */
+    public static final boolean NAV_BUILT = false;
+
     /** The scroll animations. */
     public static boolean on() {
         if (!BUILT) return false;
@@ -32,6 +35,7 @@ public final class Anim {
 
     /** The slide between menu screens. */
     public static boolean nav() {
+        if (!NAV_BUILT) return false;
         Context c = Y1Application.Companion.getAppContext();
         return Prefs.on(c, KEY) && Prefs.on(c, KEY_NAV);
     }

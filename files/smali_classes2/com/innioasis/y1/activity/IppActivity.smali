@@ -1604,26 +1604,12 @@
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 259
-    new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const/4 v9, 1
-    const-string v10, "animations"
-    const/4 v11, 0
-    const/4 v12, 0
-    move-object v8, v1
-    invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
-    invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 260
-    new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const-string v4, "anim_nav"
-    const-string v7, "animations"
-    move-object v2, v1
-    invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
-    invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 262
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 5
     const-string v10, "status_bar"
+    const/4 v11, 0
+    const/4 v12, 0
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
@@ -1632,7 +1618,6 @@
     const/4 v3, 2
     const-string v4, "bar_text"
     const/4 v5, 3
-    const/4 v7, 0
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     const-string v2, "status_bar"
