@@ -553,6 +553,8 @@ public final class IppFlowActivity extends BaseActivity {
         hold(true);
         panel.show(it);
         tracks(it);
+        // the panel's first frame is the flip's edge: allocating there waits out a running collection
+        panel.prepare();
 
         FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) card.getLayoutParams();
         lp.leftMargin = flow.coverLeft() - Flow.PAD;
@@ -874,7 +876,8 @@ public final class IppFlowActivity extends BaseActivity {
     private void tracks(Flow.Item it) {
         ui.removeCallbacks(backDwell);
         if (it == backFor && backReady != null) {
-            ui.post(new TracksDone(this, it, backReady, SystemClock.uptimeMillis()));
+            // in the flip's setup, not in its frames
+            new TracksDone(this, it, backReady, SystemClock.uptimeMillis()).run();
         } else if (backBusy == it) {
             // backDone hands it over
         } else if (backBusy != null) {
@@ -1510,9 +1513,8 @@ public final class IppFlowActivity extends BaseActivity {
             return Math.max(1, (getHeight() - HEAD) / ROW);
         }
 
-        @Override
-        protected void onDraw(Canvas c) {
-            int w = getWidth(), h = getHeight();
+        /** The head's masks for width {@code w}; everything fitted to another width is dropped. */
+        private void fitHead(int w) {
             if (w != fitW) {
                 fitW = w;
                 titleFit = null;
@@ -1530,6 +1532,42 @@ public final class IppFlowActivity extends BaseActivity {
                 artistFit = TextUtils.ellipsize(artist, sub, w - 16, TextUtils.TruncateAt.END).toString();
                 artistMask = mask(artistFit, sub, w - 16, 30, 22);
             }
+        }
+
+        /** Row {@code i}'s cut title and its masks, built on first need. */
+        private void fitRow(int i, int w) {
+            if (nums[i] == null) {
+                if (fitted[i] == null) {
+                    fitted[i] = TextUtils.ellipsize(names[i], sub, w - 16, TextUtils.TruncateAt.END).toString();
+                    nameMask[i] = mask(fitted[i], sub, w - 16, ROW, 19);
+                }
+                return;
+            }
+            if (numMask[i] == null) numMask[i] = mask(nums[i], text, (int) Math.ceil(nameX - numAt[i]), ROW, 19);
+            if (fitted[i] == null) {
+                float room = w - 8 - nameX;
+                fitted[i] = TextUtils.ellipsize(names[i], text, room, TextUtils.TruncateAt.END).toString();
+                nameMask[i] = mask(fitted[i], text, (int) room, ROW, 19);
+            }
+        }
+
+        /** Everything the first frame will draw, built now: that frame is the flip's edge. */
+        void prepare() {
+            int w = getWidth();
+            if (w <= 0) return;
+            fitHead(w);
+            if (names == null) return;
+            int from = Math.max(0, (int) (scrollY / ROW));
+            int to = Math.min(names.length, from + rows() + 1);
+            for (int i = from; i < to; i++) fitRow(i, w);
+            int res = playingPath() == null ? 0 : Rows.stateIcon();
+            if (res != 0) mark(res);
+        }
+
+        @Override
+        protected void onDraw(Canvas c) {
+            int w = getWidth(), h = getHeight();
+            fitHead(w);
             c.drawRect(0, 0, w, h, bg);
             c.drawRect(0, 0, w, 1, line);
             c.drawRect(0, h - 1, w, h, line);
@@ -1564,12 +1602,9 @@ public final class IppFlowActivity extends BaseActivity {
                 // the text takes the cursor's colour as far as the bar covers its row
                 float cover = (Math.min(barTop + ROW, top + ROW) - Math.max(barTop, top)) / ROW;
                 String s = names[i];
+                fitRow(i, w);
                 if (nums[i] == null) {
                     // a disc or side divider: the label in the artist's colour, never under the cursor
-                    if (fitted[i] == null) {
-                        fitted[i] = TextUtils.ellipsize(s, sub, w - 16, TextUtils.TruncateAt.END).toString();
-                        nameMask[i] = mask(fitted[i], sub, w - 16, ROW, 19);
-                    }
                     drawMask(c, nameMask[i], 8, top, sub.getColor());
                     continue;
                 }
@@ -1585,13 +1620,7 @@ public final class IppFlowActivity extends BaseActivity {
                     }
                     c.drawBitmap(m, null, markTo, markPaint);
                 } else {
-                    if (numMask[i] == null) numMask[i] = mask(nums[i], text, (int) Math.ceil(nameX - numAt[i]), ROW, 19);
                     drawMask(c, numMask[i], numAt[i], top, text.getColor());
-                }
-                float room = w - 8 - nameX;
-                if (fitted[i] == null) {
-                    fitted[i] = TextUtils.ellipsize(s, text, room, TextUtils.TruncateAt.END).toString();
-                    nameMask[i] = mask(fitted[i], text, (int) room, ROW, 19);
                 }
                 if (on && ran && fitted[i] != s) {
                     // cut = it does not fit: the title under the cursor runs, as a second copy after a gap
