@@ -88,16 +88,42 @@ public final class Cover {
     private static int reflGen;
     private static Bitmap reflOut;
 
-    /** The composite that left the screen at the last change; the next cover is drawn into it. */
-    private static Bitmap spare;
+    /**
+     * Composites off the screen; the next cover is drawn into one. Two: Cover Flow's way back
+     * flies two at once (the track's cover fading into the album's) and gives both back.
+     */
+    private static Bitmap spare, spare2;
 
     /** A composite someone outside the player keeps: never handed out for redrawing. */
     private static Bitmap held;
+
+    private static void give(Bitmap b) {
+        if (b == null || b == spare || b == spare2) return;
+        if (spare == null) spare = b;
+        else if (spare2 == null) spare2 = b;
+        else spare = b;
+    }
+
+    /** A spare of this size, taken out of the pair; null when neither fits. */
+    private static Bitmap take(int w, int h) {
+        Bitmap b = spare;
+        if (b != null && !b.isRecycled() && b.isMutable() && b.getWidth() == w && b.getHeight() == h) {
+            spare = null;
+            return b;
+        }
+        b = spare2;
+        if (b != null && !b.isRecycled() && b.isMutable() && b.getWidth() == w && b.getHeight() == h) {
+            spare2 = null;
+            return b;
+        }
+        return null;
+    }
 
     /** Keep this {@link #reflect} result out of the buffers that get redrawn. */
     public static synchronized void hold(Bitmap b) {
         held = b;
         if (spare == b) spare = null;
+        if (spare2 == b) spare2 = null;
     }
 
     /** A {@link #reflect} result its keeper no longer needs: the next composite is drawn into it. */
@@ -108,7 +134,7 @@ public final class Cover {
             reflOut = null;
             reflIn = null;
         }
-        spare = b;
+        give(b);
     }
 
     /**
@@ -131,10 +157,8 @@ public final class Cover {
 
             // Redrawn in place where the size allows: a fresh composite per track is what fills
             // the heap during a run of track changes.
-            Bitmap out = spare;
-            spare = null;
-            if (out != null && !out.isRecycled() && out.isMutable()
-                    && out.getWidth() == w && out.getHeight() == h + half) {
+            Bitmap out = take(w, h + half);
+            if (out != null) {
                 out.eraseColor(0);
             } else {
                 out = Bitmap.createBitmap(w, h + half, Bitmap.Config.ARGB_8888);
@@ -143,7 +167,7 @@ public final class Cover {
             c.drawBitmap(src, 0.0f, 0.0f, null);
             mirror(c, src, w, h, flatCover() ? 0 : 2);
 
-            if (reflOut != held) spare = reflOut;
+            if (reflOut != held) give(reflOut);
             reflIn = new WeakReference(src);
             reflGen = src.getGenerationId();
             reflOut = out;
@@ -354,6 +378,7 @@ public final class Cover {
      */
     private static void blank(BasePlayerActivity a) {
         try {
+            if (srcKeep == null) keepSrcs(a.getResources());
             ActivityMusicPlayerBinding vb = (ActivityMusicPlayerBinding) a.getVb();
             if (vb == null) return;
             ReflectImageView v = vb.coverBg2;
@@ -377,6 +402,30 @@ public final class Cover {
 
     private static Bitmap blankPic;
     private static int blankLook = -1;
+
+    /**
+     * The player's button icons (the android:src of activity_music_player), held: Resources keeps
+     * a decoded drawable only weakly, and after each collection the layout decoded them all
+     * again. The cover views' own src is a 4×4 ipp_cover_src: they never show it.
+     */
+    private static Object[] srcKeep;
+
+    private static final int[] PLAYER_SRCS = {
+            R.drawable.icon_a_to_b, R.drawable.icon_b_question_mark,
+            R.mipmap.ipp_bookmark, R.mipmap.ipp_heart_off, R.mipmap.ipp_lyrics, R.mipmap.ipp_queue,
+            R.mipmap.ipp_speed_off, R.mipmap.ipp_timer_off, R.mipmap.music_no_repeat,
+            R.mipmap.music_no_shuffle, R.mipmap.music_volume_full, R.mipmap.music_volume_off };
+
+    private static void keepSrcs(android.content.res.Resources r) {
+        Object[] k = new Object[PLAYER_SRCS.length];
+        for (int i = 0; i < k.length; i++) {
+            try {
+                k[i] = r.getDrawable(PLAYER_SRCS[i]);
+            } catch (Throwable t) {
+            }
+        }
+        srcKeep = k;
+    }
 
     /** The placeholder as a cover is shown, framed for the look and reflected; also what Cover Flow flies. One per look. */
     public static synchronized Bitmap blankCover() {

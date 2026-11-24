@@ -21,20 +21,20 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Ljava/lang/String;Landroid/graphics/Bitmap;[Ljava/lang/Object;)V
   .registers 5
-  .line 1833
+  .line 1845
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1834
+  .line 1846
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->path:Ljava/lang/String;
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->b:Landroid/graphics/Bitmap;
     iput-object p4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->src:[Ljava/lang/Object;
-  .line 1835
+  .line 1847
     return-void
 .end method
 
 .method public run()V
   .registers 5
-  .line 1837
+  .line 1849
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->path:Ljava/lang/String;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$AheadDone;->b:Landroid/graphics/Bitmap;

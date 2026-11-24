@@ -16,7 +16,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;)V
   .registers 3
-  .line 1893
+  .line 1905
     invoke-direct { p0 }, Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteAlbum;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteAlbum;->it:Lcom/innioasis/ipp/Flow$Item;
@@ -25,13 +25,13 @@
 
 .method public cancel()V
   .registers 1
-  .line 1900
+  .line 1912
     return-void
 .end method
 
 .method public confirm()V
   .registers 3
-  .line 1896
+  .line 1908
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteAlbum;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteAlbum;->it:Lcom/innioasis/ipp/Flow$Item;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->delete(Lcom/innioasis/ipp/Flow$Item;)V

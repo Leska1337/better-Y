@@ -599,17 +599,26 @@ public final class BigCover {
         try {
             File f = noteFile();
             if (f == null) return;
-            StringBuilder sb = new StringBuilder();
-            Iterator it = notes.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry e = (Map.Entry) it.next();
-                String k = (String) e.getKey();
-                if (k == null || k.indexOf(SEP) >= 0) continue;
-                sb.append(k).append(SEP).append(((Integer) e.getValue()).intValue()).append('\n');
+            // streamed: the whole file built as one String was ~2.5 MB of garbage per note, a run
+            // of stop-everything collections at every first open of a track
+            File tmp = new File(f.getPath() + ".tmp");
+            java.io.Writer w = new java.io.BufferedWriter(
+                    new java.io.OutputStreamWriter(new FileOutputStream(tmp), "UTF-8"), 8192);
+            try {
+                Iterator it = notes.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry e = (Map.Entry) it.next();
+                    String k = (String) e.getKey();
+                    if (k == null || k.indexOf(SEP) >= 0) continue;
+                    w.write(k);
+                    w.write(SEP);
+                    w.write(String.valueOf(((Integer) e.getValue()).intValue()));
+                    w.write('\n');
+                }
+            } finally {
+                w.close();
             }
-            FileOutputStream o = new FileOutputStream(f);
-            o.write(sb.toString().getBytes("UTF-8"));
-            o.close();
+            if (!tmp.renameTo(f)) return;
             notesDirty = false;
         } catch (Throwable t) {
         }

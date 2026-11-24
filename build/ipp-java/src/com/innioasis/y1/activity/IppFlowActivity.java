@@ -699,9 +699,21 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     void tripGone() {
+        Drawable d = trip.getDrawable();
         trip.setVisibility(View.GONE);
         trip.setImageBitmap(null);
         trip.setAlpha(1f);
+        // landed, and the player that showed it is gone: the next press draws into it, no new composite
+        if (d instanceof TransitionDrawable) {
+            TransitionDrawable td = (TransitionDrawable) d;
+            for (int i = 0; i < td.getNumberOfLayers(); i++) release(td.getDrawable(i));
+        } else {
+            release(d);
+        }
+    }
+
+    private static void release(Drawable d) {
+        if (d instanceof BitmapDrawable) Cover.release(((BitmapDrawable) d).getBitmap());
     }
 
     /** The name and artist under the row fade out while the cover turns over, and back in. */
