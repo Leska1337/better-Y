@@ -380,7 +380,7 @@ public final class MenuStyle {
      * Whether the screen shows rows of a list, whose text stands under the title as laid out. A
      * screen without (the player, Cover Flow, a tile grid) takes the title onto the menus' line.
      */
-    private static boolean rows(View v) {
+    static boolean rows(View v) {
         if (v == null || v.getVisibility() != View.VISIBLE) return false;
         if (v instanceof android.widget.AbsListView) return !(v instanceof android.widget.GridView);
         if (v instanceof RecyclerView) {
@@ -399,6 +399,26 @@ public final class MenuStyle {
             }
         }
         return false;
+    }
+
+    /** The list of a screen laid out as half a menu — list on the left, preview beside it — or null. */
+    static View half(Activity a) {
+        if (simple(a)) return null;
+        View v = null;
+        if (a instanceof MainActivity) v = a.findViewById(R.id.rc_list);
+        else if (a instanceof SettingActivity || a instanceof WallpaperListActivity
+                || a instanceof LanguageActivity) v = a.findViewById(R.id.recycler);
+        else if (a instanceof EqActivity) v = a.findViewById(R.id.recycler_list);
+        else if (a instanceof DateOneLevelActivity) v = a.findViewById(R.id.date_ll);
+        else if (a instanceof MusicMainActivity || a instanceof EbookActivity) v = a.findViewById(R.id.lv);
+        else if (a instanceof com.innioasis.y1_eBook.ui.main.MainActivity) {
+            if (!Ebook.library(a)) v = a.findViewById(R.id.ipp_book_menu);
+        } else if (a instanceof VideoListActivity) {
+            if (videoRoot(a)) v = a.findViewById(R.id.recycler);
+        } else if (a instanceof IppActivity) {
+            if (((IppActivity) a).atRoot()) v = a.findViewById(R.id.rc_list);
+        }
+        return v != null && v.getVisibility() == View.VISIBLE && v.getWidth() > 0 ? v : null;
     }
 
     /** The screens inside Settings that draw a preview beside their list. */

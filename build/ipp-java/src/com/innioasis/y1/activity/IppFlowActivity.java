@@ -199,8 +199,12 @@ public final class IppFlowActivity extends BaseActivity {
         t.start();
         flow.setItems(l, loader, start);
         flow.setOnRest(new Rested(this));
-        flow.setLabels(0);
-        labels(1, FlowView.FADE_MS);
+        if (flow.calm()) {
+            flow.setLabels(1);
+        } else {
+            flow.setLabels(0);
+            labels(1, FlowView.FADE_MS);
+        }
         armBack();
     }
 

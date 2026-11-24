@@ -5,25 +5,34 @@ import android.content.Context;
 import com.innioasis.y1.Y1Application;
 
 /**
- * "Enable animations": the one switch every animation of ours answers to — the gliding rows and the
- * travelling cursor of the tile grids (Playlists, Themes, Photos) and of the main menu ({@link Bar}).
- * Off, they move at once, as stock does.
+ * "Enable animations" and its two sub-switches. Scroll: the gliding rows and the travelling cursor
+ * of the lists and tile grids ({@link Bar}). Navigation: the slide between menu screens
+ * ({@link Nav}). Off, everything moves at once, as stock does.
  */
 public final class Anim {
 
     private Anim() { }
 
     public static final String KEY = "animations";
+    public static final String KEY_NAV = "anim_nav";
+    public static final String KEY_SCROLL = "anim_scroll";
 
     /**
-     * The animations are in this build at all. False: off everywhere, whatever the setting says,
-     * and the menu has no row for it (its line in the help assets stays and is skipped).
+     * The scroll animations are in this build at all. False: off whatever the setting says, and the
+     * menu has no row for them.
      */
     public static final boolean BUILT = false;
 
+    /** The scroll animations. */
     public static boolean on() {
         if (!BUILT) return false;
         Context c = Y1Application.Companion.getAppContext();
-        return Prefs.on(c, KEY);
+        return Prefs.on(c, KEY) && Prefs.on(c, KEY_SCROLL);
+    }
+
+    /** The slide between menu screens. */
+    public static boolean nav() {
+        Context c = Y1Application.Companion.getAppContext();
+        return Prefs.on(c, KEY) && Prefs.on(c, KEY_NAV);
     }
 }

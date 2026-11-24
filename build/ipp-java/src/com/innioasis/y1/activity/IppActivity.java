@@ -256,7 +256,9 @@ public final class IppActivity extends BaseActivity {
         l.add(new Item(TOGGLE, "follow_playing", 0, null, null));
         l.add(new Item(NUMBER, Follow.KEY_IDLE, Follow.IDLES.length, Follow.IDLES, null));
         l.add(new Item(TOGGLE, Loop.KEY, 0, null, null));
-        if (Anim.BUILT) l.add(new Item(TOGGLE, Anim.KEY, 0, null, null));
+        l.add(new Item(TOGGLE, Anim.KEY, 0, null, null));
+        l.add(new Item(TOGGLE, Anim.KEY_NAV, 0, null, Anim.KEY));
+        if (Anim.BUILT) l.add(new Item(TOGGLE, Anim.KEY_SCROLL, 0, null, Anim.KEY));
         l.add(new Item(SUB, "status_bar", 0, null, null));
         l.add(new Item(CHOICE, TopBar.KEY_TEXT, 3, null, null).in("status_bar"));
         l.add(new Item(CHOICE, TopBar.KEY_STYLE, 2, null, null).in("status_bar"));

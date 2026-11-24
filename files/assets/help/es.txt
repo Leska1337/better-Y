@@ -219,6 +219,12 @@ Determina cuántos segundos después del último giro de la rueda la selección 
 Al llegar al final o al principio de una lista, la selección salta al extremo opuesto. Funciona en todas las listas, menús, galerías y ventanas de diálogo.
 
 [animations] Activar animaciones
+El interruptor general de las animaciones de abajo. Desactivado, todas las pantallas y listas cambian al instante.
+
+[anim_nav] Navegación
+Las pantallas del menú se deslizan unas sobre otras, como en el iPod: hacia dentro, de derecha a izquierda; hacia atrás, de izquierda a derecha. Una lista junto a una imagen se desliza dentro de su mitad de la pantalla; una lista a pantalla completa entra por la derecha y empuja la mitad fuera.
+
+[anim_scroll] Desplazamiento
 En las cuadrículas de mosaicos (Playlists, Themes y Photos), las filas entran deslizándose y el marco del cursor se desplaza de un mosaico a otro. Desactivado, ambos saltan al instante.
 
 [menu_style] Estilo

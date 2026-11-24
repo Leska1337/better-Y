@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..315495f2 100644
+index 01b1f730..1783fa42 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..315495f2 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100573
++  versionCode: 10100578
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20227,7 +20227,7 @@ index 803c1e7a..c9def65c 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..976157fe 100644
+index 71fe29d0..74e30c3b 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21176,7 +21176,7 @@ index 71fe29d0..976157fe 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev573</string>
++    <string name="ipp_version">v1.1.0-dev578</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23236,7 +23236,7 @@ index c4b75839..024df549 100644
      sget-object v0, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..afbacbc3 100644
+index 060ed6d1..d596e8af 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -23262,10 +23262,13 @@ index 060ed6d1..afbacbc3 100644
  
      return-void
  .end method
-@@ -1929,6 +1936,23 @@
+@@ -1929,6 +1936,26 @@
  .method public dispatchKeyEvent(Landroid/view/KeyEvent;)Z
      .locals 7
  
++    # ipp: center or top down on a list draws the screen for the slide that may follow. See Nav.
++    invoke-static {p0, p1}, Lcom/innioasis/ipp/Nav;->key(Ljava/lang/Object;Landroid/view/KeyEvent;)V
++
 +    # ipp: the key tone, played by the launcher -- see Tone
 +    invoke-static {p1}, Lcom/innioasis/ipp/Tone;->key(Landroid/view/KeyEvent;)V
 +
@@ -23286,7 +23289,7 @@ index 060ed6d1..afbacbc3 100644
      const/4 v0, 0x1
  
      if-nez p1, :cond_0
-@@ -1960,6 +1984,11 @@
+@@ -1960,6 +1987,11 @@
      :cond_1
      iget p1, p0, Lcom/innioasis/y1/base/BaseActivity;->downRepeatCount:I
  
@@ -23298,7 +23301,7 @@ index 060ed6d1..afbacbc3 100644
      if-ge p1, v3, :cond_c
  
      iget-boolean p1, p0, Lcom/innioasis/y1/base/BaseActivity;->wasDown:Z
-@@ -2186,7 +2215,16 @@
+@@ -2186,7 +2218,16 @@
  
      invoke-virtual {p1, v3, v1}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
  
@@ -23315,7 +23318,7 @@ index 060ed6d1..afbacbc3 100644
      sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
  
      invoke-virtual {p1}, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
-@@ -2368,7 +2406,10 @@
+@@ -2368,7 +2409,10 @@
  
      new-array v6, v4, [Ljava/lang/Object;
  
@@ -23327,7 +23330,7 @@ index 060ed6d1..afbacbc3 100644
  
      .line 680
      invoke-virtual {p1}, Landroid/view/KeyEvent;->getRepeatCount()I
-@@ -2380,6 +2421,11 @@
+@@ -2380,6 +2424,11 @@
      .line 681
      iput-boolean v0, p0, Lcom/innioasis/y1/base/BaseActivity;->wasDown:Z
  
@@ -23339,7 +23342,7 @@ index 060ed6d1..afbacbc3 100644
      if-ne p1, v3, :cond_17
  
      .line 685
-@@ -2617,8 +2663,10 @@
+@@ -2617,8 +2666,10 @@
  .method public getEnableSpeedClockwise()Z
      .locals 1
  
@@ -23352,7 +23355,7 @@ index 060ed6d1..afbacbc3 100644
  
      return v0
  .end method
-@@ -2789,6 +2837,9 @@
+@@ -2789,6 +2840,9 @@
  .method protected onCreate(Landroid/os/Bundle;)V
      .locals 5
  
@@ -23362,7 +23365,7 @@ index 060ed6d1..afbacbc3 100644
      const/4 v0, 0x1
  
      .line 112
-@@ -2806,6 +2857,27 @@
+@@ -2806,6 +2860,27 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -23390,7 +23393,7 @@ index 060ed6d1..afbacbc3 100644
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3078,9 +3150,18 @@
+@@ -3078,9 +3153,18 @@
      .line 146
      invoke-virtual {p0, p1, v0}, Lcom/innioasis/y1/base/BaseActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
  
@@ -23409,7 +23412,7 @@ index 060ed6d1..afbacbc3 100644
      .line 153
      invoke-direct {p0}, Lcom/innioasis/y1/base/BaseActivity;->setObserve()V
  
-@@ -3463,9 +3544,24 @@
+@@ -3463,9 +3547,27 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -23431,10 +23434,13 @@ index 060ed6d1..afbacbc3 100644
 +    # ipp: "Menu style" Simple -- no preview beside the list, the list across the whole screen
 +    invoke-static {p0}, Lcom/innioasis/ipp/MenuStyle;->apply(Ljava/lang/Object;)V
 +
++    # ipp: the slide from the screen left to this one. See Nav.
++    invoke-static {p0}, Lcom/innioasis/ipp/Nav;->arrive(Ljava/lang/Object;)V
++
      .line 347
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -3602,7 +3698,12 @@
+@@ -3602,7 +3704,12 @@
  
      const-string v2, "save state successful"
  
@@ -23448,7 +23454,7 @@ index 060ed6d1..afbacbc3 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4223,12 @@
+@@ -4122,6 +4229,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -23461,7 +23467,7 @@ index 060ed6d1..afbacbc3 100644
      .line 809
      move-object v0, p0
  
-@@ -4143,6 +4250,16 @@
+@@ -4143,6 +4256,16 @@
  .method public final sleepScreen()V
      .locals 6
  

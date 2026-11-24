@@ -16,7 +16,7 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/y1/database/Song;)V
   .registers 3
-  .line 1932
+  .line 1936
     invoke-direct { p0 }, Lcom/innioasis/y1/utils/DialogUtil$DialogCallback;-><init>()V
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteTrack;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteTrack;->s:Lcom/innioasis/y1/database/Song;
@@ -25,13 +25,13 @@
 
 .method public cancel()V
   .registers 1
-  .line 1939
+  .line 1943
     return-void
 .end method
 
 .method public confirm()V
   .registers 3
-  .line 1935
+  .line 1939
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteTrack;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$DeleteTrack;->s:Lcom/innioasis/y1/database/Song;
     invoke-virtual { v0, v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->deleteTrack(Lcom/innioasis/y1/database/Song;)V
