@@ -163,17 +163,8 @@
   .line 68
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
-    invoke-static { }, Lcom/innioasis/ipp/Anim;->nav()Z
-    move-result v2
-    const/4 v3, 0
-    if-eqz v2, :L0
-    const/16 v2, 900
-    goto :L1
-  :L0
-    const/4 v2, 0
-  :L1
-    int-to-long v4, v2
-    add-long/2addr v0, v4
+    const-wide/16 v2, 900
+    add-long/2addr v0, v2
     iput-wide v0, p0, Lcom/innioasis/ipp/FlowView;->calm:J
   .line 84
     const/4 v0, -1
@@ -200,60 +191,61 @@
     iput-object v0, p0, Lcom/innioasis/ipp/FlowView;->erase:Landroid/graphics/Paint;
   .line 95
     new-instance v2, Landroid/text/TextPaint;
-    const/4 v4, 1
-    invoke-direct { v2, v4 }, Landroid/text/TextPaint;-><init>(I)V
+    const/4 v3, 1
+    invoke-direct { v2, v3 }, Landroid/text/TextPaint;-><init>(I)V
     iput-object v2, p0, Lcom/innioasis/ipp/FlowView;->name:Landroid/text/TextPaint;
   .line 96
-    new-instance v5, Landroid/text/TextPaint;
-    invoke-direct { v5, v4 }, Landroid/text/TextPaint;-><init>(I)V
-    iput-object v5, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
+    new-instance v4, Landroid/text/TextPaint;
+    invoke-direct { v4, v3 }, Landroid/text/TextPaint;-><init>(I)V
+    iput-object v4, p0, Lcom/innioasis/ipp/FlowView;->artist:Landroid/text/TextPaint;
   .line 271
-    const/high16 v6, 0x3F800000
-    iput v6, p0, Lcom/innioasis/ipp/FlowView;->labels:F
+    const/high16 v5, 0x3F800000
+    iput v5, p0, Lcom/innioasis/ipp/FlowView;->labels:F
   .line 453
-    new-instance v7, Landroid/graphics/Rect;
+    new-instance v6, Landroid/graphics/Rect;
+    const/4 v7, 0
     const/16 v8, 184
-    invoke-direct { v7, v3, v3, v8, v8 }, Landroid/graphics/Rect;-><init>(IIII)V
-    iput-object v7, p0, Lcom/innioasis/ipp/FlowView;->slideFrom:Landroid/graphics/Rect;
+    invoke-direct { v6, v7, v7, v8, v8 }, Landroid/graphics/Rect;-><init>(IIII)V
+    iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->slideFrom:Landroid/graphics/Rect;
   .line 454
     new-instance v9, Landroid/graphics/RectF;
-    invoke-direct { v9, v7 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
+    invoke-direct { v9, v6 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
     iput-object v9, p0, Lcom/innioasis/ipp/FlowView;->slideTo:Landroid/graphics/RectF;
   .line 455
-    sget-object v7, Lcom/innioasis/ipp/Flow;->MIR:Landroid/graphics/Rect;
-    iput-object v7, p0, Lcom/innioasis/ipp/FlowView;->reflFrom:Landroid/graphics/Rect;
+    sget-object v6, Lcom/innioasis/ipp/Flow;->MIR:Landroid/graphics/Rect;
+    iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->reflFrom:Landroid/graphics/Rect;
   .line 456
-    new-instance v7, Landroid/graphics/Rect;
+    new-instance v6, Landroid/graphics/Rect;
     const/16 v9, 180
     const/16 v10, 182
-    invoke-direct { v7, v3, v9, v8, v10 }, Landroid/graphics/Rect;-><init>(IIII)V
-    iput-object v7, p0, Lcom/innioasis/ipp/FlowView;->seamFrom:Landroid/graphics/Rect;
+    invoke-direct { v6, v7, v9, v8, v10 }, Landroid/graphics/Rect;-><init>(IIII)V
+    iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->seamFrom:Landroid/graphics/Rect;
   .line 457
-    new-instance v3, Landroid/graphics/RectF;
-    invoke-direct { v3, v7 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
-    iput-object v3, p0, Lcom/innioasis/ipp/FlowView;->seamTo:Landroid/graphics/RectF;
+    new-instance v7, Landroid/graphics/RectF;
+    invoke-direct { v7, v6 }, Landroid/graphics/RectF;-><init>(Landroid/graphics/Rect;)V
+    iput-object v7, p0, Lcom/innioasis/ipp/FlowView;->seamTo:Landroid/graphics/RectF;
   .line 458
-    new-instance v3, Landroid/graphics/RectF;
+    new-instance v6, Landroid/graphics/RectF;
     const/high16 v7, 0x42B80000
-    const/high16 v8, 0x40000000
-    const/high16 v9, 0x43360000
-    invoke-direct { v3, v8, v7, v9, v9 }, Landroid/graphics/RectF;-><init>(FFFF)V
-    iput-object v3, p0, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
+    const/high16 v8, 0x43360000
+    const/high16 v9, 0x40000000
+    invoke-direct { v6, v9, v7, v8, v8 }, Landroid/graphics/RectF;-><init>(FFFF)V
+    iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->reflTo:Landroid/graphics/RectF;
   .line 459
     invoke-static { }, Lcom/innioasis/ipp/FlowView;->fadePaint()Landroid/graphics/Paint;
-    move-result-object v3
-    iput-object v3, p0, Lcom/innioasis/ipp/FlowView;->fade:Landroid/graphics/Paint;
+    move-result-object v6
+    iput-object v6, p0, Lcom/innioasis/ipp/FlowView;->fade:Landroid/graphics/Paint;
   .line 104
     invoke-static { p1 }, Lcom/innioasis/ipp/Flow;->count(Landroid/content/Context;)I
-    move-result v3
-    invoke-virtual { p0, v3 }, Lcom/innioasis/ipp/FlowView;->setCount(I)V
+    move-result v6
+    invoke-virtual { p0, v6 }, Lcom/innioasis/ipp/FlowView;->setCount(I)V
   .line 106
-    const/4 v3, 0
-    invoke-virtual { p0, v1, v3 }, Lcom/innioasis/ipp/FlowView;->setLayerType(ILandroid/graphics/Paint;)V
+    const/4 v6, 0
+    invoke-virtual { p0, v1, v6 }, Lcom/innioasis/ipp/FlowView;->setLayerType(ILandroid/graphics/Paint;)V
   .line 107
     new-instance v1, Landroid/graphics/PorterDuffXfermode;
-    sget-object v3, Landroid/graphics/PorterDuff$Mode;->DST_OUT:Landroid/graphics/PorterDuff$Mode;
-    invoke-direct { v1, v3 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
+    sget-object v6, Landroid/graphics/PorterDuff$Mode;->DST_OUT:Landroid/graphics/PorterDuff$Mode;
+    invoke-direct { v1, v6 }, Landroid/graphics/PorterDuffXfermode;-><init>(Landroid/graphics/PorterDuff$Mode;)V
     invoke-virtual { v0, v1 }, Landroid/graphics/Paint;->setXfermode(Landroid/graphics/Xfermode;)Landroid/graphics/Xfermode;
   .line 108
     invoke-static { p1 }, Lcom/innioasis/ipp/FlowView;->textColor(Landroid/content/Context;)I
@@ -262,12 +254,12 @@
     invoke-static { p1 }, Lcom/innioasis/ipp/FlowView;->lum(I)I
     move-result v0
     const/16 v1, 128
-    if-le v0, v1, :L2
+    if-le v0, v1, :L0
     const/high16 v0, 0xC0000000
-    goto :L3
-  :L2
+    goto :L1
+  :L0
     const v0, -2130706433
-  :L3
+  :L1
     iput v0, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
   .line 110
     invoke-virtual { v2, p1 }, Landroid/text/TextPaint;->setColor(I)V
@@ -276,32 +268,32 @@
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTextSize(F)V
   .line 112
     sget-object v0, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
-    invoke-static { v0, v4 }, Landroid/graphics/Typeface;->create(Landroid/graphics/Typeface;I)Landroid/graphics/Typeface;
+    invoke-static { v0, v3 }, Landroid/graphics/Typeface;->create(Landroid/graphics/Typeface;I)Landroid/graphics/Typeface;
     move-result-object v0
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
   .line 113
-    invoke-virtual { v2, v4 }, Landroid/text/TextPaint;->setFakeBoldText(Z)V
+    invoke-virtual { v2, v3 }, Landroid/text/TextPaint;->setFakeBoldText(Z)V
   .line 114
     sget-object v0, Landroid/graphics/Paint$Align;->CENTER:Landroid/graphics/Paint$Align;
     invoke-virtual { v2, v0 }, Landroid/text/TextPaint;->setTextAlign(Landroid/graphics/Paint$Align;)V
   .line 115
     iget v0, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
     const/4 v1, 0
-    invoke-virtual { v2, v8, v1, v6, v0 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
+    invoke-virtual { v2, v9, v1, v5, v0 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
   .line 116
-    invoke-virtual { v5, p1 }, Landroid/text/TextPaint;->setColor(I)V
+    invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setColor(I)V
   .line 117
     const/high16 p1, 0x41980000
-    invoke-virtual { v5, p1 }, Landroid/text/TextPaint;->setTextSize(F)V
+    invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTextSize(F)V
   .line 118
     sget-object p1, Landroid/graphics/Typeface;->MONOSPACE:Landroid/graphics/Typeface;
-    invoke-virtual { v5, p1 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
+    invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTypeface(Landroid/graphics/Typeface;)Landroid/graphics/Typeface;
   .line 119
     sget-object p1, Landroid/graphics/Paint$Align;->CENTER:Landroid/graphics/Paint$Align;
-    invoke-virtual { v5, p1 }, Landroid/text/TextPaint;->setTextAlign(Landroid/graphics/Paint$Align;)V
+    invoke-virtual { v4, p1 }, Landroid/text/TextPaint;->setTextAlign(Landroid/graphics/Paint$Align;)V
   .line 120
     iget p1, p0, Lcom/innioasis/ipp/FlowView;->shadow:I
-    invoke-virtual { v5, v8, v1, v6, p1 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
+    invoke-virtual { v4, v9, v1, v5, p1 }, Landroid/text/TextPaint;->setShadowLayer(FFFI)V
   .line 121
     return-void
 .end method

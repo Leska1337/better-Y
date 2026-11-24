@@ -64,10 +64,10 @@ public final class FlowView extends View {
     public static final int FADE_MS = 200;
     private boolean fading;
 
-    /** Slides that arrive while the screen slides in ({@link Nav}) stand there at once. */
-    private final long calm = SystemClock.uptimeMillis() + (Anim.nav() ? 900 : 0);
+    /** Slides that arrive while the screen opens stand there at once. */
+    private final long calm = SystemClock.uptimeMillis() + 900;
 
-    /** The screen is still sliding in: what arrives now is shown without fading in. */
+    /** The screen is still opening: what arrives now is shown without fading in. */
     public boolean calm() {
         return SystemClock.uptimeMillis() < calm;
     }
