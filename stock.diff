@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..47c64394 100644
+index 01b1f730..75032384 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..47c64394 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100581
++  versionCode: 10100582
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -65,9 +65,18 @@ index b296d0ec..18b2ee01 100644
 +    <rotate android:interpolator="@android:anim/linear_interpolator" android:duration="800" android:fromDegrees="0.0" android:toDegrees="360.0" android:pivotX="50.0%" android:pivotY="50.0%" android:startOffset="-1" android:repeatCount="infinite" android:repeatMode="restart" />
  </set>
 diff --git a/build/src/res/layout-v22/activity_music_player.xml b/build/src/res/layout-v22/activity_music_player.xml
-index 2e99c3ad..8c3e1d4e 100644
+index 2e99c3ad..6c4ab7e2 100644
 --- a/build/src/res/layout-v22/activity_music_player.xml
 +++ b/build/src/res/layout-v22/activity_music_player.xml
+@@ -2,7 +2,7 @@
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <ImageView android:id="@id/player_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="centerCrop" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <ImageView android:id="@id/mask_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@mipmap/bg_mask" android:scaleType="fitXY" />
++    <ImageView android:id="@id/mask_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="fitXY" />
+     <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/cl_player_center" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginTop="45.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent">
+         <com.innioasis.y1.view.ReflectImageView android:id="@id/cover_bg" android:visibility="gone" android:layout_width="230.0dip" android:layout_height="345.0dip" android:layout_marginTop="20.0dip" android:layout_marginBottom="10.0dip" android:src="@drawable/bg_player_cover_view" android:scaleType="centerCrop" android:layout_marginStart="10.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
+         <com.innioasis.y1.view.ReflectImageView android:id="@id/cover_bg2" android:visibility="gone" android:layout_width="200.0dip" android:layout_height="300.0dip" android:layout_marginTop="35.0dip" android:layout_marginBottom="10.0dip" android:src="@drawable/bg_player_cover_view" android:scaleType="centerCrop" android:layout_marginStart="25.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 @@ -20,7 +20,7 @@
          </androidx.constraintlayout.widget.ConstraintLayout>
      </androidx.constraintlayout.widget.ConstraintLayout>
@@ -459,9 +468,18 @@ index 19a22056..6a1ca038 100644
 +    <androidx.recyclerview.widget.RecyclerView android:id="@id/recycler" android:focusable="true" android:layout_width="0.0dip" android:layout_height="0.0dip" android:listSelector="@android:color/transparent" android:divider="@null" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/layout/activity_music_player.xml b/build/src/res/layout/activity_music_player.xml
-index 4fcc1b5f..831d3b8a 100644
+index 4fcc1b5f..daecf30e 100644
 --- a/build/src/res/layout/activity_music_player.xml
 +++ b/build/src/res/layout/activity_music_player.xml
+@@ -2,7 +2,7 @@
+ <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+   xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+     <ImageView android:id="@id/player_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="centerCrop" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
+-    <ImageView android:id="@id/mask_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:src="@mipmap/bg_mask" android:scaleType="fitXY" />
++    <ImageView android:id="@id/mask_bg" android:visibility="gone" android:layout_width="fill_parent" android:layout_height="fill_parent" android:scaleType="fitXY" />
+     <androidx.constraintlayout.widget.ConstraintLayout android:id="@id/cl_player_center" android:layout_width="fill_parent" android:layout_height="0.0dip" android:layout_marginTop="45.0dip" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent">
+         <com.innioasis.y1.view.ReflectImageView android:id="@id/cover_bg" android:visibility="gone" android:layout_width="230.0dip" android:layout_height="345.0dip" android:layout_marginTop="20.0dip" android:layout_marginBottom="10.0dip" android:src="@drawable/bg_player_cover_view" android:scaleType="centerCrop" android:layout_marginStart="10.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
+         <com.innioasis.y1.view.ReflectImageView android:id="@id/cover_bg2" android:visibility="gone" android:layout_width="200.0dip" android:layout_height="300.0dip" android:layout_marginTop="35.0dip" android:layout_marginBottom="10.0dip" android:src="@drawable/bg_player_cover_view" android:scaleType="centerCrop" android:layout_marginStart="25.0dip" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 @@ -11,19 +11,37 @@
              <TextView android:textSize="21.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_bookplayer" android:background="#1affffff" android:paddingLeft="13.0dip" android:paddingRight="13.0dip" android:layout_width="fill_parent" android:layout_height="38.0dip" android:layout_marginTop="7.0dip" android:singleLine="true" app:layout_constraintTop_toBottomOf="@id/tv_bookname" />
              <TextView android:textSize="21.0sp" android:textStyle="bold" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_album" android:background="#1affffff" android:paddingLeft="13.0dip" android:paddingRight="13.0dip" android:layout_width="fill_parent" android:layout_height="38.0dip" android:layout_marginTop="7.0dip" android:singleLine="true" app:layout_constraintTop_toBottomOf="@id/tv_bookplayer" />
@@ -20227,7 +20245,7 @@ index 803c1e7a..c9def65c 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..d998870b 100644
+index 71fe29d0..e2214da7 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21176,7 +21194,7 @@ index 71fe29d0..d998870b 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev581</string>
++    <string name="ipp_version">v1.1.0-dev582</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
