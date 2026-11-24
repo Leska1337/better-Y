@@ -113,6 +113,11 @@ public final class Theme {
         SCREENS.put(a, Boolean.TRUE);
     }
 
+    /** Every screen still alive. */
+    static Object[] screens() {
+        return SCREENS.keySet().toArray();
+    }
+
     /**
      * In place of stock's {@code relaunchApp} once the theme is changed: the screens start over from
      * the splash, which loads the new theme, while the process keeps its library and playback. What

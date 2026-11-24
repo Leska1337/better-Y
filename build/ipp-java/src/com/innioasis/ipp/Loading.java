@@ -340,26 +340,78 @@ public final class Loading {
         }
     }
 
+    /** How long Photos' loads stay without a visible window. */
+    static final int LATE_MS = 800;
+
     /**
-     * Photos' progress window, made invisible but kept up: it holds the keys during the load,
-     * and a second load over the first lands the wrong folder's list.
+     * Photos' progress window: dressed as {@link #progress}, but kept invisible and shown only if
+     * the load is still running after {@link #LATE_MS}. Up all along, it holds the keys during the
+     * load, and a second load over the first would land the wrong folder's list.
      */
-    public static void hidden(ProgressDialog d) {
-        seen(d);
+    public static void late(ProgressDialog d) {
+        progress(d);
         if (d == null) return;
         try {
             Window w = d.getWindow();
             if (w == null) return;
             // Before the first draw, when the enter animation is chosen.
             w.setWindowAnimations(0);
+            View decor = w.getDecorView();
+            boolean dimmed = (w.getAttributes().flags & WindowManager.LayoutParams.FLAG_DIM_BEHIND) != 0;
+            Drawable bg = decor.getBackground();
             w.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             w.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            View decor = w.getDecorView();
-            if (decor instanceof ViewGroup) {
-                ViewGroup g = (ViewGroup) decor;
-                for (int i = 0; i < g.getChildCount(); i++) g.getChildAt(i).setVisibility(View.INVISIBLE);
-            }
+            showChildren(decor, false);
+            decor.postDelayed(new Reveal(d, bg, dimmed), LATE_MS);
         } catch (Throwable t) {
+        }
+    }
+
+    private static void showChildren(View decor, boolean on) {
+        if (!(decor instanceof ViewGroup)) return;
+        ViewGroup g = (ViewGroup) decor;
+        surfaces(decor, on);
+        for (int i = 0; i < g.getChildCount(); i++) {
+            View c = g.getChildAt(i);
+            c.setVisibility(on ? View.VISIBLE : View.INVISIBLE);
+            if (on) {
+                c.setAlpha(0f);
+                c.animate().alpha(1f).setDuration(150);
+            }
+        }
+    }
+
+    /** A SurfaceView keeps its surface on screen under an invisible parent: hidden by itself. */
+    private static void surfaces(View v, boolean on) {
+        if (v instanceof SurfaceView) {
+            v.setVisibility(on ? View.VISIBLE : View.INVISIBLE);
+        } else if (v instanceof ViewGroup) {
+            ViewGroup g = (ViewGroup) v;
+            for (int i = 0; i < g.getChildCount(); i++) surfaces(g.getChildAt(i), on);
+        }
+    }
+
+    static final class Reveal implements Runnable {
+        private final ProgressDialog d;
+        private final Drawable bg;
+        private final boolean dimmed;
+
+        Reveal(ProgressDialog d, Drawable bg, boolean dimmed) {
+            this.d = d;
+            this.bg = bg;
+            this.dimmed = dimmed;
+        }
+
+        public void run() {
+            try {
+                if (!d.isShowing()) return;
+                Window w = d.getWindow();
+                if (w == null) return;
+                if (bg != null) w.setBackgroundDrawable(bg);
+                if (dimmed) w.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+                showChildren(w.getDecorView(), true);
+            } catch (Throwable t) {
+            }
         }
     }
 

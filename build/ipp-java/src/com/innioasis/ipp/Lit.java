@@ -18,10 +18,16 @@ public final class Lit {
 
     /** Starts true: at worst a caller does its work once before the truth arrives. */
     private static volatile boolean on = true;
+    /** Uptime of the last SCREEN_ON, as received. */
+    private static volatile long onAt;
     private static boolean registered;
 
     public static boolean screenOn() {
         return on;
+    }
+
+    static long onAt() {
+        return onAt;
     }
 
     /** Idempotent. The first value comes from PowerManager: a broadcast only reports the next change. */
@@ -47,6 +53,12 @@ public final class Lit {
         public void onReceive(Context c, Intent i) {
             if (i == null) return;
             on = Intent.ACTION_SCREEN_ON.equals(i.getAction());
+            if (on) {
+                onAt = android.os.SystemClock.uptimeMillis();
+                Wake.on();
+                return;
+            }
+            Wake.off();
         }
     }
 }

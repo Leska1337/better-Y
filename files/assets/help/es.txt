@@ -56,8 +56,8 @@ Para ello, mantenga pulsado el botón superior sobre el tema deseado y seleccion
 Se guardan los siguientes ajustes:
 
 Reproduciendo ahora: estilo (excepto "inclinar la carátula").
-Menú: estilo, márgenes, color del texto en las vistas previas, estilo y color del texto de la barra de estado.
-Salvapantallas: estilo.
+Menú: estilo, estilo y color del texto de la barra de estado.
+Salvapantallas: estilo (excepto "brillo").
 Tono de tecla: sonido.
 ---
 Para añadir un fondo de salvapantallas (screensaver.*), un fondo para la pantalla USB (usb.*) o un icono de better-Y (better-Y.*), coloque imágenes con los nombres de archivo correspondientes en la carpeta del tema.

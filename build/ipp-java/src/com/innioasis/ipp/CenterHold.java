@@ -42,14 +42,21 @@ public final class CenterHold {
     private static Tick ticker;
     private static boolean sleepOwed;
     private static boolean warnedThisHold;   // survives reset(): read on the UP after it
+    /** Down time of the centre press now held. */
+    private static long downAt;
+    /** A press down before SCREEN_ON arrived plus this is the one that woke the screen. */
+    private static final long WAKE_SLACK_MS = 300;
 
     /**
      * Called first in every stock sleepScreen: the centre hold sleeps the screen at ~0.6 s, which
      * would cancel the key. While a hold runs the sleep is owed to a release before the warning;
-     * true = the caller must not sleep now.
+     * true = the caller must not sleep now. A hold begun by the press that woke the screen never
+     * sleeps it.
      */
     public static boolean deferSleep() {
         try {
+            // held from the locked screen: the press that woke it must not put it out again
+            if (downAt != 0 && (!Lit.screenOn() || downAt < Lit.onAt() + WAKE_SLACK_MS)) return true;
             if (startAt == 0) return false;
             Context c = Y1Application.Companion.getAppContext();
             if (c == null || !Prefs.on(c, KEY)) return false;
@@ -64,6 +71,8 @@ public final class CenterHold {
     public static void key(KeyEvent e) {
         try {
             if (e == null || e.getKeyCode() != KeyMap.INSTANCE.getKEY_ENTER()) return;
+            if (e.getAction() == KeyEvent.ACTION_DOWN) downAt = e.getDownTime();
+            else downAt = 0;
             Context c = Y1Application.Companion.getAppContext();
             if (c == null || !Prefs.on(c, KEY)) {
                 if (startAt != 0) reset();

@@ -56,8 +56,8 @@ Pour cela, maintenez le bouton du haut enfoncé sur le thème voulu et choisisse
 Les réglages suivants sont enregistrés :
 
 En lecture : style (sauf "incliner la pochette").
-Menu : style, marges, couleur du texte des aperçus, style et couleur du texte de la barre d'état.
-Économiseur d'écran : style.
+Menu : style, style et couleur du texte de la barre d'état.
+Économiseur d'écran : style (sauf "luminosité").
 Sonorité des touches : son.
 ---
 Pour ajouter un fond d'économiseur d'écran (screensaver.*), un fond d'écran USB (usb.*) ou une icône better-Y (better-Y.*), placez des images portant les noms de fichier correspondants dans le dossier du thème.

@@ -221,11 +221,10 @@ public final class Photos {
         CardView card = (CardView) c;
         TextView desktop = (TextView) dv;
         TextView global = (TextView) gv;
-        // "Set playlist cover" only while Playlists is a grid.
         View pv = root.findViewById(R.id.ipp_pl_cover);
         TextView cover = pv instanceof TextView ? (TextView) pv : null;
         View coverLine = root.findViewById(R.id.ipp_pl_cover_line);
-        boolean withCover = cover != null && PlGrid.on();
+        boolean withCover = cover != null;
         if (cover != null) cover.setVisibility(withCover ? View.VISIBLE : View.GONE);
         if (coverLine != null) coverLine.setVisibility(withCover ? View.VISIBLE : View.GONE);
         View sv = root.findViewById(R.id.ipp_ss_photo);
@@ -572,6 +571,38 @@ public final class Photos {
                 rv.scrollToPosition(mark);
             } catch (Throwable ignored) {
             }
+        }
+    }
+
+    /**
+     * The long-press mark on or off a tile, rebound in place: stock notified the whole grid, and
+     * every tile was rebound and repainted for the one mark the menu sets and clears.
+     */
+    public static void mark(android.app.Activity a, Object adapter, int pos) {
+        if (!rebind(a, adapter, pos)) ((RecyclerView.Adapter) adapter).notifyItemChanged(pos);
+    }
+
+    /** Clears the marks, then rebinds the tiles that carried one. */
+    public static void unmark(android.app.Activity a, Object adapter, List marked) {
+        Object[] was = marked.toArray();
+        marked.clear();
+        for (int i = 0; i < was.length; i++) {
+            if (was[i] instanceof Integer) mark(a, adapter, ((Integer) was[i]).intValue());
+        }
+    }
+
+    private static boolean rebind(android.app.Activity a, Object adapter, int pos) {
+        try {
+            RecyclerView.Adapter ad = (RecyclerView.Adapter) adapter;
+            if (pos < 0 || pos >= ad.getItemCount()) return true;
+            RecyclerView rv = ((com.innioasis.y1.databinding.ActivityPhotosBinding)
+                    ((com.innioasis.y1.activity.PhotosActivity) a).getVb()).recycler;
+            RecyclerView.ViewHolder h = rv.findViewHolderForAdapterPosition(pos);
+            if (h == null) return false;
+            ad.bindViewHolder(h, pos);
+            return true;
+        } catch (Throwable t) {
+            return false;
         }
     }
 }

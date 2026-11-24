@@ -5,6 +5,7 @@
 .annotation system Ldalvik/annotation/MemberClasses;
   value = {
     Lcom/innioasis/ipp/Loading$ScanText;,
+    Lcom/innioasis/ipp/Loading$Reveal;,
     Lcom/innioasis/ipp/Loading$Spin;
   }
 .end annotation
@@ -20,6 +21,8 @@
 .field private final static FADE_STYLE:I = 2131887152
 
 .field private final static FULL:Ljava/lang/String; = "100%"
+
+.field final static LATE_MS:I = 800
 
 .field private final static MAIN:Landroid/os/Handler;
 
@@ -73,7 +76,14 @@
     return-void
 .end method
 
-.method static synthetic access$000(I)Landroid/graphics/ColorMatrixColorFilter;
+.method static synthetic access$000(Landroid/view/View;Z)V
+  .registers 2
+  .line 58
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Loading;->showChildren(Landroid/view/View;Z)V
+    return-void
+.end method
+
+.method static synthetic access$100(I)Landroid/graphics/ColorMatrixColorFilter;
   .registers 1
   .line 58
     invoke-static { p0 }, Lcom/innioasis/ipp/Loading;->fade(I)Landroid/graphics/ColorMatrixColorFilter;
@@ -83,44 +93,44 @@
 
 .method private static centre(Landroid/view/View;)V
   .registers 4
-  .line 561
+  .line 613
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 562
+  .line 614
     instance-of v1, v0, Landroid/widget/LinearLayout$LayoutParams;
     const/16 v2, 17
     if-eqz v1, :L0
-  .line 563
+  .line 615
     check-cast v0, Landroid/widget/LinearLayout$LayoutParams;
     iput v2, v0, Landroid/widget/LinearLayout$LayoutParams;->gravity:I
     goto :L1
   :L0
-  .line 564
+  .line 616
     instance-of v1, v0, Landroid/widget/FrameLayout$LayoutParams;
     if-eqz v1, :L1
-  .line 565
+  .line 617
     check-cast v0, Landroid/widget/FrameLayout$LayoutParams;
     iput v2, v0, Landroid/widget/FrameLayout$LayoutParams;->gravity:I
   :L1
-  .line 567
+  .line 619
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 568
+  .line 620
     instance-of v0, p0, Landroid/widget/LinearLayout;
     if-eqz v0, :L2
-  .line 569
+  .line 621
     check-cast p0, Landroid/widget/LinearLayout;
     invoke-virtual { p0, v2 }, Landroid/widget/LinearLayout;->setGravity(I)V
     goto :L3
   :L2
-  .line 570
+  .line 622
     instance-of v0, p0, Landroid/widget/RelativeLayout;
     if-eqz v0, :L3
-  .line 571
+  .line 623
     check-cast p0, Landroid/widget/RelativeLayout;
     invoke-virtual { p0, v2 }, Landroid/widget/RelativeLayout;->setGravity(I)V
   :L3
-  .line 573
+  .line 625
     return-void
 .end method
 
@@ -199,7 +209,7 @@
 
 .method private static dress(Landroid/view/View;IIZ)V
   .registers 7
-  .line 367
+  .line 419
     const v0, 16707006
     const/4 v1, 0
     if-eq p1, v0, :L0
@@ -208,41 +218,41 @@
   :L0
     const/4 v0, 0
   :L1
-  .line 368
+  .line 420
     instance-of v2, p0, Landroid/widget/TextView;
     if-eqz v2, :L5
-  .line 369
+  .line 421
     check-cast p0, Landroid/widget/TextView;
-  .line 370
+  .line 422
     invoke-virtual { p0 }, Landroid/widget/TextView;->getText()Ljava/lang/CharSequence;
     move-result-object p2
-  .line 371
+  .line 423
     if-eqz p2, :L4
     invoke-interface { p2 }, Ljava/lang/CharSequence;->length()I
     move-result p2
     if-nez p2, :L2
     goto :L4
   :L2
-  .line 375
+  .line 427
     const/16 p2, 17
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setGravity(I)V
-  .line 376
+  .line 428
     if-eqz v0, :L3
     invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setTextColor(I)V
   :L3
-  .line 377
+  .line 429
     return-void
   :L4
-  .line 372
+  .line 424
     const/16 p1, 8
     invoke-virtual { p0, p1 }, Landroid/widget/TextView;->setVisibility(I)V
-  .line 373
+  .line 425
     return-void
   :L5
-  .line 379
+  .line 431
     instance-of v2, p0, Landroid/widget/ProgressBar;
     if-eqz v2, :L7
-  .line 381
+  .line 433
     invoke-virtual { p0 }, Landroid/view/View;->getResources()Landroid/content/res/Resources;
     move-result-object p2
     invoke-virtual { p2 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
@@ -254,23 +264,23 @@
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Loading;->spin(Landroid/view/View;II)Z
     move-result p1
     if-nez p1, :L6
-  .line 382
+  .line 434
     invoke-static { p0 }, Lcom/innioasis/ipp/Loading;->centre(Landroid/view/View;)V
   :L6
-  .line 384
+  .line 436
     return-void
   :L7
-  .line 386
+  .line 438
     instance-of v2, p0, Landroid/view/ViewGroup;
     if-eqz v2, :L11
-  .line 388
+  .line 440
     if-eqz p3, :L8
     const/4 v0, 0
     invoke-virtual { p0, v0 }, Landroid/view/View;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
   :L8
-  .line 389
+  .line 441
     check-cast p0, Landroid/view/ViewGroup;
-  .line 390
+  .line 442
     nop
   :L9
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
@@ -282,15 +292,15 @@
     add-int/lit8 v1, v1, 1
     goto :L9
   :L10
-  .line 391
+  .line 443
     return-void
   :L11
-  .line 393
+  .line 445
     if-eqz v0, :L12
-  .line 395
+  .line 447
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object p3
-  .line 396
+  .line 448
     if-eqz p3, :L12
     iget v0, p3, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-lez v0, :L12
@@ -298,15 +308,15 @@
     if-gt p3, p2, :L12
     invoke-virtual { p0, p1 }, Landroid/view/View;->setBackgroundColor(I)V
   :L12
-  .line 398
+  .line 450
     return-void
 .end method
 
 .method private static fade(I)Landroid/graphics/ColorMatrixColorFilter;
   .registers 7
-  .line 577
+  .line 629
     nop
-  .line 578
+  .line 630
     new-instance v0, Landroid/graphics/ColorMatrixColorFilter;
     new-instance v1, Landroid/graphics/ColorMatrix;
     const/16 v2, 20
@@ -320,7 +330,7 @@
     aput v4, v2, v3
     const/4 v3, 3
     aput v4, v2, v3
-  .line 579
+  .line 631
     invoke-static { p0 }, Landroid/graphics/Color;->red(I)I
     move-result v3
     int-to-float v3, v3
@@ -334,7 +344,7 @@
     aput v4, v2, v3
     const/16 v3, 8
     aput v4, v2, v3
-  .line 580
+  .line 632
     invoke-static { p0 }, Landroid/graphics/Color;->green(I)I
     move-result v3
     int-to-float v3, v3
@@ -348,7 +358,7 @@
     aput v4, v2, v3
     const/16 v3, 13
     aput v4, v2, v3
-  .line 581
+  .line 633
     invoke-static { p0 }, Landroid/graphics/Color;->blue(I)I
     move-result p0
     int-to-float p0, p0
@@ -370,91 +380,33 @@
     aput v4, v2, p0
     invoke-direct { v1, v2 }, Landroid/graphics/ColorMatrix;-><init>([F)V
     invoke-direct { v0, v1 }, Landroid/graphics/ColorMatrixColorFilter;-><init>(Landroid/graphics/ColorMatrix;)V
-  .line 578
+  .line 630
     return-object v0
-.end method
-
-.method public static hidden(Landroid/app/ProgressDialog;)V
-  .catchall { :L0 .. :L3 } :L5
-  .registers 4
-  .line 348
-    invoke-static { p0 }, Lcom/innioasis/ipp/Loading;->seen(Landroid/app/Dialog;)V
-  .line 349
-    if-nez p0, :L0
-    return-void
-  :L0
-  .line 351
-    invoke-virtual { p0 }, Landroid/app/ProgressDialog;->getWindow()Landroid/view/Window;
-    move-result-object p0
-  .line 352
-    if-nez p0, :L1
-    return-void
-  :L1
-  .line 354
-    const/4 v0, 0
-    invoke-virtual { p0, v0 }, Landroid/view/Window;->setWindowAnimations(I)V
-  .line 355
-    const/4 v1, 2
-    invoke-virtual { p0, v1 }, Landroid/view/Window;->clearFlags(I)V
-  .line 356
-    new-instance v1, Landroid/graphics/drawable/ColorDrawable;
-    invoke-direct { v1, v0 }, Landroid/graphics/drawable/ColorDrawable;-><init>(I)V
-    invoke-virtual { p0, v1 }, Landroid/view/Window;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
-  .line 357
-    invoke-virtual { p0 }, Landroid/view/Window;->getDecorView()Landroid/view/View;
-    move-result-object p0
-  .line 358
-    instance-of v1, p0, Landroid/view/ViewGroup;
-    if-eqz v1, :L4
-  .line 359
-    check-cast p0, Landroid/view/ViewGroup;
-  .line 360
-    nop
-  :L2
-    invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
-    move-result v1
-    if-ge v0, v1, :L4
-    invoke-virtual { p0, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
-    move-result-object v1
-    const/4 v2, 4
-    invoke-virtual { v1, v2 }, Landroid/view/View;->setVisibility(I)V
-  :L3
-    add-int/lit8 v0, v0, 1
-    goto :L2
-  :L4
-  .line 363
-    goto :L6
-  :L5
-  .line 362
-    move-exception p0
-  :L6
-  .line 364
-    return-void
 .end method
 
 .method private static holdsSpin(Landroid/view/View;)Z
   .registers 5
-  .line 440
+  .line 492
     instance-of v0, p0, Lcom/innioasis/ipp/Loading$Spin;
     const/4 v1, 1
     if-eqz v0, :L0
     return v1
   :L0
-  .line 441
+  .line 493
     instance-of v0, p0, Landroid/view/ViewGroup;
     const/4 v2, 0
     if-nez v0, :L1
     return v2
   :L1
-  .line 442
+  .line 494
     check-cast p0, Landroid/view/ViewGroup;
-  .line 443
+  .line 495
     const/4 v0, 0
   :L2
     invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
     move-result v3
     if-ge v0, v3, :L4
-  .line 444
+  .line 496
     invoke-virtual { p0, v0 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
     move-result-object v3
     invoke-static { v3 }, Lcom/innioasis/ipp/Loading;->holdsSpin(Landroid/view/View;)Z
@@ -462,12 +414,73 @@
     if-eqz v3, :L3
     return v1
   :L3
-  .line 443
+  .line 495
     add-int/lit8 v0, v0, 1
     goto :L2
   :L4
-  .line 446
+  .line 498
     return v2
+.end method
+
+.method public static late(Landroid/app/ProgressDialog;)V
+  .catchall { :L0 .. :L4 } :L5
+  .registers 7
+  .line 352
+    invoke-static { p0 }, Lcom/innioasis/ipp/Loading;->progress(Landroid/app/ProgressDialog;)V
+  .line 353
+    if-nez p0, :L0
+    return-void
+  :L0
+  .line 355
+    invoke-virtual { p0 }, Landroid/app/ProgressDialog;->getWindow()Landroid/view/Window;
+    move-result-object v0
+  .line 356
+    if-nez v0, :L1
+    return-void
+  :L1
+  .line 358
+    const/4 v1, 0
+    invoke-virtual { v0, v1 }, Landroid/view/Window;->setWindowAnimations(I)V
+  .line 359
+    invoke-virtual { v0 }, Landroid/view/Window;->getDecorView()Landroid/view/View;
+    move-result-object v2
+  .line 360
+    invoke-virtual { v0 }, Landroid/view/Window;->getAttributes()Landroid/view/WindowManager$LayoutParams;
+    move-result-object v3
+    iget v3, v3, Landroid/view/WindowManager$LayoutParams;->flags:I
+    const/4 v4, 2
+    and-int/2addr v3, v4
+    if-eqz v3, :L2
+    const/4 v3, 1
+    goto :L3
+  :L2
+    const/4 v3, 0
+  :L3
+  .line 361
+    invoke-virtual { v2 }, Landroid/view/View;->getBackground()Landroid/graphics/drawable/Drawable;
+    move-result-object v5
+  .line 362
+    invoke-virtual { v0, v4 }, Landroid/view/Window;->clearFlags(I)V
+  .line 363
+    new-instance v4, Landroid/graphics/drawable/ColorDrawable;
+    invoke-direct { v4, v1 }, Landroid/graphics/drawable/ColorDrawable;-><init>(I)V
+    invoke-virtual { v0, v4 }, Landroid/view/Window;->setBackgroundDrawable(Landroid/graphics/drawable/Drawable;)V
+  .line 364
+    invoke-static { v2, v1 }, Lcom/innioasis/ipp/Loading;->showChildren(Landroid/view/View;Z)V
+  .line 365
+    new-instance v0, Lcom/innioasis/ipp/Loading$Reveal;
+    invoke-direct { v0, p0, v5, v3 }, Lcom/innioasis/ipp/Loading$Reveal;-><init>(Landroid/app/ProgressDialog;Landroid/graphics/drawable/Drawable;Z)V
+    const-wide/16 v3, 800
+    invoke-virtual { v2, v0, v3, v4 }, Landroid/view/View;->postDelayed(Ljava/lang/Runnable;J)Z
+  :L4
+  .line 367
+    goto :L6
+  :L5
+  .line 366
+    move-exception p0
+  :L6
+  .line 368
+    return-void
 .end method
 
 .method public static paint(Landroid/app/Dialog;Landroid/view/View;)V
@@ -921,10 +934,62 @@
     return-void
 .end method
 
+.method private static showChildren(Landroid/view/View;Z)V
+  .registers 7
+  .line 371
+    instance-of v0, p0, Landroid/view/ViewGroup;
+    if-nez v0, :L0
+    return-void
+  :L0
+  .line 372
+    move-object v0, p0
+    check-cast v0, Landroid/view/ViewGroup;
+  .line 373
+    invoke-static { p0, p1 }, Lcom/innioasis/ipp/Loading;->surfaces(Landroid/view/View;Z)V
+  .line 374
+    const/4 p0, 0
+    const/4 v1, 0
+  :L1
+    invoke-virtual { v0 }, Landroid/view/ViewGroup;->getChildCount()I
+    move-result v2
+    if-ge v1, v2, :L5
+  .line 375
+    invoke-virtual { v0, v1 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
+    move-result-object v2
+  .line 376
+    if-eqz p1, :L2
+    const/4 v3, 0
+    goto :L3
+  :L2
+    const/4 v3, 4
+  :L3
+    invoke-virtual { v2, v3 }, Landroid/view/View;->setVisibility(I)V
+  .line 377
+    if-eqz p1, :L4
+  .line 378
+    const/4 v3, 0
+    invoke-virtual { v2, v3 }, Landroid/view/View;->setAlpha(F)V
+  .line 379
+    invoke-virtual { v2 }, Landroid/view/View;->animate()Landroid/view/ViewPropertyAnimator;
+    move-result-object v2
+    const/high16 v3, 0x3F800000
+    invoke-virtual { v2, v3 }, Landroid/view/ViewPropertyAnimator;->alpha(F)Landroid/view/ViewPropertyAnimator;
+    move-result-object v2
+    const-wide/16 v3, 150
+    invoke-virtual { v2, v3, v4 }, Landroid/view/ViewPropertyAnimator;->setDuration(J)Landroid/view/ViewPropertyAnimator;
+  :L4
+  .line 374
+    add-int/lit8 v1, v1, 1
+    goto :L1
+  :L5
+  .line 382
+    return-void
+.end method
+
 .method private static spin(Landroid/view/View;II)Z
   .catchall { :L3 .. :L6 } :L8
   .registers 9
-  .line 408
+  .line 460
     const/4 v0, 0
     if-nez p0, :L0
     move-object v1, v0
@@ -933,84 +998,84 @@
     invoke-virtual { p0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v1
   :L1
-  .line 409
+  .line 461
     instance-of v2, v1, Landroid/view/ViewGroup;
     const/4 v3, 0
     if-nez v2, :L2
     return v3
   :L2
-  .line 410
+  .line 462
     check-cast v1, Landroid/view/ViewGroup;
   :L3
-  .line 412
+  .line 464
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v2
-  .line 415
+  .line 467
     instance-of v4, v2, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     if-eqz v4, :L4
-  .line 416
+  .line 468
     check-cast v2, Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     invoke-static { v2 }, Lcom/innioasis/ipp/Pad;->copy(Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;)Landroidx/constraintlayout/widget/ConstraintLayout$LayoutParams;
     move-result-object p2
-  .line 417
+  .line 469
     const/4 v2, 4
     goto :L5
   :L4
-  .line 418
+  .line 470
     instance-of v2, v1, Landroid/widget/LinearLayout;
     if-eqz v2, :L7
     if-lez p2, :L7
-  .line 419
+  .line 471
     new-instance v2, Landroid/widget/LinearLayout$LayoutParams;
     invoke-direct { v2, p2, p2 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-  .line 420
+  .line 472
     const/16 p2, 17
     iput p2, v2, Landroid/widget/LinearLayout$LayoutParams;->gravity:I
-  .line 421
+  .line 473
     move-object v4, v1
     check-cast v4, Landroid/widget/LinearLayout;
     invoke-virtual { v4, p2 }, Landroid/widget/LinearLayout;->setGravity(I)V
-  .line 422
+  .line 474
     nop
-  .line 423
+  .line 475
     nop
-  .line 424
+  .line 476
     const/16 p2, 8
     move-object p2, v2
     const/16 v2, 8
   :L5
-  .line 427
+  .line 479
     new-instance v4, Lcom/innioasis/ipp/Loading$Spin;
     invoke-virtual { p0 }, Landroid/view/View;->getContext()Landroid/content/Context;
     move-result-object v5
     invoke-direct { v4, v5, p1 }, Lcom/innioasis/ipp/Loading$Spin;-><init>(Landroid/content/Context;I)V
-  .line 428
+  .line 480
     invoke-static { }, Landroid/view/View;->generateViewId()I
     move-result p1
     invoke-virtual { v4, p1 }, Lcom/innioasis/ipp/Loading$Spin;->setId(I)V
-  .line 429
+  .line 481
     invoke-virtual { v1, p0 }, Landroid/view/ViewGroup;->indexOfChild(Landroid/view/View;)I
     move-result p1
     const/4 v5, 1
     add-int/2addr p1, v5
     invoke-virtual { v1, v4, p1, p2 }, Landroid/view/ViewGroup;->addView(Landroid/view/View;ILandroid/view/ViewGroup$LayoutParams;)V
-  .line 430
+  .line 482
     invoke-virtual { p0, v2 }, Landroid/view/View;->setVisibility(I)V
-  .line 432
+  .line 484
     instance-of p1, p0, Landroid/widget/ImageView;
     if-eqz p1, :L6
     check-cast p0, Landroid/widget/ImageView;
     invoke-virtual { p0, v0 }, Landroid/widget/ImageView;->setImageDrawable(Landroid/graphics/drawable/Drawable;)V
   :L6
-  .line 433
+  .line 485
     return v5
   :L7
-  .line 425
+  .line 477
     return v3
   :L8
-  .line 434
+  .line 486
     move-exception p0
-  .line 435
+  .line 487
     return v3
 .end method
 
@@ -1185,18 +1250,54 @@
     return-void
 .end method
 
+.method private static surfaces(Landroid/view/View;Z)V
+  .registers 4
+  .line 386
+    instance-of v0, p0, Landroid/view/SurfaceView;
+    const/4 v1, 0
+    if-eqz v0, :L2
+  .line 387
+    if-eqz p1, :L0
+    goto :L1
+  :L0
+    const/4 v1, 4
+  :L1
+    invoke-virtual { p0, v1 }, Landroid/view/View;->setVisibility(I)V
+    goto :L4
+  :L2
+  .line 388
+    instance-of v0, p0, Landroid/view/ViewGroup;
+    if-eqz v0, :L4
+  .line 389
+    check-cast p0, Landroid/view/ViewGroup;
+  .line 390
+    nop
+  :L3
+    invoke-virtual { p0 }, Landroid/view/ViewGroup;->getChildCount()I
+    move-result v0
+    if-ge v1, v0, :L4
+    invoke-virtual { p0, v1 }, Landroid/view/ViewGroup;->getChildAt(I)Landroid/view/View;
+    move-result-object v0
+    invoke-static { v0, p1 }, Lcom/innioasis/ipp/Loading;->surfaces(Landroid/view/View;Z)V
+    add-int/lit8 v1, v1, 1
+    goto :L3
+  :L4
+  .line 392
+    return-void
+.end method
+
 .method private static text(Landroid/view/View;II)V
   .registers 3
-  .line 587
+  .line 639
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 588
+  .line 640
     instance-of p1, p0, Landroid/widget/TextView;
     if-eqz p1, :L0
     check-cast p0, Landroid/widget/TextView;
     invoke-virtual { p0, p2 }, Landroid/widget/TextView;->setTextColor(I)V
   :L0
-  .line 589
+  .line 641
     return-void
 .end method
 

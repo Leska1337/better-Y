@@ -56,8 +56,8 @@ Halten Sie dazu auf dem gewünschten Design die obere Taste gedrückt und wähle
 Folgende Einstellungen werden gespeichert:
 
 Gerade läuft: Stil (außer "Cover neigen").
-Menü: Stil, Ränder, Textfarbe der Vorschau, Stil und Textfarbe der Statusleiste.
-Bildschirmschoner: Stil.
+Menü: Stil, Stil und Textfarbe der Statusleiste.
+Bildschirmschoner: Stil (außer "Helligkeit").
 Tastenklang: Klang.
 ---
 Um einen Hintergrund für den Bildschirmschoner (screensaver.*), einen Hintergrund für den USB-Bildschirm (usb.*) oder ein better-Y-Symbol (better-Y.*) hinzuzufügen, legen Sie Bilder mit den entsprechenden Dateinamen in den Ordner des Designs.

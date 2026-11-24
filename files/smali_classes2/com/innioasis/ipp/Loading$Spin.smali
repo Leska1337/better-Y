@@ -28,37 +28,37 @@
 
 .method public constructor <init>(Landroid/content/Context;I)V
   .registers 4
-  .line 470
+  .line 522
     invoke-direct { p0, p1 }, Landroid/view/SurfaceView;-><init>(Landroid/content/Context;)V
-  .line 464
+  .line 516
     new-instance p1, Landroid/graphics/Paint;
     const/4 v0, 3
     invoke-direct { p1, v0 }, Landroid/graphics/Paint;-><init>(I)V
     iput-object p1, p0, Lcom/innioasis/ipp/Loading$Spin;->paint:Landroid/graphics/Paint;
-  .line 465
+  .line 517
     new-instance v0, Landroid/graphics/RectF;
     invoke-direct { v0 }, Landroid/graphics/RectF;-><init>()V
     iput-object v0, p0, Lcom/innioasis/ipp/Loading$Spin;->box:Landroid/graphics/RectF;
-  .line 471
+  .line 523
     const v0, 16707006
     if-eq p2, v0, :L0
-    invoke-static { p2 }, Lcom/innioasis/ipp/Loading;->access$000(I)Landroid/graphics/ColorMatrixColorFilter;
+    invoke-static { p2 }, Lcom/innioasis/ipp/Loading;->access$100(I)Landroid/graphics/ColorMatrixColorFilter;
     move-result-object p2
     invoke-virtual { p1, p2 }, Landroid/graphics/Paint;->setColorFilter(Landroid/graphics/ColorFilter;)Landroid/graphics/ColorFilter;
   :L0
-  .line 472
+  .line 524
     const/4 p1, 1
     invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/Loading$Spin;->setZOrderOnTop(Z)V
-  .line 473
+  .line 525
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Loading$Spin;->getHolder()Landroid/view/SurfaceHolder;
     move-result-object p1
     const/4 p2, -3
     invoke-interface { p1, p2 }, Landroid/view/SurfaceHolder;->setFormat(I)V
-  .line 474
+  .line 526
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Loading$Spin;->getHolder()Landroid/view/SurfaceHolder;
     move-result-object p1
     invoke-interface { p1, p0 }, Landroid/view/SurfaceHolder;->addCallback(Landroid/view/SurfaceHolder$Callback;)V
-  .line 475
+  .line 527
     return-void
 .end method
 
@@ -73,69 +73,69 @@
   .catchall { :L20 .. :L21 } :L22
   .catchall { :L25 .. :L26 } :L27
   .registers 15
-  .line 523
+  .line 575
     nop
-  .line 525
+  .line 577
     const/4 v0, 0
     const/4 v1, 0
   :L0
     invoke-interface { p1 }, Landroid/view/SurfaceHolder;->lockCanvas()Landroid/graphics/Canvas;
     move-result-object v2
   :L1
-  .line 526
+  .line 578
     if-nez v2, :L6
-  .line 540
+  .line 592
     if-eqz v2, :L5
   :L2
-  .line 542
+  .line 594
     invoke-interface { p1, v2 }, Landroid/view/SurfaceHolder;->unlockCanvasAndPost(Landroid/graphics/Canvas;)V
   :L3
-  .line 545
+  .line 597
     goto :L5
   :L4
-  .line 543
+  .line 595
     move-exception p1
-  .line 544
+  .line 596
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
   :L5
-  .line 526
+  .line 578
     return-void
   :L6
-  .line 527
+  .line 579
     sget-object v3, Landroid/graphics/PorterDuff$Mode;->CLEAR:Landroid/graphics/PorterDuff$Mode;
     invoke-virtual { v2, v0, v3 }, Landroid/graphics/Canvas;->drawColor(ILandroid/graphics/PorterDuff$Mode;)V
   :L7
-  .line 528
+  .line 580
     if-nez p2, :L12
-  .line 540
+  .line 592
     if-eqz v2, :L11
   :L8
-  .line 542
+  .line 594
     invoke-interface { p1, v2 }, Landroid/view/SurfaceHolder;->unlockCanvasAndPost(Landroid/graphics/Canvas;)V
   :L9
-  .line 545
+  .line 597
     goto :L11
   :L10
-  .line 543
+  .line 595
     move-exception p1
-  .line 544
+  .line 596
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
   :L11
-  .line 528
+  .line 580
     return-void
   :L12
-  .line 529
+  .line 581
     invoke-virtual { v2 }, Landroid/graphics/Canvas;->getWidth()I
     move-result v3
     int-to-float v3, v3
-  .line 530
+  .line 582
     invoke-virtual { v2 }, Landroid/graphics/Canvas;->getHeight()I
     move-result v4
     int-to-float v4, v4
-  .line 531
+  .line 583
     invoke-static { v3, v4 }, Ljava/lang/Math;->min(FF)F
     move-result v5
-  .line 532
+  .line 584
     iget-object v6, p0, Lcom/innioasis/ipp/Loading$Spin;->box:Landroid/graphics/RectF;
     sub-float v7, v3, v5
     const/high16 v8, 0x40000000
@@ -147,71 +147,71 @@
     add-float/2addr v5, v4
     div-float/2addr v5, v8
     invoke-virtual { v6, v7, v9, v10, v5 }, Landroid/graphics/RectF;->set(FFFF)V
-  .line 533
+  .line 585
     invoke-virtual { v2 }, Landroid/graphics/Canvas;->save()I
-  .line 534
+  .line 586
     div-float/2addr v3, v8
     div-float/2addr v4, v8
     invoke-virtual { v2, p3, v3, v4 }, Landroid/graphics/Canvas;->rotate(FFF)V
-  .line 535
+  .line 587
     iget-object p3, p0, Lcom/innioasis/ipp/Loading$Spin;->box:Landroid/graphics/RectF;
     iget-object v3, p0, Lcom/innioasis/ipp/Loading$Spin;->paint:Landroid/graphics/Paint;
     invoke-virtual { v2, p2, v1, p3, v3 }, Landroid/graphics/Canvas;->drawBitmap(Landroid/graphics/Bitmap;Landroid/graphics/Rect;Landroid/graphics/RectF;Landroid/graphics/Paint;)V
-  .line 536
+  .line 588
     invoke-virtual { v2 }, Landroid/graphics/Canvas;->restore()V
   :L13
-  .line 540
+  .line 592
     if-eqz v2, :L23
   :L14
-  .line 542
+  .line 594
     invoke-interface { p1, v2 }, Landroid/view/SurfaceHolder;->unlockCanvasAndPost(Landroid/graphics/Canvas;)V
   :L15
     goto :L21
   :L16
-  .line 537
+  .line 589
     move-exception p2
     move-object v1, v2
     goto :L18
   :L17
     move-exception p2
   :L18
-  .line 538
+  .line 590
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
   :L19
-  .line 540
+  .line 592
     if-eqz v1, :L23
   :L20
-  .line 542
+  .line 594
     invoke-interface { p1, v1 }, Landroid/view/SurfaceHolder;->unlockCanvasAndPost(Landroid/graphics/Canvas;)V
   :L21
-  .line 545
+  .line 597
     goto :L23
   :L22
-  .line 543
+  .line 595
     move-exception p1
-  .line 544
+  .line 596
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
     goto :L21
   :L23
-  .line 548
+  .line 600
     return-void
   :L24
-  .line 540
+  .line 592
     move-exception p2
     if-eqz v1, :L28
   :L25
-  .line 542
+  .line 594
     invoke-interface { p1, v1 }, Landroid/view/SurfaceHolder;->unlockCanvasAndPost(Landroid/graphics/Canvas;)V
   :L26
-  .line 545
+  .line 597
     goto :L28
   :L27
-  .line 543
+  .line 595
     move-exception p1
-  .line 544
+  .line 596
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
   :L28
-  .line 547
+  .line 599
     goto :L30
   :L29
     throw p2
@@ -222,32 +222,32 @@
 .method private halt()V
   .catch Ljava/lang/InterruptedException; { :L1 .. :L2 } :L3
   .registers 4
-  .line 497
+  .line 549
     const/4 v0, 0
     iput-boolean v0, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
-  .line 498
+  .line 550
     iget-object v0, p0, Lcom/innioasis/ipp/Loading$Spin;->thread:Ljava/lang/Thread;
-  .line 499
+  .line 551
     const/4 v1, 0
     iput-object v1, p0, Lcom/innioasis/ipp/Loading$Spin;->thread:Ljava/lang/Thread;
-  .line 500
+  .line 552
     if-nez v0, :L0
     return-void
   :L0
-  .line 501
+  .line 553
     invoke-virtual { v0 }, Ljava/lang/Thread;->interrupt()V
-  .line 503
+  .line 555
     const-wide/16 v1, 500
   :L1
     invoke-virtual { v0, v1, v2 }, Ljava/lang/Thread;->join(J)V
   :L2
-  .line 505
+  .line 557
     goto :L4
   :L3
-  .line 504
+  .line 556
     move-exception v0
   :L4
-  .line 506
+  .line 558
     return-void
 .end method
 
@@ -257,28 +257,28 @@
     const-class v0, Lcom/innioasis/ipp/Loading$Spin;
     monitor-enter v0
   :L0
-  .line 551
+  .line 603
     sget-object v1, Lcom/innioasis/ipp/Loading$Spin;->ring:Landroid/graphics/Bitmap;
     if-nez v1, :L1
-  .line 552
+  .line 604
     new-instance v1, Landroid/graphics/BitmapFactory$Options;
     invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
-  .line 553
+  .line 605
     const/4 v2, 0
     iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
-  .line 554
+  .line 606
     const v2, 2131231058
     invoke-static { p0, v2, v1 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
     move-result-object p0
     sput-object p0, Lcom/innioasis/ipp/Loading$Spin;->ring:Landroid/graphics/Bitmap;
   :L1
-  .line 556
+  .line 608
     sget-object p0, Lcom/innioasis/ipp/Loading$Spin;->ring:Landroid/graphics/Bitmap;
   :L2
     monitor-exit v0
     return-object p0
   :L3
-  .line 550
+  .line 602
     move-exception p0
     monitor-exit v0
     throw p0
@@ -286,33 +286,33 @@
 
 .method protected onDetachedFromWindow()V
   .registers 1
-  .line 492
+  .line 544
     invoke-direct { p0 }, Lcom/innioasis/ipp/Loading$Spin;->halt()V
-  .line 493
+  .line 545
     invoke-super { p0 }, Landroid/view/SurfaceView;->onDetachedFromWindow()V
-  .line 494
+  .line 546
     return-void
 .end method
 
 .method public run()V
   .catch Ljava/lang/InterruptedException; { :L1 .. :L2 } :L3
   .registers 9
-  .line 509
+  .line 561
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Loading$Spin;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Loading$Spin;->ring(Landroid/content/res/Resources;)Landroid/graphics/Bitmap;
     move-result-object v0
-  .line 510
+  .line 562
     invoke-virtual { p0 }, Lcom/innioasis/ipp/Loading$Spin;->getHolder()Landroid/view/SurfaceHolder;
     move-result-object v1
-  .line 511
+  .line 563
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v2
   :L0
-  .line 512
+  .line 564
     iget-boolean v4, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
     if-eqz v4, :L4
-  .line 513
+  .line 565
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v4
     sub-long/2addr v4, v2
@@ -324,51 +324,51 @@
     const/high16 v5, 0x44480000
     div-float/2addr v4, v5
     invoke-direct { p0, v1, v0, v4 }, Lcom/innioasis/ipp/Loading$Spin;->frame(Landroid/view/SurfaceHolder;Landroid/graphics/Bitmap;F)V
-  .line 515
+  .line 567
     const-wide/16 v4, 20
   :L1
     invoke-static { v4, v5 }, Ljava/lang/Thread;->sleep(J)V
   :L2
-  .line 518
+  .line 570
     goto :L0
   :L3
-  .line 516
+  .line 568
     move-exception v0
-  .line 517
+  .line 569
     return-void
   :L4
-  .line 520
+  .line 572
     return-void
 .end method
 
 .method public surfaceChanged(Landroid/view/SurfaceHolder;III)V
   .registers 5
-  .line 485
+  .line 537
     return-void
 .end method
 
 .method public surfaceCreated(Landroid/view/SurfaceHolder;)V
   .registers 3
-  .line 478
+  .line 530
     invoke-direct { p0 }, Lcom/innioasis/ipp/Loading$Spin;->halt()V
-  .line 479
+  .line 531
     const/4 p1, 1
     iput-boolean p1, p0, Lcom/innioasis/ipp/Loading$Spin;->running:Z
-  .line 480
+  .line 532
     new-instance p1, Ljava/lang/Thread;
     const-string v0, "ipp-spin"
     invoke-direct { p1, p0, v0 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
     iput-object p1, p0, Lcom/innioasis/ipp/Loading$Spin;->thread:Ljava/lang/Thread;
-  .line 481
+  .line 533
     invoke-virtual { p1 }, Ljava/lang/Thread;->start()V
-  .line 482
+  .line 534
     return-void
 .end method
 
 .method public surfaceDestroyed(Landroid/view/SurfaceHolder;)V
   .registers 2
-  .line 488
+  .line 540
     invoke-direct { p0 }, Lcom/innioasis/ipp/Loading$Spin;->halt()V
-  .line 489
+  .line 541
     return-void
 .end method

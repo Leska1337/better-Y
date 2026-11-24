@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..14b65792 100644
+index 01b1f730..c854a705 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..14b65792 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100564
++  versionCode: 10100569
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20227,7 +20227,7 @@ index 803c1e7a..c9def65c 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..efa1f106 100644
+index 71fe29d0..2c488766 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21176,7 +21176,7 @@ index 71fe29d0..efa1f106 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev564</string>
++    <string name="ipp_version">v1.1.0-dev569</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -65013,7 +65013,7 @@ index a9542df1..ed741784 100644
      sget-object v0, Lcom/innioasis/y1/utils/SharedPreferencesUtils;->INSTANCE:Lcom/innioasis/y1/utils/SharedPreferencesUtils;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
-index f2075450..bbc40c9c 100644
+index f2075450..1b7b5512 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$adapter$2$1.smali
 @@ -104,14 +104,30 @@
@@ -65069,16 +65069,73 @@ index f2075450..bbc40c9c 100644
      goto :goto_1
  
      .line 86
+@@ -283,52 +306,19 @@
+ 
+     move-result-object p3
+ 
+-    invoke-static {p3}, Lcom/bumptech/glide/Glide;->with(Landroid/content/Context;)Lcom/bumptech/glide/RequestManager;
+-
+-    move-result-object p3
+-
+-    .line 88
+-    new-instance v0, Ljava/io/File;
+-
+     invoke-virtual {p2}, Lcom/innioasis/y1/activity/PhotosActivity$Item;->getPath()Ljava/lang/String;
+ 
+     move-result-object v1
+ 
+-    invoke-direct {v0, v1}, Ljava/io/File;-><init>(Ljava/lang/String;)V
+-
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestManager;->load(Ljava/io/File;)Lcom/bumptech/glide/RequestBuilder;
++    iget-object v2, p1, Lcom/innioasis/y1/databinding/ItemPhotosBinding;->img:Landroid/widget/ImageView;
+ 
+-    move-result-object p3
+-
+-    const/16 v0, 0x50
+-
+-    const/16 v1, 0x3c
+-
+-    .line 89
+-    invoke-virtual {p3, v0, v1}, Lcom/bumptech/glide/RequestBuilder;->override(II)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object p3
+-
+-    check-cast p3, Lcom/bumptech/glide/RequestBuilder;
+-
+-    const/16 v0, 0x14
+-
+-    .line 90
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestBuilder;->encodeQuality(I)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object p3
+-
+-    check-cast p3, Lcom/bumptech/glide/RequestBuilder;
+-
+-    .line 92
+     new-instance v0, Lcom/innioasis/y1/activity/PhotosActivity$adapter$2$1$init$1;
+ 
+     invoke-direct {v0, p2, p1}, Lcom/innioasis/y1/activity/PhotosActivity$adapter$2$1$init$1;-><init>(Lcom/innioasis/y1/activity/PhotosActivity$Item;Lcom/innioasis/y1/databinding/ItemPhotosBinding;)V
+ 
+-    check-cast v0, Lcom/bumptech/glide/request/target/Target;
+-
+-    .line 91
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestBuilder;->into(Lcom/bumptech/glide/request/target/Target;)Lcom/bumptech/glide/request/target/Target;
++    # ipp: the tile at its own size, shrunk by halves; stock took 80x60 at JPEG quality 20 and
++    # stretched it into the 100x75 tile.
++    invoke-static {p3, v1, v2, v0}, Lcom/innioasis/ipp/Thumbs;->photo(Landroid/content/Context;Ljava/lang/String;Landroid/widget/ImageView;Ljava/lang/Object;)V
+ 
+     :goto_1
+     return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
-index 13444baf..6f28ff47 100644
+index 13444baf..2e66ce90 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity$handler$1.smali
 @@ -121,6 +121,9 @@
  
      move-result-object v0
  
-+    # ipp: raised but not seen -- it holds the keys while the picture loads.
-+    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->hidden(Landroid/app/ProgressDialog;)V
++    # ipp: seen only if the picture takes 1 s or more; up all along, it holds the keys.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->late(Landroid/app/ProgressDialog;)V
 +
      if-eqz v0, :cond_0
  
@@ -65098,10 +65155,42 @@ index 1a9012fb..c73c85fc 100644
      .line 687
      iget-object p1, p0, Lcom/innioasis/y1/activity/PhotosActivity$shortTop$2$1;->this$0:Lcom/innioasis/y1/activity/PhotosActivity;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-index 0688aa89..4414430f 100644
+index 0688aa89..8db9c548 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/PhotosActivity.smali
-@@ -1105,6 +1105,25 @@
+@@ -612,24 +612,23 @@
+ .end method
+ 
+ .method private final cancelMultiSelect()V
+-    .locals 1
+-
+-    .line 374
+-    iget-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->multiSelectIndexes:Ljava/util/List;
+-
+-    invoke-interface {v0}, Ljava/util/List;->clear()V
++    .locals 2
+ 
+     const/4 v0, 0x0
+ 
+     .line 375
+     iput-boolean v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->isMultiSelect:Z
+ 
+-    .line 376
++    # ipp: the marks cleared and only the tiles that carried one rebound; stock repainted the whole
++    # grid here, on every close of the long-press menu. Every caller that changes the list
++    # notifies on its own.
+     invoke-direct {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {v0}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyDataSetChanged()V
++    iget-object v1, p0, Lcom/innioasis/y1/activity/PhotosActivity;->multiSelectIndexes:Ljava/util/List;
++
++    invoke-static {p0, v0, v1}, Lcom/innioasis/ipp/Photos;->unmark(Landroid/app/Activity;Ljava/lang/Object;Ljava/util/List;)V
+ 
+     return-void
+ .end method
+@@ -1105,6 +1104,25 @@
  
      move-result-object v4
  
@@ -65127,7 +65216,7 @@ index 0688aa89..4414430f 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/PhotosActivity;->getPhotos()Landroid/widget/ImageView;
  
      move-result-object v1
-@@ -1125,6 +1144,14 @@
+@@ -1125,6 +1143,14 @@
      const/4 v5, 0x0
  
      :goto_0
@@ -65142,6 +65231,16 @@ index 0688aa89..4414430f 100644
      const/4 v6, 0x0
  
      const/4 v7, 0x0
+@@ -1712,7 +1738,8 @@
+ 
+     move-result-object v0
+ 
+-    invoke-virtual {v0, p1}, Lcom/innioasis/y1/base/BaseBindingAdapter;->notifyItemChanged(I)V
++    # ipp: the tile rebound in place instead of notified.
++    invoke-static {p0, v0, p1}, Lcom/innioasis/ipp/Photos;->mark(Landroid/app/Activity;Ljava/lang/Object;I)V
+ 
+     :cond_2
+     :goto_0
 @@ -2352,7 +2379,8 @@
  
      move-result-object v1
@@ -65156,8 +65255,8 @@ index 0688aa89..4414430f 100644
  
      iput-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->progressDialog:Landroid/app/ProgressDialog;
  
-+    # ipp: raised but not seen -- it holds the keys while the folder loads.
-+    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->hidden(Landroid/app/ProgressDialog;)V
++    # ipp: seen only if the folder takes 1 s or more; up all along, it holds the keys.
++    invoke-static {v0}, Lcom/innioasis/ipp/Loading;->late(Landroid/app/ProgressDialog;)V
 +
      if-eqz v0, :cond_1
  
@@ -65322,6 +65421,24 @@ index 0688aa89..4414430f 100644
 +
      .line 224
      iget-object v0, p0, Lcom/innioasis/y1/activity/PhotosActivity;->nowPath:Ljava/lang/String;
+ 
+@@ -3429,6 +3488,17 @@
+     return-void
+ .end method
+ 
++# ipp: Glide keeps the tiles in memory after the screen is gone; dropped here.
++.method protected onDestroy()V
++    .locals 0
++
++    invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onDestroy()V
++
++    invoke-static {p0}, Lcom/innioasis/ipp/Thumbs;->left(Landroid/app/Activity;)V
++
++    return-void
++.end method
++
+ .method public quit()V
+     .locals 0
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali b/build/src/smali_classes2/com/innioasis/y1/activity/PlayerActivity$initView$1$3.smali
 index e34359a1..11d4e4ff 100644
@@ -66252,10 +66369,82 @@ index a5a04dcd..1bdae584 100644
      return-void
  .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
-index f2baa306..13f65c91 100644
+index f2baa306..e0207aea 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity$adapter$2$1.smali
-@@ -261,6 +261,9 @@
+@@ -140,7 +140,8 @@
+ 
+     move-result v0
+ 
+-    invoke-virtual {p2, v0}, Landroid/widget/ImageView;->setImageResource(I)V
++    # ipp: the preset shrunk to the tile by Glide like the files, not drawn in at full size.
++    invoke-static {p2, v0}, Lcom/innioasis/ipp/Thumbs;->preset(Landroid/widget/ImageView;I)V
+ 
+     goto :goto_0
+ 
+@@ -151,58 +152,11 @@
+ 
+     move-result-object v0
+ 
+-    invoke-static {v0}, Lcom/bumptech/glide/Glide;->with(Landroid/content/Context;)Lcom/bumptech/glide/RequestManager;
+-
+-    move-result-object v0
+-
+-    new-instance v1, Ljava/io/File;
+-
+-    invoke-direct {v1, p2}, Ljava/io/File;-><init>(Ljava/lang/String;)V
+-
+-    invoke-virtual {v0, v1}, Lcom/bumptech/glide/RequestManager;->load(Ljava/io/File;)Lcom/bumptech/glide/RequestBuilder;
+-
+-    move-result-object v0
+-
+-    const/16 v1, 0x50
+-
+-    const/16 v3, 0x3c
+-
+-    invoke-virtual {v0, v1, v3}, Lcom/bumptech/glide/RequestBuilder;->override(II)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object v0
+-
+-    check-cast v0, Lcom/bumptech/glide/RequestBuilder;
+-
+-    .line 47
+-    new-instance v1, Lcom/bumptech/glide/request/RequestOptions;
+-
+-    invoke-direct {v1}, Lcom/bumptech/glide/request/RequestOptions;-><init>()V
+-
+-    .line 48
+-    sget-object v3, Lcom/bumptech/glide/load/engine/DiskCacheStrategy;->RESOURCE:Lcom/bumptech/glide/load/engine/DiskCacheStrategy;
+-
+-    .line 47
+-    invoke-virtual {v1, v3}, Lcom/bumptech/glide/request/RequestOptions;->diskCacheStrategy(Lcom/bumptech/glide/load/engine/DiskCacheStrategy;)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object v1
+-
+-    .line 46
+-    invoke-virtual {v0, v1}, Lcom/bumptech/glide/RequestBuilder;->apply(Lcom/bumptech/glide/request/BaseRequestOptions;)Lcom/bumptech/glide/RequestBuilder;
+-
+-    move-result-object v0
+-
+-    const/16 v1, 0x32
+-
+-    .line 50
+-    invoke-virtual {v0, v1}, Lcom/bumptech/glide/RequestBuilder;->encodeQuality(I)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object v0
+-
+-    check-cast v0, Lcom/bumptech/glide/RequestBuilder;
+-
+     iget-object v1, p1, Lcom/innioasis/y1/databinding/ItemWallpaperBinding;->img:Landroid/widget/ImageView;
+ 
+-    invoke-virtual {v0, v1}, Lcom/bumptech/glide/RequestBuilder;->into(Landroid/widget/ImageView;)Lcom/bumptech/glide/request/target/ViewTarget;
++    # ipp: the tile at the size it lays out to, shrunk by halves; stock took 80x60 at JPEG
++    # quality 50 and stretched it.
++    invoke-static {v0, p2, v1}, Lcom/innioasis/ipp/Thumbs;->wallpaper(Landroid/content/Context;Ljava/lang/String;Landroid/widget/ImageView;)V
+     :try_end_0
+     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+ 
+@@ -261,6 +215,9 @@
  
      invoke-virtual {p1, p2}, Landroidx/cardview/widget/CardView;->setCardBackgroundColor(I)V
  
@@ -66315,7 +66504,7 @@ index becba77b..6483f5b6 100644
      const/16 v1, 0xc8
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
-index 4a99a22f..04dfc1c3 100644
+index 4a99a22f..988bde40 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/WallpaperActivity.smali
 @@ -144,7 +144,9 @@
@@ -66385,10 +66574,10 @@ index 4a99a22f..04dfc1c3 100644
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getMark()I
  
 -    move-result v1
--
--    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    move-result v2
  
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
+-
 -    .line 154
      invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
  
@@ -66485,10 +66674,10 @@ index 4a99a22f..04dfc1c3 100644
  
 -    move-result v1
 +    move-result v2
-+
-+    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
  
 -    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++    invoke-direct {p0}, Lcom/innioasis/y1/activity/WallpaperActivity;->getAdapter()Lcom/innioasis/y1/activity/WallpaperActivity$adapter$2$1;
++
 +    move-result-object v3
 +
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
@@ -66516,7 +66705,25 @@ index 4a99a22f..04dfc1c3 100644
      .line 174
      move-object v0, p0
  
-@@ -599,6 +579,9 @@
+@@ -590,6 +570,17 @@
+     return-void
+ .end method
+ 
++# ipp: Glide keeps the tiles in memory after the screen is gone; dropped here.
++.method protected onDestroy()V
++    .locals 0
++
++    invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onDestroy()V
++
++    invoke-static {p0}, Lcom/innioasis/ipp/Thumbs;->left(Landroid/app/Activity;)V
++
++    return-void
++.end method
++
+ .method public quit()V
+     .locals 0
+ 
+@@ -599,6 +590,9 @@
  .method public final save(Ljava/lang/String;)V
      .locals 8
  

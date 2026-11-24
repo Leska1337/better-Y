@@ -59,8 +59,8 @@ To do this, press and hold the top button on the desired theme and select "Save 
 The following settings are saved:
 
 Now Playing: style (except for "tilt the cover").
-Menu: style, margins, text color in previews, status bar style and text color.
-Screensaver: style.
+Menu: style, status bar style and text color.
+Screensaver: style (except for "brightness").
 Key tone: sound.
 ---
 To add a screensaver background (screensaver.*), a USB screen background (usb.*), or a better-Y icon (better-Y.*), place images with the corresponding filenames in the theme folder.
