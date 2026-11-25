@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 
 import com.innioasis.y1.Y1Application;
 import com.innioasis.y1.database.Song;
@@ -594,33 +595,77 @@ public final class BigCover {
         }
     }
 
-    private static synchronized void noteSave() {
-        if (!notesDirty) return;
-        try {
-            File f = noteFile();
-            if (f == null) return;
-            // streamed: the whole file built as one String was ~2.5 MB of garbage per note, a run
-            // of stop-everything collections at every first open of a track
-            File tmp = new File(f.getPath() + ".tmp");
-            java.io.Writer w = new java.io.BufferedWriter(
-                    new java.io.OutputStreamWriter(new FileOutputStream(tmp), "UTF-8"), 8192);
-            try {
-                Iterator it = notes.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry e = (Map.Entry) it.next();
-                    String k = (String) e.getKey();
-                    if (k == null || k.indexOf(SEP) >= 0) continue;
-                    w.write(k);
-                    w.write(SEP);
-                    w.write(String.valueOf(((Integer) e.getValue()).intValue()));
-                    w.write('\n');
-                }
-            } finally {
-                w.close();
-            }
-            if (!tmp.renameTo(f)) return;
+    /** Written from a snapshot, outside the class lock: the main thread asks notes meanwhile. */
+    private static void noteSave() {
+        Object[] ks, vs;
+        synchronized (BigCover.class) {
+            if (!notesDirty) return;
             notesDirty = false;
-        } catch (Throwable t) {
+            ks = notes.keySet().toArray();
+            vs = notes.values().toArray();
+        }
+        boolean ok = false;
+        synchronized (NOTE_FILE) {
+            try {
+                File f = noteFile();
+                if (f != null) {
+                    // streamed: the whole file built as one String was ~2.5 MB of garbage per
+                    // note, a run of stop-everything collections at every first open of a track
+                    File tmp = new File(f.getPath() + ".tmp");
+                    java.io.Writer w = new java.io.BufferedWriter(
+                            new java.io.OutputStreamWriter(new FileOutputStream(tmp), "UTF-8"), 8192);
+                    try {
+                        for (int i = 0; i < ks.length; i++) {
+                            String k = (String) ks[i];
+                            if (k == null || k.indexOf(SEP) >= 0) continue;
+                            w.write(k);
+                            w.write(SEP);
+                            w.write(String.valueOf(((Integer) vs[i]).intValue()));
+                            w.write('\n');
+                        }
+                    } finally {
+                        w.close();
+                    }
+                    ok = tmp.renameTo(f);
+                }
+            } catch (Throwable t) {
+            }
+        }
+        if (!ok) {
+            synchronized (BigCover.class) {
+                notesDirty = true;
+            }
+        }
+    }
+
+    private static final Object NOTE_FILE = new Object();
+
+    // A new note outside a pass is written once the notes stop coming: per note it was the whole
+    // file (~400 KB) per track read. A process that dies meanwhile loses only those notes, and
+    // their tracks are read again.
+    private static final long SAVE_DELAY_MS = 5000L;
+    private static long lastNote;
+    private static boolean saveAsked;
+
+    private static synchronized void askSave() {
+        lastNote = SystemClock.uptimeMillis();
+        if (saveAsked) return;
+        saveAsked = true;
+        Albums.later(new Save(), SAVE_DELAY_MS);
+    }
+
+    static final class Save implements Runnable {
+        public void run() {
+            long wait;
+            synchronized (BigCover.class) {
+                wait = SAVE_DELAY_MS - (SystemClock.uptimeMillis() - lastNote);
+                if (wait <= 0) saveAsked = false;
+            }
+            if (wait > 0) {
+                Albums.later(this, wait);
+                return;
+            }
+            noteSave();
         }
     }
 
@@ -631,7 +676,7 @@ public final class BigCover {
         return o == null ? UNKNOWN : ((Integer) o).intValue();
     }
 
-    /** Saved at once outside a pass (the process can die any time), once at a pass's end. */
+    /** Saved a few seconds after the last new note outside a pass, once at a pass's end. */
     private static synchronized void noteSet(String path, int value) {
         if (path == null) return;
         noteLoad();
@@ -639,7 +684,7 @@ public final class BigCover {
         if (value == NONE) mayNone = true;
         if (had != null && ((Integer) had).intValue() == value) return;
         notesDirty = true;
-        if (!passing) noteSave();
+        if (!passing) askSave();
     }
 
     private static synchronized void noteForget(String key) {
@@ -697,7 +742,7 @@ public final class BigCover {
         Integer v = Integer.valueOf(sig(raw));
         if (v.equals(notes.put(SIG + folder, v))) return;
         notesDirty = true;
-        if (!passing) noteSave();
+        if (!passing) askSave();
     }
 
     private static synchronized boolean sigIs(String folder, byte[] raw) {
