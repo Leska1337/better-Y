@@ -53,6 +53,8 @@
 
 .field private band:Landroid/widget/TextView;
 
+.field private blankPic:Landroid/graphics/Bitmap;
+
 .field private cat:I
 
 .field private clock:Landroid/widget/TextView;
@@ -224,37 +226,37 @@
 
 .method private static addLine(Landroid/widget/LinearLayout;Landroid/widget/TextView;II)V
   .registers 6
-  .line 550
+  .line 576
     invoke-virtual { p1, p2 }, Landroid/widget/TextView;->setGravity(I)V
-  .line 551
+  .line 577
     new-instance p2, Landroid/widget/LinearLayout$LayoutParams;
     const/4 v0, -1
     const/4 v1, -2
     invoke-direct { p2, v0, v1 }, Landroid/widget/LinearLayout$LayoutParams;-><init>(II)V
-  .line 552
+  .line 578
     iput p3, p2, Landroid/widget/LinearLayout$LayoutParams;->topMargin:I
-  .line 553
+  .line 579
     invoke-virtual { p0, p1, p2 }, Landroid/widget/LinearLayout;->addView(Landroid/view/View;Landroid/view/ViewGroup$LayoutParams;)V
-  .line 554
+  .line 580
     return-void
 .end method
 
 .method private armOff()V
   .registers 6
-  .line 605
+  .line 631
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->ui:Landroid/os/Handler;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->sleep:Ljava/lang/Runnable;
     invoke-virtual { v0, v1 }, Landroid/os/Handler;->removeCallbacks(Ljava/lang/Runnable;)V
-  .line 606
+  .line 632
     iget-boolean v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->preview:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 607
+  .line 633
     const-string v0, "ss_off"
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Prefs;->val(Landroid/content/Context;Ljava/lang/String;)I
     move-result v0
-  .line 608
+  .line 634
     if-ltz v0, :L1
     sget-object v1, Lcom/innioasis/ipp/Saver;->OFF_MS:[I
     array-length v1, v1
@@ -262,14 +264,14 @@
   :L1
     const/4 v0, 3
   :L2
-  .line 609
+  .line 635
     sget-object v1, Lcom/innioasis/ipp/Saver;->OFF_MS:[I
     aget v0, v1, v0
-  .line 610
+  .line 636
     if-nez v0, :L3
     return-void
   :L3
-  .line 611
+  .line 637
     const-string v1, "ss_charging"
     invoke-static { p0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
     move-result v1
@@ -279,12 +281,12 @@
     if-eqz v1, :L4
     return-void
   :L4
-  .line 612
+  .line 638
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->ui:Landroid/os/Handler;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->sleep:Ljava/lang/Runnable;
     int-to-long v3, v0
     invoke-virtual { v1, v2, v3, v4 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
-  .line 613
+  .line 639
     return-void
 .end method
 
@@ -480,39 +482,110 @@
     return-void
 .end method
 
+.method private blank()Landroid/graphics/Bitmap;
+  .catchall { :L1 .. :L8 } :L9
+  .registers 6
+  .line 541
+    iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->blankPic:Landroid/graphics/Bitmap;
+  .line 542
+    if-eqz v0, :L0
+    invoke-virtual { v0 }, Landroid/graphics/Bitmap;->isRecycled()Z
+    move-result v1
+    if-nez v1, :L0
+    return-object v0
+  :L0
+  .line 544
+    const/4 v0, 0
+  :L1
+    new-instance v1, Landroid/graphics/BitmapFactory$Options;
+    invoke-direct { v1 }, Landroid/graphics/BitmapFactory$Options;-><init>()V
+  .line 545
+    const/4 v2, 0
+    iput-boolean v2, v1, Landroid/graphics/BitmapFactory$Options;->inScaled:Z
+    sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v2
+    invoke-virtual { v2 }, Landroid/content/Context;->getResources()Landroid/content/res/Resources;
+    move-result-object v2
+    const v3, 2131230831
+    invoke-static { v2, v3, v1 }, Landroid/graphics/BitmapFactory;->decodeResource(Landroid/content/res/Resources;ILandroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+    move-result-object v1
+  .line 547
+    if-nez v1, :L2
+    return-object v0
+  :L2
+  .line 548
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getWidth()I
+    move-result v2
+  .line 549
+    invoke-virtual { v1 }, Landroid/graphics/Bitmap;->getHeight()I
+    move-result v3
+  .line 550
+    if-gt v2, v3, :L3
+    move v4, v2
+    goto :L4
+  :L3
+    move v4, v3
+  :L4
+  .line 551
+    if-ne v4, v2, :L6
+    if-ne v4, v3, :L6
+  :L5
+    goto :L7
+  :L6
+    sub-int/2addr v2, v4
+    div-int/lit8 v2, v2, 2
+    sub-int/2addr v3, v4
+    div-int/lit8 v3, v3, 2
+    invoke-static { v1, v2, v3, v4, v4 }, Landroid/graphics/Bitmap;->createBitmap(Landroid/graphics/Bitmap;IIII)Landroid/graphics/Bitmap;
+    move-result-object v1
+    goto :L5
+  :L7
+  .line 552
+    iput-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->blankPic:Landroid/graphics/Bitmap;
+  :L8
+  .line 553
+    return-object v1
+  :L9
+  .line 554
+    move-exception v1
+  .line 555
+    return-object v0
+.end method
+
 .method private brightness(F)V
   .registers 3
-  .line 577
+  .line 603
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getWindow()Landroid/view/Window;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/view/Window;->getAttributes()Landroid/view/WindowManager$LayoutParams;
     move-result-object v0
-  .line 578
+  .line 604
     iput p1, v0, Landroid/view/WindowManager$LayoutParams;->screenBrightness:F
-  .line 579
+  .line 605
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getWindow()Landroid/view/Window;
     move-result-object p1
     invoke-virtual { p1, v0 }, Landroid/view/Window;->setAttributes(Landroid/view/WindowManager$LayoutParams;)V
-  .line 580
+  .line 606
     return-void
 .end method
 
 .method private centerCover(Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;)I
   .registers 6
-  .line 535
+  .line 561
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getResources()Landroid/content/res/Resources;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v0
     iget v0, v0, Landroid/util/DisplayMetrics;->widthPixels:I
     add-int/lit8 v0, v0, -48
-  .line 536
+  .line 562
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getResources()Landroid/content/res/Resources;
     move-result-object v1
     invoke-virtual { v1 }, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
     move-result-object v1
     iget v1, v1, Landroid/util/DisplayMetrics;->heightPixels:I
-  .line 537
+  .line 563
     invoke-static { p1, v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->tall(Landroid/widget/TextView;I)I
     move-result p1
     invoke-static { p2, v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->tall(Landroid/widget/TextView;I)I
@@ -524,7 +597,7 @@
     add-int/lit8 p1, p1, 14
     add-int/lit8 p1, p1, 6
     add-int/lit8 p1, p1, 4
-  .line 538
+  .line 564
     add-int/lit8 v1, v1, -24
     sub-int/2addr v1, p1
     const/16 p1, 170
@@ -649,7 +722,7 @@
 .method private charging()Z
   .catchall { :L0 .. :L1 } :L3
   .registers 4
-  .line 617
+  .line 643
     const/4 v0, 0
   :L0
     new-instance v1, Landroid/content/IntentFilter;
@@ -658,7 +731,7 @@
     const/4 v2, 0
     invoke-virtual { p0, v2, v1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
     move-result-object v1
-  .line 618
+  .line 644
     if-eqz v1, :L2
     const-string v2, "plugged"
     invoke-virtual { v1, v2, v0 }, Landroid/content/Intent;->getIntExtra(Ljava/lang/String;I)I
@@ -669,9 +742,9 @@
   :L2
     return v0
   :L3
-  .line 619
+  .line 645
     move-exception v1
-  .line 620
+  .line 646
     return v0
 .end method
 
@@ -824,25 +897,25 @@
 
 .method private fadeStep()V
   .registers 5
-  .line 583
+  .line 609
     iget v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->step:I
     add-int/lit8 v0, v0, 1
     iput v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->step:I
-  .line 584
+  .line 610
     int-to-float v0, v0
     const/high16 v1, 0x41C80000
     div-float/2addr v0, v1
     const/high16 v1, 0x3F800000
     invoke-static { v1, v0 }, Ljava/lang/Math;->min(FF)F
     move-result v0
-  .line 585
+  .line 611
     iget v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->from:F
     iget v2, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->target:F
     sub-float/2addr v2, v1
     mul-float v2, v2, v0
     add-float/2addr v1, v2
     invoke-direct { p0, v1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->brightness(F)V
-  .line 586
+  .line 612
     iget v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->step:I
     const/16 v1, 25
     if-ge v0, v1, :L0
@@ -851,7 +924,7 @@
     const-wide/16 v2, 60
     invoke-virtual { v0, v1, v2, v3 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
   :L0
-  .line 587
+  .line 613
     return-void
 .end method
 
@@ -906,7 +979,7 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 4
   :L0
-  .line 626
+  .line 652
     const-string v0, "power"
     invoke-virtual { p0, v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
     move-result-object v0
@@ -915,18 +988,18 @@
     move-result-wide v1
     invoke-virtual { v0, v1, v2 }, Landroid/os/PowerManager;->goToSleep(J)V
   :L1
-  .line 630
+  .line 656
     goto :L3
   :L2
-  .line 627
+  .line 653
     move-exception v0
-  .line 629
+  .line 655
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getWindow()Landroid/view/Window;
     move-result-object v0
     const/16 v1, 128
     invoke-virtual { v0, v1 }, Landroid/view/Window;->clearFlags(I)V
   :L3
-  .line 631
+  .line 657
     return-void
 .end method
 
@@ -1216,7 +1289,7 @@
     goto :L15
   :L13
   .line 481
-    invoke-static { }, Lcom/innioasis/ipp/Cover;->blankCover()Landroid/graphics/Bitmap;
+    invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->blank()Landroid/graphics/Bitmap;
     move-result-object p1
   .line 482
     if-eqz p1, :L14
@@ -1362,7 +1435,7 @@
 
 .method private songChanged()V
   .registers 3
-  .line 557
+  .line 583
     iget v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->style:I
     invoke-static { v0 }, Lcom/innioasis/ipp/Saver;->kind(I)I
     move-result v0
@@ -1370,10 +1443,10 @@
     if-eq v0, v1, :L0
     return-void
   :L0
-  .line 558
+  .line 584
     invoke-static { }, Lcom/innioasis/y1/activity/IppSaverActivity;->playing()Lcom/innioasis/y1/database/Song;
     move-result-object v0
-  .line 559
+  .line 585
     if-nez v0, :L1
     const/4 v0, 0
     goto :L2
@@ -1381,7 +1454,7 @@
     invoke-virtual { v0 }, Lcom/innioasis/y1/database/Song;->getPath()Ljava/lang/String;
     move-result-object v0
   :L2
-  .line 560
+  .line 586
     if-eqz v0, :L3
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->coverPath:Ljava/lang/String;
     invoke-virtual { v0, v1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -1389,9 +1462,9 @@
     if-eqz v0, :L3
     return-void
   :L3
-  .line 561
+  .line 587
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->layout()V
-  .line 562
+  .line 588
     return-void
 .end method
 
@@ -1399,13 +1472,13 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 3
   :L0
-  .line 568
+  .line 594
     invoke-virtual { p0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->getContentResolver()Landroid/content/ContentResolver;
     move-result-object v0
     const-string v1, "screen_brightness"
     invoke-static { v0, v1 }, Landroid/provider/Settings$System;->getInt(Landroid/content/ContentResolver;Ljava/lang/String;)I
     move-result v0
-  .line 570
+  .line 596
     int-to-float v0, v0
     const/high16 v1, 0x437F0000
     div-float/2addr v0, v1
@@ -1418,19 +1491,19 @@
   :L1
     return v0
   :L2
-  .line 571
+  .line 597
     move-exception v0
-  .line 572
+  .line 598
     iget v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity;->target:F
     return v0
 .end method
 
 .method private static tall(Landroid/widget/TextView;I)I
   .registers 12
-  .line 542
+  .line 568
     invoke-virtual { p0 }, Landroid/widget/TextView;->getText()Ljava/lang/CharSequence;
     move-result-object v0
-  .line 543
+  .line 569
     new-instance v9, Landroid/text/StaticLayout;
     if-nez v0, :L0
     const-string v0, ""
@@ -1445,12 +1518,12 @@
     move-object v1, v9
     move v4, p1
     invoke-direct/range { v1 .. v8 }, Landroid/text/StaticLayout;-><init>(Ljava/lang/CharSequence;Landroid/text/TextPaint;ILandroid/text/Layout$Alignment;FFZ)V
-  .line 545
+  .line 571
     invoke-virtual { p0 }, Landroid/widget/TextView;->getPaint()Landroid/text/TextPaint;
     move-result-object p0
     invoke-virtual { p0 }, Landroid/text/TextPaint;->getFontMetricsInt()Landroid/graphics/Paint$FontMetricsInt;
     move-result-object p0
-  .line 546
+  .line 572
     const/4 p1, 1
     invoke-virtual { v9 }, Landroid/text/StaticLayout;->getLineCount()I
     move-result v0

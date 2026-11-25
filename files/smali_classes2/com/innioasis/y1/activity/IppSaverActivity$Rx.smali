@@ -14,17 +14,17 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppSaverActivity;)V
   .registers 2
-  .line 649
+  .line 675
     invoke-direct { p0 }, Landroid/content/BroadcastReceiver;-><init>()V
-  .line 650
+  .line 676
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rx;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
-  .line 651
+  .line 677
     return-void
 .end method
 
 .method public onReceive(Landroid/content/Context;Landroid/content/Intent;)V
   .registers 5
-  .line 655
+  .line 681
     if-nez p2, :L0
     const/4 p1, 0
     goto :L1
@@ -32,21 +32,21 @@
     invoke-virtual { p2 }, Landroid/content/Intent;->getAction()Ljava/lang/String;
     move-result-object p1
   :L1
-  .line 656
+  .line 682
     if-nez p1, :L2
     return-void
   :L2
-  .line 657
+  .line 683
     const-string p2, "android.intent.action.SCREEN_OFF"
     invoke-virtual { p2, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p2
     if-eqz p2, :L3
-  .line 658
+  .line 684
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rx;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-virtual { p1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->finish()V
     goto :L7
   :L3
-  .line 659
+  .line 685
     const-string p2, "android.intent.action.ACTION_POWER_CONNECTED"
     invoke-virtual { p2, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p2
@@ -57,22 +57,22 @@
     if-eqz p2, :L4
     goto :L6
   :L4
-  .line 662
+  .line 688
     const-string p2, "android.intent.action.MY_PLAY_SONG"
     invoke-virtual { p2, p1 }, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
     move-result p1
     if-eqz p1, :L5
-  .line 663
+  .line 689
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rx;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-static { p1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$300(Lcom/innioasis/y1/activity/IppSaverActivity;)V
     goto :L7
   :L5
-  .line 665
+  .line 691
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rx;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-static { p1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$400(Lcom/innioasis/y1/activity/IppSaverActivity;)V
     goto :L7
   :L6
-  .line 661
+  .line 687
     iget-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rx;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-static { p1 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$200(Lcom/innioasis/y1/activity/IppSaverActivity;)Landroid/os/Handler;
     move-result-object p1
@@ -82,6 +82,6 @@
     const-wide/16 v0, 1500
     invoke-virtual { p1, p2, v0, v1 }, Landroid/os/Handler;->postDelayed(Ljava/lang/Runnable;J)Z
   :L7
-  .line 667
+  .line 693
     return-void
 .end method

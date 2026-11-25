@@ -6,8 +6,8 @@ import android.view.Choreographer;
 /**
  * The longest frame of an animation, written to the app's log only when one stuttered:
  * {@code slow: frames <what> worst N ms, F frames in T ms, <parts>}. {@link #part} names a step
- * that ran on the main thread meanwhile; a slow gap carries {@code /N}, the main thread's own CPU
- * time in it, so a frame it computed is told from one it waited for. Main thread only, one
+ * that ran on the main thread meanwhile. With {@link Diag#MEASURE} every gap follows, a slow one
+ * with {@code /N}, the main thread's own CPU time in it. Main thread only, one
  * animation at a time.
  */
 public final class Frames {
@@ -66,9 +66,10 @@ public final class Frames {
                 long ms = SystemClock.uptimeMillis() - startAt;
                 String line = (worst >= SLOW_MS ? "slow: frames " : "frames ") + what + " worst " + worst
                         + " ms, " + count + " frames in " + ms + " ms, mean "
-                        + (count > 0 ? ms / count : 0) + " ms" + parts + "; gaps" + gaps;
+                        + (count > 0 ? ms / count : 0) + " ms" + parts
+                        + (Diag.MEASURE ? "; gaps" + gaps : "");
                 Diag.note(line);
-                android.util.Log.i("ippflow", line);
+                if (Diag.MEASURE) android.util.Log.i("ippflow", line);
             }
             what = null;
         } catch (Throwable t) {
@@ -82,16 +83,17 @@ public final class Frames {
                 stop();                      // the animation never reported its end
                 return;
             }
-            long cpu = SystemClock.currentThreadTimeMillis();
             if (lastNanos != 0) {
                 long gap = (nanos - lastNanos) / 1000000L;
                 if (gap > worst) worst = gap;
-                gaps.append(' ').append(gap);
-                // a slow frame: how much of it the main thread spent running, the rest it waited
-                if (gap >= SLOW_MS) gaps.append('/').append(cpu - lastCpu);
+                if (Diag.MEASURE) {
+                    gaps.append(' ').append(gap);
+                    // a slow frame: how much of it the main thread spent running, the rest it waited
+                    if (gap >= SLOW_MS) gaps.append('/').append(SystemClock.currentThreadTimeMillis() - lastCpu);
+                }
             }
             lastNanos = nanos;
-            lastCpu = cpu;
+            if (Diag.MEASURE) lastCpu = SystemClock.currentThreadTimeMillis();
             count++;
             Choreographer.getInstance().postFrameCallback(this);
         }

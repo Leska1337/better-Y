@@ -15,17 +15,17 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppSaverActivity;)V
   .registers 2
-  .line 673
+  .line 699
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 674
+  .line 700
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rearm;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
-  .line 675
+  .line 701
     return-void
 .end method
 
 .method public run()V
   .registers 2
-  .line 679
+  .line 705
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rearm;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->isFinishing()Z
     move-result v0
@@ -33,6 +33,6 @@
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppSaverActivity$Rearm;->a:Lcom/innioasis/y1/activity/IppSaverActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppSaverActivity;->access$500(Lcom/innioasis/y1/activity/IppSaverActivity;)V
   :L0
-  .line 680
+  .line 706
     return-void
 .end method

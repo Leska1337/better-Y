@@ -98,11 +98,18 @@ public final class Diag {
         }
     }
 
+    /**
+     * Development measurements: collector pauses after {@code slow:}, every frame gap of an
+     * animation, the Cover Flow lines written always. A compile-time constant, so false leaves
+     * them out of the dex; true brings them back.
+     */
+    public static final boolean MEASURE = false;
+
     /** The mod's own voice in the log: rare decisions worth a line, never per-row chatter. */
     public static void note(String message) {
         ring(4 /* INFO */, "ipp", message, null);
         if (message != null && message.startsWith("slow:")) {
-            Gc.request();
+            if (MEASURE) Gc.request();
             if (message.startsWith("slow: frames")) Heap.once();
         }
     }

@@ -63,7 +63,7 @@
 .end method
 
 .method public doFrame(J)V
-  .registers 8
+  .registers 7
   .line 1122
     sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
     invoke-virtual { p1 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
@@ -101,34 +101,31 @@
     if-le p1, v0, :L3
     goto :L4
   :L3
-    const/4 p1, 0
-    goto :L5
+    const/4 v0, 0
   :L4
-    const/4 p1, 1
-  :L5
   .line 1130
-    iget-boolean v1, p0, Lcom/innioasis/ipp/Flow$FadeStart;->first:Z
-    if-nez v1, :L9
-    if-nez p1, :L6
+    iget-boolean p1, p0, Lcom/innioasis/ipp/Flow$FadeStart;->first:Z
+    if-nez p1, :L8
+    if-nez v0, :L5
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
-    move-result-wide v1
-    iget-wide v3, p0, Lcom/innioasis/ipp/Flow$FadeStart;->since:J
-    sub-long/2addr v1, v3
-    const-wide/16 v3, 600
-    cmp-long p1, v1, v3
-    if-gez p1, :L6
-    goto :L9
-  :L6
+    move-result-wide v0
+    iget-wide v2, p0, Lcom/innioasis/ipp/Flow$FadeStart;->since:J
+    sub-long/2addr v0, v2
+    const-wide/16 v2, 600
+    cmp-long p1, v0, v2
+    if-gez p1, :L5
+    goto :L8
+  :L5
   .line 1135
     const-string p1, "player fade"
-    invoke-static { p1, v0 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
+    invoke-static { p1, p2 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
   .line 1136
     nop
-  :L7
+  :L6
     iget-object p1, p0, Lcom/innioasis/ipp/Flow$FadeStart;->views:Ljava/util/ArrayList;
     invoke-virtual { p1 }, Ljava/util/ArrayList;->size()I
     move-result p1
-    if-ge p2, p1, :L8
+    if-ge p2, p1, :L7
   .line 1137
     iget-object p1, p0, Lcom/innioasis/ipp/Flow$FadeStart;->views:Ljava/util/ArrayList;
     invoke-virtual { p1, p2 }, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
@@ -155,11 +152,11 @@
     invoke-virtual { p1, v0 }, Landroid/view/ViewPropertyAnimator;->withEndAction(Ljava/lang/Runnable;)Landroid/view/ViewPropertyAnimator;
   .line 1136
     add-int/lit8 p2, p2, 1
-    goto :L7
-  :L8
+    goto :L6
+  :L7
   .line 1140
     return-void
-  :L9
+  :L8
   .line 1131
     iput-boolean p2, p0, Lcom/innioasis/ipp/Flow$FadeStart;->first:Z
   .line 1132

@@ -478,7 +478,7 @@ public final class IppSaverActivity extends Activity {
             lastPath = coverPath;
             lastCover = known;
         } else {
-            Bitmap blank = Cover.blankCover();
+            Bitmap blank = blank();
             if (blank != null) cover.setImageBitmap(blank);
             new Thread(new LoadCover(this, coverPath), "ipp-saver-cover").start();
         }
@@ -528,6 +528,32 @@ public final class IppSaverActivity extends Activity {
             lp.rightMargin = MARGIN;
         }
         content.addView(row, lp);
+    }
+
+    private Bitmap blankPic;
+
+    /**
+     * The player's placeholder as a plain square. {@link Cover#blankCover} carries the player's
+     * frame and reflection, half again as tall, and a square crop cuts through it. Kept while
+     * this screen lives, not by the process; ARGB_8888, since RGB_565 bands its gradient.
+     */
+    private Bitmap blank() {
+        Bitmap b = blankPic;
+        if (b != null && !b.isRecycled()) return b;
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inScaled = false;            Bitmap src = BitmapFactory.decodeResource(Y1Application.Companion.getAppContext().getResources(),
+                    com.innioasis.y1.R.drawable.bg_player_cover_view, o);
+            if (src == null) return null;
+            int w = src.getWidth();
+            int h = src.getHeight();
+            int side = w <= h ? w : h;
+            b = side == w && side == h ? src : Bitmap.createBitmap(src, (w - side) / 2, (h - side) / 2, side, side);
+            blankPic = b;
+            return b;
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     /** The cover under which all three lines still fit the screen, wrapped as they will be. */

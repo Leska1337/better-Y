@@ -81,28 +81,7 @@
     return-wide p0
 .end method
 
-.method static synthetic access$400()Ljava/lang/StringBuilder;
-  .registers 1
-  .line 13
-    sget-object v0, Lcom/innioasis/ipp/Frames;->gaps:Ljava/lang/StringBuilder;
-    return-object v0
-.end method
-
-.method static synthetic access$500()J
-  .registers 2
-  .line 13
-    sget-wide v0, Lcom/innioasis/ipp/Frames;->lastCpu:J
-    return-wide v0
-.end method
-
-.method static synthetic access$502(J)J
-  .registers 2
-  .line 13
-    sput-wide p0, Lcom/innioasis/ipp/Frames;->lastCpu:J
-    return-wide p0
-.end method
-
-.method static synthetic access$608()I
+.method static synthetic access$408()I
   .registers 2
   .line 13
     sget v0, Lcom/innioasis/ipp/Frames;->count:I
@@ -281,30 +260,24 @@
     sget-object v1, Lcom/innioasis/ipp/Frames;->parts:Ljava/lang/StringBuilder;
     invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
     move-result-object v0
-    const-string v1, "; gaps"
+    const-string v1, ""
     invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
-    move-result-object v0
-    sget-object v1, Lcom/innioasis/ipp/Frames;->gaps:Ljava/lang/StringBuilder;
-    invoke-virtual { v0, v1 }, Ljava/lang/StringBuilder;->append(Ljava/lang/Object;)Ljava/lang/StringBuilder;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object v0
-  .line 70
-    invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   .line 71
-    const-string v1, "ippflow"
-    invoke-static { v1, v0 }, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+    invoke-static { v0 }, Lcom/innioasis/ipp/Diag;->note(Ljava/lang/String;)V
   :L7
-  .line 73
+  .line 74
     const/4 v0, 0
     sput-object v0, Lcom/innioasis/ipp/Frames;->what:Ljava/lang/String;
   :L8
-  .line 75
+  .line 76
     goto :L10
   :L9
-  .line 74
+  .line 75
     move-exception v0
   :L10
-  .line 76
+  .line 77
     return-void
 .end method

@@ -1132,7 +1132,7 @@ public final class Flow {
                 Choreographer.getInstance().postFrameCallback(this);
                 return;
             }
-            Frames.start("player fade", true);
+            Frames.start("player fade", Diag.MEASURE);
             for (int i = 0; i < views.size(); i++) {
                 ((View) views.get(i)).animate().alpha(((Float) alphas.get(i)).floatValue())
                         .setDuration(FADE_MS).withLayer().withEndAction(FADED);

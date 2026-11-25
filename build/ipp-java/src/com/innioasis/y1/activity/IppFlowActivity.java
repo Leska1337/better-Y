@@ -543,7 +543,7 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     private void flipOver() {
-        Frames.start("flip over", true);
+        Frames.start("flip over", Diag.MEASURE);
         long t0 = SystemClock.uptimeMillis();
         int i = flow.target();
         Flow.Item it = (Flow.Item) items.get(i);
@@ -603,7 +603,7 @@ public final class IppFlowActivity extends BaseActivity {
     }
 
     private void flipBack() {
-        Frames.start("flip back", true);
+        Frames.start("flip back", Diag.MEASURE);
         hold(true);
         state = 3;
         // back in only as the cover finishes turning round: both halves of the turn, the frame the
