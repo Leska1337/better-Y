@@ -668,10 +668,8 @@ public final class Theme {
         return logo;
     }
 
-    /** Theme path -> its cover at the size Glide loads it for the gallery. */
+    /** Theme path -> its cover at the tile's own size ({@link Thumbs#themeBox}). */
     private static final java.util.Hashtable covers = new java.util.Hashtable();
-    private static final int COVER_W = 80;
-    private static final int COVER_H = 60;
     private static WeakReference coversFor = new WeakReference(null);
 
     /**
@@ -694,35 +692,31 @@ public final class Theme {
                 if (it.getPicturePath().trim().length() == 0 || covers.get(it.getPath()) != null) continue;
                 todo.add(new String[] {it.getPath(), it.getPicturePath()});
             }
-            if (!todo.isEmpty()) new Thread(new Covers(todo), "ipp-theme-covers").start();
+            if (!todo.isEmpty()) new Thread(new Covers(todo, Thumbs.themeBox(rv.getContext())), "ipp-theme-covers").start();
         } catch (Throwable t) {
         }
     }
 
+    /** From the gallery's {@code onDestroy}: neither its covers nor Glide's pictures outlive it. */
+    public static void galleryLeft(Activity a) {
+        covers.clear();
+        coversFor = new WeakReference(null);
+        Thumbs.left(a);
+    }
+
     static final class Covers implements Runnable {
         private final List todo;
-        Covers(List todo) { this.todo = todo; }
+        private final int[] box;
+        Covers(List todo, int[] box) {
+            this.todo = todo;
+            this.box = box;
+        }
         public void run() {
             for (int i = 0; i < todo.size(); i++) {
                 String[] p = (String[]) todo.get(i);
                 try {
-                    BitmapFactory.Options o = new BitmapFactory.Options();
-                    o.inJustDecodeBounds = true;
-                    BitmapFactory.decodeFile(p[1], o);
-                    if (o.outWidth <= 0 || o.outHeight <= 0) continue;
-                    int s = 1;
-                    while (o.outWidth / (s * 2) >= COVER_W && o.outHeight / (s * 2) >= COVER_H) s *= 2;
-                    o = new BitmapFactory.Options();
-                    o.inSampleSize = s;
-                    Bitmap b = BitmapFactory.decodeFile(p[1], o);
-                    if (b == null) continue;
-                    // as Glide sizes it: covering COVER_W x COVER_H, the shape kept
-                    float k = Math.max((float) COVER_W / b.getWidth(), (float) COVER_H / b.getHeight());
-                    int w = Math.max(1, Math.round(b.getWidth() * k));
-                    int h = Math.max(1, Math.round(b.getHeight() * k));
-                    Bitmap c = Bitmap.createScaledBitmap(b, w, h, true);
-                    if (c != b) b.recycle();
-                    covers.put(p[0], c);
+                    Bitmap c = Thumbs.read(p[1], box[0], box[1]);
+                    if (c != null) covers.put(p[0], c);
                 } catch (Throwable t) {
                 }
             }

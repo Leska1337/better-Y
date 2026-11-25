@@ -14,10 +14,6 @@
 
 .field private final static CAPTION:F = 1.35F
 
-.field private final static COVER_H:I = 60
-
-.field private final static COVER_W:I = 80
-
 .field private final static HALF:I = 128
 
 .field private final static MENU_SEL_STOCK:I = -16714241
@@ -93,7 +89,7 @@
     new-instance v0, Ljava/util/Hashtable;
     invoke-direct { v0 }, Ljava/util/Hashtable;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Theme;->covers:Ljava/util/Hashtable;
-  .line 675
+  .line 673
     new-instance v0, Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
@@ -587,6 +583,22 @@
     return-void
   :L7
   .line 471
+    return-void
+.end method
+
+.method public static galleryLeft(Landroid/app/Activity;)V
+  .registers 3
+  .line 702
+    sget-object v0, Lcom/innioasis/ipp/Theme;->covers:Ljava/util/Hashtable;
+    invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
+  .line 703
+    new-instance v0, Ljava/lang/ref/WeakReference;
+    const/4 v1, 0
+    invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+    sput-object v0, Lcom/innioasis/ipp/Theme;->coversFor:Ljava/lang/ref/WeakReference;
+  .line 704
+    invoke-static { p0 }, Lcom/innioasis/ipp/Thumbs;->left(Landroid/app/Activity;)V
+  .line 705
     return-void
 .end method
 
@@ -1736,120 +1748,124 @@
 
 .method public static tilesAhead(Landroidx/recyclerview/widget/RecyclerView;)V
   .catchall { :L0 .. :L9 } :L12
-  .registers 7
-  .line 683
+  .registers 8
+  .line 681
     if-nez p0, :L0
-    const/4 p0, 0
+    const/4 v0, 0
     goto :L1
   :L0
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
-    move-result-object p0
-  :L1
-  .line 684
-    instance-of v0, p0, Lcom/chad/library/adapter/base/BaseQuickAdapter;
-    if-eqz v0, :L11
-    sget-object v0, Lcom/innioasis/ipp/Theme;->coversFor:Ljava/lang/ref/WeakReference;
-    invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
-    if-ne v0, p0, :L2
+  :L1
+  .line 682
+    instance-of v1, v0, Lcom/chad/library/adapter/base/BaseQuickAdapter;
+    if-eqz v1, :L11
+    sget-object v1, Lcom/innioasis/ipp/Theme;->coversFor:Ljava/lang/ref/WeakReference;
+    invoke-virtual { v1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
+    move-result-object v1
+    if-ne v1, v0, :L2
     goto/16 :L11
   :L2
-  .line 685
-    move-object v0, p0
-    check-cast v0, Lcom/chad/library/adapter/base/BaseQuickAdapter;
-    invoke-virtual { v0 }, Lcom/chad/library/adapter/base/BaseQuickAdapter;->getData()Ljava/util/List;
-    move-result-object v0
-  .line 686
-    if-eqz v0, :L10
-    invoke-interface { v0 }, Ljava/util/List;->isEmpty()Z
-    move-result v1
-    if-eqz v1, :L3
-    goto :L10
+  .line 683
+    move-object v1, v0
+    check-cast v1, Lcom/chad/library/adapter/base/BaseQuickAdapter;
+    invoke-virtual { v1 }, Lcom/chad/library/adapter/base/BaseQuickAdapter;->getData()Ljava/util/List;
+    move-result-object v1
+  .line 684
+    if-eqz v1, :L10
+    invoke-interface { v1 }, Ljava/util/List;->isEmpty()Z
+    move-result v2
+    if-eqz v2, :L3
+    goto/16 :L10
   :L3
+  .line 685
+    new-instance v2, Ljava/lang/ref/WeakReference;
+    invoke-direct { v2, v0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
+    sput-object v2, Lcom/innioasis/ipp/Theme;->coversFor:Ljava/lang/ref/WeakReference;
+  .line 686
+    sget-object v0, Lcom/innioasis/ipp/Theme;->cfgs:Ljava/util/Hashtable;
+    invoke-virtual { v0 }, Ljava/util/Hashtable;->clear()V
   .line 687
-    new-instance v1, Ljava/lang/ref/WeakReference;
-    invoke-direct { v1, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
-    sput-object v1, Lcom/innioasis/ipp/Theme;->coversFor:Ljava/lang/ref/WeakReference;
+    new-instance v0, Ljava/util/ArrayList;
+    invoke-direct { v0 }, Ljava/util/ArrayList;-><init>()V
   .line 688
-    sget-object p0, Lcom/innioasis/ipp/Theme;->cfgs:Ljava/util/Hashtable;
-    invoke-virtual { p0 }, Ljava/util/Hashtable;->clear()V
-  .line 689
-    new-instance p0, Ljava/util/ArrayList;
-    invoke-direct { p0 }, Ljava/util/ArrayList;-><init>()V
-  .line 690
-    const/4 v1, 0
     const/4 v2, 0
+    const/4 v3, 0
   :L4
-    if-eqz v0, :L8
-    invoke-interface { v0 }, Ljava/util/List;->size()I
-    move-result v3
-    if-ge v2, v3, :L8
-  .line 691
-    invoke-interface { v0, v2 }, Ljava/util/List;->get(I)Ljava/lang/Object;
-    move-result-object v3
-  .line 692
-    instance-of v4, v3, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
-    if-nez v4, :L5
+    if-eqz v1, :L8
+    invoke-interface { v1 }, Ljava/util/List;->size()I
+    move-result v4
+    if-ge v3, v4, :L8
+  .line 689
+    invoke-interface { v1, v3 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v4
+  .line 690
+    instance-of v5, v4, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
+    if-nez v5, :L5
     goto :L7
   :L5
-  .line 693
-    check-cast v3, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
-  .line 694
-    invoke-virtual { v3 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
-    move-result-object v4
-    invoke-virtual { v4 }, Ljava/lang/String;->trim()Ljava/lang/String;
-    move-result-object v4
-    invoke-virtual { v4 }, Ljava/lang/String;->length()I
-    move-result v4
-    if-eqz v4, :L7
-    sget-object v4, Lcom/innioasis/ipp/Theme;->covers:Ljava/util/Hashtable;
-    invoke-virtual { v3 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
+  .line 691
+    check-cast v4, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;
+  .line 692
+    invoke-virtual { v4 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
     move-result-object v5
-    invoke-virtual { v4, v5 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
-    move-result-object v4
-    if-eqz v4, :L6
+    invoke-virtual { v5 }, Ljava/lang/String;->trim()Ljava/lang/String;
+    move-result-object v5
+    invoke-virtual { v5 }, Ljava/lang/String;->length()I
+    move-result v5
+    if-eqz v5, :L7
+    sget-object v5, Lcom/innioasis/ipp/Theme;->covers:Ljava/util/Hashtable;
+    invoke-virtual { v4 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
+    move-result-object v6
+    invoke-virtual { v5, v6 }, Ljava/util/Hashtable;->get(Ljava/lang/Object;)Ljava/lang/Object;
+    move-result-object v5
+    if-eqz v5, :L6
     goto :L7
   :L6
-  .line 695
-    const/4 v4, 2
-    new-array v4, v4, [Ljava/lang/String;
-    invoke-virtual { v3 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
-    move-result-object v5
-    aput-object v5, v4, v1
-    invoke-virtual { v3 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
-    move-result-object v3
-    const/4 v5, 1
-    aput-object v3, v4, v5
-    invoke-virtual { p0, v4 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
+  .line 693
+    const/4 v5, 2
+    new-array v5, v5, [Ljava/lang/String;
+    invoke-virtual { v4 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPath()Ljava/lang/String;
+    move-result-object v6
+    aput-object v6, v5, v2
+    invoke-virtual { v4 }, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
+    move-result-object v4
+    const/4 v6, 1
+    aput-object v4, v5, v6
+    invoke-virtual { v0, v5 }, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
   :L7
-  .line 690
-    add-int/lit8 v2, v2, 1
+  .line 688
+    add-int/lit8 v3, v3, 1
     goto :L4
   :L8
-  .line 697
-    invoke-virtual { p0 }, Ljava/util/ArrayList;->isEmpty()Z
-    move-result v0
-    if-nez v0, :L9
-    new-instance v0, Ljava/lang/Thread;
-    new-instance v1, Lcom/innioasis/ipp/Theme$Covers;
-    invoke-direct { v1, p0 }, Lcom/innioasis/ipp/Theme$Covers;-><init>(Ljava/util/List;)V
+  .line 695
+    invoke-virtual { v0 }, Ljava/util/ArrayList;->isEmpty()Z
+    move-result v1
+    if-nez v1, :L9
+    new-instance v1, Ljava/lang/Thread;
+    new-instance v2, Lcom/innioasis/ipp/Theme$Covers;
+    invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getContext()Landroid/content/Context;
+    move-result-object p0
+    invoke-static { p0 }, Lcom/innioasis/ipp/Thumbs;->themeBox(Landroid/content/Context;)[I
+    move-result-object p0
+    invoke-direct { v2, v0, p0 }, Lcom/innioasis/ipp/Theme$Covers;-><init>(Ljava/util/List;[I)V
     const-string p0, "ipp-theme-covers"
-    invoke-direct { v0, v1, p0 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
-    invoke-virtual { v0 }, Ljava/lang/Thread;->start()V
+    invoke-direct { v1, v2, p0 }, Ljava/lang/Thread;-><init>(Ljava/lang/Runnable;Ljava/lang/String;)V
+    invoke-virtual { v1 }, Ljava/lang/Thread;->start()V
   :L9
-  .line 699
+  .line 697
     goto :L13
   :L10
-  .line 686
-    return-void
-  :L11
   .line 684
     return-void
+  :L11
+  .line 682
+    return-void
   :L12
-  .line 698
+  .line 696
     move-exception p0
   :L13
-  .line 700
+  .line 698
     return-void
 .end method
 

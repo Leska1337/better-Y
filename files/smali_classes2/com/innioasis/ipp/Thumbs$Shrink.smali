@@ -14,7 +14,7 @@
 
 .method static constructor <clinit>()V
   .registers 1
-  .line 139
+  .line 206
     const-string v0, "com.innioasis.ipp.Thumbs.Shrink.1"
     invoke-virtual { v0 }, Ljava/lang/String;->getBytes()[B
     move-result-object v0
@@ -24,28 +24,28 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 138
+  .line 205
     invoke-direct { p0 }, Lcom/bumptech/glide/load/resource/bitmap/BitmapTransformation;-><init>()V
     return-void
 .end method
 
 .method public equals(Ljava/lang/Object;)Z
   .registers 2
-  .line 146
+  .line 213
     instance-of p1, p1, Lcom/innioasis/ipp/Thumbs$Shrink;
     return p1
 .end method
 
 .method public hashCode()I
   .registers 2
-  .line 150
+  .line 217
     const v0, 1793658
     return v0
 .end method
 
 .method protected transform(Lcom/bumptech/glide/load/engine/bitmap_recycle/BitmapPool;Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
   .registers 5
-  .line 142
+  .line 209
     invoke-static { p1, p2, p3, p4 }, Lcom/innioasis/ipp/Thumbs;->shrink(Lcom/bumptech/glide/load/engine/bitmap_recycle/BitmapPool;Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
     move-result-object p1
     return-object p1
@@ -53,9 +53,9 @@
 
 .method public updateDiskCacheKey(Ljava/security/MessageDigest;)V
   .registers 3
-  .line 154
+  .line 221
     sget-object v0, Lcom/innioasis/ipp/Thumbs$Shrink;->ID:[B
     invoke-virtual { p1, v0 }, Ljava/security/MessageDigest;->update([B)V
-  .line 155
+  .line 222
     return-void
 .end method

@@ -2,19 +2,18 @@
 #
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1            # newest APK in build\out
 #   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Apk <path>
-#   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Type B    # Y1 Type B, untested
+#   powershell -ExecutionPolicy Bypass -File build\rom.ps1 -Type B    # Y1 Type B
 #
 # Output lands in build\rom-out\:
 #   rom.zip                 a complete 3.1.2 flash set with our system.img in it
-#   rom_type_b_test.zip     -Type B: the same set on the kernel of Rockbox Type B
+#   rom_type_b.zip          -Type B: the same set on the kernel of Rockbox Type B
 #   rom_ata_kernel_test.zip -Type ATA: the same recipe on the ATA kernel (Rockbox Type A), which
 #                           runs on a Type A player and so tries the Type B recipe out on one
 #
 # -Type B and -Type ATA take preloader, lk, recovery, the boot kernel and /system/lib/modules from
 # the Rockbox archive in ROM\rockbox\ and rewrite Generic.kl for that kernel's scancodes; logo,
 # the boot ramdisk, the boot animation and the rest stay 3.1.2 (build\rom-tools\rekernel.py).
-# Neither is named rom_type_b.zip on purpose: under that name Updater CE would offer it to every
-# Type B owner, and nobody has run it on Type B hardware yet.
+# rom.zip and rom_type_b.zip are the Updater's asset names: it offers each to its own players.
 #
 # The system.img is not written out beside it: it is in the archive already, and the archive is
 # smaller than the bare image, so anyone who wants to flash that one partition by hand takes it
@@ -69,7 +68,7 @@ $baseZip = Join-Path $root "ROM\y1-community_y1-stock-rom_Latest-3.1.2.zip"
 $remote = "~/ipp-rom"
 $kernelZip = ""
 $romName = "rom.zip"
-if ($Type -eq "B") { $kernelZip = Join-Path $root "ROM\rockbox\rockbox_type_b.zip"; $romName = "rom_type_b_test.zip" }
+if ($Type -eq "B") { $kernelZip = Join-Path $root "ROM\rockbox\rockbox_type_b.zip"; $romName = "rom_type_b.zip" }
 if ($Type -eq "ATA") { $kernelZip = Join-Path $root "ROM\rockbox\rockbox_type_a.zip"; $romName = "rom_ata_kernel_test.zip" }
 if ($kernelZip) {
     if (-not (Test-Path $kernelZip)) { throw "kernel archive not found: $kernelZip" }
@@ -212,5 +211,5 @@ Invoke-Wsl "cd $remote && python3 $packPy $stockArgs && cp rom.zip '$outW/$romNa
 Write-Host ""
 Write-Host "OK" -ForegroundColor Green
 $note = "Innioasis Updater asset - keep this exact name"
-if ($kernelZip) { $note = "test build - not an Updater asset name" }
+if ($Type -eq "ATA") { $note = "test build - not an Updater asset name" }
 Write-Host ("  {0}  {1,12:n0} B   {2}" -f $romName, (Get-Item (Join-Path $Out $romName)).Length, $note)

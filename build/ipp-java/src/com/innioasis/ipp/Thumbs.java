@@ -3,11 +3,13 @@ package com.innioasis.ipp;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -16,6 +18,7 @@ import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPoolAdapter;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.target.Target;
@@ -24,7 +27,7 @@ import java.io.File;
 import java.security.MessageDigest;
 
 /**
- * Picture tiles of Photos and of the wallpaper gallery: Glide, at the tile's own size, scaled
+ * Picture tiles of Photos and of the wallpaper and theme galleries: at the tile's own size, scaled
  * down by halves (each step a true 2x2 average) and cropped to it, RGB_565 when there is no
  * alpha. Below KitKat Glide only samples by powers of two, which skips pixels outside JPEG, and
  * the tile stretched what came. What Glide holds in memory is dropped when the screen closes.
@@ -41,6 +44,7 @@ public final class Thumbs {
     private static final Shrink SHRINK = new Shrink();
     private static final Half HALF = new Half(false);
     private static final Half WHOLE = new Half(true);
+    private static final Fit FIT = new Fit();
 
     /** Photos: into stock's target, which checks the tile still shows this path. */
     public static void photo(Context c, String path, ImageView img, Object target) {
@@ -77,6 +81,69 @@ public final class Thumbs {
             img.setImageResource(res);
         }
     }
+
+    /** A theme gallery cover not read ahead yet, whole inside the tile's box: into stock's target. */
+    public static void theme(Context c, String path, Object target) {
+        try {
+            if (c == null || path == null) return;
+            int[] box = themeBox(c);
+            RequestBuilder rb = Glide.with(c).load(new File(path));
+            rb = (RequestBuilder) rb.downsample(isJpeg(path) ? HALF : WHOLE);
+            rb = (RequestBuilder) rb.transform(FIT);
+            rb = (RequestBuilder) rb.encodeQuality(QUALITY);
+            rb = (RequestBuilder) rb.override(box[0], box[1]);
+            rb.into((Target) target);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The theme cover's box: the layout's maxWidth x maxHeight of {@code ipp_pl_tile.xml}. */
+    public static int[] themeBox(Context c) {
+        float d = c.getResources().getDisplayMetrics().density;
+        return new int[] {Math.round(100 * d), Math.round(75 * d)};
+    }
+
+    /** A picture read off the card, whole inside w x h, by halves; null when it cannot be read. */
+    public static Bitmap read(String path, int w, int h) {
+        BitmapFactory.Options o = new BitmapFactory.Options();
+        o.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, o);
+        int sw = o.outWidth;
+        int sh = o.outHeight;
+        if (sw <= 0 || sh <= 0) return null;
+        int s = 1;
+        if (isJpeg(path)) {
+            while (sw / (s * 2) >= 2 * w && sh / (s * 2) >= 2 * h) s *= 2;
+        } else {
+            while ((long) (sw / s) * (sh / s) > WHOLE_MAX) s *= 2;
+        }
+        o = new BitmapFactory.Options();
+        o.inSampleSize = s;
+        Bitmap b = BitmapFactory.decodeFile(path, o);
+        if (b == null) return null;
+        Bitmap f = fit(POOL, b, w, h);
+        if (f != b) b.recycle();
+        return f;
+    }
+
+    /** The theme gallery's full-screen picture, whole inside the view that shows it (the screen before its layout). */
+    public static Bitmap full(String path, Activity a) {
+        try {
+            if (path == null || a == null) return null;
+            View v = a.findViewById(com.innioasis.y1.R.id.imgFull);
+            int w = v == null ? 0 : v.getWidth();
+            int h = v == null ? 0 : v.getHeight();
+            if (w <= 0 || h <= 0) {
+                w = a.getResources().getDisplayMetrics().widthPixels;
+                h = a.getResources().getDisplayMetrics().heightPixels;
+            }
+            return read(path, w, h);
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    private static final BitmapPoolAdapter POOL = new BitmapPoolAdapter();
 
     /** From the screen's {@code onDestroy}: no tile stays in Glide's memory behind it. */
     public static void left(Activity a) {
@@ -153,6 +220,35 @@ public final class Thumbs {
         public void updateDiskCacheKey(MessageDigest md) {
             md.update(ID);
         }
+    }
+
+    static final class Fit extends BitmapTransformation {
+        private static final byte[] ID = "com.innioasis.ipp.Thumbs.Fit.1".getBytes();
+
+        protected Bitmap transform(BitmapPool pool, Bitmap src, int w, int h) {
+            return fit(pool, src, w, h);
+        }
+
+        public boolean equals(Object o) {
+            return o instanceof Fit;
+        }
+
+        public int hashCode() {
+            return 0x1b5e7b;
+        }
+
+        public void updateDiskCacheKey(MessageDigest md) {
+            md.update(ID);
+        }
+    }
+
+    /** The whole picture inside w x h, by halves; a smaller one is left as it is. */
+    static Bitmap fit(BitmapPool pool, Bitmap src, int w, int h) {
+        float k = Math.min((float) w / src.getWidth(), (float) h / src.getHeight());
+        if (k >= 1f) return src;
+        int tw = Math.max(1, Math.round(src.getWidth() * k));
+        int th = Math.max(1, Math.round(src.getHeight() * k));
+        return shrink(pool, src, tw, th);
     }
 
     /** Centre crop to w x h, by halves while the source is at least twice the target. */

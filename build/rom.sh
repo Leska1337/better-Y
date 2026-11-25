@@ -4,15 +4,14 @@
 #   ./build/rom.sh                    # newest APK in build/out
 #   ./build/rom.sh --apk <path>
 #   ./build/rom.sh --minimal          # rom.zip with system.img alone - read the note below first
-#   ./build/rom.sh --type B           # Y1 Type B, untested: rom_type_b_test.zip
+#   ./build/rom.sh --type B           # Y1 Type B: rom_type_b.zip
 #   ./build/rom.sh --type ATA         # the Type B recipe on the ATA kernel, for a Type A player:
 #                                     # rom_ata_kernel_test.zip
 #
 # --type B and --type ATA take preloader, lk, recovery, the boot kernel and /system/lib/modules
 # from the Rockbox archive in ROM/rockbox/ and rewrite Generic.kl for that kernel's scancodes;
 # logo, the boot ramdisk, the boot animation and the rest stay 3.1.2 (rom-tools/rekernel.py).
-# Neither is named rom_type_b.zip on purpose: under that name Updater CE would offer it to every
-# Type B owner, and nobody has run it on Type B hardware yet.
+# rom.zip and rom_type_b.zip are the Updater's asset names: it offers each to its own players.
 #
 # Output lands in build/rom-out/rom.zip. The system.img is not written out beside it: it is in the
 # archive already, and the archive is smaller than the bare image, so anyone who wants to flash
@@ -64,7 +63,7 @@ done
 BASE_ZIP="$ROOT/ROM/y1-community_y1-stock-rom_Latest-3.1.2.zip"
 case "$TYPE" in
     A)   KERNEL_ZIP=""; ROM_NAME=rom.zip ;;
-    B)   KERNEL_ZIP="$ROOT/ROM/rockbox/rockbox_type_b.zip"; ROM_NAME=rom_type_b_test.zip ;;
+    B)   KERNEL_ZIP="$ROOT/ROM/rockbox/rockbox_type_b.zip"; ROM_NAME=rom_type_b.zip ;;
     ATA) KERNEL_ZIP="$ROOT/ROM/rockbox/rockbox_type_a.zip"; ROM_NAME=rom_ata_kernel_test.zip ;;
     *)   die "--type is A, B or ATA" ;;
 esac
@@ -199,6 +198,6 @@ mv "$WORK/rom.zip" "$OUT/$ROM_NAME"
 rm -rf "$WORK"
 
 NOTE="Innioasis Updater asset - keep this exact name"
-[ -z "$KERNEL_ZIP" ] || NOTE="test build - not an Updater asset name"
+[ "$TYPE" != ATA ] || NOTE="test build - not an Updater asset name"
 printf '\nOK\n'
 printf '  %s  %12d B   %s\n' "$ROM_NAME" "$(wc -c < "$OUT/$ROM_NAME" | tr -d ' ')" "$NOTE"

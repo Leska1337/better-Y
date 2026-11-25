@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..135e2116 100644
+index 01b1f730..398c0fcd 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..135e2116 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100601
++  versionCode: 10200000
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20254,7 +20254,7 @@ index 803c1e7a..c1723c60 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..b200f6aa 100644
+index 71fe29d0..0856140f 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21203,7 +21203,7 @@ index 71fe29d0..b200f6aa 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev601</string>
++    <string name="ipp_version">v1.2.0</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -66810,7 +66810,7 @@ index cdc50c54..aae80378 100644
      :goto_1
      return-void
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
-index 981585c3..edc86d9f 100644
+index 981585c3..a479b857 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1.smali
 @@ -106,6 +106,16 @@
@@ -66885,6 +66885,246 @@ index 981585c3..edc86d9f 100644
  
      .line 96
      invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
+@@ -341,52 +378,18 @@
+ 
+     move-result-object p3
+ 
+-    invoke-static {p3}, Lcom/bumptech/glide/Glide;->with(Landroid/content/Context;)Lcom/bumptech/glide/RequestManager;
+-
+-    move-result-object p3
+-
+-    .line 107
+-    new-instance v0, Ljava/io/File;
+-
+     invoke-virtual {p2}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;->getPicturePath()Ljava/lang/String;
+ 
+     move-result-object v1
+ 
+-    invoke-direct {v0, v1}, Ljava/io/File;-><init>(Ljava/lang/String;)V
+-
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestManager;->load(Ljava/io/File;)Lcom/bumptech/glide/RequestBuilder;
+-
+-    move-result-object p3
+-
+-    const/16 v0, 0x50
+-
+-    const/16 v1, 0x3c
+-
+-    .line 108
+-    invoke-virtual {p3, v0, v1}, Lcom/bumptech/glide/RequestBuilder;->override(II)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object p3
+-
+-    check-cast p3, Lcom/bumptech/glide/RequestBuilder;
+-
+-    const/16 v0, 0x14
+-
+-    .line 109
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestBuilder;->encodeQuality(I)Lcom/bumptech/glide/request/BaseRequestOptions;
+-
+-    move-result-object p3
+-
+-    check-cast p3, Lcom/bumptech/glide/RequestBuilder;
+-
+     .line 111
+     new-instance v0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1$init$1;
+ 
+     invoke-direct {v0, p2, p1}, Lcom/innioasis/y1/activity/theme/ThemeListActivity$adapter$2$1$init$1;-><init>(Lcom/innioasis/y1/activity/theme/ThemeListActivity$Item;Lcom/innioasis/y1/databinding/ItemThemeBinding;)V
+ 
+-    check-cast v0, Lcom/bumptech/glide/request/target/Target;
+-
+-    .line 110
+-    invoke-virtual {p3, v0}, Lcom/bumptech/glide/RequestBuilder;->into(Lcom/bumptech/glide/request/target/Target;)Lcom/bumptech/glide/request/target/Target;
++    # ipp: the cover at the tile's own size, scaled down by halves, instead of stock's 80x60 at
++    # JPEG quality 20 stretched into the tile (Thumbs, as in Photos and the wallpaper gallery).
++    invoke-static {p3, v1, v0}, Lcom/innioasis/ipp/Thumbs;->theme(Landroid/content/Context;Ljava/lang/String;Ljava/lang/Object;)V
+ 
+     :goto_3
+     return-void
+diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1.smali
+index 849f87fd..69f4c07c 100644
+--- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1.smali
++++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1.smali
+@@ -206,176 +206,13 @@
+ 
+     move-result-wide v7
+ 
+-    .line 172
+-    new-instance p1, Landroid/graphics/BitmapFactory$Options;
+-
+-    invoke-direct {p1}, Landroid/graphics/BitmapFactory$Options;-><init>()V
+-
+-    .line 173
+-    iput-boolean v2, p1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
+-
+-    .line 174
++    # ipp: the picture read at the size it is shown, scaled down by halves, ARGB (Thumbs.full);
++    # stock sampled it by 2 at least, into RGB_565, and the screen stretched what came.
+     iget-object v1, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1;->$path:Ljava/lang/String;
+ 
+-    invoke-static {v1, p1}, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
+-
+-    .line 175
+-    iget v1, p1, Landroid/graphics/BitmapFactory$Options;->outHeight:I
+-
+     iget-object v3, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1;->this$0:Lcom/innioasis/y1/activity/theme/ThemeListActivity;
+ 
+-    invoke-virtual {v3}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getResources()Landroid/content/res/Resources;
+-
+-    move-result-object v3
+-
+-    invoke-virtual {v3}, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
+-
+-    move-result-object v3
+-
+-    iget v3, v3, Landroid/util/DisplayMetrics;->heightPixels:I
+-
+-    div-int/2addr v1, v3
+-
+-    .line 176
+-    iget v3, p1, Landroid/graphics/BitmapFactory$Options;->outWidth:I
+-
+-    iget-object v4, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1;->this$0:Lcom/innioasis/y1/activity/theme/ThemeListActivity;
+-
+-    invoke-virtual {v4}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getResources()Landroid/content/res/Resources;
+-
+-    move-result-object v4
+-
+-    invoke-virtual {v4}, Landroid/content/res/Resources;->getDisplayMetrics()Landroid/util/DisplayMetrics;
+-
+-    move-result-object v4
+-
+-    iget v4, v4, Landroid/util/DisplayMetrics;->widthPixels:I
+-
+-    div-int/2addr v3, v4
+-
+-    .line 177
+-    invoke-static {v1, v3}, Ljava/lang/Math;->max(II)I
+-
+-    move-result v1
+-
+-    const/4 v3, 0x0
+-
+-    if-ltz v1, :cond_2
+-
+-    const/4 v4, 0x5
+-
+-    if-ge v1, v4, :cond_2
+-
+-    const/4 v4, 0x1
+-
+-    goto :goto_0
+-
+-    :cond_2
+-    const/4 v4, 0x0
+-
+-    :goto_0
+-    const/16 v5, 0x8
+-
+-    const/4 v6, 0x4
+-
+-    if-eqz v4, :cond_3
+-
+-    const/4 v5, 0x2
+-
+-    goto :goto_3
+-
+-    :cond_3
+-    if-gt v6, v1, :cond_4
+-
+-    const/16 v4, 0x9
+-
+-    if-ge v1, v4, :cond_4
+-
+-    const/4 v4, 0x1
+-
+-    goto :goto_1
+-
+-    :cond_4
+-    const/4 v4, 0x0
+-
+-    :goto_1
+-    if-eqz v4, :cond_5
+-
+-    const/4 v5, 0x4
+-
+-    goto :goto_3
+-
+-    :cond_5
+-    if-gt v5, v1, :cond_6
+-
+-    const/16 v4, 0x11
+-
+-    if-ge v1, v4, :cond_6
+-
+-    const/4 v4, 0x1
+-
+-    goto :goto_2
+-
+-    :cond_6
+-    const/4 v4, 0x0
+-
+-    :goto_2
+-    if-eqz v4, :cond_7
+-
+-    goto :goto_3
+-
+-    :cond_7
+-    const/16 v5, 0x10
+-
+-    .line 180
+-    :goto_3
+-    iput v5, p1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+-
+-    .line 187
+-    sget-object v4, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+-
+-    new-instance v5, Ljava/lang/StringBuilder;
+-
+-    invoke-direct {v5}, Ljava/lang/StringBuilder;-><init>()V
+-
+-    const-string v6, "\u56fe\u7247\u538b\u7f29\u6bd4\u4f8b "
+-
+-    invoke-virtual {v5, v6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v5, v1}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+-
+-    const-string v1, "  "
+-
+-    invoke-virtual {v5, v1}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    iget v1, p1, Landroid/graphics/BitmapFactory$Options;->inSampleSize:I
+-
+-    invoke-virtual {v5, v1}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
+-
+-    const/16 v1, 0x20
+-
+-    invoke-virtual {v5, v1}, Ljava/lang/StringBuilder;->append(C)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v5}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+-
+-    move-result-object v1
+-
+-    new-array v5, v3, [Ljava/lang/Object;
+-
+-    invoke-virtual {v4, v1, v5}, Ltimber/log/Timber$Forest;->i(Ljava/lang/String;[Ljava/lang/Object;)V
+-
+-    .line 188
+-    iput-boolean v3, p1, Landroid/graphics/BitmapFactory$Options;->inJustDecodeBounds:Z
+-
+-    .line 190
+-    sget-object v1, Landroid/graphics/Bitmap$Config;->RGB_565:Landroid/graphics/Bitmap$Config;
+-
+-    iput-object v1, p1, Landroid/graphics/BitmapFactory$Options;->inPreferredConfig:Landroid/graphics/Bitmap$Config;
+-
+-    .line 191
+-    iget-object v1, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity$handler$1$handleMessage$1;->$path:Ljava/lang/String;
+-
+-    invoke-static {v1, p1}, Landroid/graphics/BitmapFactory;->decodeFile(Ljava/lang/String;Landroid/graphics/BitmapFactory$Options;)Landroid/graphics/Bitmap;
++    invoke-static {v1, v3}, Lcom/innioasis/ipp/Thumbs;->full(Ljava/lang/String;Landroid/app/Activity;)Landroid/graphics/Bitmap;
+ 
+     move-result-object v5
+ 
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1$1$1$confirm$1.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1$1$1$confirm$1.smali
 index 5da960fc..de1b142b 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity$longTop$1$1$1$confirm$1.smali
@@ -66981,7 +67221,7 @@ index 19135336..ab77d471 100644
  
      move-result-object p1
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
-index 5e61f77d..d9199ac0 100644
+index 5e61f77d..0d06c77c 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/theme/ThemeListActivity.smali
 @@ -1249,6 +1249,9 @@
@@ -67106,14 +67346,14 @@ index 5e61f77d..d9199ac0 100644
  
 -    move-result v1
 +    move-result v2
- 
--    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
++
 +    add-int/lit8 v1, v2, -0x1
 +
 +    invoke-direct {p0}, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->getAdapter()Lcom/innioasis/y1/base/BaseBindingAdapter;
 +
 +    move-result-object v3
-+
+ 
+-    invoke-virtual {v0, v1}, Landroidx/recyclerview/widget/RecyclerView;->smoothScrollToPosition(I)V
 +    invoke-static {v0, v1, v2, v3}, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
  
      :cond_0
@@ -67167,6 +67407,21 @@ index 5e61f77d..d9199ac0 100644
      .line 241
      iget-object v0, p0, Lcom/innioasis/y1/activity/theme/ThemeListActivity;->nowPath:Ljava/lang/String;
  
+@@ -2499,3 +2534,14 @@
+ 
+     return-void
+ .end method
++
++# ipp: the covers read ahead and Glide's pictures are dropped with the screen.
++.method protected onDestroy()V
++    .locals 0
++
++    invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onDestroy()V
++
++    invoke-static {p0}, Lcom/innioasis/ipp/Theme;->galleryLeft(Landroid/app/Activity;)V
++
++    return-void
++.end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali b/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali
 index 82f7646a..c7ea36f1 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/video/SearchVideoActivity$MyAdapter.smali
