@@ -66,6 +66,7 @@ public final class Prefs {
         def("delete_folder", 0);             // stock leaves the folder; taking it is opt-in
         def("keep_awake", 1);
         def("likes", 1);
+        def(CenterHold.KEY, 0);              // hold centre to shut down: opt-in
         // kb_lang2 is deliberately absent -- see defInt
     }
 

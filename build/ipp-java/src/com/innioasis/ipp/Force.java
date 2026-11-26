@@ -81,6 +81,7 @@ public final class Force {
         try {
             if (e == null) return false;
             watch();                       // the watchdog starts with the first key press of the run
+            CenterHold.key(e);             // centre-button hold to shut down; never swallows, off by default
             // Once the reboot is on its way the app takes NO further key events at all. The pair is
             // still held at that moment and their releases are yet to come — and the top button's
             // short press is delivered on the UP, so anything let through here changes the screen

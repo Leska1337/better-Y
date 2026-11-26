@@ -1138,6 +1138,16 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
+  .line 285
+    new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
+    const/4 v9, 1
+    const-string v10, "center_hold"
+    const/4 v11, 0
+    const/4 v12, 0
+    const/4 v13, 0
+    move-object v8, v1
+    invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
+    invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 287
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v3, 2
