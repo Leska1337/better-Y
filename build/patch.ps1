@@ -154,12 +154,15 @@ function Invoke-Export {
     # -Apply reads only manifest.json, stock.diff, files\ and delete.txt, so they are inert for it.
     # Copied with their subfolders: the README pictures live in publish-src\screenshots and a
     # flat copy would publish a README whose every <img> is broken.
+    # CHANGELOG.md beside them is the maintainer's own draft of the release notes: never published.
     $extras = 0
     $extraDir = Join-Path $root "build\publish-src"
     if (Test-Path $extraDir) {
         $extraRoot = (Resolve-Path $extraDir).Path
         Get-ChildItem $extraRoot -Recurse -File | ForEach-Object {
-            $dst = Join-Path $Set $_.FullName.Substring($extraRoot.Length + 1)
+            $rel = $_.FullName.Substring($extraRoot.Length + 1)
+            if ($rel -eq "CHANGELOG.md") { return }
+            $dst = Join-Path $Set $rel
             $dstDir = Split-Path $dst -Parent
             if (-not (Test-Path $dstDir)) { New-Item -ItemType Directory -Force $dstDir | Out-Null }
             Copy-Item $_.FullName $dst -Force

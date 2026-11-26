@@ -143,10 +143,12 @@ JSON
     # --apply reads only manifest.json, stock.diff, files/ and delete.txt, so they are inert for it.
     # Copied with their subfolders: the README pictures live in publish-src/screenshots and a
     # flat copy would publish a README whose every <img> is broken.
+    # CHANGELOG.md beside them is the maintainer's own draft of the release notes: never published.
     local extras=0
     if [ -d "$BUILD_DIR/publish-src" ]; then
         while IFS= read -r f; do
             rel="${f#$BUILD_DIR/publish-src/}"
+            [ "$rel" = "CHANGELOG.md" ] && continue
             mkdir -p "$SET_DIR/$(dirname "$rel")"
             cp "$f" "$SET_DIR/$rel"
             extras=$((extras + 1))
