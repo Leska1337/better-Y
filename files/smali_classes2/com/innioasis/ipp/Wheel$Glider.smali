@@ -13,7 +13,7 @@
 
 .field private final static G:Lcom/innioasis/ipp/Wheel$Glider;
 
-.field private final static OMEGA:F = 22.0F
+.field private final static OMEGA:F = 30.0F
 
 .field private static aimDown:Z
 
@@ -486,11 +486,11 @@
     neg-float p1, p1
   .line 891
     sget p2, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
-    const/high16 v4, 0x41B00000
+    const/high16 v4, 0x41F00000
     mul-float v5, p1, v4
     add-float/2addr p2, v5
   .line 892
-    const/high16 v5, 0xC1B00000
+    const/high16 v5, 0xC1F00000
     mul-float v5, v5, v3
     float-to-double v5, v5
     invoke-static { v5, v6 }, Ljava/lang/Math;->exp(D)D

@@ -17,25 +17,25 @@
 
 .method constructor <init>(Landroid/content/Context;I)V
   .registers 3
-  .line 1477
+  .line 1488
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1478
+  .line 1489
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$Say;->c:Landroid/content/Context;
-  .line 1479
+  .line 1490
     iput p2, p0, Lcom/innioasis/ipp/PlGrid$Say;->res:I
-  .line 1480
+  .line 1491
     return-void
 .end method
 
 .method public run()V
   .registers 4
-  .line 1483
+  .line 1494
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Say;->c:Landroid/content/Context;
     iget v1, p0, Lcom/innioasis/ipp/PlGrid$Say;->res:I
     const/4 v2, 0
     invoke-static { v0, v1, v2 }, Landroid/widget/Toast;->makeText(Landroid/content/Context;II)Landroid/widget/Toast;
     move-result-object v0
     invoke-virtual { v0 }, Landroid/widget/Toast;->show()V
-  .line 1484
+  .line 1495
     return-void
 .end method

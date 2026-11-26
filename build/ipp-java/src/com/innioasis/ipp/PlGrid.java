@@ -328,8 +328,17 @@ public final class PlGrid {
                 java.util.Map.Entry e = (java.util.Map.Entry) it.next();
                 RecyclerView rv = (RecyclerView) e.getKey();
                 Mover m = (Mover) e.getValue();
-                if (rv != null && m != null && m.leg && m.has && now - m.legAt < BUSY_MAX_MS
-                        && rv.getContext() == a && rv.isShown()) return true;
+                if (rv == null || m == null || !m.has || rv.getContext() != a || !rv.isShown()) continue;
+                if (m.leg && now - m.legAt < BUSY_MAX_MS) return true;
+                // the cursor already in another row, the frame not yet on its way there (still
+                // along this row, or not drawn since): one more click would land it a row further
+                if (!m.leg && m.span > 0 && rv.getLayoutManager() instanceof GridLayoutManager
+                        && cursorAt(rv) / m.span != m.txPos / m.span) {
+                    if (m.pendAt == 0) m.pendAt = now;
+                    if (now - m.pendAt < BUSY_MAX_MS) return true;
+                } else {
+                    m.pendAt = 0;
+                }
             }
         } catch (Throwable t) {
         }
@@ -479,6 +488,8 @@ public final class PlGrid {
         /** On the way to another row: which way, and the tile the frame comes back on. */
         private boolean legDown;
         private long legAt;
+        /** Since when the cursor has been in another row than the frame, before the frame left. */
+        private long pendAt;
         /** {@code Loop.wraps} as the frame last saw it. */
         private int seenWraps = Loop.wraps;
         private int edgePos;

@@ -760,11 +760,11 @@ public final class Wheel {
      */
     static final class Glider implements android.view.Choreographer.FrameCallback {
         /**
-         * The rows on a critically damped spring, softer than the lists' bar (Bar): they start and
-         * land gently and never run past the row. A new target keeps the speed, so a turning wheel
-         * bends the glide.
+         * The rows on the lists' bar spring (Bar), critically damped: they start and land gently
+         * and never run past the row. A new target keeps the speed, so a turning wheel bends the
+         * glide.
          */
-        private static final float OMEGA = 22f;
+        private static final float OMEGA = 30f;
         /** The rows' speed, px/s (+ down), and the part of a pixel not yet scrolled. */
         private static float vel, frac;
 
