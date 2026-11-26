@@ -676,13 +676,7 @@ The five newest archives are kept. After loading one the player restarts.
 <div>
 <p></p>
 
-<table border="0" style="border-collapse: collapse; border: none;">
-  <tr style="border: none; background: transparent; vertical-align: top;">
-    <!-- Первая колонка -->
-    <td width="400" align="center" valign="top" style="border: none; padding: 0 15px 0 0; width: 1px;">
-      <img src="./screenshots/themes_support.png" alt="Queue screen with custom themes" width="800" style="display: block; max-width: none; margin: 0 auto;">
-    </td>
-</table>
+<p><img src="./screenshots/themes_support.png" alt="Queue screen with custom themes"></p>
 
 </div>
 </details>
