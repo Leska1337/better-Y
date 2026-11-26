@@ -16,42 +16,42 @@
 .method public static refresh()V
   .catchall { :L4 .. :L7 } :L8
   .registers 5
-  .line 55
+  .line 58
     sget-boolean v0, Lcom/innioasis/ipp/Shuffle;->busy:Z
     if-eqz v0, :L0
     return-void
   :L0
-  .line 56
+  .line 59
     sget-object v0, Lcom/innioasis/ipp/Shuffle;->last:Ljava/lang/ref/WeakReference;
-  .line 57
+  .line 60
     if-nez v0, :L1
     return-void
   :L1
-  .line 58
+  .line 61
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
-  .line 59
+  .line 62
     instance-of v1, v0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
     if-nez v1, :L2
     return-void
   :L2
-  .line 60
+  .line 63
     check-cast v0, Lcom/innioasis/y1/view/ShufflePlaylistItemView;
-  .line 61
+  .line 64
     invoke-virtual { v0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->getWindowToken()Landroid/os/IBinder;
     move-result-object v1
     if-nez v1, :L3
     return-void
   :L3
-  .line 62
+  .line 65
     const/4 v1, 1
     sput-boolean v1, Lcom/innioasis/ipp/Shuffle;->busy:Z
-  .line 64
+  .line 67
     const/4 v1, 0
   :L4
     invoke-virtual { v0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->isSelect()Z
     move-result v2
-  .line 65
+  .line 68
     sget-object v3, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
     if-eqz v2, :L5
     const v4, 2131231050
@@ -60,19 +60,19 @@
     const/4 v4, 0
   :L6
     invoke-virtual { v3, v0, v4, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
-  .line 66
+  .line 69
     invoke-static { v0 }, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
   :L7
     goto :L9
   :L8
-  .line 67
+  .line 70
     move-exception v0
   :L9
-  .line 69
+  .line 72
     sput-boolean v1, Lcom/innioasis/ipp/Shuffle;->busy:Z
-  .line 70
+  .line 73
     nop
-  .line 71
+  .line 74
     return-void
 .end method
 
@@ -147,7 +147,19 @@
   :L7
     invoke-virtual { v0, p0, v2, v1 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetBackground(Landroid/view/View;IZ)V
   .line 45
-    invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
+    const v0, 2131362321
+    invoke-virtual { p0, v0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->findViewById(I)Landroid/view/View;
+    move-result-object v0
   .line 46
+    instance-of v1, v0, Landroid/widget/ImageView;
+    if-eqz v1, :L8
+    sget-object v1, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
+    check-cast v0, Landroid/widget/ImageView;
+    const v2, 2131623981
+    invoke-virtual { v1, v0, v2 }, Lcom/innioasis/y1/theme/ThemeManager;->itemSetRightArrow(Landroid/widget/ImageView;I)V
+  :L8
+  .line 48
+    invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->row(Landroid/view/View;)V
+  .line 49
     return-void
 .end method

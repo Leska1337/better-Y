@@ -41,6 +41,9 @@ public final class Shuffle {
         if (im instanceof ImageView) Icons.menu((ImageView) im, tv.getCurrentTextColor());
         // Stock sets the background only from updateSelectUI, which a screen may never reach.
         ThemeManager.INSTANCE.itemSetBackground(row, sel ? R.drawable.item_selected_no_arrow : 0, sel);
+        // the theme's arrow, as on the song rows below it; the layout holds the stock one
+        View ar = row.findViewById(R.id.right_arrow);
+        if (ar instanceof ImageView) ThemeManager.INSTANCE.itemSetRightArrow((ImageView) ar, R.mipmap.right_arrow);
         // row 0 of a list under the travelling bar: the bar paints it
         Bar.row(row);
     }

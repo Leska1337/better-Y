@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..3605b93e 100644
+index 01b1f730..38e90c6e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..3605b93e 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100615
++  versionCode: 10100616
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -1208,7 +1208,7 @@ index f543a231..ad902ebc 100644
 +    <ImageView android:layout_gravity="end|center" android:id="@id/iv_arrow" android:visibility="visible" android:layout_width="wrap_content" android:layout_height="45.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" android:layout_marginEnd="10.0dip" />
  </FrameLayout>
 diff --git a/build/src/res/layout/view_shuffle_playlist_item.xml b/build/src/res/layout/view_shuffle_playlist_item.xml
-index 252b9346..c468d3de 100644
+index 252b9346..396f0f7f 100644
 --- a/build/src/res/layout/view_shuffle_playlist_item.xml
 +++ b/build/src/res/layout/view_shuffle_playlist_item.xml
 @@ -1,7 +1,12 @@
@@ -1223,9 +1223,10 @@ index 252b9346..c468d3de 100644
    xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
 -    <ImageView android:id="@id/img" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="5.0dip" android:src="@mipmap/music_shuffle" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 -    <TextView android:textSize="22.0sp" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_song_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/random_play_option" android:maxLines="1" android:fontFamily="@font/montserrat_bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/img" app:layout_constraintRight_toLeftOf="@id/right_arrow" app:layout_constraintTop_toTopOf="parent" />
+-    <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <ImageView android:id="@id/img" android:layout_width="30.0dip" android:layout_height="30.0dip" android:layout_marginLeft="10.0dip" android:src="@mipmap/music_shuffle" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toTopOf="parent" />
 +    <TextView android:textSize="22.0sp" android:textColor="@color/white" android:ellipsize="end" android:gravity="start|center" android:id="@id/tv_song_name" android:layout_width="0.0dip" android:layout_height="wrap_content" android:layout_marginLeft="10.0dip" android:text="@string/random_play_option" android:maxLines="1" android:singleLine="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toRightOf="@id/img" app:layout_constraintRight_toLeftOf="@id/right_arrow" app:layout_constraintTop_toTopOf="parent" />
-     <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
++    <ImageView android:id="@id/right_arrow" android:visibility="invisible" android:layout_width="wrap_content" android:layout_height="0.0dip" android:layout_marginRight="3.0dip" android:src="@mipmap/right_arrow" android:adjustViewBounds="true" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent" />
  </androidx.constraintlayout.widget.ConstraintLayout>
 diff --git a/build/src/res/values-480x360/dimens.xml b/build/src/res/values-480x360/dimens.xml
 index 67bb2db9..b4b1d4c4 100644
@@ -20254,7 +20255,7 @@ index 803c1e7a..c1723c60 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..42a34e5c 100644
+index 71fe29d0..68540831 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21203,7 +21204,7 @@ index 71fe29d0..42a34e5c 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev615</string>
++    <string name="ipp_version">v1.1.0-dev616</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>

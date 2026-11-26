@@ -1168,7 +1168,7 @@ public final class Bar extends RecyclerView.ItemDecoration
                     selBg.setBounds(left, top, right, top + hh);
                     selBg.draw(c);
                 }
-                drawArrow(c, r, top);
+                drawArrow(c, r, top, hh);
             }
             if (y != goal || hb != h) start();
         } catch (Throwable t) {
@@ -1181,8 +1181,12 @@ public final class Bar extends RecyclerView.ItemDecoration
         return a;
     }
 
-    /** The cursor row's own arrow, drawn on the bar: the theme's arrow may carry the bar's colour. */
-    private void drawArrow(Canvas c, RecyclerView r, int top) {
+    /**
+     * The cursor row's own arrow, drawn on the bar: the theme's arrow may carry the bar's colour.
+     * Placed below the disc strip, as the bar is, and scaled from its right edge with the bar's
+     * height, so between rows of different heights it never sticks out of the bar.
+     */
+    private void drawArrow(Canvas c, RecyclerView r, int top, int hh) {
         View row = cursorRow(r);
         if (row == null) return;
         View arrow = arrowOf(row);
@@ -1196,8 +1200,14 @@ public final class Bar extends RecyclerView.ItemDecoration
             ViewParent p = v.getParent();
             v = p instanceof View ? (View) p : null;
         }
+        int st = strip(row);
+        int body = row.getHeight() - st;
+        float k = body > 0 && hh > 0 ? (float) hh / body : 1f;
+        int w = arrow.getWidth();
         c.save();
-        c.translate(row.getLeft() + dx, top + dy);
+        c.translate(row.getLeft() + dx + w, top);
+        if (k != 1f) c.scale(k, k);
+        c.translate(-w, dy - st);
         arrow.draw(c);
         c.restore();
     }
