@@ -20,6 +20,9 @@ public final class Ijk {
     /** ijkplayer's player options. */
     private static final int OPT_PLAYER = 4;
 
+    /** Packets read ahead: some 6–14 s of a lossy track, never under the one second ijk adds. */
+    private static final long MIN_FRAMES = 300L;
+
     private static Handler worker;
 
     /**
@@ -30,6 +33,10 @@ public final class Ijk {
         try {
             // an embedded cover is a video stream to ffmpeg: decoded on every track for nothing
             ps.getPlayer().setOption(OPT_PLAYER, "vn", 1L);
+            // ffmpeg reads ahead until this many packets are queued: ijk's 50000 is minutes of
+            // audio, read flat out on two cores at the start of every track
+            ps.getPlayer().setOption(OPT_PLAYER, "min-frames", MIN_FRAMES);
+            if (Diag.MEASURE) ps.getPlayer().setOnInfoListener(new Info());
         } catch (Throwable t) {
         }
         if (old == null) return;
@@ -43,6 +50,21 @@ public final class Ijk {
             worker = new Handler(t.getLooper());
         }
         worker.post(new Release(old));
+    }
+
+    /** Diag.MEASURE: ffmpeg ran out of read-ahead and paused the sound to refill it. */
+    static final class Info implements tv.danmaku.ijk.media.player.IMediaPlayer.OnInfoListener {
+        private long at;
+
+        public boolean onInfo(tv.danmaku.ijk.media.player.IMediaPlayer mp, int what, int extra) {
+            if (what == 701) {
+                at = android.os.SystemClock.uptimeMillis();
+                Diag.note("ijk buffering start, position " + mp.getCurrentPosition() + " ms");
+            } else if (what == 702) {
+                Diag.note("ijk buffering end, " + (android.os.SystemClock.uptimeMillis() - at) + " ms");
+            }
+            return false;
+        }
     }
 
     static final class Release implements Runnable {

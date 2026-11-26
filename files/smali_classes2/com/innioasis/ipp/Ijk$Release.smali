@@ -15,7 +15,7 @@
 
 .method constructor <init>(Ltv/danmaku/ijk/media/player/IjkMediaPlayer;)V
   .registers 2
-  .line 51
+  .line 73
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/Ijk$Release;->p:Ltv/danmaku/ijk/media/player/IjkMediaPlayer;
     return-void
@@ -25,16 +25,16 @@
   .catchall { :L0 .. :L1 } :L2
   .registers 2
   :L0
-  .line 55
+  .line 77
     iget-object v0, p0, Lcom/innioasis/ipp/Ijk$Release;->p:Ltv/danmaku/ijk/media/player/IjkMediaPlayer;
     invoke-virtual { v0 }, Ltv/danmaku/ijk/media/player/IjkMediaPlayer;->release()V
   :L1
-  .line 57
+  .line 79
     goto :L3
   :L2
-  .line 56
+  .line 78
     move-exception v0
   :L3
-  .line 58
+  .line 80
     return-void
 .end method

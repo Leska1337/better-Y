@@ -644,7 +644,7 @@ public final class IppFlowActivity extends BaseActivity {
             return;
         }
         state = 5;
-        Frames.start("from player");
+        Frames.start("from player", Diag.MEASURE);
         hold(true);
         // it leaves with what the player shows now: the track may have changed since the way in
         try {
@@ -762,7 +762,7 @@ public final class IppFlowActivity extends BaseActivity {
         List songs = panel.songs;
         int at = panel.track();
         if (songs == null || at < 0) return;
-        Frames.start("to player");
+        Frames.start("to player", Diag.MEASURE);
         hold(true);
         // The picture first, before anything moves and before the playlist: the playlist starts a
         // read of this track's cover that a picture built ahead has just put in memory. When none
@@ -1715,7 +1715,9 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             long t0 = SystemClock.uptimeMillis();
+            FlowView.busyTracks = true;
             Flow.Back b = Flow.back(it);
+            FlowView.busyTracks = false;
             // No picture for the player here: ~1 MB of bitmaps on every rest of the row, and the
             // collection after it, cost the scrolling row its frames. The open list builds it once
             // the cursor rests on a track (armAhead).
@@ -1824,7 +1826,9 @@ public final class IppFlowActivity extends BaseActivity {
 
         public void run() {
             Object[] src = new Object[2];
+            FlowView.busyPic = true;
             Bitmap b = Flow.tripAhead(track, rep, src);
+            FlowView.busyPic = false;
             a.ui.post(new AheadDone(a, track.getPath(), b, src));
             // a collection overlapping a flip just begun costs it a frame, and a list only glanced
             // at closes about now: collect only once the list has stood a while longer
@@ -1855,7 +1859,9 @@ public final class IppFlowActivity extends BaseActivity {
      * next flip's first allocation.
      */
     static void tidy() {
+        FlowView.busyGc = true;
         System.gc();
+        FlowView.busyGc = false;
     }
 
     static final class AlbumMenu implements SubMenuDialog.Callback {

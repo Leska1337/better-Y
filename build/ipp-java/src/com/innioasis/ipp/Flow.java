@@ -569,6 +569,11 @@ public final class Flow {
         private final Hashtable born = new Hashtable();
         private volatile int target;
         private volatile boolean stop;
+        // Diag.MEASURE: the slide being built and what it allocated, for FlowView's frame lines
+        public volatile boolean busy;
+        public volatile String how = "";
+        public volatile String doneHow = "";
+        public volatile long doneAt;
         private Bitmap blank;
         private boolean readArtist;
         private final Object wake = new Object();
@@ -751,6 +756,10 @@ public final class Flow {
 
         private void build(int at) {
             Item it = (Item) items.get(at);
+            if (Diag.MEASURE) {
+                how = pool.isEmpty() ? " new-slide" : "";
+                busy = true;
+            }
             Bitmap s = pool.isEmpty() ? newSlide() : (Bitmap) pool.remove(pool.size() - 1);
             if (cover(it, s)) {
                 mirror(canvas, s, mirrorPaint);
@@ -760,6 +769,11 @@ public final class Flow {
                 s = blank;
             }
             slides.put(Integer.valueOf(at), s);
+            if (Diag.MEASURE) {
+                doneHow = how;
+                doneAt = SystemClock.uptimeMillis();
+                busy = false;
+            }
             ui.post(onSlide);
         }
 
@@ -805,6 +819,7 @@ public final class Flow {
                         return true;
                     }
                 }
+                if (Diag.MEASURE) how += " no-flow";
                 if (!slideSize(path, s)) return false;
                 // written from the slide itself: the next visit decodes it straight to size
                 flowCanvas.drawBitmap(s, to, all, null);
@@ -849,9 +864,13 @@ public final class Flow {
                 Bitmap src = null;
                 File f = BigCover.cachedFile(path);
                 if (f != null) src = decode(f);
-                if (src == null) src = BigCover.trackFree(path);
+                if (src == null) {
+                    if (Diag.MEASURE) how += " uncached";
+                    src = BigCover.trackFree(path);
+                }
                 if (src == null) return false;
                 int w = src.getWidth(), h = src.getHeight();
+                if (Diag.MEASURE && (w != 300 || h != 300)) how += " " + w + "x" + h;
                 int m = Math.min(w, h);
                 canvas.setBitmap(s);
                 if (m > 2 * S) {

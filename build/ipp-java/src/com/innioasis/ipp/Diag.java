@@ -114,6 +114,135 @@ public final class Diag {
         }
     }
 
+    /** Diag.MEASURE: who ran on the CPU over the next 300 ms, written as one {@code cpu} line. */
+    public static void cpu(String why) {
+        if (MEASURE) Cpu.request(why);
+    }
+
+    /**
+     * Two snapshots of /proc 300 ms apart: the whole CPU (/proc/stat), our process and each of
+     * its threads, the busiest named. Ticks are 10 ms. Reads files only, starts no process.
+     */
+    static final class Cpu implements Runnable {
+        private static volatile boolean running;
+        private final String why;
+
+        private Cpu(String why) { this.why = why; }
+
+        static void request(String why) {
+            if (running) return;
+            running = true;
+            try {
+                Thread t = new Thread(new Cpu(why), "ipp-cpu");
+                t.setPriority(Thread.MAX_PRIORITY);
+                t.start();
+            } catch (Throwable e) {
+                running = false;
+            }
+        }
+
+        public void run() {
+            try {
+                long[] c0 = total();
+                java.util.HashMap a = threads();
+                Thread.sleep(300);
+                long[] c1 = total();
+                java.util.HashMap b = threads();
+                long all = c1[0] - c0[0], busy = c1[1] - c0[1];
+                ArrayList rows = new ArrayList();
+                long ours = 0;
+                Iterator it = b.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry e = (Map.Entry) it.next();
+                    Object[] v = (Object[]) e.getValue();
+                    Object[] w = (Object[]) a.get(e.getKey());
+                    long d = ((Long) v[1]).longValue() - (w == null ? 0 : ((Long) w[1]).longValue());
+                    if (d <= 0) continue;
+                    ours += d;
+                    rows.add(new Object[] { v[0] + " " + e.getKey(), Long.valueOf(d) });
+                }
+                Collections.sort(rows, new ByTicks());
+                StringBuilder s = new StringBuilder("cpu ").append(why)
+                        .append(": busy ").append(all > 0 ? busy * 100 / all : 0).append('%')
+                        .append(", ours ").append(ours * 10).append(" ms, others ")
+                        .append(Math.max(0, busy - ours) * 10).append(" ms of ").append(all * 10).append(" ms;");
+                for (int i = 0; i < rows.size() && i < 6; i++) {
+                    Object[] r = (Object[]) rows.get(i);
+                    s.append(' ').append(r[0]).append(' ').append(((Long) r[1]).longValue() * 10);
+                }
+                String p = playing();
+                if (p != null) s.append("; playing ").append(p);
+                note(s.toString());
+            } catch (Throwable e) {
+            } finally {
+                running = false;
+            }
+        }
+
+        /** All ticks and busy ticks of every CPU together. */
+        private static long[] total() throws java.io.IOException {
+            String l = read("/proc/stat");
+            int nl = l.indexOf('\n');
+            String[] f = (nl > 0 ? l.substring(0, nl) : l).trim().split("\\s+");
+            long all = 0, idle = 0;
+            for (int i = 1; i < f.length; i++) {
+                long v = Long.parseLong(f[i]);
+                all += v;
+                if (i == 4 || i == 5) idle += v;     // idle, iowait
+            }
+            return new long[] { all, all - idle };
+        }
+
+        /** tid -> { name, utime+stime } for every thread of this process. */
+        private static java.util.HashMap threads() {
+            java.util.HashMap m = new java.util.HashMap();
+            String[] ts = new File("/proc/self/task").list();
+            if (ts == null) return m;
+            for (int i = 0; i < ts.length; i++) {
+                try {
+                    String st = read("/proc/self/task/" + ts[i] + "/stat");
+                    int o = st.indexOf('('), c = st.lastIndexOf(')');
+                    String[] f = st.substring(c + 2).trim().split(" ");
+                    long t = Long.parseLong(f[11]) + Long.parseLong(f[12]);
+                    m.put(ts[i], new Object[] { st.substring(o + 1, c), Long.valueOf(t) });
+                } catch (Throwable e) {
+                }
+            }
+            return m;
+        }
+
+        private static String read(String path) throws java.io.IOException {
+            java.io.FileInputStream in = new java.io.FileInputStream(path);
+            try {
+                byte[] b = new byte[1024];
+                int n = in.read(b);
+                return n <= 0 ? "" : new String(b, 0, n, "US-ASCII");
+            } finally {
+                in.close();
+            }
+        }
+
+        private static String playing() {
+            try {
+                com.innioasis.y1.service.PlayerService s = Y1Application.Companion.getPlayerService();
+                Song song = s == null ? null : s.getPlayingSong();
+                String p = song == null ? null : song.getPath();
+                if (p == null) return null;
+                int d = p.lastIndexOf('.');
+                return d < 0 ? p : p.substring(d);
+            } catch (Throwable e) {
+                return null;
+            }
+        }
+    }
+
+    static final class ByTicks implements java.util.Comparator {
+        public int compare(Object x, Object y) {
+            long a = ((Long) ((Object[]) x)[1]).longValue(), b = ((Long) ((Object[]) y)[1]).longValue();
+            return a > b ? -1 : a < b ? 1 : 0;
+        }
+    }
+
     /**
      * A heap dump to better-Y/logs at the first stuttering animation of the run and with every
      * "Save diagnostic log" — only while the empty file better-Y/heap_dump exists (put there by

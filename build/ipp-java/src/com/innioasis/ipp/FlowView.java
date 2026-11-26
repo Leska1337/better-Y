@@ -211,6 +211,13 @@ public final class FlowView extends View {
         if (t == target) return;
         target = t;
         hurry = false;
+        if (Diag.MEASURE && !stepPending) {
+            long now = SystemClock.uptimeMillis();
+            long k = Open.lastKey();
+            stepKey = k > 0 && k <= now && now - k < 1000 ? k : now;
+            stepAt = now;
+            stepPending = true;
+        }
         loader.aim(t);
         last = 0;
         postInvalidateOnAnimation();
@@ -300,9 +307,90 @@ public final class FlowView extends View {
         return pos != target;
     }
 
+    // ---- Diag.MEASURE: frames of the row's own animation ------------------------------------
+
+    /** What runs in the background meanwhile, set by the screen. */
+    public static volatile boolean busyTracks, busyPic, busyGc;
+    private static final long SLOW_FRAME = 40L;
+    private long prevDraw, fStart, fWorst;
+    private boolean prevAnim, moving0;
+    private int fFrames, fSlow;
+    // from the wheel's key event to the first frame that moves
+    private long stepKey, stepAt, latMax, latSum;
+    private boolean stepPending;
+    private int fSteps, fLate;
+
+    private static void say(String s) {
+        Diag.note(s);
+        android.util.Log.i("ippflow", s);
+    }
+
+    private String busy() {
+        StringBuilder b = new StringBuilder();
+        if (loader != null) {
+            if (loader.busy) b.append(", slide").append(loader.how);
+            long ago = SystemClock.uptimeMillis() - loader.doneAt;
+            if (loader.doneAt > 0 && ago < 300) b.append(", last slide ").append(ago).append(" ms ago").append(loader.doneHow);
+        }
+        if (busyTracks) b.append(", tracks");
+        if (busyPic) b.append(", picture");
+        if (busyGc) b.append(", gc");
+        return b.toString();
+    }
+
     @Override
     protected void onDraw(Canvas c) {
+        if (!Diag.MEASURE) {
+            draw0(c);
+            return;
+        }
+        long now = SystemClock.uptimeMillis();
+        if (prevAnim) {
+            long gap = now - prevDraw;
+            fFrames++;
+            if (gap > fWorst) fWorst = gap;
+            if (gap >= SLOW_FRAME) {
+                fSlow++;
+                say("flow frame " + gap + " ms" + busy());
+            }
+        } else {
+            fStart = now;
+            fFrames = 0;
+            fSlow = 0;
+            fWorst = 0;
+            fSteps = 0;
+            fLate = 0;
+            latMax = 0;
+            latSum = 0;
+        }
+        if (stepPending) {
+            stepPending = false;
+            long lat = now - stepKey;
+            fSteps++;
+            latSum += lat;
+            if (lat > latMax) latMax = lat;
+            if (lat >= 60) {
+                if (fLate == 0) Diag.cpu("flow step late");
+                fLate++;
+                say("flow step late " + lat + " ms, key to step " + (stepAt - stepKey) + busy());
+            }
+        }
+        prevDraw = now;
+        draw0(c);
+        long end = SystemClock.uptimeMillis();
+        if (end - now >= 15) say("flow draw " + (end - now) + " ms");
+        boolean anim = moving0 || fading;
+        if (prevAnim && !anim) {
+            say("frames flow scroll worst " + fWorst + " ms, " + fFrames + " frames in "
+                    + (now - fStart) + " ms, slow " + fSlow + "; steps " + fSteps + ", key to frame max "
+                    + latMax + " mean " + (fSteps > 0 ? latSum / fSteps : 0) + ", late " + fLate);
+        }
+        prevAnim = anim;
+    }
+
+    private void draw0(Canvas c) {
         boolean moving = advance();
+        moving0 = moving;
         fading = false;
         int n = count();
         if (n > 0 && w > 0) {
@@ -321,15 +409,16 @@ public final class FlowView extends View {
             Flow.Item it = (Flow.Item) items.get(Math.max(0, Math.min(n - 1, ci)));
             float cx = w / 2f;
             int ta = (int) (255 * (1f - Math.min(1f, spread * 2f)) * labels);
-            name.setAlpha(ta);
-            artist.setAlpha(ta * ARTIST_ALPHA / 255);
-            name.setShadowLayer(2, 0, 1, faded(shadow, ta));
-            artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
+            if (ta != shadowAt) {
+                shadowAt = ta;
+                name.setAlpha(ta);
+                artist.setAlpha(ta * ARTIST_ALPHA / 255);
+                name.setShadowLayer(2, 0, 1, faded(shadow, ta));
+                artist.setShadowLayer(2, 0, 1, faded(shadow, ta));
+            }
             lines(it);
-            c.drawText(TextUtils.ellipsize(nameLine, name, w - 24, TextUtils.TruncateAt.END).toString(),
-                    cx, h - 46, name);
-            c.drawText(TextUtils.ellipsize(artistLine, artist, w - 24, TextUtils.TruncateAt.END).toString(),
-                    cx, h - 19, artist);
+            c.drawText(nameFit, cx, h - 46, name);
+            c.drawText(artistFit, cx, h - 19, artist);
         }
         if (moving || fading) postInvalidateOnAnimation();
         if (wasMoving && !moving && onRest != null) post(onRest);
@@ -340,6 +429,9 @@ public final class FlowView extends View {
     // the last lines built, so a frame of an unchanged label allocates nothing
     private Flow.Item lineOf;
     private String lineArtist, lineYear, nameLine, artistLine;
+    // the same lines cut to the width they were cut for; and the alpha the paints were last given
+    private String nameFit, artistFit;
+    private int fitW = -1, shadowAt = -1;
 
     /** Where the release year goes, the screen's setting: one of Flow.YEAR_*. */
     public void setYears(int at) {
@@ -351,12 +443,15 @@ public final class FlowView extends View {
 
     private void lines(Flow.Item it) {
         String a = it.artist, y = it.year;
-        if (it == lineOf && a == lineArtist && y == lineYear) return;
+        if (it == lineOf && a == lineArtist && y == lineYear && fitW == w) return;
         lineOf = it;
         lineArtist = a;
         lineYear = y;
+        fitW = w;
         nameLine = Flow.albumLine(it.name, y, yearAt);
         artistLine = Flow.artistLine(a, y, yearAt);
+        nameFit = TextUtils.ellipsize(nameLine, name, w - 24, TextUtils.TruncateAt.END).toString();
+        artistFit = TextUtils.ellipsize(artistLine, artist, w - 24, TextUtils.TruncateAt.END).toString();
     }
 
     private float sAngle, sCx, sCy;

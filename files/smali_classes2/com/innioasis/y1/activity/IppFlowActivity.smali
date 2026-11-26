@@ -321,7 +321,7 @@
     iput p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
   .line 647
     const-string p1, "from player"
-    invoke-static { p1 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;)V
+    invoke-static { p1, v0 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
   .line 648
     const/4 p1, 1
     invoke-direct { p0, p1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->hold(Z)V
@@ -913,7 +913,7 @@
 
 .method private play()V
   .catchall { :L2 .. :L3 } :L4
-  .registers 8
+  .registers 9
   .line 762
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     iget-object v0, v0, Lcom/innioasis/y1/activity/IppFlowActivity$Panel;->songs:Ljava/util/List;
@@ -928,7 +928,8 @@
   :L0
   .line 765
     const-string v2, "to player"
-    invoke-static { v2 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;)V
+    const/4 v3, 0
+    invoke-static { v2, v3 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
   .line 766
     const/4 v2, 1
     invoke-direct { p0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->hold(Z)V
@@ -938,44 +939,44 @@
     check-cast v2, Lcom/innioasis/y1/database/Song;
   .line 771
     invoke-direct { p0, v2 }, Lcom/innioasis/y1/activity/IppFlowActivity;->takeAhead(Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
-    move-result-object v3
-    iput-object v3, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->tripPic:Landroid/graphics/Bitmap;
+    move-result-object v4
+    iput-object v4, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->tripPic:Landroid/graphics/Bitmap;
   .line 772
-    if-nez v3, :L1
+    if-nez v4, :L1
   .line 773
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
-    move-result-wide v3
+    move-result-wide v4
   .line 774
-    iget-object v5, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
-    iget v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
-    invoke-interface { v5, v6 }, Ljava/util/List;->get(I)Ljava/lang/Object;
-    move-result-object v5
-    check-cast v5, Lcom/innioasis/ipp/Flow$Item;
-    iget-object v5, v5, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
-    invoke-static { v2, v5 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
+    iget-object v6, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
+    iget v7, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
+    invoke-interface { v6, v7 }, Ljava/util/List;->get(I)Ljava/lang/Object;
+    move-result-object v6
+    check-cast v6, Lcom/innioasis/ipp/Flow$Item;
+    iget-object v6, v6, Lcom/innioasis/ipp/Flow$Item;->rep:Lcom/innioasis/y1/database/Song;
+    invoke-static { v2, v6 }, Lcom/innioasis/ipp/Flow;->trip(Lcom/innioasis/y1/database/Song;Lcom/innioasis/y1/database/Song;)Landroid/graphics/Bitmap;
     move-result-object v2
     iput-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->tripPic:Landroid/graphics/Bitmap;
   .line 775
     const-string v2, "picture"
-    invoke-static { v2, v3, v4 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
+    invoke-static { v2, v4, v5 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
   :L1
   .line 777
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
-    move-result-wide v2
+    move-result-wide v4
   :L2
   .line 779
-    sget-object v4, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-    invoke-virtual { v4 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
-    move-result-object v4
+    sget-object v2, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v2 }, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
+    move-result-object v2
   .line 780
-    if-eqz v4, :L3
-    invoke-virtual { v4, v0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setMusicPlaylist(Ljava/util/List;I)V
+    if-eqz v2, :L3
+    invoke-virtual { v2, v0, v1 }, Lcom/innioasis/y1/service/PlayerService;->setMusicPlaylist(Ljava/util/List;I)V
   :L3
   .line 785
     nop
   .line 786
     const-string v0, "playlist"
-    invoke-static { v0, v2, v3 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
+    invoke-static { v0, v4, v5 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
   .line 787
     const/4 v0, 4
     iput v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
@@ -1000,8 +1001,7 @@
   .line 782
     invoke-static { }, Lcom/innioasis/ipp/Frames;->stop()V
   .line 783
-    const/4 v0, 0
-    invoke-direct { p0, v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->hold(Z)V
+    invoke-direct { p0, v3 }, Lcom/innioasis/y1/activity/IppFlowActivity;->hold(Z)V
   .line 784
     return-void
   :L5
@@ -1317,10 +1317,16 @@
 .end method
 
 .method static tidy()V
-  .registers 0
-  .line 1858
+  .registers 1
+  .line 1862
+    const/4 v0, 1
+    sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
+  .line 1863
     invoke-static { }, Ljava/lang/System;->gc()V
-  .line 1859
+  .line 1864
+    const/4 v0, 0
+    sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
+  .line 1865
     return-void
 .end method
 
