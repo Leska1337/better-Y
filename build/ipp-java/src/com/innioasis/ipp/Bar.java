@@ -1349,7 +1349,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         int body = row.getHeight() - st;
         int right = row.getLeft() + dx + arrow.getWidth();
         Drawable d = arrow instanceof ImageView ? ((ImageView) arrow).getDrawable() : null;
-        if (d != null && hh > 0 && arrow.getHeight() >= body - 1
+        if (d != null && hh > 0 && shownHeight((ImageView) arrow, d) >= body - 1
                 && d.getIntrinsicWidth() > 0 && d.getIntrinsicHeight() > 0) {
             int w = Math.round((float) d.getIntrinsicWidth() * hh / d.getIntrinsicHeight());
             android.graphics.Rect was = d.copyBounds();
@@ -1363,6 +1363,13 @@ public final class Bar extends RecyclerView.ItemDecoration
         c.translate(row.getLeft() + dx, top + dy - st);
         arrow.draw(c);
         c.restore();
+    }
+
+    /** The picture's height as drawn: a view as tall as its row may centre a small arrow in it. */
+    private static float shownHeight(ImageView v, Drawable d) {
+        float[] m = new float[9];
+        v.getImageMatrix().getValues(m);
+        return d.getBounds().height() * m[android.graphics.Matrix.MSCALE_Y];
     }
 
     private void start() {

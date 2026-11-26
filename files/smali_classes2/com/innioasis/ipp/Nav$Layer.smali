@@ -14,23 +14,23 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/Nav$Run;)V
   .registers 3
-  .line 646
+  .line 669
     iget-object v0, p1, Lcom/innioasis/ipp/Nav$Run;->act:Landroid/app/Activity;
     invoke-direct { p0, v0 }, Landroid/view/View;-><init>(Landroid/content/Context;)V
-  .line 647
+  .line 670
     iput-object p1, p0, Lcom/innioasis/ipp/Nav$Layer;->run:Lcom/innioasis/ipp/Nav$Run;
-  .line 648
+  .line 671
     const/4 p1, 0
     invoke-virtual { p0, p1 }, Lcom/innioasis/ipp/Nav$Layer;->setWillNotDraw(Z)V
-  .line 649
+  .line 672
     return-void
 .end method
 
 .method protected onDraw(Landroid/graphics/Canvas;)V
   .registers 3
-  .line 653
+  .line 676
     iget-object v0, p0, Lcom/innioasis/ipp/Nav$Layer;->run:Lcom/innioasis/ipp/Nav$Run;
     invoke-virtual { v0, p0, p1 }, Lcom/innioasis/ipp/Nav$Run;->draw(Lcom/innioasis/ipp/Nav$Layer;Landroid/graphics/Canvas;)V
-  .line 654
+  .line 677
     return-void
 .end method

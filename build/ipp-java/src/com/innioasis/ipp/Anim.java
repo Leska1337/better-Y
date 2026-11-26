@@ -24,7 +24,7 @@ public final class Anim {
     public static final boolean BUILT = true;
 
     /** The same for the slide between screens. With both false the menu has no animations row at all. */
-    public static final boolean NAV_BUILT = false;
+    public static final boolean NAV_BUILT = true;
 
     /** The scroll animations. */
     public static boolean on() {

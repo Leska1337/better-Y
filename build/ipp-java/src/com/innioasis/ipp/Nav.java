@@ -50,7 +50,8 @@ public final class Nav {
     private static final int FULL = 2;
     private static final int SPLIT = 3;
 
-    private static final long[] MS = { 300, 400, 380, 360 };
+    // the spring every slide rides, critically damped: most of the way in ~0.28 s, settled in ~0.45
+    private static final float OMEGA = 14f;
     private static final long FRAME_NS = 27000000L;
     // a picture taken on the button press is good for the screen that press opens
     private static final long SHOT_MS = 3000;
@@ -219,12 +220,20 @@ public final class Nav {
         return LOC[1] + bar.getHeight();
     }
 
-    /** The whole window below the status bar into an opaque bitmap. */
+    /** The window below the status bar without its background: the wallpaper stands still. */
     private static void window(Bitmap b, Activity of, int top) {
-        b.eraseColor(Color.BLACK);
+        b.eraseColor(0);
         Canvas c = new Canvas(b);
         c.translate(0, -top);
-        of.getWindow().getDecorView().draw(c);
+        ViewGroup d = (ViewGroup) of.getWindow().getDecorView();
+        for (int i = 0; i < d.getChildCount(); i++) {
+            View v = d.getChildAt(i);
+            if (v.getVisibility() != View.VISIBLE || v instanceof Layer) continue;
+            c.save();
+            c.translate(v.getLeft(), v.getTop());
+            v.draw(c);
+            c.restore();
+        }
     }
 
     /** The list alone, where it stands, on a clear bitmap. */
@@ -363,6 +372,11 @@ public final class Nav {
         private long elapsed;
         private float p;
         private boolean done;
+        private Drawable oldBg;
+        // TEMP measurement: frame gaps of the slide
+        private final StringBuilder gaps = new StringBuilder();
+        private int frames;
+        private long fromKey = -1;
         private final int[] loc = new int[2];
         private final int[] at = new int[2];
 
@@ -390,6 +404,8 @@ public final class Nav {
             top = top(act);
             if (top >= h) return false;
             if (pre && (bufA == null || bufA.getWidth() != w || bufA.getHeight() != h - top)) return false;
+            oldBg = prev.getWindow().getDecorView().getBackground();
+            if (pre) fromKey = SystemClock.uptimeMillis() - keyAt;
             if (mode == SLIDE) {
                 oL = left(oldList);
                 oR = right(oldList);
@@ -452,8 +468,8 @@ public final class Nav {
             }
             origX = new float[moved.size()];
             for (int i = 0; i < origX.length; i++) origX[i] = ((View) moved.get(i)).getTranslationX();
-            under = layer(0);
             if (mode == PUSH && back) over = layer(-1);
+            else under = layer(0);
             // under the translucent status bar the screen stands still
             if (top > 0 && root instanceof ConstraintLayout && bar != null && bar.getParent() == root) {
                 strip = new Layer(this);
@@ -475,6 +491,11 @@ public final class Nav {
             // a frame held up by the screen (a first draw, pictures decoded) advances by two frames
             // at most: the slide slows down there instead of jumping to its end
             if (last == 0) first = now;
+            if (last != 0) {
+                long g = (now - last) / 1000000L;
+                frames++;
+                if (g > 40) gaps.append(' ').append(g);
+            }
             long dt = last == 0 ? FRAME_NS : Math.min(now - last, 2 * FRAME_NS);
             last = now;
             // a list filled in the background (Folders) is waited for, standing at the start
@@ -483,12 +504,11 @@ public final class Nav {
                 return;
             }
             elapsed += dt;
-            float t = Math.min(1f, elapsed / 1000000f / MS[mode]);
-            // a soft start that does not hold back, and a long settle
-            float u = 1f - t;
-            float e = 0.4f * t * t * (3f - 2f * t) + 0.6f * (1f - u * u);
+            float x = OMEGA * elapsed / 1e9f;
+            float e = 1f - (1f + x) * (float) Math.exp(-x);
+            if ((1f - e) * w < 0.5f) e = 1f;
             step(e);
-            if (t >= 1f) {
+            if (e >= 1f) {
                 end();
                 return;
             }
@@ -510,6 +530,8 @@ public final class Nav {
         void end() {
             if (done) return;
             done = true;
+            android.util.Log.e("ippnav", act.getClass().getSimpleName() + " mode " + mode + " key-start " + fromKey
+                    + " frames " + frames + " ms " + (last - first) / 1000000L + " slow" + gaps);
             try {
                 Choreographer.getInstance().removeFrameCallback(this);
                 if (under != null) decor.removeView(under);
@@ -555,35 +577,36 @@ public final class Nav {
                 }
                 case PUSH: {
                     float left = back ? w * p : w * (1f - p);
+                    // the new screen is drawn over the old one's band coming back: the band is made opaque
                     if (!back) {
                         piece(c, shot, Math.min(0f, left - edge), 0, left);
-                        paint(c, bg, left, left, w);
-                    } else if (l == under) {
-                        paint(c, bg, Math.min(0f, left - edge), 0, left);
                     } else {
+                        paint(c, bg, 0, left, w);
                         piece(c, shot, left, left, w);
                     }
                     return;
                 }
                 case FULL: {
                     s = w * p;
-                    if (!back) {
-                        piece(c, shot, -s, 0, w - s);
-                        paint(c, bg, w - s, w - s, w);
-                    } else {
-                        paint(c, bg, s - w, 0, s);
-                        piece(c, shot, s, s, w);
-                    }
+                    if (!back) piece(c, shot, -s, 0, w - s);
+                    else piece(c, shot, s, s, w);
                     return;
                 }
                 default: {
                     // SPLIT: the half menu's two parts move apart over the new screen, or close over the old
                     float q = back ? 1f - p : p;
                     Bitmap half = back ? shot2 : shot;
-                    if (back) piece(c, shot, 0, 0, w);
+                    // the halves carry their own background, they are pictures moving apart
+                    Drawable hb = back ? bg : oldBg;
+                    if (back) {
+                        paint(c, oldBg, 0, 0, w);
+                        piece(c, shot, 0, 0, w);
+                    }
                     float dl = -edge * q;
                     float dr = (w - edge) * q;
+                    paint(c, hb, dl, 0, edge + dl);
                     piece(c, half, dl, 0, edge + dl);
+                    paint(c, hb, dr, edge + dr, w);
                     piece(c, half, dr, edge + dr, w);
                 }
             }
@@ -598,7 +621,7 @@ public final class Nav {
             c.restore();
         }
 
-        /** The window's own background, moved with the live screen, in the band from x0 to x1. */
+        /** A window background drawn at dx, in the band from x0 to x1. */
         private void paint(Canvas c, Drawable bg, float dx, float x0, float x1) {
             if (x1 <= x0) return;
             c.save();
