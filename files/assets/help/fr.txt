@@ -219,13 +219,11 @@ Détermine au bout de combien de secondes, après la dernière rotation de la mo
 Arrivée à la fin ou au début d'une liste, la sélection repart du côté opposé. Fonctionne dans toutes les listes, menus, galeries et fenêtres de dialogue.
 
 [animations] Activer les animations
-L'interrupteur général des animations ci-dessous. Désactivé, tous les écrans et toutes les listes changent aussitôt.
 
 [anim_nav] Navigation
 Les écrans du menu glissent l'un dans l'autre, comme sur l'iPod : vers l'intérieur de droite à gauche, en arrière de gauche à droite. Une liste à côté d'une image glisse dans sa moitié de l'écran ; une liste plein écran arrive par la droite et pousse la moitié dehors.
 
 [anim_scroll] Défilement
-Dans les grilles de vignettes (Playlists, Themes et Photos), les rangées glissent à l'écran et le cadre du curseur se déplace d'une vignette à l'autre. Désactivé, les deux sautent aussitôt.
 
 [menu_style] Style
 * Par défaut

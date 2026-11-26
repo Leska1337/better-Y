@@ -220,7 +220,10 @@ public final class Wheel {
                 flushRows();
                 if (Loop.fromShuffle(rv, a, type)) return;
                 // on the Shuffle row nothing is above it: the screen's spv.onAntiClockwise keeps it
-                if (m < 0) return;
+                if (m < 0) {
+                    Loop.aboveShuffle();
+                    return;
+                }
             }
             if (type == 1) a.toNext(); else a.toPrevious();
             if (a.getPosition() == m) {                 // clamped at an end

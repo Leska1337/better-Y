@@ -299,13 +299,11 @@ Determines how many seconds after the last scroll of the wheel the selection ret
 When reaching the end or the beginning of a list, the selection loops back to the opposite side. Works in every list, menu, gallery and dialog window.
 
 [animations] Enable animations
-The main switch for the animations below. Off, every screen and every list moves at once.
 
 [anim_nav if animations] Navigation
 Menu screens slide into one another, as on the iPod: going deeper — from right to left, going back — from left to right. A list beside a picture slides within its half of the screen; a full-screen list comes in from the right and pushes the half out.
 
 [anim_scroll if animations] Scroll
-In the tile grids — Playlists, Themes and Photos — the rows glide into view and the cursor's frame travels from tile to tile. Off, both move at once.
 
 [menu_style] Style
 * Default

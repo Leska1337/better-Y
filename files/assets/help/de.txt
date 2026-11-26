@@ -219,13 +219,11 @@ Legt fest, wie viele Sekunden nach dem letzten Drehen des Rades die Auswahl zum 
 Am Ende oder Anfang einer Liste springt die Auswahl auf die gegenüberliegende Seite. Gilt für alle Listen, Menüs, Galerien und Dialogfenster.
 
 [animations] Animationen aktivieren
-Der Hauptschalter für die Animationen darunter. Ausgeschaltet wechseln alle Bildschirme und Listen sofort.
 
 [anim_nav] Navigation
 Menübildschirme gleiten ineinander über, wie beim iPod: tiefer hinein von rechts nach links, zurück von links nach rechts. Eine Liste neben einem Bild gleitet in ihrer Bildschirmhälfte; eine Liste über den ganzen Bildschirm kommt von rechts und schiebt die Hälfte hinaus.
 
 [anim_scroll] Scrollen
-In den Kachelrastern – Playlists, Themes und Photos – gleiten die Reihen ins Bild, und der Rahmen des Cursors wandert von Kachel zu Kachel. Ausgeschaltet springt beides sofort.
 
 [menu_style] Stil
 * Standard

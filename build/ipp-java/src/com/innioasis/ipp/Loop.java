@@ -289,6 +289,11 @@ public final class Loop {
         return true;
     }
 
+    /** From {@code Wheel.rows}: up from the Shuffle row with nothing to go round to, the bounce against the top. */
+    static void aboveShuffle() {
+        if (!on()) edge();
+    }
+
     /** From {@code Wheel.rows} after a step clamped at {@code old}. True when the cursor went round. */
     static boolean list(View lv, MyBaseAdapter a, int type, int old) {
         if (!on()) {
