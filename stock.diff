@@ -34,7 +34,7 @@ index 2c8d26c0..36f631bd 100644
          <activity android:exported="false" android:launchMode="singleTask" android:name="com.innioasis.y1.activity.AudioPlayerActivity"/>
          <activity android:exported="false" android:name="com.innioasis.y1.activity.BrightnessActivity"/>
 diff --git a/build/src/apktool.yml b/build/src/apktool.yml
-index 01b1f730..321eccbf 100644
+index 01b1f730..3605b93e 100644
 --- a/build/src/apktool.yml
 +++ b/build/src/apktool.yml
 @@ -1,5 +1,5 @@
@@ -49,7 +49,7 @@ index 01b1f730..321eccbf 100644
    renameManifestPackage: null
  versionInfo:
 -  versionCode: 312
-+  versionCode: 10100603
++  versionCode: 10100615
    versionName: 3.1.2
  sharedLibrary: false
  sparseResources: false
@@ -20254,7 +20254,7 @@ index 803c1e7a..c1723c60 100644
 +    <public type="xml" name="util_code_provider_paths" id="0x7f140007" />
 +</resources>
 diff --git a/build/src/res/values/strings.xml b/build/src/res/values/strings.xml
-index 71fe29d0..65c2c2a0 100644
+index 71fe29d0..42a34e5c 100644
 --- a/build/src/res/values/strings.xml
 +++ b/build/src/res/values/strings.xml
 @@ -1,473 +1,600 @@
@@ -21203,7 +21203,7 @@ index 71fe29d0..65c2c2a0 100644
 +    <string name="yes">Yes</string>
 +    <string name="yes_format_message">Once formatted, all stored data will be deleted.</string>
 +    <string name="ipp_brand">better-Y</string>
-+    <string name="ipp_version">v1.1.0-dev603</string>
++    <string name="ipp_version">v1.1.0-dev615</string>
 +    <string name="ipp_settings_title">better-Y</string>
 +    <string name="ipp_on">On</string>
 +    <string name="ipp_off">Off</string>
@@ -23263,7 +23263,7 @@ index c4b75839..024df549 100644
      sget-object v0, Lcom/innioasis/y1/utils/WallpaperUtils;->INSTANCE:Lcom/innioasis/y1/utils/WallpaperUtils;
  
 diff --git a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
-index 060ed6d1..d596e8af 100644
+index 060ed6d1..ee01ff84 100644
 --- a/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 +++ b/build/src/smali/com/innioasis/y1/base/BaseActivity.smali
 @@ -843,6 +843,12 @@
@@ -23328,7 +23328,35 @@ index 060ed6d1..d596e8af 100644
      if-ge p1, v3, :cond_c
  
      iget-boolean p1, p0, Lcom/innioasis/y1/base/BaseActivity;->wasDown:Z
-@@ -2186,7 +2218,16 @@
+@@ -1985,6 +2017,13 @@
+     invoke-virtual {p1, v3, v1}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
+ 
+     .line 725
++    # ipp: a click dropped while a grid's frame changes rows or just after a fast wrap -- see Wheel.drop
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->drop(Landroid/app/Activity;)Z
++
++    move-result p1
++
++    if-nez p1, :cond_f
++
+     invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->antiClockwise()V
+ 
+     .line 726
+@@ -2029,6 +2068,13 @@
+     invoke-virtual {p1, v3, v1}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
+ 
+     .line 734
++    # ipp: a click dropped while a grid's frame changes rows or just after a fast wrap -- see Wheel.drop
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->drop(Landroid/app/Activity;)Z
++
++    move-result p1
++
++    if-nez p1, :cond_f
++
+     invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->clockwise()V
+ 
+     .line 735
+@@ -2186,7 +2232,16 @@
  
      invoke-virtual {p1, v3, v1}, Ltimber/log/Timber$Forest;->d(Ljava/lang/String;[Ljava/lang/Object;)V
  
@@ -23345,7 +23373,7 @@ index 060ed6d1..d596e8af 100644
      sget-object p1, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
  
      invoke-virtual {p1}, Lcom/innioasis/y1/Y1Application$Companion;->getPlayerService()Lcom/innioasis/y1/service/PlayerService;
-@@ -2368,7 +2409,10 @@
+@@ -2368,7 +2423,10 @@
  
      new-array v6, v4, [Ljava/lang/Object;
  
@@ -23357,7 +23385,7 @@ index 060ed6d1..d596e8af 100644
  
      .line 680
      invoke-virtual {p1}, Landroid/view/KeyEvent;->getRepeatCount()I
-@@ -2380,6 +2424,11 @@
+@@ -2380,6 +2438,11 @@
      .line 681
      iput-boolean v0, p0, Lcom/innioasis/y1/base/BaseActivity;->wasDown:Z
  
@@ -23369,20 +23397,20 @@ index 060ed6d1..d596e8af 100644
      if-ne p1, v3, :cond_17
  
      .line 685
-@@ -2617,8 +2666,10 @@
+@@ -2617,8 +2680,10 @@
  .method public getEnableSpeedClockwise()Z
      .locals 1
  
 -    .line 856
 -    iget-boolean v0, p0, Lcom/innioasis/y1/base/BaseActivity;->enableSpeedClockwise:Z
-+    # ipp: the wheel accelerates only on the screens that can hold a long list -- see Wheel.fast
++    # ipp: the wheel accelerates by screen: long lists fully, short menus barely -- see Wheel.fast
 +    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->fast(Lcom/innioasis/y1/base/BaseActivity;)Z
 +
 +    move-result v0
  
      return v0
  .end method
-@@ -2789,6 +2840,9 @@
+@@ -2789,6 +2854,9 @@
  .method protected onCreate(Landroid/os/Bundle;)V
      .locals 5
  
@@ -23392,7 +23420,7 @@ index 060ed6d1..d596e8af 100644
      const/4 v0, 0x1
  
      .line 112
-@@ -2806,6 +2860,27 @@
+@@ -2806,6 +2874,27 @@
      .line 116
      invoke-super {p0, p1}, Landroidx/appcompat/app/AppCompatActivity;->onCreate(Landroid/os/Bundle;)V
  
@@ -23420,7 +23448,7 @@ index 060ed6d1..d596e8af 100644
      .line 117
      invoke-virtual {p0}, Lcom/innioasis/y1/base/BaseActivity;->getViewBinding()Landroidx/viewbinding/ViewBinding;
  
-@@ -3078,9 +3153,18 @@
+@@ -3078,9 +3167,18 @@
      .line 146
      invoke-virtual {p0, p1, v0}, Lcom/innioasis/y1/base/BaseActivity;->registerReceiver(Landroid/content/BroadcastReceiver;Landroid/content/IntentFilter;)Landroid/content/Intent;
  
@@ -23439,7 +23467,7 @@ index 060ed6d1..d596e8af 100644
      .line 153
      invoke-direct {p0}, Lcom/innioasis/y1/base/BaseActivity;->setObserve()V
  
-@@ -3463,9 +3547,27 @@
+@@ -3463,9 +3561,27 @@
  
      invoke-direct {p0, v0}, Lcom/innioasis/y1/base/BaseActivity;->updatePlay(I)V
  
@@ -23467,7 +23495,7 @@ index 060ed6d1..d596e8af 100644
      .line 347
      sget-object v0, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -3602,7 +3704,12 @@
+@@ -3602,7 +3718,12 @@
  
      const-string v2, "save state successful"
  
@@ -23481,7 +23509,7 @@ index 060ed6d1..d596e8af 100644
  
      .line 167
      sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
-@@ -4122,6 +4229,12 @@
+@@ -4122,6 +4243,12 @@
  
      invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
  
@@ -23494,7 +23522,7 @@ index 060ed6d1..d596e8af 100644
      .line 809
      move-object v0, p0
  
-@@ -4143,6 +4256,16 @@
+@@ -4143,6 +4270,16 @@
  .method public final sleepScreen()V
      .locals 6
  
@@ -64833,7 +64861,7 @@ index 3c10a113..e9972766 100644
      .line 455
      sget-object p2, Lcom/innioasis/y1/theme/ThemeManager;->INSTANCE:Lcom/innioasis/y1/theme/ThemeManager;
 diff --git a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
-index a9542df1..ed741784 100644
+index a9542df1..a7771308 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/activity/MainActivity.smali
 @@ -253,6 +253,9 @@
@@ -64968,7 +64996,19 @@ index a9542df1..ed741784 100644
  
      .line 279
      invoke-direct {p0}, Lcom/innioasis/y1/activity/MainActivity;->selItem()V
-@@ -1928,6 +1987,24 @@
+@@ -1883,7 +1942,10 @@
+     .locals 1
+ 
+     .line 69
+-    iget-boolean v0, p0, Lcom/innioasis/y1/activity/MainActivity;->enableSpeedClockwise:Z
++    # ipp: the main menu accelerates as the other short menus do -- see Wheel.fast
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->fast(Lcom/innioasis/y1/base/BaseActivity;)Z
++
++    move-result v0
+ 
+     return v0
+ .end method
+@@ -1928,6 +1990,24 @@
  .method public initView()V
      .locals 6
  
@@ -64993,7 +65033,7 @@ index a9542df1..ed741784 100644
      .line 81
      invoke-virtual {p0}, Lcom/innioasis/y1/activity/MainActivity;->getResources()Landroid/content/res/Resources;
  
-@@ -2069,7 +2146,8 @@
+@@ -2069,7 +2149,8 @@
  
      move-result-object v1
  
@@ -65003,7 +65043,7 @@ index a9542df1..ed741784 100644
  
      invoke-virtual {v1, v3}, Landroid/content/Context;->getString(I)Ljava/lang/String;
  
-@@ -2095,6 +2173,9 @@
+@@ -2095,6 +2176,9 @@
  
      move-result-object v0
  
@@ -65013,7 +65053,7 @@ index a9542df1..ed741784 100644
      if-eqz v0, :cond_1
  
      .line 95
-@@ -2375,6 +2456,9 @@
+@@ -2375,6 +2459,9 @@
  
      invoke-static {v0, v1}, Lkotlin/collections/CollectionsKt;->removeAll(Ljava/util/List;Lkotlin/jvm/functions/Function1;)Z
  
@@ -65023,7 +65063,7 @@ index a9542df1..ed741784 100644
      .line 115
      iput-object v0, p0, Lcom/innioasis/y1/activity/MainActivity;->itemList:Ljava/util/List;
  
-@@ -2566,6 +2650,21 @@
+@@ -2566,6 +2653,21 @@
      .line 212
      invoke-super {p0}, Lcom/innioasis/y1/base/BaseActivity;->onResume()V
  
@@ -75549,69 +75589,190 @@ index b1762e18..c6c8caf0 100644
      sget-object p1, Lcom/innioasis/music/objects/Global;->INSTANCE:Lcom/innioasis/music/objects/Global;
  
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-index 97739f51..5f13fa79 100644
+index 97739f51..cefb1909 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
 +++ b/build/src/smali_classes2/com/innioasis/y1/utils/SpeedUtil.smali
-@@ -78,6 +78,22 @@
+@@ -59,7 +59,7 @@
  
-     move-result-wide v0
+ # virtual methods
+ .method public final runMultipleTimes(Lkotlin/jvm/functions/Function0;)V
+-    .locals 12
++    .locals 2
+     .annotation system Ldalvik/annotation/Signature;
+         value = {
+             "(",
+@@ -73,150 +73,41 @@
  
-+    # ipp: the click this burst follows went round the end of a list (loop scrolling) -- no
-+    # extra steps after it, and the acceleration starts over from one row per click.
+     invoke-static {p1, v0}, Lkotlin/jvm/internal/Intrinsics;->checkNotNullParameter(Ljava/lang/Object;Ljava/lang/String;)V
+ 
+-    .line 23
+-    invoke-static {}, Landroid/os/SystemClock;->elapsedRealtime()J
++    # ipp: the extra rows come from the wheel's speed (Wheel.extra). A click that went round the
++    # end of a list (loop scrolling) gets none, and the speed starts over.
 +    invoke-static {}, Lcom/innioasis/ipp/Loop;->takeWrap()Z
-+
-+    move-result v2
-+
-+    if-eqz v2, :cond_ipp_nowrap
-+
-+    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
-+
-+    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->lastClockwiseTime:J
-+
-+    return-void
-+
-+    :cond_ipp_nowrap
-+
-     .line 24
-     sget-object v2, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
  
-@@ -136,11 +152,11 @@
+-    move-result-wide v0
++    move-result v0
  
-     if-lez v2, :cond_1
+-    .line 24
+-    sget-object v2, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
++    if-eqz v0, :cond_ipp_go
  
+-    const-string v3, "speed"
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->restart(Ljava/lang/Object;)V
+ 
+-    invoke-virtual {v2, v3}, Ltimber/log/Timber$Forest;->tag(Ljava/lang/String;)Ltimber/log/Timber$Tree;
+-
+-    move-result-object v2
+-
+-    new-instance v4, Ljava/lang/StringBuilder;
+-
+-    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
+-
+-    const-string v5, "\u95f4\u9694 "
+-
+-    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+-
+-    iget-wide v5, p0, Lcom/innioasis/y1/utils/SpeedUtil;->lastClockwiseTime:J
+-
+-    sub-long v5, v0, v5
+-
+-    invoke-virtual {v4, v5, v6}, Ljava/lang/StringBuilder;->append(J)Ljava/lang/StringBuilder;
+-
+-    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+-
+-    move-result-object v4
+-
+-    const/4 v5, 0x0
+-
+-    new-array v6, v5, [Ljava/lang/Object;
+-
+-    invoke-virtual {v2, v4, v6}, Ltimber/log/Timber$Tree;->d(Ljava/lang/String;[Ljava/lang/Object;)V
+-
+-    .line 25
+-    iget-wide v6, p0, Lcom/innioasis/y1/utils/SpeedUtil;->lastClockwiseTime:J
+-
+-    sub-long v8, v0, v6
+-
+-    const-wide/16 v10, 0x1f4
+-
+-    cmp-long v2, v8, v10
+-
+-    if-lez v2, :cond_0
+-
+-    .line 26
+-    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
+-
+-    goto :goto_0
+-
+-    :cond_0
+-    sub-long v6, v0, v6
+-
+-    const-wide/16 v8, 0xc8
+-
+-    cmp-long v2, v6, v8
+-
+-    if-lez v2, :cond_1
+-
 -    .line 27
 -    iget v2, p0, Lcom/innioasis/y1/utils/SpeedUtil;->debounceCount:I
 -
 -    if-lez v2, :cond_1
 -
-+    # ipp: this reset (gap of 200-500ms = not a fast scroll -> restart the run, so no
-+    # acceleration) was gated on debounceCount > 0. But debounceCount is only ever DECREMENTED
-+    # elsewhere and re-armed nowhere, so after the very first fast scroll it stays <= 0 for the
-+    # life of the screen and this branch never ran again: the run start kept ageing and
-+    # (now - firstClockwiseTime)/1000 added skipped rows at ANY scrolling speed. Reset it here.
-     .line 28
-     iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
+-    .line 28
+-    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
+-
+-    const/4 v2, 0x1
+-
+-    .line 29
+-    iput v2, p0, Lcom/innioasis/y1/utils/SpeedUtil;->debounceCount:I
+-
+-    goto :goto_0
+-
+-    .line 30
+-    :cond_1
+-    iget v2, p0, Lcom/innioasis/y1/utils/SpeedUtil;->debounceCount:I
+-
+-    add-int/lit8 v2, v2, -0x1
+-
+-    iput v2, p0, Lcom/innioasis/y1/utils/SpeedUtil;->debounceCount:I
+-
+-    .line 31
+-    :goto_0
+-    iget-wide v6, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
+-
+-    sub-long v6, v0, v6
+-
+-    const/16 v2, 0x3e8
+-
+-    int-to-long v8, v2
+-
+-    div-long/2addr v6, v8
+-
+-    long-to-int v2, v6
+-
+-    const/16 v4, 0xa
+-
+-    invoke-static {v2, v4}, Lkotlin/ranges/RangesKt;->coerceAtMost(II)I
+-
+-    move-result v2
+-
+-    .line 32
+-    sget-object v4, Ltimber/log/Timber;->Forest:Ltimber/log/Timber$Forest;
+-
+-    invoke-virtual {v4, v3}, Ltimber/log/Timber$Forest;->tag(Ljava/lang/String;)Ltimber/log/Timber$Tree;
+-
+-    move-result-object v3
+-
+-    new-instance v4, Ljava/lang/StringBuilder;
+-
+-    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
+-
+-    const-string v6, "count "
+-
+-    invoke-virtual {v4, v6}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
++    return-void
  
-@@ -210,6 +226,19 @@
-     .line 34
-     invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
- 
-+    # ipp: a step of this burst went round the end of a list -- stop here and start over
-+    invoke-static {}, Lcom/innioasis/ipp/Loop;->takeWrap()Z
-+
-+    move-result v3
-+
-+    if-eqz v3, :cond_ipp_go
-+
-+    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->firstClockwiseTime:J
-+
-+    goto :cond_2
-+
+-    invoke-virtual {v4, v2}, Ljava/lang/StringBuilder;->append(I)Ljava/lang/StringBuilder;
 +    :cond_ipp_go
-+
-     add-int/lit8 v5, v5, 0x1
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->extra(Ljava/lang/Object;)I
  
-     goto :goto_1
+-    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
++    move-result v0
+ 
+-    move-result-object v4
++    :goto_ipp_loop
++    if-lez v0, :cond_ipp_done
+ 
+-    new-array v6, v5, [Ljava/lang/Object;
++    invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
+ 
+-    invoke-virtual {v3, v4, v6}, Ltimber/log/Timber$Tree;->d(Ljava/lang/String;[Ljava/lang/Object;)V
++    invoke-static {}, Lcom/innioasis/ipp/Loop;->takeWrap()Z
+ 
+-    :goto_1
+-    if-ge v5, v2, :cond_2
++    move-result v1
+ 
+-    .line 34
+-    invoke-interface {p1}, Lkotlin/jvm/functions/Function0;->invoke()Ljava/lang/Object;
++    if-nez v1, :cond_ipp_wrapped
+ 
+-    add-int/lit8 v5, v5, 0x1
++    add-int/lit8 v0, v0, -0x1
+ 
+-    goto :goto_1
++    goto :goto_ipp_loop
+ 
+-    .line 36
+-    :cond_2
+-    iput-wide v0, p0, Lcom/innioasis/y1/utils/SpeedUtil;->lastClockwiseTime:J
++    :cond_ipp_wrapped
++    invoke-static {p0}, Lcom/innioasis/ipp/Wheel;->restart(Ljava/lang/Object;)V
+ 
++    :cond_ipp_done
+     return-void
+ .end method
 diff --git a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali b/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali
 index a8d4851e..a19a56b8 100644
 --- a/build/src/smali_classes2/com/innioasis/y1/utils/Static.smali

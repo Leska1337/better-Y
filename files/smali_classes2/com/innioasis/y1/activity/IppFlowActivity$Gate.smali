@@ -19,26 +19,26 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 6
-  .line 1688
+  .line 1742
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1686
+  .line 1740
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v0
     const-wide/16 v2, 600
     add-long/2addr v0, v2
     iput-wide v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->until:J
-  .line 1688
+  .line 1742
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     return-void
 .end method
 
 .method public onPreDraw()Z
   .registers 9
-  .line 1691
+  .line 1745
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$100(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/Flow$Loader;
     move-result-object v0
-  .line 1692
+  .line 1746
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-static { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)Ljava/util/List;
     move-result-object v1
@@ -56,7 +56,7 @@
   :L0
     const/4 v1, 0
   :L1
-  .line 1693
+  .line 1747
     if-nez v1, :L3
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-virtual { v1 }, Lcom/innioasis/y1/activity/IppFlowActivity;->isFinishing()Z
@@ -68,15 +68,15 @@
     cmp-long v1, v4, v6
     if-gez v1, :L3
     if-eqz v0, :L2
-  .line 1694
+  .line 1748
     invoke-virtual { v0 }, Lcom/innioasis/ipp/Flow$Loader;->firstReady()Z
     move-result v0
     if-nez v0, :L3
   :L2
-  .line 1695
+  .line 1749
     return v3
   :L3
-  .line 1697
+  .line 1751
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$Gate;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     invoke-virtual { v0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->getWindow()Landroid/view/Window;
     move-result-object v0
@@ -85,6 +85,6 @@
     invoke-virtual { v0 }, Landroid/view/View;->getViewTreeObserver()Landroid/view/ViewTreeObserver;
     move-result-object v0
     invoke-virtual { v0, p0 }, Landroid/view/ViewTreeObserver;->removeOnPreDrawListener(Landroid/view/ViewTreeObserver$OnPreDrawListener;)V
-  .line 1698
+  .line 1752
     return v2
 .end method

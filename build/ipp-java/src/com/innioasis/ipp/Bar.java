@@ -22,7 +22,7 @@ import com.innioasis.y1.theme.ThemeManager;
  * The travelling highlight of the menu lists (main menu, Settings, Language, Wallpaper,
  * Equalizer, Videos, Search, video search, Playlists as a list, the FM menu, the queue): the list
  * paints every row's background itself and draws the selected one as a bar that slides from row
- * to row, kept inside the list's edges while the rows glide under it. On a jump (round the list's end) the rows and
+ * to row, kept inside the list's edges while the rows move under it. On a jump (round the list's end) the rows and
  * the bar move at once, in the same frame. Ticked rows of a multi-select keep a still highlight
  * and the bar blinks. Only with "Enable animations"; off, the rows paint themselves as stock does.
  */
@@ -48,6 +48,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         /** That row's own look when no bar stands on it: its highlight, its plain text (0 = the rows'). */
         int headSel = R.drawable.item_selected;
         int headColor;
+        /** The long-press menus: the theme's menu colours and backgrounds, not its list rows'. */
+        boolean menu;
 
         Spec(int list, int selRes, int rowRes, int selColor, int rowColor, int[] texts, int arrow) {
             this.list = list;
@@ -215,10 +217,12 @@ public final class Bar extends RecyclerView.ItemDecoration
                 a.getResources().getColor(R.color.white), texts, R.id.iv_arrow);
     }
 
-    /** Share of the distance covered per second, and the floor and ceiling of speed: Mover's law. */
-    private static final float RATE = 22f;
-    private static final float VMIN = 700f;
-    private static final float VMAX = 6000f;
+    /**
+     * The bar's spring, critically damped: it starts and lands softly, never runs past its row, and
+     * a new target only bends its path, so under a turning wheel it trails the cursor a little. A
+     * step of one row settles in about 160 ms.
+     */
+    private static final float OMEGA = 30f;
     /** Rows the cursor may move between two frames and still be glided to. */
     private static final int JUMP = 4;
 
@@ -233,6 +237,8 @@ public final class Bar extends RecyclerView.ItemDecoration
     private final int rowText;
     private final int headText;
     private float y = Float.NaN;
+    /** The spring's speed, px/s, and where it left the bar last frame. */
+    private float vel, movedTo = Float.NaN;
     /** A jump: the bar waits for the cursor's row to be laid out, then stands on it. */
     private boolean snap;
     private int lastPos = -1;
@@ -270,13 +276,21 @@ public final class Bar extends RecyclerView.ItemDecoration
         Context c = rv.getContext().getApplicationContext();
         selProbe = new View(c);
         rowProbe = new View(c);
-        ThemeManager.INSTANCE.itemSetBackground(selProbe, spec.selRes, true);
-        ThemeManager.INSTANCE.itemSetBackground(rowProbe, spec.rowRes, false);
+        ThemeManager tm = ThemeManager.INSTANCE;
+        if (spec.menu) {
+            tm.menuItemSetBackground(selProbe, spec.selRes, true);
+            tm.menuItemSetBackground(rowProbe, spec.rowRes, false);
+        } else {
+            tm.itemSetBackground(selProbe, spec.selRes, true);
+            tm.itemSetBackground(rowProbe, spec.rowRes, false);
+        }
         // read back: the theme answers with its own colour, not the one asked for
         TextView t = new TextView(c);
-        ThemeManager.INSTANCE.itemSetTextColor(t, spec.selColor, true);
+        if (spec.menu) tm.menuItemSetTextColor(t, spec.selColor, true);
+        else tm.itemSetTextColor(t, spec.selColor, true);
         selText = t.getCurrentTextColor();
-        ThemeManager.INSTANCE.itemSetTextColor(t, spec.rowColor, false);
+        if (spec.menu) tm.menuItemSetTextColor(t, spec.rowColor, false);
+        else tm.itemSetTextColor(t, spec.rowColor, false);
         rowText = t.getCurrentTextColor();
         if (spec.headColor != 0) ThemeManager.INSTANCE.itemSetTextColor(t, spec.headColor, false);
         headText = spec.headColor != 0 ? t.getCurrentTextColor() : rowText;
@@ -297,10 +311,44 @@ public final class Bar extends RecyclerView.ItemDecoration
     }
 
     private static void apply(BaseActivity a, Spec s) {
+        View v = ((android.app.Activity) a).findViewById(s.list);
+        if (v instanceof RecyclerView) attach(a, (RecyclerView) v, s);
+    }
+
+    /**
+     * Top of {@code SubMenuDialog.onStart} and {@code SubMenuVideoDialog.onStart} (through Menus):
+     * the long-press menu's list gets a bar of its own, standing on the cursor at every show.
+     */
+    static void dialog(android.app.Dialog d) {
         try {
-            View v = ((android.app.Activity) a).findViewById(s.list);
-            if (!(v instanceof RecyclerView)) return;
+            View v = d.findViewById(R.id.submenu);
+            Context c = d.getContext();
+            while (!(c instanceof BaseActivity) && c instanceof android.content.ContextWrapper) {
+                c = ((android.content.ContextWrapper) c).getBaseContext();
+            }
+            if (!(v instanceof RecyclerView) || !(c instanceof BaseActivity)) return;
+            BaseActivity a = (BaseActivity) c;
+            Spec s = new Spec(R.id.submenu, R.drawable.item_selected_submenu, 0,
+                    a.getResources().getColor(R.color.selected_text_color_submenu),
+                    a.getResources().getColor(R.color.white), new int[] {R.id.submenu_item}, 0);
+            s.bgs = new int[] {R.id.submenu_item};
+            s.byAdapter = true;
+            s.menu = true;
             RecyclerView rv = (RecyclerView) v;
+            attach(a, rv, s);
+            // every show is a new window: the colours' listener went with the old one
+            Bar b = (Bar) BARS.get(rv);
+            if (b != null) {
+                rv.getViewTreeObserver().removeOnPreDrawListener(b.tinter);
+                rv.getViewTreeObserver().addOnPreDrawListener(b.tinter);
+            }
+            relist(rv);
+        } catch (Throwable t) {
+        }
+    }
+
+    private static void attach(BaseActivity a, RecyclerView rv, Spec s) {
+        try {
             Bar b = (Bar) BARS.get(rv);
             boolean on = Anim.on();
             if (on == (b != null)) return;
@@ -534,10 +582,15 @@ public final class Bar extends RecyclerView.ItemDecoration
             Bar b = r == null ? null : (Bar) BARS.get(r);
             if (b == null || r.getAdapter() == null || !live(r)) return false;
             if (b.snap) { if (Wheel.DBG) Wheel.dbg("holds snap"); return true; }
-            if (Wheel.Glider.left(r) == 0) return false;
             int m = b.cursor();
             int n = r.getAdapter().getItemCount();
             boolean h = dir > 0 ? m >= n - 1 : m <= 0;
+            // the main menu goes round by its own code, past Loop.wrap: its fast-wheel click is lost here
+            if (h && b.activity.get() instanceof com.innioasis.y1.activity.MainActivity) {
+                if (Loop.swallow()) return true;
+                Loop.noteWrap();
+            }
+            if (Wheel.Glider.left(r) == 0) return false;
             if (h && Wheel.DBG) Wheel.dbg("holds end m " + m + " left " + Wheel.Glider.left(r));
             return h;
         } catch (Throwable t) {
@@ -791,21 +844,23 @@ public final class Bar extends RecyclerView.ItemDecoration
     }
 
     /**
-     * The text colour, selected only where the bar stands. A sliding bar claims the row it covers
-     * three quarters of; a bar at rest (at an edge, the rows gliding under it) claims the cursor's
-     * row at once. Off the bar a row has the plain colour — the Equalizer's active preset its own,
-     * asked of {@link Eq} rather than remembered from a bind, which a list rebuilding in place
-     * does not always run where it can be seen.
+     * The text colour. A bar at rest (at an edge, the rows jumping under it) gives the cursor's row
+     * the selected colour at once; a sliding bar mixes each row's colour by the share of the row it
+     * covers — one colour per row, so no edge runs through the text. Off the bar a row has the
+     * plain colour — the Equalizer's active preset its own, asked of {@link Eq} rather than
+     * remembered from a bind, which a list rebuilding in place does not always run where it can be
+     * seen.
      */
     private void tint(View row, int h) {
         RecyclerView r = (RecyclerView) rv.get();
         if (h <= 0 || r == null || caption(row)) return;
         int pos = r.getChildLayoutPosition(row);
-        boolean on = claims(r, h, row.getTop() + row.getTranslationY() + strip(row), pos == cursor());
         Object a = activity.get();
-        int off = a instanceof com.innioasis.y1.activity.EqActivity ? Eq.rowColor(pos, rowText) : rowText;
+        int off = plain(a, pos);
+        float f = cover(r, h, row, pos == cursor());
         // the cursor's own row is lit by the bar alone, ticked or not: it goes dark with the blink
-        int want = on || pos != cursor() && ticked(r, pos) ? selText : off;
+        if (pos != cursor() && ticked(r, pos)) f = 1f;
+        int want = f >= 1f ? selText : f <= 0f ? off : mix(off, selText, f);
         boolean changed = false;
         for (int i = 0; i < spec.texts.length; i++) {
             View tv = row.findViewById(spec.texts[i]);
@@ -819,9 +874,38 @@ public final class Bar extends RecyclerView.ItemDecoration
         if (changed) followText(row, a, want);
     }
 
+    private int plain(Object a, int pos) {
+        return a instanceof com.innioasis.y1.activity.EqActivity ? Eq.rowColor(pos, rowText) : rowText;
+    }
+
+    private static int mix(int a, int b, float f) {
+        int r = 0;
+        for (int s = 0; s < 32; s += 8) {
+            int x = (a >>> s) & 0xff, y = (b >>> s) & 0xff;
+            r |= (Math.round(x + (y - x) * f) & 0xff) << s;
+        }
+        return r;
+    }
+
     /**
-     * Whether the bar gives the row at {@code top} the selected colour: at rest, the cursor's row;
-     * sliding, the row it covers three quarters of. In the blink's dark half, none.
+     * The share of the row the bar covers: at rest, the cursor's row whole and no other; sliding,
+     * by its drawn edges. In the blink's dark half, none.
+     */
+    private float cover(RecyclerView r, int h, View row, boolean isCursor) {
+        if (snap || Float.isNaN(y) || !onList(r) || dark()) return 0f;
+        if (Math.abs(target(r, h) - y) < 0.5f) return isCursor ? 1f : 0f;
+        int bt = Math.round(y);
+        int bb = bt + Math.round(Float.isNaN(hb) ? h : hb);
+        float top = row.getTop() + row.getTranslationY() + strip(row);
+        float bottom = row.getTop() + row.getTranslationY() + row.getHeight();
+        if (bottom <= top) return 0f;
+        float in = Math.min(bottom, bb) - Math.max(top, bt);
+        return in <= 0 ? 0f : Math.min(1f, in / (bottom - top));
+    }
+
+    /**
+     * The input line: at rest, lit while the cursor is on it; sliding, while the bar covers three
+     * quarters of it. In the blink's dark half, never.
      */
     private boolean claims(RecyclerView r, int h, float top, boolean isCursor) {
         if (snap || Float.isNaN(y) || !onList(r) || dark()) return false;
@@ -1149,18 +1233,24 @@ public final class Bar extends RecyclerView.ItemDecoration
                 y = goal;
                 hb = h;
             }
-            float d = goal - y;
-            float a = Math.abs(d);
-            float v = Math.max(VMIN, Math.min(VMAX, a * RATE));
-            float step = Math.min(a, v * dt);
+            // placed rather than moved since the last frame: the spring starts from rest
+            if (y != movedTo) vel = 0f;
+            float e = y - goal;
+            float a = Math.abs(e);
+            float cv = vel + OMEGA * e;
+            float ex = (float) Math.exp(-OMEGA * dt);
+            float ne = (e + cv * dt) * ex;
+            vel = (vel - OMEGA * cv * dt) * ex;
             // the height changes by the same share of the way (the input line is taller)
             if (Float.isNaN(hb) || a == 0) hb = h;
-            else hb += (h - hb) * (step / a);
-            y += d < 0 ? -step : step;
-            if (Math.abs(goal - y) < 0.5f) {
+            else hb += (h - hb) * Math.max(0f, Math.min(1f, 1f - Math.abs(ne) / a));
+            y = goal + ne;
+            if (Math.abs(ne) < 0.5f && Math.abs(vel) < 15f) {
                 y = goal;
                 hb = h;
+                vel = 0f;
             }
+            movedTo = y;
         }
         r.invalidate();
         // the input line draws its share of the bar in the same frame

@@ -28,6 +28,8 @@
 
 .field markBase:I
 
+.field menu:Z
+
 .field final rowColor:I
 
 .field final rowRes:I
@@ -40,7 +42,7 @@
 
 .method constructor <init>(IIIII[II)V
   .registers 9
-  .line 52
+  .line 54
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
   .line 40
     const/4 v0, 0
@@ -49,20 +51,20 @@
   .line 49
     const v0, 2131231047
     iput v0, p0, Lcom/innioasis/ipp/Bar$Spec;->headSel:I
-  .line 53
-    iput p1, p0, Lcom/innioasis/ipp/Bar$Spec;->list:I
-  .line 54
-    iput p2, p0, Lcom/innioasis/ipp/Bar$Spec;->selRes:I
   .line 55
-    iput p3, p0, Lcom/innioasis/ipp/Bar$Spec;->rowRes:I
+    iput p1, p0, Lcom/innioasis/ipp/Bar$Spec;->list:I
   .line 56
-    iput p4, p0, Lcom/innioasis/ipp/Bar$Spec;->selColor:I
+    iput p2, p0, Lcom/innioasis/ipp/Bar$Spec;->selRes:I
   .line 57
-    iput p5, p0, Lcom/innioasis/ipp/Bar$Spec;->rowColor:I
+    iput p3, p0, Lcom/innioasis/ipp/Bar$Spec;->rowRes:I
   .line 58
-    iput-object p6, p0, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
+    iput p4, p0, Lcom/innioasis/ipp/Bar$Spec;->selColor:I
   .line 59
-    iput p7, p0, Lcom/innioasis/ipp/Bar$Spec;->arrow:I
+    iput p5, p0, Lcom/innioasis/ipp/Bar$Spec;->rowColor:I
   .line 60
+    iput-object p6, p0, Lcom/innioasis/ipp/Bar$Spec;->texts:[I
+  .line 61
+    iput p7, p0, Lcom/innioasis/ipp/Bar$Spec;->arrow:I
+  .line 62
     return-void
 .end method

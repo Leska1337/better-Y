@@ -92,6 +92,7 @@ public final class Menus {
         Follow.hold(true);
         filter(d);
         fit(d);
+        Bar.dialog(d);
     }
 
     /**
@@ -101,6 +102,7 @@ public final class Menus {
     public static void onShowVideo(SubMenuVideoDialog d) {
         filter(d);
         fit(d);
+        Bar.dialog(d);
     }
 
     /**

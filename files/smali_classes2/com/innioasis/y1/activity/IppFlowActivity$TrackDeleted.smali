@@ -21,20 +21,20 @@
 
 .method constructor <init>(Lcom/innioasis/y1/activity/IppFlowActivity;Lcom/innioasis/ipp/Flow$Item;Lcom/innioasis/ipp/Flow$Back;I)V
   .registers 5
-  .line 2052
+  .line 2106
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 2053
+  .line 2107
     iput-object p1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->it:Lcom/innioasis/ipp/Flow$Item;
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->b:Lcom/innioasis/ipp/Flow$Back;
     iput p4, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->row:I
-  .line 2054
+  .line 2108
     return-void
 .end method
 
 .method public run()V
   .registers 5
-  .line 2056
+  .line 2110
     iget-object v0, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->a:Lcom/innioasis/y1/activity/IppFlowActivity;
     iget-object v1, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->it:Lcom/innioasis/ipp/Flow$Item;
     iget-object v2, p0, Lcom/innioasis/y1/activity/IppFlowActivity$TrackDeleted;->b:Lcom/innioasis/ipp/Flow$Back;

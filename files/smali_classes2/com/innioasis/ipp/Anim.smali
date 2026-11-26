@@ -2,7 +2,7 @@
 .super Ljava/lang/Object;
 .source "Anim.java"
 
-.field public final static BUILT:Z = false
+.field public final static BUILT:Z = true
 
 .field public final static KEY:Ljava/lang/String; = "animations"
 
@@ -27,8 +27,24 @@
 .end method
 
 .method public static on()Z
-  .registers 1
-  .line 31
+  .registers 2
+  .line 32
+    sget-object v0, Lcom/innioasis/y1/Y1Application;->Companion:Lcom/innioasis/y1/Y1Application$Companion;
+    invoke-virtual { v0 }, Lcom/innioasis/y1/Y1Application$Companion;->getAppContext()Landroid/content/Context;
+    move-result-object v0
+  .line 33
+    const-string v1, "animations"
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
+    move-result v1
+    if-eqz v1, :L0
+    const-string v1, "anim_scroll"
+    invoke-static { v0, v1 }, Lcom/innioasis/ipp/Prefs;->on(Landroid/content/Context;Ljava/lang/String;)Z
+    move-result v0
+    if-eqz v0, :L0
+    const/4 v0, 1
+    goto :L1
+  :L0
     const/4 v0, 0
+  :L1
     return v0
 .end method

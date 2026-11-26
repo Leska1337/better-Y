@@ -1318,15 +1318,15 @@
 
 .method static tidy()V
   .registers 1
-  .line 1862
+  .line 1916
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
-  .line 1863
+  .line 1917
     invoke-static { }, Ljava/lang/System;->gc()V
-  .line 1864
+  .line 1918
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
-  .line 1865
+  .line 1919
     return-void
 .end method
 

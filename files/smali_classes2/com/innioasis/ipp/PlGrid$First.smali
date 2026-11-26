@@ -17,15 +17,15 @@
 
 .method constructor <init>(Ljava/util/UUID;Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 3
-  .line 1190
+  .line 1248
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 1191
+  .line 1249
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$First;->id:Ljava/util/UUID;
-  .line 1192
+  .line 1250
     new-instance p1, Ljava/lang/ref/WeakReference;
     invoke-direct { p1, p2 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$First;->rv:Ljava/lang/ref/WeakReference;
-  .line 1193
+  .line 1251
     return-void
 .end method
 
@@ -33,20 +33,20 @@
   .catchall { :L0 .. :L8 } :L9
   .registers 4
   :L0
-  .line 1197
+  .line 1255
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$First;->id:Ljava/util/UUID;
-    invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$1300(Ljava/util/UUID;)Ljava/lang/String;
+    invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$1600(Ljava/util/UUID;)Ljava/lang/String;
     move-result-object v0
-  .line 1198
+  .line 1256
     if-nez v0, :L1
     return-void
   :L1
-  .line 1199
-    invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$700()Lcom/innioasis/y1/database/Y1Repository;
+  .line 1257
+    invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$1000()Lcom/innioasis/y1/database/Y1Repository;
     move-result-object v1
     invoke-virtual { v1, v0 }, Lcom/innioasis/y1/database/Y1Repository;->getSongBySongIdSync(Ljava/lang/String;)Lcom/innioasis/y1/database/Song;
     move-result-object v0
-  .line 1200
+  .line 1258
     if-nez v0, :L2
     const/4 v0, 0
     goto :L3
@@ -56,12 +56,12 @@
     invoke-static { v0 }, Lcom/innioasis/ipp/BigCover;->track(Ljava/lang/String;)Landroid/graphics/Bitmap;
     move-result-object v0
   :L3
-  .line 1201
+  .line 1259
     if-nez v0, :L6
-  .line 1202
+  .line 1260
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->dir()Ljava/io/File;
     move-result-object v0
-  .line 1203
+  .line 1261
     invoke-virtual { v0 }, Ljava/io/File;->isDirectory()Z
     move-result v1
     if-nez v1, :L4
@@ -70,26 +70,26 @@
     if-eqz v0, :L5
   :L4
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$First;->id:Ljava/util/UUID;
-    invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$1400(Ljava/util/UUID;)Ljava/io/File;
+    invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->access$1700(Ljava/util/UUID;)Ljava/io/File;
     move-result-object v0
     invoke-virtual { v0 }, Ljava/io/File;->createNewFile()Z
   :L5
-  .line 1204
+  .line 1262
     return-void
   :L6
-  .line 1206
+  .line 1264
     iget-object v1, p0, Lcom/innioasis/ipp/PlGrid$First;->id:Ljava/util/UUID;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/PlGrid;->write(Ljava/util/UUID;Landroid/graphics/Bitmap;)Z
     move-result v0
     if-nez v0, :L7
     return-void
   :L7
-  .line 1207
+  .line 1265
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$First;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 1208
+  .line 1266
     if-eqz v0, :L8
     invoke-static { }, Lcom/innioasis/ipp/PlGrid;->access$200()Landroid/os/Handler;
     move-result-object v1
@@ -97,12 +97,12 @@
     invoke-direct { v2, v0 }, Lcom/innioasis/ipp/PlGrid$Repaint;-><init>(Landroidx/recyclerview/widget/RecyclerView;)V
     invoke-virtual { v1, v2 }, Landroid/os/Handler;->post(Ljava/lang/Runnable;)Z
   :L8
-  .line 1210
+  .line 1268
     goto :L10
   :L9
-  .line 1209
+  .line 1267
     move-exception v0
   :L10
-  .line 1211
+  .line 1269
     return-void
 .end method

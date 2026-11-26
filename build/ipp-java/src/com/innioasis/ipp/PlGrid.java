@@ -311,19 +311,45 @@ public final class PlGrid {
 
     private static final java.util.WeakHashMap movers = new java.util.WeakHashMap();
 
+    /** The wheel is not taken past this while a frame changes rows: a frame that never lands must not lock it. */
+    private static final long BUSY_MAX_MS = 800L;
+
+    /**
+     * {@link Wheel#drop}: true while a grid of this screen
+     * has its frame on the way to another row, faded out or fading in. The click is dropped, so the
+     * frame comes back on the tile it was going to and the wheel goes on from there.
+     */
+    public static boolean busy(android.app.Activity a) {
+        try {
+            if (movers.isEmpty()) return false;
+            long now = SystemClock.uptimeMillis();
+            java.util.Iterator it = movers.entrySet().iterator();
+            while (it.hasNext()) {
+                java.util.Map.Entry e = (java.util.Map.Entry) it.next();
+                RecyclerView rv = (RecyclerView) e.getKey();
+                Mover m = (Mover) e.getValue();
+                if (rv != null && m != null && m.leg && m.has && now - m.legAt < BUSY_MAX_MS
+                        && rv.getContext() == a && rv.isShown()) return true;
+            }
+        } catch (Throwable t) {
+        }
+        return false;
+    }
+
     /**
      * The cursor's frame: a ring from the frame's box in to the picture's, the card's dark edge
-     * included, so it stays a frame in motion too. Along a row it travels over the tiles, every
-     * frame covering a share of the way left (Wheel.Glider's law). To another row, the next or
+     * included, so it stays a frame in motion too. Along a row it travels over the tiles on the
+     * lists' critically damped spring (Bar). To another row, the next or
      * round the list's end, it fades out where it stands and in on its tile as the rows stop,
      * and takes no new target meanwhile, so a fast wheel's targets switching sides cannot hold it
      * in the middle; further off it jumps. Kept in the list's content coordinates, so it rides
      * along while rows scroll.
      */
     static final class Mover extends RecyclerView.ItemDecoration {
-        private static final float RATE = 22f;
-        private static final float VMIN = 700f;
-        private static final float VMAX = 6000f;
+        /** The lists' bar spring (Bar): soft start and landing, never past the tile. */
+        private static final float OMEGA = 30f;
+        /** The frame's speed along the row, px/s. */
+        private float lv;
 
         private final android.graphics.Paint paint =
                 new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
@@ -337,7 +363,7 @@ public final class PlGrid {
         private int txPos;
         private boolean has, leg;
         private long last;
-        private int off, pitch, span = 1, legPos;
+        private int off, pitch, span = 1;
         /** On the way to another row: the frame's top on screen as it fades, and its opacity. */
         private float sy, fa = 1f;
         /** The rows have stopped and the frame is on its tile, fading in. */
@@ -430,6 +456,22 @@ public final class PlGrid {
         }
 
         /** The frame's box of a tile not laid out, from a laid-out one of its column. */
+        /** On the way to another row: which way, and the tile the frame comes back on. */
+        private boolean legDown;
+        private long legAt;
+        /** {@code Loop.wraps} as the frame last saw it. */
+        private int seenWraps = Loop.wraps;
+        private int edgePos;
+
+        /** The box of the first tile of {@code pos}'s row in the direction of travel. */
+        private float[] edgeBox(RecyclerView rv, int pos, int n) {
+            int s = Math.max(1, span);
+            int row = pos / s * s;
+            edgePos = legDown ? row : Math.min(n - 1, row + s - 1);
+            View tile = rv.getLayoutManager() == null ? null : rv.getLayoutManager().findViewByPosition(edgePos);
+            return tile != null ? shape(tile, rv) : project(rv, edgePos);
+        }
+
         private float[] project(RecyclerView rv, int p) {
             for (int i = 0; i < rv.getChildCount(); i++) {
                 View ch = rv.getChildAt(i);
@@ -498,12 +540,18 @@ public final class PlGrid {
             return new float[] {x, y};
         }
 
-        /** A frame's step nearer its target, by Glider's law. */
-        private static float glide(float at, float to, float dt) {
-            float d = to - at, a = Math.abs(d);
-            if (a < 1f) return to;
-            float s = Math.min(a, Math.max(VMIN, Math.min(VMAX, a * RATE)) * dt);
-            return at + (d > 0 ? s : -s);
+        /** A frame's step nearer its target on the critically damped spring. */
+        private float glide(float at, float to, float dt) {
+            float e = at - to;
+            float c = lv + OMEGA * e;
+            float ex = (float) Math.exp(-OMEGA * dt);
+            float ne = (e + c * dt) * ex;
+            lv = (lv - OMEGA * c * dt) * ex;
+            if (Math.abs(ne) < 0.5f && Math.abs(lv) < 15f) {
+                lv = 0f;
+                return to;
+            }
+            return to + ne;
         }
 
         /** The ring between the box drawn now and the same box inset by {@code by}. */
@@ -545,6 +593,7 @@ public final class PlGrid {
                 }
                 if (fb != null && !has) {
                     l = fb[0]; t = fb[1];
+                    lv = 0f;
                     tx = l;
                     txPos = sel;
                     has = true;
@@ -557,26 +606,34 @@ public final class PlGrid {
                     boolean finish = !leg && fb[1] != t && Math.abs(l - tx) >= 1f;
                     if (!leg && fb[1] != t && !finish) {
                         if (held) Wheel.releaseSoon(rv);
-                        if (Math.abs(fb[1] - t) <= 1.5f * pitch || rem != 0 || held) {
-                            // To another row, the next or round the list's end, the frame does
-                            // not travel: it fades where it stands on screen while the rows
-                            // glide, and in on its tile once they stop.
+                        // round the list's end since the last frame (Loop counts every wrap)
+                        boolean round = Loop.wraps != seenWraps;
+                        seenWraps = Loop.wraps;
+                        if (!round && (Math.abs(fb[1] - t) <= 1.5f * pitch || rem != 0 || held)) {
+                            // To the next row the frame does not travel: it fades where it stands
+                            // on screen while the rows glide, and in on its tile once they stop.
+                            // Round the end it jumps with the rows.
                             leg = true;
                             sy = t - off;
+                            legAt = now;
+                            legDown = fb[1] > t;
                             fa = 1f;
                             placed = false;
-                            legPos = sel;
                         } else {
                             l = fb[0];
                             t = fb[1];
+                            lv = 0f;
                         }
                         lx = fb[0];
                         ly = fb[1];
                     }
                     if (leg) {
-                        if (sel == legPos) {
-                            lx = fb[0];
-                            ly = fb[1];
+                        // it comes back only on the edge tile of the cursor's row, the first one the
+                        // travel reaches, and goes on along the row from there: never past tiles
+                        float[] eb = edgeBox(rv, sel, a.getItemCount());
+                        if (eb != null) {
+                            lx = eb[0];
+                            ly = eb[1];
                         }
                         // in as the rows ease the last half row in, riding along with its tile
                         if (!placed && Math.abs(rem) < pitch / 2f && fa == 0f) placed = true;
@@ -586,8 +643,9 @@ public final class PlGrid {
                         } else {
                             l = lx;
                             t = ly;
+                            lv = 0f;
                             tx = l;
-                            txPos = sel;
+                            txPos = edgePos;
                             fa = Math.min(1f, fa + dt * 1000f / FADE_MS);
                             if (fa >= 1f) leg = false;
                         }

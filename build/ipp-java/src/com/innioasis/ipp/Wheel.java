@@ -22,11 +22,34 @@ import java.lang.ref.WeakReference;
 public final class Wheel {
 
     /**
-     * Whether the wheel accelerates here ({@code BaseActivity.getEnableSpeedClockwise}): only on
-     * lists that can run to hundreds of rows. On a short menu it flies past the target.
+     * Whether the wheel accelerates here ({@code BaseActivity.getEnableSpeedClockwise}, asked on every
+     * click): fully on lists that can run to hundreds of rows, barely on the short menus, where more
+     * would fly past the row aimed at. Not on screens where the wheel sets a value (volume, tuning).
      */
     public static boolean fast(com.innioasis.y1.base.BaseActivity a) {
-        return a instanceof com.innioasis.music.SongListActivity
+        if (!ACCEL) return false;
+        accelLong = longList(a);
+        return accelLong || shortMenu(a);
+    }
+
+    /** The acceleration is in this build at all; off, a click is always one row. */
+    private static final boolean ACCEL = false;
+
+    private static boolean shortMenu(com.innioasis.y1.base.BaseActivity a) {
+        return a instanceof com.innioasis.y1.activity.MainActivity
+                || a instanceof com.innioasis.music.MusicMainActivity
+                || a instanceof com.innioasis.y1.activity.SettingActivity
+                || a instanceof com.innioasis.y1.activity.LanguageActivity
+                || a instanceof com.innioasis.y1.activity.WallpaperListActivity
+                || a instanceof com.innioasis.y1.activity.EqActivity
+                || a instanceof com.innioasis.y1.activity.IppActivity
+                || a instanceof com.innioasis.y1.activity.EbookActivity
+                || a instanceof com.innioasis.fm.MenuActivity;
+    }
+
+    private static boolean longList(com.innioasis.y1.base.BaseActivity a) {
+        return a instanceof com.innioasis.y1.activity.IppQueueActivity
+                || a instanceof com.innioasis.music.SongListActivity
                 || a instanceof com.innioasis.music.AlbumsActivity
                 || a instanceof com.innioasis.music.ArtistsActivity
                 || a instanceof com.innioasis.music.GenresActivity
@@ -39,6 +62,57 @@ public final class Wheel {
                 || a instanceof com.innioasis.y1.activity.AllAudiobooksActivity
                 || a instanceof com.innioasis.y1.activity.PlayerActivity
                 || a instanceof com.innioasis.y1.activity.BookMarkActivity;
+    }
+
+    /**
+     * Top of the wheel in {@code BaseActivity.dispatchKeyEvent}: true = the click is dropped. While a
+     * grid's frame changes rows ({@link PlGrid#busy}), and the first click after a wrap under a fast
+     * wheel ({@link Loop#afterWrap}).
+     */
+    public static boolean drop(android.app.Activity a) {
+        return PlGrid.busy(a) || Loop.afterWrap();
+    }
+
+    /** Clicks per second up to which a click is one row; past it the rows grow as the cube of the ratio. */
+    private static final float ACCEL_START = 10f;
+    /** The same and the rows at most, on a short menu. */
+    private static final float ACCEL_START_SHORT = 12f;
+    private static final int ACCEL_MAX_SHORT = 2;
+    /** The screen asked last ({@link #fast}) holds a long list. */
+    private static boolean accelLong;
+    /** Share of a click's own speed taken into the smoothed one. */
+    private static final float ACCEL_SMOOTH = 1f / 8f;
+    private static final int ACCEL_MAX_ROWS = 6;
+    /** A pause longer than this, or the other direction, starts the speed over. */
+    private static final long ACCEL_RESET_MS = 250L;
+    private static Object accelWho;
+    private static long accelAt;
+    private static float accelV;
+
+    /**
+     * {@code SpeedUtil.runMultipleTimes}: the extra rows after a click's own, from the wheel's
+     * smoothed speed (clicks per second) — slow down and it is a row per click again at once.
+     * {@code who} is the direction's own SpeedUtil.
+     */
+    public static int extra(Object who) {
+        long now = android.os.SystemClock.uptimeMillis();
+        long gap = now - accelAt;
+        if (who != accelWho || gap > ACCEL_RESET_MS) accelV = 0f;
+        accelWho = who;
+        accelAt = now;
+        float inst = Math.min(100f, 1000f / Math.max(1L, gap));
+        accelV += (inst - accelV) * ACCEL_SMOOTH;
+        float k = accelV / (accelLong ? ACCEL_START : ACCEL_START_SHORT);
+        if (k <= 1f) return 0;
+        int max = accelLong ? ACCEL_MAX_ROWS : ACCEL_MAX_SHORT;
+        return Math.max(0, Math.min(max, Math.round(k * k * k)) - 1);
+    }
+
+    /** The list went round its end: the speed starts over, a row per click. */
+    public static void restart(Object who) {
+        accelV = 0f;
+        accelWho = who;
+        accelAt = android.os.SystemClock.uptimeMillis();
     }
 
     private static WeakReference lastRv;
@@ -170,6 +244,9 @@ public final class Wheel {
 
     private static boolean stickyWrap;
 
+    /** When the wheel last moved a cursor: how {@link Loop} tells a fast wheel at the list's end. */
+    static long stepAt;
+
     /** {@link #follow} for a caller that KNOWS which row loses the cursor (a jump, a new list). */
     public static void follow(RecyclerView rv, int prev, int pos, RecyclerView.Adapter adapter) {
         if (rv == null) return;
@@ -185,6 +262,8 @@ public final class Wheel {
      */
     public static void rows(RecyclerView rv, int type) {
         try {
+            // a dialog's list: its keys never pass BaseActivity's check (drop)
+            if (Loop.afterWrap()) return;
             SongRows r = SongRows.of(rv);
             if (r == null) return;
             MyBaseAdapter a = r.model();
@@ -216,8 +295,10 @@ public final class Wheel {
             if (type == 1) a.toNext(); else a.toPrevious();
             if (a.getPosition() == m) {                 // clamped at an end
                 Loop.list(rv, a, type, m);
+                stepAt = SystemClock.uptimeMillis();
                 return;
             }
+            stepAt = SystemClock.uptimeMillis();
             stepRows(rv, old);
         } catch (Throwable t) {
         }
@@ -332,6 +413,8 @@ public final class Wheel {
     public static void follow(RecyclerView rv, int pos, RecyclerView.Adapter adapter) {
         try {
             if (rv == null) return;
+            stepAt = SystemClock.uptimeMillis();
+            if (pos != lastPos) Loop.moved();
             tune(rv);
 
             // the panel BEFORE the rows: it belongs at the end of the burst, once
@@ -342,6 +425,8 @@ public final class Wheel {
                 // the remembered row counts only for the same ADAPTER; unknown = full repaint
                 int prev = (lastRv != null && lastRv.get() == rv
                         && lastAdapter != null && lastAdapter.get() == adapter) ? lastPos : -1;
+                // past the end: Loop.mark's mark one beyond the list, as unknown as -1 (a wrap backwards)
+                if (prev >= n) prev = -1;
                 // In place, not notifyItemChanged (a full layout pass). Synchronous, so a burst
                 // repaints every row it passes.
                 if (prev < 0 || !paint(rv, adapter, prev, n) || !paint(rv, adapter, pos, n)) {
@@ -576,21 +661,23 @@ public final class Wheel {
         View edge = l.findViewByPosition(down ? last : first);
         if (span <= 0 || edge == null) return false;
         int rows = down ? pos / span - last / span : first / span - pos / span;
-        if (rows < 1 || rows > GLIDE_ROWS && !wrapping) return false;
+        // round the end the rows jump, as a list's do
+        if (wrapping || rows < 1 || rows > GLIDE_ROWS) return false;
         int step = end(edge, false) - start(edge, false);
         int d = down ? end(edge, false) + rows * step - (rv.getHeight() - rv.getPaddingBottom())
                      : start(edge, false) - rows * step - rv.getPaddingTop();
-        Glider.to(rv, d, wrapping ? Math.min(WRAP_MAX_MS, WRAP_MS + WRAP_ROW_MS * rows) : 0);
+        Glider.to(rv, d, 0);
         return true;
     }
 
     /**
-     * A list that asked for it ({@link #glides}, the lists with a travelling {@link Bar}) glides as
-     * the grids do, a row being one row of their arithmetic. A row not laid out yet is estimated,
-     * and the glide re-aims at it exactly once it is ({@link Glider#aim}).
+     * A list that asked for it ({@link #glides}, the lists with a travelling {@link Bar}) glides
+     * only round its end; a step past the edge moves the rows at once, so the next row lands under
+     * the bar standing there in the same frame. A row not laid out yet is estimated, and the glide
+     * re-aims at it exactly once it is ({@link Glider#aim}).
      */
     private static boolean glideList(RecyclerView rv, LinearLayoutManager l, int pos, int first, int last) {
-        if (first < 0 || l.getOrientation() != LinearLayoutManager.VERTICAL || gliding.get(rv) == null) {
+        if (!wrapping || first < 0 || l.getOrientation() != LinearLayoutManager.VERTICAL || gliding.get(rv) == null) {
             return false;
         }
         boolean down = pos > last;
@@ -628,7 +715,6 @@ public final class Wheel {
             d -= ex;
         }
         Glider.to(rv, d, ms);
-        Glider.list();
         Glider.aim(pos, down);
     }
 
@@ -666,24 +752,19 @@ public final class Wheel {
     private static final int WRAP_MAX_MS = 450;
 
     /**
-     * Follows the target the way the Cover Flow row does: every frame covers a share of what is
-     * left, so the list runs fast while far behind and eases in as it arrives. A new target only
-     * changes what is left — nothing restarts, so a fast wheel gives one continuous movement
-     * instead of glides cut short and begun again at another speed.
+     * Follows the target on a spring: the list sets off and eases in softly. A new target only
+     * changes what is left and keeps the speed — nothing restarts, so a fast wheel gives one
+     * continuous movement instead of glides cut short and begun again at another speed.
      */
     static final class Glider implements android.view.Choreographer.FrameCallback {
-        /** Share of the distance left covered per second; and the floor and ceiling of speed. */
-        private static final float RATE = 14f;
-        private static final float VMIN = 400f;
-        private static final float VMAX = 6000f;
-        /** A list's rate: one row is a short way, and the bar over it already moves at 22/s. */
-        private static final float LIST_RATE = 24f;
-        private static float rate = RATE;
-
-        /** This glide is a list's ({@link #to} sets the grids' rate back). */
-        static void list() {
-            rate = LIST_RATE;
-        }
+        /**
+         * The rows on a critically damped spring, softer than the lists' bar (Bar): they start and
+         * land gently and never run past the row. A new target keeps the speed, so a turning wheel
+         * bends the glide.
+         */
+        private static final float OMEGA = 22f;
+        /** The rows' speed, px/s (+ down), and the part of a pixel not yet scrolled. */
+        private static float vel, frac;
 
         private static final Glider G = new Glider();
         private static WeakReference view = new WeakReference(null);
@@ -694,15 +775,18 @@ public final class Wheel {
         private static int easeMs, easeTotal;
         private static long easeAt;
 
-        /** {@code ms} above 0: over that time, easing out, instead of a share of the way per frame. */
+        /** {@code ms} above 0: over that time, easing out, instead of the spring. */
         static void to(RecyclerView rv, int d, int ms) {
             if (view.get() != rv) {
                 stop();
                 view = new WeakReference(rv);
             }
             rv.stopScroll();
+            if (!running) {
+                vel = 0f;
+                frac = 0f;
+            }
             left = d;
-            rate = RATE;
             aimPos = -1;
             easeMs = ms;
             easeTotal = d;
@@ -801,17 +885,27 @@ public final class Wheel {
                 s = t >= 1f ? Math.round(left)
                         : Math.round(easeTotal * (1f - u * u * u)) - Math.round(easeTotal - left);
             } else {
-                float a = Math.abs(left);
-                float v = Math.max(VMIN, Math.min(VMAX, a * rate));
-                s = Math.round(Math.min(a, Math.max(1f, v * dt)));
-                if (left < 0) s = -s;
+                float e = -left;
+                float c = vel + OMEGA * e;
+                float ex = (float) Math.exp(-OMEGA * dt);
+                float ne = (e + c * dt) * ex;
+                vel = (vel - OMEGA * c * dt) * ex;
+                if (Math.abs(ne) < 0.5f && Math.abs(vel) < 15f) {
+                    s = Math.round(left);
+                    vel = 0f;
+                    frac = 0f;
+                } else {
+                    frac += ne - e;
+                    s = Math.round(frac);
+                    frac -= s;
+                }
             }
             long t0 = android.os.SystemClock.uptimeMillis();
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
             if (DBG && Math.abs(left) >= 1f && atEnd(rv, left > 0)) dbg("glider atEnd left " + left + " " + edge(rv));
-            if (Math.abs(left) < 1f || atEnd(rv, left > 0)) left = 0;
+            if (Math.abs(left) < 1f && Math.abs(vel) < 15f || atEnd(rv, left > 0)) left = 0;
             if (DBG && left == 0) dbg("glider done " + edge(rv));
             if (left != 0) {
                 android.view.Choreographer.getInstance().postFrameCallback(this);

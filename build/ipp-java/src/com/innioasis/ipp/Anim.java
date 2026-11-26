@@ -21,7 +21,7 @@ public final class Anim {
      * The scroll animations are in this build at all. False: off whatever the setting says, and the
      * menu has no row for them.
      */
-    public static final boolean BUILT = false;
+    public static final boolean BUILT = true;
 
     /** The same for the slide between screens. With both false the menu has no animations row at all. */
     public static final boolean NAV_BUILT = false;

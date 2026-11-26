@@ -1324,12 +1324,14 @@ public final class IppFlowActivity extends BaseActivity {
             if (at < 0) return false;
             if (at == sel) return true;
             boolean far = Math.abs(at - sel) > JUMP;
+            int was = first;
             sel = at;
             int rows = rows();
             int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
             if (top < first) first = top;
             if (sel >= first + rows) first = sel - rows + 1;
             if (!Anim.on() || far) settle();
+            else shift(was, rows);
             restart();
             return true;
         }
@@ -1395,6 +1397,7 @@ public final class IppFlowActivity extends BaseActivity {
         /** The bar and the window stand where they belong, no travel. */
         private void settle() {
             barY = sel * ROW;
+            barV = 0f;
             scrollY = first * ROW;
             frameAt = 0;
         }
@@ -1406,6 +1409,15 @@ public final class IppFlowActivity extends BaseActivity {
 
         void move(int d) {
             if (names == null || names.length == 0) return;
+            if (postWrap) {
+                // the first click after a wrap under a fast wheel is lost too (Loop.afterWrap)
+                postWrap = false;
+                long now = SystemClock.uptimeMillis();
+                if (Anim.on() && now - selAt < FAST_MS) {
+                    selAt = now;
+                    return;
+                }
+            }
             int s = sel;
             do {
                 s += d;
@@ -1413,13 +1425,24 @@ public final class IppFlowActivity extends BaseActivity {
             boolean wrap = false;
             if (s < 0 || s >= song.length) {
                 if (!Loop.on()) return;
+                // a fast wheel loses its first click past the end, the next goes round (Loop.wrap)
+                long now = SystemClock.uptimeMillis();
+                if (Anim.on() && !swallowed && now - selAt < FAST_MS) {
+                    swallowed = true;
+                    selAt = now;
+                    return;
+                }
                 // round the end (Loop scrolling): the first or the last track, past its dividers
                 s = d > 0 ? 0 : song.length - 1;
                 while (s >= 0 && s < song.length && song[s] < 0) s += d > 0 ? 1 : -1;
                 if (s < 0 || s >= song.length || s == sel) return;
                 wrap = true;
+                postWrap = true;
             }
+            int was = first;
             sel = s;
+            selAt = SystemClock.uptimeMillis();
+            swallowed = false;
             int rows = rows();
             // a divider right above the cursor comes into view with it
             int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
@@ -1428,13 +1451,32 @@ public final class IppFlowActivity extends BaseActivity {
             // the lists' rule: a step glides; going round the end and a jump further than JUMP rows
             // stand at once
             if (!Anim.on() || wrap || Math.abs(sel * ROW - barY) > JUMP * ROW) settle();
+            else shift(was, rows);
             restart();
         }
 
-        // The travel: the bar by Bar's law, the window by the lists' Glider — a share of what is
-        // left per second, between a floor and a ceiling of speed.
+        /**
+         * The window past its edge moves at once, as a list does: the bar keeps its place on the
+         * screen and goes on from there, so at the edge the next row is under it in the same frame.
+         */
+        private void shift(int was, int rows) {
+            if (first == was) return;
+            float onScreen = barY - scrollY;
+            scrollY = first * ROW;
+            barY = scrollY + Math.max(0, Math.min((rows - 1) * ROW, onScreen));
+        }
+
+        // The travel: the bar on the lists' critically damped spring (Bar); the window by the lists'
+        // Glider only where shift did not move it.
         private static final int JUMP = 4;
-        private static final float BAR_RATE = 22f, BAR_MIN = 700f, BAR_MAX = 6000f;
+        /** Clicks closer than this are a fast wheel. */
+        private static final long FAST_MS = 130L;
+        /** When the wheel last stepped; whether this stay at the end has had its click swallowed. */
+        private long selAt;
+        private boolean swallowed, postWrap;
+        private static final float OMEGA = 30f;
+        /** The spring's speed, px/s. */
+        private float barV;
         private static final float LIST_RATE = 14f, LIST_MIN = 400f, LIST_MAX = 6000f;
 
         /** One frame of travel; true while either has a way to go. */
@@ -1448,7 +1490,19 @@ public final class IppFlowActivity extends BaseActivity {
             long now = SystemClock.uptimeMillis();
             long dt = frameAt == 0 ? 16 : Math.min(50, now - frameAt);
             frameAt = now;
-            barY = approach(barY, barT, dt, BAR_RATE, BAR_MIN, BAR_MAX);
+            if (barY != barT) {
+                float e = barY - barT;
+                float cv = barV + OMEGA * e;
+                float t = dt / 1000f;
+                float ex = (float) Math.exp(-OMEGA * t);
+                float ne = (e + cv * t) * ex;
+                barV = (barV - OMEGA * cv * t) * ex;
+                barY = barT + ne;
+                if (Math.abs(ne) < 0.5f && Math.abs(barV) < 15f) {
+                    barY = barT;
+                    barV = 0f;
+                }
+            }
             scrollY = approach(scrollY, scrollT, dt, LIST_RATE, LIST_MIN, LIST_MAX);
             boolean going = barY != barT || scrollY != scrollT;
             if (!going) frameAt = 0;

@@ -14,7 +14,7 @@
 
 .method constructor <init>(Lcom/innioasis/ipp/PlGrid$Mover;)V
   .registers 2
-  .line 627
+  .line 685
     invoke-direct { p0 }, Landroidx/recyclerview/widget/RecyclerView$AdapterDataObserver;-><init>()V
     iput-object p1, p0, Lcom/innioasis/ipp/PlGrid$Snap;->m:Lcom/innioasis/ipp/PlGrid$Mover;
     return-void
@@ -22,27 +22,27 @@
 
 .method public onChanged()V
   .registers 2
-  .line 631
+  .line 689
     iget-object v0, p0, Lcom/innioasis/ipp/PlGrid$Snap;->m:Lcom/innioasis/ipp/PlGrid$Mover;
     invoke-virtual { v0 }, Lcom/innioasis/ipp/PlGrid$Mover;->snap()V
-  .line 632
+  .line 690
     return-void
 .end method
 
 .method public onItemRangeInserted(II)V
   .registers 3
-  .line 636
+  .line 694
     iget-object p1, p0, Lcom/innioasis/ipp/PlGrid$Snap;->m:Lcom/innioasis/ipp/PlGrid$Mover;
     invoke-virtual { p1 }, Lcom/innioasis/ipp/PlGrid$Mover;->snap()V
-  .line 637
+  .line 695
     return-void
 .end method
 
 .method public onItemRangeRemoved(II)V
   .registers 3
-  .line 641
+  .line 699
     iget-object p1, p0, Lcom/innioasis/ipp/PlGrid$Snap;->m:Lcom/innioasis/ipp/PlGrid$Mover;
     invoke-virtual { p1 }, Lcom/innioasis/ipp/PlGrid$Mover;->snap()V
-  .line 642
+  .line 700
     return-void
 .end method

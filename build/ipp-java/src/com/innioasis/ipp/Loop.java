@@ -41,16 +41,67 @@ public final class Loop {
         return Prefs.on(c, KEY);
     }
 
-    /** May the cursor go round? True also records the wrap for {@link #takeWrap}. */
+    /**
+     * May the cursor go round? True also records the wrap for {@link #takeWrap}. Under a fast
+     * wheel (animations on) the first click past the end is swallowed and the next one goes round;
+     * a slow wheel goes round at once.
+     */
     public static boolean wrap() {
         if (!on()) return false;
+        if (swallow()) return false;
         wrapped = true;
+        wraps++;
+        postWrap = true;
         wrappedAt = android.os.SystemClock.uptimeMillis();
         return true;
     }
 
     private static boolean wrapped;
     private static long wrappedAt;
+    /** Every wrap counted, for whoever must tell a move round the end from an ordinary one later on. */
+    static int wraps;
+
+    /** Clicks closer than this are a fast wheel. */
+    private static final long FAST_MS = 130L;
+    /** This stay at the end has had its click swallowed; a step off the end clears it. */
+    private static boolean swallowed;
+    private static long swallowAt;
+    /** Asked again within this, it is the same click (a screen that asks twice per step). */
+    private static final long SAME_CLICK_MS = 25L;
+
+    /** True = the click past the end is lost: the first one under a fast wheel. */
+    static boolean swallow() {
+        long now = android.os.SystemClock.uptimeMillis();
+        if (swallowed && now - swallowAt < SAME_CLICK_MS) return true;
+        if (!Anim.on() || swallowed || now - Wheel.stepAt >= FAST_MS) {
+            swallowed = false;
+            return false;
+        }
+        swallowed = true;
+        swallowAt = now;
+        return true;
+    }
+
+    /** A wrap just taken: the next click, if the wheel is still fast, is lost too. */
+    private static boolean postWrap;
+
+    /** The main menu went round by its own code. */
+    static void noteWrap() {
+        wraps++;
+        postWrap = true;
+    }
+
+    /** Top of a wheel click: true = the first click after a wrap under a fast wheel, lost. */
+    static boolean afterWrap() {
+        if (!postWrap) return false;
+        postWrap = false;
+        return Anim.on() && android.os.SystemClock.uptimeMillis() - Wheel.stepAt < FAST_MS;
+    }
+
+    /** A cursor moved by the wheel ({@code Wheel.follow}) off the row it stood on. */
+    static void moved() {
+        swallowed = false;
+    }
 
     /** For {@code Wheel.follow}, once: the step it repaints went round, within this key event. */
     static boolean justWrapped() {
