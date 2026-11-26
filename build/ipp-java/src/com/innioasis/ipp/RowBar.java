@@ -24,7 +24,7 @@ import java.util.WeakHashMap;
  * index after every step. A jump of more than one row (round the end) is a jump.
  */
 public final class RowBar extends Drawable
-        implements Choreographer.FrameCallback, ViewTreeObserver.OnPreDrawListener {
+        implements Choreographer.FrameCallback, ViewTreeObserver.OnPreDrawListener, Loop.Bumper {
 
     private static final float OMEGA = 30f;
     /** Thinner than this is a hairline, not a row. */
@@ -44,6 +44,8 @@ public final class RowBar extends Drawable
     private float y = Float.NaN, hb = Float.NaN, vel, movedTo = Float.NaN;
     private long last;
     private boolean running;
+    /** A bounce against an end: the cursor row stays lit. */
+    private boolean bouncing;
 
     private RowBar(ViewGroup col, int selRes, int rowRes, int selColor, int rowColor) {
         this.col = new WeakReference(col);
@@ -88,6 +90,7 @@ public final class RowBar extends Drawable
             View arrow = b.arrowOf(pos);
             if (arrow != null && arrow.getVisibility() == View.VISIBLE) arrow.setVisibility(View.INVISIBLE);
             if (pos != b.cur && b.cur >= 0 && Math.abs(pos - b.cur) > 1) b.y = Float.NaN;
+            if (pos != b.cur) b.bouncing = false;
             b.cur = pos;
             b.start();
             col.invalidate();
@@ -145,6 +148,29 @@ public final class RowBar extends Drawable
         return r == null ? null : r.findViewById(R.id.arrow);
     }
 
+    public void bump(int dir) {
+        View c = (View) col.get();
+        if (c == null || !c.hasWindowFocus() || Float.isNaN(y)) return;
+        bouncing = true;
+        // a bar placed rather than moved starts from rest (doFrame)
+        if (y != movedTo) {
+            vel = 0f;
+            movedTo = y;
+        }
+        vel += dir * Loop.BUMP_V;
+        start();
+    }
+
+    public int at() {
+        return cur;
+    }
+
+    public int count() {
+        int n = 0;
+        while (row(n) != null) n++;
+        return n;
+    }
+
     private void start() {
         if (running) return;
         running = true;
@@ -185,8 +211,14 @@ public final class RowBar extends Drawable
         }
         movedTo = y;
         c.invalidate();
-        if (y != goal || hb != h || vel != 0f) Choreographer.getInstance().postFrameCallback(this);
-        else running = false;
+        if (y != goal || hb != h || vel != 0f) {
+            // going round waits for this (Loop.swallow), a bounce included
+            Loop.animating();
+            Choreographer.getInstance().postFrameCallback(this);
+        } else {
+            running = false;
+            bouncing = false;
+        }
     }
 
     /** The texts' colours before the frame: a colour set from the drawing reaches the row a frame late. */
@@ -207,7 +239,7 @@ public final class RowBar extends Drawable
     }
 
     private float cover(View r, boolean isCursor) {
-        if (Float.isNaN(y)) return isCursor ? 1f : 0f;
+        if (Float.isNaN(y) || bouncing) return isCursor ? 1f : 0f;
         View goalRow = row(cur);
         if (goalRow != null && Math.abs(goalRow.getTop() - y) < 0.5f) return isCursor ? 1f : 0f;
         float top = r.getTop(), bottom = r.getBottom();
@@ -254,6 +286,9 @@ public final class RowBar extends Drawable
             }
             View cr = row(cur);
             if (cr == null || cr.getHeight() == 0) return;
+            // the highlight on screen: a click against an end bounces it (Loop)
+            View cv = (View) col.get();
+            if (cv != null && cv.hasWindowFocus()) Loop.bumper(this);
             // the screen opens before its rows are laid out: the bar stands on the first draw
             if (Float.isNaN(y)) {
                 y = cr.getTop();

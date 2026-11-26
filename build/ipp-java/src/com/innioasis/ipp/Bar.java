@@ -667,7 +667,8 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     /** {@code RVBaseAdapter.toNext}/{@code toPrevious} at an end: round it, unless {@link #holds}. */
     public static boolean wraps(RecyclerView r, int dir) {
-        return Loop.wrap() && !holds(r, dir);
+        // holds first: a wrap asked of Loop is recorded as taken
+        return !holds(r, dir) && Loop.wrap();
     }
 
     /**

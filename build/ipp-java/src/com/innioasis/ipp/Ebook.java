@@ -87,14 +87,17 @@ public final class Ebook {
         return last < fixedSum ? fixedSum : last;
     }
 
-    /** No wheel acceleration on these screens, so {@link Loop#on}, not {@link Loop#wrap}. */
+    /**
+     * Round the end only once it has come to rest; meanwhile, and with going round off, the bar
+     * bounces against it ({@link Loop#wrap}).
+     */
     public static int belowFirst(Activity a, int min, int listSize, int fixedSum) {
-        return Loop.on() ? maxMark(a, listSize, fixedSum) : min;
+        return Loop.wrap() ? maxMark(a, listSize, fixedSum) : min;
     }
 
-    /** -1 without loop scrolling. */
+    /** -1 when the cursor does not go round, as in {@link #belowFirst}. */
     public static int pastLast(Activity a, int fixedSum) {
-        return Loop.on() ? minMark(a, fixedSum) : -1;
+        return Loop.wrap() ? minMark(a, fixedSum) : -1;
     }
 
     /** The long-press book menu: never in menu mode, where no book is under the cursor. */

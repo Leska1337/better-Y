@@ -202,6 +202,13 @@ public final class Loop {
         return p;
     }
 
+    /** A column of rows that is not a list (Date and time, {@code clockwise}/{@code antiClockwise}): the next row. */
+    public static int rows(int pos, int dir, int n) {
+        int p = step(pos, dir, n);
+        if (p != pos) moved();
+        return p;
+    }
+
     /** The last entry of the Photos icon strip; with {@code isD} the cursor never stands on 4. */
     public static int lastOfStrip(int size, boolean isD) {
         int n = size - 1;
@@ -282,7 +289,8 @@ public final class Loop {
         if (spv == null || !spv.isSelect()) return false;
         int n = a.getCount();
         if (n <= 0) return false;
-        wrap();
+        // not round yet: the click is lost against the end and the bar bounces
+        if (!wrap()) return true;
         int from = cursorRow(lv, a);
         spv.onClockwise();                 // stock's own exit from the row
         toRow(lv, a, n - 1, from);
@@ -308,10 +316,10 @@ public final class Loop {
         int from = cursorRow(lv, a);
         if (type == 1) {
             if (old != n - 1) return false;
+            if (!wrap()) return false;
             if (row) {
                 // Through stock's own entry to the row. The screen's onClockwise that follows
                 // would take it straight back off, so it is told to leave it (keep).
-                wrap();
                 a.setPosition(0);
                 spv.recordOldPosition();
                 spv.onAntiClockwise(false);
@@ -326,6 +334,7 @@ public final class Loop {
         if (old != 0) return false;
         if (row) return false;             // up from track 1 is the Shuffle row, as ever
         if (n == 1) return false;
+        if (!wrap()) return false;
         toRow(lv, a, n - 1, from);
         return true;
     }
@@ -335,8 +344,8 @@ public final class Loop {
         return a.getPosition() + (lv instanceof RecyclerView ? SongRows.heads((RecyclerView) lv) : 0);
     }
 
+    /** Once {@link #wrap} has let the cursor round. */
     private static void toRow(View lv, MyBaseAdapter a, int pos, int from) {
-        wrap();
         a.setPosition(pos);
         a.notifyDataSetChanged();
         // round the end: Wheel.follow stands the rows and the bar on it at once
