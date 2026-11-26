@@ -13,51 +13,51 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 378
+  .line 263
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method public doFrame(J)V
   .registers 5
-  .line 380
-    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$400()Z
+  .line 265
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$300()Z
     move-result p1
     if-nez p1, :L0
     return-void
   :L0
-  .line 381
+  .line 266
     const/4 p1, 0
-    invoke-static { p1 }, Lcom/innioasis/ipp/Wheel;->access$402(Z)Z
-  .line 382
-    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$500()Ljava/lang/ref/WeakReference;
+    invoke-static { p1 }, Lcom/innioasis/ipp/Wheel;->access$302(Z)Z
+  .line 267
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$400()Ljava/lang/ref/WeakReference;
     move-result-object p1
     const/4 p2, 0
     if-nez p1, :L1
     move-object p1, p2
     goto :L2
   :L1
-    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$500()Ljava/lang/ref/WeakReference;
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$400()Ljava/lang/ref/WeakReference;
     move-result-object p1
     invoke-virtual { p1 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object p1
     check-cast p1, Landroidx/recyclerview/widget/RecyclerView;
   :L2
-  .line 383
-    invoke-static { p2 }, Lcom/innioasis/ipp/Wheel;->access$502(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 384
+  .line 268
+    invoke-static { p2 }, Lcom/innioasis/ipp/Wheel;->access$402(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
+  .line 269
     invoke-static { p1 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object p2
-  .line 385
+  .line 270
     if-nez p2, :L3
     return-void
   :L3
-  .line 386
-    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$600()I
+  .line 271
+    invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$500()I
     move-result v0
     invoke-virtual { p2 }, Lcom/innioasis/ipp/SongRows;->cursor()I
     move-result v1
     invoke-static { p1, v0, v1, p2 }, Lcom/innioasis/ipp/Wheel;->follow(Landroidx/recyclerview/widget/RecyclerView;IILandroidx/recyclerview/widget/RecyclerView$Adapter;)V
-  .line 387
+  .line 272
     return-void
 .end method

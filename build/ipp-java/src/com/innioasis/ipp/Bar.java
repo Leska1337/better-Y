@@ -209,6 +209,9 @@ public final class Bar extends RecyclerView.ItemDecoration
                     a.getResources().getColor(R.color.white), new int[] {R.id.tv_item}, R.id.iv_arrow);
             Spec rows = new Spec(R.id.recycler, R.drawable.item_setting_sel, 0, ACCENT, WHITE,
                     new int[] {R.id.title, R.id.text, R.id.tv_item}, R.id.arrow);
+            // the highlight is the inner line's, under the hairline: a row left lit while the bar
+            // was off keeps it there
+            rows.bgs = new int[] {R.id.layout};
             return new Spec[] {cats, rows};
         }
         if (a instanceof com.innioasis.y1.activity.BluetoothActivity) {
@@ -411,7 +414,11 @@ public final class Bar extends RecyclerView.ItemDecoration
         try {
             Bar b = (Bar) BARS.get(rv);
             boolean on = Anim.on();
-            if (on == (b != null)) return;
+            if (on == (b != null)) {
+                // a screen come back to: whatever stock repainted meanwhile is coloured again
+                if (b != null) b.dirty = true;
+                return;
+            }
             if (on) {
                 b = new Bar(rv, a, s);
                 BARS.put(rv, b);
@@ -449,6 +456,7 @@ public final class Bar extends RecyclerView.ItemDecoration
             if (r == null || !live(r)) return;
             // a bind of the cursor's row lights it, as stock's bind lights its background
             if (row.getParent() == r && r.getChildLayoutPosition(row) == b.cursor()) b.blinkOff = false;
+            b.dirty = true;
             b.clean(row);
             // The bar is the LIST's drawing: a row repainted redraws only the row. Where nothing
             // else moves the list (the Equalizer's ten rows) the bar stood where it was.
@@ -461,6 +469,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     public void onChildViewAttachedToWindow(View row) {
         try {
             RecyclerView r = (RecyclerView) rv.get();
+            dirty = true;
             if (r != null && live(r)) clean(row);
         } catch (Throwable t) {
         }
@@ -592,6 +601,7 @@ public final class Bar extends RecyclerView.ItemDecoration
                 } else {
                     blank(v);
                 }
+                own.dirty = true;
                 return true;
             }
             java.util.Iterator it = BARS.values().iterator();
@@ -639,7 +649,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         try {
             Bar b = r == null ? null : (Bar) BARS.get(r);
             if (b == null || r.getAdapter() == null || !live(r)) return false;
-            if (b.snap) { if (Wheel.DBG) Wheel.dbg("holds snap"); return true; }
+            if (b.snap) return true;
             int m = b.cursor();
             int n = r.getAdapter().getItemCount();
             boolean h = dir > 0 ? m >= n - 1 : m <= 0;
@@ -649,7 +659,6 @@ public final class Bar extends RecyclerView.ItemDecoration
                 Loop.noteWrap();
             }
             if (Wheel.Glider.left(r) == 0) return false;
-            if (h && Wheel.DBG) Wheel.dbg("holds end m " + m + " left " + Wheel.Glider.left(r));
             return h;
         } catch (Throwable t) {
             return false;
@@ -733,6 +742,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     /** A jump by letter: the bar stands on the cursor's row once it is laid out, not flown there. */
     static void stand(RecyclerView r) {
         Bar b = r == null ? null : (Bar) BARS.get(r);
+        if (b != null) b.dirty = true;
         if (b != null) b.snap = true;
     }
 
@@ -740,6 +750,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     public static boolean relist(RecyclerView r) {
         Bar b = r == null ? null : (Bar) BARS.get(r);
         if (b == null) return false;
+        b.dirty = true;
         b.y = Float.NaN;
         b.snap = false;
         b.lastPos = -1;
@@ -910,6 +921,7 @@ public final class Bar extends RecyclerView.ItemDecoration
         if (b == null || !live(r)) return false;
         b.lastPos = pos;
         b.snap = true;
+        b.dirty = true;
         Wheel.jumpNow(r, pos);
         b.start();
         return true;
@@ -1294,6 +1306,38 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     private final Tinter tinter = new Tinter(this);
 
+    /** A row was bound or taken in since the colours were last laid: lay them all again. */
+    private boolean dirty = true;
+    /** {@link #key} when the colours were last laid. */
+    private long drawnKey;
+
+    /** What the colours depend on: the bar, the cursor, where the rows, the plate and the line stand. */
+    private long key(RecyclerView r, int h) {
+        long k = Float.isNaN(y) ? -1 : Math.round(y);
+        k = k * 31 + (Float.isNaN(hb) ? -1 : Math.round(hb));
+        k = k * 31 + h;
+        k = k * 31 + cursor();
+        k = k * 31 + (snap ? 1 : 0) + (dark() ? 2 : 0) + (bouncing ? 4 : 0);
+        k = k * 31 + System.identityHashCode(r.getAdapter());
+        k = k * 31 + r.getHeight();
+        int n = r.getChildCount();
+        k = k * 31 + n;
+        if (n > 0) {
+            View f = r.getChildAt(0);
+            View l = r.getChildAt(n - 1);
+            k = k * 31 + r.getChildLayoutPosition(f);
+            k = k * 31 + Math.round(f.getTop() + f.getTranslationY());
+            k = k * 31 + Math.round(l.getBottom() + l.getTranslationY());
+        }
+        View c = cursorRow(r);
+        k = k * 31 + (c == null ? -1 : Math.round(c.getTop() + c.getTranslationY()) * 7 + c.getHeight());
+        View hv = head();
+        k = k * 31 + (hv == null ? -1 : hv.getTop());
+        View p = plate(r);
+        k = k * 31 + (p == null ? -1 : Math.round(plateTop(r, p)) * 7 + p.getHeight());
+        return k;
+    }
+
     /**
      * The text colours, BEFORE the list draws: a colour set from inside the draw reaches the row
      * only with the next frame, and a bar at rest has no next frame — the row stayed uncoloured.
@@ -1319,10 +1363,16 @@ public final class Bar extends RecyclerView.ItemDecoration
                 }
                 b.observe();
                 int h = b.height(r);
-                if (b.onList(r)) b.settle(r, h);
-                b.follow(r, h);
-                for (int i = 0; i < r.getChildCount(); i++) b.tint(r.getChildAt(i), h);
-                b.tintPlate(r, h);
+                // a frame drawn for something else (a marquee, the clock) with the bar and the
+                // rows where they were: the colours are what they were
+                if (b.dirty || b.opening() || b.key(r, h) != b.drawnKey) {
+                    if (b.onList(r)) b.settle(r, h);
+                    b.follow(r, h);
+                    for (int i = 0; i < r.getChildCount(); i++) b.tint(r.getChildAt(i), h);
+                    b.tintPlate(r, h);
+                    b.dirty = false;
+                    b.drawnKey = b.key(r, h);
+                }
                 if (b.head.get() != null) {
                     b.dressHead();
                     b.tintHead(r, h);
@@ -1438,10 +1488,12 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     /** The picture's height as drawn: a view as tall as its row may centre a small arrow in it. */
     private static float shownHeight(ImageView v, Drawable d) {
-        float[] m = new float[9];
-        v.getImageMatrix().getValues(m);
-        return d.getBounds().height() * m[android.graphics.Matrix.MSCALE_Y];
+        v.getImageMatrix().getValues(MATRIX);
+        return d.getBounds().height() * MATRIX[android.graphics.Matrix.MSCALE_Y];
     }
+
+    /** Read on every draw of the arrow: one array, main thread only. */
+    private static final float[] MATRIX = new float[9];
 
     private void start() {
         if (running) return;

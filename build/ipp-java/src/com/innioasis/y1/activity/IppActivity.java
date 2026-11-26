@@ -352,6 +352,21 @@ public final class IppActivity extends BaseActivity {
         return 0;
     }
 
+    /**
+     * "Enable animations" turned on turns Scroll on with it; Scroll turned off turns the whole row
+     * off, and its sub-row closes with the cursor back on the row above it.
+     */
+    private void animLinked(String key) {
+        if (Anim.KEY.equals(key) && Prefs.on(this, Anim.KEY)) {
+            Prefs.setBool(this, Anim.KEY_SCROLL, true);
+        } else if (Anim.KEY_SCROLL.equals(key) && !Prefs.on(this, Anim.KEY_SCROLL)) {
+            Prefs.setBool(this, Anim.KEY, false);
+            for (int i = 0; i < items.size(); i++) {
+                if (Anim.KEY.equals(((Item) items.get(i)).key)) sel = i;
+            }
+        }
+    }
+
     private void clampSel() {
         if (sel < 0 || sel >= items.size() || !selectable(sel)) {
             sel = firstSelectable();
@@ -665,6 +680,8 @@ public final class IppActivity extends BaseActivity {
     RowHolder newRow() {
         // a FIXED height: a theme's selection bitmap would stretch it
         LinearLayout line = new LinearLayout(this);
+        // the view the highlight is painted on: the travelling bar empties it (Bar.specs)
+        line.setId(R.id.layout);
         line.setOrientation(LinearLayout.HORIZONTAL);
         line.setBaselineAligned(false);
         line.setGravity(Gravity.CENTER_VERTICAL);
@@ -997,6 +1014,11 @@ public final class IppActivity extends BaseActivity {
             if ("likes".equals(it.key) && Prefs.on(this, it.key)) Fav.ensure(this);
             // the genre subtitles are cached counts the split changes
             if (GenreSplit.KEY_SPLIT.equals(it.key)) GenreInfo.clear();
+            if (Anim.KEY.equals(it.key) || Anim.KEY_SCROLL.equals(it.key)) {
+                animLinked(it.key);
+                // this screen's own lists take the bar on or off now, not at the next resume
+                Bar.apply(this);
+            }
             // the two artist-line modes exclude each other; both rows stay on screen
             String rival = Feat.rival(it.key);
             if (rival != null && Prefs.on(this, it.key)) Prefs.setBool(this, rival, false);

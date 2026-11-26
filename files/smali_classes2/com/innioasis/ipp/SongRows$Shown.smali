@@ -15,13 +15,13 @@
 
 .method constructor <init>(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 3
-  .line 549
+  .line 518
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
-  .line 550
+  .line 519
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     iput-object v0, p0, Lcom/innioasis/ipp/SongRows$Shown;->rv:Ljava/lang/ref/WeakReference;
-  .line 551
+  .line 520
     return-void
 .end method
 
@@ -29,15 +29,15 @@
   .catchall { :L0 .. :L5 } :L7
   .registers 6
   :L0
-  .line 555
+  .line 524
     iget-object v0, p0, Lcom/innioasis/ipp/SongRows$Shown;->rv:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 556
+  .line 525
     invoke-static { v0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v1
-  .line 557
+  .line 526
     if-eqz v1, :L6
     invoke-static { v1 }, Lcom/innioasis/ipp/SongRows;->access$300(Lcom/innioasis/ipp/SongRows;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object v2
@@ -46,13 +46,13 @@
     if-nez v2, :L1
     goto :L6
   :L1
-  .line 558
+  .line 527
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v2
-  .line 559
+  .line 528
     invoke-virtual { v1 }, Lcom/innioasis/ipp/SongRows;->cursor()I
     move-result v3
-  .line 560
+  .line 529
     if-nez v2, :L2
     const/4 v2, 0
     goto :L3
@@ -60,14 +60,14 @@
     invoke-virtual { v2, v3 }, Landroidx/recyclerview/widget/RecyclerView$LayoutManager;->findViewByPosition(I)Landroid/view/View;
     move-result-object v2
   :L3
-  .line 561
+  .line 530
     if-eqz v2, :L4
     invoke-virtual { v2 }, Landroid/view/View;->getTop()I
     move-result v4
     invoke-static { v0, v3 }, Lcom/innioasis/ipp/SongRows;->top(Landroidx/recyclerview/widget/RecyclerView;I)I
     move-result v3
     if-lt v4, v3, :L4
-  .line 562
+  .line 531
     invoke-virtual { v2 }, Landroid/view/View;->getBottom()I
     move-result v2
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView;->getHeight()I
@@ -77,22 +77,22 @@
     sub-int/2addr v3, v4
     if-le v2, v3, :L5
   :L4
-  .line 563
+  .line 532
     invoke-static { v1 }, Lcom/innioasis/ipp/SongRows;->access$300(Lcom/innioasis/ipp/SongRows;)Lcom/innioasis/music/adapter/MyBaseAdapter;
     move-result-object v1
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getPosition()I
     move-result v1
     invoke-static { v0, v1 }, Lcom/innioasis/ipp/Lv;->pin(Landroid/view/View;I)V
   :L5
-  .line 566
+  .line 535
     goto :L8
   :L6
-  .line 557
+  .line 526
     return-void
   :L7
-  .line 565
+  .line 534
     move-exception v0
   :L8
-  .line 567
+  .line 536
     return-void
 .end method

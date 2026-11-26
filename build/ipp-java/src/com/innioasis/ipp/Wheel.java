@@ -23,33 +23,16 @@ public final class Wheel {
 
     /**
      * Whether the wheel accelerates here ({@code BaseActivity.getEnableSpeedClockwise}, asked on every
-     * click): fully on lists that can run to hundreds of rows, barely on the short menus, where more
-     * would fly past the row aimed at. Not on screens where the wheel sets a value (volume, tuning).
+     * click; the extra rows are stock's count in {@code SpeedUtil}): only the lists of Music, Videos
+     * and Audiobooks, which run to hundreds of rows, and not with alphabetical fast scroll, which
+     * takes a fast wheel over itself. On a short menu it flies past the row aimed at.
      */
     public static boolean fast(com.innioasis.y1.base.BaseActivity a) {
-        if (!ACCEL) return false;
-        accelLong = longList(a);
-        return accelLong || shortMenu(a);
-    }
-
-    /** The acceleration is in this build at all; off, a click is always one row. */
-    private static final boolean ACCEL = false;
-
-    private static boolean shortMenu(com.innioasis.y1.base.BaseActivity a) {
-        return a instanceof com.innioasis.y1.activity.MainActivity
-                || a instanceof com.innioasis.music.MusicMainActivity
-                || a instanceof com.innioasis.y1.activity.SettingActivity
-                || a instanceof com.innioasis.y1.activity.LanguageActivity
-                || a instanceof com.innioasis.y1.activity.WallpaperListActivity
-                || a instanceof com.innioasis.y1.activity.EqActivity
-                || a instanceof com.innioasis.y1.activity.IppActivity
-                || a instanceof com.innioasis.y1.activity.EbookActivity
-                || a instanceof com.innioasis.fm.MenuActivity;
+        return longList(a) && !Prefs.on(a, "alpha_scroll");
     }
 
     private static boolean longList(com.innioasis.y1.base.BaseActivity a) {
-        return a instanceof com.innioasis.y1.activity.IppQueueActivity
-                || a instanceof com.innioasis.music.SongListActivity
+        return a instanceof com.innioasis.music.SongListActivity
                 || a instanceof com.innioasis.music.AlbumsActivity
                 || a instanceof com.innioasis.music.ArtistsActivity
                 || a instanceof com.innioasis.music.GenresActivity
@@ -71,48 +54,6 @@ public final class Wheel {
      */
     public static boolean drop(android.app.Activity a) {
         return PlGrid.busy(a) || Loop.afterWrap();
-    }
-
-    /** Clicks per second up to which a click is one row; past it the rows grow as the cube of the ratio. */
-    private static final float ACCEL_START = 10f;
-    /** The same and the rows at most, on a short menu. */
-    private static final float ACCEL_START_SHORT = 12f;
-    private static final int ACCEL_MAX_SHORT = 2;
-    /** The screen asked last ({@link #fast}) holds a long list. */
-    private static boolean accelLong;
-    /** Share of a click's own speed taken into the smoothed one. */
-    private static final float ACCEL_SMOOTH = 1f / 8f;
-    private static final int ACCEL_MAX_ROWS = 6;
-    /** A pause longer than this, or the other direction, starts the speed over. */
-    private static final long ACCEL_RESET_MS = 250L;
-    private static Object accelWho;
-    private static long accelAt;
-    private static float accelV;
-
-    /**
-     * {@code SpeedUtil.runMultipleTimes}: the extra rows after a click's own, from the wheel's
-     * smoothed speed (clicks per second) — slow down and it is a row per click again at once.
-     * {@code who} is the direction's own SpeedUtil.
-     */
-    public static int extra(Object who) {
-        long now = android.os.SystemClock.uptimeMillis();
-        long gap = now - accelAt;
-        if (who != accelWho || gap > ACCEL_RESET_MS) accelV = 0f;
-        accelWho = who;
-        accelAt = now;
-        float inst = Math.min(100f, 1000f / Math.max(1L, gap));
-        accelV += (inst - accelV) * ACCEL_SMOOTH;
-        float k = accelV / (accelLong ? ACCEL_START : ACCEL_START_SHORT);
-        if (k <= 1f) return 0;
-        int max = accelLong ? ACCEL_MAX_ROWS : ACCEL_MAX_SHORT;
-        return Math.max(0, Math.min(max, Math.round(k * k * k)) - 1);
-    }
-
-    /** The list went round its end: the speed starts over, a row per click. */
-    public static void restart(Object who) {
-        accelV = 0f;
-        accelWho = who;
-        accelAt = android.os.SystemClock.uptimeMillis();
     }
 
     private static WeakReference lastRv;
@@ -268,18 +209,7 @@ public final class Wheel {
             if (r == null) return;
             MyBaseAdapter a = r.model();
             Follow.touched(rv, a);
-            long t0 = SystemClock.uptimeMillis();
-            int p0 = a.getPosition();
-            if (Alpha.step(rv, a, type)) {
-                long t1 = SystemClock.uptimeMillis();
-                if (a.getPosition() != p0) {
-                    if (DBG) {
-                        dbg("alpha step " + (t1 - t0) + " ms");
-                        android.view.Choreographer.getInstance().postFrameCallback(new AlphaDbg(t1, rv));
-                    }
-                }
-                return;
-            }
+            if (Alpha.step(rv, a, type)) return;
             Status.check(rv);
             // a jump still being laid out, or the rows still gliding to the end to go round
             if (Bar.holds(rv, type)) return;
@@ -303,51 +233,6 @@ public final class Wheel {
             Loop.moved();
             stepRows(rv, old);
         } catch (Throwable t) {
-        }
-    }
-
-    /** Temporary: what the frame after a jump by letter costs. */
-    static final class AlphaDbg implements Runnable, android.view.Choreographer.FrameCallback,
-            android.view.ViewTreeObserver.OnGlobalLayoutListener,
-            android.view.ViewTreeObserver.OnPreDrawListener {
-        private final long at;
-        private final RecyclerView rv;
-        private long frame, laid, pre;
-
-        AlphaDbg(long at, RecyclerView rv) {
-            this.at = at;
-            this.rv = rv;
-        }
-
-        public void doFrame(long n) {
-            frame = SystemClock.uptimeMillis();
-            rv.getViewTreeObserver().addOnGlobalLayoutListener(this);
-            rv.getViewTreeObserver().addOnPreDrawListener(this);
-            UI.post(this);              // after this frame's layout and draw
-        }
-
-        public void onGlobalLayout() {
-            if (laid == 0) laid = SystemClock.uptimeMillis();
-        }
-
-        public boolean onPreDraw() {
-            if (pre == 0) pre = SystemClock.uptimeMillis();
-            return true;
-        }
-
-        public void run() {
-            long end = SystemClock.uptimeMillis();
-            rv.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-            rv.getViewTreeObserver().removeOnPreDrawListener(this);
-            dbg("alpha frame " + (end - at) + " ms: wait " + (frame - at) + " layout " + (laid == 0 ? -1 : laid - frame)
-                    + " predraw " + (pre == 0 ? -1 : pre - (laid == 0 ? frame : laid)) + " draw " + (pre == 0 ? -1 : end - pre)
-                    + ", binds " + SongRows.dbgBinds + " in " + SongRows.dbgBindMs + " ms, made " + SongRows.dbgMade + ", requested before " + SongRows.dbgReqBefore + " after " + SongRows.dbgReqAfter + " [" + SongRows.dbgWho + "]");
-            SongRows.dbgWho = null;
-            SongRows.dbgReqBefore = 0;
-            SongRows.dbgReqAfter = 0;
-            SongRows.dbgBinds = 0;
-            SongRows.dbgBindMs = 0;
-            SongRows.dbgMade = 0;
         }
     }
 
@@ -487,7 +372,6 @@ public final class Wheel {
             return;
         }
         LinearLayoutManager l = (LinearLayoutManager) lm;
-        if (DBG) dbg("to " + pos + " wrap " + wrapping + " jump " + jumping + " rel " + releasing + " left " + Glider.left(rv) + " " + edge(rv));
         // round the end under a travelling bar: rows and bar move together, at once
         if (!releasing && wrapping && Bar.defer(rv, pos)) return;
         if (!jumping && retarget(rv, l, pos)) return;
@@ -646,8 +530,12 @@ public final class Wheel {
     /** A grid asks for it (PlGrid), a list does with its travelling {@link Bar}. */
     public static void glides(RecyclerView rv, boolean on) {
         if (rv == null) return;
-        if (on) gliding.put(rv, Boolean.TRUE);
-        else gliding.remove(rv);
+        if (on) {
+            gliding.put(rv, Boolean.TRUE);
+        } else {
+            gliding.remove(rv);
+            if (Glider.left(rv) != 0) Glider.stop();
+        }
     }
 
     /**
@@ -793,12 +681,6 @@ public final class Wheel {
             easeMs = ms;
             easeTotal = d;
             easeAt = 0;
-            if (wrapping) {
-                Frames.start("glide wrap " + rv.getContext().getClass().getSimpleName(), true);
-                if (!counting) android.os.Debug.startAllocCounting();
-                counting = true;
-                alloc = android.os.Debug.getThreadAllocSize();
-            }
             if (!running && d != 0) {
                 running = true;
                 last = 0;
@@ -807,7 +689,6 @@ public final class Wheel {
         }
 
         static void stop() {
-            if (DBG && running && left != 0) dbg("glider stop left " + left + " from " + caller());
             if (running) android.view.Choreographer.getInstance().removeFrameCallback(G);
             running = false;
             left = 0;
@@ -851,17 +732,6 @@ public final class Wheel {
             aimPos = -1;
         }
 
-        /** What the main thread had allocated when a glide round the list's end set out. */
-        private static int alloc;
-        private static boolean counting;
-
-        /** The end of a glide: a glide round the end reports its frames and its garbage. */
-        private static void measured() {
-            int kb = (android.os.Debug.getThreadAllocSize() - alloc) / 1024;
-            Frames.part("alloc KB", android.os.SystemClock.uptimeMillis() - kb);
-            Frames.stop();
-        }
-
         /** The scroll still to come on {@code rv}, in pixels, + down. */
         static float left(RecyclerView rv) {
             return running && view.get() == rv ? left : 0f;
@@ -873,7 +743,6 @@ public final class Wheel {
             if (rv == null || rv.getWindowToken() == null || left == 0) {
                 running = false;
                 left = 0;
-                measured();
                 return;
             }
             long now = nanos / 1000000L;
@@ -906,38 +775,14 @@ public final class Wheel {
             rv.scrollBy(0, s);
             if (android.os.SystemClock.uptimeMillis() - t0 >= 4) Frames.part("scroll", t0);
             left -= s;
-            if (DBG && Math.abs(left) >= 1f && atEnd(rv, left > 0)) dbg("glider atEnd left " + left + " " + edge(rv));
             if (Math.abs(left) < 1f && Math.abs(vel) < 15f || atEnd(rv, left > 0)) left = 0;
-            if (DBG && left == 0) dbg("glider done " + edge(rv));
             if (left != 0) {
                 Loop.animating();
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {
                 running = false;
-                measured();
             }
         }
-    }
-
-    // ---- temporary: where a list's glide stops (the main menu stuck between rows) -----------
-
-    /** Only while /data/local/tmp/ippbar exists at process start: every call site builds its text first. */
-    static final boolean DBG = new java.io.File("/data/local/tmp/ippbar").exists();
-
-    static void dbg(String s) {
-        android.util.Log.i("ipp", "bardbg " + s);
-    }
-
-    static String edge(RecyclerView rv) {
-        View v = rv.getChildCount() == 0 ? null : rv.getChildAt(0);
-        return v == null ? "-" : "first " + rv.getChildAdapterPosition(v) + "@" + v.getTop() + " pad " + rv.getPaddingTop();
-    }
-
-    static String caller() {
-        StackTraceElement[] st = new Throwable().getStackTrace();
-        StringBuilder b = new StringBuilder();
-        for (int i = 2; i < st.length && i < 5; i++) b.append(st[i].getMethodName()).append(':').append(st[i].getLineNumber()).append(' ');
-        return b.toString();
     }
 
     /** A row's edges INCLUDING margins, as the list steps (the gallery tiles have margins). */

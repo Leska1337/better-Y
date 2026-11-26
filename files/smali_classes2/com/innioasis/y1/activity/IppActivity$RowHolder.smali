@@ -24,18 +24,18 @@
 
 .method constructor <init>(Landroid/view/View;Landroid/widget/LinearLayout;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/TextView;Landroid/widget/ImageView;)V
   .registers 7
-  .line 978
+  .line 995
     invoke-direct { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView$ViewHolder;-><init>(Landroid/view/View;)V
-  .line 979
+  .line 996
     iput-object p2, p0, Lcom/innioasis/y1/activity/IppActivity$RowHolder;->line:Landroid/widget/LinearLayout;
-  .line 980
+  .line 997
     iput-object p3, p0, Lcom/innioasis/y1/activity/IppActivity$RowHolder;->mark:Landroid/widget/TextView;
-  .line 981
+  .line 998
     iput-object p4, p0, Lcom/innioasis/y1/activity/IppActivity$RowHolder;->label:Landroid/widget/TextView;
-  .line 982
+  .line 999
     iput-object p5, p0, Lcom/innioasis/y1/activity/IppActivity$RowHolder;->value:Landroid/widget/TextView;
-  .line 983
+  .line 1000
     iput-object p6, p0, Lcom/innioasis/y1/activity/IppActivity$RowHolder;->arrow:Landroid/widget/ImageView;
-  .line 984
+  .line 1001
     return-void
 .end method

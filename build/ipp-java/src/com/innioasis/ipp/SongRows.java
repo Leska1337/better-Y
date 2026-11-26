@@ -220,7 +220,6 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
             View v = spv != null && spv.getParent() == null ? (View) spv : new View(parent.getContext());
             return new HeadHolder(v);
         }
-        dbgMade++;
         if (type == ROW) {
             return new Holder(ItemSonglistBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
         }
@@ -237,17 +236,9 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
 
     public void onBindViewHolder(RecyclerView.ViewHolder h, int p) {
         try {
-            long t0 = android.os.SystemClock.uptimeMillis();
-            if (h.itemView.isLayoutRequested()) dbgReqBefore++;
             if (h instanceof Holder) bindRow((Holder) h, p - heads());
             else if (h instanceof ItemHolder) bindItem(h.itemView, p - heads());
             else Bar.row(h.itemView);
-            dbgBinds++;
-            if (h.itemView.isLayoutRequested()) {
-                dbgReqAfter++;
-                if (dbgWho == null) dbgWho = who(h.itemView, new StringBuilder()).toString();
-            }
-            dbgBindMs += android.os.SystemClock.uptimeMillis() - t0;
         } catch (Throwable t) {
         }
     }
@@ -256,28 +247,6 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
     private void bindItem(View row, int q) {
         model.getView(q, row, list());
         Bar.row(row);
-    }
-
-    // temporary: what a jump by letter costs
-    static int dbgBinds, dbgMade, dbgReqBefore, dbgReqAfter;
-    static long dbgBindMs;
-    static String dbgWho;
-
-    private static StringBuilder who(View v, StringBuilder b) {
-        if (v.isLayoutRequested()) {
-            String n;
-            try {
-                n = v.getId() == View.NO_ID ? v.getClass().getSimpleName() : v.getResources().getResourceEntryName(v.getId());
-            } catch (Throwable t) {
-                n = v.getClass().getSimpleName();
-            }
-            b.append(n).append(' ');
-        }
-        if (v instanceof ViewGroup) {
-            ViewGroup g = (ViewGroup) v;
-            for (int i = 0; i < g.getChildCount(); i++) who(g.getChildAt(i), b);
-        }
-        return b;
     }
 
     /** The cursor as a list row: the Shuffle row is 0 while the model is parked at -1 on it. */
