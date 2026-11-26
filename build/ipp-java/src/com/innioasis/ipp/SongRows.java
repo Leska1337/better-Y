@@ -378,6 +378,7 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
     private static void fileTinted(View row) {
         View t = row.findViewById(R.id.file_name);
         if (!(t instanceof TextView)) {
+            if (albumTinted(row)) return;
             if (!markTinted(row, R.id.tv_name, R.id.ipp_book_mark)) markTinted(row, R.id.tv_item, R.id.ipp_row_icon);
             return;
         }
@@ -386,6 +387,17 @@ public final class SongRows extends RecyclerView.Adapter implements Bar.Cursor, 
         if (m instanceof ImageView && m.getVisibility() == View.VISIBLE) Icons.menu((ImageView) m, c);
         View i = row.findViewById(R.id.left_icon);
         if (i instanceof ImageView && ((ImageView) i).getColorFilter() != null) Icons.menu((ImageView) i, c);
+    }
+
+    /** An album row: the "Show all songs" icon, the one cover that carries a filter. */
+    private static boolean albumTinted(View row) {
+        View t = row.findViewById(R.id.album_name);
+        if (!(t instanceof TextView)) return false;
+        View c = row.findViewById(R.id.cover);
+        if (c instanceof ImageView && ((ImageView) c).getColorFilter() != null) {
+            Icons.menu((ImageView) c, ((TextView) t).getCurrentTextColor());
+        }
+        return true;
     }
 
     /** The image {@code mark} in the colour of the text {@code text}, if the row has both, shown. */

@@ -41,26 +41,13 @@ public final class Eq {
         host = new WeakReference(a);
     }
 
-    /** Stock's hardcoded #ADFF2F, when the sample cannot be read. */
-    private static final int ACTIVE = 0xFFADFF2F;
-
-    /** The preset in use, cursor elsewhere: the timeline's colour. */
+    /** The preset in use, cursor elsewhere: the plain row colour, told apart by its underline alone. */
     public static void active(TextView tv) {
         if (tv == null) return;
-        tv.setTextColor(activeColor());
+        ThemeManager.INSTANCE.itemSetTextColor(tv, -1, false);
     }
 
-    private static int activeColor() {
-        int c = Icons.progressColor();
-        return c != 0 ? c : ACTIVE;
-    }
-
-    /** A preset row's colour off the cursor, for the travelling Bar: the active one's, or {@code plain}. */
-    static int rowColor(int pos, int plain) {
-        return pos == EqSPUtils.INSTANCE.getEqualizerInt() ? activeColor() : plain;
-    }
-
-    /** Also underlined: a theme's timeline colour may equal its text colour. Every bind (recycled). */
+    /** The preset in use is underlined, cursor or not. Every bind: rows are recycled. */
     public static void underline(TextView tv, int pos) {
         if (tv == null) return;
         int f = tv.getPaintFlags();

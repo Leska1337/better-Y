@@ -71,14 +71,14 @@
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/SongRows;->SPVS:Ljava/util/WeakHashMap;
-  .line 503
+  .line 515
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/SongRows;->deleted:I
-  .line 586
+  .line 598
     new-instance v0, Ljava/util/WeakHashMap;
     invoke-direct { v0 }, Ljava/util/WeakHashMap;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/SongRows;->HEADS:Ljava/util/WeakHashMap;
-  .line 588
+  .line 600
     new-instance v0, Lcom/innioasis/ipp/SongRows$Reveal;
     invoke-direct { v0 }, Lcom/innioasis/ipp/SongRows$Reveal;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/SongRows;->REVEAL:Lcom/innioasis/ipp/SongRows$Reveal;
@@ -165,6 +165,40 @@
     iget-object p0, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/MyBaseAdapter;
   :L1
     return-object p0
+.end method
+
+.method private static albumTinted(Landroid/view/View;)Z
+  .registers 3
+  .line 394
+    const v0, 2131361870
+    invoke-virtual { p0, v0 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object v0
+  .line 395
+    instance-of v1, v0, Landroid/widget/TextView;
+    if-nez v1, :L0
+    const/4 p0, 0
+    return p0
+  :L0
+  .line 396
+    const v1, 2131361978
+    invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
+    move-result-object p0
+  .line 397
+    instance-of v1, p0, Landroid/widget/ImageView;
+    if-eqz v1, :L1
+    check-cast p0, Landroid/widget/ImageView;
+    invoke-virtual { p0 }, Landroid/widget/ImageView;->getColorFilter()Landroid/graphics/ColorFilter;
+    move-result-object v1
+    if-eqz v1, :L1
+  .line 398
+    check-cast v0, Landroid/widget/TextView;
+    invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
+    move-result v0
+    invoke-static { p0, v0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
+  :L1
+  .line 400
+    const/4 p0, 1
+    return p0
 .end method
 
 .method public static attach(Landroidx/recyclerview/widget/RecyclerView;Lcom/innioasis/music/adapter/SongListAdapter;)V
@@ -427,50 +461,50 @@
 
 .method public static cancel(Landroidx/recyclerview/widget/RecyclerView;[Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 5
-  .line 560
+  .line 572
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object p0
-  .line 561
+  .line 573
     if-eqz p0, :L6
     if-nez p1, :L0
     goto :L6
   :L0
-  .line 562
+  .line 574
     const/4 v0, 0
   :L1
     array-length v1, p1
     if-ge v0, v1, :L5
-  .line 563
+  .line 575
     aget-object v1, p1, v0
     iget-object v2, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/MyBaseAdapter;
     if-eq v1, v2, :L2
     goto :L4
   :L2
-  .line 564
+  .line 576
     invoke-virtual { v2 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object v1
-  .line 565
+  .line 577
     if-eqz v1, :L3
     invoke-interface { v1 }, Ljava/util/List;->clear()V
   :L3
-  .line 566
+  .line 578
     iget-object v1, p0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->notifyDataSetChanged()V
   :L4
-  .line 562
+  .line 574
     add-int/lit8 v0, v0, 1
     goto :L1
   :L5
-  .line 568
+  .line 580
     return-void
   :L6
-  .line 561
+  .line 573
     return-void
 .end method
 
 .method public static deleting(Lcom/innioasis/music/adapter/MyBaseAdapter;)V
   .registers 5
-  .line 507
+  .line 519
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -478,9 +512,9 @@
     invoke-virtual { p0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getSelectedIndexList()Ljava/util/List;
     move-result-object p0
   :L1
-  .line 508
+  .line 520
     nop
-  .line 509
+  .line 521
     const/4 v0, -1
     const/4 v1, 0
   :L2
@@ -488,32 +522,32 @@
     invoke-interface { p0 }, Ljava/util/List;->size()I
     move-result v2
     if-ge v1, v2, :L6
-  .line 510
+  .line 522
     invoke-interface { p0, v1 }, Ljava/util/List;->get(I)Ljava/lang/Object;
     move-result-object v2
-  .line 511
+  .line 523
     instance-of v3, v2, Ljava/lang/Integer;
     if-nez v3, :L3
     goto :L5
   :L3
-  .line 512
+  .line 524
     check-cast v2, Ljava/lang/Integer;
     invoke-virtual { v2 }, Ljava/lang/Integer;->intValue()I
     move-result v2
-  .line 513
+  .line 525
     if-ltz v2, :L5
     if-ltz v0, :L4
     if-ge v2, v0, :L5
   :L4
     move v0, v2
   :L5
-  .line 509
+  .line 521
     add-int/lit8 v1, v1, 1
     goto :L2
   :L6
-  .line 515
+  .line 527
     sput v0, Lcom/innioasis/ipp/SongRows;->deleted:I
-  .line 516
+  .line 528
     return-void
 .end method
 
@@ -525,51 +559,57 @@
     move-result-object v0
   .line 380
     instance-of v1, v0, Landroid/widget/TextView;
-    if-nez v1, :L1
+    if-nez v1, :L2
   .line 381
+    invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->albumTinted(Landroid/view/View;)Z
+    move-result v0
+    if-eqz v0, :L0
+    return-void
+  :L0
+  .line 382
     const v0, 2131362492
     const v1, 2131362559
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/SongRows;->markTinted(Landroid/view/View;II)Z
     move-result v0
-    if-nez v0, :L0
+    if-nez v0, :L1
     const v0, 2131362491
     const v1, 2131362556
     invoke-static { p0, v0, v1 }, Lcom/innioasis/ipp/SongRows;->markTinted(Landroid/view/View;II)Z
-  :L0
-  .line 382
-    return-void
   :L1
-  .line 384
+  .line 383
+    return-void
+  :L2
+  .line 385
     check-cast v0, Landroid/widget/TextView;
     invoke-virtual { v0 }, Landroid/widget/TextView;->getCurrentTextColor()I
     move-result v0
-  .line 385
+  .line 386
     const v1, 2131362550
     invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object v1
-  .line 386
+  .line 387
     instance-of v2, v1, Landroid/widget/ImageView;
-    if-eqz v2, :L2
+    if-eqz v2, :L3
     invoke-virtual { v1 }, Landroid/view/View;->getVisibility()I
     move-result v2
-    if-nez v2, :L2
+    if-nez v2, :L3
     check-cast v1, Landroid/widget/ImageView;
     invoke-static { v1, v0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
-  :L2
-  .line 387
+  :L3
+  .line 388
     const v1, 2131362159
     invoke-virtual { p0, v1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 388
+  .line 389
     instance-of v1, p0, Landroid/widget/ImageView;
-    if-eqz v1, :L3
+    if-eqz v1, :L4
     check-cast p0, Landroid/widget/ImageView;
     invoke-virtual { p0 }, Landroid/widget/ImageView;->getColorFilter()Landroid/graphics/ColorFilter;
     move-result-object v1
-    if-eqz v1, :L3
+    if-eqz v1, :L4
     invoke-static { p0, v0 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
-  :L3
-  .line 389
+  :L4
+  .line 390
     return-void
 .end method
 
@@ -603,34 +643,34 @@
 
 .method private static headBottom(Landroidx/recyclerview/widget/RecyclerView;)I
   .registers 4
-  .line 430
+  .line 442
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v0
-  .line 431
+  .line 443
     if-nez v0, :L0
     const/4 v0, 0
     goto :L1
   :L0
     iget-object v0, v0, Lcom/innioasis/ipp/SongRows;->spv:Lcom/innioasis/y1/view/ShufflePlaylistItemView;
   :L1
-  .line 432
+  .line 444
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v1
-  .line 433
+  .line 445
     if-eqz v0, :L3
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
     if-eq v2, p0, :L2
     goto :L3
   :L2
-  .line 434
+  .line 446
     invoke-virtual { v0 }, Landroid/view/View;->getBottom()I
     move-result p0
     invoke-static { v1, p0 }, Ljava/lang/Math;->max(II)I
     move-result p0
     return p0
   :L3
-  .line 433
+  .line 445
     return v1
 .end method
 
@@ -652,22 +692,22 @@
 
 .method public static kept(Landroidx/recyclerview/widget/RecyclerView;I)V
   .registers 4
-  .line 524
+  .line 536
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v0
-  .line 525
+  .line 537
     if-nez v0, :L0
     return-void
   :L0
-  .line 526
+  .line 538
     sget v1, Lcom/innioasis/ipp/SongRows;->deleted:I
     if-ltz v1, :L1
     sget p1, Lcom/innioasis/ipp/SongRows;->deleted:I
   :L1
-  .line 527
+  .line 539
     const/4 v1, -1
     sput v1, Lcom/innioasis/ipp/SongRows;->deleted:I
-  .line 528
+  .line 540
     iget-object v0, v0, Lcom/innioasis/ipp/SongRows;->model:Lcom/innioasis/music/adapter/MyBaseAdapter;
     invoke-virtual { v0 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->getCount()I
     move-result v1
@@ -675,32 +715,32 @@
     invoke-static { p1, v1 }, Ljava/lang/Math;->min(II)I
     move-result p1
     invoke-virtual { v0, p1 }, Lcom/innioasis/music/adapter/MyBaseAdapter;->setPosition(I)V
-  .line 529
+  .line 541
     invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->relist(Landroidx/recyclerview/widget/RecyclerView;)Z
-  .line 530
+  .line 542
     new-instance p1, Lcom/innioasis/ipp/SongRows$Shown;
     invoke-direct { p1, p0 }, Lcom/innioasis/ipp/SongRows$Shown;-><init>(Landroidx/recyclerview/widget/RecyclerView;)V
     invoke-virtual { p0, p1 }, Landroidx/recyclerview/widget/RecyclerView;->post(Ljava/lang/Runnable;)Z
-  .line 531
+  .line 543
     return-void
 .end method
 
 .method private static markTinted(Landroid/view/View;II)Z
   .registers 3
-  .line 393
+  .line 405
     invoke-virtual { p0, p1 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p1
-  .line 394
+  .line 406
     invoke-virtual { p0, p2 }, Landroid/view/View;->findViewById(I)Landroid/view/View;
     move-result-object p0
-  .line 395
+  .line 407
     instance-of p2, p1, Landroid/widget/TextView;
     if-eqz p2, :L2
     instance-of p2, p0, Landroid/widget/ImageView;
     if-nez p2, :L0
     goto :L2
   :L0
-  .line 396
+  .line 408
     invoke-virtual { p0 }, Landroid/view/View;->getVisibility()I
     move-result p2
     if-nez p2, :L1
@@ -710,11 +750,11 @@
     move-result p1
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Icons;->menu(Landroid/widget/ImageView;I)V
   :L1
-  .line 397
+  .line 409
     const/4 p0, 1
     return p0
   :L2
-  .line 395
+  .line 407
     const/4 p0, 0
     return p0
 .end method
@@ -794,7 +834,7 @@
 
 .method static pinTop(Landroidx/recyclerview/widget/RecyclerView;)I
   .registers 2
-  .line 458
+  .line 470
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v0
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->plate(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
@@ -807,10 +847,10 @@
 
 .method private static plate(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
   .registers 4
-  .line 417
+  .line 429
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getParent()Landroid/view/ViewParent;
     move-result-object p0
-  .line 418
+  .line 430
     instance-of v0, p0, Landroid/view/View;
     const/4 v1, 0
     if-eqz v0, :L0
@@ -823,7 +863,7 @@
   :L0
     move-object v0, v1
   :L1
-  .line 419
+  .line 431
     if-eqz v0, :L3
     invoke-virtual { v0 }, Landroid/view/View;->getParent()Landroid/view/ViewParent;
     move-result-object v2
@@ -837,33 +877,33 @@
 
 .method static plateChanged(Landroid/view/View;)V
   .registers 2
-  .line 463
+  .line 475
     instance-of v0, p0, Landroidx/recyclerview/widget/RecyclerView;
     if-eqz v0, :L0
     check-cast p0, Landroidx/recyclerview/widget/RecyclerView;
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v0
     if-eqz v0, :L0
-  .line 464
+  .line 476
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->invalidateItemDecorations()V
   :L0
-  .line 466
+  .line 478
     return-void
 .end method
 
 .method private static plateHeight(Landroid/view/View;)I
   .registers 3
-  .line 423
+  .line 435
     if-eqz p0, :L3
     invoke-virtual { p0 }, Landroid/view/View;->getVisibility()I
     move-result v0
     if-eqz v0, :L0
     goto :L3
   :L0
-  .line 424
+  .line 436
     invoke-virtual { p0 }, Landroid/view/View;->getLayoutParams()Landroid/view/ViewGroup$LayoutParams;
     move-result-object v0
-  .line 425
+  .line 437
     if-eqz v0, :L1
     iget v1, v0, Landroid/view/ViewGroup$LayoutParams;->height:I
     if-lez v1, :L1
@@ -875,27 +915,27 @@
   :L2
     return p0
   :L3
-  .line 423
+  .line 435
     const/4 p0, 0
     return p0
 .end method
 
 .method static plateSpan(Landroidx/recyclerview/widget/RecyclerView;)[I
   .registers 2
-  .line 450
+  .line 462
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->plate(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/SongRows;->plateHeight(Landroid/view/View;)I
     move-result v0
-  .line 451
+  .line 463
     if-nez v0, :L0
     const/4 p0, 0
     return-object p0
   :L0
-  .line 452
+  .line 464
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->headBottom(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result p0
-  .line 453
+  .line 465
     add-int/2addr v0, p0
     filled-new-array { p0, v0 }, [I
     move-result-object p0
@@ -904,7 +944,7 @@
 
 .method static reveal(Lcom/innioasis/y1/view/ShufflePlaylistItemView;)V
   .registers 4
-  .line 575
+  .line 587
     const/4 v0, 0
     if-nez p0, :L0
     move-object v1, v0
@@ -914,7 +954,7 @@
     invoke-virtual { v1, p0 }, Ljava/util/WeakHashMap;->get(Ljava/lang/Object;)Ljava/lang/Object;
     move-result-object v1
   :L1
-  .line 576
+  .line 588
     if-nez v1, :L2
     move-object v1, v0
     goto :L3
@@ -924,21 +964,21 @@
     move-result-object v1
     check-cast v1, Lcom/innioasis/ipp/SongRows;
   :L3
-  .line 577
+  .line 589
     if-nez v1, :L4
     goto :L5
   :L4
     invoke-virtual { v1 }, Lcom/innioasis/ipp/SongRows;->list()Landroidx/recyclerview/widget/RecyclerView;
     move-result-object v0
   :L5
-  .line 578
+  .line 590
     if-eqz v0, :L8
     invoke-static { v0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v2
     if-eq v2, v1, :L6
     goto :L8
   :L6
-  .line 580
+  .line 592
     invoke-virtual { p0 }, Lcom/innioasis/y1/view/ShufflePlaylistItemView;->getParent()Landroid/view/ViewParent;
     move-result-object v1
     if-ne v1, v0, :L7
@@ -949,23 +989,23 @@
     if-lt p0, v1, :L7
     return-void
   :L7
-  .line 581
+  .line 593
     sget-object p0, Lcom/innioasis/ipp/SongRows;->REVEAL:Lcom/innioasis/ipp/SongRows$Reveal;
     invoke-virtual { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;->removeCallbacks(Ljava/lang/Runnable;)Z
-  .line 582
+  .line 594
     invoke-virtual { p0, v0 }, Lcom/innioasis/ipp/SongRows$Reveal;->at(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows$Reveal;
     move-result-object p0
     invoke-virtual { v0, p0 }, Landroidx/recyclerview/widget/RecyclerView;->post(Ljava/lang/Runnable;)Z
-  .line 583
+  .line 595
     return-void
   :L8
-  .line 578
+  .line 590
     return-void
 .end method
 
 .method public static row(Landroidx/recyclerview/widget/RecyclerView;I)Landroid/view/View;
   .registers 2
-  .line 402
+  .line 414
     if-nez p0, :L0
     const/4 p0, 0
     goto :L1
@@ -978,23 +1018,23 @@
 
 .method public static select(Landroidx/recyclerview/widget/RecyclerView;I)V
   .registers 3
-  .line 407
+  .line 419
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->of(Landroidx/recyclerview/widget/RecyclerView;)Lcom/innioasis/ipp/SongRows;
     move-result-object v0
     if-nez v0, :L0
     return-void
   :L0
-  .line 408
+  .line 420
     invoke-static { p0 }, Lcom/innioasis/ipp/Bar;->relist(Landroidx/recyclerview/widget/RecyclerView;)Z
-  .line 409
+  .line 421
     if-gtz p1, :L1
     invoke-static { p0 }, Lcom/innioasis/ipp/Lv;->rest(Landroid/view/View;)V
     goto :L2
   :L1
-  .line 410
+  .line 422
     invoke-static { p0, p1 }, Lcom/innioasis/ipp/Lv;->pin(Landroid/view/View;I)V
   :L2
-  .line 411
+  .line 423
     return-void
 .end method
 
@@ -1254,21 +1294,21 @@
 
 .method static top(Landroidx/recyclerview/widget/RecyclerView;I)I
   .registers 4
-  .line 442
+  .line 454
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getPaddingTop()I
     move-result v0
-  .line 443
+  .line 455
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->heads(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result v1
     if-ge p1, v1, :L0
     return v0
   :L0
-  .line 444
+  .line 456
     invoke-static { p0 }, Lcom/innioasis/ipp/SongRows;->plate(Landroidx/recyclerview/widget/RecyclerView;)Landroid/view/View;
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/SongRows;->plateHeight(Landroid/view/View;)I
     move-result p1
-  .line 445
+  .line 457
     if-nez p1, :L1
     goto :L2
   :L1

@@ -322,11 +322,19 @@ public final class Disc {
         tv.setText(label);
         ThemeManager.INSTANCE.itemSetTextColor(
                 tv, row.getResources().getColor(R.color.selected_text_color), false);
+        stripColor = tv.getCurrentTextColor();
         tv.setVisibility(View.VISIBLE);
         // the list's unselected row background, or a theme that paints its rows shows wallpaper;
         // noSize keeps that bitmap from setting the strip's height
         ThemeManager.INSTANCE.itemSetBackground(tv, R.drawable.item_no_selected, false);
         Rows.noSize(tv);
+    }
+
+    /** The theme's colour of a disc label, as the strip and the plate are given it; 0 = none yet. */
+    private static int stripColor;
+
+    static int stripColor() {
+        return stripColor;
     }
 
     /** The strip's fixed layout height: exact for a row still off screen. */
@@ -520,6 +528,7 @@ public final class Disc {
             // the theme's row background, as the strip has
             ThemeManager.INSTANCE.itemSetTextColor(
                     tv, tv.getResources().getColor(R.color.selected_text_color), false);
+            stripColor = tv.getCurrentTextColor();
             ThemeManager.INSTANCE.itemSetBackground(tv, R.drawable.item_no_selected, false);
             Rows.noSize(tv);
             // rows pass UNDER the bar, so it must be opaque: the wallpaper behind it

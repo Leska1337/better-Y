@@ -66,8 +66,8 @@ public final class Wheel {
 
     /**
      * Top of the wheel in {@code BaseActivity.dispatchKeyEvent}: true = the click is dropped. While a
-     * grid's frame changes rows ({@link PlGrid#busy}), and the first click after a wrap under a fast
-     * wheel ({@link Loop#afterWrap}).
+     * grid's frame changes rows ({@link PlGrid#busy}), and within the stop after a wrap
+     * ({@link Loop#afterWrap}).
      */
     public static boolean drop(android.app.Activity a) {
         return PlGrid.busy(a) || Loop.afterWrap();
@@ -299,6 +299,8 @@ public final class Wheel {
                 return;
             }
             stepAt = SystemClock.uptimeMillis();
+            // drawn next frame: going round must wait from now, not from the draw
+            Loop.moved();
             stepRows(rv, old);
         } catch (Throwable t) {
         }
@@ -908,6 +910,7 @@ public final class Wheel {
             if (Math.abs(left) < 1f && Math.abs(vel) < 15f || atEnd(rv, left > 0)) left = 0;
             if (DBG && left == 0) dbg("glider done " + edge(rv));
             if (left != 0) {
+                Loop.animating();
                 android.view.Choreographer.getInstance().postFrameCallback(this);
             } else {
                 running = false;

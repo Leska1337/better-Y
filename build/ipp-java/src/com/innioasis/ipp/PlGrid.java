@@ -345,11 +345,31 @@ public final class PlGrid {
      * in the middle; further off it jumps. Kept in the list's content coordinates, so it rides
      * along while rows scroll.
      */
-    static final class Mover extends RecyclerView.ItemDecoration {
+    static final class Mover extends RecyclerView.ItemDecoration implements Loop.Bumper {
         /** The lists' bar spring (Bar): soft start and landing, never past the tile. */
         private static final float OMEGA = 30f;
         /** The frame's speed along the row, px/s. */
         private float lv;
+        private java.lang.ref.WeakReference list = new java.lang.ref.WeakReference(null);
+
+        /** A click swallowed at the list's end: the frame pushes on along the row and springs back. */
+        public void bump(int dir) {
+            RecyclerView rv = (RecyclerView) list.get();
+            if (rv == null || !has || leg) return;
+            lv += dir * Loop.BUMP_V;
+            rv.postInvalidateOnAnimation();
+        }
+
+        public int at() {
+            RecyclerView rv = (RecyclerView) list.get();
+            return rv == null ? 0 : cursorAt(rv);
+        }
+
+        public int count() {
+            RecyclerView rv = (RecyclerView) list.get();
+            RecyclerView.Adapter a = rv == null ? null : rv.getAdapter();
+            return a == null ? 0 : a.getItemCount();
+        }
 
         private final android.graphics.Paint paint =
                 new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);
@@ -656,9 +676,15 @@ public final class PlGrid {
                         tx = fb[0];
                         txPos = sel;
                     }
-                    moving = leg || l != fb[0] || t != fb[1];
+                    moving = leg || l != fb[0] || t != fb[1] || lv != 0f;
                 }
                 if (rested(moving)) Tidy.at(rv);
+                // going round waits for the frame and the rows (Loop.swallow); a bounce lands here
+                if (moving) Loop.animating();
+                if (has && rv.hasWindowFocus()) {
+                    if (list.get() != rv) list = new java.lang.ref.WeakReference(rv);
+                    Loop.bumper(this);
+                }
                 last = moving ? now : 0;
                 if (!has) return;
                 if (moving) rv.postInvalidateOnAnimation();

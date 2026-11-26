@@ -1410,13 +1410,9 @@ public final class IppFlowActivity extends BaseActivity {
         void move(int d) {
             if (names == null || names.length == 0) return;
             if (postWrap) {
-                // the first click after a wrap under a fast wheel is lost too (Loop.afterWrap)
+                // the stop after a wrap, as in the lists (Loop.afterWrap)
+                if (Anim.on() && SystemClock.uptimeMillis() - selAt < Loop.PAUSE_MS) return;
                 postWrap = false;
-                long now = SystemClock.uptimeMillis();
-                if (Anim.on() && now - selAt < FAST_MS) {
-                    selAt = now;
-                    return;
-                }
             }
             int s = sel;
             do {
@@ -1424,12 +1420,24 @@ public final class IppFlowActivity extends BaseActivity {
             } while (s >= 0 && s < song.length && song[s] < 0);
             boolean wrap = false;
             if (s < 0 || s >= song.length) {
-                if (!Loop.on()) return;
-                // a fast wheel loses its first click past the end, the next goes round (Loop.wrap)
+                if (!Loop.on()) {
+                    // against the end: the bounce alone
+                    if (Anim.on()) {
+                        bouncing = true;
+                        barV += d * Loop.BUMP_V;
+                        invalidate();
+                    }
+                    return;
+                }
+                // only once the wheel and the bar have stood still; meanwhile the bar bounces (Loop.swallow)
                 long now = SystemClock.uptimeMillis();
-                if (Anim.on() && !swallowed && now - selAt < FAST_MS) {
-                    swallowed = true;
-                    selAt = now;
+                long quiet = now - Math.max(selAt, endAt);
+                endAt = now;
+                if (Anim.on() && (quiet <= Loop.STOP_MS || barY != sel * ROW || scrollY != first * ROW
+                        || barV != 0f)) {
+                    bouncing = true;
+                    barV += d * Loop.BUMP_V;
+                    invalidate();
                     return;
                 }
                 // round the end (Loop scrolling): the first or the last track, past its dividers
@@ -1442,7 +1450,7 @@ public final class IppFlowActivity extends BaseActivity {
             int was = first;
             sel = s;
             selAt = SystemClock.uptimeMillis();
-            swallowed = false;
+            bouncing = false;
             int rows = rows();
             // a divider right above the cursor comes into view with it
             int top = sel > 0 && song[sel - 1] < 0 ? sel - 1 : sel;
@@ -1469,11 +1477,9 @@ public final class IppFlowActivity extends BaseActivity {
         // The travel: the bar on the lists' critically damped spring (Bar); the window by the lists'
         // Glider only where shift did not move it.
         private static final int JUMP = 4;
-        /** Clicks closer than this are a fast wheel. */
-        private static final long FAST_MS = 130L;
-        /** When the wheel last stepped; whether this stay at the end has had its click swallowed. */
-        private long selAt;
-        private boolean swallowed, postWrap;
+        /** When the wheel last stepped; a bounce against the end under way; a wrap just taken. */
+        private long selAt, endAt;
+        private boolean bouncing, postWrap;
         private static final float OMEGA = 30f;
         /** The spring's speed, px/s. */
         private float barV;
@@ -1490,7 +1496,7 @@ public final class IppFlowActivity extends BaseActivity {
             long now = SystemClock.uptimeMillis();
             long dt = frameAt == 0 ? 16 : Math.min(50, now - frameAt);
             frameAt = now;
-            if (barY != barT) {
+            if (barY != barT || barV != 0f) {
                 float e = barY - barT;
                 float cv = barV + OMEGA * e;
                 float t = dt / 1000f;
@@ -1504,8 +1510,11 @@ public final class IppFlowActivity extends BaseActivity {
                 }
             }
             scrollY = approach(scrollY, scrollT, dt, LIST_RATE, LIST_MIN, LIST_MAX);
-            boolean going = barY != barT || scrollY != scrollT;
-            if (!going) frameAt = 0;
+            boolean going = barY != barT || scrollY != scrollT || barV != 0f;
+            if (!going) {
+                frameAt = 0;
+                bouncing = false;
+            }
             return going;
         }
 
@@ -1666,7 +1675,8 @@ public final class IppFlowActivity extends BaseActivity {
                 if (top >= HEAD + rows * ROW) break;
                 boolean on = i == sel;
                 // the text takes the cursor's colour as far as the bar covers its row
-                float cover = (Math.min(barTop + ROW, top + ROW) - Math.max(barTop, top)) / ROW;
+                float cover = bouncing ? (on ? 1f : 0f)
+                        : (Math.min(barTop + ROW, top + ROW) - Math.max(barTop, top)) / ROW;
                 String s = names[i];
                 fitRow(i, w);
                 if (nums[i] == null) {

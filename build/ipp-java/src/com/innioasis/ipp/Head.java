@@ -25,14 +25,10 @@ public final class Head {
             if (w == null || w.isRecycled()) return;
             Drawable cur = bar.getBackground();
             Backdrop bd = new Backdrop(bar, w);
-            if (cur == null) {
-                bar.setBackgroundDrawable(bd);
-            } else {
-                Drawable[] layers = new Drawable[2];
-                layers[0] = bd;
-                layers[1] = cur;
-                bar.setBackgroundDrawable(new LayerDrawable(layers));
-            }
+            // on top: the travelling highlight where it crosses the plate
+            Drawable over = new Bar.PlatePart(bar);
+            Drawable[] layers = cur == null ? new Drawable[] {bd, over} : new Drawable[] {bd, cur, over};
+            bar.setBackgroundDrawable(new LayerDrawable(layers));
         } catch (Throwable t) {
         }
     }

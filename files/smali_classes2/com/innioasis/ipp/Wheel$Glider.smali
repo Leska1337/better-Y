@@ -43,16 +43,16 @@
 
 .method static constructor <clinit>()V
   .registers 2
-  .line 769
+  .line 771
     new-instance v0, Lcom/innioasis/ipp/Wheel$Glider;
     invoke-direct { v0 }, Lcom/innioasis/ipp/Wheel$Glider;-><init>()V
     sput-object v0, Lcom/innioasis/ipp/Wheel$Glider;->G:Lcom/innioasis/ipp/Wheel$Glider;
-  .line 770
+  .line 772
     new-instance v0, Ljava/lang/ref/WeakReference;
     const/4 v1, 0
     invoke-direct { v0, v1 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel$Glider;->view:Ljava/lang/ref/WeakReference;
-  .line 816
+  .line 818
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
     return-void
@@ -60,36 +60,36 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 759
+  .line 761
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
 
 .method static aim(IZ)V
   .registers 2
-  .line 820
-    sput p0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
-  .line 821
-    sput-boolean p1, Lcom/innioasis/ipp/Wheel$Glider;->aimDown:Z
   .line 822
+    sput p0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
+  .line 823
+    sput-boolean p1, Lcom/innioasis/ipp/Wheel$Glider;->aimDown:Z
+  .line 824
     return-void
 .end method
 
 .method private static atEnd(Landroidx/recyclerview/widget/RecyclerView;Z)Z
   .registers 7
-  .line 830
+  .line 832
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getAdapter()Landroidx/recyclerview/widget/RecyclerView$Adapter;
     move-result-object v0
-  .line 831
+  .line 833
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getChildCount()I
     move-result v1
-  .line 832
+  .line 834
     const/4 v2, 1
     if-eqz v0, :L8
     if-nez v1, :L0
     goto :L8
   :L0
-  .line 833
+  .line 835
     const/4 v3, 0
     if-eqz p1, :L1
     sub-int/2addr v1, v2
@@ -99,10 +99,10 @@
   :L2
     invoke-virtual { p0, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAt(I)Landroid/view/View;
     move-result-object v1
-  .line 834
+  .line 836
     invoke-virtual { p0, v1 }, Landroidx/recyclerview/widget/RecyclerView;->getChildAdapterPosition(Landroid/view/View;)I
     move-result v4
-  .line 835
+  .line 837
     if-eqz p1, :L5
     invoke-virtual { v0 }, Landroidx/recyclerview/widget/RecyclerView$Adapter;->getItemCount()I
     move-result p1
@@ -122,7 +122,7 @@
   :L4
     return v2
   :L5
-  .line 836
+  .line 838
     if-nez v4, :L6
     invoke-static { v1, v3 }, Lcom/innioasis/ipp/Wheel;->access$1300(Landroid/view/View;Z)I
     move-result p1
@@ -135,13 +135,13 @@
   :L7
     return v2
   :L8
-  .line 832
+  .line 834
     return v2
 .end method
 
 .method static left(Landroidx/recyclerview/widget/RecyclerView;)F
   .registers 2
-  .line 865
+  .line 867
     sget-boolean v0, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
     if-eqz v0, :L0
     sget-object v0, Lcom/innioasis/ipp/Wheel$Glider;->view:Ljava/lang/ref/WeakReference;
@@ -158,36 +158,36 @@
 
 .method private static measured()V
   .registers 5
-  .line 858
+  .line 860
     invoke-static { }, Landroid/os/Debug;->getThreadAllocSize()I
     move-result v0
     sget v1, Lcom/innioasis/ipp/Wheel$Glider;->alloc:I
     sub-int/2addr v0, v1
     div-int/lit16 v0, v0, 1024
-  .line 859
+  .line 861
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v1
     int-to-long v3, v0
     sub-long/2addr v1, v3
     const-string v0, "alloc KB"
     invoke-static { v0, v1, v2 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
-  .line 860
+  .line 862
     invoke-static { }, Lcom/innioasis/ipp/Frames;->stop()V
-  .line 861
+  .line 863
     return-void
 .end method
 
 .method private static reaim(Landroidx/recyclerview/widget/RecyclerView;)V
   .registers 4
-  .line 841
+  .line 843
     sget v0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
     if-gez v0, :L0
     return-void
   :L0
-  .line 842
+  .line 844
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->getLayoutManager()Landroidx/recyclerview/widget/RecyclerView$LayoutManager;
     move-result-object v0
-  .line 843
+  .line 845
     instance-of v1, v0, Landroidx/recyclerview/widget/LinearLayoutManager;
     if-eqz v1, :L1
     check-cast v0, Landroidx/recyclerview/widget/LinearLayoutManager;
@@ -198,11 +198,11 @@
   :L1
     const/4 v0, 0
   :L2
-  .line 844
+  .line 846
     if-nez v0, :L3
     return-void
   :L3
-  .line 845
+  .line 847
     sget-boolean v1, Lcom/innioasis/ipp/Wheel$Glider;->aimDown:Z
     const/4 v2, 0
     if-eqz v1, :L4
@@ -216,7 +216,7 @@
     sub-int/2addr v0, v1
     goto :L5
   :L4
-  .line 846
+  .line 848
     invoke-static { v0, v2 }, Lcom/innioasis/ipp/Wheel;->access$1300(Landroid/view/View;Z)I
     move-result v0
     sget v1, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
@@ -224,7 +224,7 @@
     move-result p0
     sub-int/2addr v0, p0
   :L5
-  .line 847
+  .line 849
     sget p0, Lcom/innioasis/ipp/Wheel$Glider;->easeMs:I
     if-lez p0, :L6
     sget p0, Lcom/innioasis/ipp/Wheel$Glider;->easeTotal:I
@@ -236,19 +236,19 @@
     add-int/2addr p0, v1
     sput p0, Lcom/innioasis/ipp/Wheel$Glider;->easeTotal:I
   :L6
-  .line 848
+  .line 850
     int-to-float p0, v0
     sput p0, Lcom/innioasis/ipp/Wheel$Glider;->left:F
-  .line 849
+  .line 851
     const/4 p0, -1
     sput p0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
-  .line 850
+  .line 852
     return-void
 .end method
 
 .method static stop()V
   .registers 3
-  .line 808
+  .line 810
     sget-boolean v0, Lcom/innioasis/ipp/Wheel;->DBG:Z
     const/4 v1, 0
     if-eqz v0, :L0
@@ -276,7 +276,7 @@
     move-result-object v0
     invoke-static { v0 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
   :L0
-  .line 809
+  .line 811
     sget-boolean v0, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
     if-eqz v0, :L1
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
@@ -284,62 +284,62 @@
     sget-object v2, Lcom/innioasis/ipp/Wheel$Glider;->G:Lcom/innioasis/ipp/Wheel$Glider;
     invoke-virtual { v0, v2 }, Landroid/view/Choreographer;->removeFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L1
-  .line 810
+  .line 812
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
-  .line 811
+  .line 813
     sput v1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
-  .line 812
+  .line 814
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
-  .line 813
+  .line 815
     return-void
 .end method
 
 .method static to(Landroidx/recyclerview/widget/RecyclerView;II)V
   .registers 7
-  .line 780
+  .line 782
     sget-object v0, Lcom/innioasis/ipp/Wheel$Glider;->view:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     if-eq v0, p0, :L0
-  .line 781
+  .line 783
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->stop()V
-  .line 782
+  .line 784
     new-instance v0, Ljava/lang/ref/WeakReference;
     invoke-direct { v0, p0 }, Ljava/lang/ref/WeakReference;-><init>(Ljava/lang/Object;)V
     sput-object v0, Lcom/innioasis/ipp/Wheel$Glider;->view:Ljava/lang/ref/WeakReference;
   :L0
-  .line 784
+  .line 786
     invoke-virtual { p0 }, Landroidx/recyclerview/widget/RecyclerView;->stopScroll()V
-  .line 785
+  .line 787
     sget-boolean v0, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
     if-nez v0, :L1
-  .line 786
+  .line 788
     const/4 v0, 0
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
-  .line 787
+  .line 789
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
   :L1
-  .line 789
+  .line 791
     int-to-float v0, p1
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->left:F
-  .line 790
+  .line 792
     const/4 v0, -1
     sput v0, Lcom/innioasis/ipp/Wheel$Glider;->aimPos:I
-  .line 791
-    sput p2, Lcom/innioasis/ipp/Wheel$Glider;->easeMs:I
-  .line 792
-    sput p1, Lcom/innioasis/ipp/Wheel$Glider;->easeTotal:I
   .line 793
+    sput p2, Lcom/innioasis/ipp/Wheel$Glider;->easeMs:I
+  .line 794
+    sput p1, Lcom/innioasis/ipp/Wheel$Glider;->easeTotal:I
+  .line 795
     const-wide/16 v0, 0
     sput-wide v0, Lcom/innioasis/ipp/Wheel$Glider;->easeAt:J
-  .line 794
+  .line 796
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$900()Z
     move-result p2
     const/4 v2, 1
     if-eqz p2, :L3
-  .line 795
+  .line 797
     new-instance p2, Ljava/lang/StringBuilder;
     invoke-direct { p2 }, Ljava/lang/StringBuilder;-><init>()V
     const-string v3, "glide wrap "
@@ -356,48 +356,48 @@
     invoke-virtual { p0 }, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
     move-result-object p0
     invoke-static { p0, v2 }, Lcom/innioasis/ipp/Frames;->start(Ljava/lang/String;Z)V
-  .line 796
+  .line 798
     sget-boolean p0, Lcom/innioasis/ipp/Wheel$Glider;->counting:Z
     if-nez p0, :L2
     invoke-static { }, Landroid/os/Debug;->startAllocCounting()V
   :L2
-  .line 797
+  .line 799
     sput-boolean v2, Lcom/innioasis/ipp/Wheel$Glider;->counting:Z
-  .line 798
+  .line 800
     invoke-static { }, Landroid/os/Debug;->getThreadAllocSize()I
     move-result p0
     sput p0, Lcom/innioasis/ipp/Wheel$Glider;->alloc:I
   :L3
-  .line 800
+  .line 802
     sget-boolean p0, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
     if-nez p0, :L4
     if-eqz p1, :L4
-  .line 801
-    sput-boolean v2, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
-  .line 802
-    sput-wide v0, Lcom/innioasis/ipp/Wheel$Glider;->last:J
   .line 803
+    sput-boolean v2, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
+  .line 804
+    sput-wide v0, Lcom/innioasis/ipp/Wheel$Glider;->last:J
+  .line 805
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object p0
     sget-object p1, Lcom/innioasis/ipp/Wheel$Glider;->G:Lcom/innioasis/ipp/Wheel$Glider;
     invoke-virtual { p0, p1 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
   :L4
-  .line 805
+  .line 807
     return-void
 .end method
 
 .method public doFrame(J)V
   .registers 14
-  .line 869
+  .line 871
     sget-object v0, Lcom/innioasis/ipp/Wheel$Glider;->view:Ljava/lang/ref/WeakReference;
     invoke-virtual { v0 }, Ljava/lang/ref/WeakReference;->get()Ljava/lang/Object;
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
-  .line 870
+  .line 872
     if-eqz v0, :L0
     invoke-static { v0 }, Lcom/innioasis/ipp/Wheel$Glider;->reaim(Landroidx/recyclerview/widget/RecyclerView;)V
   :L0
-  .line 871
+  .line 873
     const/4 v1, 0
     const/4 v2, 0
     if-eqz v0, :L22
@@ -409,10 +409,10 @@
     if-nez v3, :L1
     goto/16 :L22
   :L1
-  .line 877
+  .line 879
     const-wide/32 v3, 1000000
     div-long/2addr p1, v3
-  .line 878
+  .line 880
     sget-wide v3, Lcom/innioasis/ipp/Wheel$Glider;->last:J
     const-wide/16 v5, 0
     cmp-long v7, v3, v5
@@ -428,14 +428,14 @@
     invoke-static { v4, v3 }, Ljava/lang/Math;->min(FF)F
     move-result v3
   :L3
-  .line 879
-    sput-wide p1, Lcom/innioasis/ipp/Wheel$Glider;->last:J
   .line 881
+    sput-wide p1, Lcom/innioasis/ipp/Wheel$Glider;->last:J
+  .line 883
     sget v4, Lcom/innioasis/ipp/Wheel$Glider;->easeMs:I
     const/high16 v7, 0x41700000
     const/high16 v8, 0x3F800000
     if-lez v4, :L7
-  .line 882
+  .line 884
     sget-wide v9, Lcom/innioasis/ipp/Wheel$Glider;->easeAt:J
     cmp-long v3, v9, v5
     if-nez v3, :L4
@@ -443,7 +443,7 @@
     sub-long v5, p1, v5
     sput-wide v5, Lcom/innioasis/ipp/Wheel$Glider;->easeAt:J
   :L4
-  .line 883
+  .line 885
     sget-wide v5, Lcom/innioasis/ipp/Wheel$Glider;->easeAt:J
     sub-long/2addr p1, v5
     long-to-float p1, p1
@@ -451,9 +451,9 @@
     div-float/2addr p1, p2
     invoke-static { v8, p1 }, Ljava/lang/Math;->min(FF)F
     move-result p1
-  .line 884
+  .line 886
     sub-float p2, v8, p1
-  .line 885
+  .line 887
     cmpl-float p1, p1, v8
     if-ltz p1, :L5
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
@@ -461,7 +461,7 @@
     move-result p1
     goto :L6
   :L5
-  .line 886
+  .line 888
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->easeTotal:I
     int-to-float p1, p1
     mul-float v3, p2, p2
@@ -478,36 +478,36 @@
     move-result p2
     sub-int/2addr p1, p2
   :L6
-  .line 887
+  .line 889
     goto :L9
   :L7
-  .line 888
+  .line 890
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
     neg-float p1, p1
-  .line 889
+  .line 891
     sget p2, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
     const/high16 v4, 0x41B00000
     mul-float v5, p1, v4
     add-float/2addr p2, v5
-  .line 890
+  .line 892
     const/high16 v5, 0xC1B00000
     mul-float v5, v5, v3
     float-to-double v5, v5
     invoke-static { v5, v6 }, Ljava/lang/Math;->exp(D)D
     move-result-wide v5
     double-to-float v5, v5
-  .line 891
+  .line 893
     mul-float v6, p2, v3
     add-float/2addr v6, p1
     mul-float v6, v6, v5
-  .line 892
+  .line 894
     sget v9, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
     mul-float p2, p2, v4
     mul-float p2, p2, v3
     sub-float/2addr v9, p2
     mul-float v9, v9, v5
     sput v9, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
-  .line 893
+  .line 895
     invoke-static { v6 }, Ljava/lang/Math;->abs(F)F
     move-result p2
     const/high16 v3, 0x3F000000
@@ -518,36 +518,36 @@
     move-result p2
     cmpg-float p2, p2, v7
     if-gez p2, :L8
-  .line 894
+  .line 896
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
     invoke-static { p1 }, Ljava/lang/Math;->round(F)I
     move-result p1
-  .line 895
+  .line 897
     sput v2, Lcom/innioasis/ipp/Wheel$Glider;->vel:F
-  .line 896
+  .line 898
     sput v2, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
     goto :L9
   :L8
-  .line 898
+  .line 900
     sget p2, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
     sub-float/2addr v6, p1
     add-float/2addr p2, v6
     sput p2, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
-  .line 899
+  .line 901
     invoke-static { p2 }, Ljava/lang/Math;->round(F)I
     move-result p1
-  .line 900
+  .line 902
     sget p2, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
     int-to-float v3, p1
     sub-float/2addr p2, v3
     sput p2, Lcom/innioasis/ipp/Wheel$Glider;->frac:F
   :L9
-  .line 903
+  .line 905
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v3
-  .line 904
+  .line 906
     invoke-virtual { v0, v1, p1 }, Landroidx/recyclerview/widget/RecyclerView;->scrollBy(II)V
-  .line 905
+  .line 907
     invoke-static { }, Landroid/os/SystemClock;->uptimeMillis()J
     move-result-wide v5
     sub-long/2addr v5, v3
@@ -557,12 +557,12 @@
     const-string p2, "scroll"
     invoke-static { p2, v3, v4 }, Lcom/innioasis/ipp/Frames;->part(Ljava/lang/String;J)V
   :L10
-  .line 906
+  .line 908
     sget p2, Lcom/innioasis/ipp/Wheel$Glider;->left:F
     int-to-float p1, p1
     sub-float/2addr p2, p1
     sput p2, Lcom/innioasis/ipp/Wheel$Glider;->left:F
-  .line 907
+  .line 909
     sget-boolean p1, Lcom/innioasis/ipp/Wheel;->DBG:Z
     const/4 p2, 1
     if-eqz p1, :L13
@@ -601,7 +601,7 @@
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
   :L13
-  .line 908
+  .line 910
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
     invoke-static { p1 }, Ljava/lang/Math;->abs(F)F
     move-result p1
@@ -626,7 +626,7 @@
   :L17
     sput v2, Lcom/innioasis/ipp/Wheel$Glider;->left:F
   :L18
-  .line 909
+  .line 911
     sget-boolean p1, Lcom/innioasis/ipp/Wheel;->DBG:Z
     if-eqz p1, :L19
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
@@ -645,30 +645,32 @@
     move-result-object p1
     invoke-static { p1 }, Lcom/innioasis/ipp/Wheel;->dbg(Ljava/lang/String;)V
   :L19
-  .line 910
+  .line 912
     sget p1, Lcom/innioasis/ipp/Wheel$Glider;->left:F
     cmpl-float p1, p1, v2
     if-eqz p1, :L20
-  .line 911
+  .line 913
+    invoke-static { }, Lcom/innioasis/ipp/Loop;->animating()V
+  .line 914
     invoke-static { }, Landroid/view/Choreographer;->getInstance()Landroid/view/Choreographer;
     move-result-object p1
     invoke-virtual { p1, p0 }, Landroid/view/Choreographer;->postFrameCallback(Landroid/view/Choreographer$FrameCallback;)V
     goto :L21
   :L20
-  .line 913
+  .line 916
     sput-boolean v1, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
-  .line 914
+  .line 917
     invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->measured()V
   :L21
-  .line 916
+  .line 919
     return-void
   :L22
-  .line 872
-    sput-boolean v1, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
-  .line 873
-    sput v2, Lcom/innioasis/ipp/Wheel$Glider;->left:F
   .line 874
-    invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->measured()V
+    sput-boolean v1, Lcom/innioasis/ipp/Wheel$Glider;->running:Z
   .line 875
+    sput v2, Lcom/innioasis/ipp/Wheel$Glider;->left:F
+  .line 876
+    invoke-static { }, Lcom/innioasis/ipp/Wheel$Glider;->measured()V
+  .line 877
     return-void
 .end method

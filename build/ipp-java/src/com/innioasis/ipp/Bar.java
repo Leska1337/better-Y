@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.view.Choreographer;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,7 +28,7 @@ import com.innioasis.y1.theme.ThemeManager;
  * and the bar blinks. Only with "Enable animations"; off, the rows paint themselves as stock does.
  */
 public final class Bar extends RecyclerView.ItemDecoration
-        implements Choreographer.FrameCallback, RecyclerView.OnChildAttachStateChangeListener {
+        implements Choreographer.FrameCallback, RecyclerView.OnChildAttachStateChangeListener, Loop.Bumper {
 
     /**
      * What one screen's rows are made of, and the colours stock gives them. {@code bgs}: the views
@@ -239,6 +240,9 @@ public final class Bar extends RecyclerView.ItemDecoration
     private float y = Float.NaN;
     /** The spring's speed, px/s, and where it left the bar last frame. */
     private float vel, movedTo = Float.NaN;
+    /** A bounce against the list's end ({@link #bump}): the cursor's row stays lit, and wrapping does not wait for it. */
+    private boolean bouncing;
+    private float bounceGoal;
     /** A jump: the bar waits for the cursor's row to be laid out, then stands on it. */
     private boolean snap;
     private int lastPos = -1;
@@ -438,7 +442,10 @@ public final class Bar extends RecyclerView.ItemDecoration
         return y;
     }
 
-    /** A caption, a disc strip or a pinned divider between where the bar is and where it goes. */
+    /**
+     * A queue caption between where the bar is and where it goes: the bar jumps it. A disc strip
+     * or the pinned plate it slides across, as Cover Flow's track window does.
+     */
     private static boolean crosses(RecyclerView r, float from, float fromH, float to, float toH) {
         if (Math.abs(to - from) < 0.5f) return false;
         boolean down = to > from;
@@ -446,23 +453,11 @@ public final class Bar extends RecyclerView.ItemDecoration
         float gapBottom = down ? to : from;
         // outside the list: the queue's caption pinned between its playing row and the list
         if (gapTop < -1 && gapBottom >= 0) return true;
-        // a pinned plate over the list (SongRows)
-        int[] pl = SongRows.plateSpan(r);
-        if (pl != null && pl[0] >= gapTop - 1 && pl[1] <= gapBottom + 1) return true;
         for (int i = 0; i < r.getChildCount(); i++) {
             View v = r.getChildAt(i);
+            if (!caption(v)) continue;
             float t = v.getTop() + v.getTranslationY();
-            float dt, db;
-            if (caption(v)) {
-                dt = t;
-                db = t + v.getHeight();
-            } else {
-                int s = strip(v);
-                if (s == 0) continue;
-                dt = t;
-                db = t + s;
-            }
-            if (dt >= gapTop - 1 && db <= gapBottom + 1) return true;
+            if (t >= gapTop - 1 && t + v.getHeight() <= gapBottom + 1) return true;
         }
         return false;
     }
@@ -496,6 +491,12 @@ public final class Bar extends RecyclerView.ItemDecoration
                 ROWS.put(v, me);
                 blank(v);
             }
+        }
+        // the disc strip lets the bar through: its background is drawn under the rows (onDraw)
+        View st = row.findViewById(R.id.tv_disc_header);
+        if (st != null && st.getVisibility() == View.VISIBLE) {
+            ROWS.put(st, me);
+            blank(st);
         }
         View arrow = arrowOf(row);
         if (arrow != null && arrow.getVisibility() == View.VISIBLE) arrow.setVisibility(View.INVISIBLE);
@@ -706,6 +707,32 @@ public final class Bar extends RecyclerView.ItemDecoration
         }
     }
 
+    public void bump(int dir) {
+        RecyclerView r = (RecyclerView) rv.get();
+        if (r == null || !r.hasWindowFocus() || !live(r) || !onList(r) || snap || Float.isNaN(y)) return;
+        int h = height(r);
+        if (h <= 0) return;
+        bouncing = true;
+        bounceGoal = target(r, h);
+        // a bar placed rather than moved starts from rest (doFrame)
+        if (y != movedTo) {
+            vel = 0f;
+            movedTo = y;
+        }
+        vel += dir * Loop.BUMP_V;
+        start();
+    }
+
+    public int at() {
+        return cursor();
+    }
+
+    public int count() {
+        RecyclerView r = (RecyclerView) rv.get();
+        RecyclerView.Adapter a = r == null ? null : r.getAdapter();
+        return a == null ? 0 : a.getItemCount();
+    }
+
     private int cursor() {
         if (spec.byAdapter) {
             RecyclerView r = (RecyclerView) rv.get();
@@ -847,16 +874,14 @@ public final class Bar extends RecyclerView.ItemDecoration
      * The text colour. A bar at rest (at an edge, the rows jumping under it) gives the cursor's row
      * the selected colour at once; a sliding bar mixes each row's colour by the share of the row it
      * covers — one colour per row, so no edge runs through the text. Off the bar a row has the
-     * plain colour — the Equalizer's active preset its own, asked of {@link Eq} rather than
-     * remembered from a bind, which a list rebuilding in place does not always run where it can be
-     * seen.
+     * plain colour.
      */
     private void tint(View row, int h) {
         RecyclerView r = (RecyclerView) rv.get();
         if (h <= 0 || r == null || caption(row)) return;
         int pos = r.getChildLayoutPosition(row);
         Object a = activity.get();
-        int off = plain(a, pos);
+        int off = rowText;
         float f = cover(r, h, row, pos == cursor());
         // the cursor's own row is lit by the bar alone, ticked or not: it goes dark with the blink
         if (pos != cursor() && ticked(r, pos)) f = 1f;
@@ -872,10 +897,120 @@ public final class Bar extends RecyclerView.ItemDecoration
             }
         }
         if (changed) followText(row, a, want);
+        int st = strip(row);
+        if (st > 0) {
+            float top = row.getTop() + row.getTranslationY();
+            stripText(row.findViewById(R.id.tv_disc_header), share(r, h, top, top + st));
+        }
     }
 
-    private int plain(Object a, int pos) {
-        return a instanceof com.innioasis.y1.activity.EqActivity ? Eq.rowColor(pos, rowText) : rowText;
+    /** A disc label's colour by the share of it the bar covers: its own colour, the bar's text. */
+    private void stripText(View v, float f) {
+        int off = Disc.stripColor();
+        if (!(v instanceof TextView) || off == 0) return;
+        int want = f >= 1f ? selText : f <= 0f ? off : mix(off, selText, f);
+        if (((TextView) v).getCurrentTextColor() != want) ((TextView) v).setTextColor(want);
+    }
+
+    /** The share of the span {@code top..bottom} (list coordinates) the drawn bar covers. */
+    private float share(RecyclerView r, int h, float top, float bottom) {
+        if (snap || Float.isNaN(y) || !onList(r) || dark() || bottom <= top) return 0f;
+        float bt = Math.round(y);
+        float bb = bt + Math.round(Float.isNaN(hb) ? h : hb);
+        float o = Math.min(bb, bottom) - Math.max(bt, top);
+        return o <= 0 ? 0f : Math.min(1f, o / (bottom - top));
+    }
+
+    // ---- the pinned disc plate --------------------------------------------------------------
+
+    /** The plate beside the list, shown, or null. */
+    private static View plate(RecyclerView r) {
+        Object p = r.getParent();
+        View v = p instanceof View ? ((View) p).findViewById(R.id.ipp_disc_bar) : null;
+        return v == null || v.getParent() != p || v.getVisibility() != View.VISIBLE ? null : v;
+    }
+
+    /** The plate's top in the list's coordinates. */
+    private static float plateTop(RecyclerView r, View plate) {
+        return plate.getTop() + plate.getTranslationY() - r.getTop();
+    }
+
+    private float plateShare = -1f;
+
+    /** From the Tinter: the plate's label coloured like a row's, and its bar part repainted. */
+    private void tintPlate(RecyclerView r, int h) {
+        View p = plate(r);
+        if (p == null) return;
+        float t = plateTop(r, p);
+        float f = share(r, h, t, t + p.getHeight());
+        stripText(p, f);
+        if (f != plateShare || f > 0f) p.invalidate();
+        plateShare = f;
+    }
+
+    /** Over the plate's background: the share of the bar that passes under it. */
+    private void drawOnPlate(Canvas c, View plate) {
+        RecyclerView r = (RecyclerView) rv.get();
+        if (r == null || r.getChildCount() == 0 || !live(r) || dark() || snap || Float.isNaN(y)) return;
+        if (!onList(r)) return;
+        Drawable sel = selProbe.getBackground();
+        if (sel == null) return;
+        int h = height(r);
+        float pt = plateTop(r, plate);
+        int bt = Math.round(y);
+        int hh = Math.round(Float.isNaN(hb) ? h : hb);
+        float ot = Math.max(bt, pt), ob = Math.min(bt + hh, pt + plate.getHeight());
+        if (ob <= ot) return;
+        View any = r.getChildAt(0);
+        int dx = plate.getLeft() - r.getLeft();
+        int dy = Math.round(pt);
+        c.save();
+        c.clipRect(0, ot - dy, plate.getWidth(), ob - dy);
+        sel.setBounds(any.getLeft() - dx, bt - dy, any.getRight() - dx, bt - dy + hh);
+        sel.draw(c);
+        // the cursor's arrow too: the plate covers the one the list draws
+        c.translate(-dx, -dy);
+        drawArrow(c, r, bt, hh);
+        c.restore();
+    }
+
+    /** The bar of the list beside {@code plate}, or null. */
+    private static Bar ofPlate(View plate) {
+        ViewParent p = plate.getParent();
+        java.util.Iterator it = BARS.entrySet().iterator();
+        while (it.hasNext()) {
+            java.util.Map.Entry e = (java.util.Map.Entry) it.next();
+            Object k = e.getKey();
+            if (k instanceof View && ((View) k).getParent() == p) return (Bar) e.getValue();
+        }
+        return null;
+    }
+
+    /** The top layer of the plate's background ({@code Head.backdrop}): the bar crossing it. */
+    static final class PlatePart extends Drawable {
+        private final View host;
+
+        PlatePart(View host) {
+            this.host = host;
+        }
+
+        public void draw(Canvas c) {
+            try {
+                Bar b = ofPlate(host);
+                if (b != null) b.drawOnPlate(c, host);
+            } catch (Throwable t) {
+            }
+        }
+
+        public void setAlpha(int a) {
+        }
+
+        public void setColorFilter(android.graphics.ColorFilter f) {
+        }
+
+        public int getOpacity() {
+            return android.graphics.PixelFormat.TRANSLUCENT;
+        }
     }
 
     private static int mix(int a, int b, float f) {
@@ -893,7 +1028,7 @@ public final class Bar extends RecyclerView.ItemDecoration
      */
     private float cover(RecyclerView r, int h, View row, boolean isCursor) {
         if (snap || Float.isNaN(y) || !onList(r) || dark()) return 0f;
-        if (Math.abs(target(r, h) - y) < 0.5f) return isCursor ? 1f : 0f;
+        if (bouncing || Math.abs(target(r, h) - y) < 0.5f) return isCursor ? 1f : 0f;
         int bt = Math.round(y);
         int bb = bt + Math.round(Float.isNaN(hb) ? h : hb);
         float top = row.getTop() + row.getTranslationY() + strip(row);
@@ -1116,6 +1251,7 @@ public final class Bar extends RecyclerView.ItemDecoration
                 if (b.onList(r)) b.settle(r, h);
                 b.follow(r, h);
                 for (int i = 0; i < r.getChildCount(); i++) b.tint(r.getChildAt(i), h);
+                b.tintPlate(r, h);
                 if (b.head.get() != null) {
                     b.dressHead();
                     b.tintHead(r, h);
@@ -1148,12 +1284,20 @@ public final class Bar extends RecyclerView.ItemDecoration
                 int t = Math.round(v.getTop() + v.getTranslationY());
                 d.setBounds(v.getLeft(), t, v.getRight(), t + v.getHeight());
                 d.draw(c);
+                // the disc strip's own background, which it no longer draws itself (clean)
+                int st = d == rowBg ? strip(v) : 0;
+                if (st > 0) {
+                    d.setBounds(v.getLeft(), t, v.getRight(), t + st);
+                    d.draw(c);
+                }
             }
             if (!onList(r)) {
                 // off the list: the bar comes back standing on the row, not flying in
                 y = Float.NaN;
                 return;
             }
+            // the highlight on screen: a click swallowed at the end bounces it (Loop)
+            if (r.hasWindowFocus()) Loop.bumper(this);
             int h = height(r);
             boolean laid = settle(r, h);
             float goal = target(r, h);
@@ -1183,8 +1327,9 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     /**
      * The cursor row's own arrow, drawn on the bar: the theme's arrow may carry the bar's colour.
-     * Placed below the disc strip, as the bar is, and scaled from its right edge with the bar's
-     * height, so between rows of different heights it never sticks out of the bar.
+     * Placed below the disc strip, as the bar is. An arrow as tall as its row is drawn at the bar's
+     * height, its width from the picture's proportions — not the view's, which a row with a disc
+     * strip measures differently. Any other is drawn as laid out, clipped to the bar.
      */
     private void drawArrow(Canvas c, RecyclerView r, int top, int hh) {
         View row = cursorRow(r);
@@ -1202,12 +1347,20 @@ public final class Bar extends RecyclerView.ItemDecoration
         }
         int st = strip(row);
         int body = row.getHeight() - st;
-        float k = body > 0 && hh > 0 ? (float) hh / body : 1f;
-        int w = arrow.getWidth();
+        int right = row.getLeft() + dx + arrow.getWidth();
+        Drawable d = arrow instanceof ImageView ? ((ImageView) arrow).getDrawable() : null;
+        if (d != null && hh > 0 && arrow.getHeight() >= body - 1
+                && d.getIntrinsicWidth() > 0 && d.getIntrinsicHeight() > 0) {
+            int w = Math.round((float) d.getIntrinsicWidth() * hh / d.getIntrinsicHeight());
+            android.graphics.Rect was = d.copyBounds();
+            d.setBounds(right - w, top, right, top + hh);
+            d.draw(c);
+            d.setBounds(was);
+            return;
+        }
         c.save();
-        c.translate(row.getLeft() + dx + w, top);
-        if (k != 1f) c.scale(k, k);
-        c.translate(-w, dy - st);
+        c.clipRect(row.getLeft(), top, row.getRight(), top + hh);
+        c.translate(row.getLeft() + dx, top + dy - st);
         arrow.draw(c);
         c.restore();
     }
@@ -1238,6 +1391,8 @@ public final class Bar extends RecyclerView.ItemDecoration
         int h = height(r);
         if (!snap && settle(r, h)) {
             float goal = target(r, h);
+            // a new step during a bounce is a step again
+            if (bouncing && Math.abs(goal - bounceGoal) >= 0.5f) bouncing = false;
             // a divider between the two rows (the bar would pass under it), or the screen just opened
             if (!Float.isNaN(hb) && (opening() || crosses(r, y, hb, goal, h))) {
                 y = goal;
@@ -1266,10 +1421,13 @@ public final class Bar extends RecyclerView.ItemDecoration
         // the input line draws its share of the bar in the same frame
         View hv = head();
         if (hv != null) hv.invalidate();
-        if (snap || y != target(r, h) || hb != h) {
+        if (snap || y != target(r, h) || hb != h || vel != 0f) {
+            // going round waits for this (Loop.swallow), a bounce included
+            Loop.animating();
             Choreographer.getInstance().postFrameCallback(this);
         } else {
             running = false;
+            bouncing = false;
         }
     }
 }

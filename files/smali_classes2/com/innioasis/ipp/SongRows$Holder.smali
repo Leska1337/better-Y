@@ -14,12 +14,12 @@
 
 .method constructor <init>(Lcom/innioasis/y1/databinding/ItemSonglistBinding;)V
   .registers 3
-  .line 631
+  .line 643
     invoke-virtual { p1 }, Lcom/innioasis/y1/databinding/ItemSonglistBinding;->getRoot()Landroidx/constraintlayout/widget/ConstraintLayout;
     move-result-object v0
     invoke-direct { p0, v0 }, Landroidx/recyclerview/widget/RecyclerView$ViewHolder;-><init>(Landroid/view/View;)V
-  .line 632
+  .line 644
     iput-object p1, p0, Lcom/innioasis/ipp/SongRows$Holder;->b:Lcom/innioasis/y1/databinding/ItemSonglistBinding;
-  .line 633
+  .line 645
     return-void
 .end method

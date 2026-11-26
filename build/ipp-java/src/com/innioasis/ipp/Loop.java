@@ -42,17 +42,21 @@ public final class Loop {
     }
 
     /**
-     * May the cursor go round? True also records the wrap for {@link #takeWrap}. Under a fast
-     * wheel (animations on) the first click past the end is swallowed and the next one goes round;
-     * a slow wheel goes round at once.
+     * May the cursor go round? True also records the wrap for {@link #takeWrap}. With animations
+     * on, only once the end has come to rest: a click past it while the step there still moves is
+     * swallowed, and the highlight bounces against the end ({@link #swallow}).
      */
     public static boolean wrap() {
-        if (!on()) return false;
+        if (!on()) {
+            edge();
+            return false;
+        }
         if (swallow()) return false;
         wrapped = true;
         wraps++;
         postWrap = true;
         wrappedAt = android.os.SystemClock.uptimeMillis();
+        wrapTime = wrappedAt;
         return true;
     }
 
@@ -61,46 +65,117 @@ public final class Loop {
     /** Every wrap counted, for whoever must tell a move round the end from an ordinary one later on. */
     static int wraps;
 
-    /** Clicks closer than this are a fast wheel. */
-    private static final long FAST_MS = 130L;
-    /** This stay at the end has had its click swallowed; a step off the end clears it. */
+    /** The last click's answer, and when: asked again within SAME_CLICK_MS it is the same click. */
     private static boolean swallowed;
     private static long swallowAt;
     /** Asked again within this, it is the same click (a screen that asks twice per step). */
     private static final long SAME_CLICK_MS = 25L;
 
-    /** True = the click past the end is lost: the first one under a fast wheel. */
+    /** True = the click past the end is lost: the step to the end still moves on screen. */
     static boolean swallow() {
         long now = android.os.SystemClock.uptimeMillis();
         if (swallowed && now - swallowAt < SAME_CLICK_MS) return true;
-        if (!Anim.on() || swallowed || now - Wheel.stepAt >= FAST_MS) {
+        boolean rest = settled(now);
+        clickAt = now;
+        if (!Anim.on() || rest) {
             swallowed = false;
             return false;
         }
         swallowed = true;
         swallowAt = now;
+        bump();
         return true;
     }
 
-    /** A wrap just taken: the next click, if the wheel is still fast, is lost too. */
+    // ---- the end at rest, and the bounce against it -----------------------------------------
+
+    /** The last frame of a highlight or rows moving to a step (not a bounce), and the last step. */
+    private static long animAt, movedAt;
+    /** Longer than a frame (27 ms): no frame since means the motion is over. */
+    private static final long SETTLE_MS = 40L;
+
+    /** From each animation's frame while it moves to a step: Bar, the grid's frame, Glider. */
+    public static void animating() {
+        animAt = android.os.SystemClock.uptimeMillis();
+    }
+
+    /**
+     * The wheel has stood still this long before the click that goes round: a turning wheel,
+     * however slow, stays against the end. Clicks against it count, swallowed or not.
+     */
+    public static final long STOP_MS = 300L;
+    /** The last click at the end, swallowed or let round. */
+    private static long clickAt;
+
+    private static boolean settled(long now) {
+        return now - animAt > SETTLE_MS && now - Math.max(movedAt, clickAt) > STOP_MS;
+    }
+
+    /** What shows a swallowed click: the highlight drawn last pushes past the end and springs back. */
+    public interface Bumper {
+        /** {@code dir} +1 past the last row, -1 past the first. */
+        void bump(int dir);
+
+        /** Where the cursor stands, and of how many. */
+        int at();
+
+        int count();
+    }
+
+    private static java.lang.ref.WeakReference bumper;
+
+    /** From a highlight's draw: it is the one on screen. */
+    public static void bumper(Bumper b) {
+        if (bumper == null || bumper.get() != b) bumper = new java.lang.ref.WeakReference(b);
+    }
+
+    private static long edgeAt;
+
+    /** A click against an end with going round off: the bounce alone, once per click. */
+    private static void edge() {
+        if (!Anim.on()) return;
+        long now = android.os.SystemClock.uptimeMillis();
+        if (now - edgeAt < SAME_CLICK_MS) return;
+        edgeAt = now;
+        bump();
+    }
+
+    private static void bump() {
+        Bumper b = bumper == null ? null : (Bumper) bumper.get();
+        if (b == null) return;
+        int n = b.count();
+        if (n > 0) b.bump(b.at() < n / 2 ? -1 : 1);
+    }
+
+    /** A bounce's speed, px/s: on the lists' spring (OMEGA 30) it peaks about 3 px out. */
+    public static final float BUMP_V = 240f;
+
+    /** A wrap just taken, and when: the cursor stands still for {@link #PAUSE_MS} after it. */
     private static boolean postWrap;
+    private static long wrapTime;
+
+    /** The stop at the other end after a wrap (animations on); clicks inside it are lost. */
+    public static final long PAUSE_MS = 100L;
 
     /** The main menu went round by its own code. */
     static void noteWrap() {
         wraps++;
         postWrap = true;
+        wrapTime = android.os.SystemClock.uptimeMillis();
     }
 
-    /** Top of a wheel click: true = the first click after a wrap under a fast wheel, lost. */
+    /** Top of a wheel click: true = still within the stop after a wrap, the click is lost. */
     static boolean afterWrap() {
         if (!postWrap) return false;
+        if (Anim.on() && android.os.SystemClock.uptimeMillis() - wrapTime < PAUSE_MS) return true;
         postWrap = false;
-        return Anim.on() && android.os.SystemClock.uptimeMillis() - Wheel.stepAt < FAST_MS;
+        return false;
     }
 
-    /** A cursor moved by the wheel ({@code Wheel.follow}) off the row it stood on. */
+    /** A cursor moved by the wheel off the row it stood on: going round waits for it to rest. */
     static void moved() {
         swallowed = false;
+        movedAt = android.os.SystemClock.uptimeMillis();
     }
 
     /** For {@code Wheel.follow}, once: the step it repaints went round, within this key event. */
@@ -141,10 +216,14 @@ public final class Loop {
      */
     public static void mark(BaseActivity a, int dir) {
         try {
-            if (a == null || !on()) return;
+            if (a == null) return;
             int n = count(a);
             if (n <= 1) return;
             int m = a.getMark();
+            if (!on()) {
+                if (dir > 0 ? m >= n - 1 : m <= 0) edge();
+                return;
+            }
             // not round while the rows still glide to this end under a travelling bar
             if (Bar.holds(firstList(a.getVb().getRoot()), dir)) return;
             if (dir > 0 && m >= n - 1 && wrap()) a.setMark(-1);
@@ -212,7 +291,10 @@ public final class Loop {
 
     /** From {@code Wheel.rows} after a step clamped at {@code old}. True when the cursor went round. */
     static boolean list(View lv, MyBaseAdapter a, int type, int old) {
-        if (!on()) return false;
+        if (!on()) {
+            edge();
+            return false;
+        }
         int n = a.getCount();
         if (n <= 0) return false;
         ShufflePlaylistItemView spv = Lv.shuffle(lv);

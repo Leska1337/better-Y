@@ -13,7 +13,7 @@
 
 .method constructor <init>()V
   .registers 1
-  .line 621
+  .line 623
     invoke-direct { p0 }, Ljava/lang/Object;-><init>()V
     return-void
 .end method
@@ -21,7 +21,7 @@
 .method public run()V
   .catchall { :L2 .. :L4 } :L5
   .registers 5
-  .line 623
+  .line 625
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$800()Ljava/lang/ref/WeakReference;
     move-result-object v0
     const/4 v1, 0
@@ -35,12 +35,12 @@
     move-result-object v0
     check-cast v0, Landroidx/recyclerview/widget/RecyclerView;
   :L1
-  .line 624
+  .line 626
     invoke-static { v1 }, Lcom/innioasis/ipp/Wheel;->access$802(Ljava/lang/ref/WeakReference;)Ljava/lang/ref/WeakReference;
-  .line 625
+  .line 627
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$900()Z
     move-result v1
-  .line 627
+  .line 629
     const/4 v2, 0
     if-eqz v0, :L7
   :L2
@@ -52,40 +52,40 @@
     if-nez v3, :L3
     goto :L7
   :L3
-  .line 628
+  .line 630
     invoke-static { }, Lcom/innioasis/ipp/Wheel;->access$1000()Z
     move-result v3
     invoke-static { v3 }, Lcom/innioasis/ipp/Wheel;->access$902(Z)Z
-  .line 630
+  .line 632
     const/4 v3, 1
     invoke-static { v3 }, Lcom/innioasis/ipp/Wheel;->access$1102(Z)Z
-  .line 631
+  .line 633
     invoke-static { v0 }, Lcom/innioasis/ipp/PlGrid;->cursorAt(Landroidx/recyclerview/widget/RecyclerView;)I
     move-result v3
     invoke-static { v0, v3 }, Lcom/innioasis/ipp/Wheel;->access$1200(Landroidx/recyclerview/widget/RecyclerView;I)V
   :L4
     goto :L6
   :L5
-  .line 632
+  .line 634
     move-exception v0
   :L6
-  .line 634
-    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1102(Z)Z
-  .line 635
-    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1002(Z)Z
   .line 636
-    invoke-static { v1 }, Lcom/innioasis/ipp/Wheel;->access$902(Z)Z
+    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1102(Z)Z
   .line 637
-    nop
+    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1002(Z)Z
   .line 638
+    invoke-static { v1 }, Lcom/innioasis/ipp/Wheel;->access$902(Z)Z
+  .line 639
+    nop
+  .line 640
     return-void
   :L7
-  .line 634
-    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1102(Z)Z
-  .line 635
-    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1002(Z)Z
   .line 636
+    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1102(Z)Z
+  .line 637
+    invoke-static { v2 }, Lcom/innioasis/ipp/Wheel;->access$1002(Z)Z
+  .line 638
     invoke-static { v1 }, Lcom/innioasis/ipp/Wheel;->access$902(Z)Z
-  .line 627
+  .line 629
     return-void
 .end method
