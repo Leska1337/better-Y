@@ -52,7 +52,8 @@ public final class PickDialog extends BaseDialog {
     private TextView[] labels;
     private TextView[] values;
     private ImageView[] ticks;
-    private int sel;
+    /** The cursor over the rows and, past them, the button. */
+    private Column col;
 
     private int okRow;
 
@@ -106,7 +107,6 @@ public final class PickDialog extends BaseDialog {
             size[i] = -1L;
         }
         okRow = n + 1;
-        sel = 0;
 
         rows = new View[n + 2];
         labels = new TextView[n + 2];
@@ -132,12 +132,21 @@ public final class PickDialog extends BaseDialog {
                 activity.getResources().getColor(R.color.white), false);
         box.addView(head, -1, -2);
 
-        box.addView(row(0, activity.getString(R.string.ipp_pick_all)), -1, -2);
+        row(0, activity.getString(R.string.ipp_pick_all));
         for (int i = 0; i < n; i++) {
             String name = names != null && i < names.length ? names[i]
                     : activity.getString(Pick.label(cats[i]));
-            box.addView(row(i + 1, name), -1, -2);
+            row(i + 1, name);
         }
+        View[] list = new View[okRow];
+        System.arraycopy(rows, 0, list, 0, okRow);
+        col = new Column(activity, list, new Look(this));
+        LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(-1, 0);
+        cp.weight = 1.0f;
+        box.addView(col.list(), cp);
+        col.bar(activity, true, R.drawable.item_selected_submenu,
+                activity.getResources().getColor(R.color.selected_text_color_submenu),
+                activity.getResources().getColor(R.color.white));
 
         LinearLayout buttons = new LinearLayout(activity);
         buttons.setOrientation(LinearLayout.HORIZONTAL);
@@ -156,7 +165,8 @@ public final class PickDialog extends BaseDialog {
             w.setAttributes(lp);
         }
 
-        paintAll();
+        col.set(0);
+        paint(okRow);
         // A theme's row bitmap lands asynchronously on the view that asked, possibly after the row
         // was cleared again, leaving stray highlights. Repainting once it is cached settles it.
         Rows.watchFlat(new Repaint(this));
@@ -192,8 +202,17 @@ public final class PickDialog extends BaseDialog {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
     }
 
+    static final class Look extends Column.Painter {
+        private final PickDialog d;
+
+        Look(PickDialog d) { this.d = d; }
+
+        public void paint(int row) { d.paint(row); }
+    }
+
     private View row(int i, String label) {
         LinearLayout r = new LinearLayout(activity);
+        r.setLayoutParams(new android.view.ViewGroup.LayoutParams(-1, -2));
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setGravity(Gravity.CENTER_VERTICAL);
         r.setPadding(5, 3, 5, 3);
@@ -203,6 +222,7 @@ public final class PickDialog extends BaseDialog {
         t.setImageBitmap(box(false));
         if (i == 0) t.setVisibility(View.INVISIBLE);   // "Select all" is an action: no box, same indent
         t.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        t.setTag(Bar.TICK);
         LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(16, 16);
         tp.rightMargin = 6;
         r.addView(t, tp);
@@ -211,6 +231,7 @@ public final class PickDialog extends BaseDialog {
         l.setTextSize(14.0f);
         l.setTypeface(font());
         l.setMaxLines(3);
+        l.setId(Column.TITLE);
         l.setText(label);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2);
         lp.weight = 1.0f;
@@ -221,6 +242,7 @@ public final class PickDialog extends BaseDialog {
         v.setTypeface(font());
         v.setGravity(Gravity.END);
         v.setPadding(4, 0, 2, 0);
+        v.setId(Column.TEXT);
         r.addView(v, -2, -2);
 
         rows[i] = r;
@@ -245,12 +267,13 @@ public final class PickDialog extends BaseDialog {
     }
 
     private void paintAll() {
-        for (int i = 0; i < rows.length; i++) paint(i);
+        col.paintAll();
+        paint(okRow);
     }
 
     private void paint(int i) {
         if (rows[i] == null) return;
-        boolean focus = (i == sel);
+        boolean focus = i == col.sel();
         int fg = activity.getResources().getColor(focus
                 ? R.color.selected_text_color_submenu : R.color.white);
 
@@ -267,14 +290,16 @@ public final class PickDialog extends BaseDialog {
         // Cleared FIRST and the highlight guaranteed AFTER: while the theme bitmap is loading
         // ThemeManager leaves the view untouched, and a row losing the highlight would keep it.
         // 0 for an unfocused row, as SubmenuAdapter does — with no theme the resource is applied.
-        rows[i].setBackgroundDrawable(null);
-        ThemeManager.INSTANCE.menuItemSetBackground(rows[i],
-                focus ? R.drawable.item_selected_submenu : 0, focus);
-        if (focus && rows[i].getBackground() == null) {
-            rows[i].setBackgroundResource(R.drawable.item_selected_submenu);
+        if (!col.barred()) {
+            rows[i].setBackgroundDrawable(null);
+            ThemeManager.INSTANCE.menuItemSetBackground(rows[i],
+                    focus ? R.drawable.item_selected_submenu : 0, focus);
+            if (focus && rows[i].getBackground() == null) {
+                rows[i].setBackgroundResource(R.drawable.item_selected_submenu);
+            }
+            // A theme's 640x91 highlight bitmap would set the row's height.
+            Rows.noSize(rows[i]);
         }
-        // A theme's 640x91 highlight bitmap would set the row's height.
-        Rows.noSize(rows[i]);
         ThemeManager.INSTANCE.menuItemSetTextColor(labels[i], fg, focus);
         ThemeManager.INSTANCE.menuItemSetTextColor(values[i], fg, focus);
         // The colour the label ACTUALLY got: under a theme fg is ignored.
@@ -348,16 +373,15 @@ public final class PickDialog extends BaseDialog {
     }
 
     private void move(int dir) {
-        int old = sel;
-        int next = Loop.step(sel, dir, rows.length);
-        if (next == sel) return;
-        sel = next;
-        paint(old);
-        paint(sel);
+        int old = col.sel();
+        int next = Loop.step(old, dir, rows.length);
+        if (next == old) return;
+        col.move(next);
+        if (old == okRow || next == okRow) paint(okRow);
     }
 
     private void enter() {
-        if (sel == okRow) {
+        if (col.sel() == okRow) {
             int mask = 0;
             for (int i = 0; i < cats.length; i++) {
                 if (on[i + 1]) mask |= cats[i];
@@ -366,7 +390,7 @@ public final class PickDialog extends BaseDialog {
             if (go != null && (none || mask != 0)) go.go(mask);
             return;
         }
-        toggle(sel);
+        toggle(col.sel());
     }
 
     private boolean allOn() {

@@ -37,6 +37,7 @@ public final class DateTime {
                     arrow.setVisibility(View.GONE);
                 }
             }
+            RowBar.dateTime(a, pos);
         } catch (Throwable t) {
         }
     }

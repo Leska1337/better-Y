@@ -146,74 +146,74 @@
     return-void
 .end method
 
-.method static synthetic access$000(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
+.method static synthetic access$100(Lcom/innioasis/y1/activity/IppFlowActivity;)Landroid/os/Handler;
   .registers 1
   .line 72
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->ui:Landroid/os/Handler;
     return-object p0
 .end method
 
-.method static synthetic access$100(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/Flow$Loader;
+.method static synthetic access$1000(Lcom/innioasis/y1/activity/IppFlowActivity;)V
+  .registers 1
+  .line 72
+    invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->armAhead()V
+    return-void
+.end method
+
+.method static synthetic access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/Flow$Loader;
   .registers 1
   .line 72
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->loader:Lcom/innioasis/ipp/Flow$Loader;
     return-object p0
 .end method
 
-.method static synthetic access$200(Lcom/innioasis/y1/activity/IppFlowActivity;)Ljava/util/List;
+.method static synthetic access$300(Lcom/innioasis/y1/activity/IppFlowActivity;)Ljava/util/List;
   .registers 1
   .line 72
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->items:Ljava/util/List;
     return-object p0
 .end method
 
-.method static synthetic access$300(Lcom/innioasis/y1/activity/IppFlowActivity;)I
+.method static synthetic access$400(Lcom/innioasis/y1/activity/IppFlowActivity;)I
   .registers 1
   .line 72
     iget p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->state:I
     return p0
 .end method
 
-.method static synthetic access$400(Lcom/innioasis/y1/activity/IppFlowActivity;)V
+.method static synthetic access$500(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 1
   .line 72
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->flipOver()V
     return-void
 .end method
 
-.method static synthetic access$500(Lcom/innioasis/y1/activity/IppFlowActivity;)V
+.method static synthetic access$600(Lcom/innioasis/y1/activity/IppFlowActivity;)V
   .registers 1
   .line 72
     invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->armBack()V
     return-void
 .end method
 
-.method static synthetic access$600(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/FlowView;
+.method static synthetic access$700(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/ipp/FlowView;
   .registers 1
   .line 72
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flow:Lcom/innioasis/ipp/FlowView;
     return-object p0
 .end method
 
-.method static synthetic access$700(Lcom/innioasis/y1/activity/IppFlowActivity;)I
+.method static synthetic access$800(Lcom/innioasis/y1/activity/IppFlowActivity;)I
   .registers 1
   .line 72
     iget p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->flipped:I
     return p0
 .end method
 
-.method static synthetic access$800(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
+.method static synthetic access$900(Lcom/innioasis/y1/activity/IppFlowActivity;)Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
   .registers 1
   .line 72
     iget-object p0, p0, Lcom/innioasis/y1/activity/IppFlowActivity;->panel:Lcom/innioasis/y1/activity/IppFlowActivity$Panel;
     return-object p0
-.end method
-
-.method static synthetic access$900(Lcom/innioasis/y1/activity/IppFlowActivity;)V
-  .registers 1
-  .line 72
-    invoke-direct { p0 }, Lcom/innioasis/y1/activity/IppFlowActivity;->armAhead()V
-    return-void
 .end method
 
 .method private addTo(Ljava/util/List;Lcom/innioasis/y1/database/Playlist;)V
@@ -1318,15 +1318,15 @@
 
 .method static tidy()V
   .registers 1
-  .line 1926
+  .line 1938
     const/4 v0, 1
     sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
-  .line 1927
+  .line 1939
     invoke-static { }, Ljava/lang/System;->gc()V
-  .line 1928
+  .line 1940
     const/4 v0, 0
     sput-boolean v0, Lcom/innioasis/ipp/FlowView;->busyGc:Z
-  .line 1929
+  .line 1941
     return-void
 .end method
 

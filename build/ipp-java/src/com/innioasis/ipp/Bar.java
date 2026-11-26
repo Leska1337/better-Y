@@ -44,8 +44,12 @@ public final class Bar extends RecyclerView.ItemDecoration
         boolean byAdapter;
         /** Subtracted from the screen's mark: the mark of the list's first row (E-book's Library). */
         int markBase;
+        /** A list above this one on the same marks: its rows are subtracted too (Bluetooth). */
+        int markList;
         /** A row ABOVE the list that the cursor stands on as position -1 (Search's input line). */
         int head;
+        /** The row stands BELOW the list, the cursor on it is the list's count (the import's button). */
+        boolean headBelow;
         /** That row's own look when no bar stands on it: its highlight, its plain text (0 = the rows'). */
         int headSel = R.drawable.item_selected;
         int headColor;
@@ -207,8 +211,27 @@ public final class Bar extends RecyclerView.ItemDecoration
                     new int[] {R.id.title, R.id.text, R.id.tv_item}, R.id.arrow);
             return new Spec[] {cats, rows};
         }
+        if (a instanceof com.innioasis.y1.activity.BluetoothActivity) {
+            // the On/Off line is mark 0, the paired devices follow, the found ones after them;
+            // across the headings between the parts the bar jumps
+            Spec mine = blue(a, R.id.recycler_my_device);
+            // the On/Off line is the first list's position -1: the bar stands and bounces there
+            mine.head = R.id.layout_title;
+            mine.headSel = R.drawable.item_selected_no_arrow;
+            Spec other = blue(a, R.id.recycler_other_device);
+            other.markList = R.id.recycler_my_device;
+            return new Spec[] {mine, other};
+        }
         Spec s = spec(a);
         return s == null ? new Spec[0] : new Spec[] {s};
+    }
+
+    private static Spec blue(BaseActivity a, int list) {
+        Spec s = new Spec(list, R.drawable.bg_bl_sel, 0,
+                a.getResources().getColor(R.color.selected_text_color),
+                a.getResources().getColor(R.color.white), new int[] {R.id.tv_name, R.id.tv_state, R.id.tv_title}, 0);
+        s.markBase = 1;
+        return s;
     }
 
     /** The music and video lists: stock's selected row and plain row, its two text colours. */
@@ -350,6 +373,39 @@ public final class Bar extends RecyclerView.ItemDecoration
         } catch (Throwable t) {
         }
     }
+
+    /**
+     * A list a screen builds itself ({@link Column}), in an Activity or a dialog over one: the
+     * cursor is its adapter's. {@code foot}: the id of a row below the list the cursor stands on
+     * as position count (the import's button), 0 for none. Every show of a dialog is a new window:
+     * the colours' listener is hung again.
+     */
+    static void column(android.app.Activity act, RecyclerView rv, boolean menu, int selRes,
+            int selColor, int rowColor, int[] texts, int foot) {
+        try {
+            if (!(act instanceof BaseActivity)) return;
+            Spec s = new Spec(rv.getId(), selRes, 0, selColor, rowColor, texts, 0);
+            s.byAdapter = true;
+            s.menu = menu;
+            if (foot != 0) {
+                s.head = foot;
+                s.headBelow = true;
+                s.headSel = selRes;
+                s.headColor = selColor;
+            }
+            attach((BaseActivity) act, rv, s);
+            Bar b = (Bar) BARS.get(rv);
+            if (b != null) {
+                rv.getViewTreeObserver().removeOnPreDrawListener(b.tinter);
+                rv.getViewTreeObserver().addOnPreDrawListener(b.tinter);
+            }
+            relist(rv);
+        } catch (Throwable t) {
+        }
+    }
+
+    /** The tag of a row's tick box: it takes the colour the bar gives the row's text. */
+    public static final String TICK = "ipp_tick";
 
     private static void attach(BaseActivity a, RecyclerView rv, Spec s) {
         try {
@@ -510,7 +566,7 @@ public final class Bar extends RecyclerView.ItemDecoration
      * content asks no layout, while setting or clearing a background re-lays out the whole window
      * (Settings with its panel) on every click.
      */
-    private static void blank(View row) {
+    static void blank(View row) {
         Drawable d = row.getBackground();
         if (d instanceof Rows.Flat) {
             Rows.Flat f = (Rows.Flat) d;
@@ -526,6 +582,7 @@ public final class Bar extends RecyclerView.ItemDecoration
     static boolean landed(View v) {
         try {
             if (v == null) return false;
+            if (RowBar.landed(v)) return true;
             Bar own = of(v);
             if (own != null) {
                 if (v == own.head.get()) {
@@ -557,7 +614,7 @@ public final class Bar extends RecyclerView.ItemDecoration
      */
     /** The row is painted by a bar, so its own background stays empty. */
     static boolean owns(View row) {
-        return row != null && of(row) != null;
+        return row != null && (of(row) != null || RowBar.owns(row));
     }
 
     private static Bar of(View row) {
@@ -747,7 +804,14 @@ public final class Bar extends RecyclerView.ItemDecoration
             return -1;
         }
         BaseActivity a = (BaseActivity) activity.get();
-        return a == null ? -1 : a.getMark() - spec.markBase;
+        if (a == null) return -1;
+        int before = 0;
+        if (spec.markList != 0) {
+            View above = ((android.app.Activity) a).findViewById(spec.markList);
+            RecyclerView.Adapter ad = above instanceof RecyclerView ? ((RecyclerView) above).getAdapter() : null;
+            before = ad == null ? 0 : ad.getItemCount();
+        }
+        return a.getMark() - spec.markBase - before;
     }
 
     /** The cursor on a row of the list: off it (Search's input line) there is no bar. */
@@ -763,7 +827,11 @@ public final class Bar extends RecyclerView.ItemDecoration
     }
 
     private boolean onHead() {
-        return cursor() == -1 && head() != null;
+        if (head() == null) return false;
+        if (!spec.headBelow) return cursor() == -1;
+        RecyclerView r = (RecyclerView) rv.get();
+        RecyclerView.Adapter a = r == null ? null : r.getAdapter();
+        return a != null && cursor() == a.getItemCount();
     }
 
     /** The input line's top in the list's coordinates; it stands right above the list. */
@@ -1163,7 +1231,10 @@ public final class Bar extends RecyclerView.ItemDecoration
 
     /** What the bind tinted with the text's colour: the Favorites heart, a Videos folder icon. */
     private static void followText(View row, Object a, int color) {
-        if (a instanceof com.innioasis.music.PlaylistsActivity) {
+        View tick = row.findViewWithTag(TICK);
+        if (tick instanceof android.widget.ImageView) {
+            Icons.menu((android.widget.ImageView) tick, color);
+        } else if (a instanceof com.innioasis.music.PlaylistsActivity) {
             PlGrid.listRow(row);
         } else if (a instanceof com.innioasis.y1_eBook.ui.main.MainActivity) {
             Ebook.librarySub(row);

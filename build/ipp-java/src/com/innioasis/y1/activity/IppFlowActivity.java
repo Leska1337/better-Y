@@ -982,7 +982,7 @@ public final class IppFlowActivity extends BaseActivity {
      * group's name in the status bar. A layer of this screen, so it opens at once; the row of covers
      * is hidden under it. Its words are the help asset's Cover Flow group, eight languages.
      */
-    static final class Opts extends LinearLayout {
+    static final class Opts extends FrameLayout {
         private static final String GROUP = "coverflow";
         private static final String[] KEYS = { Flow.KEY_COUNT, Flow.KEY_GROUP, Flow.KEY_YEAR, Flow.KEY_START };
         /** Each row's values when the asset names none; null is an Off/On row. */
@@ -1000,19 +1000,19 @@ public final class IppFlowActivity extends BaseActivity {
         private final LinearLayout[] lines = new LinearLayout[KEYS.length];
         private final TextView[] names = new TextView[KEYS.length];
         private final TextView[] vals = new TextView[KEYS.length];
-        private int sel;
+        private final View[] items = new View[KEYS.length];
+        private final com.innioasis.ipp.Column col;
         private boolean fitted;
 
         Opts(Context c) {
             super(c);
-            setOrientation(VERTICAL);
             names(c);
             TextView probe = new TextView(c);
             ThemeManager.INSTANCE.itemSetTextColor(probe, c.getResources().getColor(R.color.selected_text_color), false);
             int hair = (probe.getCurrentTextColor() & 0x00FFFFFF) | HAIR_ALPHA;
             for (int k = 0; k < KEYS.length; k++) {
                 LinearLayout line = new LinearLayout(c);
-                line.setOrientation(HORIZONTAL);
+                line.setOrientation(LinearLayout.HORIZONTAL);
                 line.setBaselineAligned(false);
                 line.setGravity(Gravity.CENTER_VERTICAL);
                 line.setPadding(TEXT_START, 0, 5, 0);
@@ -1021,6 +1021,7 @@ public final class IppFlowActivity extends BaseActivity {
                 label.setIncludeFontPadding(false);
                 label.setGravity(Gravity.CENTER_VERTICAL);
                 label.setText(labels[k]);
+                label.setId(com.innioasis.ipp.Column.TITLE);
                 LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -1);
                 lp.weight = 1f;
                 line.addView(label, lp);
@@ -1029,16 +1030,31 @@ public final class IppFlowActivity extends BaseActivity {
                 value.setIncludeFontPadding(false);
                 value.setGravity(Gravity.CENTER_VERTICAL);
                 value.setPadding(6, 0, 6, 0);
+                value.setId(com.innioasis.ipp.Column.TEXT);
                 line.addView(value, -2, -2);
-                addView(line, new LinearLayout.LayoutParams(-1, 0));
+                LinearLayout item = new LinearLayout(c);
+                item.setOrientation(LinearLayout.VERTICAL);
+                item.setLayoutParams(new ViewGroup.LayoutParams(-1, -2));
+                item.addView(line, new LinearLayout.LayoutParams(-1, 0));
                 View h = new View(c);
                 h.setBackgroundColor(hair);
-                addView(h, new LinearLayout.LayoutParams(-1, 1));
+                item.addView(h, new LinearLayout.LayoutParams(-1, 1));
+                items[k] = item;
                 lines[k] = line;
                 names[k] = label;
                 vals[k] = value;
             }
-            com.innioasis.ipp.Fill.rows(this);
+            col = new com.innioasis.ipp.Column(c, items, new Look(this));
+            addView(col.list(), -1, -1);
+            col.bar((android.app.Activity) c, false, R.drawable.item_setting_sel, ACCENT, 0xFFFFFFFF);
+        }
+
+        static final class Look extends com.innioasis.ipp.Column.Painter {
+            private final Opts o;
+
+            Look(Opts o) { this.o = o; }
+
+            public void paint(int row) { o.paint(row); }
         }
 
         /** The menu's rule: 22sp, smaller until every label fits two lines beside its widest value. */
@@ -1073,18 +1089,17 @@ public final class IppFlowActivity extends BaseActivity {
             requestLayout();
         }
 
-        /** The rows painted as bindRow paints them: the setting bar and the accent under the cursor. */
-        private void paint() {
-            Context c = getContext();
-            for (int k = 0; k < KEYS.length; k++) {
-                boolean on = k == sel;
-                int v = Prefs.val(c, KEYS[k]);
-                vals[k].setText(v >= 0 && v < values[k].length ? values[k][v] : "");
-                int fg = on ? ACCENT : -1;
+        /** A row painted as bindRow paints it: the setting bar and the accent under the cursor. */
+        private void paint(int k) {
+            boolean on = k == col.sel();
+            int v = Prefs.val(getContext(), KEYS[k]);
+            vals[k].setText(v >= 0 && v < values[k].length ? values[k][v] : "");
+            int fg = on ? ACCENT : -1;
+            if (!col.barred()) {
                 ThemeManager.INSTANCE.itemSetBackground(lines[k], on ? R.drawable.item_setting_sel : 0, on);
-                ThemeManager.INSTANCE.itemSetTextColor(names[k], fg, on);
-                ThemeManager.INSTANCE.itemSetTextColor(vals[k], fg, on);
             }
+            ThemeManager.INSTANCE.itemSetTextColor(names[k], fg, on);
+            ThemeManager.INSTANCE.itemSetTextColor(vals[k], fg, on);
         }
 
         String title() { return title; }
@@ -1126,24 +1141,21 @@ public final class IppFlowActivity extends BaseActivity {
 
         void open() {
             group = Prefs.val(getContext(), Flow.KEY_GROUP);
-            sel = 0;
             fit();
-            paint();
             setVisibility(View.VISIBLE);
+            col.set(0);
         }
 
         void move(int d) {
-            int s = Loop.step(sel, d, KEYS.length);
-            if (s == sel) return;
-            sel = s;
-            paint();
+            col.step(d);
         }
 
         /** The value under the cursor to the next one, round the end. */
         void change() {
+            int sel = col.sel();
             int v = Prefs.val(getContext(), KEYS[sel]);
             Prefs.setInt(getContext(), KEYS[sel], (v + 1) % values[sel].length);
-            paint();
+            col.repaint(sel);
         }
     }
 

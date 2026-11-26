@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -48,7 +49,7 @@ public final class BackupDialog extends BaseDialog {
     private View[] views;
     private TextView[] labels;
     private TextView[] values;
-    private int sel;
+    private Column col;
 
     /** {@code bg_submenu}'s own colour, for when the theme has nothing to say. */
     private static final int BOX = 0xFF8C94B2;
@@ -85,7 +86,6 @@ public final class BackupDialog extends BaseDialog {
         views = new View[n];
         labels = new TextView[n];
         values = new TextView[n];
-        sel = 0;
 
         LinearLayout box = new LinearLayout(activity);
         box.setOrientation(LinearLayout.VERTICAL);
@@ -117,7 +117,12 @@ public final class BackupDialog extends BaseDialog {
             box.addView(nt, -1, -2);
         }
 
-        for (int i = 0; i < n; i++) box.addView(row(i), -1, -2);
+        for (int i = 0; i < n; i++) row(i);
+        col = new Column(activity, views, new Paint(this));
+        box.addView(col.list(), -1, -2);
+        col.bar(activity, true, R.drawable.item_selected_submenu,
+                activity.getResources().getColor(R.color.selected_text_color_submenu),
+                activity.getResources().getColor(R.color.white));
 
         setContentView(box);
 
@@ -131,7 +136,7 @@ public final class BackupDialog extends BaseDialog {
             w.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        paintAll();
+        col.set(0);
         // A late theme bitmap lands on a row already cleared; see PickDialog.
         Rows.watchFlat(new Repaint(this));
     }
@@ -151,7 +156,7 @@ public final class BackupDialog extends BaseDialog {
             if (!d.isShowing() || d.repainting) return;
             d.repainting = true;
             try {
-                d.paintAll();
+                d.col.paintAll();
             } finally {
                 d.repainting = false;
             }
@@ -165,8 +170,17 @@ public final class BackupDialog extends BaseDialog {
         return Typeface.create(Typeface.MONOSPACE, Typeface.BOLD);
     }
 
+    static final class Paint extends Column.Painter {
+        private final BackupDialog d;
+
+        Paint(BackupDialog d) { this.d = d; }
+
+        public void paint(int row) { d.paint(row); }
+    }
+
     private View row(int i) {
         LinearLayout r = new LinearLayout(activity);
+        r.setLayoutParams(new ViewGroup.LayoutParams(-1, -2));
         r.setOrientation(LinearLayout.HORIZONTAL);
         r.setGravity(Gravity.CENTER_VERTICAL);
         r.setPadding(5, 3, 5, 3);
@@ -176,6 +190,7 @@ public final class BackupDialog extends BaseDialog {
         l.setTextSize(14.0f);
         l.setTypeface(font());
         l.setMaxLines(2);
+        l.setId(Column.TITLE);
         l.setText(i < rows.length ? rows[i] : toggle);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2);
         lp.weight = 1.0f;
@@ -187,6 +202,7 @@ public final class BackupDialog extends BaseDialog {
         v.setGravity(Gravity.END);
         v.setPadding(4, 0, 2, 0);
         v.setSingleLine(true);
+        v.setId(Column.TEXT);
         if (i >= rows.length) {
             v.setText(activity.getString(toggled ? R.string.ipp_on : R.string.ipp_off));
         } else {
@@ -200,25 +216,23 @@ public final class BackupDialog extends BaseDialog {
         return r;
     }
 
-    private void paintAll() {
-        for (int i = 0; i < views.length; i++) paint(i);
-    }
-
     private void paint(int i) {
         if (views[i] == null) return;
-        boolean focus = (i == sel);
+        boolean focus = i == col.sel();
         int fg = activity.getResources().getColor(focus
                 ? R.color.selected_text_color_submenu : R.color.white);
 
         // Cleared first and the highlight guaranteed after: ThemeManager may do neither while the
         // theme bitmap is loading. 0 for an unfocused row, as SubmenuAdapter does.
-        views[i].setBackgroundDrawable(null);
-        ThemeManager.INSTANCE.menuItemSetBackground(views[i],
-                focus ? R.drawable.item_selected_submenu : 0, focus);
-        if (focus && views[i].getBackground() == null) {
-            views[i].setBackgroundResource(R.drawable.item_selected_submenu);
+        if (!col.barred()) {
+            views[i].setBackgroundDrawable(null);
+            ThemeManager.INSTANCE.menuItemSetBackground(views[i],
+                    focus ? R.drawable.item_selected_submenu : 0, focus);
+            if (focus && views[i].getBackground() == null) {
+                views[i].setBackgroundResource(R.drawable.item_selected_submenu);
+            }
+            Rows.noSize(views[i]);
         }
-        Rows.noSize(views[i]);
         ThemeManager.INSTANCE.menuItemSetTextColor(labels[i], fg, focus);
         ThemeManager.INSTANCE.menuItemSetTextColor(values[i], fg, focus);
     }
@@ -251,17 +265,12 @@ public final class BackupDialog extends BaseDialog {
     }
 
     private void move(int dir) {
-        int old = sel;
-        int next = Loop.step(sel, dir, views.length);
-        if (next == sel) return;
-        sel = next;
-        paint(old);
-        paint(sel);
+        col.step(dir);
     }
 
     /** Dismissed first: what the row starts may open a dialog of its own. */
     private void take() {
-        int row = sel;
+        int row = col.sel();
         if (row >= rows.length) {
             toggled = !toggled;
             values[row].setText(activity.getString(toggled ? R.string.ipp_on : R.string.ipp_off));

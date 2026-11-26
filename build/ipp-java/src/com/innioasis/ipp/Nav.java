@@ -373,10 +373,6 @@ public final class Nav {
         private float p;
         private boolean done;
         private Drawable oldBg;
-        // TEMP measurement: frame gaps of the slide
-        private final StringBuilder gaps = new StringBuilder();
-        private int frames;
-        private long fromKey = -1;
         private final int[] loc = new int[2];
         private final int[] at = new int[2];
 
@@ -405,7 +401,6 @@ public final class Nav {
             if (top >= h) return false;
             if (pre && (bufA == null || bufA.getWidth() != w || bufA.getHeight() != h - top)) return false;
             oldBg = prev.getWindow().getDecorView().getBackground();
-            if (pre) fromKey = SystemClock.uptimeMillis() - keyAt;
             if (mode == SLIDE) {
                 oL = left(oldList);
                 oR = right(oldList);
@@ -491,11 +486,6 @@ public final class Nav {
             // a frame held up by the screen (a first draw, pictures decoded) advances by two frames
             // at most: the slide slows down there instead of jumping to its end
             if (last == 0) first = now;
-            if (last != 0) {
-                long g = (now - last) / 1000000L;
-                frames++;
-                if (g > 40) gaps.append(' ').append(g);
-            }
             long dt = last == 0 ? FRAME_NS : Math.min(now - last, 2 * FRAME_NS);
             last = now;
             // a list filled in the background (Folders) is waited for, standing at the start
@@ -530,8 +520,6 @@ public final class Nav {
         void end() {
             if (done) return;
             done = true;
-            android.util.Log.e("ippnav", act.getClass().getSimpleName() + " mode " + mode + " key-start " + fromKey
-                    + " frames " + frames + " ms " + (last - first) / 1000000L + " slow" + gaps);
             try {
                 Choreographer.getInstance().removeFrameCallback(this);
                 if (under != null) decor.removeView(under);

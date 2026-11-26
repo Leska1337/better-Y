@@ -105,14 +105,7 @@
     return-object p0
 .end method
 
-.method static synthetic access$1100()J
-  .registers 2
-  .line 44
-    sget-wide v0, Lcom/innioasis/ipp/Nav;->keyAt:J
-    return-wide v0
-.end method
-
-.method static synthetic access$1200(Landroid/view/View;)I
+.method static synthetic access$1100(Landroid/view/View;)I
   .registers 1
   .line 44
     invoke-static { p0 }, Lcom/innioasis/ipp/Nav;->left(Landroid/view/View;)I
@@ -120,7 +113,7 @@
     return p0
 .end method
 
-.method static synthetic access$1300(Landroid/view/View;)I
+.method static synthetic access$1200(Landroid/view/View;)I
   .registers 1
   .line 44
     invoke-static { p0 }, Lcom/innioasis/ipp/Nav;->right(Landroid/view/View;)I
@@ -128,21 +121,21 @@
     return p0
 .end method
 
-.method static synthetic access$1400()Landroid/graphics/Bitmap;
+.method static synthetic access$1300()Landroid/graphics/Bitmap;
   .registers 1
   .line 44
     sget-object v0, Lcom/innioasis/ipp/Nav;->bufB:Landroid/graphics/Bitmap;
     return-object v0
 .end method
 
-.method static synthetic access$1402(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
+.method static synthetic access$1302(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   .registers 1
   .line 44
     sput-object p0, Lcom/innioasis/ipp/Nav;->bufB:Landroid/graphics/Bitmap;
     return-object p0
 .end method
 
-.method static synthetic access$1500(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
+.method static synthetic access$1400(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
   .registers 3
   .line 44
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Nav;->buffer(Landroid/graphics/Bitmap;II)Landroid/graphics/Bitmap;
@@ -150,35 +143,35 @@
     return-object p0
 .end method
 
-.method static synthetic access$1600(Landroid/graphics/Bitmap;Landroid/view/View;I)V
+.method static synthetic access$1500(Landroid/graphics/Bitmap;Landroid/view/View;I)V
   .registers 3
   .line 44
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Nav;->listShot(Landroid/graphics/Bitmap;Landroid/view/View;I)V
     return-void
 .end method
 
-.method static synthetic access$1700(Landroid/graphics/Bitmap;Landroid/app/Activity;I)V
+.method static synthetic access$1600(Landroid/graphics/Bitmap;Landroid/app/Activity;I)V
   .registers 3
   .line 44
     invoke-static { p0, p1, p2 }, Lcom/innioasis/ipp/Nav;->window(Landroid/graphics/Bitmap;Landroid/app/Activity;I)V
     return-void
 .end method
 
-.method static synthetic access$1800()Landroid/graphics/Bitmap;
+.method static synthetic access$1700()Landroid/graphics/Bitmap;
   .registers 1
   .line 44
     sget-object v0, Lcom/innioasis/ipp/Nav;->bufC:Landroid/graphics/Bitmap;
     return-object v0
 .end method
 
-.method static synthetic access$1802(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
+.method static synthetic access$1702(Landroid/graphics/Bitmap;)Landroid/graphics/Bitmap;
   .registers 1
   .line 44
     sput-object p0, Lcom/innioasis/ipp/Nav;->bufC:Landroid/graphics/Bitmap;
     return-object p0
 .end method
 
-.method static synthetic access$1900(Landroid/view/View;)Z
+.method static synthetic access$1800(Landroid/view/View;)Z
   .registers 1
   .line 44
     invoke-static { p0 }, Lcom/innioasis/ipp/Nav;->filled(Landroid/view/View;)Z

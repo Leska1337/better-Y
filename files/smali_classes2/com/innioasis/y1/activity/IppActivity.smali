@@ -1613,36 +1613,28 @@
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 260
+  .line 261
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const-string v4, "anim_nav"
+    const-string v4, "anim_scroll"
     const-string v7, "animations"
     move-object v2, v1
     invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
-  .line 261
-    new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const-string v10, "anim_scroll"
-    const-string v13, "animations"
-    move-object v8, v1
-    invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
-    invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 262
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const/4 v3, 5
-    const-string v4, "status_bar"
-    const/4 v7, 0
-    move-object v2, v1
-    invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
+    const/4 v9, 5
+    const-string v10, "status_bar"
+    move-object v8, v1
+    invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z
   .line 263
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
-    const/4 v9, 2
-    const-string v10, "bar_text"
-    const/4 v11, 3
-    const/4 v13, 0
-    move-object v8, v1
-    invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
+    const/4 v3, 2
+    const-string v4, "bar_text"
+    const/4 v5, 3
+    const/4 v7, 0
+    move-object v2, v1
+    invoke-direct/range { v2 .. v7 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     const-string v2, "status_bar"
     invoke-virtual { v1, v2 }, Lcom/innioasis/y1/activity/IppActivity$Item;->in(Ljava/lang/String;)Lcom/innioasis/y1/activity/IppActivity$Item;
     move-result-object v1
@@ -1684,7 +1676,6 @@
     new-instance v1, Lcom/innioasis/y1/activity/IppActivity$Item;
     const/4 v9, 1
     const-string v10, "meta_title"
-    const/4 v11, 0
     move-object v8, v1
     invoke-direct/range { v8 .. v13 }, Lcom/innioasis/y1/activity/IppActivity$Item;-><init>(ILjava/lang/String;I[ILjava/lang/String;)V
     invoke-interface { v0, v1 }, Ljava/util/List;->add(Ljava/lang/Object;)Z

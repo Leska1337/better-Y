@@ -46,6 +46,11 @@ public final class Fill extends RecyclerView.ItemDecoration {
         for (int i = 0; i < g.getChildCount(); i++) walk(g.getChildAt(i));
     }
 
+    /** A list built after {@code onResume} (Column): the walk did not see it. */
+    static void list(RecyclerView rv) {
+        add(rv);
+    }
+
     /** The layout manager is not asked here: SongRows sets one with its adapter, after onResume. */
     private static void add(RecyclerView rv) {
         if (DONE.containsKey(rv)) return;

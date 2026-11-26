@@ -41,6 +41,8 @@ public final class IppImportActivity extends BaseActivity {
     private LinearLayout container;
     private LinearLayout footer;
     private ScrollView scroller;
+    /** Where the scroller stands, and the file list in its place while it is shown. */
+    private android.widget.FrameLayout body;
     private TextView name;
     private TextView which;
     private TextView counts;
@@ -77,7 +79,9 @@ public final class IppImportActivity extends BaseActivity {
         outer.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams sp = new LinearLayout.LayoutParams(-1, 0);
         sp.weight = 1.0f;
-        outer.addView(scroller, sp);
+        body = new android.widget.FrameLayout(this);
+        body.addView(scroller, -1, -1);
+        outer.addView(body, sp);
         footer = new LinearLayout(this);
         footer.setOrientation(LinearLayout.VERTICAL);
         outer.addView(footer, new LinearLayout.LayoutParams(-1, -2));
@@ -112,11 +116,14 @@ public final class IppImportActivity extends BaseActivity {
     private TextView[] labels;
     private TextView[] values;
     private ImageView[] ticks;
-    private int sel;
+    /** The cursor over the file rows and, past them, the button. */
+    private com.innioasis.ipp.Column col;
 
     /** A tick per file, "Select all" on top (toggles them all), the button below. */
     void buildList() {
         listing = true;
+        int keep = col == null ? 0 : col.sel();
+        dropList();
         container.removeAllViews();
         footer.removeAllViews();
         int n = all.size() + 2;
@@ -134,6 +141,7 @@ public final class IppImportActivity extends BaseActivity {
             ImageView t = new ImageView(this);
             t.setImageBitmap(PickDialog.box(false));
             if (i == 0) t.setVisibility(View.INVISIBLE);   // "Select all" is an action: no box, same indent
+            t.setTag(com.innioasis.ipp.Bar.TICK);
             LinearLayout.LayoutParams tp = new LinearLayout.LayoutParams(-2, -2);
             tp.rightMargin = 6;
             r.addView(t, tp);
@@ -141,20 +149,23 @@ public final class IppImportActivity extends BaseActivity {
             TextView l = line(label(i), 17.0f);
             l.setSingleLine(true);
             l.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            l.setId(com.innioasis.ipp.Column.TITLE);
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, -2);
             lp.weight = 1.0f;
             r.addView(l, lp);
 
             TextView v = line("", 15.0f);
             v.setPadding(6, 0, 4, 0);
+            v.setId(com.innioasis.ipp.Column.TEXT);
             if (i > 0 && i <= all.size()) {
                 v.setText(String.valueOf(((M3u.Plan) all.get(i - 1)).lines.size()));
             }
             r.addView(v, -2, -2);
 
             if (i == n - 1) {
-                // the button: its words centred, no tick, no count
+                // the button: its words centred, no tick, no count; the bar's row below the list
                 t.setVisibility(View.GONE);
+                r.setId(R.id.search_head);
                 l.setGravity(Gravity.CENTER);
                 bold(l);
             }
@@ -177,12 +188,37 @@ public final class IppImportActivity extends BaseActivity {
                 boxes[i] = r;
             } else {
                 boxes[i] = boxed(r, step - HAIR_H);
-                container.addView(boxes[i], new LinearLayout.LayoutParams(-1, -2));
+                boxes[i].setLayoutParams(new ViewGroup.LayoutParams(-1, -2));
             }
         }
-        sel = Math.min(sel, n - 1);
-        for (int i = 0; i < n; i++) paintRow(i);
-        scrollToSel(true);
+        View[] list = new View[n - 1];
+        System.arraycopy(boxes, 0, list, 0, n - 1);
+        col = new com.innioasis.ipp.Column(this, list, new Look(this));
+        body.addView(col.list(), -1, -1);
+        scroller.setVisibility(View.GONE);
+        col.bar(this, false, R.drawable.item_setting_sel, ACCENT, 0xFFFFFFFF, R.id.search_head);
+        col.set(Math.min(keep, n - 1));
+        paintRow(n - 1);
+    }
+
+    /** The file list off the screen: the scroller shows the stages after it. */
+    private void dropList() {
+        if (col != null) body.removeView(col.list());
+        scroller.setVisibility(View.VISIBLE);
+    }
+
+    static final class Look extends com.innioasis.ipp.Column.Painter {
+        private final IppImportActivity a;
+
+        Look(IppImportActivity a) { this.a = a; }
+
+        public void paint(int row) { a.paintRow(row); }
+    }
+
+    /** A row repainted, through the list when it is one of its rows. */
+    private void repaint(int i) {
+        if (i < rows.length - 1) col.repaint(i);
+        else paintRow(i);
     }
 
     private int step;                    // a list row with its hairline, and the button
@@ -211,9 +247,11 @@ public final class IppImportActivity extends BaseActivity {
         return ((M3u.Plan) all.get(i - 1)).file;
     }
 
-    private void paintRow(int i) {
-        boolean on = i == sel;
-        ThemeManager.INSTANCE.itemSetBackground(rows[i], on ? R.drawable.item_setting_sel : 0, on);
+    void paintRow(int i) {
+        boolean on = i == col.sel();
+        if (!col.barred()) {
+            ThemeManager.INSTANCE.itemSetBackground(rows[i], on ? R.drawable.item_setting_sel : 0, on);
+        }
         ThemeManager.INSTANCE.itemSetTextColor(labels[i], on ? ACCENT : -1, on);
         ThemeManager.INSTANCE.itemSetTextColor(values[i], on ? ACCENT : -1, on);
         // the colour the label actually got
@@ -225,26 +263,12 @@ public final class IppImportActivity extends BaseActivity {
     }
 
     private void moveSel(int dir) {
-        int next = Loop.step(sel, dir, rows.length);
-        if (next == sel) return;
-        int old = sel;
-        sel = next;
-        paintRow(old);
-        paintRow(sel);
-        scrollToSel(true);
-    }
-
-    void scrollToSel(boolean mayPost) {
-        View v = boxes == null ? null : boxes[sel];
-        if (v == null || scroller == null || v.getParent() != container) return;   // the button
-        if (v.getHeight() <= 0) {
-            if (mayPost) scroller.post(new ScrollLater(this));
-            return;
-        }
-        int y = scroller.getScrollY();
-        int h = scroller.getHeight();
-        if (v.getTop() < y) scroller.scrollTo(0, v.getTop());
-        else if (v.getBottom() > y + h) scroller.scrollTo(0, v.getBottom() - h);
+        int old = col.sel();
+        int next = Loop.step(old, dir, rows.length);
+        if (next == old) return;
+        col.move(next);
+        int button = rows.length - 1;
+        if (old == button || next == button) paintRow(button);
     }
 
     private boolean every() {
@@ -255,14 +279,15 @@ public final class IppImportActivity extends BaseActivity {
 
     private void press() {
         int n = all.size();
+        int sel = col.sel();
         if (sel == 0) {
             boolean every = every();
             for (int i = 0; i < n; i++) ((M3u.Plan) all.get(i)).picked = !every;
-            for (int i = 0; i <= n; i++) paintRow(i);
+            for (int i = 0; i <= n; i++) repaint(i);
         } else if (sel <= n) {
             M3u.Plan p = (M3u.Plan) all.get(sel - 1);
             p.picked = !p.picked;
-            paintRow(sel);
+            repaint(sel);
         } else {
             go();
         }
@@ -309,6 +334,7 @@ public final class IppImportActivity extends BaseActivity {
 
     void start() {
         if (isFinishing()) return;
+        dropList();
         container.removeAllViews();
         footer.removeAllViews();
         rows = null;
@@ -582,14 +608,6 @@ public final class IppImportActivity extends BaseActivity {
         Back(IppImportActivity a) { this.a = a; }
         public void run() {
             if (!a.isFinishing()) a.backToList();
-        }
-    }
-
-    static final class ScrollLater implements Runnable {
-        private final IppImportActivity a;
-        ScrollLater(IppImportActivity a) { this.a = a; }
-        public void run() {
-            if (a.listing) a.scrollToSel(false);
         }
     }
 
